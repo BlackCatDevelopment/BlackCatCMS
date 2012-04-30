@@ -1,0 +1,94 @@
+<?php
+
+/**
+ * This file is part of LEPTON Core, released under the GNU GPL
+ * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ * 
+ * NOTICE:LEPTON CMS Package has several different licenses.
+ * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *
+ * @author          LEPTON Project
+ * @copyright       2012, LEPTON Project
+ * @link            http://www.LEPTON-cms.org
+ * @license         http://www.gnu.org/licenses/gpl.html
+ * @license_terms   please see LICENSE and COPYING files in your package
+ * @version         $Id$
+ *
+ */
+ 
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {
+	include(WB_PATH.'/framework/class.secure.php');
+} else {
+	$oneback = "../";
+	$root = $oneback;
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= $oneback;
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
+}
+// end include class.secure.php
+
+require_once(WB_PATH.'/framework/class.admin.php');
+require_once(WB_PATH.'/framework/functions.php');
+
+$admin		= new admin('admintools', 'admintools');
+$get_tool	= $admin->add_slashes( $admin->get_get('tool') );
+
+if ( $get_tool == '' )
+{
+	header("Location: index.php");
+	exit(0);
+}
+
+// =========================================================================== 
+// ! Create the controller, it is reusable and can render multiple templates 	
+// =========================================================================== 
+global $parser;
+
+// ============================== 
+// ! Check if tool is installed   
+// ============================== 
+$result = $database->query("SELECT * FROM ".TABLE_PREFIX."addons WHERE type = 'module' AND function = 'tool' AND directory = '".$get_tool."'");
+if ( $result->numRows() == 0 )
+{
+	header("Location: index.php");
+	exit(0);
+}
+$tool	= $result->fetchRow();
+
+// Set toolname
+$data_dwoo['TOOL_NAME']		= $tool['name'];
+
+// Check if folder of tool exists
+if ( file_exists(WB_PATH.'/modules/'.$tool['directory'].'/tool.php') )
+{
+	if (
+		  file_exists( WB_PATH.'/modules/'.$tool['directory'].'/languages/'.$admin->lang->getLang().'.php' )
+	) {
+		$admin->lang->addFile( $admin->lang->getLang().'.php', WB_PATH.'/modules/'.$tool['directory'].'/languages' );
+	}
+	// Cache the tool and add it to dwoo
+	ob_start();
+	require(WB_PATH.'/modules/'.$tool['directory'].'/tool.php');
+	$data_dwoo['TOOL']	= ob_get_contents();
+	ob_end_clean();
+}
+else
+{
+	$admin->print_error($MESSAGE['GENERIC_ERROR_OPENING_FILE'] );
+}
+
+// print page
+$parser->output( 'backend_admintools_tool.lte', $data_dwoo );
+
+// Print admin footer
+$admin->print_footer();
+
+?>

@@ -1,0 +1,42 @@
+<div id="fc_content_header">
+	{translate('Welcome to LEPTON Administration')}
+</div>
+<div id="fc_main_content">
+	<ul id="fc_widget_list_1" class="fc_widgets">
+	{foreach $sections as section}
+	{if $section.permission}
+		<li class="fc_widget_wrapper">
+			<div class="fc_widget_shadow_1"></div>
+			<div class="fc_widget_shadow_2"></div>
+			<div class="fc_widget_content">
+				<span class="fc_close"></span>
+				<div class="fc_starter ui-corner-all fc_start_{$section.name}">
+					<p class="fc_start_title ui-corner-top">{$section.title}</p>
+					{if $section.subpages}
+						{foreach $section.subpages subpage}
+						{if $subpage.permission}
+						<p>
+							<span class="fc_description">{$subpage.description}</span>
+							<a href="{$ADMIN_URL}/{$subpage.name}/index.php" class="button"><span class="fc_title">{$TEXT.MODIFY}</span></a>
+						</p>
+						<hr/>
+						{/if}
+						{/foreach}
+					{else}
+					<p>
+						<span class="fc_description">{$section.description}</span>
+						<a href="{$ADMIN_URL}/{$section.name}/index.php" class="button"><span class="fc_title">{$TEXT.MODIFY}</span></a>
+					</p>
+					<div class="clear"></div>
+					{/if}
+				</div>
+			</div>
+		</li>
+	{/if}
+	{/foreach}
+	</ul>
+	<ul id="fc_widget_list_2" class="fc_widgets">
+
+	</ul>
+	<div class="clear"></div>
+</div>

@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+  <link rel="stylesheet" href="../../frontend.css" type="text/css" />
+  <script type="text/javascript" src="../../jquery-core/jquery-core.min.js"></script>
+	<script type="text/javascript" src="../../plugins/ClueTip/jquery.cluetip.min.js"></script>
+	<link rel="stylesheet" href="../../plugins/ClueTip/jquery.cluetip.css" type="text/css" />
+  <title>jQueryAdmin: clueTip jQuery Plugin</title>
+  </head>
+  <body>
+
+    <div id="outer">
+      <div id="header"><h1>jQueryAdmin: clueTip jQuery Plugin</h1></div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="http://plugins.learningjquery.com/cluetip/#getting-started" target="_blank">
+            Homepage
+            </a>
+          </li>
+          <li>
+            <a href="http://plugins.learningjquery.com/" target="_blank">
+            Demo
+            </a>
+          </li>
+          <li>
+            <a href="http://plugins.learningjquery.com/cluetip/#details" target="_blank">
+            Usage
+            </a>
+          </li>
+          <li>
+            <a href="http://www.opensource.org/licenses/mit-license.php" target="_blank">
+            MIT License
+            </a>
+            <a href="http://www.gnu.org/licenses/gpl.html" target="_blank">
+            GNU GPL
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div id="content">
+        <h2>Usage</h2>
+        <ol>
+          <li> Create a preset using the jQueryAdmin Admin Tool, by checking "Plugins" =&gt; "ClueTip"</li>
+          <li> Save the preset in the jQueryAdmin presets folder (name it "cluetip", for example)</li>
+          <li> IInclude the following code in your template or a WYSIWYG section on your page:<br />
+               <tt>[[jQueryInclude?preset=&lt;Presetname&gt;]]</tt><br />
+          <li> Add to <strong>class="&lt;classname&gt;"</strong> attribute to the links that should have a clueTip,
+               where "&lt;classname&gt;" is one of:
+               <ul>
+                 <li>clfragment</li>
+                 <li>cllocal</li>
+                 <li>cltitle</li>
+               </ul><br />
+               Example:
+               <tt>
+                 &lt;a href="#local" class="cllocal" rel="#local" &gt;link&lt;/a&gt;
+               </tt><br />
+               Predefined options:<br /><br />
+               <dl>
+                 <dt>Use the contents of the <tt>title</tt> attribute</dt>
+                 <dd>
+                   <tt>&lt;a class="cltitle" href="#" title="|Houdini was an escape artist.|He was also adept at prestidigitation.">Houdini&lt;/a&gt;</tt><br />
+                   <a class="cltitle" href="#" title="|Houdini was an escape artist.|He was also adept at prestidigitation.">Demo</a>
+                 </dd>
+                 <dt>Use an external HTML page for the tip content</dt>
+                 <dd>
+                   <tt>&lt;a class="clfragment" href="fragment.html" rel="fragment.html"&gt;link&lt;/a&gt;</tt><br />
+                   <a class="clfragment" href="demo/ajax2.htm" rel="demo/ajax2.htm">Demo</a>
+                 </dd>
+                 <dt>Use the content of a page block for the tip content</dt>
+                 <dd>
+                   <tt>&lt;a class="cllocal" href="#myid" rel="#myid"&gt;link&lt;/a&gt;<br />
+                   ...later...<br />
+                   &lt;div id="myid"&gt;Dieser Text wird als clueTip angezeigt.&lt;/div&gt;
+                   </tt><br />
+                   <a class="cllocal" href="#myid" rel="#myid">Demo</a><br />
+                   <div style="display:none;" id="myid">Dieser Text wird als clueTip angezeigt.</div>
+                   Please note: In this variant, the "sticky" option is used by default.
+                 </dd>
+               </dl><br /><br />
+               You may change or add the available options by changing the
+               <tt>default.preset</tt> file in the plugin's folder.
+               </li>
+        </ol><br /><br />
+        For more setup options, visit the <a href="http://plugins.learningjquery.com/cluetip/#getting-started">clueTip Homepage</a>.
+      </div>
+
+      <div id="footer">
+        <a href="http://www.webbird.de/" target="_blank">&copy; 2010 BlackBird Webprogrammierung</a>
+      </div>
+    </div>
+	<script type="text/javascript">
+      $('a.clfragment').cluetip();
+      $('a.cllocal').cluetip({
+        local        : true,
+        cursor       : 'pointer',
+        sticky       : true,
+        mouseOutClose: true,
+        cluetipClass : 'jtip',
+        arrows       : true,
+        dropShadow   : false,
+        showTitle    : false
+      });
+  </script>
+
+  </body>
+</html>

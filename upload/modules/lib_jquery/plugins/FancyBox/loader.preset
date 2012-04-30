@@ -1,0 +1,70 @@
+<!-- position: body -->
+	<script type="text/javascript">
+    if ( typeof jQuery != 'undefined' ) {
+      jQuery(document).ready(function() {
+        // Defaults
+        jQuery.fn.fancybox.defaults = {
+          'padding': 10,  	           // Space between FancyBox wrapper and content
+          'margin':	20, 	             // Space between viewport and FancyBox wrapper
+          'opacity': false,  	         // When true, transparency of content is changed for elastic transitions
+          'modal': false, 	           // When true, 'overlayShow' is set to 'true' and 'hideOnOverlayClick', 'hideOnContentClick', 'enableEscapeButton', 'showCloseButton' are set to 'false'
+          'cyclic':	false, 	           // When true, galleries will be cyclic, allowing you to keep pressing next/back.
+          'scrolling': 'auto',         // Set the overflow CSS property to create or hide scrollbars. Can be set to 'auto', 'yes', or 'no'
+          'width': 560,                // Width for content types 'iframe' and 'swf'. Also set for inline content if 'autoDimensions' is set to 'false'
+          'height': 340,               // Height for content types 'iframe' and 'swf'. Also set for inline content if 'autoDimensions' is set to 'false'
+          'autoScale': true, 	         // If true, FancyBox is scaled to fit in viewport
+          'autoDimensions':	true,      // For inline and ajax views, resizes the view to the element recieves. Make sure it has dimensions otherwise this will give unexpected results
+          'centerOnScroll':	false,     // When true, FancyBox is centered while scrolling page
+          'hideOnOverlayClick': true,  // Toggle if clicking the overlay should close FancyBox
+          'hideOnContentClick':	false, // Toggle if clicking the content should close FancyBox
+          'overlayShow': true, 	       // Toggle overlay
+          'overlayOpacity':	0.3, 	     // Opacity of the overlay (from 0 to 1; default - 0.3)
+          'overlayColor': '#666',      // Color of the overlay
+          'titleShow': true, 	         // Toggle title
+          'titlePosition': 'outside',  // The position of title. Can be set to 'outside', 'inside' or 'over'
+          'transitionIn': 'fade',      // The transition type for 'in'. Can be set to 'elastic', 'fade' or 'none'
+          'transitionOut': 'fade', 	   // The transition type for 'out'. Can be set to 'elastic', 'fade' or 'none'
+          'speedIn': 300,              // Speed of the fade and elastic transitions, in milliseconds, for 'in'
+          'speedOut':	300, 	           // Speed of the fade and elastic transitions, in milliseconds, for 'out'
+          'changeSpeed': 300,          // Speed of resizing when changing gallery items, in milliseconds
+          'changeFade':	'fast',        // Speed of the content fading while changing gallery items
+          'easingIn': 'swing',         //	Easing used for elastic animations, for 'in'
+          'easingOut': 'swing',        //	Easing used for elastic animations, for 'out'
+          'showCloseButton': true, 	   // Toggle close button
+          'showNavArrows': true, 	     // Toggle navigation arrows
+          'enableEscapeButton': true,  // Toggle if pressing Esc button closes FancyBox
+      		'onStart': function(){},     //	Will be called right before attempting to load the content
+    		  'onCancel': function(){},    //	Will be called after loading is canceled
+    		  'onComplete': function(){},  //	Will be called once the content is displayed
+    		  'onCleanup': function(){},   //	Will be called just before closing
+    		  'onClosed': function(){},    //	Will be called once FancyBox is closed
+    		  'onError': function(){}      //	Will be called on Error
+        };
+
+    	  jQuery("a.grouped_elements").fancybox();
+    	  jQuery("a[rel=fancybox]").fancybox();
+    	  jQuery("a.fancybox").fancybox();
+
+     	  // YouTube
+        jQuery("a.fancyyoutube").click(function() {
+        	jQuery.fancybox({
+        	  'padding'		    : 0,
+        		'autoScale'		  : false,
+        		'transitionIn'	: 'none',
+        		'transitionOut'	: 'none',
+        		'title'			    : this.title,
+        		'width'		      : 680,
+        		'height'		    : 495,
+        		'href'			    : this.href.replace(new RegExp("watch\\?v=", "i"), 'v/'),
+        		'type'			    : 'swf',
+        		'swf'			      : {
+        		   	                  'wmode'		: 'transparent',
+        			                    'allowfullscreen'	: 'true'
+        		                  }
+        	});
+
+        	return false;
+        });
+      });
+    }
+	</script>

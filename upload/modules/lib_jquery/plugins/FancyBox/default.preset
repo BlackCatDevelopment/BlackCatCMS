@@ -1,0 +1,4 @@
+	<script type="text/javascript" src="{WB_URL}/modules/lib_jquery/jquery-ui/external/jquery.mousewheel.min.js"></script>
+	<script type="text/javascript" src="{WB_URL}/modules/lib_jquery/jquery-ui/external/jquery.easing.js"></script>
+	<script type="text/javascript" src="{WB_URL}/modules/lib_jquery/plugins/FancyBox/jquery.fancybox-1.3.4.js"></script>
+	<link rel="stylesheet" type="text/css" href="{WB_URL}/modules/lib_jquery/plugins/FancyBox/jquery.fancybox-1.3.4.css" media="screen" />

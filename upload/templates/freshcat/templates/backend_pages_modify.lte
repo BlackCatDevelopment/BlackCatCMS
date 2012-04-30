@@ -1,0 +1,127 @@
+<div id="fc_content_header">
+	<span class="left">{translate('Modify page')}</span>
+	<div class="fc_header_buttons">
+		<a href="{$ADMIN_URL}/pages/modify.php?page_id={$PAGE_ID}" class="ui-corner-left fc_header_button fc_current">{translate('Modify page')}</a>
+		<a href="{$ADMIN_URL}/pages/settings.php?page_id={$PAGE_ID}" class="fc_header_button">{translate('Change settings')}</a>
+		<a href="{$PAGE_LINK}" target="_blank" class="ui-corner-right fc_header_button">{translate('View page')}</a>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div id="fc_main_content">
+	<div class="fc_modified_header">
+		<div class="fc_current_page">
+			{translate('Current page')}: <strong>{$PAGE_TITLE}</strong> (<strong>ID: {$PAGE_ID}</strong>)
+		</div>
+		<div class="fc_modified">
+			{if $MODIFIED_WHEN}
+			{translate('Last modification by')} {$MODIFIED_BY} ({$MODIFIED_BY_USERNAME}), {$MODIFIED_WHEN}
+			{/if}
+		</div>
+		<div class="clear"></div>
+	</div>
+	<form action="{$ADMIN_URL}/pages/sections_save.php" id="fc_add_module_form" class="ui-corner-bottom" name="add_section" method="post">
+		<div id="fc_add_module">
+			<select name="add_module">
+				{foreach $modules as module}
+				<option value="{$module.VALUE}">{$module.NAME}</option>
+				{/foreach}
+			</select>
+			<input type="hidden" name="page_id" value="{$PAGE_ID}" />
+			<input type="submit" name="submit_add" value="{translate('Add')}" />
+		</div>
+		<div id="fc_options_module">
+			<span class="button ui-corner-all" id="hide_modules">{translate('Hide all sections')}</span>
+			<span class="button ui-corner-all" id="show_modules">{translate('Show all sections')}</span>
+		</div>
+	</form>
+	{if $blocks_counter > 0}
+	<ul id="fc_all_blocks">
+		{foreach $blocks as block}
+		<li class="fc_module_block fc_active" id="sectionid_{$block.section_id}">
+			{if $MANAGE_SECTIONS}<div class="fc_section_drag ui-corner-tl ui-corner-tr"></div>{/if}
+			<div class="fc_module_content ui-shadow ui-corner-all">
+				<div class="fc_blocks_header ui-corner-top">
+					<table>
+						<tbody class="ui-corner-all">
+							<tr class="ui-corner-all">
+								<td class="fc_section_header_block ui-corner-tl">
+									{translate('Block')}: <strong>{$block.current_block_name}</strong>
+								</td>
+								{if $block.name}
+								<td class="fc_section_header_name">
+									{translate('Name')}: <strong>{$block.name}</strong>
+								</td>
+								{/if}
+								<td class="fc_section_header_module">
+									{translate('Modul')}: <strong>{$block.module}</strong>
+								</td>
+								<td class="fc_section_header_id">
+									ID: <strong>{$block.section_id}</strong>
+								</td>
+								{if $MANAGE_SECTIONS}
+								<td class="fc_sections_options ui-corner-tr">
+									<span class="fc_section_button fc_toggle_section_block" title="show/hide section"></span>
+									<div class="fc_section_modify_div_parent">
+										<span class="fc_section_button fc_open_section_modify" title="{translate('Modify section')}"></span>
+										<div class="fc_section_modify_div ui-corner-all ui-shadow">
+											<div class="fc_arrow_up"></div>
+											<form action="{$ADMIN_URL}/pages/sections_save.php" name="modify_section" class="fc_modify_section">
+												<div>
+													<input type="hidden" name="section_id" value="{$block.section_id}" />
+													<span class="fc_section_modify_label">{translate('Name')} :</span>
+													<input type="text" name="blockname" value="{$block.name}" />
+													<div class="clear"></div>
+													<hr/>
+													<span class="fc_section_modify_label left">{translate('Block')} :</span>
+													<select name="set_block" class="left">
+													{foreach $block.template_blocks as template_block}
+														<option value="{$template_block.VALUE}"{if $template_block.SELECTED} selected="selected"{/if}>{$template_block.NAME}</option>
+													{/foreach}
+													</select>
+													<div class="clear"></div>
+													<hr/>
+													<span class="fc_section_modify_label">{translate('From')} :</span>
+													<input type="text" name="day_from" value="{$block.date_day_from}" class="fc_date_two" maxlength="2" title="{translate('Day')}" /> . 
+													<input type="text" name="month_from" value="{$block.date_month_from}" class="fc_date_two" maxlength="2" title="{translate('Month')}" /> . 
+													<input type="text" name="year_from" value="{$block.date_year_from}" class="fc_date_four" maxlength="4" title="{translate('Year')}" /> - 
+													<input type="text" name="hour_from" value="{$block.date_hour_from}" class="fc_date_two" maxlength="2" title="{translate('Hour')}" /> : 
+													<input type="text" name="minute_from" value="{$block.date_minute_from}" class="fc_date_two" maxlength="2" title="{translate('Minute')}" />
+													<div class="clear"></div>
+													<span class="fc_section_modify_label">{translate('To')} :</span>
+													<input type="text" name="day_to" value="{$block.date_day_to}" class="fc_date_two" maxlength="2" title="{translate('Day')}" /> . 
+													<input type="text" name="month_to" value="{$block.date_month_to}" class="fc_date_two" maxlength="2" title="{translate('Month')}" /> . 
+													<input type="text" name="year_to" value="{$block.date_year_to}" class="fc_date_four" maxlength="4" title="{translate('Year')}" /> - 
+													<input type="text" name="hour_to" value="{$block.date_hour_to}" class="fc_date_two" maxlength="2" title="{translate('Hour')}" /> : 
+													<input type="text" name="minute_to" value="{$block.date_minute_to}" class="fc_date_two" maxlength="2" title="{translate('Minute')}" />
+													<div class="clear"></div>
+												</div>
+											</form>
+											<div class="fc_save_section">
+												<input type="hidden" name="section_id" value="{$block.section_id}" />
+												<input type="submit" name="save_section" value="{translate('Save & Close')}" />
+											</div>
+										</div>
+									</div>
+									<div class="fc_section_button fc_delete_section" title="delete section">
+										<input type="hidden" name="section_id" value="{$block.section_id}" />
+									</div>
+								</td>
+								{/if}
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="fc_blocks_content">
+				{$block.content}
+				</div>
+				<div class="fc_blocks_footer ui-corner-bottom"></div>
+			</div>
+		</li>
+		{/foreach}
+	</ul>
+	{else}
+	<li class="fc_module_block">{translate('No sections were found for this page')}</li>
+	{/if}
+	<div id="fc_main_content_footer"></div>
+</div>

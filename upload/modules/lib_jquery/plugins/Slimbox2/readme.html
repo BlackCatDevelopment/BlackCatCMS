@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+  <link rel="stylesheet" href="../../frontend.css" type="text/css" />
+  <title>jQueryAdmin: SlimBox2 jQuery Plugin</title>
+  </head>
+  <body>
+
+    <div id="outer">
+      <div id="header"><h1>jQueryAdmin: SlimBox2 jQuery Plugin</h1></div>
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="http://www.digitalia.be/software/slimbox2 target="_blank">
+            Homepage
+            </a>
+          </li>
+          <li>
+            <a href="http://www.digitalia.be/software/slimbox2#demo" target="_blank">
+            Demo
+            </a>
+          </li>
+          <li>
+            <a href="http://www.digitalia.be/software/slimbox2#usage" target="_blank">
+            Usage
+            </a>
+          </li>
+          <li>
+            <a href="http://www.opensource.org/licenses/mit-license.php" target="_blank">
+            MIT License
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div id="content">
+        <h2>Usage</h2>
+        <h3>Setup</h3>
+        <ol>
+          <li> Create a preset using the jQueryAdmin Admin Tool, by checking "Plugins" =&gt; "SlimBox2"</li>
+          <li> Save the preset in the jQueryAdmin presets folder (name it "slimbox", for example)</li>
+          <li> Include the following code in your template or a code section on your page:<br />
+               <tt>
+               [[jQueryInclude?preset=&lt;Presetname&gt;]]
+               </tt></li>
+          <li> Add the <strong>rel="lightbox"</strong> attribute to the links pointing to your full-sized images<br />
+               Example:
+               <pre>
+                 &lt;a href="images/image-1.jpg" rel="lightbox" title="my caption"&gt;image #1&lt;/a&gt;
+               </pre>
+               </li>
+          <li> For sets of related images that you want to group and make navigable, add a group name to the rel attribute just after the “lightbox” word, for example:<br />
+               <tt>
+                &lt;a href="images/image-1.jpg" rel="lightbox-cats"&gt;image #1&lt;/a&gt;<br />
+                &lt;a href="images/image-2.jpg" rel="lightbox-cats"&gt;image #2&lt;/a&gt;<br />
+                &lt;a href="images/image-3.jpg" rel="lightbox-cats"&gt;image #3&lt;/a&gt;<br />
+               </tt>
+          </li>
+        </ol>
+        For more setup options, see <a href="http://www.digitalia.be/software/slimbox2#usage">SlimBox2 Home</a>.
+      </div>
+
+      <div id="footer">
+        <a href="http://www.webbird.de/" target="_blank">&copy; 2010 BlackBird Webprogrammierung</a>
+      </div>
+    </div>
+
+  </body>
+</html>

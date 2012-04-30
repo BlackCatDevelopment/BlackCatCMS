@@ -1,0 +1,6 @@
+<!-- BEGIN main_block -->
+<div class="error_box" style="text-align: center;">
+	<p>{MESSAGE}<br /><br /></p>
+	<h3 style="text-align:center;"><a target="_top" href="{LINK}">{BACK}</a></h3>
+</div>
+<!-- END main_block -->

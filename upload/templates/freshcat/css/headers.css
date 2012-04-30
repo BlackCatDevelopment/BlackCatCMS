@@ -1,0 +1,201 @@
+/**
+ * This file is part of LEPTON Core, released under the GNU GPL
+ * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ * 
+ * NOTICE:LEPTON CMS Package has several different licenses.
+ * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *
+ * @author          LEPTON Project
+ * @copyright       2012, LEPTON Project
+ * @link            http://www.LEPTON-cms.org
+ * @license         http://www.gnu.org/licenses/gpl.html
+ * @license_terms   please see LICENSE and COPYING files in your package
+ * @version         $Id$
+ *
+ */
+
+#fc_admin_header {
+	line-height: 2em;
+	text-shadow: 1px 1px 1px white;
+	height: 50px;
+	color: #1d2023;
+	background-color: #f8f8f8;
+	border-bottom-color: #cccccc;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	top: 0px;
+	background-image: url(images/header/header_back.png);
+	width: 100%;
+	background-position: 0 top;
+	background-repeat: repeat-x;
+}
+#fc_header_content {
+	height: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 0;
+	padding-right: 0;
+}
+#fc_sidebar_header {
+	position: relative;
+	font-size: 11px;
+	height: 20px;
+	text-shadow: 1px 1px 1px white;
+	background-color: #f8f8f8;
+	background-repeat: repeat-x;
+	background-image: url(images/header/header_back.png);
+	font-weight: bold;
+	line-height: 20px;
+	padding-left: 10px;
+	border-bottom-color: #cccccc;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+#fc_content_header {
+	padding-right: 15px;
+	background-position: 0 bottom;
+	clear: both;
+	line-height: 40px;
+	border-top-color: #1d2023;
+	border-top-width: 1px;
+	border-top-style: solid;
+	font-weight: bold;
+	font-size: 12px;
+	border-bottom-color: #1d2023;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	background-image: url(images/content_header.png);
+	background-repeat: repeat-x;
+	color: #f8f8f8;
+	padding-left: 15px;
+	background-color: #1d2023;
+}
+
+#fc_account {
+	float: right;
+}
+
+#fc_logout {
+	background-position: 0 0px;
+	background-image: url(images/header/header_back.png);
+	background-repeat: repeat-x;
+	display: inline-block;
+	float: left;
+	height: 50px;
+	width: 50px;
+}
+
+#fc_logout span {
+	height: 50px;
+	width: 50px;
+	display: inline-block;
+	background-position: center -100px;
+	background-repeat: no-repeat;
+	background-image: url(images/header/icons_right.png);
+}
+
+#fc_logout:hover {
+	background-position: 0 -80px;
+}
+
+#fc_logout:hover span {
+	background-position: center -150px;
+}
+
+#fc_user_preferences {
+	border-color: #cccccc;
+	border-bottom-width: 0px;
+	border-top-width: 0px;
+	border-style: solid;
+	border-right-width: 1px;
+	border-left-width: 1px;
+	float: left;
+	display: inline-block;
+	background-position: 0 top;
+	background-image: url(images/header/header_back.png);
+	background-repeat: repeat-x;
+}
+
+.fc_display_name {
+	padding-top: 10px;
+	line-height: 1.4em;
+	font-size: 12px;
+	font-weight: bold;
+	display: block;
+	color: #1d2023;
+}
+
+.fc_username {
+	font-weight: bold;
+	line-height: 1.2em;
+	font-size: 11px;
+	display: block;
+	color: #9e9e9e;
+}
+
+#fc_user_preferences strong {
+	display: inline-block;
+	background-repeat: no-repeat;
+	background-image: url(images/header/icons_right.png);
+	background-position: 15px 0px;
+	padding-right: 20px;
+	height: 50px;
+	padding-left: 60px;
+}
+
+#fc_user_preferences:hover, #fc_user_preferences.fc_current {
+	text-shadow: 1px 1px 1px #1d2023;
+	border-color: #9e9e9e;
+	background-position: 0 -80px;
+}
+
+#fc_user_preferences:hover .fc_username, #fc_user_preferences.fc_current .fc_username {
+	color: #cccccc;
+}
+
+#fc_user_preferences:hover .fc_display_name, #fc_user_preferences.fc_current .fc_display_name {
+	color: #f8f8f8;
+}
+
+#fc_user_preferences:hover strong, #fc_user_preferences.fc_current strong {
+	background-position: 15px -50px;
+}
+
+.fc_modified_header {
+	line-height: 2em;
+	text-shadow: 1px 1px 1px white;
+	border-bottom-color: #cccccc;
+	border-top-color: white;
+	border-style: solid;
+	border-right-width: 0px;
+	border-left-width: 0px;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	padding-right: 15px;
+	padding-left: 15px;
+	background-repeat: repeat-x;
+	background-image: url(images/header/header_back.png);
+}
+
+.fc_current_page {
+	float: left;
+}
+
+.fc_modified {
+	float: right;
+}
+
+.fc_form_content_title {
+	background-position: 0 top;
+	background-image: url(images/button.png);
+	background-repeat: repeat-x;
+	line-height: 2.5em;
+	text-shadow: 1px 1px 1px white;
+	height: 2.5em;
+	border-bottom-color: #9e9e9e;
+	border-bottom-width: 1px;
+	border-bottom-style: dashed;
+	background-color: #f8f8f8;
+}
+

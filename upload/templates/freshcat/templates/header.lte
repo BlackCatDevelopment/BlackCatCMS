@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>{$META.WEBSITE_TITLE} &raquo; {translate('Administration')} - {$HEAD.SECTION_NAME}</title>
+
+<link rel="shortcut icon" href="{$THEME_URL}/images/favicon.ico" type="image/x-icon" />
+
+<meta http-equiv="content-type" content="text/html; charset={$META.CHARSET}" />
+<meta http-equiv="content-language" content="{$META.LANGUAGE}" />
+<meta name="description" content="{translate('Administration')}" />
+<meta name="keywords" content="{translate('Administration')}" />
+<meta name="author" content="LEPTON CMS" />
+
+{*is this really needed?
+<meta http-equiv="Content-Encoding" content="gzip" />
+<meta http-equiv="Accept-Encoding" content="gzip, deflate" />
+*}
+
+<script type="text/javascript">
+	var WB_URL									= '{$LEPTON_URL}', {* Marked as deprecated *}
+		LEPTON_URL								= '{$LEPTON_URL}',
+		THEME_URL								= '{$THEME_URL}',
+		ADMIN_URL								= '{$ADMIN_URL}',
+		DATE_FORMAT								= '{$DATE_FORMAT}',
+		TIME_FORMAT								= '{$TIME_FORMAT}';
+	var LEPTON_TEXT								= new Array();
+	LEPTON_TEXT["SEARCH"]						= '{translate('Search')}';
+	LEPTON_TEXT["BACK"]							= '{translate('Back')}';
+	LEPTON_TEXT["YES"]							= '{translate('Yes')}';
+	LEPTON_TEXT["NO"]							= '{translate('No')}';
+	LEPTON_TEXT["DEFAULT_MESSAGE_TITLE"]		= '{translate('Notification')}';
+	LEPTON_TEXT["GROUPS_CONFIRM_DELETE"]		= '{translate('Are you sure you want to delete the selected group (and any users that belong to it)?')}';
+	LEPTON_TEXT["USERS_CONFIRM_DELETE"]			= '{translate('Are you sure you want to delete the selected user?')}';
+	LEPTON_TEXT["MANAGE_GROUPS"]				= '{translate('Manage groups')}';
+	LEPTON_TEXT["MANAGE_USERS"]					= '{translate('Manage users')}';
+	LEPTON_TEXT["MEDIA_CONFIRM_DELETE_FILE"]	= '{translate('Are you sure you want to delete file {name}')}';
+	LEPTON_TEXT["MEDIA_CONFIRM_DELETE_DIR"]		= '{translate('Are you sure you want to delete the directory {name}')}';
+	LEPTON_TEXT["SECTION_CONFIRM_DELETE"]		= '{translate('Are you sure you want to delete this section?')}';
+	LEPTON_TEXT["SECTION_DELETE"]				= '{translate('Delete section')}';
+</script>
+
+{get_page_headers( "backend" , true , "$section_name")}
+
+</head>
+<body>
+<div class="fc_popup"></div>
+<div id="fc_admin_header">
+	<div id="fc_header_content">
+		{*main navigation*}
+		<ul id="fc_menu">
+			{foreach $MAIN_MENU as menu}
+			{if $menu.permission == true}
+			<li>
+				<a href="{$menu.link}" target="_self" class="fc_{$menu.permission_title}{if $menu.current == true} fc_current{/if}">{$menu.title}</a>
+			</li>
+			{/if}
+			{/foreach}
+		</ul>
+
+		{*user/displayname and link to userpreferences*}
+		<div id="fc_account">
+			<a href="{$PREFERENCES.link}" id="fc_user_preferences"{if $PREFERENCES.current == true} class="fc_current"{/if} title="{$PREFERENCES.title}">
+				<strong>
+					<span class="fc_display_name">{$USER.display_name}</span>
+					<span class="fc_username">{$USER.username}</span>
+				</strong>
+			</a>
+			{*logout*}
+			<a href="{$ADMIN_URL}/logout/" id="fc_logout" title=" {translate('Logout')}"><span>&nbsp;</span></a>
+		</div>
+
+	</div>
+	<div class="clear"></div>
+</div>
+{*if user is allowed to see pages, sidebar will be shown - I will have to think about that, as the activity-bar is inside this div, so it is also needed for users, who can't see pages*}
+{if $permission.pages}
+<div id="fc_sidebar">
+	<div id="fc_sidebar_header">{translate('Pages')}<span class="fc_side_add show_popup" rel="fc_add_page" title="{translate('Add page')}">+ {translate('Add page')}</span></div>
+	<div id="fc_sidebar_content">
+		<div id="fc_pages">
+			{if $pages}
+			<div id="fc_search_tree" class="ui-corner-all">
+				<div id="fc_search_page_tree_default" class="ui-corner-all"><span>{translate('Search')}</span></div>
+				<input type="text" name="search_page_tree" id="fc_search_page_tree" value="" />
+				<span class="fc_close"></span>
+				<div id="fc_search_page_options">
+					<ul>
+						<li title="{translate('Check all')}" rel="{translate('Any')}" class="fc_activeSearchOption">{translate('Check all')}</li>
+						<li title="{translate('Menu title contains')}" rel="{translate('Menu')}">{translate('Menu title contains')}</li>
+						<li title="{translate('Page title contains')}" rel="{translate('Title')}">{translate('Page title contains')}</li>
+						<li title="{translate('Section title contains')}" rel="{translate('Section')}">{translate('Section name contains')}</li>
+						<li title="{translate('Page ID is')}" rel="{translate('PID')}">{translate('Page ID is')}</li>
+						<li title="{translate('Section ID is')}" rel="{translate('SID')}">{translate('Section ID is')}</li>
+					</ul>
+				</div>
+			</div>
+			{/if}
+			{if $permission.pages_intro}
+			<div class="fc_page_link fc_page_intro">
+				<a href="{$ADMIN_URL}/pages/intro.php" title="{translate('Modify intro page')}">{translate('Intro page')}</a>
+			</div>
+			{/if}
+			{if $pages_editable != 0}
+			<div id="fc_page_tree_top">
+				<ul>
+				{foreach $pages page}
+					{if $page.close_parent}
+					{for close 0 $page.close_parent}
+					{if $close > 0}
+						</ul>
+					</li>
+					{/if}
+					{/for}
+					{/if}
+					<li id="pageid_{$page.page_id}" rel="{$page.page_id}" class="fc_page_tree_item{if $page.is_parent} fc_expandable{if $page.cookie} fc_tree_open{else} fc_tree_close{/if}{/if}">
+						<dl class="fc_page_tree_search_dl">
+							<dt>PageID</dt>
+							<dd class="fc_search_PageID">{$page.page_id}</dd>
+							<dt>MenuTitle</dt>
+							<dd class="fc_search_MenuTitle">{$page.menu_title}</dd>
+							<dt>PageTitle</dt>
+							<dd class="fc_search_PageTitle">{$page.page_title}</dd>
+							{foreach $page.sections as section}
+							<dt>SectionID</dt>
+							<dd class="fc_search_SectionID">{$section.section_id}</dd>
+							<dt>SectionName</dt>
+							<dd class="fc_search_SectionName">{$section.name}</dd>
+							{/foreach}
+						</dl>
+						<div class="fc_page_tree_options_parent ui-corner-all ui-shadow">
+							<div class="fc_page_tree_options ui-corner-all">
+								<span class="fc_page_tree_arrow"></span>
+								<span class="fc_close"></span>
+								<div class="fc_page_tree_quick_changes{if $page.visibility == 'deleted'} hidden{/if}">
+									<strong>{translate('Quick changes')}</strong>
+									<hr/>
+									<p>
+										<span class="fc_page_tree_label">{translate('Menu Title')}</span><input type="text" name="MenuTitle" value="{$page.menu_title}" /><br/>
+										<span class="fc_page_tree_label">{translate('Page Title')}</span><input type="text" name="PageTitle" value="{$page.page_title}" /><br/>
+										<span class="fc_page_tree_label">{translate('URL')}</span><input type="text" name="PageLink" class="fc_page_tree_PageLink" value="{$page.page_link}" />{$PAGE_EXTENSION}
+										<input type="hidden" name="parent" value="{$page.parent}" />
+									</p>
+									<hr/>
+									<span class="button submit ui-corner-left fc_page_tree_save_and_close">{translate('Save & Close')}</span>
+									<a class="button ui-corner-right fc_page_tree_goto" href="{$ADMIN_URL}/pages/settings.php?page_id={$page.page_id}">{translate('Page settings')} &raquo;</a>
+									<div class="clear"></div>
+									<hr />
+									<span class="red_button ui-corner-all page_tree_delete_page">{translate('Delete page')}</span>
+									<div class="clear sp_clear"></div>
+								</div>
+								<div class="fc_page_tree_restore{if $page.visibility != 'deleted'} hidden{/if}">
+									<strong>{translate('Options for deleted pages')}</strong>
+									<hr/>
+									<span class="button submit ui-corner-all fc_page_tree_restore_page">{translate('Restore page')}</span>
+									<div class="clear"></div>
+									<hr />
+									<span class="red_button ui-corner-all page_tree_delete_page">{translate('Delete page finally')}</span>
+									<div class="clear sp_clear"></div>
+								</div>
+							</div>
+						</div>
+						<div class="fc_page_link fc_page_type_{$page.visibility}{if !$page.editable} fc_page_tree_not_editable{/if}">
+							{if $page.is_parent}<span class="fc_toggle_tree">+</span>{/if}
+							<a href="{if !$page.editable}#{else}{$ADMIN_URL}/pages/modify.php?page_id={$page.page_id}{/if}" title="{translate('Page title')}: {$page.page_title}">
+								<span class="fc_page_tree_menu_title">{$page.menu_title}</span> <span class="fc_page_tree_menu_ID">(ID: {$page.page_id})</span>
+							</a>
+							<span class="fc_page_tree_options_open fc_pages_tree_options_button"></span>
+						</div>
+						<input type="hidden" name="pageid" value="{$page.page_id}" />
+						{if $page.is_parent}
+						<ul>
+						{else}
+					</li>
+					{/if}
+					{$last_level = $page.level}
+				{/foreach}
+				{if $last_level > 0}
+					{for close 0 $last_level}
+					{if $close > 0}
+						</ul>
+					</li>
+					{/if}
+					{/for}
+				{/if}
+				</ul>
+			</div>
+			{else}
+			<ul class="fc_no_page_found">
+				<li>{translate('No editable pages were found')}</li>
+			</ul>
+			{/if}
+		</div>
+	</div>
+	{if $permission.pages_add}
+	<form name="add_page" action="{$ADMIN_URL}/pages/add.php" method="post" id="fc_add_page">
+		<div class="fc_form_content">
+			<div class="clear">
+				<input type="hidden" name="form_title" value="{translate('Add page')}" />
+			</div>
+			<div class="fc_tabs c_16" id="fc_addpage_tab">
+				<ul>
+					<li style="width: 25%;"><a href="#fc_tabs_general">{translate('General Settings')}</a></li>
+					<li style="width: 25%;"><a href="#fc_tabs_settings">{translate('Preferences')}</a></li>
+					<li style="width: 25%;"><a href="#fc_tabs_seo">{translate('SEO Settings')}</a></li>
+					<li style="width: 25%;"><a href="#fc_tabs_privacy">{translate('Security Settings')}</a></li>
+				</ul>
+				<ul>
+					<li id="fc_tabs_general">
+						<div class="clear sp_clear"></div>
+
+						<label for="fc_addPage_title" class="g_4">{translate('Menu title')}:</label>
+						<input type="text" name="menu_title" id="fc_addPage_title" class="g_11"  value="" />
+						<div class="clear sp_clear"></div>
+						
+						<label class="g_4" for="fc_addPage_type">{translate('Type')}:</label>
+						<select name="type" id="fc_addPage_type" class="g_11">
+							{foreach $modules as module}
+							<option value="{$module.VALUE}"{if $module.SELECTED} selected="selected"{/if}>{$module.NAME}</option>
+							{/foreach}
+						</select>
+						<div class="clear sp_clear"></div>
+
+						<label class="g_4" for="fc_addPage_parent">{translate('Parent')}:</label>
+						<select name="parent" id="fc_addPage_parent" class="g_11">
+							{foreach $parents_list as parent}
+							<option value="{$parent.id}"{if $parent.disabled} disabled="disabled"{/if}>{for i 0 $parent.level 1}{if $i>0}- {/if}{/for}{$parent.menu_title}</option>
+							{/foreach}
+						</select>
+						<div class="clear sp_clear"></div>
+
+					</li>
+					<li id="fc_tabs_settings">
+						<div class="clear sp_clear"></div>
+
+						{if $DISPLAY_MENU_LIST}
+						<label class="g_4" for="fc_addPage_menu">{translate('Menu')}:</label>
+						<select name="menu" id="fc_addPage_menu" class="g_11">
+							{foreach $TEMPLATE_MENU as menu}
+							<option value="{$menu.VALUE}"{if $menu.SELECTED} selected="selected"{/if}>{$menu.NAME}</option>
+							{/foreach}
+						</select>
+						<div class="clear sp_clear"></div>
+						{/if}
+
+						<label class="g_4" for="fc_addPage_target">{translate('Target')}:</label>
+						<select name="target" id="fc_addPage_target" class="g_11">
+							<option value="_blank" selected="selected">{translate('New window')}</option>
+							<option value="_self">{translate('Same window')}</option>
+							<option value="_top">{translate('Top frame')}</option>
+						</select>
+						<div class="clear sp_clear"></div>
+
+						<label class="g_4" for="fc_addPage_template">{translate('Template')}:</label>
+						<select name="template" id="fc_addPage_template" class="g_11">
+							<option value="" selected="selected">{translate('System default')}</option>
+							<option value="" disabled="disabled">----------------------</option>
+							{foreach $templates as template}
+							<option value="{$template.VALUE}">{$template.NAME}</option>
+							{/foreach}
+						</select>
+						<div class="clear sp_clear"></div>
+
+						{if $DISPLAY_LANGUAGE_LIST}
+						<label class="g_4" for="fc_addPage_language">{translate('Language')}:</label>
+						<select name="language" id="fc_addPage_language" class="g_11">
+							{foreach $languages as language}
+							<option value="{$language.VALUE}"{if $language.SELECTED} selected="selected"{/if}>{$language.NAME}</option> {*$language.FLAG_LANG_ICONS*}
+							{/foreach}
+						</select>
+						<div class="clear sp_clear"></div>
+						{/if}
+
+					</li>
+				
+					<li id="fc_tabs_seo">
+						<div class="clear sp_clear"></div>
+
+						<label class="g_4" for="fc_addPage_page_title">{translate('Title')}:</label>
+						<input type="text" name="page_title" value="" id="fc_addPage_page_title" class="g_11" />
+						<div class="clear sp_clear"></div>
+
+						<label class="g_4" for="fc_addPage_description">{translate('Description')}:</label>
+						<textarea name="description" id="fc_addPage_description" rows="10" cols="1" class="g_11" ></textarea>
+						<div class="clear sp_clear"></div>
+
+						<label class="g_4" for="fc_addPage_keywords_ul">{translate('Keywords')}:</label>
+						<ul id="fc_addPage_keywords_ul" class="g_11"></ul>
+						<input name="keywords" type="hidden" id="fc_addPage_keywords" value="" />
+						<div class="clear sp_clear"></div>
+
+					</li>
+				
+					<li id="fc_tabs_privacy">
+						<div class="clear sp_clear"></div>
+						{*need to include settings of searching - if searching is generally disabled, don't show this option*}
+						<div class="pre_4 g_11">
+							<label for="fc_addPage_Searching">{translate('Searching')}</label>
+							<input type="checkbox" class="fc_checkbox_jq" name="searching" id="fc_addPage_Searching" value="1" {if !$SEARCHING_DISABLED} checked="checked"{/if} />
+						</div>
+						<div class="clear sp_clear"></div>
+
+						<label for="fc_addPage_visibility" class="g_5">{translate('Visibility')}:</label>
+						<select name="visibility" id="fc_addPage_visibility" class="fc_toggle_element" rel="fc_addPage_allowed_viewers">
+							<option value="public" rel="hide">{translate('Public')}</option>
+							<option value="private" rel="show">{translate('Private')}</option>
+							<option value="registered" rel="show">{translate('Registered')}</option>
+							<option value="hidden" rel="hide">{translate('Hidden')}</option>
+							<option value="none" rel="hide">{translate('None')}</option>
+						</select>
+						<div class="clear sp_clear"></div>
+
+						<div id="fc_allowed_admins">
+							<label class="g_4" for="fc_admins_groups">{translate('Administrators')}:</label>
+							<div class="g_12">
+								<div class="fc_settings_label" id="fc_admin_groups">
+									{foreach $groups.admins group}
+									<label for="fc_admin_group_{$group.VALUE}" class="buttonset">{$group.NAME}</label>
+									<input type="checkbox" class="fc_checkbox_jq" name="admin_groups[]" id="fc_admin_group_{$group.VALUE}" value="{$group.VALUE}"{if $group.CHECKED} checked="checked"{/if}{if $group.DISABLED} disabled="disabled"{/if} />
+								{/foreach}
+								</div>
+							</div>
+							<div class="clear sp_clear"></div>
+						</div>
+
+						<div id="fc_addPage_allowed_viewers" class="{if $VISIBILITY == 'private' || $VISIBILITY == 'registered'}active_element{else}inactive_element{/if}">
+							<label class="g_4" for="fc_viewers_groups">{translate('Registered viewers')}:</label>
+							<div class="g_12">
+								<div class="fc_settings_label" id="fc_viewers_groups">
+									{foreach $groups.viewers viewer}
+									<label for="fc_viewing_group_{$viewer.VALUE}" class="buttonset">{$viewer.NAME}</label>
+									<input type="checkbox" class="fc_checkbox_jq" name="viewing_groups[]" id="fc_viewing_group_{$viewer.VALUE}" value="{$viewer.VALUE}"{if $viewer.CHECKED} checked="checked"{/if}{if $viewer.DISABLED} disabled="disabled"{/if}/>
+								{/foreach}
+								</div>
+							</div>
+							<div class="clear sp_clear"></div>
+						</div>
+
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="fc_confirm_bar">
+			<input type="submit" name="add_page" value="{translate('Add')}" />
+			<input type="reset" name="reset" value="{translate('Reset')}" />
+		</div>
+	</form>
+	{/if}
+	<div id="fc_activity"></div>
+</div>
+{/if}
+<div id="fc_content_container"{if !$pages} class="fc_no_sidebar"{/if}>

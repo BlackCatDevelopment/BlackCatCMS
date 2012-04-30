@@ -1,0 +1,4 @@
+<script src="{WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery.ui.widget.min.js" type="text/javascript"></script>
+<script src="{WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery.ui.button.min.js" type="text/javascript"></script>
+<script src="{WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery.ui.position.min.js" type="text/javascript"></script>
+{{ insert_files }}

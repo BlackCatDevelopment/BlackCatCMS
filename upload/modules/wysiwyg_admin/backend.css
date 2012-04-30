@@ -1,0 +1,39 @@
+/**
+ *  @module         wysiwyg Admin
+ *  @version        see info.php of this module
+ *  @authors        Dietrich Roland Pehlke
+ *  @copyright      2010-2011 Dietrich Roland Pehlke
+ *  @license        GNU General Public License
+ *  @license terms  see info.php of this module
+ *  @platform       see info.php of this module
+ *  @requirements   PHP 5.2.x and higher
+ */
+ 
+td.cka_label {
+	display: block;
+	float: left;
+	width: 80px;
+	color: #660000;
+	font-size: 11px;
+	text-align: right;
+	padding-top: 3px;
+	margin-right:3px;
+}
+
+form#wysiwyg_admin input[type='text'] {
+	display: block;
+	width: 150px;
+	float: left;
+	border: 1px solid #999999;
+}
+
+form#wysiwyg_admin select,
+form#wysiwyg_admin input[type='submit'],
+form#wysiwyg_admin input[type='button']{
+	width: 150px;
+}
+
+.legend {
+	color: #990000;
+	margin-left: 15px;
+}

@@ -1,0 +1,9 @@
+<script type="text/javascript">
+  if( typeof 'jQuery' != 'undefined' ) {
+    jQuery(document).ready(function($) {
+      $("div.drop").click(function () {
+        $(this).hide("drop", { direction: "down" }, 1000);
+      });
+    });
+  }
+</script>

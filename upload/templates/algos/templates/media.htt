@@ -1,0 +1,173 @@
+<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
+<script type="text/javascript">
+var WB_URL = '{WB_URL}';
+var THEME_URL = '{THEME_URL}';
+var ADMIN_URL = '{ADMIN_URL}';
+</script>
+<script src="{WB_URL}/modules/lib_jquery/jquery-core/jquery-core.min.js" type="text/javascript"></script>
+<script src="{THEME_URL}/jquery/jquery-insert.js" type="text/javascript"></script>
+<!--[if lt IE 7]><script type="text/javascript" src="{WB_URL}/include/jquery/plugins/jquery-pngFix.js"></script><![endif]-->
+<script src="{THEME_URL}/jquery/jquery-plugins.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+
+	function ActivateZipUpload(CB)
+	{
+		document.getElementById('filelist').style.display = (CB.checked == true) ? 'none' : 'table-header-group';
+		var input = document.getElementById('file_script');
+        var unzip = (CB.checked == true) ? '0' : '{MAX_UPLOADS}';
+        input.setAttribute('maxlength',(unzip));
+	}
+
+   $(document).ready(function()
+	{
+       if($(".overlib").length)
+	   {
+         $.insert('{ADMIN_URL}/media/overlib.js');
+	   }
+       if($("#upload_wrap").length)
+	   {
+			$.insert('{THEME_URL}/jquery/jquery.MultiFile.pack.js');
+			$.insert('{THEME_URL}/jquery/jquery.MetaData.js');
+			$('#upload_wrap').removeClass('hidden');
+			$('.noscript').removeClass('hidden');
+			$('#file_script').MultiFile({
+				list: '#upload_wrap',
+			 STRING: {
+			  file: '<em title="Click to remove" onclick="$(this).parent().prev().click()">$file<\/em>',
+			  remove: '<img src="{THEME_URL}/images/delete_16.png" height="16" width="16" alt="x"/>'
+			 }
+			});
+       }
+
+	});
+
+
+/* ]]> */
+</script>
+<!-- BEGIN main_block -->
+
+<div class="browse_wrapper ">
+		<table class="media_box" summary="{HEADING_UPLOAD_FILES}" cellpadding="0" cellspacing="0">
+		  <tr>
+		    <td class="media_upload" valign="top" align="left">
+				<form name="explorer" action="index.php" method="post">
+					<input type="hidden" name="action" value="show"  />
+					<h3 class="legend">{HEADING_MEDIA}</h3>
+					<table summary="{HEADING_UPLOAD_FILES}" cellpadding="3" cellspacing="0" width="100%">
+						<tr>
+						<td>{TEXT_TARGET_FOLDER}:<br />
+							<select name="current_select" onchange="this.form.submit()" style="width:100%;">
+							<option value="{MEDIA_DIRECTORY}{HOME_DIRECTORY}" selected="selected">{MEDIA_DIRECTORY}{HOME_DIRECTORY}</option>
+	<!-- BEGIN dir_list_block -->
+							<option value="{MEDIA_NAME}" {SELECTED}>{MEDIA_NAME}</option>
+	<!-- END dir_list_block -->
+							</select>
+						</td>
+						</tr>
+					</table>
+				</form>
+	<!-- BEGIN media_upload_block -->
+			<h3 class="legend">{HEADING_UPLOAD_FILES}</h3>
+<fieldset>
+			<form name="upload" action="index.php" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="action" value="media_upload"  />
+				<input type="hidden" name="current_dir" value="{CURRENT_DIR}"  />
+				<table summary="{TEXT_UNZIP_FILE}" cellpadding="3" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<td valign="top">
+								<input type="checkbox" name="unzip" id="unzip" value='true' onclick="ActivateZipUpload(this);" />
+								<label for="unzip">{TEXT_UNZIP_FILE}</label>
+							</td>
+						</tr>
+						<tr >
+							<td align="left">
+							<input id="file_script" type="file" size="33" name="upload[]" maxlength="{MAX_UPLOADS}" accept="{ALLOW_EXTS}" />
+							</td>
+						</tr>
+						<tr class="upload-list">
+							<td>
+						       <div id="upload_wrap" class="hidden MultiFile-wrap"></div>
+							</td>
+						</tr>
+					</thead>
+					<tbody id="filelist">
+						<tr class="noscript">
+ 							<td align="left">
+					<noscript>
+	<!-- BEGIN input_upload_block -->
+							<p><input type="file" size="33" name="upload[]" accept="{ALLOW_EXTS}" /></p>
+	<!-- END input_upload_block -->
+					</noscript>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<table summary="{TEXT_OVERWRITE_EXISTING} {TEXT_FILES}" cellpadding="3" cellspacing="0" width="100%">
+					<tr>
+						<td colspan="2"><input type="checkbox" name="overwrite" id="overwrite" value='true' />
+							<label for="overwrite">{TEXT_OVERWRITE_EXISTING} {TEXT_FILES}</label><br />
+							<input type="submit" name="submit" value="{TEXT_UPLOAD_FILES}" style="width:160px;margin-top:5px;" />
+						</td>
+					</tr>
+				</table>
+			</form>
+</fieldset>
+	<!-- END media_upload_block -->
+<!--
+If you want to HIDE the option of creating folders in the Media-folder (for your clients, for example),
+please set the class below to "hide", else to "show".
+-->
+      <div class="show">
+	<!-- BEGIN media_create_block -->
+ <h3 class="legend">{HEADING_CREATE_FOLDER}</h3>
+ <fieldset>
+ 	<form name="create" action="index.php" method="post">
+		  <input type="hidden" name="action" value="media_create"  />
+		  <input type="hidden" name="current_dir" value="{CURRENT_DIR}"  />
+          <table summary="{HEADING_CREATE_FOLDER}" cellpadding="3" cellspacing="0" width="100%">
+            <tr>
+              <td>{TEXT_NAME}:<br />
+              <input type="text" name="target" style="width:98%;" /></td>
+            </tr>
+          </table>
+
+          <table summary="{TEXT_CREATE_FOLDER}" cellpadding="3" cellspacing="0" width="100%">
+            <tr>
+              <td><input type="submit" name="submit" value="{TEXT_CREATE_FOLDER}" style="width:160px;" />
+              </td>
+            </tr>
+          </table>
+	</form>
+</fieldset>
+	<!-- END media_create_block -->
+      </div>
+    </td>
+	<td width="10">&nbsp;</td>
+    <td class="browse_media" valign="top" align="right">
+		<h3 class="legend">{HEADING_BROWSE_MEDIA}</h3>
+		<form name="setting" action="index.php" method="post">
+			<input type="hidden" name="action" value="media_settings"  />
+			<input type="hidden" name="current_dir" value="{CURRENT_DIR}"  />
+			<div class="option_box">{OPTIONS}:&nbsp;
+	<!-- BEGIN media_settings_block -->
+				<button class="href_link" type="submit" name="media_settings" value="true" >{CHANGE_SETTINGS}</button>
+	<!-- END media_settings_block -->
+				<button class="href_link" type="submit" name="media_reload" value="true" >{TEXT_RELOAD}</button>
+			</div>
+		</form>
+			<div class="browse_content">
+	<!-- BEGIN main_wrapper_block -->
+	       {MEDIA_BROWSE}
+	<!-- END main_wrapper_block -->
+			</div>
+
+		    </td>
+		  </tr>
+		</table>
+
+</div>
+<!-- END main_block -->

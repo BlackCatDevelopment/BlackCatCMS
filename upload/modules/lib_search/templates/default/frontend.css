@@ -1,0 +1,71 @@
+/**
+ * This file is part of LEPTON Core, released under the GNU GPL
+ * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ * 
+ * NOTICE:LEPTON CMS Package has several different licenses.
+ * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *
+ * @author          LEPTON Project
+ * @copyright       2010-2012, LEPTON Project
+ * @link            http://www.lepton-cms.org
+ * @license         http://www.gnu.org/licenses/gpl.html
+ * @version         $Id$
+ */
+
+#search_results {
+  font-size: 9pt;
+  margin: 20px 0 30px 0;
+  padding: 0;
+  font-family: Gill, Helvetica, sans-serif;
+}
+#search_results h2 {
+  font-size: 14pt;
+}
+.search_form {
+  margin: 0 0 25px 0;
+  padding: 0;
+}
+.search_item {
+  margin: 0;
+  padding: 0 0 20px 0;
+  font-size: 11pt;
+  clear: both;
+}
+.search_item_header {
+  font-size: 13pt;
+  font-weight: bold;
+  padding: 0 0 10px 0;
+}
+.search_item_description {
+  font-size: 8pt;
+  font-style: italic;
+  padding: 0 0 10px 0;
+  margin: 0;
+}
+.search_item_excerpt {
+  font-size: 9pt;
+}
+.search_image_thumbs {
+  margin: 10px 0 0 0;
+  padding: 0;
+  clear: both;
+  font-size: 9pt;
+}
+.search_image_thumbs_title {
+  font-size: 9pt;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0 0 10px 0;
+}
+.content_image,
+.search_image_thumbs_image {
+  width: 100px;
+  height: auto;
+  padding: 0;
+  margin: 0 20px 10px 0;
+  float: left;
+}
+.search_image_thumbs_loop {
+  clear: both;
+  margin: 0 0 15px 0;
+}

@@ -1,0 +1,87 @@
+<div id="fc_content_header">
+	{translate('My settings')}
+</div>
+<div id="fc_main_content" class="c_16">
+	{if $show_cmd_profile_edit_block}
+	<div class="">
+		<form name="CMD_PROFILE_EDIT" action="{$PROFILE_ACTION_URL}" method="post">
+			<input type="hidden" name="user_id" value="{$USER_ID}" />
+			<input type="submit" name="cmd_profile_edit" value="{translate('Change the profile')}" />
+		</form>
+	</div>
+	{/if}
+	<div class="fc_modified_header">
+		{translate('Username')}: <strong>{$USERNAME}</strong>
+	</div>
+	<form name="preferences_form" id="fc_preferences_form" action="{$ADMIN_URL}/preferences/save.php" method="post" class="ajaxForm c_16 ui-corner-bottom">
+		<div class="fc_form_content">
+			<div class="clear sp_clear"></div>
+			<div class="g_7">
+				<label for="fc_display_name" class="g_6">{translate('Display name')}:</label>
+				<input type="text" id="fc_display_name" name="display_name" class="g_9" value="{$DISPLAY_NAME}" />
+				<div class="clear sp_clear"></div>
+		
+				<label for="fc_language" class="g_6">{translate('Language')}:</label>
+				<select name="language" id="fc_language" class="g_9">
+					{foreach $languages as language}
+					<option value="{$language.VALUE}"{if $language.SELECTED} selected="selected"{/if} style="background: url({$language.VALUE}.png) no-repeat center left; padding-left: 20px;">{$language.NAME} ({$language.VALUE})</option>
+					{/foreach}
+				</select>
+				<div class="clear sp_clear"></div>
+		
+				<label for="fc_timezone_string" class="g_6">{translate('Timezone')}:</label>
+				<select name="timezone_string" id="fc_timezone_string" class="g_9">
+					{foreach $timezones as timezone}
+					<option{if $timezone.SELECTED} selected="selected"{/if}>{$timezone.NAME}</option>
+					{/foreach}
+				</select>
+				<div class="clear sp_clear"></div>
+		
+				<label for="fc_date_format" class="g_6">{translate('Date format')}:</label>
+				<select name="date_format" id="fc_date_format" class="g_9">
+					{foreach $dateformats as dateformat}
+					<option value="{$dateformat.VALUE}"{if $dateformat.SELECTED} selected="selected"{/if}>{$dateformat.NAME}</option>
+					{/foreach}
+				</select>
+				<div class="clear sp_clear"></div>
+		
+				<label for="fc_time_format" class="g_6">{translate('Time format')}:</label>
+				<select name="time_format" id="fc_time_format" class="g_9">
+					{foreach $timeformats as timeformat}
+						<option value="{$timeformat.VALUE}"{if $timeformat.SELECTED} selected="selected"{/if}>{$timeformat.NAME}</option>
+					{/foreach}
+				</select>
+				<div class="clear sp_clear"></div>
+			</div>
+		
+			<div class="g_9">
+				<div class="hidden">
+					<label for="fc_init_page_select" class="g_7 ">{$INIT_PAGE_LABEL.label_default}:</label>
+					{$INIT_PAGE_SELECT}
+					<div class="clear sp_clear"></div>
+				</div>
+		
+				<label for="fc_email" class="g_7">{translate('Email')}:</label>
+				<input type="text" id="fc_email" class="g_7" name="email" value="{$EMAIL}" />
+				<div class="clear sp_clear"></div>
+		
+				<label for="fc_new_password_1" class="g_7">{translate('New password')}:</label>
+				<input type="password" id="fc_new_password_1" class="g_7" name="new_password_1" value="" />
+				<div class="clear sp_clear"></div>
+		
+				<label for="fc_new_password_2" class="g_7">{translate('Re-Type new password')}:</label>
+				<input type="password" id="fc_new_password_2" class="g_7" name="new_password_2" value="" />
+				<div class="clear sp_clear"></div>
+		
+				<label for="fc_current_password" class="g_7">{translate('Confirm with current password')}:</label>
+				<input type="password" id="fc_current_password" class="g_7" name="current_password" value="" />
+				<div class="clear sp_clear"></div>
+			</div>
+			<div class="clear sp_clear"></div>
+		</div>
+		<div class="fc_confirm_bar ui-corner-bottom">
+			<input type="submit" id="fc_preferences_submit" name="submit" value="{translate('Save')}" />
+			<input type="reset" id="reset" name="reset" value="{translate('Reset')}" />
+		</div>
+	</form>
+</div>

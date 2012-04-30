@@ -1,0 +1,9 @@
+<script type="text/javascript">
+  if( typeof 'jQuery' != 'undefined' ) {
+    jQuery(document).ready(function($) {
+      $("div.fold").click(function () {
+        $(this).hide("fold", {}, 1000);
+      });
+    });
+  }
+</script>

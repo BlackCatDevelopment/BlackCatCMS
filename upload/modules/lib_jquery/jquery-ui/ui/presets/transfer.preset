@@ -1,0 +1,12 @@
+<style type="text/css">
+  .ui-effects-transfer { border: 2px solid black; background-color: #FFFFCC; }
+</style>
+<script type="text/javascript">
+  if( typeof 'jQuery' != 'undefined' ) {
+    jQuery(document).ready(function($) {
+      $("div.transfer").click(function () {
+        $(this).effect("transfer", { to: $("div.transferto") }, 2000);
+      });
+    });
+  }
+</script>

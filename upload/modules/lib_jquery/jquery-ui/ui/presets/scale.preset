@@ -1,0 +1,9 @@
+<script type="text/javascript">
+  if( typeof 'jQuery' != 'undefined' ) {
+    jQuery(document).ready(function($) {
+      $("div.scale").click(function () {
+        $(this).hide("scale", {}, 1000);
+      });
+    });
+  }
+</script>

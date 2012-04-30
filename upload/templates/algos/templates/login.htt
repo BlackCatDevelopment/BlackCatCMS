@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+	<head>
+		<title>{TEXT_LOGIN}</title>
+		<meta http-equiv="content-type" content="text/html; charset={CHARSET}" />
+		<meta http-equiv="content-language" content="{LANGUAGE}" />
+		<meta name="description" content="{TEXT_LOGIN}" />
+		<meta name="keywords" content="{TEXT_LOGIN}" />
+		
+		<script src="{WB_URL}/modules/lib_jquery/jquery-core/jquery-core.min.js" type="text/javascript"></script>
+		<script src="{THEME_URL}/jquery/webkit_fix.js" type="text/javascript"></script>
+		
+		<script type="text/javascript">
+		var THEME_URL = "{THEME_URL}"
+		</script>
+		<link href="{THEME_URL}/login.css" rel="stylesheet" type="text/css" />
+	</head>
+
+	<body>
+		<div id="main_container">
+			<div class="login_form">
+				<h2>LEPTON Login Panel</h2>
+				<a href="{FORGOTTEN_DETAILS_APP}" class="forgot_pass">{TEXT_FORGOTTEN_DETAILS}</a> 
+         <br style="clear:both"/><br />
+         <div>{MESSAGE}</div><br />
+				<form action="{ACTION_URL}" method="post" name="login">
+					<fieldset>
+						<ul>
+							<li>
+								<input type="hidden" name="username_fieldname" value="{USERNAME_FIELDNAME}" />
+								<input type="hidden" name="password_fieldname" value="{PASSWORD_FIELDNAME}" />
+								<label for="{USERNAME_FIELDNAME}">{TEXT_USERNAME}:</label>
+								<div class="input">
+									<input type="text" maxlength="{MAX_USERNAME_LEN}" name="{USERNAME_FIELDNAME}" id="{USERNAME_FIELDNAME}" value="{USERNAME}" size="54"/>
+								</div>
+							</li>
+							<li>
+								<label for="{PASSWORD_FIELDNAME}">{TEXT_PASSWORD}:</label>
+								<div class="input">
+									<input type="password" maxlength="{MAX_PASSWORD_LEN}" name="{PASSWORD_FIELDNAME}" id="{PASSWORD_FIELDNAME}" size="54" />
+								</div>
+							</li>
+							<li>
+								<div class="submit">
+									<input type="submit" name="submit" id="forgot" value="{TEXT_LOGIN}" />
+								</div>
+							</li>
+						</ul>
+						<div id="details-link">
+							<a style="text-align:center;" href="{WB_URL}" target="_blank">{TEXT_HOME}</a>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+			<div class="footer_login">
+				<div class="left_footer_login">
+					<a href="http://www.lepton-cms.org" title="LEPTON CMS" target="_blank">LEPTON Core</a> is released under the
+					<a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON Core is GPL" target="_blank">GNU General Public License</a>.
+				</div>
+				<div class="left_footer_login">
+					<a href="http://www.lepton-cms.org" title="LEPTON Package" target="_blank">LEPTON CMS Package</a> is released under several different licenses.
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

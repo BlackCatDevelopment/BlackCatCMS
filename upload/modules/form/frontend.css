@@ -1,0 +1,62 @@
+/**
+ *  @author         Ryan Djurovich
+ *  @author         Rudolph Lartey
+ *  @author         John Maats
+ *  @author         Dietrich Roland Pehlke
+ *  @copyright      2004-2011 Ryan Djurovich, Rudolph Lartey, John Maats, Dietrich Roland Pehlke
+ *  @license        see info.php of this module
+ *  @todo           separate HTML from code, in addition the used HTML is no longer 
+ *                  valid and uses deprecated attributes i.e. cellpadding a.s.o.
+ *  @version        $Id$
+ */
+ 
+.required {
+	color: #FF0000;
+}
+.field_title {
+	font-size: 12px;
+	width: 140px;
+}
+.textfield {
+	font-size: 12px;
+	width: 343px;
+}
+.textarea {
+	font-size: 12px;
+	width: 344px;
+border:1px solid #5B9ACF;
+	height: 100px;
+}
+.field_heading {
+	font-size: 12px;
+	font-weight: bold;
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-bottom-color: #666666;
+	padding-top: 10px;
+	color: #666666;
+}
+.select {
+	font-size: 12px;
+	width: 344px;
+margin-left:10px;
+border:1px solid #5B9ACF;
+margin-top:2px;
+}
+.checkbox_label {
+	font-size: 11px;
+	cursor: pointer;
+}
+.radio_label {
+	font-size: 11px;
+	cursor: pointer;
+}
+.email {
+	font-size: 12px;
+	width: 343px;
+}
+
+/*** Don't remove the class nixhier, this is required for ASP ***/
+.nixhier {
+	display:none;
+}		

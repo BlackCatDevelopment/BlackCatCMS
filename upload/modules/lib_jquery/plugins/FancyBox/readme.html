@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+  <link rel="stylesheet" href="../../frontend.css" type="text/css" />
+  <title>jQueryAdmin: Fancybox 1.3.1 jQuery Plugin</title>
+  </head>
+  <body>
+
+    <div id="outer">
+      <div id="header"><h1>jQueryAdmin: Fancybox 1.3.1 jQuery Plugin</h1></div>
+
+      <div id="menu">
+        <ul>
+          <li>
+            <a href="http://fancybox.net/" target="_blank">
+            Homepage
+            </a>
+          </li>
+          <li>
+            <a href="http://fancybox.net/" target="_blank">
+            Demo
+            </a>
+          </li>
+          <li>
+            <a href="http://fancybox.net/howto" target="_blank">
+            Usage
+            </a>
+          </li>
+          <li>
+            <a href="http://docs.jquery.com/Licensing" target="_blank">
+            MIT and GPL License
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div id="content">
+        <h2>Usage</h2>
+        <ol>
+          <li> Create a preset using the jQueryAdmin Admin Tool, by checking "Plugins" =&gt; "FancyBox"</li>
+          <li> Save the preset in the jQueryAdmin presets folder (name it "fancybox", for example)</li>
+          <li> Include the following code in your template or a code section on your page:<br />
+               <tt>[[jQueryInclude?preset=&lt;Presetname&gt;]]</tt></li>
+          <li> Add the <strong>rel="grouped_elements"</strong> attribute to the links pointing to your full-sized images<br />
+               Example:<br /><br />
+               <tt>&lt;a class="grouped_elements" rel="group1" href="image_big_1.jpg"&gt;<br />
+               &lt;img src="image_small_1.jpg" alt=""/&gt;<br />
+               &lt;/a&gt;</tt>
+               </li>
+        </ol>
+        Please note: You may have to edit the <tt>default.preset</tt> file in the <tt>plugins/FancyBox</tt>
+        folder to change the groupname to a value of your choice. ("grouped_elements" is the default, see example above.)<br /><br />
+        
+        <h2>YouTube Videos</h2>
+        To show YouTube videos in a "fancy" style, add the <tt>class="fancyyoutube"</tt> attribute to the link:<br /><br />
+        &lt;a href="http://www.youtube.com/watch?v=M-cIjPOJdFM&amp;fs=1" class="fancyyoutube"&gt;See video&lt;/a&gt;<br /><br />
+        
+        For more setup options, see <a href="http://fancybox.net/" target="_blank">Fancybox Homepage</a>.
+      </div>
+
+      <div id="footer">
+        <a href="http://www.webbird.de/" target="_blank">&copy; 2010 BlackBird Webprogrammierung</a>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,99 @@
+<!-- BEGIN comment_block -->
+default Template for account/preferences_form.php
+<!-- END comment_block -->
+<!-- core version -->
+<div class="result_message">{RESULT_MESSAGE}</div>
+<noscript>
+<div class="result_message">{TEXT_ENABLE_JAVASCRIPT}</div>
+</noscript>
+<form name="user" action="{PREFERENCES_URL}" method="post" style="margin-bottom: 5px;" onsubmit="return pf_check_form();">
+	<input type="hidden" name="user_id" value="{USER_ID}" />
+	<input type="hidden" name="hash" value="{HASH}" />
+	<input type="hidden" name="r_time" value="{r_time}" />
+	<input type="hidden" name="save" value="account_settings" />
+	<fieldset class="account_form">
+		<legend>{HEADING_MY_SETTINGS}</legend>	
+		<div class="account_label">{TEXT_DISPLAY_NAME}:</div>
+		<div class="account_value"><input type="text" name="display_name" maxlength="255" value="{DISPLAY_NAME}" /></div>
+		
+		<div class="account_label">{TEXT_LANGUAGE}:</div>
+		<div class="account_value">
+			<select name="language">
+			<!-- BEGIN languages_values_block -->
+			<option value="{LANG_CODE}" {LANG_SELECTED}>{LANG_NAME} ({LANG_CODE})</option>
+			<!-- END languages_values_block -->
+			</select>
+		</div>
+		<div class="account_label">{TEXT_TIMEZONE}:</div>
+		<div class="account_value">
+			<select name="timezone_string">
+			<!-- BEGIN timezone_values_block -->			
+			<option value="{TIMEZONE_NAME}" {TIMEZONE_SELECTED}>{TIMEZONE_NAME}</option>
+			<!-- END timezone_values_block -->				
+			</select>
+		</div>
+		<div class="account_label">{TEXT_DATE_FORMAT}:</div>
+		<div class="account_value">
+			<select name="date_format">
+			<option value="">{TEXT_PLEASE_SELECT}...</option>
+			<!-- BEGIN date_format_block -->			
+			<option value="{DATE_FORMAT_VALUE}" {DATE_FORMAT_SELECTED}>{DATE_FORMAT_TITLE}</option>
+			<!-- END date_format_block -->	
+			</select>
+		</div>
+		<div class="account_label">{TEXT_TIME_FORMAT}:</div>
+		<div class="account_value">
+			<select name="time_format">
+			<option value="">{TEXT_PLEASE_SELECT}...</option>
+			<!-- BEGIN time_format_block -->			
+			<option value="{TIME_FORMAT_VALUE}" {TIME_FORMAT_SELECTED}>{TIME_FORMAT_TITLE}</option>
+			<!-- END time_format_block -->			
+			</select>
+		</div>
+	</fieldset>
+	<fieldset class="account_form">
+	<legend>{HEADING_MY_EMAIL}</legend>
+	<div class="account_label">{TEXT_EMAIL}:</div>
+		<div class="account_value">
+			<input type="text" name="email" maxlength="255" value="{GET_EMAIL}" />
+		</div>
+	</fieldset>
+	<fieldset class="account_form">
+		<legend>{HEADING_MY_PASSWORD}</legend>
+		<div class="account_label">{TEXT_NEW_PASSWORD}:</div>
+		<div class="account_value"><input type="password" name="new_password" /></div>
+		<div class="account_label">{TEXT_RETYPE_NEW_PASSWORD}:</div>
+		<div class="account_value"><input type="password" name="new_password2" /></div>
+	</fieldset>
+	<fieldset class="account_form">
+		<legend>{TEXT_NEED_CURRENT_PASSWORD}</legend>
+		<div class="account_label">{TEXT_CURRENT_PASSWORD}:</div>
+		<div class="account_value"><input type="password" name="current_password" id="current_password" onkeyup="check_input(this);"/></div>
+	</fieldset>
+	<input type="submit" name="submit" value="{TEXT_SAVE}" disabled='disabled' id="user_submit" />
+	<input type="reset" name="reset" value="{TEXT_RESET}" />
+</form>
+<script type="text/javascript">
+
+function pf_check_form() {
+	var ref = document.getElementById("current_password");
+	if (ref) {
+		if (ref.value == "") {
+			alert ("Please confirm the changes by your current password!");
+			return false;
+		} else {
+			return true;
+		}
+	}
+	return false;
+}
+
+function check_input(aRef) {
+	var ref = document.getElementById("user_submit");
+	if (aRef.value == "") {
+		ref.disabled = true;
+	} else {
+		ref.disabled = (aRef.value.length >= {AUTH_MIN_LOGIN_LENGTH}) ? false : true;
+	}
+}
+</script>

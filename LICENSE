@@ -1,0 +1,39 @@
+License
+=======
+LEPTON Core is released under the GNU General Public License,
+Copyright (C) 2010-2011 LEPTON CMS Project
+http://www.gnu.org/licenses/gpl.txt
+
+
+LICENSE INFORMATION
+
+LEPTON Core is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 3
+of the License, or (at your option) any later version.
+
+Notice: LEPTON CMS files are released under several different licences.
+Please see the individual license in the header of each single file or info.php of modules and templates..
+
+LEPTON CMS is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. 
+
+
+LICENSE Terms
+
+1. All existing copyright notices in every single file have to stay untouched
+2. Following text and links in the backend must stay visible and untouched:
+
+ <a href="http://www.LEPTON-cms.org" title="LEPTON CMS" target="_blank">LEPTON Core</a> is released under the
+ <a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON Core is GPL" target="_blank">GNU General Public License</a>.
+ <br /><a href="http://www.LEPTON-cms.org" title="LEPTON Package" target="_blank">LEPTON CMS Package</a> is released under several different licenses. 
+
+3. A frontend-link to 
+	http://www.lepton-cms.org 
+   is aprecciated. 

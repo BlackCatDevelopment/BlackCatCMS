@@ -1,0 +1,48 @@
+<!-- BEGIN main_block -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>{pagelinkDlgTitle}</title>
+		<meta http-equiv="Content-Type" content="text/html; charset={CHARSET}">
+		<meta content="noindex, nofollow" name="robots">
+	    <link href="css/pagelink.css" rel="stylesheet" type="text/css" />
+	    <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+	    <script type="text/javascript" src="js/pagelink.js"></script>
+	</head>
+
+	<body scroll="no" style="overflow:hidden;">
+        <form onsubmit="pagelinkDialog.insert();return false;" action="#">
+		 <table height="100%" cellSpacing="0" cellPadding="0" width="100%" border="0">
+		 	<tr> 
+				<td>
+					<table width="100%">
+						<tr>
+							<td colspan="2"><span class="mceDlgTitle">{pagelinklblPageSelection}:</span>&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select id="cmbLinks" style="WIDTH: 100%" size="14" name="cmbLinks">
+									<!-- BEGIN page_list_block -->
+									<option value="{LINK}"{SELECTED}>{TITLE}</option>
+									<!-- END page_list_block -->
+								</select>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<input type="checkbox" name="wbUseTitle" value="1" id="wbUseTitle"/><label for="wbUseTitle">Use pagetitle!</label>
+		<div class="mceActionPanel">
+			<div style="float: left;">
+				<input type="submit" id="insert" name="insert" value="{pagelinklblInsert}" onclick="pagelinkDialog.insert();" />
+			</div>
+
+			<div style="float: right;">
+				<input type="button" id="cancel" name="cancel" value="{pagelinklblCancel}" onclick="tinyMCEPopup.close();" />
+			</div>
+		</div>
+    </form>
+	</body>
+</html> 
+<!-- END main_block -->

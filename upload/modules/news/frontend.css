@@ -1,0 +1,120 @@
+ /**
+ *  @module         news
+ *  @version        see info.php of this module
+ *  @author			    Ryan Djurovich, Rob Smith, Dietrich Roland Pehlke, Christian M. Stefan (Stefek), Jurgen Nijhuis (Argos)
+ *  @copyright		  2004-2011, Ryan Djurovich, Rob Smith, Dietrich Roland Pehlke, Christian M. Stefan (Stefek), Jurgen Nijhuis (Argos) 
+ *  @license        GNU General Public License
+ *  @license terms  see info.php of this module
+ *  @platform       see info.php of this module
+ *  @requirements   PHP 5.2.x and higher
+ */
+ 
+ .loop_header {
+	width: 100%;
+}
+
+.post_top {
+
+}
+ 
+.post_title, .post_date {
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.post_title {
+	font-weight: bold;
+	font-size: 12px;
+	color: #000000;
+}
+
+.post_date {
+	text-align: right;
+	font-weight: bold;
+}
+
+.post_short {
+	text-align: justify;
+	padding-bottom: 5px;
+}
+
+.news_loop_image {
+	width:150px;
+  float:left;
+  margin-right:20px;
+}
+
+.page_header {
+	width: 100%;	
+}
+
+.page_left {
+	text-align: left;	
+}
+.page_center {
+	text-align: center;
+}
+
+.page_right {
+	text-align: right;	
+}
+
+.post_header {
+	width: 100%;	
+}
+
+.public_info {
+	text-align: right;
+}
+
+.group_page {
+	text-align: center;
+}
+
+.comment_header {
+	width: 100%;
+}
+
+.comment_title {
+	font-weight: bold;
+}
+
+.comment_info {
+	text-align: right;
+	border-right: 1px solid #DDDDDD;
+}
+
+.comment_text {
+	font-weight: bold;
+	background-color: #FDFDFD;
+	border-bottom: 1px solid #DDDDDD;
+	padding-bottom: 15px;
+}
+
+.comment_title, .comment_text {
+	border-left: 1px solid #DDDDDD;
+}
+
+.comment_title, .comment_info {
+	border-top: 1px solid #DDDDDD;
+	background-color: #EEEEEE;
+}
+
+.selected_group_title { 
+	font-size: 14px;
+	text-align: center;
+}
+/*** Don't remove the class nixhier, this is required for ASP ***/
+.nixhier {
+	display:none;
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,28 @@
+/**
+ * This file is part of LEPTON Core, released under the GNU GPL
+ * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ * 
+ * NOTICE:LEPTON CMS Package has several different licenses.
+ * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *
+ * @author          LEPTON Project
+ * @copyright       2010-2012, LEPTON Project
+ * @link            http://www.lepton-cms.org
+ * @license         http://www.gnu.org/licenses/gpl.html
+ * @version         $Id$
+ */
+
+.search_box_input_active,
+.search_box_input {
+  width: 150px;
+  background-image: url('../../images/search.gif');
+  background-repeat:no-repeat;
+  padding-left:20px;
+  color: #b3b3b3;
+  background-color: transparent;
+} 
+/* change the color at input */
+.search_box_input_active {
+  color: #000;
+  background-color: transparent;
+}

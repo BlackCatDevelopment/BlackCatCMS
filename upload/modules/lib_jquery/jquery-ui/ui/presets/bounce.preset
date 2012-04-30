@@ -1,0 +1,9 @@
+<script type="text/javascript">
+  if( typeof 'jQuery' != 'undefined' ) {
+    jQuery(document).ready(function($) {
+      $("div.bounce").click(function () {
+        $(this).effect("bounce", { times:3 }, 300);
+      });
+    });
+  }
+</script>

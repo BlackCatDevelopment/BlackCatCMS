@@ -1,0 +1,263 @@
+/**
+ *  @template       Algos Backend-Theme
+ *  @version        see info.php of this template
+ *  @author         Jurgen Nijhuis & Ruud Eisinga, Dietrich Roland Pehlke
+ *  @copyright      2009-2011 Jurgen Nijhuis & Ruud Eisinga, Dietrich Roland Pehlke
+ *  @license        GNU General Public License
+ *  @license terms  see info.php of this template
+ *  @platform       LEPTON, see info.php of this template
+ *  @requirements   PHP 5.2.x and higher
+ */
+
+/* css login.htt and login_forgot.htt only  */
+
+* {
+	padding: 0px;
+	margin: 0px;
+}
+
+body {
+	background: #999999;
+	color: #333333;
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 12px;
+}
+.clear {
+	clear:both;
+}
+
+a {
+	text-decoration: none;
+	color: #85c226;
+}
+
+a:hover {
+	color:#e67817;
+}
+
+fieldset {
+	background-color: transparent;
+	border:none;
+	clear:both;
+	padding:0px;
+}
+label {
+	height: 26px;
+	line-height: 26px;
+	width: 160px;
+	text-align: right;
+	float: left;
+	display: inline-block;
+	font-size:11px;
+	font-weight:bold;
+	color:#666;
+	cursor: auto;
+}
+h2 {
+padding-left: 0px;
+padding-bottom: 20px;
+padding-right: 5px;
+padding-top: 15px;
+color:#666;
+float:left;
+font-size:22px;
+font-weight:normal;
+margin:0;
+width: 300px;
+}
+
+#main_container {
+	padding-top: 100px;
+	margin-right: auto;
+	margin-left: auto;
+	width: 600px;
+}
+
+.login_form
+{
+	padding-left: 25px;
+	padding-bottom: 50px;
+	padding-right: 25px;
+	padding-top: 0px;
+	margin-left: 0px;
+	margin-bottom: 20px;
+	margin-right: 0px;
+	margin-top: 20px;
+	width: 550px;
+	display: block;
+	height: 200px;
+	background:url(images/login_bg.png) no-repeat center top;
+	float:left;
+}
+.forgot_pass, a.forgot_pass {
+	margin-right: 0px;
+	margin-left: 0;
+	margin-bottom: 0;
+	margin-top: 15px;
+	text-align: left;
+	width: 220px;
+	float:right;
+	color: #85c226;
+	padding:0 0 0 18px;
+	display: inline-block;
+}
+
+a.forgot_pass {
+	background-position: left;
+	background-image: url(images/help_16.png);
+	background-repeat: no-repeat;
+}
+#back_to_login {
+	margin-right: 30px;
+}
+
+.footer_login {
+	width:600px;
+	margin:auto;
+}
+
+.footer_login a {
+	color:#FFFFFF;
+}
+
+.left_footer {
+	float:left;
+	padding:25px 0 0 10px;
+	color:#a8549b;
+	font-size:11px;
+}
+
+.left_footer_login {
+	clear: both;
+	float:left;
+	padding:0 0 4px 10px;
+	color:#ccc;
+}
+
+select, input, textarea, button {outline:none; resize:none;}
+.login_form input {
+	display: inline-block;
+	color: #020202;
+	width: 300px;
+	line-height: 22px;
+	padding-left: 5px;
+	padding-bottom: 6px;
+	padding-right: 5px;
+	padding-top: 6px;
+	margin: 0px;
+	border-width: 0px;
+	height: 22px;
+	background-image: url(images/log-img/input.gif);
+	background-repeat: repeat-x;
+	background-color: transparent;
+}
+.login_form li {
+	text-align: center;
+	list-style-type: none;
+}
+.submit {
+	margin-top: 25px;
+	display: inline-block;
+	margin-right: auto;
+	margin-left: auto;
+	width: auto;
+	position: relative;
+}
+.submit input {
+	padding-bottom: 0px;
+	padding-top: 0px;
+	height: 34px;
+	width: auto;
+	line-height: 22px;
+	padding-right: 10px;
+	padding-left: 10px;
+	text-shadow: 1px 1px 2px #5593b6;
+	font-weight: bold;
+	color: white;
+	background-image: url(images/log-img/button.png);
+	cursor: pointer;
+}
+.submit:before {
+	background-position: -10px;
+	left: -10px;
+	top: 0px;
+	position: absolute;
+	padding: 0px;
+	margin: 0px;
+	height: 34px;
+	display: inline-block;
+	width: 10px;
+	content: url(images/log-img/button-left.png);
+	overflow: hidden;
+}
+
+.submit:after {
+	right: -10px;
+	top: 0px;
+	position: absolute;
+	padding: 0px;
+	margin: 0px;
+	height: 34px;
+	display: inline-block;
+	width: 10px;
+	content: url(images/log-img/button-right.png);
+	overflow: hidden;
+}
+.submit:hover:before {
+	content: url(images/log-img/button-left-hover.png);
+}
+.submit:hover:after {
+	content: url(images/log-img/button-right-hover.png);
+}
+.submit:hover input {
+	background-position: 0 -34px;
+}
+.input {
+	display: inline-block;
+	margin-right: auto;
+	margin-left: auto;
+	width: auto;
+	position: relative;
+}
+
+.input:before {
+	background-position: -10px;
+	left: -10px;
+	top: 0px;
+	position: absolute;
+	padding: 0px;
+	margin: 0px;
+	height: 34px;
+	display: inline-block;
+	width: 10px;
+	content: url(images/log-img/input-left.gif);
+	overflow: hidden;
+}
+
+.input:after {
+	right: -10px;
+	top: 0px;
+	position: absolute;
+	padding: 0px;
+	margin: 0px;
+	height: 34px;
+	display: inline-block;
+	width: 10px;
+	content: url(images/log-img/input-right.gif);
+	overflow: hidden;
+}
+
+input:-webkit-autofill {
+	background-image: url(images/log-img/input.gif) !important;
+	background-color: #78ffb3 !important;
+}
+
+#details-link {
+	text-align: center;
+	clear: both;
+	padding-top: 20px;
+	display: inline-block;
+	margin-right: auto;
+	margin-left: auto;
+}
+

@@ -1,0 +1,59 @@
+<div class="info">
+{translate('Please specify your operating system information, check your path settings, and select a default timezone and a default backend language')}
+</div>
+
+<table>
+  <tbody>
+    <tr>
+      <td>{translate('Server Operating System')}</td>
+      <td>
+        <input type="radio" tabindex="1" name="installer_operating_system" id="installer_operating_system_linux"
+		       onclick="document.getElementById('file_perms_box').style.display = 'table-row';" value="linux"
+			   {if $is_linux}checked="checked"{/if} />
+		<label for="installer_operating_system_linux" style="cursor: pointer;" onclick="document.getElementById('file_perms_box').style.display = 'table-row';">{translate('Linux/Unix based')}</label>
+		<br />
+		<input type="radio" tabindex="5" name="installer_operating_system" id="installer_operating_system_windows"
+		       onclick="document.getElementById('file_perms_box').style.display = 'none';" value="windows"
+			   {if $is_windows}checked="checked"{/if} />
+		<label for="installer_operating_system_windows" style="cursor: pointer;" onclick="document.getElementById('file_perms_box').style.display = 'none';">Windows</label>
+      </td>
+	</tr>
+	<tr id="file_perms_box" style="display:{if $is_linux}table-row{else}none{/if};">
+      <td>
+		<label for="installer_world_writeable">{translate('World-writeable file permissions')} (777)</label><br />
+        <span style="font-size: 10px; color: #666666;">({translate('Please note: only recommended for testing environments')})</span>
+      </td>
+	  <td>
+	    <input type="checkbox" tabindex="6" name="installer_world_writeable" id="installer_world_writeable" value="true" />
+      </td>
+	</tr>
+
+    <tr{if $errors.installer_lepton_url} class="fail"{/if}>
+      <td><label for="installer_lepton_url">{translate('Absolute URL')}</label></td>
+      <td>
+        <input type="text" tabindex="1" name="installer_lepton_url" id="installer_lepton_url" style="width: 97%;" value="{$installer_lepton_url}" />
+        {if $errors.installer_lepton_url}<br /><span>{$errors.installer_lepton_url}</span>{/if}
+      </td>
+	</tr>
+	<tr>
+      <td><label for="installer_default_timezone_string">{translate('Default Timezone')}</label></td>
+      <td>
+        <select id="installer_default_timezone_string" name="installer_default_timezone_string" tabindex="2">
+		  {foreach $timezones zone}
+		  <option value="{$zone}"{if $zone == $installer_default_timezone_string} selected="selected"{/if}>{$zone}</option>
+		  {/foreach}
+        </select>
+	  </td>
+	</tr>
+	<tr>
+      <td><label for="installer_default_language">{translate('Default Language')}</label></td>
+      <td>
+        <select id="installer_default_language" name="installer_default_language" tabindex="3">
+		  {foreach $languages abbr lang}
+		  <option value="{$abbr}"{if $abbr == $installer_default_language} selected="selected"{/if}>{$lang}</option>
+		  {/foreach}
+        </select>
+	  </td>
+	</tr>
+  </tbody>
+</table>

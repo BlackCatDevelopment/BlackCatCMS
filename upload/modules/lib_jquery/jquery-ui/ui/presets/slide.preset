@@ -1,0 +1,9 @@
+<script type="text/javascript">
+  if( typeof 'jQuery' != 'undefined' ) {
+    jQuery(document).ready(function($) {
+      $("div.slide").click(function () {
+        $(this).hide("slide", { direction: "down" }, 1000);
+      });
+    });
+  }
+</script>

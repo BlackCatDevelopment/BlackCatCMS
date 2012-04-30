@@ -1,0 +1,52 @@
+/**
+ *  @module         news
+ *  @version        see info.php of this module
+ *  @author			Ryan Djurovich, Rob Smith, Dietrich Roland Pehlke, Christian M. Stefan (Stefek), Jurgen Nijhuis (Argos)
+ *  @copyright		2004-2011, Ryan Djurovich, Rob Smith, Dietrich Roland Pehlke, Christian M. Stefan (Stefek), Jurgen Nijhuis (Argos) 
+ *  @license        GNU General Public License
+ *  @license terms  see info.php of this module
+ *  @platform       see info.php of this module
+ *  @requirements   PHP 5.2.x and higher
+ */
+
+img.image_preview  { 
+	width: auto; height: auto;max-width: 150px; max-height: 150px; 
+	-ms-interpolation-mode: bicubic; 
+}
+.setting_name  { width: 20%; vertical-align: top !important }
+
+.setting_value {
+	vertical-align: top;
+	width: 80%;
+}
+
+/* 
+  The definitions below provide the style for the edit CSS button 
+  Required CSS class name: input.mod_moduledirectory_edit_css
+*/
+input.mod_news_edit_css {
+  color: #000;
+  padding: 2px;
+  margin: -20px auto;
+  float: right;
+}
+
+.news_prev_link,
+.news_of,
+.news_next_link {
+	display: block;
+	float: left;
+	width: 30%;
+	height: 20px;
+}
+
+.news_of {
+	width: 80px;
+}
+
+tr.row_a {
+	background-color: #FFFFFF;
+}
+tr.row_b {
+	background-color: #EEEEEE;
+}

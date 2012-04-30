@@ -1,0 +1,54 @@
+/**
+ *  @template       Lepton-Start
+ *  @version        see info.php of this template
+ *  @author         cms-lab
+ *  @copyright      2010-2011 CMS-LAB
+ *  @license        http://creativecommons.org/licenses/by/3.0/
+ *  @license terms  see info.php of this template
+ *  @platform       see info.php of this template
+ *  @requirements   PHP 5.2.x and higher
+ */
+
+legend {
+	padding-left: 5px;
+	padding-right: 5px;
+	font-size: 12px;
+	padding-bottom:6px;
+	font-weight: bold;
+	color:#990000;
+}
+fieldset.account_form {
+	padding: 13px;
+	display:block;
+	width: 380px;
+	margin-bottom: 10px;
+	border: 1px solid #999999;
+}
+div.account_label, div.account_value {
+	display: block;
+	float: left;
+	line-height: 1.4em;
+	margin-bottom: 7px;
+	height: 20px;
+}
+div.account_label {
+	width: 120px;
+	font-size: 12px;
+	color: #333333;
+	padding-left: 5px;
+}
+div.account_value {
+	width: 250px;
+	overflow:hidden;
+}
+div.account_value input, div.account_value select {
+	width: 220px;
+}
+div.account_value select {
+	 width:226px;
+}
+div.result_message {
+	color: #990000;
+	font-size: 12px;
+	font-weight: bold;
+}

@@ -1,0 +1,144 @@
+<!-- BEGIN comment_block -->
+/**
+ * Admin tool: Addon File Editor
+ *
+ * This tool allows you to "edit", "delete", "create", "upload" or "backup" files of installed 
+ * Add-ons such as modules, templates and languages via the Website Baker backend. This enables
+ * you to perform small modifications on installed Add-ons without downloading the files first.
+ *
+ * This file contains the HTML output for the Add-on overview list.
+ * 
+ * LICENSE: GNU General Public License 3.0
+ * 
+ * @author		Christian Sommer (doc)
+ * @copyright	(c) 2008-2010
+ * @license		http://www.gnu.org/licenses/gpl.html
+ * @version		1.0.0
+ * @platform	Website Baker 2.8
+*/
+<!-- END comment_block -->
+
+<div id="mod_addon_file_editor">
+
+<div class="help_file">
+<a href="{URL_HELP_FILE}" target="_blank">[ {TXT_HELP} ]</a>
+</div>
+
+<h2><a href="{URL_ADMIN_TOOL}">{TXT_HEADING}</a></h2>
+
+<p>{TXT_DESCRIPTION}</p>
+
+<div class="info {CLASS_SHOW_FTP_INFO}">{TXT_FTP_NOTICE}</div>
+
+<div class="box" id="modules">
+	<a href="{URL_ADMIN_TOOL}&amp;reload">[ {TXT_RELOAD} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#modules">[ {TXT_MODULES} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#templates">[ {TXT_TEMPLATES} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#languages">[ {TXT_LANGUAGES} ]</a> 
+</div>
+
+<table width="98%" border="0" cellspacing="0" cellpadding="5">
+<thead>
+	<tr>
+		<th id="trigger_modules" width="88%">{TXT_LIST_OF_MODULES}</th>
+		<th width="10%">&nbsp;</th>
+	</tr>
+</thead>
+
+<tbody id="toggle_modules">
+	<!-- BEGIN module_block -->
+	<tr class="{CLASS_ODD_EVEN}{CLASS_PERMISSION}">
+		<td>
+			<a href="{URL_EDIT_ADDON}">
+				<img src="{URL_ICON_FOLDER}/folder.gif" title="{TXT_EDIT_ADDON_FILE}" alt="{TXT_EDIT_ADDON_FILE}" />
+			</a>
+			&nbsp;<a href="{URL_EDIT_ADDON}" title="{TXT_EDIT_ADDON_FILE}">{ADDON_NAME}</a>
+		</td>
+		<td align="right">
+			<a href="{URL_ZIP_ADDON}" target="_blank">
+				<img src="{URL_ICON_FOLDER}/download_archive.png" title="{TXT_ZIP_ADDON_FILES}" alt="{TXT_ZIP_ADDON_FILES}" />
+			</a>
+		</td>
+	</tr>
+	<!-- END module_block -->
+</tbody>
+</table>
+<br />
+
+<div class="box" id="templates">
+	<a href="{URL_ADMIN_TOOL}&amp;reload">[ {TXT_RELOAD} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#modules">[ {TXT_MODULES} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#templates">[ {TXT_TEMPLATES} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#languages">[ {TXT_LANGUAGES} ]</a> 
+</div>
+
+<table width="98%" border="0" cellspacing="0" cellpadding="5">
+<thead>
+	<tr>
+		<th id="trigger_templates" width="88%">{TXT_LIST_OF_TEMPLATES}</th>
+		<th width="10%">&nbsp;</th>
+	</tr>
+</thead>
+
+<tbody id="toggle_templates">
+	<!-- BEGIN template_block -->
+	<tr class="{CLASS_ODD_EVEN}{CLASS_PERMISSION}">
+		<td>
+			<a href="{URL_EDIT_ADDON}">
+				<img src="{URL_ICON_FOLDER}/folder.gif" title="{TXT_EDIT_ADDON_FILE}" alt="{TXT_EDIT_ADDON_FILE}" />
+			</a>
+			&nbsp;<a href="{URL_EDIT_ADDON}" title="{TXT_EDIT_ADDON_FILE}">{ADDON_NAME}</a>
+		</td>
+		<td align="right">
+			<a href="{URL_ZIP_ADDON}" target="_blank">
+				<img src="{URL_ICON_FOLDER}/download_archive.png" title="{TXT_ZIP_ADDON_FILES}" alt="{TXT_ZIP_ADDON_FILES}" />
+			</a>
+		</td>
+	</tr>
+	<!-- END template_block -->
+</tbody>
+</table>
+<br />
+
+<div class="box" id="languages">
+	<a href="{URL_ADMIN_TOOL}&amp;reload">[ {TXT_RELOAD} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#modules">[ {TXT_MODULES} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#templates">[ {TXT_TEMPLATES} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#languages">[ {TXT_LANGUAGES} ]</a> 
+</div>
+
+<table width="98%" border="0" cellspacing="0" cellpadding="5">
+<thead>
+	<tr>
+		<th id="trigger_languages" width="88%">{TXT_LIST_OF_LANGUAGES}</th>
+		<th width="10%">&nbsp;</th>
+	</tr>
+</thead>
+
+<tbody id="toggle_languages">
+	<!-- BEGIN language_block -->
+	<tr class="{CLASS_ODD_EVEN}{CLASS_PERMISSION}">
+		<td>
+			<a href="{URL_EDIT_ADDON}">
+				<img src="{URL_ICON_FOLDER}/folder.gif" title="{TXT_EDIT_ADDON_FILE}" alt="{TXT_EDIT_ADDON_FILE}" />
+			</a>
+			&nbsp;<a href="{URL_EDIT_ADDON}" title="{TXT_EDIT_ADDON_FILE}">{ADDON_NAME}</a>
+		</td>
+		<td align="right">
+			<a href="{URL_ZIP_ADDON}" target="_blank">
+				<img src="{URL_ICON_FOLDER}/download_archive.png" title="{TXT_ZIP_ADDON_FILES}" alt="{TXT_ZIP_ADDON_FILES}" />
+			</a>
+		</td>
+	</tr>
+	<!-- END language_block -->
+</tbody>
+</table>
+
+<div class="box">
+	<a href="{URL_ADMIN_TOOL}&amp;reload">[ {TXT_RELOAD} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#modules">[ {TXT_MODULES} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#templates">[ {TXT_TEMPLATES} ]</a>&nbsp;&nbsp;
+	<a href="{URL_ADMIN_TOOL}#languages">[ {TXT_LANGUAGES} ]</a> 
+</div>
+
+</div>

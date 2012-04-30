@@ -1,0 +1,73 @@
+<form name="dirlist" action="index.php" method="post">
+	<input type="hidden" name="action" value="show"  />
+	<input type="hidden" name="up" value="{PARENT_DIR_LINK}"  />
+	<input type="hidden" name="current_dir" value="{PARENT_PATH}" />
+	<table summary="{PARENT_DIR_LINK}" class="browse_header" cellpadding="4" cellspacing="0">
+	<tr>
+	<!-- BEGIN up_link_block -->
+		<td class="up_link_img">
+			<button class="href_link" type="submit" name="parent" value="{PARENT_PATH}">
+				<img src="{THEME_URL}/images/up_folder_16.png" width="16" alt="^" />
+			</button>
+		</td>
+	<!-- END up_link_block -->
+		<td align="left" class="up_link_dir{DISPLAY_UP_ARROW}">
+			<strong>{TEXT_CURRENT_FOLDER}: {ROOT_DIRECTORY}{CURRENT_PATH}</strong>
+		</td>
+	</tr>
+	</table>
+</form>
+
+<div class="table_list">
+	<p class="table_list_info{DISPLAY_NONE_FOUND}"><br />{NONE_FOUND}</p>
+	<table summary="{TEXT_CURRENT_FOLDER}: {ROOT_DIRECTORY}{CURRENT_PATH}" cellpadding="4" cellspacing="0" class="browse_list{DISPLAY_LIST_TABLE}">
+<!-- BEGIN file_list_block -->
+	<tr class="row_{ROW_ID}{ENABLE_OVERLIB} hover">
+		<td class="image_link{CLASS_PREVIEW}">
+			<a href="{LINK}">
+				<img src="{FT_ICON}" class="{DISPLAY_ICON}" alt="{NAME}" {MOUSEOVER} />
+			</a>
+		</td>
+		<td class="image_url" {MOUSEOVER}>
+			<a href="{LINK}">{NAME}</a>
+		</td>
+		<td width="190" class="image_detail">
+			<small>{IMAGEDETAIL}<br />{DATE}</small>
+		</td>
+		<td width="60" align="right" class="image_action">
+			<form name="id_{TEMP_ID}" action="index.php" method="post" id="id_{TEMP_ID}" onsubmit="return confirm_delete_file('{NAME}',this);">
+				<input type="hidden" name="temp_id" value="{TEMP_ID}"  />
+				<input type="hidden" name="current_dir" value="{CURRENT_DIR}"  />
+				<input type="hidden" name="filename" value="{FILENAME}"  />
+				<input type="hidden" name="fileext" value="{EXTENSION}"  />
+				<input type="hidden" name="filetype" value="{FILETYPE}"  />
+	<!-- BEGIN media_rename_block -->
+				<button class="href_link" type="submit" name="action" value="media_rename" onclick="this.form.onsubmit=function(){};">
+					<img src="{THEME_URL}/images/modify_16.png" alt="{TEXT_RENAME}" />
+				</button>
+	<!-- END media_rename_block -->
+				{RENHAME_CONTENT}
+	<!-- BEGIN media_delete_block -->
+				<button class="href_link" type="submit" name="action" value="media_delete">
+					<img src="{THEME_URL}/images/delete_16.png" alt="{TEXT_DELETE}" />
+				</button>
+	<!-- END media_delete_block -->
+				{DELETE_CONTENT}
+			</form>
+		</td>
+	</tr>
+<!-- END file_list_block -->
+	</table>
+</div>
+<script type="text/javascript">
+/* <![CDATA[ */
+function confirm_delete_file(aFileName, aFormRef) {
+	var s = (aFormRef.elements['filetype'].value=="dir")
+			? "{CONFIRM_DELETE_DIR}"
+			: "{CONFIRM_DELETE_FILE}"
+			;
+	var str = unescape( s.replace(/{name}/ig, aFileName) );
+	return ( confirm(str) );
+}
+/* ]]> */
+</script>

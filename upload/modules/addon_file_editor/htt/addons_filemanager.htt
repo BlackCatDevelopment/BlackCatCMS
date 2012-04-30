@@ -1,0 +1,72 @@
+<!-- BEGIN comment_block -->
+/**
+ * Admin tool: Addon File Editor
+ *
+ * This tool allows you to "edit", "delete", "create", "upload" or "backup" files of installed 
+ * Add-ons such as modules, templates and languages via the Website Baker backend. This enables
+ * you to perform small modifications on installed Add-ons without downloading the files first.
+ *
+ * This file contains the HTML output for the file manager.
+ * 
+ * LICENSE: GNU General Public License 3.0
+ * 
+ * @author		Christian Sommer (doc)
+ * @copyright	(c) 2008-2010
+ * @license		http://www.gnu.org/licenses/gpl.html
+ * @version		1.0.0
+ * @platform	Website Baker 2.8
+*/
+<!-- END comment_block -->
+
+<div id="mod_addon_file_editor">
+
+<div class="help_file">
+	<a href="{URL_HELP_FILE}" target="_blank">[ {TXT_HELP} ]</a>
+</div>
+
+<h2><a href="{URL_EDIT_ADDON}">{TXT_ADDON_TYPE}: {ADDON_NAME}</a></h2>
+<p>{TXT_EDIT_DESCRIPTION}</p>
+
+<div class="info {CLASS_SHOW_FTP_INFO}">{TXT_FTP_NOTICE}</div>
+
+<a class="backlink" href="{URL_EDIT_ADDON}">{TXT_BACK_TO_OVERVIEW}</a>
+
+<div class="box">
+	<a href="{URL_RELOAD}">[ {TXT_RELOAD} ]&nbsp;</a>
+	<a class="{CLASS_HIDDEN}" href="{URL_CREATE_FILE_FOLDER}">[ {TXT_CREATE_FILE_FOLDER} ]&nbsp;</a>
+	<a class="{CLASS_HIDDEN}" href="{URL_UPLOAD_FILE}">[ {TXT_UPLOAD_FILE} ]&nbsp;</a>
+</div>
+
+<table class="filemanager" width="98%" border="0" cellspacing="0" cellpadding="5">
+<thead>
+	<tr>
+		<th width="65%">{ADDON_PATH}</th>
+		<th class="center" colspan="2" width="25%">{TXT_FILE_INFOS}</th>
+		<th class="right" width="8%">{TXT_FILE_ACTIONS}</th>
+	</tr>
+</thead>
+
+<tbody>
+	<!-- BEGIN file_block -->
+	<tr class="{CLASS_ODD_EVEN}{CLASS_FOLDER}{CLASS_PERMISSION}">
+		<td>
+			<img src="{URL_ICON_FOLDER}/{FILE_ICON}.gif" title="{TXT_FILE_TYPE}" alt="{TXT_FILE_TYPE}" />&nbsp;
+			{FILE_NAME}</td>
+		<td class="right">{FILE_SIZE}</td>
+		<td class="right">{FILE_MAKE_TIME}</td>
+		<td class="right">
+			<a class="{HIDE_EDIT_ICON}" href="{URL_EDIT_FILE}" {TARGET_BLANK}>
+			<img src="{URL_ICON_FOLDER}/edit.gif" alt="{TXT_EDIT}" title="{TXT_EDIT}"/></a>
+			<a class="{CLASS_HIDDEN}" href="{URL_RENAME_FILE}">
+			<img src="{URL_ICON_FOLDER}/rename.gif" alt="{TXT_RENAME}" title="{TXT_RENAME}"/></a>
+			<a class="{CLASS_HIDDEN}" href="{URL_DELETE_FILE}">
+			<img src="{URL_ICON_FOLDER}/delete.gif" alt="{TXT_DELETE}" title="{TXT_DELETE}"/></a>
+		</td>
+	</tr>
+	<!-- END file_block -->
+</tbody>
+</table>
+
+<a class="backlink" href="{URL_EDIT_ADDON}">{TXT_BACK_TO_OVERVIEW}</a>
+
+</div>

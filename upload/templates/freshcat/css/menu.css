@@ -1,0 +1,87 @@
+/**
+ * This file is part of LEPTON Core, released under the GNU GPL
+ * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ * 
+ * NOTICE:LEPTON CMS Package has several different licenses.
+ * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *
+ * @author          LEPTON Project
+ * @copyright       2012, LEPTON Project
+ * @link            http://www.LEPTON-cms.org
+ * @license         http://www.gnu.org/licenses/gpl.html
+ * @license_terms   please see LICENSE and COPYING files in your package
+ * @version         $Id$
+ *
+ */
+
+#fc_menu {
+	margin: 0px;
+	float: left;
+	display: inline-block;
+}
+
+#fc_menu li {
+	float: left;
+	padding: 0px;
+	margin-right: 5px;
+	margin-left: 5px;
+	list-style-type: none;
+}
+
+#fc_menu li a {
+	font-weight: bold;
+	display: inline-block;
+	padding-right: 10px;
+	padding-left: 10px;
+	padding-top: 28px;
+	font-size: 10px;
+	color: #1d2023;
+}
+
+#fc_menu li a.fc_start {
+	margin-left: 20px;
+	background-repeat: no-repeat;
+	background-image: url(images/header/menu_home.png);
+	background-position: center -70px;
+	margin-right: 160px;
+}
+
+#fc_menu li a.fc_media {
+	background-repeat: no-repeat;
+	background-image: url(images/header/menu_media.png);
+	background-position: center -70px;
+}
+
+#fc_menu li a.fc_settings {
+	background-image: url(images/header/menu_settings.png);
+	background-repeat: no-repeat;
+	background-position: center -70px;
+}
+
+#fc_menu li a.fc_addons {
+	background-repeat: no-repeat;
+	background-image: url(images/header/menu_addons.png);
+	background-position: center -70px;
+}
+
+#fc_menu li a.fc_admintools {
+	background-repeat: no-repeat;
+	background-image: url(images/header/menu_admintools.png);
+	background-position: center -70px;
+}
+
+#fc_menu li a.fc_access {
+	background-image: url(images/header/menu_access.png);
+	background-repeat: no-repeat;
+	background-position: center -70px;
+}
+
+#fc_menu li a:hover {
+	background-position: center -140px;
+}
+
+#fc_menu li a.fc_current {
+	color: #0d3601;
+	background-position: center top;
+}
+

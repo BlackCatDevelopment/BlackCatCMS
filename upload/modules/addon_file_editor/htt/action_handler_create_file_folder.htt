@@ -1,0 +1,78 @@
+<!-- BEGIN comment_block -->
+/**
+ * Admin tool: Addon File Editor
+ *
+ * This tool allows you to "edit", "delete", "create", "upload" or "backup" files of installed 
+ * Add-ons such as modules, templates and languages via the Website Baker backend. This enables
+ * you to perform small modifications on installed Add-ons without downloading the files first.
+ *
+ * This file contains the HTML output for the create file/folder action handler.
+ * 
+ * LICENSE: GNU General Public License 3.0
+ * 
+ * @author		Christian Sommer (doc)
+ * @copyright	(c) 2008-2010
+ * @license		http://www.gnu.org/licenses/gpl.html
+ * @version		1.0.0
+ * @platform	Website Baker 2.8
+*/
+<!-- END comment_block -->
+
+<script language="javascript" type="text/javascript">
+	function toogle(file_type) 
+	{
+		if(file_type == 'file') {
+			document.getElementById('file_extensions').disabled = false;
+		} else if(file_type == 'folder') {
+			document.getElementById('file_extensions').disabled = true;
+		}
+	}
+</script>
+
+<div id="mod_addon_file_editor">
+	<h4 class="admintools">
+		<a href="{URL_WB_ADMIN_TOOLS}">{TXT_HEADING_ADMINTOOLS}</a> -> {NAME_FILE_EDITOR}
+	</h4>
+
+	<div class="help_file">
+		<a href="{URL_HELP_FILE}" target="_blank">[ {TXT_HELP} ]</a>
+	</div>
+
+	<h2><a href="{URL_FILEMANAGER}">{ADDON_TYPE}: {ADDON_NAME}</a></h2>
+	<a class="backlink" href="{URL_FILEMANAGER}">{TXT_BACK}</a>
+
+	<form class="formbox" action="{URL_FORM_SUBMIT}" method="post">
+		<h3>{TXT_ACTION}: {TXT_ACTION_CREATE_FILE}</h3>
+
+		<div class="{CLASS_HIDDEN}">
+		<label for="file_folder">{TXT_CREATE}:</label>
+		<input id="file_folder" type="radio" value="file" name="file_folder" checked="checked" onclick="javascript: toogle('file')" />
+		{TXT_FILE}
+		<input type="radio" value="folder" name="file_folder" onclick="javascript: toogle('folder')" />{TXT_FOLDER}
+		<br /><br />
+	
+		<label for="file_folder_name">{TXT_FILE_NAME}:</label>
+		<input id="file_folder_name" type="text" value="" name="file_name" class="file" />
+		<strong>.</strong>
+		<select id="file_extensions" size="1" name="file_extensions">
+			{SEL_ENTRIES_FILE_EXTENSIONS}
+		</select>
+		{TXT_ALLOWED_FILE_CHARS}
+		<br /><br />
+	
+		<label for="target_folder">{TXT_TARGET_FOLDER}:</label>
+		<select id="target_folder" size="1" name="target_folder" class="file">
+			{SEL_ENTRIES_TARGET_FOLDER}
+		</select>
+
+		<br /><br />
+		<input class="submit" type="submit" name="create_file_folder" value="{TXT_SUBMIT_CREATE}" />
+		<a class="submit" href="{URL_FORM_CANCEL}">{TXT_SUBMIT_CANCEL}</a>
+		</div>
+
+		<br style="clear: both;" />
+	</form>
+
+	{STATUS_MESSAGE}
+
+</div>

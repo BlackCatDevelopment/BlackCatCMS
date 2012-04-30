@@ -1,0 +1,18 @@
+</form>
+<h1>Installation fertiggestellt!</h1>
+
+<p>LEPTON ist nun installiert und kann verwendet werden!</p>
+
+<form method="get" action="{$lepton_url}/{$backend_path}/start/index.php">
+  <input type="submit" value="{translate('Login')}" />
+</form>
+
+<p><a href="{$lepton_url}/temp/inst.log" class="fancybox iframe">Möchten Sie ein Installationslog ansehen?</a></p>
+
+<h2>Wie weiter?</h2>
+
+<p>Wenn Sie weitere Informationen oder Hilfe benötigen, besuchen Sie bitte unsere
+<a href="http://www.lepton-cms.org/" target="_blank">Homepage</a>
+und/oder <a href="http://forum.lepton-cms.org/" target="_blank">das Forum</a>.
+
+<p><strong>Vielen Dank, dass Sie LEPTON verwenden!</strong></p>

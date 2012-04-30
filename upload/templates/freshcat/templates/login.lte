@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>{$TEXT.LOGIN}</title>
+
+<link rel="shortcut icon" href="{$THEME_URL}/images/favicon.ico" type="image/x-icon" />
+
+<meta http-equiv="content-type" content="text/html; charset={$meta.CHARSET}" />
+<meta http-equiv="content-language" content="{$meta.LANGUAGE}" />
+<meta name="description" content="{$TEXT.LOGIN}" />
+<meta name="keywords" content="{$TEXT.LOGIN}" />
+<meta name="robots" content="noindex, nofollow" />
+
+<meta http-equiv="Content-Encoding" content="gzip" />
+<meta http-equiv="Accept-Encoding" content="gzip, deflate" />
+
+<meta name="author" content="LEPTON CMS" />
+
+<link href="{$THEME_URL}/css/login.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+	var WB_URL								= '{$WB_URL}';
+	var THEME_URL							= '{$THEME_URL}';
+	var ADMIN_URL							= '{$ADMIN_URL}';
+</script>
+
+<script src="{$WB_URL}/modules/lib_jquery/jquery-core/jquery-core.min.js" type="text/javascript"></script>
+<script src="{$WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery-ui.min.js" type="text/javascript"></script>
+<script src="{$WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery.effects.core.min.js" type="text/javascript"></script>
+<script src="{$WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery.effects.shake.min.js" type="text/javascript"></script>
+
+<script src="{$THEME_URL}/js/login.js" type="text/javascript"></script>
+
+</head>
+<body>
+	<img src="{$THEME_URL}/css/images/login/radial.png" alt="radial" class="fc_login_radial" />
+	<div class="fc_img_no_save fc_start_black"></div>
+	<noscript>
+		<img src="{$THEME_URL}/css/images/js_required.jpg" alt="JavaScript is required" />
+		<div id="fc_JS_needed" class="ui-corner-all ui-shadow">
+			<h1>JavaScript is required</h1>
+			<p>To use Lepton, please enable JavaScript in your browser and try again.</p>
+		</div>
+	</noscript>
+	<div id="fc_forms" class="ui-corner-all">
+		<div id="fc_login_header" class="ui-corner-top">
+			<img src="{$THEME_URL}/css/images/login/beta_state.png" alt="This is a beta version" id="fc_beta"/>
+			<a href="{$WB_URL}" id="fc_home_site" title="{$TEXT.HOME}"></a>
+		</div>
+		<form name="login" action="{$ACTION_URL}" method="post" id="fc_login_form" class="ajaxLogin">
+			<p>
+				{*Currently not active <input type="hidden" name="url" value="{$REDIRECT}" rel="login" />*}
+				<input type="hidden" name="username_fieldname" value="{$USERNAME_FIELDNAME}" />
+				<input type="hidden" name="password_fieldname" value="{$PASSWORD_FIELDNAME}" />
+	
+				<label for="fc_login_username">{$TEXT.USERNAME}</label>
+				<input type="text" maxlength="{$MAX_USERNAME_LEN}" name="{$USERNAME_FIELDNAME}" value="{$USERNAME}" id="fc_login_username" />
+			</p>
+			<p>
+				<label for="fc_login_password">{$TEXT.PASSWORD}</label>
+				<input type="password" maxlength="{$MAX_PASSWORD_LEN}" name="{$PASSWORD_FIELDNAME}" id="fc_login_password" />
+			</p>
+			<p>
+				<button type="submit" name="submit_login" class="fc_login_button submit">{$TEXT.LOGIN}</button>
+				<div class="loader"></div>
+			</p>
+		</form>
+		<form name="forgot_pass" action="{$ADMIN_URL}/login/forgot/index.php" method="post" id="fc_login_forgot_form" class="ajaxForm">
+			<p>
+				<label for="fc_forgot">{$TEXT.EMAIL}</label>
+				<input type="text" maxlength="255" name="email" value="{if $EMAIL}{$EMAIL}{/if}" id="fc_forgot" />
+				<button type="submit" name="submit_email" class="fc_forgot_button submit">{$TEXT.SEND_DETAILS}</button>
+			</p>
+			<p class="fc_loader"></p>
+			<p id="fc_message"></p>
+			<span class="ui-corner-top" id="fc_home_login">{$TEXT.NEED_TO_LOGIN}</span>
+		</form>
+	</div>
+	
+	<div class="fc_license">
+		<p class="right"><a href="http://www.lepton-cms.org" title="LEPTON CMS" target="_blank">LEPTON Core</a> is released under the
+			<a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON Core is GPL" target="_blank">GNU General Public License</a>.<br/>
+			<a href="http://www.lepton-cms.org" title="LEPTON Package" target="_blank">LEPTON CMS Package</a> is released under several different licenses.
+		</p>
+		<p class="left">
+			<a href="{$FORGOTTEN_DETAILS_APP}" id="fc_login_forgot" title="{$TEXT.FORGOTTEN_DETAILS}">
+				<span class="ui-corner-all fc_show_description">{$TEXT.FORGOTTEN_DETAILS}</span>
+			</a>
+		</p>
+		<div class="fc_error_box hidden">
+			<p class="g_16">Session expired. Please login again after reloading the page!<br />
+			This happens if there was no valid leptoken or your session expired by time.</p>
+		</div>
+	</div>
+</body>
+</html>

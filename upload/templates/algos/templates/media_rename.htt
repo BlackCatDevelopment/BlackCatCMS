@@ -1,0 +1,37 @@
+<table cellpadding="4" cellspacing="0" border="0" width="100%" class="browse_header">
+<tr>
+	<td align="left" class="up_link_dir{DISPLAY_UP_ARROW}"><strong>{TEXT_CURRENT_FOLDER}: {ROOT_DIRECTORY}{CURRENT_PATH}</strong></td>
+</tr>
+</table>
+
+	<form name="rename" action="index.php" method="post">
+		<input type="hidden" name="action" value="save_media_rename" />
+		<input type="hidden" name="current_dir" value="{CURRENT_PATH}" />
+		<input type="hidden" name="old_name" value="{BASENAME}" />
+		<input type="hidden" name="extension" value="{FILE_EXT}" />
+		<input type="hidden" name="filetype" value="{FILE_TYPE}" />
+
+		<table summary="{TEXT_RENAME}" cellpadding="5" cellspacing="0" border="0" width="400" align="center">
+		<tr>
+			<td align="center" colspan="2"><strong>'{FILENAME}'</strong> {TEXT_RENAME}  :</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="text" name="name" value="{BASENAME}" style="width: 100%;" />
+				<script type="text/javascript">
+				document.rename.name.focus();
+				</script>
+			</td>
+			<td width="50" class="{DISPlAY_EXTENSION}">
+				<label class="bold">{EXTENSION}</label>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<input type="submit" name="save" value="{TEXT_RENAME}" style="width: 49%;" />
+				<input type="submit" name="cancel" value="{TEXT_CANCEL}" style="width: 49%;" />
+			</td>
+		</tr>
+		</table>
+
+	</form>

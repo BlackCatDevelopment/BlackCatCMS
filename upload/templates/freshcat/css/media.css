@@ -1,0 +1,334 @@
+/**
+ * This file is part of LEPTON Core, released under the GNU GPL
+ * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ * 
+ * NOTICE:LEPTON CMS Package has several different licenses.
+ * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *
+ * @author          LEPTON Project
+ * @copyright       2012, LEPTON Project
+ * @link            http://www.LEPTON-cms.org
+ * @license         http://www.gnu.org/licenses/gpl.html
+ * @license_terms   please see LICENSE and COPYING files in your package
+ * @version         $Id$
+ *
+ */
+
+
+#fc_media_browser {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	overflow-y: auto;
+}
+
+.fc_media_folder {
+	padding: 0px;
+	margin: 0px;
+	min-height: 100%;
+	left: 0px;
+	top: 0px;
+	position: absolute;
+	width: 250px;
+	color: #1d2023;
+	border-right-color: #cccccc;
+	border-right-width: 1px;
+	border-right-style: solid;
+	background-color: white;
+}
+
+.fc_filetype_folder {
+	height: 26px;
+	line-height: 26px;
+	padding: 0px;
+	margin: 0px;
+	display: block;
+	cursor: pointer;
+}
+
+.fc_filetype_image {
+	line-height: 26px;
+	padding: 0px;
+	height: 26px;
+	margin: 0px;
+	display: block;
+	cursor: pointer;
+}
+
+.fc_filetype_folder .fc_name_short {
+	padding-right: 5px;
+	padding-left: 30px;
+	background-position: 5px center;
+	background-image: url(images/file_icons/folder.png);
+	background-repeat: no-repeat;
+}
+.fc_filetype_image .fc_name_short {
+	padding-right: 5px;
+	padding-left: 30px;
+	background-position: 5px center;
+	background-repeat: no-repeat;
+}
+.fc_name_short p {
+	margin: 0px;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	padding-right: 10px;
+	padding-top: 0px;
+	display: block;
+}
+.fc_filetype_folder .fc_name_short p {
+	background-position: right 8px;
+	background-image: url(images/file_icons/folder_arrow.png);
+	background-repeat: no-repeat;
+}
+.fc_filetype_folder:hover .fc_name_short p, .fc_filetype_folder.fc_active .fc_name_short p, .fc_open_folder .fc_name_short p {
+	background-position: right -14px;
+}
+.fc_filetype_image:hover, .fc_filetype_folder:hover {
+	color: white;
+	background-position: 0 -26px;
+	background-image: url(images/file_icons/media_state.png);
+	background-repeat: repeat-x;
+	background-color: #2b323f;
+}
+.fc_filetype_image.fc_active, .fc_filetype_folder.fc_active, .fc_open_folder {
+	background-position: left top;
+	background-image: url(images/file_icons/media_state.png);
+	background-repeat: repeat-x;
+	color: white;
+	background-color: #5b9c14;
+}
+.fc_file_info {
+	padding-bottom: 25px;
+	padding-top: 25px;
+	padding-right: 50px;
+	padding-left: 50px;
+	text-align: center;
+}
+
+.fc_filetype_image .fc_file_info {
+	display: none;
+}
+
+.fc_file_info img {
+	max-height: 200px;
+	max-width: 300px;
+}
+
+.fc_file_more_info {
+	text-align: left;
+	padding-right: 20px;
+	padding-left: 20px;
+	padding-bottom: 5px;
+	padding-top: 5px;
+	background-color: white;
+}
+.fc_file_label {
+	color: #9e9e9e;
+	width: 150px;
+	display: inline-block;
+}
+#fc_media_info {
+	width: 500px;
+	left: 250px;
+	position: absolute;
+}
+.fc_filename {
+	display: block;
+}
+.fc_file_jpg {
+	background-image: url(images/file_icons/jpg.png);
+}
+.fc_name_short {
+	white-space: nowrap;
+}
+ul.fc_header_button_dropdown {
+	z-index: 4;
+	position: relative;
+	height: auto;
+	float: right;
+}
+.fc_header_button_dropdown li {
+	float: none;
+	padding: 0px;
+	margin: 0px;
+	white-space: nowrap;
+}
+.fc_header_button_dropdown ul {
+	border-bottom-color: black;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	z-index: 1;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+	padding-top: 10px;
+	right: -1px;
+	text-shadow: 1px 1px 1px black;
+	top: 16px;
+	position: absolute;
+	margin: 0px;
+	display: none;
+}
+.fc_header_button_dropdown:hover ul {
+	display: block;
+}
+.fc_header_button_dropdown ul li {
+	border-color: black;
+	border-style: solid;
+	border-left-width: 1px;
+	border-bottom-width: 0px;
+	border-right-width: 1px;
+	border-top-width: 0px;
+	font-style: normal;
+	font-weight: normal;
+	color: #f8f8f8;
+	background-color: #23272a;
+	margin: 0px;
+	padding-right: 15px;
+	padding-left: 15px;
+	padding-bottom: 10px;
+	padding-top: 8px;
+	line-height: 1em;
+	height: 1em;
+	cursor: pointer;
+}
+.fc_header_button_dropdown ul li:hover {
+	text-shadow: 1px 1px 1px white;
+	background-color: #f8f8f8;
+	color: #1d2023;
+}
+.fc_header_button_dropdown ul li.fc_inactive_button {
+	color: #9e9e9e;
+	cursor: default;
+}
+.fc_header_button_dropdown ul li.fc_inactive_button:hover {
+	text-shadow: 1px 1px 1px black;
+	color: #9e9e9e;
+	background-color: #23272a;
+}
+li.fc_loader {
+	padding: 0px;
+	margin: 0px;
+}
+.fc_save_rename {
+	background-position: 0 0px;
+	background-repeat: no-repeat;
+	background-image: url(images/media_rename.png);
+	top: 2px;
+	right: 2px;
+	display: inline-block;
+	position: absolute;
+	height: 20px;
+	width: 20px;
+}
+.fc_save_rename:hover {
+	background-position: -20px 0px;
+}
+.fc_input_rename_file {
+	position: relative;
+}
+.fc_file_options {
+	padding: 25px;
+}
+.fc_no_preview_pdf {
+	background-color: #ff5572;
+}
+.fc_media_folder_active {
+	border-style: solid;
+	background-color: #eaffe1;
+}
+.fc_upload_fields {
+	position: relative;
+	clear: both;
+}
+.fc_upload_choose {
+	margin-right: 10px;
+	background-color: #f8f8f8;
+	color: white;
+	background-position: left top;
+	background-image: url(images/media/media_choose_file.png);
+	background-repeat: no-repeat;
+	line-height: 40px;
+	z-index: 2;
+	position: relative;
+	padding-right: 10px;
+	padding-left: 20px;
+	height: 40px;
+	display: inline-block;
+	float: left;
+	cursor: pointer;
+}
+.fc_upload_choose:hover {
+	background-position: 0 bottom;
+}
+.fc_upload_close {
+	background-position: left top;
+	padding-right: 10px;
+	background-repeat: no-repeat;
+	background-color: #f8f8f8;
+	background-image: url(images/media/media_close.png);
+	width: 50px;
+	z-index: 2;
+	height: 40px;
+	display: inline-block;
+	top: 0px;
+	right: 0px;
+	position: absolute;
+	cursor: pointer;
+}
+.fc_upload_close:hover {
+	background-position: 0 bottom;
+}
+ .fc_upload_fields input {
+	border-width: 0px;
+	font-size: 8px;
+	line-height: 0px;
+	height: 10px;
+	position: absolute;
+	z-index: 0;
+	background-color: transparent;
+	background-image: none;
+}
+.fc_upload_file {
+	padding: 0px;
+	line-height: 40px;
+	background-image: url(images/media/media_upload.png);
+	background-repeat: repeat-x;
+	height: 40px;
+	z-index: 1;
+	position: relative;
+	background-color: #f8f8f8;
+	display: block;
+}
+#fc_add_upload_field {
+	background-position: center top;
+	background-image: url(images/media/upload_button.png);
+	background-repeat: no-repeat;
+	text-align: center;
+	color: white;
+	margin-right: 20px;
+	float: right;
+	font-size: 2em;
+	font-weight: bold;
+	background-color: #82c347;
+	height: 45px;
+	width: 70px;
+	cursor: pointer;
+	text-indent: -9999px;
+}
+#fc_add_upload_field:hover {
+	background-position: center -45px;
+}
+label[for=fc_overwrite] {
+	margin-bottom: 0px;
+	margin-left: 20px;
+	margin-top: 8px;
+}
+.fc_upload_zip {
+	border-bottom-color: #cccccc;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	padding-bottom: 8px;
+	margin-bottom: 8px;
+}

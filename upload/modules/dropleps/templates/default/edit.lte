@@ -1,0 +1,28 @@
+{include file="header.lte"}
+  <br /><br /><a href="{$ADMIN_URL}/admintools/tool.php?tool=dropleps">&laquo; {translate('Back to overview')} &laquo;</a><br />
+  {if $problem}<div class="problem ui-corner-all">{$problem}</div>{/if}
+  {if $info}<div class="info ui-corner-all">{$info}</div>{/if}
+  <form method="post" action="{$action}">
+    <input type="hidden" name="tool" value="dropleps" />
+    <input type="hidden" name="edit" value="{$id}" />
+    <fieldset>
+      <legend>{translate('Edit Droplep')}: {$name}</legend>
+        <label for="name">{translate('Name')}:</label>
+          <input type="text" name="name" id="name" value="{$data.name|escape}" /><br />
+        <label for="comment">{translate('Description')}:</label>
+          <input type="text" name="description" id="description" value="{$data.description|escape}" /><br /><b></b>
+        <label for="comment">{translate('Comments')}:</label>
+          <textarea name="comments" id="comments">{$data.comments|escape}</textarea><br />
+        <span class="label">{translate('Active')}:</span>
+          <input type="radio" checked="checked" id="active_y" name="active" value="1" />
+            <label for="active_y">{translate('Yes')}</label>
+          <input type="radio" id="active_n" name="active" value="0" />
+            <label for="active_n">{translate('No')}</label><br /><br />
+        <label for="code">{translate('Code')}:</label>
+          {show_wysiwyg_editor( 'code', 'code', $data.code )}<br /><br />
+        <input type="submit" name="save" value="{translate('Save')}" />
+        <input type="submit" name="save_and_back" value="{translate('Save and Back')}" />
+        <input type="submit" name="cancel" value="{translate('Cancel')}" />
+    </fieldset>
+  </form>
+{include file="footer.lte"}

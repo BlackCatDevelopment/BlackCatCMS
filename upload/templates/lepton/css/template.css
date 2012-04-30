@@ -1,0 +1,295 @@
+/**
+ *  @template       Lepton-Start
+ *  @version        see info.php of this template
+ *  @author         cms-lab
+ *  @copyright      2010-2011 CMS-LAB
+ *  @license        http://creativecommons.org/licenses/by/3.0/
+ *  @license terms  see info.php of this template
+ *  @platform       see info.php of this template
+ *  @requirements   PHP 5.2.x and higher
+ */
+
+ 
+ /* Definierte Startwerte alle HTML-Elemente */
+ * { 
+	margin: 0;
+	padding: 0;
+ }
+ 
+ /* Schrift und Hintergrund Browserseite */
+html body { 
+	background:none repeat scroll 0 0 #999999;
+	font-family:Arial,Lucida Grande,Lucida Sans Unicode,verdana,geneva,sans-serif;
+	font-size:14px;
+}
+ 
+ a:link, a:visited, a:active {
+	text-decoration:underline;
+	color:black;
+ }
+  
+ a:hover {
+	color:#9b141a;
+ }
+  
+ /* Schrift und Hintergrund Seite */
+ #site {
+	background:none repeat scroll 0 0 #7F7F7F;
+	color:#333333;
+	margin:20px auto;
+	width:900px;
+}
+
+ /* Schrift und Hintergrund Kopf */
+ #head {
+ 	height:180px;
+}
+
+#headtitle {
+    background-color: #333333;
+    color: #EEEEEE;
+    font-size: 22px;
+    height: 27px;
+    padding-top: 3px;
+    text-align: center;
+}
+
+#spacer {
+	height:12px;
+	background:transparent;
+}
+
+ /* Positionierung, Navigation, Schrift und Hintergrund im linken Bereich */
+#side {
+	float:left;
+	padding-top:10px;
+	width:189px;
+}
+
+#navi1 ul {
+	padding-left:10px;
+	list-style:none;
+}
+ 
+#navi1 li {
+	width:auto;;
+}
+ 
+#navi1 a {
+	background-color:#666666;
+	border-bottom:1px solid #CCCCCC;
+	color:#999999;
+	display:block;
+	font-size:16px;
+	padding-bottom:2px;	
+	padding-left:12px;
+	padding-top:2px;
+	text-decoration:none;
+}
+ 
+#navi1 .menu-current a {
+	background-color:#333333;
+	color:#DDDDDD;
+}
+
+#navi1 a:hover {
+	background-color:#333333;
+	color:#CCCCCC;
+}
+ 
+#search {
+	font-size:11px;
+	width:168px;
+	margin-top:20px;
+	margin-bottom:20px;
+	margin-left:10px;
+}
+
+#search legend {
+	display:none;
+}
+
+#search fieldset {
+	padding:10px;
+	border:1px dotted #330000;
+}
+  
+#search input[type='text'] {
+	background:#ccc;
+	border: 1px solid #ccc;
+	color:#330000;
+	width:144px;
+}
+
+#search input[type='submit'] {
+	width:80px;
+	border: 1px solid #330000;
+	color:#fff;
+	background:#330000;
+	text-align:center;
+	margin-top:10px;
+	margin-left:36px;
+}
+
+#login {
+	font-size:11px;
+	width:168px;
+	margin-top:20px;
+	margin-bottom:20px;
+	margin-left:10px;
+}
+
+#login legend {
+	display:none;
+}
+
+#login fieldset {
+	padding:10px;
+	border:1px dotted #330000;
+	color:#330000;
+}
+  
+#login input[type='text'] {
+	background:#ccc;
+	border: 1px solid #ccc;
+	color:#330000;
+	width:144px;
+	margin-bottom:10px;
+}
+
+#login input[type='password'] {
+	background:#ccc; 
+	border: 1px solid #ccc;
+	color:#9b141a;
+	width:144px;
+}
+
+#login input[type='submit'] {
+	width:80px;border: 1px solid #330000;
+	color:#fff;
+	background:#330000;
+	text-align:center;
+	margin-top:10px;
+	margin-left:36px;
+	margin-bottom:10px;
+}
+
+#login a {
+	color:#330000;
+}
+
+#login a:hover {
+	color:#FFFFFF;
+}
+
+#frontedit { /* formating the frontedit module */
+    color: #000000;
+    margin-left: 44px;
+    margin-top: 50px;
+    padding: 10px;
+    text-align: left;
+}
+#frontedit a {font-weight:normal;color:red; font-size:13px;}
+#frontedit a:hover {color:#000;}
+#frontedit img {padding-right:10px;}
+
+/* Positionierung, Schrift und Hintergrund Hauptteil */
+#cont {
+	background:none repeat scroll 0 0 #FFFFFF;
+	float:left;
+	min-height:288px;
+	padding-left:20px;
+	padding-right:20px;
+	padding-top:10px;
+	width:671px;
+}
+
+/* Positionierung, Schrift und Hintergrund Fussbereich */
+#foot {
+	background-color:#333333;
+	color:#330000;
+	font-size:10px;
+	height:24px;
+	line-height:24px;
+	text-align:center;
+	width:900px;
+}
+
+#foot ul {
+	list-style:none;
+	display:inline;
+} 
+ 
+#foot li {
+	display:inline;
+	padding:5px;
+}
+
+#foot a {
+	color:#7F7F7F;
+	font-size:14px;
+	list-style:none outside none;
+	padding:4px;
+	text-decoration:none;
+}
+ 
+ #foot a:hover {
+   color:#f7f7f7;
+   background-color:#330000;
+}
+
+#foot .menu-current a {
+	color:#f7f7f7;
+}
+ 
+/* Footer */
+
+#basic {
+	color:#330000;
+	display:block;
+	float:left;
+	font-size:11px;
+	height:30px;
+	width:100%;
+}
+
+#links {
+	padding-left:14px;
+	float:left;
+	padding-top:10px;
+}
+
+#links a {
+	color:#330000;
+	text-decoration:none;
+}
+
+#links a:hover {
+	color:#f7f7f7;
+}
+
+#design {
+	float:right;
+	padding-right:10px;
+	padding-top:10px;
+}
+
+#design a {
+	text-decoration:none; color:#330000;
+}
+
+#design a:hover {
+	color:#f7f7f7;
+}
+
+img.head_img {
+	border: 0px;
+}
+
+.highlight {
+	width: auto;
+	padding-left:3px;
+	padding-right:3px;
+	border: 1px solid #AAAAAA;
+	background-color: #DDDDDD;
+}

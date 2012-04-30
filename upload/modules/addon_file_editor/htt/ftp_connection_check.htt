@@ -1,0 +1,78 @@
+<!-- BEGIN comment_block -->
+/**
+ * Admin tool: Addon File Editor
+ *
+ * This tool allows you to "edit", "delete", "create", "upload" or "backup" files of installed 
+ * Add-ons such as modules, templates and languages via the Website Baker backend. This enables
+ * you to perform small modifications on installed Add-ons without downloading the files first.
+ *
+ * This file contains the HTML output for the FTP installation wizard.
+ * 
+ * LICENSE: GNU General Public License 3.0
+ * 
+ * @author		Christian Sommer (doc)
+ * @copyright	(c) 2008-2010
+ * @license		http://www.gnu.org/licenses/gpl.html
+ * @version		1.0.0
+ * @platform	Website Baker 2.8
+*/
+<!-- END comment_block -->
+
+<div id="mod_addon_file_editor">
+	<h4 class="admintools">
+		<a href="{URL_WB_ADMIN_TOOLS}">{TXT_HEADING_ADMINTOOLS}</a> -> {NAME_FILE_EDITOR}
+	</h4>
+
+	<div class="help_file">
+		<a href="{URL_HELP_FILE}" target="_blank">[ {TXT_HELP} ]</a>
+	</div>
+
+	<h2><a href="{URL_FILEMANAGER}">{TXT_FTP_HEADING}</a></h2>
+	<p>{TXT_FTP_DESCRIPTION}</p>
+	<a class="backlink" href="{URL_FILEMANAGER}">{TXT_BACK}</a>
+
+	<form class="formbox" action="{URL_FORM_SUBMIT}" method="post">
+		<h3 class="normal">{TXT_FTP_SETTINGS}:</h3>
+
+		<label for="ftp_enabled">{TXT_FTP_SUPPORT}:</label>
+		<input id="ftp_enabled" value="1" type="radio" {ENABLED_CHECKED} name="ftp_enabled" />{TXT_ENABLE}
+		<input type="radio" value="0" name="ftp_enabled" {DISABLED_CHECKED} />{TXT_DISABLE}
+		<br /><br />
+
+		<label for="ftp_server">{TXT_FTP_SERVER}:</label>
+		<input id="ftp_server" type="text" value="{FTP_SERVER}" name="ftp_server" class="file" />
+		<br /><br />
+
+		<label for="ftp_user">{TXT_FTP_USER}:</label>
+		<input id="ftp_user" type="text" value="{FTP_USER}" name="ftp_user" class="file" />
+		<br /><br />
+
+		<label for="ftp_password">{TXT_FTP_PASSWORD}:</label>
+		<input id="ftp_password" type="password" value="{FTP_PASSWORD}" name="ftp_password" class="file" />
+		<br /><br />
+
+		<label for="ftp_port">{TXT_FTP_PORT}:</label>
+		<input id="ftp_port" type="text" value="{FTP_PORT}" name="ftp_port" class="file" />
+		<br /><br />
+
+		<label for="ftp_start_dir">{TXT_FTP_START_DIR}:</label>
+		<input id="ftp_start_dir" type="text" value="{FTP_START_DIR}" name="ftp_start_dir" class="file" />
+		<br /><br />
+
+		<input class="submit" type="submit" name="ftp_save_settings" value="{TXT_SAVE}" />
+		<br style="clear: both;" />
+	</form>
+	
+	<br />
+	<div class="{CLASS_HIDDEN}">
+		<form class="formbox" action="{URL_FORM_SUBMIT}" method="post">
+			<h3 class="normal">{TXT_FTP_CONNECTION_TEST}:</h3>
+			<p>{TXT_CHECK_FTP_CONNECTION}</p>
+			<p>{TXT_FTP_CHECK_NOTE}</p>
+			<input class="submit" type="submit" name="ftp_connection_check" value="{TXT_SUBMIT_CHECK}" />
+			<br style="clear: both;" />
+		</form>
+		{STATUS_MESSAGE}
+	</div>
+	
+</div>

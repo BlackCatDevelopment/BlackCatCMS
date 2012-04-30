@@ -1,0 +1,284 @@
+/**
+ *  @template       Algos Backend-Theme
+ *  @version        see info.php of this template
+ *  @author         Jurgen Nijhuis & Ruud Eisinga, Dietrich Roland Pehlke
+ *  @copyright      2009-2011 Jurgen Nijhuis & Ruud Eisinga, Dietrich Roland Pehlke
+ *  @license        GNU General Public License
+ *  @license terms  see info.php of this template
+ *  @platform       LEPTON, see info.php of this template
+ *  @requirements   PHP 5.2.x and higher
+ */
+
+html { overflow :-moz-scrollbars-vertical; /* Force firefox to always show room for a vertical scrollbar *//* Force firefox to always show room for a vertical scrollbar */ }
+
+body,td,th,input,textarea {font-family: verdana,arial,helvetica,sans-serif;font-size:11px;color:#333;}
+body {background:#f9f9f9 url(images/background.jpg) 0 0 repeat-x;margin:0;text-align:center;}
+img {	border: 0px;}
+fieldset { position :relative; top :0.0em; text-align :left; background-color :transparent; border :1px solid #bbbbbb; margin :10px auto; }
+
+div.access_title { margin-left :0px; margin-right :0px; padding :0.35em 0.625em 0.35em; display :block; color :#f2f2f2; background :#1a5189; font-size :1.2em; font-weight :bold; }
+.adv_button { float :right; }
+.be_section { border :1px solid #AAAAAA; background-color:#EEEEEE; }
+fieldset { margin-top :0.0em; background :#FFFFFF none; text-align :left; }
+.bold, .pages_list { font-weight :bold; }
+div.box { width :100%; margin :-10px 0 0 0; font-size :small; text-align :right; }
+.c10l, .c10r { width:10%; float :left; }
+.c25l, .c25r { width:26%; float :left; }
+.c50l, .c50r { width:50%; float :left; }
+.c60l, .c60r { width:60%; float :left; }
+.c90l, .c90r { width:90%; float :left; }
+.content { margin :0; padding :20px 0; width :900px; text-align :left; vertical-align :top; }
+/* Preference styles */
+div.content_box { margin :0px auto; position :relative; }
+div.content_box fieldset { margin :10px auto; }
+div.content_box form{ background :transparent; height :auto; }
+div.content_box input{ width :400px; }
+div.content_box label{ padding-left :4px; font-weight :600; }
+div.content_box legend { padding :0px 3px 0px 4px; color :#336699; font-size :15px; font-weight :bold; }
+.description { padding :4px 4px 0 4px; text-align :left; }
+fieldset.dir_mode, fieldset.file_mode {background :transparent; }
+select option.disabled { color :#aaaaaa; }
+.error_box { padding :10px; text-align :center; }
+.form_submit .right, .right { text-align :right; }
+.form_submit, .input_full, .setting_value input, .setting_value select, .setting_value textarea, .value_input input, .value_input text, .value_input select { width :100%; }
+.graphic { width :50px; border :4px solid #fdfdfd; padding-left :3px; height :50px; }
+.graphic img { padding :4px; border :1px solid #d0d0d0; background-color :#ffffff; vertical-align :middle; }
+.header_list_actions { width :150px; text-align :left; }
+.header_list_block { width :180px; text-align :left; }
+.header_list_menu_title, .list_menu_title, .left, .form_submit .left, .header_list_type { text-align :left;padding-bottom:4px;padding-top:4px; }
+.header_list_page_id, .list_page_id { width :50px; padding-right :15px; text-align :right; }
+.header_list_page_title, .list_page_title {padding-bottom: 10px;padding-top: 10px;text-align: left; width: 200px; }
+.header_list_page_URL, .list_page_URL {width:250px; text-align:left;}
+.header_list_pubdate_start, .header_list_pubdate_end, .list_pubdate_start, .list_pubdate_end { width :200px; text-align :left; }
+.header_list_section_id, .list_section_id { width :30px; text-align :right; }
+.header_list_sections_actions { width :30px; text-align :left; }
+.hide, #hide2, .page_list, .input_hide,
+.tabs_hide { display :none; }
+/* WB2.8 STYLES */
+.img_noborder img { border :0; }
+.important {
+background:none repeat scroll 0 0 #FFFFFF;
+border:2px solid red;
+color:red;
+font-size:12px;
+margin-bottom:12px;
+padding:10px;
+}
+.info { padding :10px; margin-bottom :0.5em; background :#f8f8f8; color :#666666; font-size :91.7%; }
+.input_large { width :300px; }
+.input_medium { width :150px; }
+.input_narrow { width :100px; }
+.input_normal { width :120px; }
+.input_small { width :20px; }
+.input_wide { width :200px; }
+.jsadmin_drag img { margin-top :2px; vertical-align : middle; cursor :pointer; }
+.jsadmin_drag img:hover { }
+.list_actions { width :25px; height :25px; text-align :left; vertical-align :middle; }
+.list_page_language { width :240px; }
+.menu { margin :0 auto; padding :0; width :900px; text-align :center; }
+.menu .current a, .menu a:hover { border-bottom :3px solid #d25e59; color:#FFFFFF; }
+.menu a { float :left; margin :0 5px 0 0; padding :0 0 0 3px; border-bottom :3px solid #DDDDDD; color :#FFFFFF !important; background :url(images/tabl.jpg) #28609b no-repeat left top; text-decoration :none; }
+.menu a span { padding :6px 9px 6px 6px; display :block; background :url(images/tabr.jpg) #AAAAAA no-repeat right top; }
+.menu a:hover, .menu a:hover span, li.current { background-color :#999999; text-decoration :none; color:#FFFFFF; }
+.menu li { margin :0 2px 0 0; padding :0; border-bottom :3px solid #c9c9c9; display :inline; font-weight :bold; }
+.menu ul { margin :0; padding :0; list-style-type :none; }
+.modify_link { padding :4px 0 0 7px; }
+.note { border :2px #448844 solid; padding :10px; margin :10px auto; background :#eeffee; color :#004400; color :#666666; font-size :10px; }
+img.page_list_rights { border :none; float :left; margin :0; vertical-align :middle; }
+.pages_list_header {  }
+.page_list_show li { display :block; }
+.pages_list .icon_col td img { border-style :none; float :left; padding-right :7px; display :block; }
+.pages_list ul { margin :0; padding :0; font-weight :normal; }
+.pages_list ul li { margin :2px 0; list-style-type :none; }
+table.pages_view tr, tr.sectionrow { background :#fDfDfD; }
+table.pages_view tr:hover, tr.sectionrow:hover { background :#ddd; }
+.row_0 { background-color :transparent; }
+.row_1 { background-color :#ccddee; }
+.save_section { margin :20px auto 5px auto; }
+.section, .section_2 { margin-top :1px; padding :0; border :1px solid #999999; width :100%; background-color :#fdfdfd; height:125px; display:block; float: right; overflow: hidden; }
+
+tr.sectionrow { padding :0 10px; }
+tr.sectionrow td { border-top :3px solid #f9f9f9; }
+.sections_list { padding-left :10px; font-weight :bold; }
+.sections_list table, .pages_list table, table.pages_view { width :900px; }
+
+td.setting_admin input { width :25px; height :13px; }
+td.setting_admin label { width :240px; margin :0 auto; padding :0px 0px 2px 0px; display :inline-block; vertical-align :middle; }
+.setting_name { width :10%; min-width :180px; }
+.setting_name { width :20%; }
+td.setting_small input { width :358px; height :16px; }
+td.setting_small select { width :362px; height :20px; }
+.setting_value { width :90%; }
+.setting_value textarea { height :50px; }
+.settings_table td { padding :5px; text-align :left; vertical-align :top; }
+
+.subc { padding :0 0.5em; }
+.subcl { padding :0 1em 0 0; }
+/* set div layers indead tables */
+.subcolumns { width :100%; overflow :hidden; }
+.subcolumns_oldgecko { width :100%; float :left; }
+.subcr { padding :0 0 0 1em; }
+.submit, .cancel { width :100px; margin-top :5px; }
+.title { margin-bottom :5px; font-weight :bold; font-size :14px; text-align :left; }
+#topmenu .version { padding :0 10px 0 0; color :#999999; font-size :11px; }
+.warning {
+background:none repeat scroll 0 0 #FFFFFF;
+border:2px solid red;
+color:red;
+font-size:12px;
+margin-bottom:12px;
+padding:10px;
+}
+#admin_header { width :900px; margin :0 auto; padding :10px 0 0 0; text-align :center; height :105px; }
+a#website_title { display :block; color :#003366; font-size :14px; font-weight :bold; text-align :left; text-transform :uppercase; text-decoration :none; }
+#admintools li { float :left; width :48%; margin-left: 0px; margin-top: 0px; margin-bottom:5px; margin-right: 5px; list-style-type :none; }
+#admintools ul { padding :0; margin :0; }
+#content_container { width :900px; clear :both; margin :0 auto; text-align :center; }
+#file_mode input, #dir_mode input { width :12px; height :12px; }
+/* acces */
+#file_mode, #dir_mode { width :40%; background :transparent; }
+#header_top { height :78px; }
+#language,
+#timezone,
+#date_format,
+#time_format, #display_name,
+#username,
+#email,
+#new_password_1,
+#new_password_2,
+#current_password { min-width :250px; }
+#multi_lingual { font-weight :bolder; }
+#submit,
+#reset { max-width :100px; }
+#topmenu { float :right; color :#003366; text-align :right; }
+#topmenu a { margin :0 5px; color :#003366; font-size :11px; text-decoration :underline; }
+a:link, a:visited, a:active { color :#28609b; text-decoration :none; }
+a:hover { color :#28609b; text-decoration :underline; }
+
+body { margin :0; background :url(images/ornaments_03.gif) #f9f9f9 0 0; text-align :center; }
+body,td,th,input,textarea { color :#003366; font-family:verdana,arial,helvetica,sans-serif; font-size :11px; }
+
+div#username { width :402px; border :0px groove #6799c4; margin :0; font-weight :bold; text-align :left; height :17px; min-width :250px; }
+form { margin :0; }
+h1 { color :#003366; font-size :15px; text-align :left; text-transform :uppercase; }
+h2 { margin :5px 0; color :#003366; font-size :16px; font-family :arial,sans-serif; font-weight :bold; text-align :left; letter-spacing :0px; }
+h3 { margin :5px 0; color :#003366; font-size :14px; text-align :left; }
+hr { margin :15px 0; color :#003366; height :1px; }
+html { overflow :-moz-scrollbars-vertical; /* Force firefox to always show room for a vertical scrollbar */ }
+iframe { border :1px solid #35373a; }
+img { border :0px; }
+input:focus, select:focus, textarea:focus { background :#f1f8fd; }
+label { cursor :pointer; }
+td {}
+
+div.preference_box { position :relative; margin :0px auto; }
+div.preference_box form{ background :transparent; height :auto; }
+div.preference_box fieldset { margin :10px auto; }
+div.preference_box legend { color :#999999	; font-size :11px; font-weight:bold; letter-spacing:0.5px; padding :0px 3px 8px 4px; }
+div.preference_box label{ font-weight :600; padding-left :4px; padding-top: 3px; color:#003366;}
+div.preference_box select { width :253px; margin-bottom :5px; }
+div.preference_box input[type='text'], 
+div.preference_box input[type='password'] {margin-bottom: 8px; padding: 5px; width: 250px; }
+
+div.userlist_box { position :relative; margin :0px auto; }
+div.userlist_box form { background :transparent; height :auto; }
+div.userlist_box fieldset { margin :10px auto; }
+div.userlist_box legend { color :#336699; font-size :15px; font-weight :bold; padding :0px 3px 0px 4px; }
+div.userlist_box select { width :400px; }
+div.userlist_box input[type='submit'] { width : auto;  font-size :1em;  }
+
+div.access_box input[type='text'].input_text_disabled { border :0px; font-weight :bold; background :transparent; }
+div.access_box { position :relative; margin :0px auto; }
+div.access_box form{ background :transparent; height :auto; }
+div.access_box fieldset { margin :10px auto; }
+div.access_box legend { color :#336699; font-size :15px; font-weight :bold; padding :0px 3px 0px 4px; }
+div.access_box label { font-weight :600; padding-left :4px; }
+div.access_box input[type='text'] { width :400px; }
+div.access_box p label { font-weight : normal; padding-left :4px; }
+div.access_box .c25l p label { font-weight : bold; padding-left :4px; }
+div.access_box .checkbox { height :20px; }
+div.access_box .checkbox .c25l label { padding :6px }
+div.access_box input[type='text'],
+div.access_box input[type='password'] { width :300px; margin-bottom :5px; }
+div#username { height :17px; width :402px; background-color :transparent; min-width :250px; border :0px groove #6799c4; text-align :left; font-weight :bold; margin :0; }
+.save_section { margin : 20px auto 5px 10px; }
+
+td div.title { color: #003366; }
+li.current { background-color: #900; }
+table.section_2 { height: 75px; text-align: left; margin-top: 10px; }
+table.section {
+	height: 100px !important;
+	padding:10px;
+}
+span.title { color: #003366; }
+
+#decorator {
+	position: absolute;
+	left:0px;
+	top:0px;
+	background:url("images/background.jpg") repeat scroll left top #CCCCCC;
+	height: 115px;
+	width:100%;
+	display:block;
+	float:left;
+	z-index:-1000;
+}
+
+#text_login {
+text-align:left;
+font-size:20px;
+color:#003366;
+padding:15px 0 0 50px;
+height:100px;
+}
+
+#key {
+float:left;
+margin-bottom:30px;
+margin-top:30px;
+width:100%;
+}
+
+td.browse_media {
+border:1px solid #CCCCCC;
+padding:10px;
+}
+.bowse_wrapper {
+/*	background-color: #FFFFFF; */
+	padding-left: 5px;
+}
+
+td.media_upload {
+border:1px solid #CCCCCC;
+padding:10px;
+width:350px;
+}
+
+td.image_action {
+	width: 120px !important;
+}
+div.table_list {
+background-color:#FFFFFF;
+border:1px solid #CCCCCC;
+padding:4px;
+}
+tr.row_1, tr.row_0 {
+	height: 50px;
+}
+tr.row_1 {
+	background-color: #E8EDF2;
+}
+span.admin_tool {
+	color: #990000;
+}
+input[disabled='disabled'] {
+	border: none;
+	background-color: #EEEEEE;
+	width: 100%;
+}
+input[checked='checked'] {
+	width:auto;
+}
+.tr_20 {
+	height:28px;
+}

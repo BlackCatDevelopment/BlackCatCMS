@@ -1,0 +1,60 @@
+<div class="info">
+{translate('Site settings')}
+</div>
+
+<table>
+  <tbody>
+    <tr{if $errors.installer_website_title || $errors.global} class="fail"{/if}>
+      <td><label for="installer_website_title">{translate('Website title')}</label></td>
+      <td>
+        <input type="text" tabindex="1" name="installer_website_title" id="installer_website_title" style="width: 97%;" value="{$installer_website_title}" />
+        {if $errors.installer_website_title}<br /><span>{$errors.installer_website_title}</span>{/if}
+      </td>
+	</tr>
+	<tr{if $errors.installer_backend_theme || $errors.global} class="fail"{/if}>
+      <td><label for="installer_backend_theme">{translate('Backend theme')}</label><br />
+	  	<span style="font-size:smaller">{translate('Click on the image on the right to see a preview')}</span></td>
+      <td>
+        <select tabindex="2" id="installer_backend_theme" name="installer_backend_theme">
+          <option value="algos"{if $installer_backend_theme == 'algos'} selected="selected"{/if}>{translate('traditional')} (Algos)</option>
+          <option value="freshcat"{if $installer_backend_theme == 'freshcat'} selected="selected"{/if}>{translate('modern (jQuery enhanced)')} (FreshCat)</option>
+        </select>
+        {if $errors.installer_backend_theme}<br /><span>{$errors.installer_backend_theme}</span>{/if}
+        <span id="be_preview"><a href="{$installer_uri}/templates/default/images/{$installer_backend_theme}.png" id="preview_link" class="fancybox"><img id="preview_image" src="{$installer_uri}/templates/default/images/tn_{$installer_backend_theme}.png" /></a></span>
+      </td>
+	</tr>
+	<tr{if $errors.installer_admin_username || $errors.global} class="fail"{/if}>
+      <td><label for="installer_admin_username">{translate('Username')}</label></td>
+      <td>
+        <input type="text" tabindex="3" name="installer_admin_username" id="installer_admin_username" style="width: 97%;" value="{$installer_admin_username}" />
+        {if $errors.installer_admin_username}<br /><span>{$errors.installer_admin_username}</span>{/if}
+	  </td>
+	</tr>
+	<tr{if $errors.installer_admin_email || $errors.global} class="fail"{/if}>
+      <td><label for="installer_admin_email">{translate('E-Mail')}</label></td>
+      <td>
+        <input type="text" tabindex="4" name="installer_admin_email" id="installer_admin_email" style="width: 97%;" value="{$installer_admin_email}" />
+        {if $errors.installer_admin_email}<br /><span>{$errors.installer_admin_email}</span>{/if}
+	  </td>
+	</tr>
+	<tr{if $errors.installer_admin_password || $errors.global} class="fail"{/if}>
+      <td><label for="installer_admin_password">{translate('Password')}</label></td>
+      <td>
+    	<input type="password" tabindex="5" name="installer_admin_password" id="installer_admin_password" style="width: 98%;" value="{$installer_admin_password}" />
+    	{if $errors.installer_admin_password}<br /><span>{$errors.installer_admin_password}</span>{/if}
+      </td>
+    </tr>
+	<tr{if $errors.installer_admin_repassword || $errors.global} class="fail"{/if}>
+      <td><label for="installer_admin_repassword">{translate('Retype Password')}</label></td>
+      <td>
+    	<input type="password" tabindex="6" name="installer_admin_repassword" id="installer_admin_repassword" style="width: 98%;" value="{$installer_admin_repassword}" />
+    	{if $errors.installer_admin_repassword}<br /><span>{$errors.installer_admin_repassword}</span>{/if}
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+{if $errors.global}
+<div id="result" class="fail">{$errors.global}</div>
+{/if}

@@ -1,0 +1,35 @@
+body {background-color: #85C226;background-image: url("background.png");background-repeat: repeat-x;margin: 0;}
+body, h1, h2, h3, td, th, input, textarea {color:#85c226;font-family: Verdana,Arial,Helvetica,sans-serif;}
+body, td, th, input, textarea{font-size:12px;color:#333333;}
+div.info,div.fail{margin-top:30px;padding:25px 10px 25px 40px;text-align:center;background:#ccccff url(info.png) no-repeat 10px center;border:1px solid #53a0f2;border-radius: 10px 10px 10px 10px;}
+div.fail{border:1px solid #c00;background-color:#ffdbdb;background-image:url();}
+/* tables */
+table{width:100%;border-collapse: collapse;border:0 none;margin-top:30px;}
+table.header {border:0 none;margin:20px auto;padding:0;text-align:center;width:900px;}
+table#footer {width:100%;padding: 10px 0px 10px 0px;margin:0;border:0;}
+table#footer td{font-size:10px;text-align:center;color:#fff;}
+th{background-color:#85c226;text-align:left;padding:5px 0;}
+td{padding:5px;}
+table th.col1{width:50%;}
+table th.col2{width:30%;}
+td.ok{background: url(ok.png) no-repeat left center;width:20px;}
+td.fail{background: url(not_ok.png) no-repeat left center;padding-left:20px;}
+tr.fail input{border:1px solid #c00;background-color: #ffdbdb;}
+.success{color:#85c226;font-weight:bold;}
+.fail{color:#c00;font-weight:bold;}
+.box{border:1px solid #838280;border-radius: 10px 10px 10px 10px;margin:20px auto;background-color:white;width:900px;}
+div#content{padding:15px;}
+textarea#license{min-height:300px;width:100%;margin-top:20px;}
+/* navigation */
+ul#steps {background-color:#838280;width:890px;padding:0;}
+ul#steps {list-style: none outside none;margin: 0 auto;overflow: hidden;}
+ul#steps li{float:left;font-size:15px;color:white;padding:5px 5px 5px 25px;width:100px;}
+ul#steps li a{text-decoration:none;display:block;color:white;}
+ul#steps li.current, ul#steps li.current a{background-color:#FFFFFF;color: #838280;}
+ul#steps li.done{background: url(ok.png) no-repeat left center;}
+ul#steps li span{font-size:10px;}
+
+/* form elements */
+div#buttons{background-color:#838280;margin-top:15px;height:30px;padding:15px;width:870px;}
+button{float:right;}
+input[type="text"],input[type="password"] {border: 1px solid #000000;padding: 5px;}

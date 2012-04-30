@@ -1,0 +1,34 @@
+LEPTON CMS Installation Instructions
+============================================
+
+First of all, you must have a webserver/webspace with following requirements:
+
+    * Minimum of 20 MB webspace (extended installations need more)
+    * PHP 5.2. or higher
+    * MySQL 5.0 or higher
+    * PHP Safe Mode = off
+    * Activated PHP Session Support
+
+PHP and MySQL installed correctly. 
+Once you have got that, place the "upload" folder somewhere on 
+your server, probably under the document root:
+e.g. /documentroot/upload
+
+This should be accessed by an address something like this:
+e.g. http://your_domain.tld/upload/
+
+If you want no "upload" directory please upload all files and folders directly to your root.
+
+Now create a blank MySQL database, commonly called "lepton".
+Please use collation "utf8_unicode_ci" if possible.
+
+Once that is all done simple run the
+install script from your browser:
+e.g. http://your_domain.tld/upload/install 
+or 
+http://your_domain.tld/install 
+if you don't want "upload" directory.
+
+Fill in the form, submit and if all details are correct, you should be taken to LEPTON Login Page.
+
+Have fun!

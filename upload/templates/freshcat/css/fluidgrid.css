@@ -1,0 +1,435 @@
+/**
+ * This file is part of LEPTON Core, released under the GNU GPL
+ * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ * 
+ * NOTICE:LEPTON CMS Package has several different licenses.
+ * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *
+ * @author          LEPTON Project
+ * @copyright       2012, LEPTON Project
+ * @link            http://www.LEPTON-cms.org
+ * @license         http://www.gnu.org/licenses/gpl.html
+ * @license_terms   please see LICENSE and COPYING files in your package
+ * @version         $Id$
+ *
+ */
+
+/* Containers
+----------------------------------------------------------------------------------------------------*/
+.c_16 {
+	width: 100%;
+}
+
+/* Grid >> Global
+----------------------------------------------------------------------------------------------------*/
+
+.g_1,
+.g_2,
+.g_3,
+.g_4,
+.g_5,
+.g_6,
+.g_7,
+.g_8,
+.g_9,
+.g_10,
+.g_11,
+.g_12,
+.g_13,
+.g_14,
+.g_15,
+.g_16 {
+	display:inline;
+	float: left;
+	position: relative;
+	margin-left: 1%;
+	margin-right: 1%;
+}
+
+/* Grid >> Children (Alpha ~ First, Omega ~ Last)
+----------------------------------------------------------------------------------------------------*/
+
+.alpha {
+	margin-left: 0;
+}
+
+.omega {
+	margin-right: 0;
+}
+
+/* Grid >> 16 Columns
+----------------------------------------------------------------------------------------------------*/
+
+
+.c_16 .g_1 {
+	width:4.25%;
+}
+
+.c_16 .g_2 {
+	width:10.5%;
+}
+
+.c_16 .g_3 {
+	width:16.75%;
+}
+
+.c_16 .g_4 {
+	width:23.0%;
+}
+
+.c_16 .g_5 {
+	width:29.25%;
+}
+
+.c_16 .g_6 {
+	width:35.5%;
+}
+
+.c_16 .g_7 {
+	width:41.75%;
+}
+
+.c_16 .g_8 {
+	width:48.0%;
+}
+
+.c_16 .g_9 {
+	width:54.25%;
+}
+
+.c_16 .g_10 {
+	width:60.5%;
+}
+
+.c_16 .g_11 {
+	width:66.75%;
+}
+
+.c_16 .g_12 {
+	width:73.0%;
+}
+
+.c_16 .g_13 {
+	width:79.25%;
+}
+
+.c_16 .g_14 {
+	width:85.5%;
+}
+
+.c_16 .g_15 {
+	width:91.75%;
+}
+
+.c_16 .g_16 {
+	width:98.0%;
+}
+
+
+
+/* Prefix Extra Space >> 16 Columns
+----------------------------------------------------------------------------------------------------*/
+
+
+.c_16 .pre_1 {
+	padding-left:6.25%;
+}
+
+.c_16 .pre_2 {
+	padding-left:12.5%;
+}
+
+.c_16 .pre_3 {
+	padding-left:18.75%;
+}
+
+.c_16 .pre_4 {
+	padding-left:25.0%;
+}
+
+.c_16 .pre_5 {
+	padding-left:31.25%;
+}
+
+.c_16 .pre_6 {
+	padding-left:37.5%;
+}
+
+.c_16 .pre_7 {
+	padding-left:43.75%;
+}
+
+.c_16 .pre_8 {
+	padding-left:50.0%;
+}
+
+.c_16 .pre_9 {
+	padding-left:56.25%;
+}
+
+.c_16 .pre_10 {
+	padding-left:62.5%;
+}
+
+.c_16 .pre_11 {
+	padding-left:68.75%;
+}
+
+.c_16 .pre_12 {
+	padding-left:75.0%;
+}
+
+.c_16 .pre_13 {
+	padding-left:81.25%;
+}
+
+.c_16 .pre_14 {
+	padding-left:87.5%;
+}
+
+.c_16 .pre_15 {
+	padding-left:93.75%;
+}
+
+
+
+/* Suffix Extra Space >> 16 Columns
+----------------------------------------------------------------------------------------------------*/
+
+
+.c_16 .su_1 {
+	padding-right:6.25%;
+}
+
+.c_16 .su_2 {
+	padding-right:12.5%;
+}
+
+.c_16 .su_3 {
+	padding-right:18.75%;
+}
+
+.c_16 .su_4 {
+	padding-right:25.0%;
+}
+
+.c_16 .su_5 {
+	padding-right:31.25%;
+}
+
+.c_16 .su_6 {
+	padding-right:37.5%;
+}
+
+.c_16 .su_7 {
+	padding-right:43.75%;
+}
+
+.c_16 .su_8 {
+	padding-right:50.0%;
+}
+
+.c_16 .su_9 {
+	padding-right:56.25%;
+}
+
+.c_16 .su_10 {
+	padding-right:62.5%;
+}
+
+.c_16 .su_11 {
+	padding-right:68.75%;
+}
+
+.c_16 .su_12 {
+	padding-right:75.0%;
+}
+
+.c_16 .su_13 {
+	padding-right:81.25%;
+}
+
+.c_16 .su_14 {
+	padding-right:87.5%;
+}
+
+.c_16 .su_15 {
+	padding-right:93.75%;
+}
+
+
+
+/* Push Space >> 16 Columns
+----------------------------------------------------------------------------------------------------*/
+
+
+.c_16 .ps_1 {
+	left:6.25%;
+}
+
+.c_16 .ps_2 {
+	left:12.5%;
+}
+
+.c_16 .ps_3 {
+	left:18.75%;
+}
+
+.c_16 .ps_4 {
+	left:25.0%;
+}
+
+.c_16 .ps_5 {
+	left:31.25%;
+}
+
+.c_16 .ps_6 {
+	left:37.5%;
+}
+
+.c_16 .ps_7 {
+	left:43.75%;
+}
+
+.c_16 .ps_8 {
+	left:50.0%;
+}
+
+.c_16 .ps_9 {
+	left:56.25%;
+}
+
+.c_16 .ps_10 {
+	left:62.5%;
+}
+
+.c_16 .ps_11 {
+	left:68.75%;
+}
+
+.c_16 .ps_12 {
+	left:75.0%;
+}
+
+.c_16 .ps_13 {
+	left:81.25%;
+}
+
+.c_16 .ps_14 {
+	left:87.5%;
+}
+
+.c_16 .ps_15 {
+	left:93.75%;
+}
+
+
+
+/* Pull Space >> 16 Columns
+----------------------------------------------------------------------------------------------------*/
+
+
+.c_16 .pl_1 {
+	left:-6.25%;
+}
+
+.c_16 .pl_2 {
+	left:-12.5%;
+}
+
+.c_16 .pl_3 {
+	left:-18.75%;
+}
+
+.c_16 .pl_4 {
+	left:-25.0%;
+}
+
+.c_16 .pl_5 {
+	left:-31.25%;
+}
+
+.c_16 .pl_6 {
+	left:-37.5%;
+}
+
+.c_16 .pl_7 {
+	left:-43.75%;
+}
+
+.c_16 .pl_8 {
+	left:-50.0%;
+}
+
+.c_16 .pl_9 {
+	left:-56.25%;
+}
+
+.c_16 .pl_10 {
+	left:-62.5%;
+}
+
+.c_16 .pl_11 {
+	left:-68.75%;
+}
+
+.c_16 .pl_12 {
+	left:-75.0%;
+}
+
+.c_16 .pl_13 {
+	left:-81.25%;
+}
+
+.c_16 .pl_14 {
+	left:-87.5%;
+}
+
+.c_16 .pl_15 {
+	left:-93.75%;
+}
+
+
+
+
+/* Clear Floated Elements
+----------------------------------------------------------------------------------------------------*/
+
+/* http://sonspring.com/journal/clearing-floats */
+
+.clear {
+	clear: both;
+	display: block;
+	overflow: hidden;
+	visibility: hidden;
+	width: 0;
+	height: 0;
+}
+
+
+.clearfix:after {
+	clear: both;
+	content: ' ';
+	display: block;
+	font-size: 0;
+	line-height: 0;
+	visibility: hidden;
+	width: 0;
+	height: 0;
+}
+
+.clearfix {
+	display: inline-block;
+}
+
+* html .clearfix {
+	height: 1%;
+}
+
+.clearfix {
+	display: block;
+}
+
+.sp_clear {
+	padding-bottom: 1em;
+}

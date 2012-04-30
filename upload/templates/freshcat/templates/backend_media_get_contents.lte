@@ -1,0 +1,48 @@
+<div id="fc_main_content">
+	<div id="fc_media_browser">
+		<ul class="fc_media_folder">
+			<input type="hidden" name="folder_path" value="{$initial_folder}" />
+			{if count($folders)==0 && count($files)==0}
+			<li class="fc_filetype_image fc_no_content">{translate('No files available')}</li>
+			{else}
+			{foreach $folders as folder}
+			<li class="fc_filetype_folder{if $open_folder == $folder.NAME} fc_active{/if}" title="{$folder.NAME}">
+				<div class="fc_name_short">
+					<p>{$folder.NAME}</p>
+				</div>
+				<input type="hidden" name="load_url" value="{$folder.NAME}" />
+			</li>
+			{/foreach}
+			{foreach $files as file}
+			<li class="fc_filetype_image" title="{$file.FULL_NAME}">
+				<div class="fc_name_short fc_file_jpg">
+					<p>
+						{$file.FULL_NAME}
+					</p>
+				</div>
+				<input type="hidden" name="load_url" value="{$file.FULL_NAME}" />
+				<div class="fc_file_info">
+					{if $file.show_preview}
+					<img src="{$LEPTON_URL}/{$initial_folder}/{$file.FULL_NAME}" alt="" />
+					{else}
+					<p class="fc_no_preview_{$file.FILETYPE}">{translate('No preview available')}</p>
+					{/if}
+					<span class="fc_filename">{$file.NAME}</span>
+					<div class="fc_file_more_info ui-corner-all">
+						<span class="fc_file_label">{translate('File type')}:</span>{$file.FILETYPE}<br/>
+						<span class="fc_file_label">{translate('File size')}:</span>{$file.FILESIZE}<br/>
+						<span class="fc_file_label">{translate('Created at')}:</span>{$file.FILEDATE} {translate('at')} {$file.FILETIME}
+					</div>
+					<div class="fc_file_options">
+						<button class="left fc_rename_file">{translate('Rename')}</button>
+						<button class="right fc_delete_file">{translate('Delete')}</button>
+						<div class="clear"></div>
+					</div>
+				</div>
+			</li>
+			{/foreach}
+			{/if}
+		</ul>
+	</div>
+	<span class="fc_success_box"></span>
+</div>

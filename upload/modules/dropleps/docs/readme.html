@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+    <title>DropLEPs</title>
+    <link href="readme.css" rel="stylesheet" type="text/css" media="screen" />
+  </head>
+  <body>
+	<div style="color:#7f7f7f;font-size:smaller;">DropLEPs Help</div>
+
+	<img src="dropleps_logo.png" alt="Logo" style="float:left;"/>
+	
+	<br /><br />
+	<strong>The LEPTON DropLEPs module is based on the Droplets module included in
+	Website Baker, but completely rewritten and with lots of new features; so the
+	name "DropLEPs" means "Droplets made the LEPTON way".</strong><br /><br />
+	DropLEPs (or Droplets, we use it vice versa here) are small chunks of php code
+	(just like the code module) that can be included in your template or any other
+	content section. <br />
+	Including a droplet is done by encapsulating the droplet name in double brackets. <br /><br />
+	<strong>Example:</strong><br />
+	If you want to use the droplet &quot;LoginBox&quot;, you only need to add
+	<strong>[[LoginBox]]</strong> to your template or a WYSIWYG section on your
+	page. <br /><br />
+	You are encouraged to create your own DropLEPs and share them with the community.
+	<br style="clear:left;" /><br />
+	
+	<h3>Installation</h3><br />
+	The DropLEPs module is installed as an Admin Tool. As it is shipped with
+	LEPTON >= v2.0, you don't have to install it. If you need to install an
+	upgrade, just install it like any other module in the LEPTON backend.<br />
+
+    <h3>Usage</h3><br />
+    You need to have the permission to access [Admin Tools] -> [DropLEPS] to
+	use this tool.<br />
+	Clicking the tool will display the current installed DropLEPs. Depending on
+	your permissions, you will be able to
+    <ul>
+      <li> create (add) your own Droplets;</li>
+      <li> edit existing Droplets;</li>
+      <li> activate / deactivate Droplets;</li>
+      <li> duplicate Droplets (to create a new one based on an existing one);</li>
+      <li> delete Droplets;</li>
+      <li> import (install) new Droplets;</li>
+      <li> export (backup) Droplets;</li>
+      <li> manage Droplet permissions;</li>
+	</ul>
+	<br />
+
+	<h3>Getting DropLEPs</h3><br />
+	A fast growing number of DropLEPs are available for use, you can use the
+	<a href="http://www.websitebakers.com/pages/Droplets/official-library.php" target="_new">Official Droplets Library</a>
+	on the AMASP project website, or you can search the Forum. You may use any
+	Website Baker Droplet on LEPTON.<br /><br />
+	DropLEPs can be added by copy&amp;paste or by direct upload of an appropriate ZIP file.<br />
+	
+	<h3>Coding DropLEPs</h3><br />
+	DropLEPs run in PHP mode, no <span style="color:#ff0000;">&lt;?php</span>
+	or <span style="color:#ff0000;">?&gt;</span> is allowed in the code!
+	If any of these tags are found in the code they will be removed. Your code
+	will not run as expected. <br />
+	The droplet code can NOT echo or print data to the output stream directly.
+	The Droplet name is replaced by the return value of the PHP code.<br /><br />
+	
+	<strong>Example: [[HelloWorld]]</strong><br /><br />
+	<span style="color:#ff0000;">Wrong code:</span> echo &quot;Hello World&quot;; <br />
+	<span style="color:#339966;">Correct code:</span> return &quot;Hello World&quot;; <br /><br />
+	Take a look at the DropLEPs that come with the module for examples.<br />
+	DropLEPs can modify the complete page content. <br />
+	When the Droplet is called, an extra variable ($wb_page_data) is made available.
+	This variable holds all the content of your current generated webpage.
+	You can modify any part of this content simply by replacing it in the variable.
+    There is no need to return this variable, the Droplet code will process changed
+    content automatically.<br /><br />
+
+	DropLEPs will check the PHP code you have saved for validity. <br />
+	When the code will not execute correctly a red flashing icon
+    <img src="../css/img/invalid.gif" alt="icon" title="invalid droplet code icon" />
+    will apear in the backend DropLEPs list. <br />
+	The standard blue icon
+    <img src="../css/img/droplet.png" alt="icon" title="standard droplet icon" />
+    is no guarantee that the DropLEPs does what you would expect it to do, it
+	will just tell you if the code is valid PHP code.<br /><br />
+
+	DropLEPs do not need to return any data. When you end your code with
+	<pre>return true;</pre> there will not be an error message. The processed
+	Droplet tag will just be removed.<br /><br />
+	
+	<h3>PHP color coding</h3><br />
+	The DropLEPs edit page is ready to use the EditArea module. This module
+	creates a color coded editor for PHP code. EditArea is included with LEPTON,
+	so you don't need to install it.<br /><br />
+	
+	<h3>Exporting DropLEPs</h3><br />
+	You can backup your DropLEPs checking the checkboxes of the DropLEPs you
+	wish to save and hit <button disabled="disabled" title="Export">Export</button><br />
+	This will save all marked DropLEPs as single PHP files into a ZIP file. You
+	can take this ZIP and <button disabled="disabled" title="Import">Import</button> it on another
+    LEPTON Installation, for example.<br />
+	To see a list of all backups you created, click on the
+	<button disabled="disabled" title="Backups">Manage Backups</button> button. This button will only
+	appear if there really <strong>are</strong> backup files. You can now manage your backups,
+	i.e., delete, recover or download them, see how much files (=DropLEPs) are included,
+	and even view a list of included files. To see the list, place the mouse pointer on the file
+	name; a "tooltip" will appear that shows the files contained in the ZIP.<br />
+	
+	</body>
+
+</html>

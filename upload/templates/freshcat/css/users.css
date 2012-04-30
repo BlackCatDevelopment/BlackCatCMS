@@ -1,0 +1,326 @@
+/**
+ * This file is part of LEPTON Core, released under the GNU GPL
+ * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ * 
+ * NOTICE:LEPTON CMS Package has several different licenses.
+ * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *
+ * @author          LEPTON Project
+ * @copyright       2012, LEPTON Project
+ * @link            http://www.LEPTON-cms.org
+ * @license         http://www.gnu.org/licenses/gpl.html
+ * @license_terms   please see LICENSE and COPYING files in your package
+ * @version         $Id$
+ *
+ */
+
+#fc_lists_overview {
+	line-height: 2em;
+	border-bottom-color: #9e9e9e;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+#fc_list_overview {
+	border-color: #cccccc;
+	border-left-width: 1px;
+	border-bottom-width: 0px;
+	border-right-width: 1px;
+	border-top-width: 0px;
+	padding: 0px;
+	border-style: solid;
+	background-color: #f8f8f8;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+#fc_list_overview li {
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: white;
+	border-bottom-color: #cccccc;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	padding-left: 60px;
+	padding-bottom: 5px;
+	padding-right: 10px;
+	padding-top: 5px;
+	margin: 0px;
+	cursor: pointer;
+}
+
+#fc_list_overview.fc_group_list li {
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
+
+#fc_list_overview li span {
+	display: block;
+}
+#fc_list_overview .fc_display_name {
+	color: #1d2023;
+	padding: 0px;
+	font-size: 13px;
+}
+
+#fc_list_overview .fc_list_name {
+	color: #9e9e9e;
+	font-size: 11px;
+}
+
+#fc_list_overview li.fc_active {
+	color: white;
+	background-color: #5b9c14;
+}
+
+#fc_list_overview li.fc_active .fc_display_name {
+	color: white;
+}
+
+#fc_list_overview li.fc_active .fc_list_name {
+	color: #f8f8f8;
+}
+
+.fc_input_description {
+	font-size: 11px;
+	margin-bottom: 5px;
+	padding-left: 15px;
+	padding-bottom: 5px;
+	padding-right: 15px;
+	padding-top: 5px;
+	color: white;
+	background-color: #5b9c14;
+}
+
+#fc_list_add {
+	padding-bottom: 0px;
+	padding-top: 0px;
+	color: #f8f8f8;
+	background-position: 0 -80px;
+	padding-right: 5px;
+	padding-left: 5px;
+	border-right-color: #cccccc;
+	border-left-color: #cccccc;
+	border-top-color: #5b9c14;
+	border-bottom-color: #0d3601;
+	border-right-width: 1px;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-style: solid;
+	border-left-width: 1px;
+	font-weight: bold;
+	font-size: 11px;
+	text-shadow: 1px 1px 1px #1d2023;
+	background-image: url(images/header/header_back.png);
+	background-repeat: repeat-x;
+	background-color: #5b9c14;
+	cursor: pointer;
+}
+
+#fc_list_add:hover {
+	background-position: 0 -110px;
+}
+
+.fc_advanced_groups {
+	margin-left: -5px;
+	margin-top: -27px;
+	margin-bottom: 25px;
+	padding-left: 20px;
+	padding-bottom: 5px;
+	padding-right: 20px;
+	padding-top: 27px;
+	border-color: #9e9e9e;
+	border-width: 1px;
+	border-style: solid;
+}
+
+.fc_advanced_button {
+	top: -10px;
+	z-index: 2;
+	position: relative;
+	margin-left: -20px;
+	height: 40px;
+	width: 50px;
+	background-position: -234px -40px;
+	background-repeat: no-repeat;
+	background-image: url(images/jquery_ui/on_off_button.png);
+	display: inline-block;
+	cursor: pointer;
+}
+
+.fc_advanced_button:hover {
+	background-position: -312px -40px;
+}
+
+.fc_advanced_button:active {
+	background-position: -390px -40px;
+}
+
+.fc_advanced_button.fc_active {
+	background-position: -468px -40px;
+}
+
+.fc_advanced_button.fc_active:hover {
+	background-position: -546px -40px;
+}
+
+#fc_list_search {
+	position: relative;
+	border-left-color: #cccccc;
+	border-bottom-color: #cccccc;
+	border-right-color: #cccccc;
+	border-top-color: white;
+	text-shadow: 1px 1px 1px white;
+	background-image: url(images/header/header_back.png);
+	font-size: 11px;
+	line-height: 30px;
+	padding-right: 5px;
+	padding-left: 5px;
+	border-width: 1px;
+	border-style: solid;
+	background-color: #f8f8f8;
+	height: 30px;
+}
+
+.fc_module_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/module_list.png);
+}
+
+.fc_language_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/language_list.png);
+}
+
+.fc_template_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/templates_list.png);
+}
+
+.fc_group_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/groups_list.png);
+}
+
+.fc_list_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/user_list.png);
+}
+
+.fc_setting_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/settings_list.png);
+}
+
+.fc_system_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/system_list.png);
+}
+
+.fc_searching_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/search_list.png);
+}
+
+.fc_server_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/server_list.png);
+}
+
+.fc_mail_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/mail_list.png);
+}
+
+.fc_time_language_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/time_language_list.png);
+}
+
+.fc_frontend_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/frontend_list.png);
+}
+
+.fc_seo_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/seo_list.png);
+}
+
+.fc_lists_item {
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	background-image: url(images/list_icons/user_list.png);
+}
+
+.fc_list_remove {
+	text-shadow: 1px 1px 1px #4e001c;
+	font-size: 11px;
+	padding-right: 10px;
+	padding-left: 10px;
+	display: inline-block;
+	float: left;
+	cursor: pointer;
+}
+
+.fc_groups_tabs li {
+	font-size: 11px;
+	width: 25%;
+}
+
+.fc_input_fake {
+	margin-top: 3px;
+	padding-right: 30px;
+	border-color: #cccccc;
+	border-width: 1px;
+	border-style: solid;
+	background-color: white;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height: 2em;
+	padding-left: 0.3em;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.fc_input_fake input {
+	width: 100%;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+	padding-top: 0px;
+	margin: 0px;
+	border-width: 0px;
+	display: block;
+	background-color: transparent;
+}
+
+.fc_input_fake .fc_close {
+	right: 5%;
+	top: 7px;
+	position: absolute;
+}
+
+.fc_input_fake input:focus {
+	outline: 0;
+}
+
+#fc_list_overview .fc_activeSearch {
+	color: #1d2023;
+}
+

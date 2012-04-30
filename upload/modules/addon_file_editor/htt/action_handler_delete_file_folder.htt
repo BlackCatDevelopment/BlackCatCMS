@@ -1,0 +1,48 @@
+<!-- BEGIN comment_block -->
+/**
+ * Admin tool: Addon File Editor
+ *
+ * This tool allows you to "edit", "delete", "create", "upload" or "backup" files of installed 
+ * Add-ons such as modules, templates and languages via the Website Baker backend. This enables
+ * you to perform small modifications on installed Add-ons without downloading the files first.
+ *
+ * This file contains the HTML output for the delete file/folder action handler.
+ * 
+ * LICENSE: GNU General Public License 3.0
+ * 
+ * @author		Christian Sommer (doc)
+ * @copyright	(c) 2008-2010
+ * @license		http://www.gnu.org/licenses/gpl.html
+ * @version		1.0.0
+ * @platform	Website Baker 2.8
+*/
+<!-- END comment_block -->
+
+<div id="mod_addon_file_editor">
+	<h4 class="admintools">
+		<a href="{URL_WB_ADMIN_TOOLS}">{TXT_HEADING_ADMINTOOLS}</a> -> {NAME_FILE_EDITOR}
+	</h4>
+	
+	<div class="help_file">
+		<a href="{URL_HELP_FILE}" target="_blank">[ {TXT_HELP} ]</a>
+	</div>
+
+	<h2><a href="{URL_FILEMANAGER}">{ADDON_TYPE}: {ADDON_NAME}</a></h2>
+	<a class="backlink" href="{URL_FILEMANAGER}">{TXT_BACK}</a>
+	
+	<form class="formbox" action="{URL_FORM_SUBMIT}" method="post">
+		<h3>{TXT_ACTION}: {TXT_ACTION_DELETE_FILE}</h3>
+		<p class="highlight"><strong>{TXT_ACTUAL_FILE}: </strong>"{ADDON_FILE}"</p>
+
+		<div class="{CLASS_HIDDEN}">
+			<input class="submit" type="submit" name="delete_file_folder" value="{TXT_SUBMIT_DELETE}" />
+			<a class="submit" href="{URL_FORM_CANCEL}">{TXT_SUBMIT_CANCEL}</a>
+		</div>
+		<br style="clear: both;" />
+	</form>
+	
+	<div class="error {CLASS_HIDDEN}">{TXT_DELETE_WARNING}</div>
+
+	{STATUS_MESSAGE}
+
+</div>

@@ -1,0 +1,35 @@
+/**
+ *  @template       Lepton-Start
+ *  @version        see info.php of this template
+ *  @author         cms-lab
+ *  @copyright      2010-2011 CMS-LAB
+ *  @license        http://creativecommons.org/licenses/by/3.0/
+ *  @license terms  see info.php of this template
+ *  @platform       see info.php of this template
+ *  @requirements   PHP 5.2.x and higher
+ */
+
+ 
+ /* start all HTML-Elements */
+ * { 
+	margin: 0;
+	padding: 0;
+ }
+ 
+ /* background, links and font */
+html body { 
+	background:none repeat scroll 0 0 #FFF;
+	font-family:Arial,Lucida Grande,Lucida Sans Unicode,verdana,geneva,sans-serif;
+	font-size:14px;
+ 	color:#333333;
+}
+ 
+ a:link, a:visited, a:active {
+	text-decoration:underline;
+	color:black;
+ }
+  
+ a:hover {
+	color:#9b141a;
+ }
+ 

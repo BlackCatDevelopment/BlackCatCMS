@@ -1,0 +1,65 @@
+/*
+   BASIC STYLE SHEET
+   Source: http://www.grochtdreis.de/adventskalender/advent.php
+ */
+body,th,td{font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;font-size:62.5%;vertical-align:top;}
+body{background-color:#d7d7d7;color:#333;margin:0 20px;text-align:center;}
+body,h1,h2,h3,h4,h5,h6,div,p,table,td,ul,ol,li,blockquote,address,hr,pre{margin:0;padding:0;}
+p,li,h1,h2,h3,h4,h5,h6,table,th,td{font-size:1em;font-weight:400;}
+/*
+    (c) 2010 Bianka Martinovic
+ */
+html,body{height:100%;}
+tt{font-size:1.3em;}
+th,td{vertical-align:top;}
+li{margin-bottom:10px;}
+#outer{background-color:#f2f2f2;border:1px solid #999;margin:10px auto auto;text-align:left;width:98%;}
+#header{background-color:#c2c2c2;border-bottom:2px solid #999;height:50px;line-height:50px;padding-left:20px;}
+#header h1{font-size:2.4em;font-weight:bolder;padding-left:30px;}
+/*
+    Navigation
+ */
+#menu{background-color:#D7D7D7;float:left;margin:0;min-height:400px;height:80%;padding:0;width:140px;}
+#menu ul{border:none;list-style:none;margin-left:0;padding:0;}
+#menu li{border-bottom:1px solid #f0eee8;margin:0;}
+#menu li li{border-bottom:0;border-top:1px solid #f0eee8;margin:0;}
+#menu li a{background:#d7d7d7;border-left:10px solid #a1a1a1;border-right:10px solid #c2c2c2;color:#000;display:block;padding:5px;text-decoration:none;width:100%;}
+#menu li li a{background-color:#f0eee8;padding-left:10px;z-index:1000;}
+#menu li li li a{background-color:#f2f2f2;padding-left:15px;}
+#menu li li li li a{padding-left:20px;}
+#menu li li li li li a{padding-left:25px;}
+html>body #menu li a{width:auto;}
+#menu li a:hover{background-color:#f0eee8;border-left:10px solid #c2c2c2;border-right:10px solid #a1a1a1;}
+#menu .menucurrent{font-weight:700;}
+/*
+    Content area
+ */
+#content{background:url(./images/menubg.jpg) top left repeat-y;font-size:1.2em;min-height:300px;padding:10px 15px 20px 180px;}
+#content h1,#content h2,#content h3,#content h4{font-size:1.8em;font-weight:bolder;margin-bottom:10px;margin-left:-20px;padding-left:0;}
+#content h2{font-size:1.6em;}
+#content h3{font-size:1.4em;}
+/*
+    Page footer (copyright)
+ */
+#footer{background-color:#c2c2c2;border-bottom:1px solid #999;border-top:1px solid #999;clear:left;height:15px;line-height:15px;margin:-16px auto 0;text-align:center;}
+#footer a{color:#333;text-decoration:none;}
+dt{font-weight:700;margin:5px;}
+/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter)  */
+.html4strict{font-family:monospace;}
+.html4strict .imp{color:red;font-weight:700;}
+.html4strict .kw1{color:#b1b100;}
+.html4strict .kw2{color:#000;font-weight:700;}
+.html4strict .kw3{color:#006;}
+.html4strict .comulti{color:gray;font-style:italic;}
+.html4strict .es0{color:#009;font-weight:700;}
+.html4strict .br0{color:#6c6;}
+.html4strict .st0{color:red;}
+.html4strict .nu0{color:#c6c;}
+.html4strict .sc0{color:#0bd;}
+.html4strict .sc1{color:#db0;}
+.html4strict .sc2{color:#090;}
+.sourceblock{display:block;}
+.sourceblocklink{font-size:smaller;text-align:right;}
+.sourceblocktext{background-color:#f1f0ed;border:1px solid gray;padding:0.5em;}
+.sourceblocktext div{font-family:monospace;font-size:small;line-height:1;}
+.sourceblocktext div.head,.sourceblocktext div.foot{font:italic medium serif;padding:0.5em;}

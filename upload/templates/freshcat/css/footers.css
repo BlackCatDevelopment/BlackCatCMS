@@ -1,0 +1,68 @@
+/**
+ * This file is part of LEPTON Core, released under the GNU GPL
+ * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ * 
+ * NOTICE:LEPTON CMS Package has several different licenses.
+ * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *
+ * @author          LEPTON Project
+ * @copyright       2012, LEPTON Project
+ * @link            http://www.LEPTON-cms.org
+ * @license         http://www.gnu.org/licenses/gpl.html
+ * @license_terms   please see LICENSE and COPYING files in your package
+ * @version         $Id$
+ *
+ */
+
+#fc_footer {
+	line-height: 2em;
+	position: absolute;
+	text-align: center;
+	font-size: 10px;
+	background-image: url(images/header/header_back.png);
+	background-repeat: repeat-x;
+	border-top-color: #cccccc;
+	border-top-width: 1px;
+	border-top-style: solid;
+	z-index: 15;
+	width: 100%;
+	bottom: 0px;
+	height: 30px;
+}
+
+#fc_sidebar_footer {
+	line-height: 2em;
+	position: relative;
+	border-right-color: #cccccc;
+	border-right-width: 1px;
+	border-right-style: solid;
+	display: inline-block;
+	float: left;
+	z-index: 0;
+	width: 250px;
+	height: 30px;
+}
+
+
+#fc_content_footer {
+	line-height: 2em;
+	bottom: 0px;
+	right: 0px;
+	position: absolute;
+	display: inline-block;
+	z-index: 11;
+	width: 80%;
+	height: 30px;
+}
+
+#fc_main_content_footer {
+	line-height: 2em;
+	height: 140px;
+}
+
+#fc_hidden_inputs {
+	display: none;
+	height: 0px;
+	width: 0px;
+}
+

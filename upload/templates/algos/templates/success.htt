@@ -1,0 +1,11 @@
+<!-- BEGIN main_block -->
+<div class="error_box">
+{MESSAGE}<br /><br />
+<!-- BEGIN show_redirect_block -->
+ <script type="text/javascript">
+  setTimeout("top.location.href ='{REDIRECT}'", {REDIRECT_TIMER});
+ </script>
+<!-- END show_redirect_block -->
+ <h3 style="text-align:center;"><a target="_top" href="{REDIRECT}" title="{NEXT}">{BACK}</a></h3>
+</div>
+<!-- END main_block -->

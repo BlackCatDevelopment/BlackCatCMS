@@ -1,0 +1,9 @@
+<script type="text/javascript">
+  if( typeof 'jQuery' != 'undefined' ) {
+    jQuery(document).ready(function($) {
+      $("div.shake").click(function () {
+        $(this).effect("shake", {}, 100);
+      });
+    });
+  }
+</script>

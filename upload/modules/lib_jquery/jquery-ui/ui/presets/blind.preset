@@ -1,0 +1,9 @@
+<script type="text/javascript">
+  if( typeof 'jQuery' != 'undefined' ) {
+    jQuery(document).ready(function($) {
+      $("div.blind").click(function () {
+        $(this).hide("blind", { direction: "horizontal" }, 1000);
+      });
+    });
+  }
+</script>

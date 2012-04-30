@@ -1,0 +1,9 @@
+<script type="text/javascript">
+  if( typeof 'jQuery' != 'undefined' ) {
+    jQuery(document).ready(function($) {
+      $("div.pulsate").click(function () {
+        $(this).effect("pulsate", { times:3 }, 2000);
+      });
+    });
+  }
+</script>

@@ -1,0 +1,33 @@
+<!-- BEGIN main_block -->
+<h2>{ACCESS}</h2>
+<table cellpadding="0" cellspacing="0" border="0" width="99%" align="center">
+	<tr>
+		<td align="center" valign="top">
+			<!-- BEGIN show_cmd_users_block -->
+			<table cellpadding="0" cellspacing="0" border="0" class="section_2" {DISPLAY_USERS} >
+				<tr>
+					<td class="graphic" align="center" valign="top" rowspan="2">
+						<a href="{ADMIN_URL}/users/index.php"><img src="{THEME_URL}/images/users.png" alt="{USERS}" /></a>
+					</td>
+					<td class="description" valign="top">
+						<a href="{ADMIN_URL}/users/index.php"><span class="title">{USERS}</span></a><p>{USERS_OVERVIEW}</p>
+					</td>
+				</tr>
+			</table>	
+			<!-- END show_cmd_users_block -->
+			<!-- BEGIN show_cmd_groups_block -->
+			<table cellpadding="0" cellspacing="0" border="0" class="section_2" {DISPLAY_GROUPS} >
+				<tr>
+					<td class="graphic" align="center" valign="top" rowspan="2">
+						<a href="{ADMIN_URL}/groups/index.php"><img src="{THEME_URL}/images/groups.png" alt="{GROUPS}" /></a>
+					</td>
+					<td class="description" valign="top">
+						<a href="{ADMIN_URL}/groups/index.php"><span class="title">{GROUPS}</span></a><p>{GROUPS_OVERVIEW}</p>
+					</td>
+				</tr>
+			</table>
+			<!-- END show_cmd_groups_block -->
+		</td>
+	</tr>
+</table>
+<!-- END main_block -->

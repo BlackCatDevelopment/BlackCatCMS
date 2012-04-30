@@ -1,0 +1,123 @@
+<!-- BEGIN main_block -->
+<script type="text/javascript">
+/* <![CDATA[ */
+$(function(){
+	$('#submit').click(function() {
+		if(!$('#current_password').val()) { 
+			alert( unescape('{TEXT_NEED_PASSWORD_TO_CONFIRM}!') ); return false; 
+		}
+	});
+ });
+/* ]]> */
+</script>
+<div class="preference_box">
+	<!-- BEGIN show_cmd_profile_edit_block -->
+	<div class="right">
+		<form name="CMD_PROFILE_EDIT" action="{PROFILE_ACTION_URL}" method="post">
+			<input type="hidden" name="user_id" value="{USER_ID}" />
+			<input type="submit" name="cmd_profile_edit" value="{TEXT_PROFILES_EDIT}" />
+		</form>
+	</div>
+	<!-- END show_cmd_profile_edit_block -->
+	<form name="{FORM_NAME}" id="{FORM_NAME}" action="{ACTION_URL}" method="post">
+				<div class="c25l">
+					<label>{TEXT_USERNAME}:</label><br />
+				</div>
+				<div class="c60l">
+					<div id="username">{USERNAME}</div><br />
+				</div>
+
+				<div class="c25l">
+					<label>{TEXT_DISPLAY_NAME}:</label><br />
+				</div>
+				<div class="c60l">
+					<input type="text" id="display_name" name="display_name" value="{DISPLAY_NAME}" /><br />
+				</div>
+
+				<div class="c25l">
+					<label>{TEXT_LANGUAGE}:</label><br />
+				</div>
+				<div class="c60l">
+					<select name="language" id="language">
+	<!-- BEGIN language_list_block -->
+						<option value="{LANG_CODE}"{LANG_SELECTED} style="background: url({LANG_FLAG}.png) no-repeat center left; padding-left: 20px;">{LANG_NAME} ({LANG_CODE})</option>
+	<!-- END language_list_block -->
+					</select>
+				</div>
+
+				<div class="c25l">
+					<label>{TEXT_TIMEZONE}:</label><br />
+				</div>
+				<div class="c60l">
+					<select name="timezone_string" id="timezone_string">
+	<!-- BEGIN timezone_list_block -->
+						<option {TIMEZONE_SELECTED}>{TIMEZONE_NAME}</option>
+	<!-- END timezone_list_block -->
+					</select>
+				</div>
+
+				<div class="c25l">
+					<label>{TEXT_DATE_FORMAT}:</label><br />
+				</div>
+				<div class="c60l">
+					<select name="date_format" id="date_format">
+	<!-- BEGIN date_format_list_block -->
+							<option value="{DATEFORMAT_VALUE}"{DATEFORMAT_SELECTED}>{DATEFORMAT_NAME}</option>
+	<!-- END date_format_list_block -->
+					</select>
+				</div>
+
+				<div class="c25l">
+					<label>{TEXT_TIME_FORMAT}:</label><br />
+				</div>
+				<div class="c60l">
+					<select name="time_format" id="time_format">
+	<!-- BEGIN time_format_list_block -->
+							<option value="{TIMEFORMAT_VALUE}"{TIMEFORMAT_SELECTED}>{TIMEFORMAT_NAME}</option>
+	<!-- END time_format_list_block -->
+					</select>
+				</div>
+				<div class="c25l">
+					<label>{INIT_PAGE_LABEL}:</label>
+				</div>
+				<div class="c60l">
+					{INIT_PAGE_SELECT}
+				</div>
+			
+				<div class="c25l">
+					<label>{TEXT_EMAIL}:</label><br />
+				</div>
+				<div class="c60l">
+					<input type="text" id="email" name="email" value="{EMAIL}" /><br />
+				</div>
+
+			
+				<div class="c25l">
+					<label>{TEXT_NEW_PASSWORD}:</label><br />
+				</div>
+				<div class="c60l">
+					<input type="password" id="new_password_1" name="new_password_1" value="{EMPTY_STRING}" /><br />
+				</div>
+
+				<div class="c25l">
+					<label>{TEXT_RETYPE_NEW_PASSWORD}:</label><br />
+				</div>
+				<div class="c60l">
+					<input type="password" id="new_password_2" name="new_password_2" value="{EMPTY_STRING}" /><br />
+				</div>
+
+
+				<div class="c25l">
+					<label>{TEXT_NEED_CURRENT_PASSWORD}:</label><br />
+				</div>
+				<div class="c60l">
+					<input type="password" id="current_password" name="current_password" value="{EMPTY_STRING}" /><br />
+				</div>
+				<div class="c25l save_section">
+					<input type="submit" id="submit" name="submit" value="{TEXT_SAVE}" />
+					<input type="reset" id="reset" name="reset" value="{TEXT_RESET}" />
+				</div>
+				<div class="c25l">&nbsp;</div>
+	</form>
+</div>
+<!-- END main_block -->

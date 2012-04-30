@@ -1,0 +1,26 @@
+/**
+ *  @template       blank
+ *  @version        see info.php of this template
+ *  @author         erpe
+ *  @copyright      2010-2011 erpe
+ *  @license        GNU General Public License
+ *  @license terms  see info.php of this module
+ *  @platform       see info.php of this module
+ *  @requirements   PHP 5.2.x and higher
+ */
+ 
+/** template css */
+
+h1, h2, h3, h4 {font-family:Verdana; text-align:center;color:#333;}
+
+
+a:link, a:visited, a:active {
+	color: #000;
+	text-decoration: underline;
+}
+a:hover {
+	color: #666;
+	text-decoration: none;
+}
+
+

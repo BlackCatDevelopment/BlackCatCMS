@@ -1,0 +1,3 @@
+  <script type="text/javascript" src="{WB_URL}/modules/jqueryadmin/jquery-ui/external/jquery.hoverIntent.js"></script>
+  <script type="text/javascript" src="{WB_URL}/modules/jqueryadmin/plugins/ClueTip/jquery.cluetip.min.js"></script>
+	<link rel="stylesheet" href="{WB_URL}/modules/jqueryadmin/plugins/ClueTip/jquery.cluetip.css" type="text/css" />
