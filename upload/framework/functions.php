@@ -46,43 +46,14 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 {
     define('FUNCTIONS_FILE_LOADED', true);
     
-    // global array to catch header files
-    $HEADERS = array(
-        'frontend' => array(
-            'css'    => array(),
-            'meta'   => array(),
-            'js'     => array(),
-            'jquery' => array(),
-        ),
-        'backend' => array(
-            'css'    => array(),
-            'meta'   => array(),
-            'js'     => array(),
-            'jquery' => array(),
-        ),
-    );
-    
-    $FOOTERS = array(
-        'frontend' => array(
-            'script' => array(),
-            'js'     => array(),
-        ),
-        'backend' => array(
-            'script' => array(),
-            'js'     => array(),
-        ),
-    );
-    
     // set debug level here; see LEPTON_Helper_KLogger for available levels
     // 7 = debug, 8 = off
 	$debug_level  = 8;
 
     // include helpers
-	global $lhd, $array, $logger;
+	global $lhd, $arrayh, $logger;
     include dirname(__FILE__).'/LEPTON/Helper/Directory.php';
-    include dirname(__FILE__).'/LEPTON/Helper/Array.php';
 	$lhd   = new LEPTON_Helper_Directory();
-	$array = new LEPTON_Helper_Array();
 	$logger = new LEPTON_Helper_KLogger( LEPTON_PATH.'/temp', $debug_level );
 
     
@@ -697,356 +668,23 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     /**
      * get additions for page header (css, js, meta)
      *
-     * + gets all active sections for a page;
-     * + scans module directories for file headers.inc.php;
-     * + includes that file if it is available
-     * + includes automatically if exists:
-     *   + module dirs:
-     *     + frontend.css / backend.css              (media: all)
-     *     + ./css/frontend.css / backend.css        (media: all)
-     *     + frontend_print.css / backend_print.css  (media: print)
-     *     + ./css/frontend_print.css / backend_print.css  (media: print)
-     *     + frontend.js / backend.js
-	 *     + ./js/frontend.js / backend.js
-     *   + template dir:
-     *     + <PAGE_ID>.css 							 (media: all)
-     *     + ./css/<PAGE_ID>.css					 (media: all)
-	 *   + pages_directory:
-	 *     + <PAGE_ID>.css                           (media: all)
-	 *     + ./css/<PAGE_ID>.css                     (media: all)
+     * This is a wrapper for LEPTON_Pages->getHeaders()
      *
      * @access public
      * @param  string  $for - 'frontend' (default) / 'backend'
-     * @param  boolean $print_output
-     * @param  boolean $current_section
-     * @return void (echo's result)
+     * @param  boolean $print_output - echo result (default) or return
+     * @param  boolean $individual   - JS for individual section (BE only)
+     * @return mixed
      *
      **/
 	function get_page_headers( $for = 'frontend', $print_output = true, $individual = false )
 	{
-
-		global $HEADERS, $array, $lhd, $logger;
-		// don't do this twice
-		if (defined('LEP_HEADERS_SENT'))
-		{
-		    $logger->logDebug( 'headers already sent, do nothing' );
-			return;
-		}
-		if ( ! $for || $for == '' || ( $for != 'frontend' && $for != 'backend' ) ) {
-			$for = 'frontend';
-		}
-		$page_id = defined( 'PAGE_ID' )
-			? PAGE_ID
-			: (
-				( isset($_GET['page_id']) && is_numeric($_GET['page_id']) )
-					? $_GET['page_id']
-					: NULL
-			);
-
-		$logger->logDebug( sprintf( 'headers for [%s], page_id [%s]', $for, $page_id ) );
-
-		// load headers.inc.php for backend theme
-		if ( $for == 'backend' )
-		{
-			if (file_exists(LEPTON_PATH . '/templates/' . DEFAULT_THEME . '/headers.inc.php'))
-			{
-			    $logger->logDebug( sprintf( 'adding items for backend theme [%s]', DEFAULT_THEME ) );
-				__addItems( $for, LEPTON_PATH . '/templates/' . DEFAULT_THEME );
-			}
-		}
-		// load headers.inc.php for backend theme
-		else
-		{
-			if (file_exists(LEPTON_PATH . '/templates/' . DEFAULT_TEMPLATE . '/headers.inc.php'))
-			{
-				$logger->logDebug( sprintf( 'adding items for backend theme [%s]', DEFAULT_TEMPLATE ) );
-				__addItems( $for, LEPTON_PATH . '/templates/' . DEFAULT_TEMPLATE );
-			}
-		}
-		// handle search
-        if (($page_id == 0) && ($for == 'frontend')) {
-            $logger->logDebug( 'handle search' );
-            $caller = debug_backtrace();
-            if (isset($caller[2]['file']) && (strpos($caller[2]['file'], DIRECTORY_SEPARATOR.'search'.DIRECTORY_SEPARATOR.'index.php') !== false)) {
-                // the page is called from the LEPTON SEARCH
-                foreach (array(
-                    '/modules/'.SEARCH_LIBRARY.'/templates/custom',
-                    '/modules/'.SEARCH_LIBRARY.'/templates/default'
-                    ) as $directory) {
-                    $file = $lhd->sanitizePath( $directory.'/'.$for.'.css' );
-                    if (file_exists(LEPTON_PATH.'/'.$file)) {
-                        $HEADERS[$for]['css'][] = array(
-                            'media' => 'all',
-							'file'  => $file
-						);
-                        // load only once
-                        break;
-					}
-                }
-            }
-        }
-        
-        // load CSS and JS for DropLEPs
-        if (($for == 'frontend') && $page_id && is_numeric($page_id)) {
-            $logger->logDebug( 'handle CSS/JS for DropLEPS' );
-            if (file_exists(LEPTON_PATH.'/modules/lib_lepton/pages_load/library.php')) {
-                require_once LEPTON_PATH.'/modules/lib_lepton/pages_load/library.php';
-                get_droplep_headers($page_id);
-            }
-        }
-        
-        $css_subdirs = array();
-        $js_subdirs  = array();
-        
-        // it's an admin tool...
-        if ( $for == 'backend' && isset($_REQUEST['tool']) && file_exists( LEPTON_PATH.'/modules/'.$_REQUEST['tool'].'/tool.php' ) )
-        {
-            $logger->logDebug( sprintf( 'handle admin tool [%s]', $_REQUEST['tool'] ) );
-            $css_subdirs = array(
-		        '/modules/'   . $_REQUEST['tool']          ,
-		        '/modules/'   . $_REQUEST['tool']  . '/css',
-			);
-			$js_subdirs = array(
-		        '/modules/'   . $_REQUEST['tool']         ,
-		        '/modules/'   . $_REQUEST['tool']  . '/js',
-			);
-			if (file_exists(LEPTON_PATH . '/modules/' . $_REQUEST['tool'] . '/headers.inc.php'))
-			{
-				__addItems( $for, LEPTON_PATH . '/modules/' . $_REQUEST['tool'] );
-			}
-        }
-        // if we have a page id...
-		elseif ( $page_id && is_numeric($page_id) )
-		{
-            // ...get active sections
-		    if ( ! class_exists( 'LEPTON_Sections' ) )
-		    {
-		        @require_once dirname(__FILE__).'/LEPTON/Sections.php';
-			}
-			$sec_h    = new LEPTON_Sections();
-			$sections = $sec_h->get_active_sections($page_id);
-			
-			if (count($sections))
-			{
-			    $logger->logDebug( 'handling sections for current page', $sections );
-				global $current_section;
-				global $mod_headers;
-				foreach ($sections as $section)
-				{
-					$module = $section['module'];
-					$headers_path = sanitize_path(LEPTON_PATH.'/modules/'. $module);
-					// special case: 'wysiwyg'
-					if ( $for == 'backend' && ! strcasecmp($module,'wysiwyg') ) {
-					    // get the currently used WYSIWYG module
-					    if ( defined('WYSIWYG_EDITOR') && WYSIWYG_EDITOR != "none" ) {
-                            $headers_path = sanitize_path(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR);
-					    }
-					}
-					$logger->logDebug( sprintf ( 'looking for file [%s]', $headers_path . '/headers.inc.php' ) );
-					// find header definition file
-					if (file_exists($headers_path . '/headers.inc.php'))
-					{
-					    $logger->logDebug( sprintf( 'handling module [%s]', $module ) );
-						$current_section = $section['section_id'];
-						__addItems( $for, $headers_path );
-					}
-					else {
-					    $logger->logDebug( 'not found!' );
-					}
-					$css_subdirs = array(
-					        '/modules/'   . $module          ,
-					        '/modules/'   . $module  . '/css',
-					);
-					$js_subdirs = array(
-				        '/modules/'   . $module         ,
-				        '/modules/'   . $module  . '/js',
-					);
-				}   // foreach ($sections as $section)
-			}       // if (count($sections))
-			
-			// add css/js search subdirs for frontend only; page based CSS/JS
-			// does not make sense in BE
-			if ( $for == 'frontend' )
-			{
-				array_push(
-					$css_subdirs,
-			        PAGES_DIRECTORY,
-					PAGES_DIRECTORY . '/css'
-				);
-				array_push(
-					$js_subdirs,
-			        PAGES_DIRECTORY,
-			        PAGES_DIRECTORY . '/js'
-				);
-			}
-
-		}           // if ( $page_id )
-
-		// add template css
-		// note: defined() is just to avoid warnings, the NULL does not really
-		// make sense!
-		$subdir = ( $for == 'backend' )
-				? ( defined('DEFAULT_THEME') ? DEFAULT_THEME : NULL )
-				: ( defined('TEMPLATE')      ? TEMPLATE      : NULL )
-				;
-				
-		array_push(
-			$css_subdirs,
-			'/templates/' . $subdir,
-	        '/templates/' . $subdir . '/css'
-		);
-		array_push(
-			$js_subdirs,
-			'/templates/' . $subdir,
-	        '/templates/' . $subdir . '/js'
-							);
-					
-		// automatically add CSS files
-		foreach( $css_subdirs as $directory )
-		{
-			// frontend.css / backend.css
-			$file = $lhd->sanitizePath( $directory.'/'.$for.'.css' );
-			if ( file_exists(LEPTON_PATH.'/'.$file) )
-			{
-				$HEADERS[$for]['css'][] = array(
-					'media' => 'all',
-					'file'  => $file
-				);
-			}
-			// frontend_print.css / backend_print.css
-		    $file = $lhd->sanitizePath( $directory.'/'.$for.'_print.css' );
-						    if ( file_exists(LEPTON_PATH.'/'.$file) ) {
-						        $HEADERS[$for]['css'][] = array(
-									'media' => 'print',
-									'file'  => $file
-								);
-						    }
-						}
-		// automatically add JS files
-		foreach( $js_subdirs as $directory ) {
-			$file = $lhd->sanitizePath( $directory.'/'.$for.'.js' );
-						if ( file_exists(LEPTON_PATH.'/'.$file) ) {
-							$HEADERS[$for]['js'][] = $file;
-						}
-					}
-
-			$output = null;
-			foreach ( array( 'meta', 'css', 'jquery', 'js' ) as $key )
-			{
-				if ( ! isset($HEADERS[$for][$key]) || ! is_array($HEADERS[$for][$key]) )
-				{
-					continue;
-				}
-				// make array unique
-
-				$HEADERS[$for][$key] = $array->ArrayUniqueRecursive($HEADERS[$for][$key]);
-				foreach ($HEADERS[$for][$key] as $i => $arr)
-				{
-					switch ($key)
-					{
-						case 'meta':
-							if (is_array($arr))
+	    if ( ! class_exists( 'LEPTON_Pages', false ) )
 							{
-								foreach ($arr as $item)
-								{
-									$output .= $item . "\n";
-								}
+	        include sanitize_path( dirname(__FILE__).'/LEPTON/Pages.php' );
 							}
-							break;
-						case 'css':
-							// make sure we have an URI (LEPTON_URL included)
-							$file	= (preg_match('#' . LEPTON_URL . '#i', $arr['file'])
-									? $arr['file']
-									: LEPTON_URL . '/' . $arr['file']);
-							$output .= '<link rel="stylesheet" type="text/css" href="' . sanitize_url($file) . '" media="' . (isset($arr['media']) ? $arr['media'] : 'all') . '" />' . "\n";
-							break;
-						case 'jquery':
-							// make sure that we load the core if needed, even if the
-							// author forgot to set the flags
-							if (
-								( isset($arr['ui']) && $arr['ui'] === true )
-								|| ( isset($arr['ui-effects']) && is_array($arr['ui-effects']) )
-								|| ( isset($arr['ui-components']) && is_array($arr['ui-components']) )
-							) {
-								$arr['core'] = true;
-							}
-							// make sure we load the ui core if needed
-							if ( isset($arr['ui-components']) && is_array($arr['ui-components'])
-								|| ( isset($arr['ui-effects']) && is_array($arr['ui-effects']) )
-							) {
-								$arr['ui'] = true;
-							}
-							if ( isset($arr['ui-effects']) && is_array($arr['ui-effects']) && ( !in_array( 'core' , $arr['ui-effects'] ) ) )
-							{
-								array_unshift( $arr['ui-effects'] , 'core' );
-							}
-							// load the components
-							if ( isset($arr['ui-theme']) && file_exists(LEPTON_PATH.'/modules/lib_jquery/jquery-ui/themes/'.$arr['ui-theme']) ) {
-								$output .= '<link rel="stylesheet" type="text/css" href="' . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/themes/'.$arr['ui-theme'].'/jquery-ui.css').'" media="all" />' . "\n";
-							}
-							if ( isset($arr['core']) && $arr['core'] === true ) {
-								$output .= '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-core/jquery-core.min.js').'"></script>' . "\n";
-							}
-							if ( isset($arr['ui']) && $arr['ui'] === true ) {
-								$output .= '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.ui.core.min.js').'"></script>' . "\n";
-							}
-							if ( isset($arr['ui-effects']) && is_array($arr['ui-effects']) ) {
-								foreach( $arr['ui-effects'] as $item ) {
-									$output .= '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.effects.'.$item.'.min.js').'"></script>' . "\n";
-								}
-							}
-							if ( isset($arr['ui-components']) && is_array($arr['ui-components']) ) {
-								foreach( $arr['ui-components'] as $item ) {
-									$output .= '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.ui.'.$item.'.min.js').'"></script>' . "\n";
-								}
-							}
-							if ( isset($arr['all']) && is_array($arr['all']) ) {
-								foreach( $arr['all'] as $item ) {
-									$output .= '<script type="text/javascript" src="' . sanitize_url( LEPTON_URL . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js' ) . '"></script>' . "\n";
-								}
-							}
-							if ( isset($arr['individual']) && is_array( $arr['individual'] ) ) {
-								foreach( $arr['individual'] as $section_name => $item ) {
-									if ( $section_name == strtolower($individual) )
-									{
-										$output .= '<script type="text/javascript" src="' . sanitize_url( LEPTON_URL . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js' ) . '"></script>' . "\n";
-									}
-								}
-							}
-							break;
-						case 'js':
-							if ( is_array($arr) )
-							{
-								if ( isset($arr['all']) )
-								{
-									foreach ( $arr['all'] as $item )
-									{
-										$output .= '<script type="text/javascript" src="' . sanitize_url( LEPTON_URL . '/templates/' . DEFAULT_THEME . '/js/' . $item ) . '"></script>' . "\n";
-									}
-								}
-								if ( isset($arr['individual']) )
-								{
-									foreach ( $arr['individual'] as $section_name => $item )
-									{
-										if ( $section_name == strtolower($individual) )
-										{
-											$output .= '<script type="text/javascript" src="' . sanitize_url( LEPTON_URL . '/templates/' . DEFAULT_THEME . '/js/' . $item ) . '"></script>' . "\n";
-										}
-									}
-								}
-							}
-							else
-							{
-								$output .= '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL . '/' . $arr) . '"></script>' . "\n";
-							}
-							break;
-						default:
-							trigger_error('Unknown header type ['.$key.']!', E_USER_NOTICE);
-							break;
-					}
-				}
-			}
-			// foreach( array( 'meta', 'css', 'js' ) as $key )
+	    $pg     = new LEPTON_Pages();
+	    $output = $pg->getHeaders( $for, $individual );
 		if ( $print_output )
 		{
 			echo $output;
@@ -1077,130 +715,23 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      * @return void (echo's result)
      *
      **/
-    function get_page_footers($for = 'frontend')
-    {
-        global $FOOTERS, $array, $lhd;
-        // don't do this twice
-        if (defined('LEP_FOOTERS_SENT'))
-        {
-            return;
-        }
-        if ( ! $for || $for == '' || ( $for != 'frontend' && $for != 'backend' ) ) {
-            $for = 'frontend';
-        }
-        $page_id = defined( 'PAGE_ID' )
-                 ? PAGE_ID
-                 : (
-                       ( isset($_GET['page_id']) && is_numeric($_GET['page_id']) )
-                     ? $_GET['page_id']
-                     : NULL
-                   );
-
-        $js_subdirs  = array();
-
-        // it's an admin tool...
-        if ( $for == 'backend' && isset($_REQUEST['tool']) && file_exists( LEPTON_PATH.'/modules/'.$_REQUEST['tool'].'/tool.php' ) )
-        {
-			$js_subdirs = array(
-		        '/modules/'   . $_REQUEST['tool']         ,
-		        '/modules/'   . $_REQUEST['tool']  . '/js',
-			);
-			if (file_exists(LEPTON_PATH . '/modules/' . $_REQUEST['tool'] . '/footers.inc.php'))
-			{
-				__addItems( $for, LEPTON_PATH . '/modules/' . $_REQUEST['tool'], true );
-			}
-        }
-        
-        elseif ( $page_id && is_numeric($page_id) )
-        {
-            // ...get active sections
-		    if ( ! class_exists( 'LEPTON_Sections' ) )
-		    {
-		        @require_once dirname(__FILE__).'/LEPTON/Sections.php';
-			}
-			$sec_h    = new LEPTON_Sections();
-			$sections = $sec_h->get_active_sections($page_id);
-            if ( is_array($sections) && count($sections) )
+    function get_page_footers( $for = 'frontend', $print_output = true )
             {
-                global $current_section;
-                foreach ($sections as $section)
+        if ( ! class_exists( 'LEPTON_Pages', false ) )
                 {
-                    $module = $section['module'];
-					// find header definition file
-                    if (file_exists(LEPTON_PATH . '/modules/' . $module . '/footers.inc.php'))
-                    {
-                        $current_section = $section['section_id'];
-						__addItems( $for, LEPTON_PATH . '/modules/' . $module );
-					}
-					$js_subdirs = array(
-				        '/modules/'   . $module         ,
-				        '/modules/'   . $module  . '/js',
-					);
-				}   // foreach ($sections as $section)
-			}       // if (count($sections))
-
-			// add css/js search subdirs for frontend only; page based CSS/JS
-			// does not make sense in BE
-			if ( $for == 'frontend' )
-                        {
-				array_push(
-					$js_subdirs,
-			        PAGES_DIRECTORY,
-			        PAGES_DIRECTORY . '/js'
-				);
-                                        }
-                                    }
-
-		// add template JS
-		// note: defined() is just to avoid warnings, the NULL does not really
-		// make sense!
-		$subdir = ( $for == 'backend' )
-				? ( defined('DEFAULT_THEME') ? DEFAULT_THEME : NULL )
-				: ( defined('TEMPLATE')      ? TEMPLATE      : NULL )
-				;
-
-		array_push(
-			$js_subdirs,
-			'/templates/' . $subdir,
-	        '/templates/' . $subdir . '/js'
-		);
-		
-		// automatically add JS files
-		foreach( $js_subdirs as $directory ) {
-			$file = $lhd->sanitizePath( $directory.'/'.$for.'_body.js' );
-			if ( file_exists(LEPTON_PATH.'/'.$file) ) {
-				$FOOTERS[$for]['js'][] = $file;
-                    }
+	        include sanitize_path( dirname(__FILE__).'/LEPTON/Pages.php' );
                 }
-                $output = null;
-                foreach (array('js','script') as $key)
-                {
-                    if ( ! isset($FOOTERS[$for][$key]) || ! is_array($FOOTERS[$for][$key]) )
+	    $pg     = new LEPTON_Pages();
+	    $output = $pg->getFooters( $for );
+        if ( $print_output )
                     {
-                        continue;
+			echo $output;
+			define('LEP_FOOTERS_SENT', true);
                     }
-                    // make array unique
-                    $FOOTERS[$for][$key] = $array->ArrayUniqueRecursive($FOOTERS[$for][$key]);
-                    foreach ($FOOTERS[$for][$key] as $i => $arr)
-                    {
-                        switch ($key)
+		else
                         {
-                            case 'js':
-                                $output .= '<script type="text/javascript" src="' . sanitize_url( LEPTON_URL . '/' . $arr ) . '"></script>' . "\n";
-                                break;
-                            case 'script':
-                                $output .= '<script type="text/javascript">' . implode( "\n", $arr ) . '</script>' . "\n";
-                                break;
-                            default:
-                                trigger_error('Unknown footer type ['.$key.']!', E_USER_NOTICE);
-                                break;
-                        }
-                    }
+			return $output;
                 }
-                // foreach( array( 'meta', 'css', 'js' ) as $key )
-                echo $output;
-                define('LEP_FOOTERS_SENT', true);
-        
     }   // end function get_page_footers()
 
     // Function to get page title
@@ -1995,73 +1526,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         $entities = array('&auml;' => "%E4", '&Auml;' => "%C4", '&ouml;' => "%F6", '&Ouml;' => "%D6", '&uuml;' => "%FC", '&Uuml;' => "%DC", '&szlig;' => "%DF", '&euro;' => "%u20AC", '$' => "%24");
         return str_replace(array_keys($entities), array_values($entities), $string);
     }
-    
-    function __addItems( $for, $path, $footer = false )
-	{
-		global $lhd, $HEADERS, $FOOTERS;
-		$path   = $lhd->sanitizePath( $path );
-		$trail  = explode( '/', $path );
-		$subdir = array_pop($trail);
-		
-		$mod_headers = array();
-		$mod_footers = array();
-		
-		if ( $footer )
-		{
-		    $add_to  =& $FOOTERS;
-		    $to_load =  'footers.inc.php';
-		}
-		else
-		{
-		    $add_to  =& $HEADERS;
-		    $to_load =  'headers.inc.php';
-		}
-
-		require( $lhd->sanitizePath( $path.'/'.$to_load) );
-		
-		if ( $footer )
-		{
-		    $array =& $mod_footers;
-		}
-		else
-		{
-		    $array =& $mod_headers;
-		}
-		
-		if (count($array))
-		{
-			
-			foreach (array('css', 'meta', 'js', 'jquery') as $key)
-			{
-			    if ( ! isset($array[$for][$key]) ) {
-			        continue;
-				}
-				foreach( $array[$for][$key] as &$item ) {
-				    // let's see if the path is relative (i.e., does not contain the current subdir)
-					if ( isset( $item['file'] ) && ! preg_match( "#/$subdir/#", $item['file'] ) ) {
-					    if ( file_exists( $path.'/'.$item['file'] ) ) {
-						// treat path as relative, add modules subfolder
-						$item['file'] = str_ireplace( $lhd->sanitizePath(LEPTON_PATH), '', $path ).'/'.$item['file'];
-						}
-						if ( file_exists( $lhd->sanitizePath( LEPTON_PATH.'/'.$item['file'] ) ) ) {
-							$item['file'] = $lhd->sanitizePath( $item['file'] );
-						}
-					}
-				}
-				if ( ! isset($add_to[$for][$key]) || ! is_array($add_to[$for][$key]) ) 
-				{
-					$add_to[$for][$key] = array();
-				}
-				$add_to[$for][$key] = array_merge($add_to[$for][$key], $array[$for][$key]);
-			}
-		}
-		
-  		if ( $footer && file_exists( $lhd->sanitizePath( $path.$for.'_body.js') ) )
-        {
-            $FOOTERS[$for]['js'][]  = '/modules/'.$subdir.'_body.js';
-        }
-        
-	}   // end function __addItems()
 
 }
 // end .. if functions is loaded 

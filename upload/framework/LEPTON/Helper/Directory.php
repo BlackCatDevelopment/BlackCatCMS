@@ -258,6 +258,77 @@ if ( ! class_exists( 'LEPTON_Helper_Directory', false ) ) {
 		}   // end function setSuffixFilter()
 		
 		/**
+		 * set directory or file to read-only; used for index.php
+		 *
+		 * @access public
+		 * @param  string $directory
+		 * @return void
+		 *
+		 **/
+        public function setReadOnly($item)
+	    {
+	        // Only chmod if os is not windows
+	        if (OPERATING_SYSTEM != 'windows')
+	        {
+                $mode = (int) octdec( '644' );
+	            if (file_exists($item))
+	            {
+	                $umask = umask(0);
+	                chmod($item, $mode);
+	                umask($umask);
+	                return true;
+	            }
+	            else
+	            {
+	                return false;
+	            }
+	        }
+	        else
+	        {
+	            return true;
+	        }
+	    }   // function setReadOnly()
+	    
+        /**
+         * This method creates index.php files in every subdirectory of a given path
+         *
+         * @access public
+         * @param  string  directory to start with
+         * @return void
+         *
+         **/
+        public function recursiveCreateIndex( $dir )
+        {
+            if ( $handle = opendir($dir) )
+            {
+                if ( ! file_exists( $dir . '/index.php' ) )
+                {
+                    $fh = fopen( $dir.'/index.php', 'w' );
+                    fwrite( $fh, '<' . '?' . 'php' . "\n" );
+        	        fwrite( $fh, $this->_class_secure_code() );
+        	        fclose( $fh );
+                }
+
+                while ( false !== ( $file = readdir($handle) ) )
+                {
+                    if ( $file != "." && $file != ".." )
+                    {
+                        if( is_dir( $dir.'/'.$file ) )
+                        {
+                            $this->recursiveCreateIndex( $dir.'/'.$file );
+                        }
+                    }
+                }
+                closedir($handle);
+                return true;
+            }
+            else {
+                return false;
+            }
+
+        }   // end function recursiveCreateIndex()
+		
+		/**
 		 * remove directory recursively
 		 *
 		 * @access public
@@ -316,6 +387,36 @@ if ( ! class_exists( 'LEPTON_Helper_Directory', false ) ) {
 			}
 		    return ( substr(sprintf('%o', fileperms($directory)), -1) == 7 ? true : false );
 		}   // end function is_world_writable()
+		
+		/**
+		 *
+		 *
+		 *
+		 *
+		 **/
+		private function _class_secure_code()
+		{
+			return "
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('LEPTON_PATH')) {
+	include(LEPTON_PATH.'/framework/class.secure.php');
+} else {
+	\$oneback = \"../\";
+	\$root = \$oneback;
+	\$level = 1;
+	while ((\$level < 10) && (!file_exists(\$root.'/framework/class.secure.php'))) {
+		\$root .= \$oneback;
+		\$level += 1;
+	}
+	if (file_exists(\$root.'/framework/class.secure.php')) {
+		include(\$root.'/framework/class.secure.php');
+	} else {
+		trigger_error(sprintf(\"[ <b>%s</b> ] Can't include class.secure.php!\", \$_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
+}
+// end include class.secure.php
+";
+		}   // end function _class_secure_code()
 
 	}
 }
