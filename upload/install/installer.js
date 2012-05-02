@@ -1,4 +1,7 @@
 if( typeof jQuery != 'undefined' ) {
+	jQuery('#black').show();
+	jQuery('#be_preview_note').show();
+	jQuery('#be_preview').show();
 	jQuery(document).ready( function($) {
 	
 	    jQuery('input[type="text"]').each( function () {

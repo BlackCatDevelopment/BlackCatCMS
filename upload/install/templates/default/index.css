@@ -83,7 +83,7 @@ body {
 /* end of bit that does the work */
 
 /* overlay */
-#black {left: 0px;top: 0px;position: absolute;height: 100%;width: 100%;background-color: black;}
+#black {left: 0px;top: 0px;position: absolute;height: 100%;width: 100%;background-color: black;display:none;}
 #radial {width: 100%;height: 100%;left: 0px;top: 0px;position: fixed;z-index: -1;}
 #radial img {width:100%;height:100%;}
 
@@ -115,7 +115,7 @@ div#buttons input{margin-left:15px;margin-right:15px;}
 /* other */
 h1,h2,h3{color: #71ae1c;}
 a{text-decoration: none;color: #71ae1c;}
-a:hover{color: #f8f8f8;}
+a:hover{color:#00CC99;}
 table{width:100%;border-collapse:collapse;border:0 none;}
 th{text-align:left;padding:5px;background-color:#252c36;color:white;}
 td{padding:5px;vertical-align: top;}

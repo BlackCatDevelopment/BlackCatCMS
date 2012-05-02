@@ -49,13 +49,24 @@ $dirs = array(
 	'temp',
 	'install'
 );
-foreach( $dirs as $i => $dir ) {
-    $path           = dirname(__FILE__).'/../'.$dir;
+$pre_inst_err   = array();
+// check root folder; needed for config.php
+if ( ! is_writable(dirname(__FILE__).'/..') )
+{
+    $pre_inst_err[] = 'The LEPTON base directory must be writable during installation!<br />Das LEPTON Basisverzeichnis muss während der Installation schreibbar sein!';
+}
+foreach( $dirs as $i => $dir )
+{
+    $path = dirname(__FILE__).'/../'.$dir;
     if ( ! is_writable($path) )
 	{
-	    pre_installation_error('The ['.$dir.'] subfolder must be writable!');
-	    exit;
+	    $pre_inst_err[] = 'The ['.$dir.'] subfolder must be writable!<br />Das Verzeichnis ['.$dir.'] muss schreibbar sein!';
 	}
+}
+if ( count($pre_inst_err) )
+{
+	pre_installation_error( implode( '<br /><br />', $pre_inst_err ) );
+	exit;
 }
 // *****************************************************************************
 
@@ -66,6 +77,15 @@ $lang = new LEPTON_Helper_I18n();
 // the admin dummy defines some methods needed for module installation and error handling
 include dirname(__FILE__).'/admin_dummy.inc.php';
 $admin = new admin_dummy();
+
+// user class for checking password
+include dirname(__FILE__).'/../framework/LEPTON/Users.php';
+$users  = new LEPTON_Users();
+
+// directory helper
+include dirname(__FILE__).'/../framework/LEPTON/Helper/Directory.php';
+$dirh   = new LEPTON_Helper_Directory();
+
 
 // *****************************************************************************
 // define the steps we are going through
@@ -426,7 +446,8 @@ function show_step_db( $step ) {
             'installer_database_password' => ( isset($config['database_password']) ? $config['database_password'] : ''             ),
             'installer_database_name' 	  => ( isset($config['database_name'])     ? $config['database_name'] 	  : 'my-db-name'   ),
             'installer_table_prefix'      => ( isset($config['table_prefix'])      ? $config['table_prefix']      : 'lep_'         ),
-            'installer_install_tables'    => ( isset($config['install_tables'])    ? $config['install_tables']    : 'y'             ),
+            'installer_install_tables'    => ( isset($config['install_tables'])    ? $config['install_tables']    : 'y'            ),
+            'installer_empty_db_password' => ( isset($config['empty_db_password']) ? $config['empty_db_password'] : ''             ),
             'errors'            		  => $step['errors']
 		)
 	);
@@ -472,7 +493,7 @@ function show_step_site( $step ) {
  *
  **/
 function check_step_site() {
-	global $lang, $config, $parser;
+	global $lang, $config, $users, $parser;
 	// do not check if back button was clicked
 	if ( isset($_REQUEST['btn_back']) ) {
 	    return array( true, array() );
@@ -499,21 +520,22 @@ function check_step_site() {
 	if ( ! isset($config['admin_password']) || $config['admin_password'] == '' ) {
 	    $errors['installer_admin_password'] = $lang->translate( 'Please enter an admin password!' );
 	}
-	else {
-	    if ( strlen($config['admin_password']) < 6 ) {
-	        $errors['installer_admin_password'] = $lang->translate('Password too short! The admin password should be at least 6 chars long.');
-	    }
-	}
 	if ( ! isset($config['admin_repassword']) || $config['admin_repassword'] == '' ) {
 	    $errors['installer_admin_repassword'] = $lang->translate( 'Please retype the admin password!' );
 	}
 	if (
 		   isset($config['admin_password']) && isset($config['admin_repassword'])
-		&& $config['admin_password'] != '' && $config['admin_repassword'] != ''
+        && $config['admin_password'] != ''  && $config['admin_repassword'] != ''
 		&& strcmp( $config['admin_password'], $config['admin_repassword'] )
 	) {
 	    $errors['installer_admin_password']   = $lang->translate( 'The admin passwords you have given do not match!' );
 	    $errors['installer_admin_repassword'] = $lang->translate( 'The admin passwords you have given do not match!' );
+	}
+
+    if ( ! $users->validatePassword($config['admin_password']) )
+    {
+		$errors['installer_admin_password'] = $lang->translate('Invalid password!')
+											. ' (' . $users->getPasswordError() . ')';
 	}
 	
 	// check admin email address
@@ -583,8 +605,8 @@ function show_step_finish() {
 
 function __lep_check_db_config() {
 
-	global $lang, $config;
-
+	global $lang, $users, $config;
+	
 	$errors = array();
 	$regexp = '/^[^\x-\x1F]+$/D';
 
@@ -597,7 +619,7 @@ function __lep_check_db_config() {
 	{
 		if ( preg_match( $regexp, $config['database_host'], $match ) )
 		{
-			$database_host = $match[ 0 ];
+			$database_host = $match[0];
 		}
 		else
 		{
@@ -630,7 +652,7 @@ function __lep_check_db_config() {
 	{
 		if ( preg_match( $regexp, $config['database_username'], $match ) )
 		{
-			$database_username = $match[ 0 ];
+			$database_username = $match[0];
 		}
 		else
 		{
@@ -638,27 +660,24 @@ function __lep_check_db_config() {
 		}
 	}
 	// Check if user has entered a database password
-	if ( !isset( $config['database_password'] ) )
+	if ( !isset( $config['database_password'] ) || $config['database_password'] == '' )
 	{
 		$database_password = '';
+		if ( ! isset($config['empty_db_password']) )
+		{
+            $errors['installer_database_password_empty'] = true;
+		}
 	}
 	else
 	{
-		if ( preg_match( $regexp, $config['database_password'], $match ) )
-		{
-			// don't allow quotes in the PW!
-			if ( preg_match( '/(\%27)|(\')|(%2D%2D)|(\-\-)/i', $match[ 0 ] ) )
-			{
-				$errors['installer_database_password'] = $lang->translate('Invalid database password!');
-			}
-			else
-			{
-				$database_password = $match[ 0 ];
-			}
+	    if ( ! $users->validatePassword($config['database_password']) )
+	    {
+			$errors['installer_database_password'] = $lang->translate('Invalid database password!')
+												   . ' ' . $users->getPasswordError();
 		}
 		else
 		{
-			$errors['installer_database_password'] = $lang->translate('Invalid database password!');
+		    $database_password = $users->getLastValidatedPassword();
 		}
 	}
 
@@ -932,7 +951,7 @@ function install_tables ($database) {
  **/
 function __do_install() {
 
-	global $config, $parser;
+	global $config, $parser, $dirh;
 
 	include dirname(__FILE__).'/../framework/functions.php';
 	$lepton_path = sanitize_path( dirname(__FILE__).'/..' );
@@ -1112,6 +1131,12 @@ function __do_install() {
 			}
 		}
 	}
+	
+	// ---- set index.php to read only ----
+	$dirh->setReadOnly( $lepton_path.'/index.php' );
+	
+	// ---- make sure we have an index.php everywhere ----
+	$dirh->recursiveCreateIndex( $lepton_path );
 
 	if ( count($errors) )
 	{
@@ -1459,9 +1484,30 @@ function pre_installation_error( $msg ) {
  	<link rel="stylesheet" href="'.$installer_uri.'/templates/default/index.css" type="text/css" />
    </head>
   <body>
-  <h1>LEPTON Installation Prerequistes Error</h1>
-  <h2>Sorry, the LEPTON Installation Prerequisites Check failed.</h2>
-  <span style="color:#fff;">'.$msg.'</span>
+  <div style="width:800px;min-width:500px;margin-left:auto;margin-right:auto;margin-top:100px;text-align:center;">
+    <div style="float:left">
+	  <img src="templates/default/images/fail.png" alt="Fail" title="Fail" />
+    </div>
+    <div style="float:left">
+  	  <h1>LEPTON Installation Prerequistes Error</h1>
+  	  <h2>Sorry, the LEPTON Installation prerequisites check failed.</h2>
+  	  <span style="color:#fff;">'.$msg.'</span><br /><br />
+  	  <h2>You will need to fix the errors quoted above to start the installation.</h2>
+    </div>
+  </div>
+  <div id="header">
+    <div>Installation Wizard</div>
+  </div>
+  <div id="footer">
+    <div style="float:left;margin:0;padding:0;padding-left:50px;"><h3>feel free to keep it strictly simple...</h3></div>
+    <div>
+      <!-- Please note: the below reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
+      <a href="http://www.lepton-cms.org" title="LEPTON CMS" target="_blank">LEPTON Core</a> is released under the
+      <a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON Core is GPL" target="_blank">GNU General Public License</a>.<br />
+      <!-- Please note: the above reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
+      <a href="http://www.lepton-cms.org" title="LEPTON Package" target="_blank">LEPTON CMS Package</a> is released under several different licenses.
+    </div>
+  </div>
   </body>
 </html>
 ';

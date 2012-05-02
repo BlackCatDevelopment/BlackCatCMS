@@ -74,6 +74,12 @@ $LANG = array(
 	    => 'Nur die Zeichen a-z, A-Z, 0-9, - und _ sind erlaubt. Bitte beachten, dass ein Datenbankname nicht ausschließlich aus Zahlen bestehen darf.',
     'Only characters a-z, A-Z, 0-9 and _ allowed in table_prefix.'
         => 'Nur die Zeichen a-z, A-Z, 0-9, - und _ sind als table_prefix erlaubt.',
+    'Empty database password' => 'Leeres Datenbankkennwort',
+    'You have set an empty password. Please check the checkbox above to confirm that this is really what you want.'
+		=> 'Das Datenbankkennwort ist leer. Zur Bestätigung bitte obige Checkbox markieren.',
+    'Please check the database password!' => 'Bitte das Datenbankkennwort prüfen',
+    "If you don't have a database password, please check this checkbox. Please note that this is a security risk in public environments. Use empty passwords in (local) testing environments only."
+		=> 'Wenn das Datenbankkennwort leer bleiben soll, bitte nebenstehende Checkbox anhaken. Hinweis: Dies ist ein Sicherheitsrisiko! Leere Kennworte sollten nur in (lokalen) Testumgebungen verwendet werden.',
 // ----- site -----
 	'Site settings' => 'Site Einstellungen',
 	'Website title' => 'Webseitentitel',
@@ -87,6 +93,7 @@ $LANG = array(
 	'modern (jQuery enhanced)' => 'modern (mit jQuery)',
 	'Please enter an admin username (choose "admin", for example)!'
 		=> 'Bitte eine Administrator-Kennung angeben (z. B. "admin")',
+	'Please enter an email address!' => 'Bitte eine Mailadresse für das Administratorkonto angeben',
 	'Please enter a valid email address for the Administrator account'
 	    => 'Bitte eine gültige E-Mail Adresse für das Administratorkonto angeben',
     'Please enter an admin password!' => 'Bitte ein Kennwort angeben!',
@@ -97,8 +104,8 @@ $LANG = array(
         => 'Name zu kurz! Die Administrator-Kennung sollte mindestens 3 Zeichen lang sein.',
     'Only characters a-z, A-Z, 0-9 and _ allowed in admin username'
         => 'Nur die Zeichen a-z, A-Z, 0-9, - und _ sind in der Administrator-Kennung erlaubt.',
-    'Password too short! The admin password should be at least 5 chars long.'
-		=> 'Kennwort zu kurz! Das Administrator-Kennwort sollte mindestens 5 Zeichen lang sein.',
+	'Invalid password!' => 'Das Kennwort ist ungültig!',
+	'The password is too short.' => 'Das Kennwort ist zu kurz.',
 // ----- postcheck -----
     'Please check your settings before finishing the installation process.'
         => 'Bitte überprüfen Sie nochmals Ihre Einstellungen, bevor Sie fortfahren',
