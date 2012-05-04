@@ -744,7 +744,15 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 					    if ( file_exists( $this->sanitizePath(LEPTON_PATH.'/'.$file) ) )
 						{
 					        LEPTON_Pages::$css[] = array(
-								'media' => 'all',
+								'media' => 'screen,projection',
+								'file'  => $file
+							);
+					    }
+					    $file = $this->sanitizePath( $directory.'/'.PAGE_ID.'_print.css' );
+					    if ( file_exists( $this->sanitizePath(LEPTON_PATH.'/'.$file) ) )
+						{
+					        LEPTON_Pages::$css[] = array(
+								'media' => 'print',
 								'file'  => $file
 							);
 					    }
