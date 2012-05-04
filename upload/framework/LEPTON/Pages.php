@@ -31,6 +31,8 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	
 	    protected $debugLevel      = 8; // 8 = OFF
 	    
+	    private $space = '    ';
+	    
 	    // header components
 	    private static $css      = array();
 	    private static $meta     = array();
@@ -75,11 +77,11 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 		 *
 		 * @access public
 		 * @param  string  $for - 'backend'/'frontend'
-		 * @param  string  $individual - backend section name to load JS for
+		 * @param  string  $section - backend section name to load JS for
 		 * @return mixed
 		 *
 		 **/
-	    public function getHeaders( $for = NULL, $individual = false )
+	    public function getHeaders( $for = NULL, $section = false )
 	    {
 	    
 	        // don't do this twice
@@ -106,10 +108,10 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
             $this->log()->logDebug( 'page id: ['.$page_id.']' );
             
             if ( $for == 'backend' ) {
-                return $this->getBackendHeaders($individual);
+                return $this->getBackendHeaders($section);
 			}
 			else {
-			    return $this->getFrontendHeaders($individual);
+			    return $this->getFrontendHeaders($section);
 			}
 
 	    }   // end function getHeaders()
@@ -179,7 +181,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	     *
 	     *
 	     **/
-	    public function getBackendHeaders($individual)
+	    public function getBackendHeaders($section)
 	    {
 	    
 	        // -----------------------------------------------------------------
@@ -189,7 +191,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	        if (file_exists($file))
 			{
 			    $this->log()->logDebug( sprintf( 'adding items for backend theme [%s]', DEFAULT_THEME ) );
-			    $this->_load_headers_inc( $file, 'backend', 'templates/'.DEFAULT_THEME, $individual );
+			    $this->_load_headers_inc( $file, 'backend', 'templates/'.DEFAULT_THEME, $section );
 			}   // end loading theme
 			
 			// -----------------------------------------------------------------
@@ -218,105 +220,27 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 					if ( file_exists( $file ) )
 					{
 						$this->log()->logDebug( sprintf( 'adding items for admin tool [%s]', $_REQUEST['tool'] ) );
-			    		$this->_load_headers_inc( $file, 'backend', 'modules/'.$_REQUEST['tool'], $individual );
+			    		$this->_load_headers_inc( $file, 'backend', 'modules/'.$_REQUEST['tool'], $section );
 					}
 				}
 	        }
 	        // -----------------------------------------------------------------
-			// -----                        page                           -----
+			// -----                  edit page                            -----
 			// -----------------------------------------------------------------
 	        else
 			{
-			
-				$page_id = defined( 'PAGE_ID' )
-                 	     ? PAGE_ID
-                         : (
-                             ( isset($_GET['page_id']) && is_numeric($_GET['page_id']) )
-                             ? $_GET['page_id']
-                             : NULL
-                           );
-                           
-				if ( $page_id && is_numeric($page_id) )
-	        	{
-		            // ...get active sections
-				    if ( ! class_exists( 'LEPTON_Sections' ) )
-				    {
-				        @require_once $this->sanitizePath( dirname(__FILE__).'/Sections.php' );
-					}
-					$sec_h    = new LEPTON_Sections();
-					$sections = $sec_h->get_active_sections($page_id);
-		            if ( is_array($sections) && count($sections) )
-		            {
-		                global $current_section;
-		                foreach ($sections as $section)
-		                {
-		                    $module = $section['module'];
-		                    $file   = $this->sanitizePath(LEPTON_PATH.'/modules/'.$module.'/headers.inc.php');
-							// find header definition file
-		                    if ( file_exists($file) )
-		                    {
-		                        $current_section = $section['section_id'];
-								$this->_load_headers_inc( $file, $for, 'modules/'.$module, $individual );
-							}
-							array_push(
-								LEPTON_Pages::$css_search_path,
-						        '/modules/' . $module,
-						        '/modules/' . $module . '/css'
-							);
-							array_push(
-								LEPTON_Pages::$js_search_path,
-						        '/modules/' . $module,
-						        '/modules/' . $module . '/js'
-							);
-						}   // foreach ($sections as $section)
-					}       // if (count($sections))
-				}
+			    $this->_load_sections('backend');
 			}
 	        
 	        // -----------------------------------------------------------------
 	        // -----                scan for css files                     -----
 	        // -----------------------------------------------------------------
-	        if ( count(LEPTON_Pages::$css_search_path) )
-	        {
-	            // automatically add CSS files
-				foreach( LEPTON_Pages::$css_search_path as $directory )
-				{
-					// backend.css
-					$file = $this->sanitizePath( $directory.'/backend.css' );
-					if ( file_exists(LEPTON_PATH.'/'.$file) )
-					{
-						LEPTON_Pages::$css[] = array(
-							'media' => 'all',
-							'file'  => $file
-						);
-					}
-					// backend_print.css
-				    $file = $this->sanitizePath( $directory.'/backend_print.css' );
-				    if ( file_exists(LEPTON_PATH.'/'.$file) )
-					{
-				        LEPTON_Pages::$css[] = array(
-							'media' => 'print',
-							'file'  => $file
-						);
-				    }
-				}
-	        }
+	        $this->_load_css('backend');
 	        
 	        // -----------------------------------------------------------------
 	        // -----                scan for js files                      -----
 	        // -----------------------------------------------------------------
-	        if ( count(LEPTON_Pages::$js_search_path) )
-	        {
-	        	foreach( LEPTON_Pages::$js_search_path as $directory )
-				{
-					$file = $this->sanitizePath( $directory.'/backend.js' );
-					if ( file_exists(LEPTON_PATH.'/'.$file) ) {
-						LEPTON_Pages::$js = '<script type="text/javascript" src="'
-										  . sanitize_url( LEPTON_URL.$file )
-										  . '"></script>' . "\n";
-					}
-				}
-			}
+	        $this->_load_js('backend');
 			
 			// return the results
 			return $this->getCSS().
@@ -333,11 +257,36 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	     **/
 	    public function getFrontendHeaders()
 	    {
-	        if (file_exists(LEPTON_PATH.'/templates/'.DEFAULT_TEMPLATE.'/headers.inc.php'))
+	        // -----------------------------------------------------------------
+	        // -----                  frontend theme                       -----
+	        // -----------------------------------------------------------------
+	        $file = $this->sanitizePath( LEPTON_PATH.'/templates/'.DEFAULT_THEME.'/headers.inc.php' );
+	        if (file_exists($file))
 			{
 				$this->log()->logDebug( sprintf( 'adding items for backend theme [%s]', DEFAULT_TEMPLATE ) );
-				__addItems( 'frontend', LEPTON_PATH . '/templates/' . DEFAULT_TEMPLATE );
+				$this->_load_headers_inc( $file, 'frontend', 'templates/'.DEFAULT_TEMPLATE );
 			}
+			
+			// -----------------------------------------------------------------
+	        // -----                  sections (modules)                   -----
+	        // -----------------------------------------------------------------
+			$this->_load_sections('frontend');
+			
+			// -----------------------------------------------------------------
+	        // -----                  scan for css files                   -----
+	        // -----------------------------------------------------------------
+	        $this->_load_css('frontend');
+
+	        // -----------------------------------------------------------------
+	        // -----                  scan for js files                    -----
+	        // -----------------------------------------------------------------
+	        $this->_load_js('frontend');
+
+			// return the results
+			return $this->getCSS().
+				   $this->getJQuery( 'header' ).
+				   $this->getJavaScripts( 'header' );
+			
 	    }   // end function getFrontendHeaders()
 	    
 	    /**
@@ -409,7 +358,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 			}
 			if ( count($static) )
 			{
-			    return implode( "\n", $static );
+			    return implode( "\n", $static ) . "\n";
 			}
 			return NULL;
 	    }   // end function getJQuery()
@@ -465,8 +414,17 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	     * @return void
 	     *
 	     **/
-	    private function _analyze_javascripts( &$arr, $for = 'frontend', $path_prefix = NULL, $individual = false )
+	    private function _analyze_javascripts( &$arr, $for = 'frontend', $path_prefix = NULL, $section = false )
 	    {
+	    
+        	if ( $for == 'frontend' )
+	    {
+		        $static =& LEPTON_Pages::$js;
+		    }
+		    else {
+		        $static =& LEPTON_Pages::$f_js;
+		    }
+
 			if ( is_array($arr) )
 			{
 			    $check_paths = array();
@@ -476,14 +434,6 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 				    $check_paths = array_reverse($check_paths);
 				}
 				
-				if ( $for == 'frontend' )
-			    {
-			        $static =& LEPTON_Pages::$js;
-			    }
-			    else {
-			        $static =& LEPTON_Pages::$f_js;
-			    }
-
 				if ( isset($arr['all']) )
 				{
 					foreach ( $arr['all'] as $item )
@@ -498,7 +448,8 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 								}
 							}
 						}
-						$static[] = '<script type="text/javascript" src="'
+						$static[] = $this->space
+								  . '<script type="text/javascript" src="'
 							      . sanitize_url( LEPTON_URL.$item )
 								  . '"></script>';
 					}
@@ -510,7 +461,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 				    {
 						foreach ( $arr['individual'] as $section_name => $item )
 						{
-							if ( $section_name == strtolower($individual) )
+							if ( $section_name == strtolower($section) )
 							{
 							    foreach( $check_paths as $subdir )
 							    {
@@ -519,7 +470,8 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 									    $item = $this->sanitizePath( $subdir.'/'.$item );
 									}
 								}
-								$static[] = '<script type="text/javascript" src="'
+								$static[] = $this->space
+										  . '<script type="text/javascript" src="'
 										  . sanitize_url( LEPTON_URL.$item )
 										  . '"></script>';
 							}
@@ -529,7 +481,8 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 			}
 			else
 			{
-				$static[] = '<script type="text/javascript" src="'
+				$static[] = $this->space
+						  . '<script type="text/javascript" src="'
 					      . sanitize_url(LEPTON_URL . '/' . $arr)
 						  . '"></script>';
 			}
@@ -575,39 +528,59 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 			
 			// load the components
 			if ( isset($arr['ui-theme']) && file_exists(LEPTON_PATH.'/modules/lib_jquery/jquery-ui/themes/'.$arr['ui-theme']) ) {
-				$static[] = '<link rel="stylesheet" type="text/css" href="' . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/themes/'.$arr['ui-theme'].'/jquery-ui.css').'" media="all" />' . "\n";
+				$static[] = $this->space
+						  . '<link rel="stylesheet" type="text/css" href="'
+						  . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/themes/'.$arr['ui-theme'].'/jquery-ui.css')
+						  . '" media="all" />' . "\n";
 			}
 			
 			// core is always added to header
 			if ( isset($arr['core']) && $arr['core'] === true ) {
-				LEPTON_Pages::$jquery[] = '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-core/jquery-core.min.js').'"></script>' . "\n";
+				LEPTON_Pages::$jquery[] = $this->space
+										. '<script type="text/javascript" src="'
+										. sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-core/jquery-core.min.js')
+										. '"></script>' . "\n";
 			}
 			
 			// ui is always added to header
 			if ( isset($arr['ui']) && $arr['ui'] === true ) {
-				LEPTON_Pages::$jquery[] = '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.ui.core.min.js').'"></script>' . "\n";
+				LEPTON_Pages::$jquery[] = $this->space
+										. '<script type="text/javascript" src="'
+										. sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.ui.core.min.js')
+										. '"></script>' . "\n";
 			}
 			
 			if ( isset($arr['ui-effects']) && is_array($arr['ui-effects']) ) {
 				foreach( $arr['ui-effects'] as $item ) {
-					$static[] = '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.effects.'.$item.'.min.js').'"></script>' . "\n";
+					$static[] = $this->space
+							  . '<script type="text/javascript" src="'
+							  . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.effects.'.$item.'.min.js')
+							  . '"></script>' . "\n";
 				}
 			}
 			if ( isset($arr['ui-components']) && is_array($arr['ui-components']) ) {
 				foreach( $arr['ui-components'] as $item ) {
-					$static[] = '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.ui.'.$item.'.min.js').'"></script>' . "\n";
+					$static[] = $this->space
+							  . '<script type="text/javascript" src="'
+							  . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.ui.'.$item.'.min.js')
+							  . '"></script>' . "\n";
 				}
 			}
 			if ( isset($arr['all']) && is_array($arr['all']) ) {
 				foreach( $arr['all'] as $item ) {
-					$static[] = '<script type="text/javascript" src="' . sanitize_url( LEPTON_URL . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js' ) . '"></script>' . "\n";
+					$static[] = $this->space
+							  . '<script type="text/javascript" src="'
+							  . sanitize_url( LEPTON_URL . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js' )
+							  . '"></script>' . "\n";
 				}
 			}
 			if ( isset($arr['individual']) && is_array( $arr['individual'] ) ) {
 				foreach( $arr['individual'] as $section_name => $item ) {
-					if ( $section_name == strtolower($individual) )
+					if ( $section_name == strtolower($section) )
 					{
-						$static[] = '<script type="text/javascript" src="' . sanitize_url( LEPTON_URL . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js' ) . '"></script>' . "\n";
+						$static[] = '<script type="text/javascript" src="'
+								  . sanitize_url( LEPTON_URL . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js' )
+								  . '"></script>' . "\n";
 					}
 				}
 			}
@@ -620,7 +593,42 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 		 *
 		 *
 		 **/
-        private function _load_footers_inc( $file, $for, $path_prefix, $individual )
+		private function _load_css( $for = 'frontend' )
+		{
+			if ( count(LEPTON_Pages::$css_search_path) )
+	        {
+	            // automatically add CSS files
+				foreach( LEPTON_Pages::$css_search_path as $directory )
+				{
+					// backend.css
+					$file = $this->sanitizePath( $directory.'/'.$for.'.css' );
+					if ( file_exists(LEPTON_PATH.'/'.$file) )
+					{
+						LEPTON_Pages::$css[] = array(
+							'media' => 'all',
+							'file'  => $file
+						);
+					}
+					// backend_print.css
+				    $file = $this->sanitizePath( $directory.'/'.$for.'_print.css' );
+				    if ( file_exists(LEPTON_PATH.'/'.$file) )
+					{
+				        LEPTON_Pages::$css[] = array(
+							'media' => 'print',
+							'file'  => $file
+						);
+				    }
+				}
+	        }
+		}   // end function _load_css()
+		
+		/**
+		 *
+		 *
+		 *
+		 *
+		 **/
+        private function _load_footers_inc( $file, $for, $path_prefix, $section )
         {
             // reset array
 			$mod_footers = array();
@@ -642,7 +650,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 		 *
 		 *
 		 **/
-		private function _load_headers_inc( $file, $for, $path_prefix, $individual )
+		private function _load_headers_inc( $file, $for, $path_prefix, $section = NULL )
 		{
 			// reset array
 			$mod_headers = array();
@@ -664,8 +672,83 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 				// ----- other JS -----
 				if ( isset($mod_headers[$for]['js']) && is_array($mod_headers[$for]['js']) && count($mod_headers[$for]['js']) )
 				{
-                    $this->_analyze_javascripts($mod_headers[$for]['js'][0], $for, $path_prefix.'/js', $individual );
+                    $this->_analyze_javascripts($mod_headers[$for]['js'][0], $for, $path_prefix.'/js', $section );
 				}
+			}
+		}
+		
+		/**
+		 *
+		 *
+		 *
+		 *
+		 **/
+		private function _load_js( $for = 'frontend' )
+		{
+			if ( count(LEPTON_Pages::$js_search_path) )
+	        {
+	        	foreach( LEPTON_Pages::$js_search_path as $directory )
+				{
+					$file = $this->sanitizePath( $directory.'/backend.js' );
+					if ( file_exists(LEPTON_PATH.'/'.$file) ) {
+						LEPTON_Pages::$js = '<script type="text/javascript" src="'
+										  . sanitize_url( LEPTON_URL.$file )
+										  . '"></script>' . "\n";
+					}
+				}
+				}
+		}   // end function _load_js()
+		
+		/**
+		 *
+		 *
+		 *
+		 *
+		 **/
+		private function _load_sections( $for = 'frontend' )
+		{
+			$page_id = defined( 'PAGE_ID' )
+             	     ? PAGE_ID
+                     : (
+                         ( isset($_GET['page_id']) && is_numeric($_GET['page_id']) )
+                         ? $_GET['page_id']
+                         : NULL
+                       );
+
+			if ( $page_id && is_numeric($page_id) )
+        	{
+	            // ...get active sections
+			    if ( ! class_exists( 'LEPTON_Sections' ) )
+			    {
+			        @require_once $this->sanitizePath( dirname(__FILE__).'/Sections.php' );
+				}
+				$sec_h    = new LEPTON_Sections();
+				$sections = $sec_h->get_active_sections($page_id);
+	            if ( is_array($sections) && count($sections) )
+	            {
+	                global $current_section;
+	                foreach ($sections as $section)
+	                {
+	                    $module = $section['module'];
+	                    $file   = $this->sanitizePath(LEPTON_PATH.'/modules/'.$module.'/headers.inc.php');
+						// find header definition file
+	                    if ( file_exists($file) )
+	                    {
+	                        $current_section = $section['section_id'];
+							$this->_load_headers_inc( $file, $for, 'modules/'.$module, $section );
+						}
+						array_push(
+							LEPTON_Pages::$css_search_path,
+					        '/modules/' . $module,
+					        '/modules/' . $module . '/css'
+						);
+						array_push(
+							LEPTON_Pages::$js_search_path,
+					        '/modules/' . $module,
+					        '/modules/' . $module . '/js'
+						);
+					}   // foreach ($sections as $section)
+				}       // if (count($sections))
 			}
 		}
 		
