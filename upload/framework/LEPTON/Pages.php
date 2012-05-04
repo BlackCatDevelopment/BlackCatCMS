@@ -255,12 +255,53 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	     *
 	     *
 	     **/
+		public function getFrontendFooters()
+		{
+
+		    // -----------------------------------------------------------------
+	        // -----                  frontend theme                       -----
+	        // -----------------------------------------------------------------
+	        $file = $this->sanitizePath( LEPTON_PATH.'/templates/'.DEFAULT_TEMPLATE.'/footers.inc.php' );
+	        if (file_exists($file))
+			{
+			    $this->log()->logDebug( sprintf( 'adding footer items for frontend template [%s]', DEFAULT_TEMPLATE ) );
+			    $this->_load_footers_inc( $file, 'frontend', 'templates/'.DEFAULT_TEMPLATE );
+			}   // end loading theme
+			
+			// -----------------------------------------------------------------
+	        // -----                  scan for js files                    -----
+	        // -----------------------------------------------------------------
+	        if ( count(LEPTON_Pages::$js_search_path) )
+	        {
+	        	foreach( LEPTON_Pages::$js_search_path as $directory )
+				{
+					$file = $this->sanitizePath( $directory.'/frontend_body.js' );
+					if ( file_exists(LEPTON_PATH.'/'.$file) ) {
+						LEPTON_Pages::$f_js[] = $this->space
+											  . '<script type="text/javascript" src="'
+										      . sanitize_url( LEPTON_URL.$file )
+										      . '"></script>' . "\n";
+					}
+				}
+			}
+
+			return $this->getJQuery('footer').
+				   $this->getJavaScripts('footer');
+				   
+		}   // end function getFrontendFooters()
+	    
+	    /**
+	     *
+	     *
+	     *
+	     *
+	     **/
 	    public function getFrontendHeaders()
 	    {
 	        // -----------------------------------------------------------------
 	        // -----                  frontend theme                       -----
 	        // -----------------------------------------------------------------
-	        $file = $this->sanitizePath( LEPTON_PATH.'/templates/'.DEFAULT_THEME.'/headers.inc.php' );
+	        $file = $this->sanitizePath( LEPTON_PATH.'/templates/'.DEFAULT_TEMPLATE.'/headers.inc.php' );
 	        if (file_exists($file))
 			{
 				$this->log()->logDebug( sprintf( 'adding items for backend theme [%s]', DEFAULT_TEMPLATE ) );
