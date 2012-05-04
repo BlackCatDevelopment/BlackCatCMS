@@ -31,7 +31,10 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	
 	    protected $debugLevel      = 8; // 8 = OFF
 	    
+		// space before header items
 	    private $space = '    ';
+	    
+	    private static $properties      = array();
 	    
 	    // header components
 	    private static $css      = array();
@@ -308,6 +311,13 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 				$this->_load_headers_inc( $file, 'frontend', 'templates/'.DEFAULT_TEMPLATE );
 			}
 			
+			// add template path to CSS search path (frontend only)
+		    array_push(
+				LEPTON_Pages::$css_search_path,
+		        '/templates/'.DEFAULT_TEMPLATE,
+		        '/templates/'.DEFAULT_TEMPLATE . '/css'
+			);
+
 			// -----------------------------------------------------------------
 	        // -----                  sections (modules)                   -----
 	        // -----------------------------------------------------------------
@@ -324,7 +334,8 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	        $this->_load_js('frontend');
 
 			// return the results
-			return $this->getCSS().
+			return $this->getPageProperties().
+				   $this->getCSS().
 				   $this->getJQuery( 'header' ).
 				   $this->getJavaScripts( 'header' );
 			
@@ -403,6 +414,55 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 			}
 			return NULL;
 	    }   // end function getJQuery()
+	    
+	    /**
+	     *
+	     *
+	     *
+	     *
+	     **/
+	    public function getPageProperties()
+	    {
+	        $properties = $this->_load_page_properties();
+			$output = array();
+			
+			// charset
+			if ( isset($properties['default_charset']) )
+			{
+			    $output[] = $this->space
+						  . '<meta http-equiv="Content-Type" content="text/html; charset='
+						  . $properties['default_charset']
+						  . '" />';
+			}
+			
+			// page title
+			if ( isset($properties['title']) )
+			{
+			    $output[] = $this->space
+						  . '<title>'.$properties['title'].'</title>';
+			}
+			
+			// description
+			if ( isset($properties['description']) )
+			{
+			    $output[] = $this->space
+						  . '<meta name="description" content="'
+						  . $properties['description']
+						  . '" />';
+			}
+			
+			// keywords
+			if ( isset($properties['keywords']) )
+			{
+			    $output[] = $this->space
+						  . '<meta name="keywords" content="'
+						  . $properties['keywords']
+						  . '" />';
+			}
+			
+			return implode( "\n", $output ) . "\n";
+
+	    }   // end function getPageProperties()
 	    
 	    /**
 	     *
@@ -641,7 +701,25 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	            // automatically add CSS files
 				foreach( LEPTON_Pages::$css_search_path as $directory )
 				{
-					// backend.css
+				    // template.css
+				    $file = $this->sanitizePath( $directory.'/template.css' );
+					if ( file_exists(LEPTON_PATH.'/'.$file) )
+					{
+						LEPTON_Pages::$css[] = array(
+							'media' => 'screen,projection',
+							'file'  => $file
+						);
+					}
+					// print.css
+				    $file = $this->sanitizePath( $directory.'/print.css' );
+					if ( file_exists(LEPTON_PATH.'/'.$file) )
+					{
+						LEPTON_Pages::$css[] = array(
+							'media' => 'print',
+							'file'  => $file
+						);
+					}
+					// frontend.css / backend.css
 					$file = $this->sanitizePath( $directory.'/'.$for.'.css' );
 					if ( file_exists(LEPTON_PATH.'/'.$file) )
 					{
@@ -650,7 +728,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 							'file'  => $file
 						);
 					}
-					// backend_print.css
+					// frontend.css / backend_print.css
 				    $file = $this->sanitizePath( $directory.'/'.$for.'_print.css' );
 				    if ( file_exists(LEPTON_PATH.'/'.$file) )
 					{
@@ -658,6 +736,18 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 							'media' => 'print',
 							'file'  => $file
 						);
+				    }
+				    // PAGE_ID.css (frontend only)
+				    if ( $for == 'frontend' && defined( 'PAGE_ID' ) && preg_match( '#/templates/#', $directory ) )
+				    {
+				        $file = $this->sanitizePath( $directory.'/'.PAGE_ID.'.css' );
+					    if ( file_exists( $this->sanitizePath(LEPTON_PATH.'/'.$file) ) )
+						{
+					        LEPTON_Pages::$css[] = array(
+								'media' => 'all',
+								'file'  => $file
+							);
+					    }
 				    }
 				}
 	        }
@@ -739,6 +829,70 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 				}
 				}
 		}   // end function _load_js()
+		
+		/**
+		 *
+		 *
+		 *
+		 *
+		 **/
+		private function _load_page_properties()
+		{
+		    global $database;
+		    
+			if ( ! is_array(self::$properties) || ! count(self::$properties) )
+	        {
+
+				// get global settings
+				$sql = sprintf(
+					'SELECT `name`,`value` FROM `%ssettings` ORDER BY `name`',
+					TABLE_PREFIX
+				);
+			    if ( ( $result = $database->query( $sql ) ) && ( $result->numRows( ) > 0 ) )
+				{
+			        while ( false != ($row = $result->fetchRow( MYSQL_ASSOC ) ) )
+					{
+					    if ( preg_match( '#^website_(.*)$#', $row['name'], $match ) )
+					    {
+			            	self::$properties[ $match[1] ] = $row['value'];
+						}
+						if ( $row['name'] == 'default_charset' )
+					    {
+			            	self::$properties[ 'default_charset' ]
+								= ( $row['value'] != '' )
+								? $row['value']
+								: 'utf-8';
+						}
+					}
+			    }
+				else {
+			        die( "Settings not found" );
+			    }
+
+				// get properties for current page; overwrites globals if not empty
+				$sql = sprintf(
+					'SELECT page_title, description, keywords FROM %spages WHERE page_id = "%d"',
+					TABLE_PREFIX,
+					PAGE_ID
+				);
+				if ( ( $result = $database->query( $sql ) ) && ( $result->numRows( ) > 0 ) )
+				{
+			        while ( false != ($row = $result->fetchRow( MYSQL_ASSOC ) ) )
+					{
+					    foreach ( array( 'page_title', 'description', 'keywords' ) as $key )
+					    {
+					        if ( isset($row[$key]) && $row[$key] != '' )
+					        {
+					            $prop = str_ireplace( 'page_', '', $key );
+			            		self::$properties[$prop] = $row[$key];
+							}
+						}
+					}
+			    }
+			}
+
+			return self::$properties;
+		}
 		
 		/**
 		 *
