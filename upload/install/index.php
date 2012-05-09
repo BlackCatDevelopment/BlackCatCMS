@@ -1005,6 +1005,9 @@ function __do_install() {
 	    }
 	  }
 	}
+	
+	// remove trailing /
+	$config_lepton_url = rtrim( $config['lepton_url'], '/' );
 
 	$config_content = "" .
 "<?php\n".
@@ -1034,7 +1037,7 @@ function __do_install() {
 "\n".
 "define('LEPTON_SERVER_ADDR', '".$server_addr."');\n".
 "define('LEPTON_PATH', dirname(__FILE__));\n".
-"define('LEPTON_URL', '".$config['lepton_url']."');\n".
+"define('LEPTON_URL', '".$config_lepton_url."');\n".
 "define('ADMIN_PATH', LEPTON_PATH.'/'.LEPTON_BACKEND_PATH);\n".
 "define('ADMIN_URL', LEPTON_URL.'/'.LEPTON_BACKEND_PATH);\n".
 "\n".
