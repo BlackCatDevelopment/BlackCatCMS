@@ -11,7 +11,7 @@
  * @link            http://www.lepton-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
- * @version         $Id$
+ * @version         $Id: pclzip.lib.php 1871 2012-04-06 11:03:40Z erpe $
  *
  */
 
@@ -59,7 +59,7 @@ if (defined('WB_PATH')) {
 //   The use of this software is at the risk of the user.
 //
 // --------------------------------------------------------------------------------
-// $Id$
+// $Id: pclzip.lib.php 1871 2012-04-06 11:03:40Z erpe $
 // --------------------------------------------------------------------------------
 
   // ----- Constants

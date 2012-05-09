@@ -9,7 +9,7 @@
  * @link            http://www.lepton-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
- * @version         $Id$
+ * @version         $Id: readme.txt 1871 2012-04-06 11:03:40Z erpe $
  *
  */
 
@@ -18,7 +18,7 @@
 // Vincent Blavet - vincent@phpconcept.net
 // http://www.phpconcept.net
 // --------------------------------------------------------------------------------
-// $Id$
+// $Id: readme.txt 1871 2012-04-06 11:03:40Z erpe $
 // --------------------------------------------------------------------------------
 
 
