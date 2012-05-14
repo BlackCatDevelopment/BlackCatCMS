@@ -477,7 +477,7 @@ function show_step_site( $step ) {
 	$output = $parser->get(
         'site.lte',
         array(
-            'installer_website_title'    => ( isset($config['website_title'])    ? $config['website_title']    : 'LEPTON CMS' ),
+            'installer_website_title'    => ( isset($config['website_title'])    ? $config['website_title']    : 'LEPTON CMS "Black Cat Edition"' ),
             'installer_admin_username'   => ( isset($config['admin_username'])   ? $config['admin_username']   : ''    		  ),
             'installer_admin_password'   => ( isset($config['admin_password'])   ? $config['admin_password']   : ''    		  ),
             'installer_admin_repassword' => ( isset($config['admin_repassword']) ? $config['admin_repassword'] : ''    		  ),
@@ -1190,7 +1190,7 @@ function fill_tables($database,$lepton_guid) {
 		." ('website_title', '".$config['website_title']."'),"
 		." ('website_description', ''),"
 		." ('website_keywords', ''),"
-		." ('website_header', 'LEPTON CMS'),"
+		." ('website_header', 'LEPTON CMS \"Black Cat Edition\"'),"
 		." ('website_footer', 'settings/website footer'),"
 		." ('rename_files_on_upload', 'jpg,jpeg,gif,gz,png,pdf,tif,zip'),"
 		." ('er_level', ''),"
@@ -1214,7 +1214,7 @@ function fill_tables($database,$lepton_guid) {
 		." ('page_trash', 'inline'),"
 		." ('homepage_redirection', 'false'),"
 		." ('page_languages', 'false'),"
-		." ('wysiwyg_editor', 'tiny_mce_jq'),"
+		." ('wysiwyg_editor', 'ckeditor'),"
 		." ('manage_sections', 'true'),"
 		." ('section_blocks', 'true'),"
 		." ('frontend_login', 'false'),"
@@ -1414,9 +1414,9 @@ function check_tables($database) {
 	 *	Keep in Mind, that the values are only used as default, if an entry isn't found.
 	 */
 	$vars = array(
-		'DEFAULT_THEME'	=> "algos",
-		'THEME_URL'		=> LEPTON_URL."/templates/algos",
-		'THEME_PATH'	=> LEPTON_PATH."/templates/algos",
+		'DEFAULT_THEME'	=> "freshcat",
+		'THEME_URL'		=> LEPTON_URL."/templates/freshcat",
+		'THEME_PATH'	=> LEPTON_PATH."/templates/freshcat",
 		'LANGUAGE'		=> $_POST['default_language'],
 		'SERVER_EMAIL'	=> "admin@yourdomain.tld",
 		'PAGES_DIRECTORY' => '/page',

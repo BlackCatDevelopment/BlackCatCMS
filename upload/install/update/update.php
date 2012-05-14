@@ -201,7 +201,7 @@ function update_111() {
 	    "form",
 	    "news",
 	    "initial_page",
-	    "tiny_mce_jq",
+	    "ckeditor",
 	    "show_menu2",
 	    "wysiwyg_admin"
 	);
@@ -257,7 +257,7 @@ function update_112 () {
 	$upgrade_modules = array(
 	    "news",
 	    "initial_page",
-	    "tiny_mce_jq",
+	    "ckeditor",
 	    "addon_file_editor",
 	    "edit_area",
 	    "jsadmin",
@@ -294,7 +294,7 @@ function update_113 () {
 	 *
 	 */
 	$upgrade_modules = array(
-	    "tiny_mce_jq",
+	    "ckeditor",
 	    "news",
 	    "code2",
 	    "lib_jquery"
@@ -350,7 +350,7 @@ function update_114 () {
 	 *
 	 */
 	$upgrade_modules = array(
-	    "tiny_mce_jq",
+	    "ckeditor",
 	    "news",
 	    "form",
 	    "wrapper",
@@ -424,7 +424,7 @@ function update_200 () {
 	 *
 	 */
 	$upgrade_modules = array(
-	    "tiny_mce_jq",
+	    "ckeditor",
 	    "lib_jquery",
 	    "dropleps",
 	);

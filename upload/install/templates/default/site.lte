@@ -11,22 +11,6 @@
         {if $errors.installer_website_title}<br /><span>{$errors.installer_website_title}</span>{/if}
       </td>
 	</tr>
-	<tr{if $errors.installer_backend_theme || $errors.global} class="fail"{/if}>
-      <td><label for="installer_backend_theme">{translate('Backend theme')}</label><br />
-	  	<span id="be_preview_note" style="font-size:smaller;display:none;">{translate('Click on the image on the right to see a preview')}</span></td>
-      <td>
-        <select tabindex="2" id="installer_backend_theme" name="installer_backend_theme">
-          <option value="algos"{if $installer_backend_theme == 'algos'} selected="selected"{/if}>{translate('traditional')} (Algos)</option>
-          <option value="freshcat"{if $installer_backend_theme == 'freshcat'} selected="selected"{/if}>{translate('modern (jQuery enhanced)')} (FreshCat)</option>
-        </select>
-        {if $errors.installer_backend_theme}<br /><span>{$errors.installer_backend_theme}</span>{/if}
-        <span id="be_preview" style="display:none;">
-		  <a href="{$installer_uri}/templates/default/images/{$installer_backend_theme}.png" id="preview_link" class="fancybox">
-		    <img id="preview_image" src="{$installer_uri}/templates/default/images/tn_{$installer_backend_theme}.png" />
-		  </a>
-		</span>
-      </td>
-	</tr>
 	<tr{if $errors.installer_admin_username || $errors.global} class="fail"{/if}>
       <td><label for="installer_admin_username">{translate('Username')}</label></td>
       <td>

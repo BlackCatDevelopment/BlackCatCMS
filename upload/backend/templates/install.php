@@ -77,7 +77,7 @@ unset( $theme_directory );
 // ======================================================================== 
 // ! Setup the PclZip object and unzip the files to the temp unzip folder   
 // ======================================================================== 
-require_once( WB_PATH . '/modules/lib_lepton/pclzip/pclzip.lib.php' );
+require_once( WB_PATH . '/modules/lib_pclzip/pclzip.lib.php' );
 $archive	= new PclZip($temp_file);
 $list		= $archive->extract(PCLZIP_OPT_PATH, $temp_unzip);
 

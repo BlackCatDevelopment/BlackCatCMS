@@ -76,7 +76,7 @@ $temp_subdir	= $temp_unzip . basename($_FILES['userfile']['tmp_name']) . '/';
 make_dir( $temp_subdir );
 
 // Include the PclZip class file
-require_once( WB_PATH . '/modules/lib_lepton/pclzip/pclzip.lib.php' );
+require_once( WB_PATH . '/modules/lib_pclzip/pclzip.lib.php' );
 
 // Setup the PclZip object and unzip the files to the temp unzip folder
 $archive	= new PclZip($temp_file);
