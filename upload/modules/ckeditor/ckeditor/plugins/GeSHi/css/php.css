@@ -1,0 +1,17 @@
+/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+pre.php {border:1px solid #ccc;padding:5px;}
+.php .imp {font-weight: bold; color: red;}
+.php .kw1 {color: #b1b100;}
+.php .kw2 {color: #000000; font-weight: bold;}
+.php .kw3 {color: #000066;}
+.php .co1 {color: #808080; font-style: italic;}
+.php .co2 {color: #808080; font-style: italic;}
+.php .coMULTI {color: #808080; font-style: italic;}
+.php .es0 {color: #000099; font-weight: bold;}
+.php .br0 {color: #66cc66;}
+.php .st0 {color: #ff0000;}
+.php .nu0 {color: #cc66cc;}
+.php .me1 {color: #006600;}
+.php .me2 {color: #006600;}
+.php .re0 {color: #0000ff;}
+.php .re1 {color: #ff0000;}
