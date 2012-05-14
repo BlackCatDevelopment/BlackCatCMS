@@ -1,1 +1,0 @@
-<textarea name="{$name}" id="{$id}" style="width: {$width}; height: {$height};" cols="8" rows="8" >{$content}</textarea>
