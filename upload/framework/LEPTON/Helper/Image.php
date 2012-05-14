@@ -27,7 +27,7 @@ if ( ! class_exists( 'LEPTON_Helper_Image', false ) ) {
 
 		public function __construct() {
 	        if ( ! class_exists( 'Image', false ) ) {
-	            include dirname(__FILE__).'/../../../modules/lib_lepton/images/class.Images.php';
+	            include dirname(__FILE__).'/../../../modules/lib_images/inc/class.Images.php';
 			}
 			if ( ! defined('LEPTON_PATH') ) {
 			    include dirname(__FILE__).'/../../../config.php';
