@@ -482,7 +482,6 @@ function show_step_site( $step ) {
             'installer_admin_password'   => ( isset($config['admin_password'])   ? $config['admin_password']   : ''    		  ),
             'installer_admin_repassword' => ( isset($config['admin_repassword']) ? $config['admin_repassword'] : ''    		  ),
             'installer_admin_email' 	 => ( isset($config['admin_email'])  	 ? $config['admin_email']      : ''    		  ),
-            'installer_backend_theme' 	 => ( isset($config['backend_theme'])    ? $config['backend_theme']    : 'algos'      ),
 			'errors' => $step['errors']
 		)
 	);
@@ -591,7 +590,7 @@ function show_step_finish() {
 	$output = $parser->get(
 		$tpl,
 		array(
-			'backend_path'  => ( $config['backend_theme'] == 'freshcat' ? 'backend' : 'admins' ),
+			'backend_path'  => 'backend',
 			'installer_uri' => $installer_uri,
 		)
 	);
@@ -1025,7 +1024,7 @@ function __do_install() {
 "// path to new admins subfolder; default name is 'backend'\n".
 "define('LEPTON_BACKEND_FOLDER', 'backend');\n".
 "// do not touch this line! It is set by the options tab in the backend!\n".
-"define('LEPTON_BACKEND_PATH', ".($config['backend_theme'] == 'freshcat' ? 'LEPTON_BACKEND_FOLDER' : 'LEPTON_ADMINS_FOLDER')." );\n".
+"define('LEPTON_BACKEND_PATH', LEPTON_BACKEND_FOLDER );\n".
 "// *****************************************************************************\n\n".
 "define('DB_TYPE', 'mysql');\n".
 "define('DB_HOST', '".$config['database_host']."');\n".
@@ -1079,12 +1078,12 @@ function __do_install() {
 	}
 
 	// avoid to lead config.php here
-	if ( ! defined('LEPTON_PATH') ) 		  { define('LEPTON_PATH',$lepton_path);                    }
-	if ( ! defined('LEPTON_ADMINS_FOLDER') )  { define('LEPTON_ADMINS_FOLDER', '/admins');             }
-	if ( ! defined('LEPTON_BACKEND_FOLDER') ) { define('LEPTON_BACKEND_FOLDER', '/backend');           }
-	if ( ! defined('LEPTON_BACKEND_PATH') )   { define('LEPTON_BACKEND_PATH', ( $config['backend_theme'] == 'freshcat' ? LEPTON_BACKEND_FOLDER : LEPTON_ADMINS_FOLDER ) );  }
-	if ( ! defined('ADMIN_PATH') )  		  { define('ADMIN_PATH', LEPTON_PATH.LEPTON_BACKEND_PATH); }
-	if ( ! defined('ADMIN_URL') )   		  { define('ADMIN_URL', LEPTON_URL.LEPTON_BACKEND_PATH);   }
+	if ( ! defined('LEPTON_PATH') ) 		  { define('LEPTON_PATH',$lepton_path);                     }
+	if ( ! defined('LEPTON_ADMINS_FOLDER') )  { define('LEPTON_ADMINS_FOLDER', '/admins');              }
+	if ( ! defined('LEPTON_BACKEND_FOLDER') ) { define('LEPTON_BACKEND_FOLDER', '/backend');            }
+	if ( ! defined('LEPTON_BACKEND_PATH') )   { define('LEPTON_BACKEND_PATH', LEPTON_BACKEND_FOLDER );  }
+	if ( ! defined('ADMIN_PATH') )  		  { define('ADMIN_PATH', LEPTON_PATH.LEPTON_BACKEND_PATH);  }
+	if ( ! defined('ADMIN_URL') )   		  { define('ADMIN_URL', LEPTON_URL.LEPTON_BACKEND_PATH);    }
 
 	foreach( $config as $key => $value ) {
 		if ( ! defined( strtoupper($key) ) )
@@ -1207,7 +1206,7 @@ function fill_tables($database,$lepton_guid) {
 		." ('max_attempts', '9'),"
 		." ('home_folders', 'true'),"
 		." ('default_template', 'lepton'),"
-		." ('default_theme', '".$config['backend_theme']."'),"
+		." ('default_theme', 'freshcat'),"
 		." ('default_charset', 'utf-8'),"
 		." ('multiple_menus', 'true'),"
 		." ('page_level_limit', '4'),"

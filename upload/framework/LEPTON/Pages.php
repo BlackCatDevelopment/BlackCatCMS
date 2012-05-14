@@ -413,7 +413,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 			    return implode( "\n", $static ) . "\n";
 			}
 			return NULL;
-	    }   // end function getJQuery()
+	    }   // end function getJavaScripts()
 	    
 	    /**
 	     *
