@@ -35,5 +35,5 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 // Delete the editor directory
-rm_full_dir(WB_PATH.'/modules/phpmailer');
+rm_full_dir(WB_PATH.'/modules/lib_phpmailer');
 ?>

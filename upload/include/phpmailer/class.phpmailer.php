@@ -36,6 +36,6 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-include_once(WB_PATH.'/modules/phpmailer/class.phpmailer.php');
+include_once(WB_PATH.'/modules/lib_phpmailer/class.phpmailer.php');
 
 ?>
