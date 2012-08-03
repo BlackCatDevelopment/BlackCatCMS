@@ -32,16 +32,20 @@ if (defined('WB_PATH')) {
 $module_directory	= 'ckeditor';
 $module_name		= 'CKEditor';
 $module_function	= 'WYSIWYG';
-$module_version		= '0.9.0';
+$module_version		= '0.10.0';
 $module_platform	= '1.x';
-$module_author		= 'Michael Tenschert, erpe, Dietrich Roland Pehlke (last)';
+$module_author		= 'Michael Tenschert, erpe, Dietrich Roland Pehlke, B. Martinovic (last)';
 $module_license		= '<a target="_blank" href="http://www.gnu.org/licenses/lgpl.html">LGPL</a>';
 $module_license_terms = '-';
-$module_description = 'includes CKEditor 3.6.3,CKE allows editing content and can be integrated in frontend and backend modules.';
+$module_description = 'includes CKEditor 3.6.4; CKE allows editing content and can be integrated in frontend and backend modules.';
 $module_guid 		= '613AF469-9EE6-40AB-B91A-AC308791D64C';
 $module_home		= 'http://www.lepton-cms.org';
 
 /**
+ *
+ *  0.10.0  2012-08-03  - Upgrade CKE to 3.6.4
+ *                      - added Autosave plugin
+ *                      - added Code Highlighting with GeSHi
  *
  *	0.9.0	2012-04-17	- Upgrade CK-Editor internal to 3.6.3.
  *

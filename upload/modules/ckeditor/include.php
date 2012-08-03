@@ -3,7 +3,7 @@
 /**
  *  @module         ckeditor
  *  @version        see info.php of this module
- *  @authors        Dietrich Roland Pehlke
+ *  @authors        Dietrich Roland Pehlke; B. Martinovic (Plugins)
  *  @copyright      2010-2012 Dietrich Roland Pehlke
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
