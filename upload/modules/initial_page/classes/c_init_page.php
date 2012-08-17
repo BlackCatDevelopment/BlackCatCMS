@@ -8,7 +8,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         copyright, all rights reserved
  * @license_terms   please see info.php of this module
- * @version         $Id$
+ *
  *
  */
  

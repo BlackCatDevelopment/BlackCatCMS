@@ -14,7 +14,7 @@
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  * @reformatted     2011-10-04
- * @version         $Id$
+ *
  *
  */
 

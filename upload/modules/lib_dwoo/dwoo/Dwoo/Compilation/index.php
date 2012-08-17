@@ -11,7 +11,7 @@
  * @link            http://www.lepton-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
- * @version         $Id$
+ *
  */
 
 // try to include LEPTON class.secure.php to protect this file and the whole CMS!

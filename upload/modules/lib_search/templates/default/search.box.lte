@@ -9,7 +9,7 @@
  * @copyright       2010-2012, LEPTON Project
  * @link            http://www.lepton-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @version         $Id$
+ *
  *}
 <div class="search_box">
   <form name="search" action="{$action}" method="get">

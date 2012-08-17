@@ -11,7 +11,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         BSD License
  * @license_terms   please see info.php of this module
- * @version         $Id$
+ *
  *
  */ 
 

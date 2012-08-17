@@ -13,7 +13,7 @@
  * @license         http://www.gnu.org/licenses/gpl.html
  * @category        LEPTON_Core
  * @package         Installation
- * @version         $Id$
+ *
  */
  
 $debug = false;

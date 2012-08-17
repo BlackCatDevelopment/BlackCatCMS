@@ -11,7 +11,7 @@
  * @copyright       2010-2012, LEPTON Project
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @version         $Id$
+ *
  *
  */
  

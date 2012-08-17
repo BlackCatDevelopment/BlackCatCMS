@@ -9,7 +9,7 @@
  * @copyright       2010-2012, LEPTON Project
  * @link            http://www.lepton-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @version         $Id$
+ *
  *}
 <div id="search_error">
   <h2>{$error.header}</h2>
