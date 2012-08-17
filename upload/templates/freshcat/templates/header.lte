@@ -310,7 +310,7 @@
 						<div class="clear sp_clear"></div>
 
 						<div id="fc_allowed_admins">
-							<label class="g_4" for="fc_admins_groups">{translate('Administrators')}:</label>
+							<label class="g_4" for="fc_admin_groups">{translate('Administrators')}:</label>
 							<div class="g_12">
 								<div class="fc_settings_label" id="fc_admin_groups">
 									{foreach $groups.admins group}
