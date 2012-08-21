@@ -53,15 +53,21 @@ $language_guid = 'f49419c8-eb27-4a69-bffb-af61fce6b0c9';
 
 $LANG = array(
     // ----- BACKEND -----
+    'Welcome to LEPTON Administration' => 'Willkommen im LEPTON Administrationsbereich',
     // ----- common -----
+    'Notification' => 'Hinweis',
+    'Options' => 'Optionen',
     'Pages' => 'Seiten',
     'Add page' => 'Seite hinzufügen',
     'Add' => 'Hinzufügen',
     'Back' => 'Zurück',
     'Search' => 'Suche',
     'Page title' => 'Seitentitel',
+    'Close' => 'Schließen',
     // ----- page -----
-    'Modify page' => 'Site bearbeiten',
+    'Current page' => 'Aktuelle Seite',
+    'Modify Page Settings' => 'Seiteneinstellungen bearbeiten',
+    'Modify page' => 'Seite bearbeiten',
     'Change settings' => 'Einstellungen bearbeiten',
     'View page' => 'Vorschau',
     'show/hide section' => 'Sektion anzeigen/verstecken',
@@ -73,6 +79,7 @@ $LANG = array(
     'Show all sections' => 'Alle Sektionen zeigen',
     'Last modification by' => 'Letzte Änderung von',
     // ----- media -----
+    'Media' => 'Medien',
     'New folder' => 'Neues Verzeichnis',
     'Folder created successfully' => 'Verzeichnis erfolgreich angelegt',
     'Unable to write to the target directory' => 'Kann nicht in das Zielverzeichnis schreiben',
@@ -83,6 +90,18 @@ $LANG = array(
     'at' => 'um',
     'No preview available' => 'Keine Vorschau vorhanden',
     'Rename' => 'Umbenennen',
+    'Create new folder' => 'Neues Verzeichnis',
+    'Rename folder/file' => 'Verzeichnis/Datei umbenennen',
+    'Duplicate folder/file' => 'Verzeichnis/Datei duplizieren',
+    'Delete folder/file' => 'Verzeichnis/Datei löschen',
+    'Change settings' => 'Einstellungen ändern',
+    'Upload File(s)' => 'Datei(en) hochladen',
+    'Overwrite existing files' => 'Vorhandene Dateien überschreiben',
+    'Choose a file...' => 'Datei wählen...',
+    'No file selected...' => 'Keine Datei ausgewählt...',
+    'Unpack zip archive' => 'ZIP Archiv entpacken',
+    'Delete zip archive after unpacking' => 'ZIP Archiv nach dem Entpacken löschen',
+    'Are you sure you want to delete the directory {name}' => 'Wollen Sie das Verzeichnis {name} wirklich löschen?',
 );
 
 
