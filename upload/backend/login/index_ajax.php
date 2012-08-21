@@ -51,6 +51,8 @@ $thisApp = new Login(
     false
 );
 
-echo $thisApp->is_authenticated();
+if($thisApp->is_authenticated()) {
+    echo $thisApp->getToken();
+}
 
 ?>

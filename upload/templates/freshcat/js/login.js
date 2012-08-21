@@ -252,7 +252,7 @@ jQuery(document).ready(function(){
 				success:	function(data)
 				{
 					$('.loader').fadeOut(300).addClass('hidden');
-					if ( data != 1 )
+					if ( $(data).length > 32 )
 					{
 						$('#fc_forms').effect( 'shake', { times: 3 }, 80);
 						data = 'Something went wrong!';
@@ -263,7 +263,7 @@ jQuery(document).ready(function(){
 					}
 					else
 					{
-						window.location		= ADMIN_URL + '/start/index.php?leptoken=' + lepToken;
+						window.location		= ADMIN_URL + '/start/index.php?leptoken=' + data;
 					}
 				},
 				error:		function(data)
