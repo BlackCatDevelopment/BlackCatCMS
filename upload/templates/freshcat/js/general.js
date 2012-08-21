@@ -374,7 +374,7 @@ function dialog_form( currentForm, beforeSend, afterSend )
 		// Define ajax for form
 		currentForm.ajaxSubmit(
 		{
-			clearForm:		true,
+			clearForm:		$(this).hasClass('clearForm'),
 			beforeSend:		function( data )
 			{
 				// Check if the form has a (mostly hidden) input field with a title for the form (if not 'loading' is used
