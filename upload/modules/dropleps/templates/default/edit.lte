@@ -19,7 +19,7 @@
           <input type="radio" id="active_n" name="active" value="0" />
             <label for="active_n">{translate('No')}</label><br /><br />
         <label for="code">{translate('Code')}:</label>
-          {show_wysiwyg_editor( 'code', 'code', $data.code )}<br /><br />
+          {show_edit_area( 'code', 'code', $data.code, '800px' )}<br style="clear:both;" /><br />
         <input type="submit" name="save" value="{translate('Save')}" />
         <input type="submit" name="save_and_back" value="{translate('Save and Back')}" />
         <input type="submit" name="cancel" value="{translate('Cancel')}" />

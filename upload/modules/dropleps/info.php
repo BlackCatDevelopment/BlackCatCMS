@@ -36,7 +36,7 @@ if (defined('WB_PATH')) {
 $module_directory = 'dropleps';
 $module_name = 'Dropleps';
 $module_function = 'tool';
-$module_version = '2.02';
+$module_version = '2.03';
 $module_platform = '2.x';
 $lepton_platform = '2.x';
 $module_author = 'LEPTON Project';
