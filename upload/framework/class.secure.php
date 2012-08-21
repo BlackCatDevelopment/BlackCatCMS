@@ -82,6 +82,7 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/languages/install.php',
 			$admin_dir.'/languages/uninstall.php',
 			$admin_dir.'/login/index.php',
+            $admin_dir.'/login/index_ajax.php',
 			$admin_dir.'/login/forgot/index.php',
 			$admin_dir.'/logout/index.php',
 

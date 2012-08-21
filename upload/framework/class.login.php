@@ -45,7 +45,7 @@ require_once(LEPTON_PATH."/framework/class.admin.php");
 require_once(ADMIN_PATH.'/interface/version.php');
 
 class login extends admin {
-	function __construct( $config_array )
+	function __construct( $config_array, $redirect = true )
 	{
 		// Get language vars
 		global $MESSAGE, $database;
@@ -126,10 +126,12 @@ class login extends admin {
 			// Check if the user exists (authenticate them)
 			$this->password = md5($this->password);
 			if($this->authenticate()) {
+                if($redirect) {
 				// Authentication successful
 				$token		= (!LEPTOKEN_LIFETIME) ? '' : '?leptoken=' . $this->getToken();
 				header("Location: ".$this->url . $token);
 				exit(0);
+                }
 			} else {
 				$this->message = $MESSAGE['LOGIN_AUTHENTICATION_FAILED'];
 				$this->increase_attemps();

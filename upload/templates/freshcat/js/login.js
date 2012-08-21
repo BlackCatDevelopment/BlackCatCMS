@@ -230,7 +230,7 @@ jQuery(document).ready(function(){
 			user					= current.find('input[name=' + username_fieldname + ']').val(),
 			password				= current.find('input[name=' + password_fieldname + ']').val(),
 			dates					= 'username_fieldname=' + username_fieldname + '&password_fieldname=' + password_fieldname + '&' + username_fieldname + '=' + user + '&' + password_fieldname + '=' + password,
-			link					= ADMIN_URL + '/login/index.php';
+			link					= ADMIN_URL + '/login/index_ajax.php';
 			current.find('button').fadeOut(0);
 			current.find('.loader').fadeIn(0).removeClass('hidden');
 
@@ -243,6 +243,7 @@ jQuery(document).ready(function(){
 				url:		link,
 				data:		dates,
 				dataType:	'html',
+                async:      false,
 				beforeSend:	function(data)
 				{
 					$('.loader').removeClass('hidden').fadeIn(0);
@@ -251,8 +252,7 @@ jQuery(document).ready(function(){
 				success:	function(data)
 				{
 					$('.loader').fadeOut(300).addClass('hidden');
-					var lepToken	= $(data).find('input[name=leptoken]').val();
-					if ( typeof lepToken == 'undefined' || lepToken == '' )
+					if ( data != 1 )
 					{
 						$('#fc_forms').effect( 'shake', { times: 3 }, 80);
 						data = 'Something went wrong!';

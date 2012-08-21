@@ -11,11 +11,6 @@
 <meta name="keywords" content="{translate('Administration')}" />
 <meta name="author" content="LEPTON CMS" />
 
-{*is this really needed?
-<meta http-equiv="Content-Encoding" content="gzip" />
-<meta http-equiv="Accept-Encoding" content="gzip, deflate" />
-*}
-
 <script type="text/javascript">
 	var WB_URL									= '{$LEPTON_URL}', {* Marked as deprecated *}
 		LEPTON_URL								= '{$LEPTON_URL}',
