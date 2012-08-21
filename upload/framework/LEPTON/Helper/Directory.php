@@ -29,6 +29,7 @@ if ( ! class_exists( 'LEPTON_Helper_Directory', false ) ) {
 	    protected $prefix  = NULL;
 	    protected $suffix_filter = array();
 	    protected $skip_dirs     = array();
+        protected $skip_files    = array();
 	    
 	    /**
 	     * shortcut method for scanDirectory( $dir, $remove_prefix, true, true )
@@ -132,7 +133,7 @@ if ( ! class_exists( 'LEPTON_Helper_Directory', false ) ) {
 		 *     => result is /to/subdir1, /to/subdir2, ...
 		 *
 		 **/
-		function scanDirectory( $dir, $with_files = false, $files_only = false, $remove_prefix = NULL, $suffixes = array(), $skip_dirs = array() ) {
+		function scanDirectory( $dir, $with_files = false, $files_only = false, $remove_prefix = NULL, $suffixes = array(), $skip_dirs = array(), $skip_files = array() ) {
 
 			$dirs = array();
 
@@ -140,17 +141,24 @@ if ( ! class_exists( 'LEPTON_Helper_Directory', false ) ) {
             if ( $suffixes && is_scalar($suffixes) ) {
                 $suffixes = array( $suffixes );
 			}
-			if ( ! count($suffixes) && count( $this->suffix_filter ) )
-			{
+			if ( ! count($suffixes) && count( $this->suffix_filter ) ) {
 			    $suffixes = $this->suffix_filter;
 			}
-			// make sure $skip_dirs is an array(
+			// make sure $skip_dirs is an array
 			if ( $skip_dirs && is_scalar($skip_dirs) ) {
 			    $skip_dirs = array( $skip_dirs );
 			}
 			if ( ! count($skip_dirs) && count( $this->skip_dirs ) )
 			{
 			    $skip_dirs = $this->skip_dirs;
+			}
+            // same for $skip_files
+            if ( $skip_files && is_scalar($skip_files) ) {
+			    $skip_files = array( $skip_files );
+			}
+			if ( ! count($skip_files) && count( $this->skip_files ) )
+			{
+			    $skip_files = $this->skip_files;
 			}
 			if ( ! $remove_prefix && $this->prefix )
 			{
@@ -161,6 +169,10 @@ if ( ! class_exists( 'LEPTON_Helper_Directory', false ) ) {
                 while( false !== ($file = readdir($dh))) {
                     if ( ! preg_match( '#^\.#', $file ) ) {
 						if ( count($skip_dirs) && in_array( pathinfo($dir.'/'.$file,PATHINFO_DIRNAME), $skip_dirs) )
+						{
+						    continue;
+						}
+                        if ( count($skip_files) && in_array( pathinfo($dir.'/'.$file,PATHINFO_FILENAME), $skip_files) )
 						{
 						    continue;
 						}
@@ -214,6 +226,27 @@ if ( ! class_exists( 'LEPTON_Helper_Directory', false ) ) {
 		        $this->recurse = $bool;
 			}
 		}   // end function setRecursion()
+
+        /**
+         *
+         **/
+        public function setSkipFiles($files)
+        {
+            // reset
+		    if ( is_null( $files ) )
+		    {
+		        $this->skip_files = array();
+		        return;
+			}
+		    // make sure $dirs is an array
+            if ( $files && is_scalar($files) ) {
+                $files = array( $files );
+			}
+			if ( is_array($files) )
+			{
+			    $this->skip_files = $files;
+			}
+        }   // end function setSkipFiles()
 		
 		/**
 		 *
