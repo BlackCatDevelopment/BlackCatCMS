@@ -6,7 +6,7 @@
 #dropleps span.usage {font-weight:bold;}
 #dropleps fieldset{border:1px solid #888888;padding:10px;}
 #dropleps legend{font-weight:bold;font-size:1.3em;padding:0 20px;border-left:1px solid #888888;border-right:1px solid #888888;margin:15px 0;}
-#dropleps label, #dropleps span.label {width:200px;display:inline-block;float:left;text-align:right;margin-right:5px;font-weight:bold;}
+#dropleps .label, #dropleps span.label,div#dropleps span#EditAreaArroundInfos_code label{width:200px;display:inline-block;float:left;text-align:right;margin-right:5px;font-weight:bold;}
 #dropleps input[type=text], #dropleps textarea {width:600px;}
 #dropleps input[type=submit] {width:200px;}
 #dropleps div.problem {border:2px solid #f00;padding:15px;background-color:#FFCCCC;font-size:1.2em;font-weight:bold;text-align:center;color:#f00;}

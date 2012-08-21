@@ -34,6 +34,11 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 $LANG = array(
+    'Yes' => 'Ja',
+    'No' => 'Nein',
+    'Save' => 'Speichern',
+    'Save and Back' => 'Speichern und zurück',
+    'Cancel' => 'Abbrechen',
  	'Actions' => 'Aktionen',
  	'Back to overview' => 'Zurück zur Übersicht',
  	'Backup file deleted: {{file}}' => 'Backup Datei gelöscht: {{file}}',
@@ -73,8 +78,10 @@ $LANG = array(
 	'Manage global permissions' => 'Globale Rechte verwalten',
 	'Manage Droplep permissions' => 'Droplep Rechte verwalten',
 	'Edit datafile' => 'Datendatei bearbeiten',
+    'Edit Droplep' => 'Droplep bearbeiten',
  	'Create new' => 'Neues Droplep',
  	'Description' => 'Beschreibung',
+    'Comments' => 'Kommentar',
  	'Active' => 'Aktiv',
  	'Search' => 'Suche',
  	'Droplep is NOT registered in Search' => 'Das Droplep ist NICHT für die Suche aktiv',
