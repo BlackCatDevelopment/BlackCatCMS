@@ -39,6 +39,6 @@ if (defined('WB_PATH')) {
  *
  */
 if (!defined('CORE')) define('CORE', 'LEPTON');
-if (!defined('VERSION')) define('VERSION', '2.0_dev');
+if (!defined('VERSION')) define('VERSION', 'v2.0 "Black Cat Edition" Alpha 1');
 
 ?>

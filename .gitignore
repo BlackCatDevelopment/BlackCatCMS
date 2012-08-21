@@ -161,3 +161,4 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+/upload\modules\lib_jquery\plugins\leptranslate/index.php
