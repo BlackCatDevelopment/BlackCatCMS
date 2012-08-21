@@ -51,7 +51,7 @@ $mod_headers = array(
 				'ui'			=> true,
 				'ui-components'	=> array ( 'widget' , 'mouse', 'position' , 'resizable' , 'sortable' , 'autocomplete' , 'button' , 'dialog' , 'tabs' , 'selectmenu' ),
 				'ui-effects'	=> array ( 'fade' ),
-				'all'			=> array ( 'jquery.highlight', 'jquery.cookies', 'tag-it', 'jquery.form' , 'jquery.livesearch' , 'jquery.smarttruncation' )
+				'all'			=> array ( 'jquery.highlight', 'jquery.cookies', 'tag-it', 'jquery.form' , 'jquery.livesearch' , 'jquery.smarttruncation', 'leptranslate' )
 			)
 		),
 		'js' => array(

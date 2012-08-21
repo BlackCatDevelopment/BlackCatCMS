@@ -345,7 +345,7 @@ jQuery(document).ready(function()
 									parent.find('.fc_page_tree_search_dl > .fc_search_MenuTitle:first').html( menu_title );
 									parent.find('.fc_page_tree_search_dl > .fc_search_PageTitle:first').html( page_title );
 									parent.find('.fc_page_link > a > .fc_page_tree_menu_title:first').html( menu_title );
-									parent.find('.fc_page_link > a:first').attr( 'title', 'Page title: ' + page_title );
+									parent.find('.fc_page_link > a:first').attr( 'title', leptranslate('Page title') + ': ' + page_title );
 									//alert(parent.find('.fc_page_tree_search_dl > .fc_search_MenuTitle').html());
 								};
 		dialog_ajax( link, dates, beforeSend, afterSend, current, 'POST' );

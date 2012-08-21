@@ -61,7 +61,7 @@
 								</td>
 								{if $MANAGE_SECTIONS}
 								<td class="fc_sections_options ui-corner-tr">
-									<span class="fc_section_button fc_toggle_section_block" title="show/hide section"></span>
+									<span class="fc_section_button fc_toggle_section_block" title="{translate('show/hide section')}"></span>
 									<div class="fc_section_modify_div_parent">
 										<span class="fc_section_button fc_open_section_modify" title="{translate('Modify section')}"></span>
 										<div class="fc_section_modify_div ui-corner-all ui-shadow">
@@ -103,7 +103,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="fc_section_button fc_delete_section" title="delete section">
+									<div class="fc_section_button fc_delete_section" title="{translate('delete section')}">
 										<input type="hidden" name="section_id" value="{$block.section_id}" />
 									</div>
 								</td>

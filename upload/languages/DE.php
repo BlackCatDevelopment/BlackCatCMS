@@ -51,6 +51,42 @@ $language_author = 'Stefan Braunewell, Matthias Gallas';
 $language_license = 'GNU General Public License';
 $language_guid = 'f49419c8-eb27-4a69-bffb-af61fce6b0c9';
 
+$LANG = array(
+    // ----- BACKEND -----
+    // ----- common -----
+    'Pages' => 'Seiten',
+    'Add page' => 'Seite hinzufügen',
+    'Add' => 'Hinzufügen',
+    'Back' => 'Zurück',
+    'Search' => 'Suche',
+    'Page title' => 'Seitentitel',
+    // ----- page -----
+    'Modify page' => 'Site bearbeiten',
+    'Change settings' => 'Einstellungen bearbeiten',
+    'View page' => 'Vorschau',
+    'show/hide section' => 'Sektion anzeigen/verstecken',
+    'Modify section' => 'Sektion bearbeiten',
+    'delete section' => 'Sektion löschen',
+    'Administration Tools' => 'Admin Tools',
+    'Delete' => 'Löschen',
+    'Hide all sections' => 'Alle Sektionen verstecken',
+    'Show all sections' => 'Alle Sektionen zeigen',
+    'Last modification by' => 'Letzte Änderung von',
+    // ----- media -----
+    'New folder' => 'Neues Verzeichnis',
+    'Folder created successfully' => 'Verzeichnis erfolgreich angelegt',
+    'Unable to write to the target directory' => 'Kann nicht in das Zielverzeichnis schreiben',
+    'No files available' => 'Keine Dateien vorhanden',
+    'File type' => 'Dateityp',
+    'File size' => 'Dateigröße',
+    'Created at' => 'Angelegt am',
+    'at' => 'um',
+    'No preview available' => 'Keine Vorschau vorhanden',
+    'Rename' => 'Umbenennen',
+);
+
+
+
 $MENU = array(
 	'ACCESS' 				=> 'Benutzerverwaltung',
 	'ADDON' 				=> 'Add-on',
