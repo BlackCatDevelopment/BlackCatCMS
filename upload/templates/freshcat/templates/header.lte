@@ -279,7 +279,7 @@
 						<div class="clear sp_clear"></div>
 
 						<label class="g_4" for="fc_addPage_keywords_ul">{translate('Keywords')}:</label>
-						<ul id="fc_addPage_keywords_ul" class="g_11"></ul>
+						<ul id="fc_addPage_keywords_ul" class="g_11"><li></li></ul>
 						<input name="keywords" type="hidden" id="fc_addPage_keywords" value="" />
 						<div class="clear sp_clear"></div>
 
