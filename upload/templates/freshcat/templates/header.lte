@@ -239,9 +239,9 @@
 
 						<label class="g_4" for="fc_addPage_target">{translate('Target')}:</label>
 						<select name="target" id="fc_addPage_target" class="g_11">
-							<option value="_blank" selected="selected">{translate('New window')}</option>
+							<option value="_top" selected="selected">{translate('Top frame')}</option>
+							<option value="_blank">{translate('New window')}</option>
 							<option value="_self">{translate('Same window')}</option>
-							<option value="_top">{translate('Top frame')}</option>
 						</select>
 						<div class="clear sp_clear"></div>
 
