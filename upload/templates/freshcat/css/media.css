@@ -104,6 +104,7 @@
 	padding-right: 50px;
 	padding-left: 50px;
 	text-align: center;
+    background-color: #f2f1ef;
 }
 
 .fc_filetype_image .fc_file_info {
@@ -136,11 +137,47 @@
 .fc_filename {
 	display: block;
 }
-.fc_file_jpg {
-	background-image: url(images/file_icons/jpg.png);
-}
 .fc_name_short {
 	white-space: nowrap;
+}
+
+/* default image */
+li.fc_filetype_image div.fc_name_short {
+    background-image: url(images/file_icons/page_icon.png);
+}
+li.fc_filetype_image div.fc_name_short.fc_file_jpg {
+	background-image: url(images/file_icons/jpg.png);
+}
+li.fc_filetype_image div.fc_name_short.fc_file_png {
+	background-image: url(images/file_icons/png.png);
+}
+li.fc_filetype_image div.fc_name_short.fc_file_gif {
+	background-image: url(images/file_icons/gif.png);
+}
+li.fc_filetype_image div.fc_name_short.fc_file_pdf {
+	background-image: url(images/file_icons/pdf.png);
+}
+li.fc_filetype_image div.fc_name_short.fc_file_doc, li.fc_filetype_image div.fc_name_short.fc_file_docx {
+	background-image: url(images/file_icons/doc.png);
+}
+li.fc_filetype_image div.fc_name_short.fc_file_xls {
+	background-image: url(images/file_icons/xls.png);
+}
+li.fc_filetype_image div.fc_name_short.fc_file_ppt {
+	background-image: url(images/file_icons/ppt.png);
+}
+li.fc_filetype_image div.fc_name_short.fc_file_zip {
+    background-image: url(images/file_icons/compress.png);
+}
+div.fc_file_preview img {
+    width:80px;
+    height:80px;
+    max-width:80px;
+    max-height:80px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 0 auto;
+
 }
 ul.fc_header_button_dropdown {
 	z-index: 4;

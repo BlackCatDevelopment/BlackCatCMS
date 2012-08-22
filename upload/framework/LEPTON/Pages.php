@@ -595,16 +595,10 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	     *
 	     *
 	     **/
-		private function _analyze_jquery_components( &$arr, $for = 'frontend' )
+		private function _analyze_jquery_components( &$arr, $for = 'frontend', $section = NULL )
 		{
 		
-		    if ( $for == 'frontend' )
-		    {
 		        $static =& LEPTON_Pages::$jquery;
-		    }
-		    else {
-		        $static =& LEPTON_Pages::$f_jquery;
-		    }
 
 	        // make sure that we load the core if needed, even if the
 			// author forgot to set the flags
@@ -669,18 +663,37 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 			}
 			if ( isset($arr['all']) && is_array($arr['all']) ) {
 				foreach( $arr['all'] as $item ) {
+                    if(!file_exists(sanitize_path(LEPTON_PATH.'/modules/lib_jquery/plugins/'.$item))) {
+                        if(!file_exists(sanitize_path(LEPTON_PATH.'/modules/lib_jquery/plugins/'.$item.'/'.$item.'.js'))) {
+                            // error! file not found!
+                            continue;
+                        }
+                        else {
+                            $item = $item.'/'.$item.'.js';
+                        }
+                    }
 					$static[] = $this->space
 							  . '<script type="text/javascript" src="'
 							  . sanitize_url( LEPTON_URL . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js' )
 							  . '"></script>' . "\n";
 				}
 			}
-			if ( isset($arr['individual']) && is_array( $arr['individual'] ) ) {
+			if ( isset($arr['individual']) && is_array( $arr['individual'] ) && isset($section) && $section != '' ) {
 				foreach( $arr['individual'] as $section_name => $item ) {
 					if ( $section_name == strtolower($section) )
 					{
-						$static[] = '<script type="text/javascript" src="'
-								  . sanitize_url( LEPTON_URL . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js' )
+                        if(!file_exists(sanitize_path(LEPTON_PATH.'/modules/lib_jquery/plugins/'.$item))) {
+                            if(!file_exists(sanitize_path(LEPTON_PATH.'/modules/lib_jquery/plugins/'.$item.'/'.$item.'.js'))) {
+                                // error! file not found!
+                                continue;
+                            }
+                            else {
+                                $item = $item.'/'.$item.'.js';
+                            }
+                        }
+						$static[] = $this->space
+                                  . '<script type="text/javascript" src="'
+								  . sanitize_url( LEPTON_URL . '/modules/lib_jquery/plugins/' . $item )
 								  . '"></script>' . "\n";
 					}
 				}
@@ -778,7 +791,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 			{
                 if ( isset($mod_footers[$for]['jquery']) && is_array($mod_footers[$for]['jquery']) && count($mod_footers[$for]['jquery']) )
 				{
-				    $this->_analyze_jquery_components($mod_footers[$for]['jquery'][0]);
+				    $this->_analyze_jquery_components($mod_footers[$for]['jquery'][0], $for, $section );
 				}
 			}
         }   // end function _load_footers_inc()
@@ -806,7 +819,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 				// ----- jQuery -----
 				if ( isset($mod_headers[$for]['jquery']) && is_array($mod_headers[$for]['jquery']) && count($mod_headers[$for]['jquery']) )
 				{
-				    $this->_analyze_jquery_components($mod_headers[$for]['jquery'][0]);
+				    $this->_analyze_jquery_components($mod_headers[$for]['jquery'][0], $for, $section);
 				}
 				// ----- other JS -----
 				if ( isset($mod_headers[$for]['js']) && is_array($mod_headers[$for]['js']) && count($mod_headers[$for]['js']) )

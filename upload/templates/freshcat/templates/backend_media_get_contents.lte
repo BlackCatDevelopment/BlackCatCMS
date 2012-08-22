@@ -1,4 +1,3 @@
-<div id="fc_main_content">
 	<div id="fc_media_browser">
 		<ul class="fc_media_folder">
 			<input type="hidden" name="folder_path" value="{$initial_folder}" />
@@ -15,18 +14,20 @@
 			{/foreach}
 			{foreach $files as file}
 			<li class="fc_filetype_image" title="{$file.FULL_NAME}">
-				<div class="fc_name_short fc_file_jpg">
+				<div class="fc_name_short fc_file_{$file.FILETYPE}">
 					<p>
 						{$file.FULL_NAME}
 					</p>
 				</div>
 				<input type="hidden" name="load_url" value="{$file.FULL_NAME}" />
 				<div class="fc_file_info">
+                    <div class="fc_file_preview">
 					{if $file.show_preview}
-					<img src="{$LEPTON_URL}/{$initial_folder}/{$file.FULL_NAME}" alt="" />
+					    <a class="fancybox" href="{$LEPTON_URL}/{$initial_folder}/{$file.FULL_NAME}" title="{$file.FULL_NAME}"><img src="{$LEPTON_URL}/{$initial_folder}/{$file.FULL_NAME}" alt="" /></a>
 					{else}
 					<p class="fc_no_preview_{$file.FILETYPE}">{translate('No preview available')}</p>
 					{/if}
+                    </div>
 					<span class="fc_filename">{$file.NAME}</span>
 					<div class="fc_file_more_info ui-corner-all">
 						<span class="fc_file_label">{translate('File type')}:</span>{$file.FILETYPE}<br/>
@@ -43,6 +44,8 @@
 			{/foreach}
 			{/if}
 		</ul>
+        <div id="fc_media_info">
+
+		</div>
 	</div>
 	<span class="fc_success_box"></span>
-</div>

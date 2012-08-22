@@ -99,7 +99,10 @@ $data_dwoo['MEDIA_DIRECTORY']		= MEDIA_DIRECTORY;
 // ! Set the initial folder to view (mediaroot or homefolder). If the user don't have permissions to see media, redirect to admin_url   
 // ==================================================================================================================================== 
 if ($admin->get_permission('media')==true){
-	$data_dwoo['initial_folder'] = ( $admin->get_user_id() == 1 || (HOME_FOLDERS && $admin->get_home_folder()=='') || !HOME_FOLDERS ) ? MEDIA_DIRECTORY : MEDIA_DIRECTORY.$admin->get_home_folder();
+	$data_dwoo['initial_folder']
+        = ( $admin->get_user_id() == 1 || (HOME_FOLDERS && $admin->get_home_folder()=='') || !HOME_FOLDERS )
+        ? sanitize_path(MEDIA_DIRECTORY)
+        : sanitize_path(MEDIA_DIRECTORY.$admin->get_home_folder());
 }
 else {
 	header('Location: '.ADMIN_URL);
@@ -127,7 +130,7 @@ if(isset($dir['filename']) && is_array($dir['filename']))
 {
 	foreach($dir['filename'] as $counter => $file)
 	{
-		$file_path									= LEPTON_PATH . $data_dwoo['initial_folder'].'/'.$file;
+		$file_path									= sanitize_path(LEPTON_PATH . $data_dwoo['initial_folder'].'/'.$file);
 		$data_dwoo['files'][$counter]['FILETYPE']	= strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
 		$data_dwoo['files'][$counter]['show_preview'] = ( in_array( strtolower($data_dwoo['files'][$counter]['FILETYPE']), $allowed_img_types ) ) ? true : false;
 
