@@ -110,13 +110,14 @@ $module_permissions		= $_SESSION['MODULE_PERMISSIONS'];
 $delete_section_id		= $admin->get_get('delete_section_id');
 $update_section_id		= $admin->get_get('update_section_id');
 $add_module				= $admin->add_slashes($admin->get_post('add_module'));
+$add_to_block           = $admin->add_slashes($admin->get_post('add_to_block'));
 
 if ( $add_module != '' )
 {
 	// Get section info
 	$module = preg_replace("/\W/", "", $add_module);  // fix secunia 2010-91-4
 	/**
-	 *	Is the module-name valide? Or in other words: does the module(-name) exists?
+	 *	Is the module-name valid? Or in other words: does the module(-name) exists?
 	 *
 	 */
 	$temp_result = $database->query("SELECT `name` from `".TABLE_PREFIX."addons` where `directory`='".$module."'");
@@ -138,8 +139,11 @@ if ( $add_module != '' )
 	 */
 	if (true === in_array($module, $module_permissions ) )
 	{
-		$admin->print_error( 'Actualization not possibly' );
+		$admin->print_error( "Sorry, but you don't have the permissions for this action" );
 	}
+
+    // make sure we have a valid block id
+    $add_to_block = ( is_numeric($add_to_block) && $add_to_block > 0 ) ? $add_to_block : 1;
 
 	// Include the ordering class
 	require(LEPTON_PATH.'/framework/class.order.php');
@@ -151,7 +155,7 @@ if ( $add_module != '' )
 	$sql	.= '`page_id` = '.$page_id.', ';
 	$sql	.= '`module` = "'.$module.'", ';
 	$sql	.= '`position` = '.$position.', ';
-	$sql	.= '`block`=1';
+	$sql	.= '`block` = '.$add_to_block.';';
 	$database->query($sql);
 	if ( !$database->is_error() )
 	{

@@ -408,7 +408,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 			else {
 			    $static =& LEPTON_Pages::$f_js;
 			}
-			if ( count($static) )
+			if ( is_array($static) && count($static) )
 			{
 			    return implode( "\n", $static ) . "\n";
 			}

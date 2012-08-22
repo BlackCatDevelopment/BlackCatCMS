@@ -78,6 +78,7 @@ $LANG = array(
     'Hide all sections' => 'Alle Sektionen verstecken',
     'Show all sections' => 'Alle Sektionen zeigen',
     'Last modification by' => 'Letzte Änderung von',
+    "Sorry, but you don't have the permissions for this action" => 'Sie haben leider nicht die notwendigen Rechte für diese Aktion',
     // ----- media -----
     'Media' => 'Medien',
     'New folder' => 'Neues Verzeichnis',
