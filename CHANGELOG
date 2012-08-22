@@ -3,6 +3,92 @@ Change Log
 
 This changelog starts with LEPTON v2.0 official Alpha. Changes prior to this version may be found at http://www.lepton-cms.org.
 
+Alpha 2
+=======
+
+Revision: 0000000000000000000000000000000000000000
+Author:
+Date: 01.01.1970 01:00:00
+Message:
+Working dir changes
+
+1 files changed
+----
+Modified: CHANGELOG
+
+Revision: 2f9e4e96b102e0ad5c8b32d4cc36715315f8be4c
+Author: Bianka Martinovic
+Date: 22.08.2012 16:10:46
+Message:
+updated CHANGELOG for Alpha 1
+
+
+----
+Modified: CHANGELOG
+
+Revision: d8521f3f80d98262c24472e53880c60b8c9912cd
+Author: Bianka Martinovic
+Date: 22.08.2012 14:37:34
+Message:
+added block select to add block selection; fixed strange language string
+
+
+----
+Modified: upload/backend/pages/sections_save.php
+Modified: upload/framework/LEPTON/Pages.php
+Modified: upload/languages/DE.php
+Modified: upload/templates/freshcat/templates/backend_pages_modify.lte
+
+Revision: 2ee3e23aeaac1f2a75da2738e5721edb70e5cc5f
+Author: Bianka Martinovic
+Date: 22.08.2012 13:40:37
+Message:
+set default page target to "_top" (instead of "_blank")
+
+
+----
+Modified: upload/templates/freshcat/templates/header.lte
+
+Revision: a9668ca66c418b46fa02c7bd21b049d07580bf9e
+Author: Bianka Martinovic
+Date: 22.08.2012 11:05:01
+Message:
+removed all langs except EN and DE (we're just unable to support them; can be provided for download later)
+
+
+----
+Deleted: upload/languages/CZ.php
+Deleted: upload/languages/FI.php
+Deleted: upload/languages/FR.php
+Deleted: upload/languages/IT.php
+Deleted: upload/languages/NL.php
+Deleted: upload/languages/PL.php
+Deleted: upload/languages/RU.php
+
+Revision: 0686c824b10e8ccf2440263a57bd790635ae639b
+Author: Bianka Martinovic
+Date: 21.08.2012 19:57:55
+Message:
+fixed typo
+
+
+----
+Modified: upload/modules/ckeditor/ckeditor/plugins/pagelink/lang/de.js
+
+Revision: c97c8841ae79474a731728f395063e81a871356e
+Author: Bianka Martinovic
+Date: 21.08.2012 18:21:58
+Message:
+fixed login (missing leptoken); added show_edit_area.php to Dwoo
+
+
+----
+Modified: upload/backend/login/index_ajax.php
+Added: upload/modules/lib_dwoo/dwoo/plugins/lepton/show_edit_area.php
+Modified: upload/templates/freshcat/js/login.js
+
+
+
 Alpha 1
 =======
 
