@@ -13,7 +13,7 @@
 <body>
 <div id="site">
 	<div id="head">
-	<a href="{$WB_URL}/"><img class="head_img" src="{template_dir()}/img/1.jpg" width="900" height="180" alt="image" /></a>
+	<a href="{$WB_URL}/"><img class="head_img" src="{template_dir()}/images/1.jpg" width="900" height="180" alt="image" /></a>
 	</div>
 	<div id="headtitle">{page_header()}</div>
 
