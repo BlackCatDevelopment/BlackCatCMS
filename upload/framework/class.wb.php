@@ -52,7 +52,7 @@ class wb extends SecureCMS
 {
     public  $password_chars      = 'a-zA-Z0-9\_\-\!\#\*\+';
     private $lep_active_sections = NULL;
-    private $helper_classes      = NULL;
+    private $_handles            = NULL;
     public  $lang                = NULL;
 
     // General initialization public function
@@ -288,94 +288,32 @@ class wb extends SecureCMS
     public function get_timezone_string()
     {
         return isset($_SESSION['TIMEZONE_STRING']) ? $_SESSION['TIMEZONE_STRING'] : DEFAULT_TIMEZONESTRING;
-    }
+    }   // end function get_timezone_string()
+
+    /**
+     *
+     *
+     *
+     *
+     **/
+    public function get_controller($name)
+    {
+		// name must not contain LEPTON_...
+	    $name      = preg_replace( '~^lepton_~i', '', $name );
+	    return $this->int_get_handle('',$name,func_get_args());
+    }   // end function get_controller()
     
     /**
      * get accessor to helper class
      * @access public
      * @param  string $name - name of the class
      **/
-	public function get_helper( $name )
+	public function get_helper($name)
 	{
-
-		// name must not contain LEPTON_...
+		// name must not contain LEPTON_Helper_...
 	    $name      = preg_replace( '~^lepton_helper_~i', '', $name );
-	    $classname = 'LEPTON_Helper_'.$name;
+        return $this->int_get_handle('Helper',$name,func_get_args());
 
-		// ----- Look for variable options arguments
-	    $v_size     = func_num_args();
-	    $v_arg_list = NULL;
-	    $args       = NULL;
-	    
-	    if ($v_size > 1) {
-	    	// ----- Get the arguments
-	    	$v_arg_list = func_get_args();
-	    	// ----- Remove the first argument (it's the helper itself)
-	    	array_shift($v_arg_list);
-	    	$args = (
-					    ( count($v_arg_list) )
-					  ? "'".implode( "', '", $v_arg_list )."'"
-					  : NULL
-					);
-		}
-		
-		// do we already have a handle?
-	    if (
-				isset($this->helper_classes[$classname])
-			&&  isset($this->helper_classes[$classname]['__handle__'])
-			&& is_object($this->helper_classes[$classname]['__handle__']) )
-	    {
-	        // if we have additional arguments, compare them with the ones
-	        // we used in the last call
-	        if (
-					$args
-				&&  isset($this->helper_classes[$classname]['__args__'])
-				&&  $args == $this->helper_classes[$classname]['__args__'] )
-	        {
-	        	return $this->helper_classes[$classname]['__handle__'];
-			}
-	    }
-	    
-		// check if the file exists
-		if ( ! file_exists( LEPTON_PATH.'/framework/LEPTON/Helper/'.$name.'.php' ) )
-		{
-		    trigger_error(sprintf("[ <b>%s</b> ] Invalid helper class name: [%s]", $_SERVER['SCRIPT_NAME'], $name), E_USER_ERROR);
-		    return false;
-		}
-		
-		// okay, let's see if we already have that class
-		if ( ! class_exists( $classname ) )
-		{
-		    @require_once LEPTON_PATH.'/framework/LEPTON/Helper/'.$name.'.php';
-		}
-		
-  		// no handle or different arguments?
-	    if (
-				! isset( $this->helper_classes[$classname]['__handle__'] )
-			||
-			    (
-				    $args
-					&&  isset($this->helper_classes[$classname]['__args__'])
-					&&  $args != $this->helper_classes[$classname]['__args__']
-				)
-		) {
-	        // the class exists, but we don't have a handle
-            $this->helper_classes[$classname]['__handle__'] = eval ( "return new $classname($args);" );
-            if ( $args )
-			{
-                $this->helper_classes[$classname]['__args__'] = $args;
-            }
-		}
-
-		if ( isset($this->helper_classes[$classname]['__handle__']) && is_object($this->helper_classes[$classname]['__handle__']) )
-	    {
-	        return $this->helper_classes[$classname]['__handle__'];
-	    }
-	    else {
-	        trigger_error(sprintf("[ <b>%s</b> ] Invalid helper class: [%s]", $_SERVER['SCRIPT_NAME'], $name), E_USER_ERROR);
-	        return false;
-	    }
-	    
 	}   // end function get_helper()
 
     /* ****************
@@ -701,5 +639,95 @@ class wb extends SecureCMS
             return true;
         }
     }
+
+    /**
+     * internal method to get a handle
+     *
+     * @access private
+     * @param  string  $namespace - 'Helper',''
+     * @param  string  $name      - class to load
+     * @param  mixed   $args      - optional arguments
+     *
+     **/
+    private function int_get_handle()
+    {
+        $v_arg_list = func_get_args();
+        $namespace  = array_shift($v_arg_list);
+        $name       = array_shift($v_arg_list);
+
+  		// ----- Look for variable options arguments
+	    $v_size     = count($v_arg_list);
+	    $args       = NULL;
+
+	    if ($v_size > 2) {
+	    	$args = (
+					    ( count($v_arg_list) )
+					  ? "'".implode( "', '", $v_arg_list )."'"
+					  : NULL
+					);
+		}
+
+        $classname = 'LEPTON_' . ( $namespace != '' ? $namespace.'_' : '' ) . $name;
+
+		// do we already have a handle?
+	    if (
+				   isset($this->_handles[$classname])
+			&&     isset($this->_handles[$classname]['__handle__'])
+			&& is_object($this->_handles[$classname]['__handle__']) )
+	    {
+	        // if we have additional arguments, compare them with the ones
+	        // we used in the last call
+	        if (
+					$args
+				&&  isset($this->_handles[$classname]['__args__'])
+				&&  $args == $this->_handles[$classname]['__args__'] )
+	        {
+	        	return $this->_handles[$classname]['__handle__'];
+			}
+	    }
+
+        $filename = sanitize_path(LEPTON_PATH.'/framework/LEPTON/'.$namespace.'/'.$name.'.php');
+
+		// check if the file exists
+		if ( ! file_exists( $filename ) )
+		{
+		    trigger_error(sprintf("[ <b>%s</b> ] Invalid helper class name: [%s]", $_SERVER['SCRIPT_NAME'], $classname), E_USER_ERROR);
+		    return false;
+		}
+
+		// okay, let's see if we already have that class
+		if ( ! class_exists( $classname ) )
+		{
+		    @require_once $filename;
+		}
+
+  		// no handle or different arguments?
+	    if (
+				! isset( $this->_handles[$classname]['__handle__'] )
+			||
+			    (
+				    $args
+					&&  isset($this->_handles[$classname]['__args__'])
+					&&  $args != $this->_handles[$classname]['__args__']
+				)
+		) {
+	        // the class exists, but we don't have a handle
+            $this->_handles[$classname]['__handle__'] = eval ( "return new $classname($args);" );
+            if ( $args )
+			{
+                $this->_handles[$classname]['__args__'] = $args;
+            }
+		}
+
+		if ( isset($this->_handles[$classname]['__handle__']) && is_object($this->_handles[$classname]['__handle__']) )
+	    {
+	        return $this->_handles[$classname]['__handle__'];
+	    }
+	    else {
+	        trigger_error(sprintf("[ <b>%s</b> ] Invalid helper class: [%s]", $_SERVER['SCRIPT_NAME'], $name), E_USER_ERROR);
+	        return false;
+	    }
+    
+    }   // end function int_get_handle()
 }
 ?>
