@@ -192,6 +192,30 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
 if (file_exists(LEPTON_PATH.'/modules/lib_dwoo/library.php')) {
 	// load Dwoo Template Engine
 	require_once LEPTON_PATH.'/modules/lib_dwoo/library.php';
+    // set some constants as globals so we don't need to set them later
+    $defs = get_defined_constants(true);
+    foreach($defs['user'] as $const => $value ) {
+        if(preg_match('~^DEFAULT_~',$const)) { // DEFAULT_CHARSET etc.
+            $parser->setGlobals($const,$value);
+            continue;
+        }
+        if(preg_match('~^WEBSITE_~',$const)) { // WEBSITE_HEADER etc.
+            $parser->setGlobals($const,$value);
+            continue;
+        }
+        if(preg_match('~^SHOW_~',$const)) { // SHOW_SEARCH etc.
+            $parser->setGlobals($const,$value);
+            continue;
+        }
+        if(preg_match('~^FRONTEND_~',$const)) { // FRONTEND_LOGIN etc.
+            $parser->setGlobals($const,$value);
+            continue;
+        }
+        if(preg_match('~_FORMAT$~',$const)) { // DATE_FORMAT etc.
+            $parser->setGlobals($const,$value);
+            continue;
+        }
+    }
 }
 
 ?>

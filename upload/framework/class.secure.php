@@ -149,6 +149,8 @@ if (! defined ( 'LEPTON_PATH' ))
 			//////////////////////////////////////////
 
 			$admin_dir.'/pages/settings.php',
+            $admin_dir.'/pages/lang_settings.php',
+            $admin_dir.'/pages/lang_settings_save.php',
 
 			// phplib
 			$admin_dir.'/pages/settings2.php',

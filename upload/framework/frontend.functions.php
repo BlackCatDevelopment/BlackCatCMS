@@ -489,6 +489,30 @@ if ( !function_exists( 'page_footer' ) )
     }
 }
 
+function language_menu()
+{
+    global $wb, $parser;
+    if (defined('PAGE_LANGUAGES') && PAGE_LANGUAGES)
+    {
+        if ( ! class_exists( 'LEPTON_Pages', false ) )
+        {
+	        include sanitize_path( dirname(__FILE__).'/LEPTON/Pages.php' );
+		}
+        $pages = new LEPTON_Pages();
+        $items = $pages->get_linked_by_language(PAGE_ID);
+    }
+    if(count($items))
+    {
+        // initialize template search path
+        $parser->setPath(LEPTON_PATH.'/templates/'.TEMPLATE.'/templates');
+        $parser->setFallbackPath(THEME_PATH.'/templates');
+        if($parser->hasTemplate('languages.lte'))
+        {
+            $parser->output('languages.lte', array('items'=>$items));
+        }
+    }
+}
+
 function bind_jquery( $file_id = 'jquery' )
 {
     /**

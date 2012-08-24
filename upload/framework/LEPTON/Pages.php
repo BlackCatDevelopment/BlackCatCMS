@@ -470,6 +470,34 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	     *
 	     *
 	     **/
+        public function get_linked_by_language($page_id)
+        {
+            global $database,$wb,$admin;
+            if(!is_object($wb)) $wb =& $admin;
+            $results =
+                $database->query('SELECT * FROM `' . TABLE_PREFIX . 'page_langs` AS t1'
+                    . ' RIGHT OUTER JOIN `'.TABLE_PREFIX.'pages` AS t2'
+                    . ' ON t1.link_page_id=t2.page_id'
+                    . ' WHERE t1.page_id = ' . $page_id);
+            if ( $results->numRows() )
+            {
+                $items = array();
+                while( ( $row = $results->fetchRow( MYSQL_ASSOC ) ) !== false )
+                {
+                    $row['href'] = $wb->page_link($row['link']);
+                    $items[] = $row;
+                }
+                return $items;
+            }
+            return false;
+        }   // end function get_linked_by_language()
+	    
+	    /**
+	     *
+	     *
+	     *
+	     *
+	     **/
 		private function _analyze_css( &$arr, $path_prefix = NULL )
 		{
 		    if ( is_array($arr) )
