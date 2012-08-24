@@ -752,195 +752,14 @@ function default_dir_mode($temp_dir) {
  * install tables
  **/
 function install_tables ($database) {
-
 	global $config ;
-
-	$errors = array();
-
 	if (!defined('LEPTON_INSTALL_PROCESS')) define ('LEPTON_INSTALL_PROCESS', true);
-
-	// ----- Remove tables -----
-
-	// Pages table
-	$pages = "DROP TABLE IF EXISTS `".TABLE_PREFIX."pages`";
-	$database->query($pages);
-	// Sections table
-	$sections = "DROP TABLE IF EXISTS `".TABLE_PREFIX."sections`";
-	$database->query($sections);
-	// Settings table
-	$settings = "DROP TABLE IF EXISTS `".TABLE_PREFIX."settings`";
-	$database->query($settings);
-	// Users table
-	$users = "DROP TABLE IF EXISTS `".TABLE_PREFIX."users`";
-	$database->query($users);
-	// Groups table
-	$groups = "DROP TABLE IF EXISTS `".TABLE_PREFIX."groups`";
-	$database->query($groups);
-	// Addons table
-	$addons = "DROP TABLE IF EXISTS `".TABLE_PREFIX."addons`";
-	$database->query($addons);
-
-	// force db to utf-8
-	$database->query("ALTER DATABASE `".DB_NAME."` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci");
-	
-	// open log file
-	$logh = fopen( LOGFILE, 'a' );
-
-	// ----- Install tables -----
-
-	// Pages table
-	$pages = 'CREATE TABLE `'.TABLE_PREFIX.'pages` ( '
-		   . ' `page_id` INT NOT NULL auto_increment,'
-	       . ' `parent` INT NOT NULL DEFAULT \'0\','
-	       . ' `root_parent` INT NOT NULL DEFAULT \'0\','
-	       . ' `level` INT NOT NULL DEFAULT \'0\','
-	       . ' `link` TEXT NOT NULL,'
-	       . ' `target` VARCHAR( 7 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `page_title` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `menu_title` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `description` TEXT NOT NULL ,'
-	       . ' `keywords` TEXT NOT NULL ,'
-	       . ' `page_trail` TEXT NOT NULL  ,'
-	       . ' `template` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `visibility` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `position` INT NOT NULL DEFAULT \'0\','
-	       . ' `menu` INT NOT NULL DEFAULT \'0\','
-	       . ' `language` VARCHAR( 5 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `searching` INT NOT NULL DEFAULT \'0\','
-	       . ' `admin_groups` TEXT NOT NULL ,'
-	       . ' `admin_users` TEXT NOT NULL ,'
-	       . ' `viewing_groups` TEXT NOT NULL ,'
-	       . ' `viewing_users` TEXT NOT NULL ,'
-	       . ' `modified_when` INT NOT NULL DEFAULT \'0\','
-	       . ' `modified_by` INT NOT NULL  DEFAULT \'0\','
-	       . ' PRIMARY KEY ( `page_id` ) '
-	       . ' )';
-	$database->query($pages);
-	if ( $database->is_error() ) {
-		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
-		$errors['pages'] = $database->get_error();
-	}
-	else {
-	    fwrite( $logh, 'created table [pages]'."\n" );
-	}
-
-	// Sections table
-	$sections = 'CREATE TABLE `'.TABLE_PREFIX.'sections` ( '
-		   . ' `section_id` INT NOT NULL auto_increment,'
-	       . ' `page_id` INT NOT NULL DEFAULT \'0\','
-	       . ' `position` INT NOT NULL DEFAULT \'0\','
-	       . ' `module` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `block` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `publ_start` VARCHAR( 255 ) NOT NULL DEFAULT \'0\' ,'
-	       . ' `publ_end` VARCHAR( 255 ) NOT NULL DEFAULT \'0\' ,'
-	       . ' `name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT \'no name\' ,'
-	       . ' PRIMARY KEY ( `section_id` ) '
-	       . ' )';
-	$database->query($sections);
-	if ( $database->is_error() ) {
-		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
-		$errors['sections'] = $database->get_error();
-	}
-	else {
-	    fwrite( $logh, 'created table [sections]'."\n" );
-	}
-
-	include(ADMIN_PATH.'/interface/version.php');
-	// Settings table
-	$settings='CREATE TABLE `'.TABLE_PREFIX.'settings` ( '
-		   . '`setting_id` INT NOT NULL auto_increment,'
-		   . ' `name` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-		   . ' `value` TEXT NOT NULL ,'
-		   . ' PRIMARY KEY ( `setting_id` ) '
-		   . ' )';
-	$database->query($settings);
-	if ( $database->is_error() ) {
-		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
-		$errors['settings'] = $database->get_error();
-	}
-	else {
-	    fwrite( $logh, 'created table [settings]'."\n" );
-	}
-
-	// Users table
-	$users = 'CREATE TABLE `'.TABLE_PREFIX.'users` ( '
-		   . ' `user_id` INT NOT NULL auto_increment,'
-	       . ' `group_id` INT NOT NULL DEFAULT \'0\','
-	       . ' `groups_id` VARCHAR( 255 ) NOT NULL DEFAULT \'0\','
-	       . ' `active` INT NOT NULL DEFAULT \'0\','
-		   . ' `statusflags` INT NOT NULL DEFAULT \'6\','
-	       . ' `username` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `password` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `last_reset` INT NOT NULL DEFAULT \'0\','
-	       . ' `display_name` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `email` TEXT NOT NULL ,'
-	       . " `timezone_string` VARCHAR( 50 ) NOT NULL DEFAULT '".$config['default_timezone_string']."',"
-	       . ' `date_format` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `time_format` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `language` VARCHAR( 5 ) NOT NULL DEFAULT \'' .$config['default_language'] .'\' ,'
-	       . ' `home_folder` TEXT NOT NULL ,'
-	       . ' `login_when` INT NOT NULL  DEFAULT \'0\','
-	       . ' `login_ip` VARCHAR( 15 ) NOT NULL DEFAULT \'\' ,'
-	       . ' PRIMARY KEY ( `user_id` ) '
-	       . ' )';
-	$database->query($users);
-	if ( $database->is_error() ) {
-		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
-		$errors['users'] = $database->get_error();
-	}
-	else {
-	    fwrite( $logh, 'created table [users]'."\n" );
-	}
-
-	// Groups table
-	$groups = 'CREATE TABLE `'.TABLE_PREFIX.'groups` ( '
-		   . ' `group_id` INT NOT NULL auto_increment,'
-	       . ' `name` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-	       . ' `system_permissions` TEXT NOT NULL ,'
-	       . ' `module_permissions` TEXT NOT NULL ,'
-	       . ' `template_permissions` TEXT NOT NULL ,'
-	       . ' PRIMARY KEY ( `group_id` ) '
-	       . ' )';
-	$database->query($groups);
-	if ( $database->is_error() ) {
-		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
-		$errors['groups'] = $database->get_error();
-	}
-	else {
-	    fwrite( $logh, 'created table [groups]'."\n" );
-	}
-
-	// Addons table
-	$addons = 'CREATE TABLE `'.TABLE_PREFIX.'addons` ( '
-			.'`addon_id` INT NOT NULL auto_increment,'
-			.'`type` VARCHAR( 128 ) NOT NULL DEFAULT \'\' ,'
-			.'`directory` VARCHAR( 128 ) NOT NULL DEFAULT \'\' ,'
-			.'`name` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-			.'`description` TEXT NOT NULL ,'
-			.'`function` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-			.'`version` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-			.'`guid` VARCHAR( 50 ) NOT NULL,'
-			.'`platform` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-			.'`author` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-			.'`license` VARCHAR( 255 ) NOT NULL DEFAULT \'\' ,'
-			.' PRIMARY KEY (`addon_id`), '
-			.' UNIQUE KEY `type` (`type`,`directory`) '
-			.' )';
-			
-	$database->query($addons);
-	if ( $database->is_error() ) {
-		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
-		$errors['addons'] = $database->get_error();
-	}
-	else {
-	    fwrite( $logh, 'created table [addons]'."\n" );
-	}
-	
-	fclose($logh);
+    // import structure
+    _lep_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
 	
 	return array(
-		( count($errors) ? false : true ),
-		$errors
+		true,      // no error checks here! Maybe added later...
+		array()
 	);
 
 }   // end function install_tables()
@@ -1387,7 +1206,7 @@ function check_tables($database) {
 
 	$table_prefix = $config['table_prefix'];
 
-	$requested_tables = array("pages","sections","settings","users","groups","addons","search","mod_droplets","mod_dropleps_settings","mod_dropleps_permissions","mod_wysiwyg","mod_wysiwyg_admin");
+	$requested_tables = array("pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_dropleps_settings","mod_dropleps_permissions","mod_wysiwyg","mod_wysiwyg_admin");
 	for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
 
 	$result = mysql_query("SHOW TABLES FROM ".DB_NAME);
@@ -1514,3 +1333,28 @@ function pre_installation_error( $msg ) {
 </html>
 ';
 }   // end function pre_installation_error()
+
+/**
+ * parse SQL file and execute the statements
+ * $file     is the name of the file
+ * $database is the db handle
+ **/
+function _lep_installer_import_sql($file,$database) {
+
+    $import = file_get_contents($file);
+
+    $import = preg_replace( "%/\*(.*)\*/%Us", ''          , $import );
+    $import = preg_replace( "%^--(.*)\n%mU" , ''          , $import );
+    $import = preg_replace( "%^$\n%mU"      , ''          , $import );
+    $import = preg_replace( "%wb_%"         , TABLE_PREFIX, $import );
+    $import = preg_replace( "%\r?\n%"       , ''          , $import );
+
+    $import = explode (";", $import);
+
+    foreach ($import as $imp){
+        if ($imp != '' && $imp != ' '){
+            $ret = $db->query($imp);
+        }
+    }
+
+}   // end function _lep_installer_import_sql()
