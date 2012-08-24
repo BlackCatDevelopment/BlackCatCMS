@@ -8,6 +8,8 @@
    *  @license terms  see info.php of this template
    *  @platform       see info.php of this template
    *  @requirements   PHP 5.2.x and higher
+   *
+   *  v1.03 now uses Dwoo Template Engine
    */
   
   // include class.secure.php to protect this file and the whole CMS!
@@ -45,7 +47,7 @@
   $template_directory = 'lepton';
   $template_name = 'lepton-start';
   $template_function = 'template';
-  $template_version = '1.02';
+  $template_version = '1.03';
   $template_platform = '1.0';
   $template_author = 'CMS-LAB';
   $template_license = 'http://creativecommons.org/licenses/by/3.0/';

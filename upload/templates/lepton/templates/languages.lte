@@ -1,0 +1,5 @@
+<div class="langmenu">
+  {foreach $items as item}
+  <a href="{$item.href}">{$item.language}</a>
+  {/foreach}
+</div>

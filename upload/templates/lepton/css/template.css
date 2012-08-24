@@ -204,6 +204,11 @@ html body {
 	width:671px;
 }
 
+/* Link zu Seite in anderen Sprachen */
+#langmenu {
+    float:right;
+}
+
 /* Positionierung, Schrift und Hintergrund Fussbereich */
 #foot {
 	background-color:#333333;
