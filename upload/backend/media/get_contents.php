@@ -144,7 +144,9 @@ $data_dwoo['permissions']['media_delete']	= $admin->get_permission('media_delete
 // ==================== 
 // ! Parse the site   
 // ==================== 
+echo '<div id="fc_main_content">';
 $parser->output('backend_media_get_contents.lte', $data_dwoo);
+echo '</div>';
 
 // ====================== 
 // ! Print admin footer   

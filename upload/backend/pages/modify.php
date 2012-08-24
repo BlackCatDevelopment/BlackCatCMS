@@ -94,6 +94,9 @@ $data_dwoo['SECTION_BLOCKS']			= SECTION_BLOCKS;
 $data_dwoo['SEC_ANCHOR']				= SEC_ANCHOR;
 $data_dwoo['DATE_FORMAT']				= DATE_FORMAT;
 
+$data_dwoo['CUR_TAB']                   = 'modify';
+$data_dwoo['PAGE_HEADER']               = $admin->lang->translate('Modify page');
+
 // ========================================================= 
 // ! Work-out if we should show the "manage sections" link   
 // ========================================================= 

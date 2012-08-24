@@ -106,13 +106,16 @@ $user									= $admin->get_user_details( $results_array['modified_by'] );
 // ============================================= 
 // ! Add result_array to the template variable   
 // ============================================= 
+$data_dwoo['CUR_TAB']                   = 'settings';
+$data_dwoo['PAGE_HEADER']               = $admin->lang->translate('Modify Page Settings');
 $data_dwoo['PAGE_ID']					= $results_array['page_id'];
 $data_dwoo['PAGE_TITLE']				= $results_array['page_title'];
+$data_dwoo['PAGE_GROUPS']			    = $results_array['page_groups'];
 $data_dwoo['PAGE_LINK']					= $admin->page_link($results_array['link']);
 $data_dwoo['PAGE_SHORT_LINK']			= substr( $results_array['link'], strripos( $results_array['link'], '/' ) + 1 );
 $data_dwoo['MENU_TITLE']				= $results_array['menu_title'];
 $data_dwoo['DESCRIPTION']				= $results_array['description'];
-$data_dwoo['KEYWORDS']					= explode( ',', $results_array['keywords']);
+$data_dwoo['KEYWORDS']					= $results_array['keywords'];
 $data_dwoo['VISIBILITY']				= $results_array['visibility'];
 $data_dwoo['TOP_SELECTED']				= $results_array['target'];
 $data_dwoo['MODIFIED_WHEN']				= ($results_array['modified_when'] != 0) ? date(TIME_FORMAT.', '.DATE_FORMAT, $results_array['modified_when']) : 'Unknown';

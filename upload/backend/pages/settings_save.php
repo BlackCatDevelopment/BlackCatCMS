@@ -57,11 +57,12 @@ if ( !$admin->get_permission('pages_settings') )
 require_once( LEPTON_PATH . '/framework/functions.php' );
 
 // Get values
-$page_title			= htmlspecialchars($admin->get_post_escaped('page_title') );
-$menu_title			= htmlspecialchars($admin->get_post_escaped('menu_title') );
-$page_link			= htmlspecialchars($admin->get_post_escaped('page_link') );
-$description		= htmlspecialchars($admin->get_post_escaped('description') );
-$keywords			= htmlspecialchars($admin->get_post_escaped('keywords') );
+$page_title			= htmlspecialchars($admin->get_post_escaped('page_title'));
+$menu_title			= htmlspecialchars($admin->get_post_escaped('menu_title'));
+$page_link			= htmlspecialchars($admin->get_post_escaped('page_link'));
+$description		= htmlspecialchars($admin->get_post_escaped('description'));
+$keywords			= htmlspecialchars($admin->get_post_escaped('keywords'));
+$page_groups        = htmlspecialchars($admin->get_post_escaped('page_groups'));
 $parent				= $admin->get_post_escaped('parent');
 $target				= $admin->get_post_escaped('target');
 $template			= $admin->get_post_escaped('template');
@@ -208,7 +209,8 @@ if ( $request != 'ajax' )
 	$sql	.= '`searching` = '.$searching.', ';
 	if ($language != '') $sql	.= '`language` = "'.$language.'", ';
 	$sql	.= '`admin_groups` = "'.$admin_groups.'", ';
-	$sql	.= '`viewing_groups` = "'.$viewing_groups.'"';
+	$sql	.= '`viewing_groups` = "'.$viewing_groups.'", ';
+    $sql    .= '`page_groups`= "'.$page_groups.'"';
 }
 
 $sql	.= 'WHERE `page_id` = '.$page_id;
