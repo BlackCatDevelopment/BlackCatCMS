@@ -120,7 +120,7 @@ $pages->current_page['parent']				= $results_array['parent'];
 // ===========================
 // ! find already linked pages
 // ===========================
-$items          = $pages->get_linked_by_language($page_id);
+$items          = $admin->get_controller('Pages')->get_linked_by_language($page_id);
 
 
 // =========================
