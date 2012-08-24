@@ -240,7 +240,7 @@
 	padding-top: 5px;
 	clear: both;
 }
-#fc_add_module_form {
+#fc_add_module_form, #fc_linked_languages {
 	padding: 0px;
 	margin-right: 15px;
 	float: right;

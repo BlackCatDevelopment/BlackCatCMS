@@ -29,7 +29,7 @@
 @import url("jquery_ui.css");
 @import url("users.css");
 @import url("admintools.css");
-
+@import url(../../../modules/lib_jquery/plugins/tag-it/tag-it.css);
 
 body,html {
 	line-height: 1.5em;
@@ -145,6 +145,10 @@ li {
   margin: 15px;
   text-align: center;
 }
+.fc_info_icon {
+    background: transparent url(images/info.png) left center no-repeat;
+    padding-left: 80px;
+}
 .success {
   background-color: #D0FFA0;
 }
@@ -237,6 +241,17 @@ li {
 
 label {
 	text-align: right;
+}
+
+table {
+    width: 90%;
+    margin: 5px auto;
+}
+
+th {
+    font-weight: 900;
+    text-align: left;
+    background-color: #71ae1c;
 }
 
 .popup {

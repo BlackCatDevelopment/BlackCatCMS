@@ -51,6 +51,13 @@ jQuery(document).ready(function()
 		singleFieldNode:	$('input[name=keywords]')
 	});
 
+	// Activate tagit for Pagegroups
+	$('#fc_page_groups').tagit(
+	{
+		singleField:		true,
+		singleFieldNode:	$('input[name=page_groups]')
+	});
+
 	// activate sortable function for sections
 	$( "#fc_all_blocks" ).sortable({
 		handle:				'.fc_section_drag',

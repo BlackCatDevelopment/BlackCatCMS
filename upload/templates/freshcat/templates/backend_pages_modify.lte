@@ -1,13 +1,4 @@
-<div id="fc_content_header">
-	<span class="left">{translate('Modify page')}</span>
-	<div class="fc_header_buttons">
-		<a href="{$ADMIN_URL}/pages/modify.php?page_id={$PAGE_ID}" class="ui-corner-left fc_header_button fc_current">{translate('Modify page')}</a>
-		<a href="{$ADMIN_URL}/pages/settings.php?page_id={$PAGE_ID}" class="fc_header_button">{translate('Change settings')}</a>
-		<a href="{$PAGE_LINK}" target="_blank" class="ui-corner-right fc_header_button">{translate('View page')}</a>
-	</div>
-	<div class="clear"></div>
-</div>
-
+{include('backend_pages_header.lte')}
 <div id="fc_main_content">
 	<div class="fc_modified_header">
 		<div class="fc_current_page">

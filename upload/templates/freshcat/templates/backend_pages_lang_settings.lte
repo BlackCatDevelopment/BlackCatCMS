@@ -1,0 +1,80 @@
+{include('backend_pages_header.lte')}
+<div id="fc_main_content">
+
+	<div class="fc_modified_header">
+		<div class="fc_current_page">
+			{translate('Current page')}: <strong>{$PAGE_TITLE}</strong> (<strong>ID: {$PAGE_ID}</strong>)
+		</div>
+		<div class="fc_modified">
+			{if $MODIFIED_WHEN}
+			{translate('Last modification by')} {$MODIFIED_BY} ({$MODIFIED_BY_USERNAME}), {$MODIFIED_WHEN}
+			{/if}
+		</div>
+		<div class="clear"></div>
+	</div>
+
+    <div id="fc_linked_languages" class="g_8 ui-corner-bottom" style="padding:5px 15px">
+        <div class="fc_info_icon">
+        {translate('Language mappings allow to link pages of different languages together. In combination with the <tt>language_menu()</tt> function in the template, you will get links to all available languages for a page.')}
+        </div>
+    </div>
+    <div class="clear sp_clear"></div>
+
+    <div class="c_16">
+        <div class="g_6 fc_form_content ui-shadow ui-corner-all">
+            <h2 style="margin:0" class="fc_modified_header">{translate('Current links')}</h2>
+            {if count($PAGE_LINKS)}
+            <table style="width:100%">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>{translate('Language')}</th>
+                        <th>{translate('Page')}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {foreach $PAGE_LINKS as link}
+                    <tr>
+                        <td><a href="{$ADMIN_URL}/pages/lang_settings.php?page_id={$PAGE_ID}&amp;del={$link.lang}_{$link.page_id}"><img src="{$THEME_URL}/images/delete_16.png" border="0" alt="X" /></a></td>
+                        <td>{$link.lang}</td>
+                        <td>{$link.menu_title}</td>
+                    </tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {else}
+            <div class="fc_header highlight">{translate('No current links')}</div>
+            {/if}
+        </div>
+
+        <div class="g_8 fc_form_content ui-shadow ui-corner-all">
+        <h2 style="margin:0" class="fc_modified_header">{translate('Create link')}</h2>
+        {if count($AVAILABLE_PAGES)}
+    	<form name="lang_settings" action="{$ADMIN_URL}/pages/lang_settings_save.php" method="post" class="ajaxForm">
+    		<input type="hidden" name="page_id" value="{$PAGE_ID}" />
+
+            <label for="fc_map_language" class="g_4">{translate('Map to language')}</label>
+            <select id="fc_map_language" name="map_language">
+            {foreach $AVAILABLE_LANGS as lang}
+                <option value="{$lang.VALUE}">{$lang.NAME}</li>
+            {/foreach}
+            </select>
+
+            <label for="fc_link_page_id" class="g_4">{translate('Map to page')}</label>
+            <select id="fc_link_page_id" name="link_page_id">
+            {foreach $AVAILABLE_PAGES as pg}
+                <option value="{$pg.page_id}">{$pg.menu_title}</li>
+            {/foreach}
+            </select>
+
+    		<div class="fc_confirm_bar ui-corner-bottom">
+    			<input type="submit" name="submit" value="{translate('Save')}" />
+    			<input type="reset" name="reset" value="{translate('Reset')}" />
+    		</div>
+    	</form>
+        {else}
+        <div class="fc_header highlight">{translate('No pages available')}</div>
+        {/if}
+        </div>
+    </div>
+</div>
