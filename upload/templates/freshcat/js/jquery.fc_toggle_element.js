@@ -65,17 +65,25 @@
 			}
 			else if ( current.is('input:checkbox') || current.is('input:radio') )
 			{
-				// Get the according ID
+
 				var according_div = $('#' + current.attr('rel') );
 			
-				// if multiple elements control an ID (the rel-tag must provide action|id)
-				if ( current.attr('rel').split( '|' ).length == 2)
+				// if multiple elements control an ID (the class-tag must provide action___id)
+                var div_id        = match_class_prefix('show___',current);
+                var action        = 'show';
+                if( typeof div_id == 'undefined' || div_id.length == 0 )
 				{
-					var value = current.attr('rel').split( '|' );
-					var action = value[0];
+                    div_id = match_class_prefix('hide___',current);
+                    action = 'hide';
+                }
 			
-					var according_div = $('#' + value[1] );
+                if( typeof div_id != 'undefined' )
+                {
+                    according_div = $('#'+div_id);
+                }
 			
+				if ( typeof according_div != 'undefined' && according_div.length > 0 )
+				{
 					if ( action == 'show' && current.attr( 'checked' ) )
 					{
 						options.show_on_start = true;

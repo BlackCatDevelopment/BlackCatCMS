@@ -51,6 +51,19 @@ function getThemeName()
 	return 'freshcat';
 }
 
+// match css class with given prefix
+function match_class_prefix(prefix,elem)
+{
+    var classes = elem.attr('class').split(' ');
+    var regex   = new RegExp('^'+prefix+'(.+)',"g");
+    for (var i = 0; i < classes.length; i++) {
+        var matches = regex.exec(classes[i]);
+        if (matches != null) {
+            return matches[1];
+        }
+    }
+}
+
 // Function to show the dialog with error message if an ajax reports an error
 function return_error( data, process_div )
 {

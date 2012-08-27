@@ -24,8 +24,10 @@
 		var options = $.extend(defaults, options);
 		return this.each(function ()
 		{
-			var current_button		= $(this),
-				current_item		= $('#'+current_button.attr('rel'));
+
+			var current_button		= $(this);
+            var form_id             = match_class_prefix('form_',current_button);
+            var current_item        = $('#'+form_id);
 
 			current_button.unbind().click(function()
 			{
@@ -35,10 +37,10 @@
 				// Find the title of the element, get it to add it to the ui-dialog-titlebar
 				var title	= current_item.find('input[name="form_title"]').val();
 
+                buttonsOpts			= new Array();
 				// Find confirm-buttons of the element, get them for adding them to the ui-dialog-footer and hide it
 				if ( current_item.find('.fc_confirm_bar').size() > 0 )
 				{
-					buttonsOpts			= new Array();
 					current_item.find('.fc_confirm_bar input').each(function()
 					{
 						var input		= $(this);
@@ -100,7 +102,7 @@
 					buttons:		buttonsOpts
 				});
 			});
-			current_item.hide();
+//			current_item.hide();
 		});
 	}
 })(jQuery);

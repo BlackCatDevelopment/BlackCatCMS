@@ -70,7 +70,7 @@
 {*if user is allowed to see pages, sidebar will be shown - I will have to think about that, as the activity-bar is inside this div, so it is also needed for users, who can't see pages*}
 {if $permission.pages}
 <div id="fc_sidebar">
-	<div id="fc_sidebar_header">{translate('Pages')}<span class="fc_side_add show_popup" rel="fc_add_page" title="{translate('Add page')}">+ {translate('Add page')}</span></div>
+	<div id="fc_sidebar_header">{translate('Pages')}<span class="fc_side_add show_popup form_fc_add_page" title="{translate('Add page')}">+ {translate('Add page')}</span></div>
 	<div id="fc_sidebar_content">
 		<div id="fc_pages">
 			{if $pages}
@@ -80,12 +80,12 @@
 				<span class="fc_close"></span>
 				<div id="fc_search_page_options">
 					<ul>
-						<li title="{translate('Check all')}" rel="{translate('Any')}" class="fc_activeSearchOption">{translate('Check all')}</li>
-						<li title="{translate('Menu title contains')}" rel="{translate('Menu')}">{translate('Menu title contains')}</li>
-						<li title="{translate('Page title contains')}" rel="{translate('Title')}">{translate('Page title contains')}</li>
-						<li title="{translate('Section title contains')}" rel="{translate('Section')}">{translate('Section name contains')}</li>
-						<li title="{translate('Page ID is')}" rel="{translate('PID')}">{translate('Page ID is')}</li>
-						<li title="{translate('Section ID is')}" rel="{translate('SID')}">{translate('Section ID is')}</li>
+						<li title="{translate('Check all')}" id="{translate('Any')}" class="fc_activeSearchOption">{translate('Check all')}</li>
+						<li title="{translate('Menu title contains')}" id="{translate('Menu')}">{translate('Menu title contains')}</li>
+						<li title="{translate('Page title contains')}" id="{translate('Title')}">{translate('Page title contains')}</li>
+						<li title="{translate('Section title contains')}" id="{translate('Section')}">{translate('Section name contains')}</li>
+						<li title="{translate('Page ID is')}" id="{translate('PID')}">{translate('Page ID is')}</li>
+						<li title="{translate('Section ID is')}" id="{translate('SID')}">{translate('Section ID is')}</li>
 					</ul>
 				</div>
 			</div>
@@ -187,158 +187,7 @@
 		</div>
 	</div>
 	{if $permission.pages_add}
-	<form name="add_page" action="{$ADMIN_URL}/pages/add.php" method="post" id="fc_add_page">
-		<div class="fc_form_content">
-			<div class="clear">
-				<input type="hidden" name="form_title" value="{translate('Add page')}" />
-			</div>
-			<div class="fc_tabs c_16" id="fc_addpage_tab">
-				<ul>
-					<li style="width: 25%;"><a href="#fc_tabs_general">{translate('General Settings')}</a></li>
-					<li style="width: 25%;"><a href="#fc_tabs_settings">{translate('Preferences')}</a></li>
-					<li style="width: 25%;"><a href="#fc_tabs_seo">{translate('SEO Settings')}</a></li>
-					<li style="width: 25%;"><a href="#fc_tabs_privacy">{translate('Security Settings')}</a></li>
-				</ul>
-				<ul>
-					<li id="fc_tabs_general">
-						<div class="clear sp_clear"></div>
-
-						<label for="fc_addPage_title" class="g_4">{translate('Menu title')}:</label>
-						<input type="text" name="menu_title" id="fc_addPage_title" class="g_11"  value="" />
-						<div class="clear sp_clear"></div>
-						
-						<label class="g_4" for="fc_addPage_type">{translate('Type')}:</label>
-						<select name="type" id="fc_addPage_type" class="g_11">
-							{foreach $modules as module}
-							<option value="{$module.VALUE}"{if $module.SELECTED} selected="selected"{/if}>{$module.NAME}</option>
-							{/foreach}
-						</select>
-						<div class="clear sp_clear"></div>
-
-						<label class="g_4" for="fc_addPage_parent">{translate('Parent')}:</label>
-						<select name="parent" id="fc_addPage_parent" class="g_11">
-							{foreach $parents_list as parent}
-							<option value="{$parent.id}"{if $parent.disabled} disabled="disabled"{/if}>{for i 0 $parent.level 1}{if $i>0}- {/if}{/for}{$parent.menu_title}</option>
-							{/foreach}
-						</select>
-						<div class="clear sp_clear"></div>
-
-					</li>
-					<li id="fc_tabs_settings">
-						<div class="clear sp_clear"></div>
-
-						{if $DISPLAY_MENU_LIST}
-						<label class="g_4" for="fc_addPage_menu">{translate('Menu')}:</label>
-						<select name="menu" id="fc_addPage_menu" class="g_11">
-							{foreach $TEMPLATE_MENU as menu}
-							<option value="{$menu.VALUE}"{if $menu.SELECTED} selected="selected"{/if}>{$menu.NAME}</option>
-							{/foreach}
-						</select>
-						<div class="clear sp_clear"></div>
-						{/if}
-
-						<label class="g_4" for="fc_addPage_target">{translate('Target')}:</label>
-						<select name="target" id="fc_addPage_target" class="g_11">
-							<option value="_top" selected="selected">{translate('Top frame')}</option>
-							<option value="_blank">{translate('New window')}</option>
-							<option value="_self">{translate('Same window')}</option>
-						</select>
-						<div class="clear sp_clear"></div>
-
-						<label class="g_4" for="fc_addPage_template">{translate('Template')}:</label>
-						<select name="template" id="fc_addPage_template" class="g_11">
-							<option value="" selected="selected">{translate('System default')}</option>
-							<option value="" disabled="disabled">----------------------</option>
-							{foreach $templates as template}
-							<option value="{$template.VALUE}">{$template.NAME}</option>
-							{/foreach}
-						</select>
-						<div class="clear sp_clear"></div>
-
-						{if $DISPLAY_LANGUAGE_LIST}
-						<label class="g_4" for="fc_addPage_language">{translate('Language')}:</label>
-						<select name="language" id="fc_addPage_language" class="g_11">
-							{foreach $languages as language}
-							<option value="{$language.VALUE}"{if $language.SELECTED} selected="selected"{/if}>{$language.NAME}</option> {*$language.FLAG_LANG_ICONS*}
-							{/foreach}
-						</select>
-						<div class="clear sp_clear"></div>
-						{/if}
-
-					</li>
-				
-					<li id="fc_tabs_seo">
-						<div class="clear sp_clear"></div>
-
-						<label class="g_4" for="fc_addPage_page_title">{translate('Title')}:</label>
-						<input type="text" name="page_title" value="" id="fc_addPage_page_title" class="g_11" />
-						<div class="clear sp_clear"></div>
-
-						<label class="g_4" for="fc_addPage_description">{translate('Description')}:</label>
-						<textarea name="description" id="fc_addPage_description" rows="10" cols="1" class="g_11" ></textarea>
-						<div class="clear sp_clear"></div>
-
-						<label class="g_4" for="fc_addPage_keywords_ul">{translate('Keywords')}:</label>
-						<ul id="fc_addPage_keywords_ul" class="g_11"><li></li></ul>
-						<input name="keywords" type="hidden" id="fc_addPage_keywords" value="" />
-						<div class="clear sp_clear"></div>
-
-					</li>
-				
-					<li id="fc_tabs_privacy">
-						<div class="clear sp_clear"></div>
-						{*need to include settings of searching - if searching is generally disabled, don't show this option*}
-						<div class="pre_4 g_11">
-							<label for="fc_addPage_Searching">{translate('Searching')}</label>
-							<input type="checkbox" class="fc_checkbox_jq" name="searching" id="fc_addPage_Searching" value="1" {if !$SEARCHING_DISABLED} checked="checked"{/if} />
-						</div>
-						<div class="clear sp_clear"></div>
-
-						<label for="fc_addPage_visibility" class="g_5">{translate('Visibility')}:</label>
-						<select name="visibility" id="fc_addPage_visibility" class="fc_toggle_element" rel="fc_addPage_allowed_viewers">
-							<option value="public" rel="hide">{translate('Public')}</option>
-							<option value="private" rel="show">{translate('Private')}</option>
-							<option value="registered" rel="show">{translate('Registered')}</option>
-							<option value="hidden" rel="hide">{translate('Hidden')}</option>
-							<option value="none" rel="hide">{translate('None')}</option>
-						</select>
-						<div class="clear sp_clear"></div>
-
-						<div id="fc_allowed_admins">
-							<label class="g_4" for="fc_admin_groups">{translate('Administrators')}:</label>
-							<div class="g_12">
-								<div class="fc_settings_label" id="fc_admin_groups">
-									{foreach $groups.admins group}
-									<label for="fc_admin_group_{$group.VALUE}" class="buttonset">{$group.NAME}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="admin_groups[]" id="fc_admin_group_{$group.VALUE}" value="{$group.VALUE}"{if $group.CHECKED} checked="checked"{/if}{if $group.DISABLED} disabled="disabled"{/if} />
-								{/foreach}
-								</div>
-							</div>
-							<div class="clear sp_clear"></div>
-						</div>
-
-						<div id="fc_addPage_allowed_viewers" class="{if $VISIBILITY == 'private' || $VISIBILITY == 'registered'}active_element{else}inactive_element{/if}">
-							<label class="g_4" for="fc_viewers_groups">{translate('Registered viewers')}:</label>
-							<div class="g_12">
-								<div class="fc_settings_label" id="fc_viewers_groups">
-									{foreach $groups.viewers viewer}
-									<label for="fc_viewing_group_{$viewer.VALUE}" class="buttonset">{$viewer.NAME}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="viewing_groups[]" id="fc_viewing_group_{$viewer.VALUE}" value="{$viewer.VALUE}"{if $viewer.CHECKED} checked="checked"{/if}{if $viewer.DISABLED} disabled="disabled"{/if}/>
-								{/foreach}
-								</div>
-							</div>
-							<div class="clear sp_clear"></div>
-						</div>
-
-					</li>
-				</ul>
-			</div>
-		</div>
-		<div class="fc_confirm_bar">
-			<input type="submit" name="add_page" value="{translate('Add')}" />
-			<input type="reset" name="reset" value="{translate('Reset')}" />
-		</div>
-	</form>
+    {include('form_add_page.lte')}
 	{/if}
 	<div id="fc_activity"></div>
 </div>

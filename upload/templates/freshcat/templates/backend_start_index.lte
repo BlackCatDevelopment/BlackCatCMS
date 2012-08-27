@@ -36,7 +36,7 @@
 	{/foreach}
 	</ul>
 	<ul id="fc_widget_list_2" class="fc_widgets">
-
+        <li></li>
 	</ul>
 	<div class="clear"></div>
 </div>

@@ -218,7 +218,7 @@
 
 			function setSearchTreeOption()
 			{
-				var option					= options.options_ul.find('.fc_activeSearchOption').attr('rel'),
+				var option					= options.options_ul.find('.fc_activeSearchOption').attr('id'),
 					searchTerm				= element.val();
 
 				search_page_tree( searchTerm );

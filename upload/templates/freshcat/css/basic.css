@@ -300,3 +300,7 @@ th {
 * > .fc_inactiveSearch {
 	display: none;
 }
+
+
+div#fc_BACKEND.fc_form_content p.g_7 { margin-left:38.5%;font-size:0.9em;color:#bbb;}
+div.pre_4 label.ui-button{width:300px;}

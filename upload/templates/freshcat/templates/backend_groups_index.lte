@@ -42,7 +42,7 @@
 					<label for="fc_name_newgroup" class="g_4">{translate('Name')}:</label>
 					<input type="text" name="name" id="fc_name_newgroup" class="g_11" value="" />
 					<div class="clear sp_clear"></div>
-					<div id="fc_tabs_{$group.VALUE}" class="fc_tabs">
+					<div id="fc_tabs_group" class="fc_tabs">
 						<ul class="fc_groups_tabs">
 							<li><a href="#fc_tabs_system_permissions">{translate('System permissions')}</a></li>
 							<li><a href="#fc_tabs_modules">{translate('Module permissions')}</a></li>

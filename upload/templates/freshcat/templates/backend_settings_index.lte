@@ -429,9 +429,9 @@
 			<label for="fc_operating_system" class="g_6">{translate('Server Operating System')}:</label>
 			<div class="settings_label g_9" id="fc_operating_system">
 				<label for="fc_operating_system_linux">{translate('Linux/Unix based')}</label>
-				<input type="radio" class="fc_radio_jq fc_toggle_element" name="operating_system" id="fc_operating_system_linux" value="linux" rel="show|fc_linux"{if $OPERATING_SYSTEM == 'linux'} checked="checked"{/if}/>
+				<input type="radio" class="fc_radio_jq fc_toggle_element show___fc_linux" name="operating_system" id="fc_operating_system_linux" value="linux" {if $OPERATING_SYSTEM == 'linux'} checked="checked"{/if}/>
 				<label for="fc_operating_system_windows">{translate('Windows')}</label>
-				<input type="radio" class="fc_radio_jq fc_toggle_element" name="operating_system" id="fc_operating_system_windows" value="windows" rel="hide|fc_linux"{if $OPERATING_SYSTEM == 'windows'} checked="checked"{/if}/>
+				<input type="radio" class="fc_radio_jq fc_toggle_element hide___fc_linux" name="operating_system" id="fc_operating_system_windows" value="windows" {if $OPERATING_SYSTEM == 'windows'} checked="checked"{/if}/>
 			</div>
 			<div class="clear sp_clear"></div>
 
@@ -504,9 +504,9 @@
 			<label for="fc_wbmailer_routine" class="g_4">{translate('Mail routine')}:</label>
 			<div class="settings_label g_11" id="fc_wbmailer_routine">
 				<label for="fc_wbmailer_routine_phpmail">{translate('PHP mail')}</label>
-				<input type="radio" class="fc_radio_jq fc_toggle_element" name="wbmailer_routine" id="fc_wbmailer_routine_phpmail" value="phpmail" rel="hide|fc_smtp"{if $WBMAILER_ROUTINE == 'phpmail'} checked="checked"{/if}/>
+				<input type="radio" class="fc_radio_jq fc_toggle_element hide___fc_smtp" name="wbmailer_routine" id="fc_wbmailer_routine_phpmail" value="phpmail" {if $WBMAILER_ROUTINE == 'phpmail'} checked="checked"{/if}/>
 				<label for="fc_wbmailer_routine_smtp">{translate('SMTP')}</label>
-				<input type="radio" class="fc_radio_jq fc_toggle_element" name="wbmailer_routine" id="fc_wbmailer_routine_smtp" value="smtp" rel="show|fc_smtp"{if $WBMAILER_ROUTINE == 'smtp'} checked="checked"{/if}/>
+				<input type="radio" class="fc_radio_jq fc_toggle_element show___fc_smtp" name="wbmailer_routine" id="fc_wbmailer_routine_smtp" value="smtp" {if $WBMAILER_ROUTINE == 'smtp'} checked="checked"{/if}/>
 			</div>
 			<div class="clear"></div>
 
