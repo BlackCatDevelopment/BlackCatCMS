@@ -14,18 +14,23 @@
  *
  */
 
-// jQuery-Plugin to implement not case-sensitive function :contains
+function jqueryContainsI(text) {
+    return function (elem) {
+        return (elem.textContent || elem.innerText || $.text(elem)).toLowerCase().indexOf(text.toLowerCase()) > -1;
+    };
+}
+
+jqueryContainsI.sizzleFilter = true;
+
+// add case insensitive :contains filter called :containsi (see the last i)
 $.extend($.expr[':'], {
-	'containsi': function(elem, i, match, array)
-	{
-		return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
-	}
+    'containsi': jqueryContainsI
 });
 
 // Plugin to validate email
 function isValidEmailAddress(emailAddress) {
-var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-return pattern.test(emailAddress);
+    var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+    return pattern.test(emailAddress);
 }
 
 
