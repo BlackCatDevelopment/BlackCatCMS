@@ -137,9 +137,11 @@ foreach( $avail as $i => &$l )
     }
 }
 // remove already linked languages
-foreach($items as $item)
-{
+if(is_array($items) && count($items)) {
+    foreach($items as $item)
+    {
     $arrh->ArrayRemove( $item['lang'], $avail, 'VALUE' );
+    }
 }
 
 // ===========
@@ -149,9 +151,11 @@ $pages_list = $pages->make_list();
 // skip current page
 $arrh->ArrayRemove( $page_id, $pages_list, 'page_id' );
 // skip already linked pages
-foreach($items as $item)
-{
+if(is_array($items) && count($items)) {
+    foreach($items as $item)
+    {
     $arrh->ArrayRemove( $item['link_page_id'], $pages_list, 'page_id' );
+    }
 }
 
 // =========================================================
@@ -169,7 +173,7 @@ $data_dwoo['PAGE_LINK']					= $admin->page_link($results_array['link']);
 $data_dwoo['PAGE_TITLE']				= $results_array['page_title'];
 $data_dwoo['AVAILABLE_LANGS']           = $avail;
 $data_dwoo['AVAILABLE_PAGES']           = $pages_list;
-$data_dwoo['PAGE_LINKS']                = $items;
+$data_dwoo['PAGE_LINKS']                = ( ( is_array($items) && count($items) ) ? $items : NULL );
 
 $data_dwoo['MODIFIED_BY']				= $user['display_name'];
 $data_dwoo['MODIFIED_BY_USERNAME']		= $user['username'];
