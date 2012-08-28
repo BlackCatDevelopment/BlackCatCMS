@@ -300,7 +300,10 @@ class wb extends SecureCMS
     {
 		// name must not contain LEPTON_...
 	    $name      = preg_replace( '~^lepton_~i', '', $name );
-	    return $this->int_get_handle('',$name,func_get_args());
+        $args      = func_get_args();
+        // remove first element (it's the name)
+        array_shift($args);
+	    return $this->int_get_handle('',$name,(count($args)?$args:NULL));
     }   // end function get_controller()
     
     /**
@@ -312,8 +315,10 @@ class wb extends SecureCMS
 	{
 		// name must not contain LEPTON_Helper_...
 	    $name      = preg_replace( '~^lepton_helper_~i', '', $name );
-        return $this->int_get_handle('Helper',$name,func_get_args());
-
+        $args      = func_get_args();
+        // remove first element (it's the name)
+        array_shift($args);
+        return $this->int_get_handle('Helper',$name,(count($args)?$args:NULL));
 	}   // end function get_helper()
 
     /* ****************
@@ -649,23 +654,8 @@ class wb extends SecureCMS
      * @param  mixed   $args      - optional arguments
      *
      **/
-    private function int_get_handle()
+    private function int_get_handle( $namespace, $name, $args )
     {
-        $v_arg_list = func_get_args();
-        $namespace  = array_shift($v_arg_list);
-        $name       = array_shift($v_arg_list);
-
-  		// ----- Look for variable options arguments
-	    $v_size     = count($v_arg_list);
-	    $args       = NULL;
-
-	    if ($v_size > 2) {
-	    	$args = (
-					    ( count($v_arg_list) )
-					  ? "'".implode( "', '", $v_arg_list )."'"
-					  : NULL
-					);
-		}
 
         $classname = 'LEPTON_' . ( $namespace != '' ? $namespace.'_' : '' ) . $name;
 
@@ -678,7 +668,7 @@ class wb extends SecureCMS
 	        // if we have additional arguments, compare them with the ones
 	        // we used in the last call
 	        if (
-					$args
+					count($args)
 				&&  isset($this->_handles[$classname]['__args__'])
 				&&  $args == $this->_handles[$classname]['__args__'] )
 	        {
@@ -712,6 +702,7 @@ class wb extends SecureCMS
 				)
 		) {
 	        // the class exists, but we don't have a handle
+            $args = ( count($args) ? '"'.implode('", "',$args).'"' : NULL );
             $this->_handles[$classname]['__handle__'] = eval ( "return new $classname($args);" );
             if ( $args )
 			{
