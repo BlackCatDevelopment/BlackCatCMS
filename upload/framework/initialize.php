@@ -190,6 +190,7 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
 }
 
 if (file_exists(LEPTON_PATH.'/modules/lib_dwoo/library.php')) {
+    global $parser;
 	// load Dwoo Template Engine
 	require_once LEPTON_PATH.'/modules/lib_dwoo/library.php';
     // set some constants as globals so we don't need to set them later

@@ -1346,14 +1346,14 @@ function _lep_installer_import_sql($file,$database) {
     $import = preg_replace( "%/\*(.*)\*/%Us", ''          , $import );
     $import = preg_replace( "%^--(.*)\n%mU" , ''          , $import );
     $import = preg_replace( "%^$\n%mU"      , ''          , $import );
-    $import = preg_replace( "%wb_%"         , TABLE_PREFIX, $import );
+    $import = preg_replace( "%lep_%"        , TABLE_PREFIX, $import );
     $import = preg_replace( "%\r?\n%"       , ''          , $import );
 
     $import = explode (";", $import);
 
     foreach ($import as $imp){
         if ($imp != '' && $imp != ' '){
-            $ret = $db->query($imp);
+            $ret = $database->query($imp);
         }
     }
 
