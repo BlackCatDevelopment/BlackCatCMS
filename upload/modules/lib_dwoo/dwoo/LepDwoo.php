@@ -139,6 +139,30 @@ class LepDwoo extends Dwoo {
     }  // end function setGlobals()
     
     /**
+     * check if template exists in current search path(s)
+     **/
+    public function hasTemplate($name)
+    {
+        // scan search paths (if any)
+        $paths = array();
+        if ( $this->path ) {
+            $paths[] = $this->path;
+        }
+        if ( $this->fallback_path ) {
+            $paths[] = $this->fallback_path;
+        }
+        $paths[] = $this->workdir;
+        // remove doubles
+        $paths = array_unique($paths);
+        foreach ( $paths as $dir ) {
+            if ( file_exists( $dir.'/'.$name ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * this overrides and extends the original get() method Dwoo provides:
      * - use the template search and fallback paths
      *

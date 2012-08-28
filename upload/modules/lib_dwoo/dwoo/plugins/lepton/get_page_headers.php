@@ -37,7 +37,7 @@ require_once WB_PATH.'/framework/functions.php';
 
 function Dwoo_Plugin_get_page_headers(Dwoo $dwoo, $for = 'frontend' , $print_output = true , $current_section = false )
 {
-	return get_page_headers( $for , $print_output , $current_section);
+	return get_page_headers( $for, $print_output, $current_section);
 }
 
 ?>

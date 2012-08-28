@@ -63,9 +63,12 @@ if (!is_object($parser))
               'LEPTON_URL' => LEPTON_URL,
         	  'LEPTON_PATH' => LEPTON_PATH,
         	  'THEME_URL' => THEME_URL,
-        	  'URL_HELP' => 'http://www.lepton-cms.org/'
+        	  'URL_HELP' => 'http://lepton2.webbird.de/'
       )
   );
+  // initialize template search path
+  $parser->setPath(THEME_PATH . '/templates');
+  $parser->setFallbackPath(THEME_PATH . '/templates');
 }
 
 ?>
