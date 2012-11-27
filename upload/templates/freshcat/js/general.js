@@ -10,8 +10,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
- *
+  *
  */
 
 function jqueryContainsI(text) {
@@ -392,7 +391,7 @@ function dialog_form( currentForm, beforeSend, afterSend )
 		// Define ajax for form
 		currentForm.ajaxSubmit(
 		{
-			clearForm:		$(this).hasClass('clearForm'),
+			clearForm:		true,
 			beforeSend:		function( data )
 			{
 				// Check if the form has a (mostly hidden) input field with a title for the form (if not 'loading' is used
@@ -450,47 +449,17 @@ function dialog_form( currentForm, beforeSend, afterSend )
 // Function to activate buttons (for example if a some new elements where added to the body with ajax)
 function set_buttons( element )
 {
-	// Add ids to select, to fix a bug of selectmenu, if there is no id set to the label
-	$( element ).find('select').each( function()
+	/*$( element ).find('input.fc_checkbox_jq').each( function()
 	{
 		var current_select		= $(this);
 		if ( typeof current_select.attr('id') == 'undefined' )
 		{
 			current_select.attr( 'id', current_select.attr('name') );
 		}
-	});
-
-	$( element ).find('input.fc_checkbox_jq').each( function()
-	{
-		var current_select		= $(this);
-		if ( typeof current_select.attr('id') == 'undefined' )
-		{
-			current_select.attr( 'id', current_select.attr('name') );
-		}
-	});
-
-	// Activate jQuery selectmenu
-	$( element ).find('select').selectmenu(
-	{
-		style:		'popup',
-		width:		200,
-		icons:		{
-			primary:			"ui-icon-carat-2-n-s"
-		}
-	});
-
-	// Activate jQuery UI Tabs, if there are tabs
-	if ( $( element ).find('#fc_tabs').size() > 0 )
-	{
-		$( element ).find('#fc_tabs').tabs();
-	}
-	if ( $( element ).find('.fc_tabs').size() > 0 )
-	{
-		$( element ).find('.fc_tabs').tabs();
-	}
+	});*/
 
 	// Activate jQuery UI Buttons for radio-buttons
-	$( element ).find('input.fc_radio_jq').each( function()
+	/*$( element ).find('input.fc_radio_jq').each( function()
 	{
 		// Get the id of each element
 		var input_id	= $(this).attr('id');
@@ -507,7 +476,7 @@ function set_buttons( element )
 			});
 		}
 	});
-
+/*
 	// Activate jQuery UI Buttons for checkboxes
 	$( element ).find('input.fc_checkbox_jq').each( function()
 	{
@@ -526,7 +495,7 @@ function set_buttons( element )
 			});
 		}
 	});
-
+*/
 	// Activate toggle for select
 	element.find( '.fc_toggle_element' ).fc_toggle_element();
 }
@@ -536,10 +505,10 @@ function searchUsers( searchTerm )
 	$('#fc_list_overview li').removeClass('fc_activeSearch').slideDown(0);
 	if ( searchTerm.length > 0 )
 	{
-		$('#fc_list_overview li:containsi(' + searchTerm + ')').addClass('fc_activeSearch');
+		$('#fc_list_overview li:containsi(' + searchTerm + ')').not('.fc_no_search').addClass('fc_activeSearch');
 		if ( $('#fc_list_overview').hasClass('fc_settings_list') )
 		{
-			$('.fc_form_content:containsi(' + searchTerm + ')').each( function()
+			$('.fc_list_forms:containsi(' + searchTerm + ')').each( function()
 			{
 				var id	= $(this).attr('id');
 				$('#fc_list_overview li[rel=' + id + ']').addClass('fc_activeSearch');
@@ -549,7 +518,7 @@ function searchUsers( searchTerm )
 	}
 	else
 	{
-		$('#fc_list_overview li').slideDown(300);
+		$('#fc_list_overview li').not('fc_no_search').slideDown(300);
 	}
 
 }
@@ -613,6 +582,7 @@ jQuery(document).ready( function()
 			// resize also some elements
 			$('#fc_content_container, #fc_content_footer').css({width: ( window_width - ui.size.width )+'px'});
 			$('#fc_sidebar_footer, #fc_sidebar, #fc_activity, #fc_sidebar_content').css({width: ui.size.width+'px'});
+			$('#fc_add_page').css({left: ui.size.width+'px'});
 		},
 		stop: function(event, ui)
 		{
@@ -623,15 +593,6 @@ jQuery(document).ready( function()
 
 	// Initial activation of click events
 	set_buttons($('body'));
-
-	// Bind reset button with timeout reset, to reset even jQuery UI-Buttons and Dropdowns
-	$('input:reset').click(function()
-	{
-		setTimeout( function()
-		{
-			$('.fc_advanced_groups input').change();
-		}, 10 );
-	});
 
 	$('#fc_list_search input').livesearch(
 	{
@@ -655,5 +616,34 @@ jQuery(document).ready( function()
 	});
 
 	// Bind buttons to show popups
-	$('.show_popup').fc_show_popup();
+	//$('.show_popup').fc_show_popup();
+
+	// Bind navigation of AddPage-Form
+	$('#fc_add_page_nav').find('a').click( function()
+	{
+		var current		= $(this);
+		if ( !current.hasClass('fc_active') )
+		{
+			$('#fc_add_page').find('.fc_active').removeClass('fc_active');
+			current.addClass('fc_active');
+			var target	= current.attr('href');
+			$(target).addClass('fc_active');
+		}
+		return false;
+	});
+
+	$('#fc_add_page').slideUp(0);
+	$('#fc_add_page input:reset').click( function()
+	{
+		var form	= $('#fc_add_page');
+		form.find('.fc_addPageOnly').show();
+		form.find('.fc_changePageOnly').hide();
+		form.animate({width: 'toggle'});
+	});
+	$('.fc_side_add').click( function()
+	{
+		var form	= $('#fc_add_page');
+		form.find('a:first').click();
+		form.find('input:reset').click();
+	});
 });

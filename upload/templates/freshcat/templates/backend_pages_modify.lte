@@ -1,6 +1,15 @@
-{include('backend_pages_header.lte')}
+<div id="fc_content_header" class="gradient_light4">
+	<span class="left">{translate('Modify page')}</span>
+	<div class="fc_header_buttons">
+		{*<a href="{$ADMIN_URL}/pages/modify.php?page_id={$PAGE_ID}" class="ui-corner-left fc_header_button gradient_blue gradient_hover fc_current">{translate('Modify page')}</a>
+		<a href="{$ADMIN_URL}/pages/settings.php?page_id={$PAGE_ID}" class="fc_header_button gradient_light1 gradient_hover">{translate('Change settings')}</a>*}
+		<a href="{$PAGE_LINK}" target="_blank" class="ui-corner-all fc_header_button gradient_light1 gradient_hover">{translate('View page')}</a>
+	</div>
+	<div class="clear"></div>
+</div>
+
 <div id="fc_main_content">
-	<div class="fc_modified_header">
+	<div class="fc_modified_header gradient_light1">
 		<div class="fc_current_page">
 			{translate('Current page')}: <strong>{$PAGE_TITLE}</strong> (<strong>ID: {$PAGE_ID}</strong>)
 		</div>
@@ -18,15 +27,6 @@
 				<option value="{$module.VALUE}">{$module.NAME}</option>
 				{/foreach}
 			</select>
-  	        {if $blocks_counter > 0}
-	        <select name="add_to_block">
-	        {foreach $blocks as block}
-                {foreach $block.template_blocks as template_block}
-					<option value="{$template_block.VALUE}"{if $template_block.SELECTED} selected="selected"{/if}>{$template_block.NAME}</option>
-				{/foreach}
-            {/foreach}
-            </select>
-            {/if}
 			<input type="hidden" name="page_id" value="{$PAGE_ID}" />
 			<input type="submit" name="submit_add" value="{translate('Add')}" />
 		</div>
@@ -61,7 +61,7 @@
 								</td>
 								{if $MANAGE_SECTIONS}
 								<td class="fc_sections_options ui-corner-tr">
-									<span class="fc_section_button fc_toggle_section_block" title="{translate('show/hide section')}"></span>
+									<span class="fc_section_button fc_toggle_section_block" title="show/hide section"></span>
 									<div class="fc_section_modify_div_parent">
 										<span class="fc_section_button fc_open_section_modify" title="{translate('Modify section')}"></span>
 										<div class="fc_section_modify_div ui-corner-all ui-shadow">
@@ -72,7 +72,7 @@
 													<span class="fc_section_modify_label">{translate('Name')} :</span>
 													<input type="text" name="blockname" value="{$block.name}" />
 													<div class="clear"></div>
-													<hr />
+													<hr/>
 													<span class="fc_section_modify_label left">{translate('Block')} :</span>
 													<select name="set_block" class="left">
 													{foreach $block.template_blocks as template_block}
@@ -80,7 +80,7 @@
 													{/foreach}
 													</select>
 													<div class="clear"></div>
-													<hr />
+													<hr/>
 													<span class="fc_section_modify_label">{translate('From')} :</span>
 													<input type="text" name="day_from" value="{$block.date_day_from}" class="fc_date_two" maxlength="2" title="{translate('Day')}" /> . 
 													<input type="text" name="month_from" value="{$block.date_month_from}" class="fc_date_two" maxlength="2" title="{translate('Month')}" /> . 
@@ -103,7 +103,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="fc_section_button fc_delete_section" title="{translate('delete section')}">
+									<div class="fc_section_button fc_delete_section" title="delete section">
 										<input type="hidden" name="section_id" value="{$block.section_id}" />
 									</div>
 								</td>

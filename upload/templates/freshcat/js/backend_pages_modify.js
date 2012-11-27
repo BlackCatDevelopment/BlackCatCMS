@@ -10,8 +10,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
- *
+  *
  */
 
 jQuery(document).ready(function()
@@ -49,13 +48,6 @@ jQuery(document).ready(function()
 		allowSpaces:		true,
 		singleField:		true,
 		singleFieldNode:	$('input[name=keywords]')
-	});
-
-	// Activate tagit for Pagegroups
-	$('#fc_page_groups').tagit(
-	{
-		singleField:		true,
-		singleFieldNode:	$('input[name=page_groups]')
 	});
 
 	// activate sortable function for sections

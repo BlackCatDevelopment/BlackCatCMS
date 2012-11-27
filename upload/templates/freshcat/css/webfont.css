@@ -1,0 +1,288 @@
+@font-face {
+	font-family: 'lepton2';
+	src:url('webfont/lepton2.eot');
+	src:url('webfont/lepton2.eot?#iefix') format('embedded-opentype'),
+		url('webfont/lepton2.svg#lepton2') format('svg'),
+		url('webfont/lepton2.woff') format('woff'),
+		url('webfont/lepton2.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+	font-family: 'lepton2';
+	content: attr(data-icon);
+	speak: none;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+[class^="icon-"]:before, [class*=" icon-"]:before {
+	font-family: 'lepton2';
+	font-style: normal;
+	speak: none;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+}
+.icon-file-libreoffice:before,
+[class^="icon-file-"]:before,
+[class*=" icon-file-"] {
+	padding-right:	0.5em;
+	content:		"\e042";
+}
+.icon-pencil:before {
+	content: "\e001";
+}
+.icon-brush:before {
+	content: "\e002";
+}
+.icon-color-palette:before {
+	content: "\e003";
+}
+.icon-pictures:before,
+.icon-file-png:before,
+.icon-file-jpg:before,
+.icon-file-jepg:before,
+.icon-file-gif:before,
+.icon-file-bmp:before {
+	content: "\e004";
+}
+.icon-library:before {
+	content: "\e000";
+}
+.icon-copy:before {
+	content: "\e005";
+}
+.icon-file:before {
+	content: "\e006";
+}
+.icon-file-add:before {
+	content: "\e007";
+}
+.icon-file-remove:before {
+	content: "\e008";
+}
+.icon-tag:before {
+	content: "\e009";
+}
+.icon-mail:before {
+	content: "\e00a";
+}
+.icon-alarm:before {
+	content: "\e00b";
+}
+.icon-calendar:before {
+	content: "\e00c";
+}
+.icon-screen:before {
+	content: "\e00d";
+}
+.icon-screen-2:before {
+	content: "\e00e";
+}
+.icon-database:before {
+	content: "\e00f";
+}
+.icon-comments:before {
+	content: "\e010";
+}
+.icon-user:before {
+	content: "\e011";
+}
+.icon-user-add:before {
+	content: "\e012";
+}
+.icon-user-remove:before {
+	content: "\e013";
+}
+.icon-users:before {
+	content: "\e014";
+}
+.icon-users-2:before {
+	content: "\e015";
+}
+.icon-binocular:before {
+	content: "\e016";
+}
+.icon-search:before {
+	content: "\e017";
+}
+.icon-key:before {
+	content: "\e018";
+}
+.icon-cogs:before {
+	content: "\e019";
+}
+.icon-cog:before {
+	content: "\e01a";
+}
+.icon-equalizer:before {
+	content: "\e01b";
+}
+.icon-unlocked:before {
+	content: "\e01c";
+}
+.icon-locked:before {
+	content: "\e01d";
+}
+.icon-wrench:before {
+	content: "\e01e";
+}
+.icon-tools:before {
+	content: "\e01f";
+}
+.icon-bug:before {
+	content: "\e020";
+}
+.icon-meter:before {
+	content: "\e021";
+}
+.icon-remove:before {
+	content: "\e022";
+}
+.icon-puzzle:before {
+	content: "\e023";
+}
+.icon-shield:before {
+	content: "\e024";
+}
+.icon-switch:before {
+	content: "\e025";
+}
+.icon-power-cord:before {
+	content: "\e026";
+}
+.icon-download:before {
+	content: "\e027";
+}
+.icon-upload:before {
+	content: "\e028";
+}
+.icon-globe:before {
+	content: "\e029";
+}
+.icon-eye:before {
+	content: "\e02a";
+}
+.icon-eye-blocked:before {
+	content: "\e02b";
+}
+.icon-eye-2:before {
+	content: "\e02c";
+}
+.icon-eye-blocked-2:before {
+	content: "\e02d";
+}
+.icon-star:before {
+	content: "\e02e";
+}
+.icon-star-2:before {
+	content: "\e02f";
+}
+.icon-star-3:before {
+	content: "\e030";
+}
+.icon-notification:before {
+	content: "\e031";
+}
+.icon-cancel:before {
+	content: "\e032";
+}
+.icon-cancel-2:before {
+	content: "\e033";
+}
+.icon-warning:before {
+	content: "\e034";
+}
+.icon-info:before {
+	content: "\e035";
+}
+.icon-help:before {
+	content: "\e036";
+}
+.icon-checkmark:before {
+	content: "\e037";
+}
+.icon-minus:before {
+	content: "\e038";
+}
+.icon-plus:before {
+	content: "\e039";
+}
+.icon-resize:before {
+	content: "\e03a";
+}
+.icon-arrow-up:before {
+	content: "\e03b";
+}
+.icon-arrow-right:before {
+	content: "\e03c";
+}
+.icon-arrow-down:before {
+	content: "\e03d";
+}
+.icon-arrow-left:before {
+	content: "\e03e";
+}
+.icon-share:before {
+	content: "\e03f";
+}
+.icon-facebook:before {
+	content: "\e040";
+}
+.icon-github:before {
+	content: "\e041";
+}
+.icon-openoffice:before {
+	content: "\e044";
+}
+.icon-file-pdf:before {
+	content: "\e043";
+}
+
+.icon-file-word:before,
+.icon-file-doc:before,
+.icon-file-docx:before {
+	content: "\e045";
+}
+.icon-file-excel:before,
+.icon-file-xls:before,
+.icon-file-xlsm:before,
+.icon-file-xlsx:before,
+.icon-file-xlsb:before,
+.icon-file-xlam:before,
+.icon-file-xltx:before,
+.icon-file-xlk:before,
+.icon-file-xll:before,
+.icon-file-xls:before,
+.icon-file-xla:before,
+.icon-file-xlt:before {
+	content: "\e046";
+}
+.icon-file-powerpoint:before,
+.icon-file-pptx:before,
+.icon-file-ppt:before {
+	content: "\e047";
+}
+.icon-file-zip:before,
+.icon-file-rar:before {
+	content: "\e048";
+}
+.icon-file-xml:before,
+.icon-file-html:before,
+.icon-file-htm:before,
+.icon-file-php:before {
+	content: "\e049";
+}
+.icon-file-css:before {
+	content: "\e04a";
+}
+.icon-folder-add:before {
+	content: "\e04b";
+}
+.icon-folder:before {
+	padding-right:	0.5em;
+	content:		"\e04c";
+}

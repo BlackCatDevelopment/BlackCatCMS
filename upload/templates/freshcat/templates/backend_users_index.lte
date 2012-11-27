@@ -1,186 +1,193 @@
-{*each class .advanced_label should be checked for advanced permission if we keep it in the Core*}
-
 <div id="fc_content_header">
-	{translate('Modify/ Delete users')}
+	{translate('Modify users')}
 	<div class="fc_header_buttons">
-		<a href="{$ADMIN_URL}/users/index.php" class="ui-corner-left {if !$permissions.GROUPS}ui-corner-right {/if}fc_header_button fc_current">{translate('Manage users')}</a>
-		{if $permissions.GROUPS}<a href="{$ADMIN_URL}/groups/index.php" class="ui-corner-right fc_header_button">{translate('Manage groups')}</a>{/if}
+		<a href="{$ADMIN_URL}/users/index.php" class="fc_gradient1 fc_gradient_hover fc_active">{translate('Manage users')}</a>
+		{if $permissions.GROUPS}<a href="{$ADMIN_URL}/groups/index.php" class="fc_gradient1 fc_gradient_hover">{translate('Manage groups')}</a>{/if}
 	</div>
-	<div class="clear"></div>
 </div>
-<div id="fc_main_content" class="c_16">
-	<div class="clear sp_clear"></div>
-	
-	<div id="fc_lists_overview" class="g_4 ui-corner-all">
-		<div id="fc_list_search" class="ui-corner-top">
+
+<div id="fc_main_content">
+	<div id="fc_lists_overview">
+		<div id="fc_list_search">
 			<div class="fc_input_fake">
-				<input type="text" name="fc_list_search" id="fc_list_search_input" value="{translate('Search')}" />
+				<input type="text" name="fc_list_search" id="fc_list_search_input" value="{translate('Search...')}" />
 				<label class="fc_close" for="fc_list_search_input"></label>
 			</div>
 		</div>
-		{if $permissions.USERS_ADD}<div id="fc_list_add">+ {$HEADING.ADD_USER}</div>{/if}
-		<ul id="fc_list_overview" >
+
+		<div class="fc_gradient1 fc_border">
+			{if $permissions.USERS_ADD}<button id="fc_list_add" class="icon-plus fc_cell_one fc_gradient1 fc_gradient_hover" title="{translate('Add user')}"></button>{/if}
+			<div class="clear"></div>
+		</div>
+
+		<ul id="fc_list_overview" class="fc_group_list">
 			{foreach $users as user}
-			<li class="fc_list_item fc_list_{$user.VALUE}" rel="fc_list_{$user.VALUE}">
-				<span class="fc_display_name">{$user.DISPLAY_NAME}</span>
+			<li class="fc_group_item icon-users fc_border fc_gradient1 fc_gradient_hover" rel="fc_list_{$user.VALUE}">
+				<span class="fc_display_name">{$user.DISPLAY_NAME}</span><br/>
 				<span class="fc_list_name">{$user.USER_NAME}</span>
 			</li>
 			{/foreach}
 		</ul>
 	</div>
+
 	{if $permissions.USERS_MODIFY}
-	
-	<div class="g_12 fc_all_forms">
+	<div class="fc_all_forms">
 		{if $permissions.USERS_ADD}
-		<div id="fc_install_new" class="fc_list_forms">
-			<form name="add_user" action="{$ADMIN_URL}/users/add.php" method="post" id="fc_add_user" class="c_16">
-				<div class="fc_form_content ui-corner-top">
-					<div class="fc_form_content_title ui-corner-top">
-						<p class="g_16">{$HEADING.ADD_USER}</p>
-						<input type="hidden" name="form_title" value="{$HEADING.ADD_USER}" />
-						<input type="hidden" name="username_fieldname" value="{$USERNAME_FIELDNAME}" />
-					</div>
-					<span class="fc_input_description ui-corner-all fc_list_name g_10 ps_4">{$NEWUSERHINT.0}</span>
-					<div class="clear"></div>
-					<label for="fc_list_name" class="g_4">{translate('Username')}:</label>
-					<input type="text" name="{$USERNAME_FIELDNAME}" id="fc_list_name" class="g_11"  value="" rel="2"/>
-					<div class="clear sp_clear"></div>
-	
-					<label for="fc_display_name" class="g_4">{translate('Display name')}:</label>
-					<input type="text" name="display_name" id="fc_display_name" maxlength="255" class="g_11"  value="" rel="0"/>
-					<div class="clear sp_clear"></div>
-	
-					<label for="fc_email" class="g_4">{translate('Email')}:</label>
-					<input type="text" name="email" id="fc_email" maxlength="255" class="g_11"  value="" rel="email"/>
-					<div class="clear sp_clear"></div>
-	
-					<div class="fc_input_description ui-corner-all fc_password fc_password2 g_10 ps_4">
-						{$NEWUSERHINT.1}
-						<div class="clear"></div>
-					</div>
-					<div class="clear"></div>
-					<label for="fc_password" class="g_4">{translate('Password')}:</label>
-					<input type="password" name="password" id="fc_password" class="g_11"  value="" />
-					<div class="clear sp_clear"></div>
-	
-					<label for="fc_password2" class="g_4">{translate('Retype password')}:</label>
-					<input type="password" name="password2" id="fc_password2" class="g_11"  value="" />
-					<div class="clear sp_clear"></div>
-	
-					{if $HOME_FOLDERS}
-					<label for="fc_home_folder" class="g_4">{translate('Home folder')}:</label>
-					<select name="home_folder" id="fc_home_folder" class="g_11">
-						<option value="">{translate('None')}</option>
-						{foreach $home_folders homefolder}
-						<option value="{$homefolder.FOLDER}">{$homefolder.NAME}</option>
-						{/foreach}
-					</select>
-					<div class="clear sp_clear"></div>
-					{/if}
-	
-					<label for="fc_group" class="g_4">{translate('Groups')}:</label>
-					<div id="fc_group" class="g_11">
-						<span class="fc_description">({translate('You need to choose even one group')})</span><br/>
-						{foreach $groups.viewers group}
-						<label for="fc_groups_{$group.VALUE}">{$group.NAME}</label>
-						<input type="checkbox" class="fc_checkbox_jq" name="groups[]" id="fc_groups_{$group.VALUE}" value="{$group.VALUE}"{if $group.VALUE == 1}{if !$is_admin} disabled="disabled"{/if}{/if}/>
-						{/foreach}
-					</div>
-					<div class="clear sp_clear"></div>
-	
-					<div class="pre_4 g_11">
-						<label for="fc_active">{translate('Users')} {translate('Active')}</label>
-						<input type="checkbox" class="fc_checkbox_jq" name="active" id="fc_active" value="1" checked="checked" />
-					</div>
-					<div class="clear sp_clear"></div>
-				</div>
-				<div class="fc_confirm_bar ui-corner-bottom">
-					<input type="submit" name="submit_add_user" value="{translate('Add')}" />
-					<input type="reset" name="reset_user" value="{translate('Reset')}" />
-				</div>
-			
-			</form>
-		</div>
+		<form name="add_user" action="{$ADMIN_URL}/users/add.php" method="post" id="fc_install_new" class="fc_list_forms">
+			<p class="submit_settings fc_gradient1">
+				<strong>{translate('Add user')}</strong>
+				<input type="submit" name="submit_add_user" value="{translate('Add user')}">
+				<input type="reset" name="reset_user" value="{translate('Reset')}">
+				<input type="hidden" name="username_fieldname" value="{$USERNAME_FIELDNAME}" />
+			</p>
+			<div class="clear_sp"></div>
+
+			<div class="fc_input_description">
+				<label for="fc_list_name" class="fc_label_120">{translate('Username')}:</label>
+				<input type="text" name="{$USERNAME_FIELDNAME}" id="fc_list_name" value="" rel="2"/>
+				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.0}</div>
+			</div>
+			<div class="clear_sp"></div>
+
+			<label for="fc_display_name_add" class="fc_label_120">{translate('Display name')}:</label>
+			<input type="text" name="display_name" id="fc_display_name_add" maxlength="255" value="" rel="0"/>
+			<div class="clear_sp"></div>
+
+			<label for="fc_email" class="fc_label_120">{translate('Email')}:</label>
+			<input type="text" name="email" id="fc_email" maxlength="255" value="" rel="email"/>
+			<div class="clear_sp"></div>
+
+			<div class="fc_input_description">
+				<label for="fc_password" class="fc_label_120">{translate('Password')}:</label>
+				<input type="password" name="password" id="fc_password" value="" />
+				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.1}</div>
+			</div>
+			<div class="clear_sp"></div>
+
+			<div class="fc_input_description">
+				<label for="fc_password2" class="fc_label_120">{translate('Retype password')}:</label>
+				<input type="password" name="password2" id="fc_password2" value="" />
+				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.1}</div>
+			</div>
+
+			{if $HOME_FOLDERS}
+			<div class="clear_sp"></div>
+			<label for="fc_home_folder" class="fc_label_120">{translate('Home folder')}:</label>
+			<select name="home_folder" id="fc_home_folder">
+				<option value="">{translate('None')}</option>
+				{foreach $home_folders homefolder}
+				<option value="{$homefolder.FOLDER}">{$homefolder.NAME}</option>
+				{/foreach}
+			</select>
+			{/if}
+			<hr/>
+
+			<label for="fc_group">{translate('Groups')}:</label>
+			<div id="fc_group" class="fc_settings_max">
+				<span class="fc_description">({translate('You need to choose even one group')})</span><br/>
+				{foreach $groups.viewers group}
+				<input type="checkbox" class="fc_checkbox_jq" name="groups[]" id="fc_groups_{$group.VALUE}" value="{$group.VALUE}"{if $group.VALUE == 1}{if !$is_admin} disabled="disabled"{/if}{/if}/>
+				<label for="fc_groups_{$group.VALUE}">{$group.NAME}</label>
+				{/foreach}
+			</div>
+			<hr/>
+
+			<div class="fc_settings_max">
+				<input type="checkbox" class="fc_checkbox_jq" name="active" id="fc_active_user" value="1" checked="checked" />
+				<label for="fc_active_user">{translate('Activate user')}</label>
+			</div>
+			<div class="clear_sp"></div>
+
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit_add_user" value="{translate('Add user')}">
+				<input type="reset" name="reset_user" value="{translate('Reset')}">
+				<input type="hidden" name="username_fieldname" value="{$USERNAME_FIELDNAME}" />
+			</p>
+
+		</form>
 		{/if}
 		{foreach $users as user}
-		<div id="fc_list_{$user.VALUE}" class="fc_list_forms">
-			<form name="user" action="{$ADMIN_URL}/users/save.php" method="post" class="ajaxForm">
-				<div class="fc_form_content ui-corner-top">
-					<div class="clear sp_clear">
-						<input type="hidden" name="user_id" value="{$user.VALUE}" />
-						<input type="hidden" name="form_title" value="{$HEADING.MODIFY_USER}" />
-						<input type="hidden" name="username_fieldname" value="{$user.USERNAME_FIELDNAME}" />
-					</div>
-		
-					<span class="fc_input_description ui-corner-all fc_name_{$user.VALUE} g_10 ps_4">{$NEWUSERHINT.0}</span>
-					<div class="clear"></div>
-					<label for="fc_name_{$user.VALUE}" class="g_4">{translate('Username')}:</label>
-					<input type="text" name="{$user.USERNAME_FIELDNAME}" id="fc_name_{$user.VALUE}" class="g_11"  value="{$user.USER_NAME}" />
-					<div class="clear sp_clear"></div>
-		
-					<label for="fc_display_name_{$user.VALUE}" class="g_4">{translate('Display name')}:</label>
-					<input type="text" name="display_name" id="fc_display_name_{$user.VALUE}" maxlength="255" class="g_11"  value="{$user.DISPLAY_NAME}" />
-					<div class="clear sp_clear"></div>
-		
-					<label for="fc_email_{$user.VALUE}" class="g_4">{translate('Email')}:</label>
-					<input type="text" name="email" id="fc_email_{$user.VALUE}" maxlength="255" class="g_11"  value="{$user.EMAIL}" />
-					<div class="clear sp_clear"></div>
-		
-					<div class="fc_input_description ui-corner-all fc_password_{$user.VALUE} fc_password2_{$user.VALUE} g_10 ps_4">
-						{translate('Please note: You should only enter values in those fields if you wish to change this users password')}
-						<br/>{$NEWUSERHINT.1}
-					</div>
-		
-					<div class="clear"></div>
-					<label for="fc_password_{$user.VALUE}" class="g_4">{translate('Password')}:</label>
-					<input type="password" name="password" id="fc_password_{$user.VALUE}" class="g_11" value="" />
-					<div class="clear sp_clear"></div>
-		
-					<label for="fc_password2_{$user.VALUE}" class="g_4">{translate('Retype password')}:</label>
-					<input type="password" name="password2" id="fc_password2_{$user.VALUE}" class="g_11" value="" />
-					<div class="clear sp_clear"></div>
-		
-					{if $HOME_FOLDERS}
-					<label for="fc_home_folder_{$user.VALUE}" class="g_4">{translate('Home folder')}:</label>
-					<select name="home_folder" id="fc_home_folder_{$user.VALUE}" class="g_11">
-						<option value="">{translate('None')}</option>
-						{foreach $home_folders homefolder}
-						<option value="{$homefolder.FOLDER}"{if $user.HOMEFOLDER == $homefolder.FOLDER} selected="selected"{/if}>{$homefolder.NAME}</option>
-						{/foreach}
-					</select>
-					<div class="clear sp_clear"></div>
-					{/if}
-		
-					<label for="fc_group_{$user.VALUE}" class="g_4">{translate('Groups')}:</label>
-					<div id="fc_group_{$user.VALUE}" class="g_11">
-						({translate('You need to choose even one group')})<br/>
-						{foreach $groups.viewers group}
-						{$group_id = $group.VALUE}
-						<label for="fc_groups_{$group.VALUE}_{$user.VALUE}">{$group.NAME}</label>
-						<input type="checkbox" class="fc_checkbox_jq" name="groups[]" id="fc_groups_{$group.VALUE}_{$user.VALUE}" value="{$group.VALUE}" {if $user.GROUPS.$group_id} checked="checked"{/if}{if $group.VALUE == 1}{if !$is_admin} disabled="disabled"{/if}{/if}/>
-						{/foreach}
-					</div>
-					<div class="clear sp_clear"></div>
-		
-					<div class="pre_4 g_11">
-						<label for="fc_active_{$user.VALUE}">{translate('Users')} {translate('Active')}</label>
-						<input type="checkbox" class="fc_checkbox_jq" name="active" id="fc_active_{$user.VALUE}" value="1" {if $user.ACTIVE} checked="checked"{/if} />
-					</div>
-					<div class="clear sp_clear"></div>
-				</div>
-		
-				<div class="fc_confirm_bar ui-corner-bottom">
+		<form name="user" action="{$ADMIN_URL}/users/save.php" method="post" id="fc_list_{$user.VALUE}" class="fc_list_forms ajaxForm">
+			<p class="submit_settings fc_gradient1">
+				<strong>{translate('Add user')}</strong>
+				<input type="submit" name="submit_add_user" value="{translate('Add user')}">
+				<input type="reset" name="reset_user" value="{translate('Reset')}">
+				<input type="hidden" name="user_id" value="{$user.VALUE}" />
+				<input type="hidden" name="username_fieldname" value="{$user.USERNAME_FIELDNAME}" />
+			</p>
+			<div class="clear_sp"></div>
+
+			<div class="fc_input_description">
+				<label for="fc_name_{$user.VALUE}" class="fc_label_120">{translate('Username')}:</label>
+				<input type="text" name="{$user.USERNAME_FIELDNAME}" id="fc_name_{$user.VALUE}" value="{$user.USER_NAME}" />
+				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.0}</div>
+			</div>
+			<div class="clear_sp"></div>
+
+			<label for="fc_display_name_{$user.VALUE}" class="fc_label_120">{translate('Display name')}:</label>
+			<input type="text" name="display_name" id="fc_display_name_{$user.VALUE}" maxlength="255" value="{$user.DISPLAY_NAME}" />
+			<div class="clear_sp"></div>
+
+			<label for="fc_email_{$user.VALUE}" class="fc_label_120">{translate('Email')}:</label>
+			<input type="text" name="email" id="fc_email_{$user.VALUE}" maxlength="255" value="{$user.EMAIL}" />
+			<div class="clear_sp"></div>
+
+			<div class="fc_password_notification fc_br_all icon-notification fc_gradient_red fc_input_description">
+				{translate('Please note: You should only enter values in those fields if you wish to change this users password')}
+			</div>
+			<div class="clear_sp"></div>
+
+			<div class="fc_input_description">
+				<label for="fc_password_{$user.VALUE}" class="fc_label_120">{translate('Password')}:</label>
+				<input type="password" name="password" id="fc_password_{$user.VALUE}" value="" />
+				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.1}</div>
+			</div>
+			<div class="clear_sp"></div>
+
+			<div class="fc_input_description">
+				<label for="fc_password2_{$user.VALUE}" class="fc_label_120">{translate('Retype password')}:</label>
+				<input type="password" name="password2" id="fc_password2_{$user.VALUE}" value="" />
+				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.1}</div>
+			</div>
+
+			{if $HOME_FOLDERS}
+			<div class="clear_sp"></div>
+			<label for="fc_home_folder_{$user.VALUE}" class="fc_label_120">{translate('Home folder')}:</label>
+			<select name="home_folder" id="fc_home_folder_{$user.VALUE}">
+				<option value="">{translate('None')}</option>
+				{foreach $home_folders homefolder}
+				<option value="{$homefolder.FOLDER}"{if $user.HOMEFOLDER == $homefolder.FOLDER} selected="selected"{/if}>{$homefolder.NAME}</option>
+				{/foreach}
+			</select>
+			{/if}
+			<hr/>
+
+			<label for="fc_group_{$user.VALUE}">{translate('Groups')}:</label>
+			<div id="fc_group_{$user.VALUE}" class="fc_settings_max">
+				({translate('You need to choose even one group')})<br/>
+				{foreach $groups.viewers group}
+				{$group_id = $group.VALUE}
+				<input type="checkbox" class="fc_checkbox_jq" name="groups[]" id="fc_groups_{$group.VALUE}_{$user.VALUE}" value="{$group.VALUE}" {if $user.GROUPS.$group_id} checked="checked"{/if}{if $group.VALUE == 1}{if !$is_admin} disabled="disabled"{/if}{/if}/>
+				<label for="fc_groups_{$group.VALUE}_{$user.VALUE}">{$group.NAME}</label>
+				{/foreach}
+			</div>
+			<hr/>
+
+			<div class="fc_settings_max">
+				<input type="checkbox" class="fc_checkbox_jq" name="active" id="fc_active_{$user.VALUE}" value="1" {if $user.ACTIVE} checked="checked"{/if} />
+				<label for="fc_active_{$user.VALUE}">{translate('Activate user')}</label>
+			</div>
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
 					{if $permissions.USERS_DELETE}
-					<span class="fc_list_remove fc_user_remove ui-corner-all red_button">
+					<button type="submit" class="fc_list_remove fc_user_remove fc_gradient_red">
 						{translate('Delete user')}
-					</span>
+					</button>
 					{/if}
-					<input type="submit" name="submit_changes" value="{translate('Save')}" />
-					<input type="reset" name="reset" value="{translate('Reset')}" />
-				</div>
-		
-			</form>
-		</div>
+				<input type="submit" name="submit_changes" value="{translate('Save user')}">
+				<input type="reset" name="reset_user" value="{translate('Reset')}">
+			</p>
+		</form>
 		{/foreach}
 	</div>
 	{/if}

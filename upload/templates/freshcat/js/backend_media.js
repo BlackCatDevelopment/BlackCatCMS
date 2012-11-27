@@ -5,12 +5,12 @@
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ * @author		  LEPTON Project
+ * @copyright	   2012, LEPTON Project
+ * @link			http://www.LEPTON-cms.org
+ * @license		 http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
+ * @version		 $Id$
  *
  */
 
@@ -24,21 +24,21 @@ function get_active_media()
 	else if ( $('#fc_media_browser .fc_active').size() > 0 )
 	{
 		// Check if the activated item is not a folder to choose the current directory
-		if ( $('#fc_media_browser .fc_active').hasClass('fc_filetype_image') )
+		if ( $('#fc_media_browser .fc_active').hasClass('fc_filetype_file') )
 		{
-			return  $('#fc_media_browser .fc_active').closest('.fc_media_folder');
+			return  $('#fc_media_browser .fc_active').closest('ul.fc_media_folder');
 		}
 		// If the activated type is a folder choose the next directory
 		else
 		{
-			return $('#fc_media_browser .fc_active').closest('.fc_media_folder').next('.fc_media_folder');
+			return $('#fc_media_browser .fc_active').closest('ul.fc_media_folder').next('ul.fc_media_folder');
 		}
 	}
 	// If no file was activated choose the root directory
 	else
 	{
-		$('.fc_media_folder:first').addClass('fc_media_folder_active');
-		return $('.fc_media_folder:first');
+		$('ul.fc_media_folder:first').addClass('fc_media_folder_active');
+		return $('ul.fc_media_folder:first');
 	}
 }
 
@@ -46,21 +46,21 @@ function get_active_media()
 function save_name( current_active )
 {
 	var new_name				= current_active.find('input[name=rename]').val(),
-		file_path				= current_active.closest('.fc_media_folder').find('input[name=folder_path]').val(),
+		file_path				= current_active.closest('ul.fc_media_folder').find('input[name=folder_path]').val(),
 		rename_file				= current_active.find('input[name=load_url]').val(),
 		link					= ADMIN_URL + '/media/rename.php',
 		dates					= 'file_path=' + file_path + '&rename_file=' + rename_file + '&new_name=' + new_name,
 		beforeSend				= function ()
 									{
 										// Add a fc_loader-icon to the current folder and delete all subfolders from the view
-										current_active.closest('.fc_media_folder').prepend('<li class="fc_loader" />');
-										current_active.closest('.fc_media_folder').nextAll('.fc_media_folder').remove();
+										current_active.closest('ul.fc_media_folder').prepend('<li class="fc_loader" />');
+										current_active.closest('ul.fc_media_folder').nextAll('ul.fc_media_folder').remove();
 									},
 		afterSend				= function ()
 									{
 										// Reload the current selected folder to see, whether everything worked fine and to get automatically the right order
 										// the previous folder or file is currently not selected again - could be added later
-										var current_active	= $(this).closest('.fc_media_folder');
+										var current_active	= $(this).closest('ul.fc_media_folder');
 										current_active.find('.fc_loader').remove();
 										reload_folder( current_active );
 									};
@@ -70,34 +70,7 @@ function save_name( current_active )
 // This function send a ajaxRequest to get_contents.php to get all files from the selected folder
 function reload_folder( current_active )
 {
-	var folder_path				= current_active.find('input[name=folder_path]').val(),
-		link					= ADMIN_URL + '/media/get_contents.php',
-		dates					= 'load_url=' + folder_path,
-		afterSend				= function (data)
-									{
-										var current_active	= $(this);
-										// Reload the current selected folder to see, whether everything worked fine and to get automatically the right order
-										// the previous folder or file is currently not selected again - could be added later
-										// clear and fade out media_info
-										$('#fc_media_info').fadeOut(300).html('');
-										// Get the contents from data
-										current_active.html( $(data).find('.fc_media_folder').html() );
-										current_active.prev('.fc_media_folder').find('.fc_open_folder').removeClass('fc_open_folder').addClass('fc_active');
-
-										// Scroll to the very right to put the new loaded files into viewable area
-										scrollToRight();
-
-										// Activate all click-events to the new added list
-										set_media_functions();
-
-										// Fix names again to fit to the list
-										current_active.find('.fc_name_short p').smartTruncation({ 'truncateCenter' : true });
-									};
-	if ( current_active.find('.fc_active').size() > 0 )
-	{
-		var dates	= dates + '&open_folder=' + current_active.find('.fc_active').children('input[name=load_url]').val();
-	}
-	dialog_ajax( link, dates, false, afterSend, current_active, 'POST' );
+	alert('check');
 }
 
 // Function to automatically scroll to the very right if an item was clicked
@@ -110,104 +83,148 @@ function scrollToRight()
 }
 
 // Function to (re)activate the clickevent of items in the browser
-function set_media_functions()
+function set_media_functions( element )
 {
+	element.find('li').mouseover( function()
+	{
+		$(this).closest('ul').removeClass('fc_clickable');
+	}).mouseout( function()
+	{
+		$(this).closest('ul').addClass('fc_clickable');
+	});
+
 	// Set click for all "non-folder"-items to set them active and show info
-	$('.fc_filetype_image').not('.fc_no_content, .fc_save_rename').unbind().click(function()
+	element.find('.fc_filetype_file, .fc_filetype_folder').not('.fc_no_content, .fc_save_rename').unbind('click').click( function()
 	{
 		// Store current item to variable
-		var current = $(this);
+		var current		= $(this),
+			current_ul	= current.closest('ul.fc_media_folder');
 
 		// Remove active-Class from all other list-items
-		current.closest('.fc_media_folder').prevAll('.fc_media_folder').find('.fc_active').addClass('fc_open_folder').removeClass('fc_active');
-		current.closest('.fc_media_folder').find('.fc_active').removeClass('fc_active');
-		current.closest('.fc_media_folder').find('.fc_open_folder').removeClass('fc_open_folder');
-
+		$('ul.fc_media_folder_active').removeClass('fc_media_folder_active');
+		current_ul.prevAll('ul.fc_media_folder').find('.fc_active').addClass('fc_open_folder').removeClass('fc_active');
+		current_ul.nextAll('ul.fc_media_folder').remove();
+		current_ul.find('.fc_active').removeClass('fc_active');
+		current_ul.find('.fc_open_folder').removeClass('fc_open_folder');
 
 		// Than add active-Class to the clicked item
 		current.addClass('fc_active');
 
-		// Remove all sub-folders to show the media-info next to the clicked item
-		$('.fc_filetype_image.fc_active').closest('.fc_media_folder').nextAll('.fc_media_folder').remove();
-
-		// Get count of currently shown media-folders get the right position for media-info
-		var folder_count = $('.fc_media_folder').size();
-		$('#fc_media_info').css({left: folder_count*251+'px'});
-
-		// Clear content of #media_info and add the fileinfo of the clicked item
-		$('#fc_media_info').html('').fadeIn(300);
-		current.children('.fc_file_info').clone().appendTo('#fc_media_info');
-		set_media_buttons($('#fc_media_info'));
-
-		// Push info into users view
-		scrollToRight();
-	});
-
-
-	// Set click for all folder-items to hide info and load contents of the clicked directory via ajax
-	$('.fc_filetype_folder').unbind().click(function()
-	{
-		var current_folder = $(this);
-
-		// Remove active-Class from all other list-items
-		current_folder.closest('.fc_media_folder').prevAll('.fc_media_folder').find('.fc_active').addClass('fc_open_folder').removeClass('fc_active');
-		current_folder.closest('.fc_media_folder').find('.fc_active').removeClass('fc_active');
-		current_folder.closest('.fc_media_folder').find('.fc_open_folder').removeClass('fc_open_folder');
-
-		// Store current item to variable
-		current_folder.addClass('fc_active');
-
 		// Create link for ajax
-		var link			= ADMIN_URL+'/media/get_contents.php',
-			load_url		= current_folder.children('input[name=load_url]').val(),
-			folder_path		= current_folder.closest('.fc_media_folder').find('input[name=folder_path]').val(),
-			dates			= 'load_url=' + load_url + '&folder_path=' + folder_path,
-			beforeSend		= function ()
-								{
-									current_folder			= $(this);
-									// Remove all sub-folders and hide&clear #media_info
-									$('#fc_media_info').fadeOut(300).html('');
-									current_folder.closest('.fc_media_folder').nextAll('.fc_media_folder').remove();
-									// Get count of currently shown media-folders get the right position for media-info
-									var folder_count		= $('.fc_media_folder').size();
-									current_folder.closest('.fc_media_folder').after('<ul class="fc_media_folder"><li class="fc_loader"></li></div>');
-									$('.fc_media_folder:last').css({left: folder_count * 251 + 'px'});
-								},
-			afterSend		= function (data)
-								{
-									// Check that no image was clicked, while loading!
-									if( $('.fc_filetype_folder.fc_active').size() > 0 )
-									{
-										// Get count of currently shown media-folders get the right position for media-info
-										var folder_count	= $('.fc_media_folder').size();
-										// Add folder-content of data to the last media_folder
-										$('.fc_media_folder_active').removeClass('fc_media_folder_active');
-										$('.fc_media_folder:last').html( $(data).find('.fc_media_folder').html() ).addClass('fc_media_folder_active');
-										$('#fc_media_info').css({left: ( folder_count + 1 ) * 251 + 'px'});
-										// Fix names again to fit to the list
-										$('.fc_media_folder:last .fc_name_short p').smartTruncation({ 'truncateCenter' : true });
-										// Push info into users view
-										scrollToRight();
-										// Activate all click-events to the new added list
-										set_media_functions();
-									}
-								};
-		dialog_ajax( link, dates, beforeSend, afterSend, current_folder, 'POST' );
+		var link			= ADMIN_URL + '/media/ajax_get_contents.php',
+			dates			= {
+								'load_url':		current.children('input[name=load_url]').val(),
+								'folder_path':	current.closest('ul.fc_media_folder').find('input[name=folder_path]').val(),
+								'leptoken':		getToken()
+							};
+
+		$.ajax(
+		{
+			type:		'GET',
+			context:	current,
+			url:		link,
+			dataType:	'json',
+			data:		dates,
+			cache:		false,
+			beforeSend:	function( data )
+			{
+				$('#fc_media_info').hide();
+				$('ul.fc_media_folder_active').nextAll('ul').remove();
+				var leftValue	= $('ul.fc_media_folder').size() * 250;
+				if ( current.hasClass('fc_filetype_folder') )
+				{
+					current_ul.after('<ul class="fc_media_folder fc_gradient1 fc_media_folder_active fc_clickable" />');
+					$('ul.fc_media_folder_active').css({ left: leftValue });
+				}
+				else
+				{
+					current_ul.addClass('fc_media_folder_active');
+					$('#fc_media_info').css({ left: leftValue });
+				}
+				$('ul.fc_media_folder:last').prepend('<li class="fc_loader" />');
+			},
+			success:	function( data )
+			{
+				$('ul.fc_media_folder').find('.fc_loader').remove();
+				if ( data.is_folder )
+				{
+					$('ul.fc_media_folder:last').append('<input type="hidden" name="folder_path" value="' + data.initial_folder + '">');
+					
+					if( typeof data.folders == 'undefined' && typeof data.files == 'undefined' )
+					{
+						$('ul.fc_media_folder_active').append('<li class="icon-info"> No files found.</li>');
+					}
+					if( typeof data.folders != 'undefined' )
+					{
+						$.each(data.folders, function(index, value)
+						{
+							var insert	= '<li class="fc_filetype_folder" title="' + value.name + '"><div class="fc_name_short"><p class="icon-folder"> ' + value.name + '</p></div><input type="hidden" name="load_url" value="' + value.name + '" /></li>';
+							$('ul.fc_media_folder_active').append(insert);
+						});
+					}
+					if( typeof data.files != 'undefined' )
+					{
+						$.each(data.files, function(index, value)
+						{
+							var insert	= '<li class="fc_filetype_file" title="' + value.full_name + '"><div class="fc_name_short"><p class="icon-file-' + value.filetype  + '"> ' + value.full_name + '</p></div><input type="hidden" name="load_url" value="' + value.full_name + '" /></li>';
+							$('ul.fc_media_folder_active').append(insert);
+						});
+					}
+					$('ul.fc_media_folder:last').find('.fc_name_short p').smartTruncation({ 'truncateCenter' : true });
+					// Activate all click-events to the new added list
+					set_media_functions( $('ul.fc_media_folder:last') );
+				}
+				else
+				{
+					// Get count of currently shown media-folders get the right position for media-info
+					var mediaInfo	= $('#fc_media_info'),
+						fileData	= data.files;
+
+					mediaInfo.fadeIn(300);
+					if ( fileData.show_preview )
+					{
+						$('.fc_file_info').children('img').remove();
+						$('.fc_file_info').children('p').hide();
+						$('.fc_file_info').prepend('<img src="' + fileData.load_url + '" alt="" />');
+					}
+					else
+					{
+						$('.fc_file_info').children('p').show();
+						$('.fc_file_info').children('img').remove();
+					}
+					mediaInfo.find('.fc_filename').text(' '  + fileData.filename).removeClass().addClass('fc_filename icon-file-' + fileData.filetype);
+					mediaInfo.find('.fc_file_type').text(fileData.filetype);
+					mediaInfo.find('.fc_file_size').text(fileData.filesize);
+					mediaInfo.find('.fc_file_date').text(fileData.filedate);
+					mediaInfo.find('.fc_file_time').text(fileData.filetime);
+				}
+				// Scroll to the very right to put the new loaded files into viewable area
+				scrollToRight();
+			},
+			error:		function(jqXHR, textStatus, errorThrown)
+			{
+				alert(textStatus + ': ' + errorThrown );
+			}
+		});
+	});
+	element.click( function()
+	{
+		var current	= $(this);
+		if ( current.hasClass('fc_clickable') )
+		{
+			$('ul.fc_media_folder_active').removeClass('fc_media_folder_active');
+			current.addClass('fc_media_folder_active');
+		}
 	});
 
-	$('.fc_media_folder').unbind().click( function()
-	{
-		$('.fc_media_folder_active').removeClass('fc_media_folder_active');
-		$(this).addClass('fc_media_folder_active');
-	});
 }
 
-function set_media_buttons(element)
+function set_media_buttons( element )
 {
 	element.find('.fc_delete_file').unbind().click(function()
 	{
 		// Check if any item is active
-		if ( $('#fc_media_browser .fc_active').size() == 0 )
+		if ( $('#fc_media_browser li.fc_active').size() == 0 )
 		{
 			// if not deactive the button
 			$(this).addClass('fc_inactive_button');
@@ -215,9 +232,9 @@ function set_media_buttons(element)
 		else
 		{
 			// Store current active item in a variable
-			var current_active	= $('#fc_media_browser .fc_active');
+			var current_active	= $('#fc_media_browser li.fc_active');
 			// Get the previous name of the file that is supposed to be deleted (files and folders has to be seperated!)
-			if ( current_active.hasClass('fc_filetype_image') )
+			if ( current_active.hasClass('fc_filetype_file') )
 			{
 				var name		= '<br/><strong>'+current_active.find('.fc_name_short').text()+'</strong>',
 					message		= LEPTON_TEXT['MEDIA_CONFIRM_DELETE_FILE'].replace( /\{name\}/g, name );
@@ -227,35 +244,64 @@ function set_media_buttons(element)
 				var name		= '<br/><strong>' + current_active.find('.fc_name_short').text() + '</strong>',
 					message		= LEPTON_TEXT['MEDIA_CONFIRM_DELETE_DIR'].replace( /\{name\}/g, name );
 			}
-			// Find the folderpath of chosen directory
-			var file_path		= current_active.closest('.fc_media_folder').find('input[name=folder_path]').val(),
-				file			= current_active.find('input[name=load_url]').val(),
-				link			= ADMIN_URL+'/media/delete.php?file_path='+file_path+'&file='+file,
-				beforeSend		= function()
+			// Create link for ajax
+			var link			= ADMIN_URL + '/media/ajax_delete.php',
+				dates			= {
+									'load_url':		current_active.children('input[name=load_url]').val(),
+									'file_path':	current_active.closest('ul.fc_media_folder').find('input[name=folder_path]').val(),
+									'file':			current_active.find('input[name=load_url]').val(),
+									'leptoken':		getToken()
+								};
+			$.ajax(
+			{
+				type:		'GET',
+				context:	current_active,
+				url:		link,
+				dataType:	'json',
+				data:		dates,
+				cache:		false,
+				beforeSend:	function( data )
+				{
+					$('#fc_media_browser li.fc_active').closest('ul').prepend('<li class="fc_loader" />');
+				},
+				success:	function( data )
+				{
+					$('#fc_media_info').hide();
+					$('li.fc_loader').remove();
+					if ( data.deleted == true )
 					{
-						// Add fc_loader to current folder
-						current_active.closest('.fc_media_folder').prepend('<li class="fc_loader" />');
-					}
-				afterSend		= function()
-					{
-						// set the parent folder to active again
-						current_active	= $(this);
-						current_active.closest('.fc_media_folder').prev('.fc_media_folder').find('.fc_open_folder').addClass('fc_active').removeClass('fc_open_folder');
-						// If a folder was deleted also remove the sub-folder from view
-						if(current_active.hasClass('fc_filetype_folder'))
+						var current		= $(this),
+							current_ul	= current.closest('ul');
+						if ( current_ul.children('li').size() == 1 )
 						{
-							current_active.closest('.fc_media_folder').nextAll('.fc_media_folder').remove();
-							//current_active.closest('.media_folder').remove();
+							current_ul.nextAll('ul.fc_media_folder').andSelf().remove();
+							var fc_active	= $('.fc_open_folder:last');
+							fc_active.closest('ul').removeClass('fc_clickable');
+							fc_active.click();
 						}
-						// If a file was deleted remove the media info for this file
+						else if ( current.hasClass('fc_filetype_folder') )
+						{
+							current_ul.nextAll('ul.fc_media_folder').remove();
+							current_ul.click();
+						}
 						else
 						{
-							$('#fc_media_info').fadeOut(300).html('');
+							current_ul.nextAll('ul.fc_media_folder').remove();
+							current_ul.click();
 						}
-						// Reload the current folder
-						reload_folder( current_active.closest('.fc_media_folder') );
-					};
-			dialog_confirm( message, link, beforeSend, afterSend, current_active );
+						current.remove();
+					}
+					else
+					{
+						alert( data.message );
+					}
+				},
+				error:		function( jqXHR, textStatus, errorThrown )
+				{
+					$('li.fc_loader').remove();
+					alert(textStatus + ': ' + errorThrown );
+				}
+			});
 		}
 	});
 
@@ -271,13 +317,13 @@ function set_media_buttons(element)
 		else
 		{
 			// unbind the list-items to prevent unwanted actions while renaming
-			$('.fc_filetype_folder, .fc_filetype_image').unbind();
+			$('.fc_filetype_folder, .fc_filetype_file').unbind();
 
 			// Store current active item in a variable
 			var current_active = $('#fc_media_browser .fc_active');
 
 			// Get the previous name of the file that is supposed to be renamed (files and folders has to be seperated!)
-			if (current_active.hasClass('fc_filetype_image'))
+			if (current_active.hasClass('fc_filetype_file'))
 			{
 				var old_name = current_active.find('.fc_filename').text();
 			}
@@ -334,7 +380,7 @@ function set_media_buttons(element)
 							$('.fc_input_rename_file').remove();
 
 							// Activate the click events for list items again
-							set_media_functions();
+							//set_media_functions(  );
 						}
 					});
 				});
@@ -457,26 +503,50 @@ jQuery(document).ready(function()
 
 	// Activate click-events to the list items
 	set_media_buttons($('body'));
-	set_media_functions();
+	set_media_functions( $('ul.fc_media_folder') );
 
 	// Define buttons on the upper right site
 	$('.fc_create_new_folder').unbind().click(function()
 	{
-		var current_active			= get_active_media(),
-			folder_path				= current_active.find('input[name=folder_path]').val(), // Find the folderpath of chosen directory
-			link					= ADMIN_URL + '/media/create_folder.php', // Create link for ajax
-			dates					= 'folder_path=' + folder_path,
-			beforeSend				= function ()
-										{
-											// Add fc_loader to the current folder
-											current_active.prepend('<li class="fc_loader" />');
-										},
-			afterSend				= function ()
-										{
-											// Reload current folder to see if everthing really worked fine
-											reload_folder( $(this) );
-										};
-		dialog_ajax( link, dates, beforeSend, afterSend, current_active, 'GET' );
+		// Create link for ajax
+		var current			= get_active_media(),
+			link			= ADMIN_URL + '/media/ajax_create_folder.php',
+			dates			= {
+								'folder_path':	current.closest('ul.fc_media_folder').find('input[name=folder_path]').val(),
+								'leptoken':		getToken()
+							};
+		$.ajax(
+		{
+			type:		'GET',
+			context:	current,
+			url:		link,
+			dataType:	'json',
+			data:		dates,
+			cache:		false,
+			beforeSend:	function( data )
+			{
+				$('#fc_media_info').hide();
+				current.prepend('<li class="fc_loader" />');
+			},
+			success:	function( data )
+			{
+				$('li.fc_loader').remove();
+				if ( data.created == true )
+				{
+					var fc_active	= $('.fc_filetype_folder.fc_active:last');
+					fc_active.closest('ul').removeClass('fc_clickable');
+					fc_active.click();
+				}
+				else
+				{
+					alert( data.message );
+				}
+			},
+			error:		function(jqXHR, textStatus, errorThrown)
+			{
+				alert(textStatus + ': ' + errorThrown );
+			}
+		});
 	});
 
 	// Activate the upload form to send data with ajax

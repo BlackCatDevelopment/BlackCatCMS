@@ -10,94 +10,82 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
- *
+  *
  */
 
 
 #fc_pages {
-	padding-left: 0px;
-	padding-bottom: 15px;
-	padding-right: 0px;
-	padding-top: 0px;
 	margin: 0px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 15px;
+	padding-left: 0px;
+	text-shadow:	none;
 }
 #fc_pages ul {
-	padding: 0px;
 	margin: 0px;
+	padding: 0px;
 }
 #fc_pages ul ul {
-	padding-left: 15px;
-	padding-bottom: 0px;
-	padding-right: 0px;
-	padding-top: 0px;
 	margin: 0px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	padding-left: 15px;
 }
 #fc_pages li {
-	padding-left: 0px;
-	padding-bottom: 1px;
-	padding-right: 0px;
-	padding-top: 0px;
-	min-height: 25px;
-	line-height: 26px;
 	margin: 0px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 1px;
+	padding-left: 0px;
+	min-height: 25px;
 	white-space: nowrap;
+	line-height: 26px;
 }
 .fc_page_link {
 	position: relative;
 }
 .fc_page_link > a {
-	display: block;
-	background-position: 26px center;
-	background-repeat: no-repeat;
-	background-image: url(images/file_icons/page_icon.png);
-	height: 26px;
-	padding-left: 43px;
-	padding-bottom: 0px;
-	padding-right: 0px;
-	padding-top: 0px;
-	margin: 0px;
-	color: white;
+	display:	block;
+	margin:		0px;
+	padding:	0px 0px 0px 25px;
+	height:		25px;
+	color:		white;
 }
 .fc_page_link:hover > a, .fc_page_tree_item > a.fc_pages_tree_options_button_active, .page_tree_open_options > .fc_page_link > a {
-	background-color: #f8f8f8;
-	color: #1d2023;
+	background-color:	#f8f8f8;
+	color:				#1d2023;
 }
+.fc_page_link.fc_page_intro > a {
+	color:		#282a2e;
+}
+
 .fc_page_type_deleted > a {
-	/*color: #ec87ae;*/
-	background-image: url(images/file_icons/deleted_page_icon.png);
 }
 .fc_page_type_none > a {
-	/*color: #9e9e9e;*/
-	background-image: url(images/file_icons/none_page_icon.png);
 }
 .fc_page_type_hidden > a {
-	/*color: #cccccc;*/
-	background-image: url(images/file_icons/hidden_page_icon.png);
 }
 .fc_page_type_registered > a {
-	/*color: #d2af4b;*/
-	background-image: url(images/file_icons/registered_page_icon.png);
 }
 .fc_page_type_private > a {
-	/*color: #bfdef7;*/
-	background-image: url(images/file_icons/private_page_icon.png);
 }
 .fc_toggle_tree {
-	z-index: 3;
 	position: relative;
-	text-align: center;
-	width: 26px;
+	z-index: 3;
+	display: inline-block;
+	float: left;
 	margin: 0px;
 	padding: 0px;
-	float: left;
+	width: 26px;
 	height: 26px;
-	display: inline-block;
-	cursor: pointer;
-	background-position: 0 0px;
 	background-image: url(images/page_tree/page_tree_arrows_white.png);
+	background-position: 0 0px;
 	background-repeat: no-repeat;
+	text-align: center;
 	text-indent: -999px;
+	cursor: pointer;
 }
 .fc_page_link:hover > .fc_toggle_tree {
 	background-image: url(images/page_tree/page_tree_arrows_black.png);
@@ -115,108 +103,106 @@
 	display: none;
 }
 .pages_tree_link {
-	display: none;
-	z-index: 10;
 	position: absolute;
+	z-index: 10;
+	display: none;
 }
 .fc_pages_tree_options_button {
-	background-position: 0 -24px;
-	background-repeat: no-repeat;
-	background-image: url(images/sections_buttons.png);
 	display: none;
-	height: 100%;
-	width: 24px;
+	width: 25px;
+	height: 23px;
+	text-align: center;
 	cursor: pointer;
 }
 
 .fc_page_link:hover > .fc_pages_tree_options_button {
-	top: 1px;
-	right: 6px;
-	position: absolute;
-	display: inline-block;
+	position:	absolute;
+	top:		0px;
+	right:		0px;
+	display:	inline-block;
 }
 .fc_page_tree_options_parent {
-	left: 0px;
-	border-color: #9e9e9e;
-	border-width: 1px;
-	border-style: solid;
-	background-color: #f8f8f8;
-	width: 300px;
 	position: absolute;
+	left: 0px;
 	z-index: 9999;
 	display: none;
+	width: 300px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #9e9e9e;
+	background-color: #f8f8f8;
 }
 
 .page_tree_open_options {
 }
 .fc_page_tree_options {
-	color: #1d2023;
-	padding-bottom: 3px;
 	padding-top: 3px;
-	border-bottom-color: #9e9e9e;
-	border-top-color: #f8f8f8;
-	border-right-width: 0px;
-	border-left-width: 0px;
-	border-bottom-width: 1px;
+	padding-bottom: 3px;
 	border-style: solid;
 	border-top-width: 1px;
+	border-top-color: #f8f8f8;
+	border-right-width: 0px;
+	border-bottom-width: 1px;
+	border-bottom-color: #9e9e9e;
+	border-left-width: 0px;
+	color: #1d2023;
 }
 
 .fc_page_tree_options strong {
 	margin: 0px;
-	padding-left: 10px;
-	padding-bottom: 0px;
-	padding-right: 0px;
 	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	padding-left: 10px;
 }
 span.fc_page_tree_save_and_close {
-	margin-left: 10px;
-	margin-bottom: 0px;
-	margin-right: 0px;
-	margin-top: 0px;
+	display: inline-block;
 	float: left;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 10px;
 	padding: 0px;
+	width: 135px;
+	height: 2em;
 	text-align: center;
 	font-size: 11px;
 	line-height: 2em;
-	height: 2em;
-	width: 135px;
-	display: inline-block;
 }
 a.fc_page_tree_goto {
-	margin: 0px;
+	display: inline-block;
 	float: left;
+	margin: 0px;
 	padding: 0px;
+	width: 135px;
+	height: 2em;
 	text-align: center;
 	font-size: 11px;
 	line-height: 2em;
-	height: 2em;
-	width: 135px;
-	display: inline-block;
 }
 span.page_tree_delete_page {
-	line-height: 2em;
-	height: 2em;
-	margin-left: 10px;
-	margin-bottom: 0px;
-	margin-right: 0px;
 	margin-top: 0px;
-	text-align: center;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 10px;
 	padding: 0px;
-	font-size: 11px;
 	width: 272px;
+	height: 2em;
+	text-align: center;
+	font-size: 11px;
+	line-height: 2em;
 }
 span.fc_page_tree_restore_page {
 	margin-top: 0px;
-	line-height: 2em;
-	height: 2em;
-	margin-left: 10px;
-	margin-bottom: 0px;
 	margin-right: 0px;
-	text-align: center;
+	margin-bottom: 0px;
+	margin-left: 10px;
 	padding: 0px;
-	font-size: 11px;
 	width: 272px;
+	height: 2em;
+	text-align: center;
+	font-size: 11px;
+	line-height: 2em;
 }
 .fc_page_tree_options input[type=text] {
 	width: 180px;
@@ -229,18 +215,18 @@ span.fc_page_tree_restore_page {
 	float: left;
 	border-style: none;
 	border-width: 0px;
-	padding: 0px;
 	margin: 0px;
+	padding: 0px;
 	background-position: 0px 0px;
 	display: inline-block;
 }
 .fc_page_tree_label {
-	text-align: right;
-	color: #9e9e9e;
-	width: 80px;
-	padding-right: 5px;
 	display: inline-block;
+	padding-right: 5px;
 	padding-left: 15px;
+	width: 80px;
+	color: #9e9e9e;
+	text-align: right;
 }
 .fc_page_tree_settings {
 	right: 30px;
@@ -254,99 +240,85 @@ span.fc_page_tree_restore_page {
 	right: 78px;
 }
 #fc_search_tree {
-	padding-bottom: 2px;
-	padding-top: 2px;
-	min-height: 24px;
-	padding-left: 5px;
-	background-color: white;
-	margin-right: 10px;
-	padding-right: 30px;
-	margin-left: 10px;
-	margin-top: 5px;
-	margin-bottom: 10px;
-	position: relative;
+	position:			relative;
+	padding:			0px 30px 0px 10px;
+	height:				25px;
+	background-color:	white;
 }
-#fc_search_tree input {
-	margin-left: 0px;
-	margin-bottom: 0px;
-	margin-right: 0px;
-	margin-top: 2px;
-	padding-left: 5px;
-	padding-bottom: 0px;
-	padding-right: 0px;
-	padding-top: 0px;
-	border-width: 0px;
-	position: relative;
-	top: 0px;
-	z-index: 0;
-	width: 100%;
-	float: none;
-	display: block;
-}
-#fc_search_tree .fc_close {
-	top: 6px;
-	right: 4px;
-	position: absolute;
-}
-.fc_activeSearch.fc_tree_close ul {
-	z-index: 1;
-	display: list-item;
-}
+	#fc_search_tree input {
+		position:		relative;
+		top:			0px;
+		z-index:		0;
+		display:		block;
+		float:			none;
+		margin:			0px;
+		padding:		0px 25px 0px 0px;
+		width:			100%;
+		height:			23px;
+		border:			none;
+	}
+
+	#fc_search_tree input:focus {
+		outline-color:	transparent;
+	}
+
+	#fc_search_tree .fc_close {
+		position:	absolute;
+		top:		4px;
+		right:		4px;
+	}
+
+	.fc_activeSearch.fc_tree_close ul {
+		z-index: 1;
+		display: list-item;
+	}
+
 #fc_pages ul .highlight {
-	margin-left: 0px;
-	margin-bottom: 2px;
-	margin-right: 0px;
-	margin-top: 2px;
 	display: inline-block;
-	padding-left: 2px;
-	padding-bottom: 0px;
-	padding-right: 2px;
+	margin-top: 2px;
+	margin-right: 0px;
+	margin-bottom: 2px;
+	margin-left: 0px;
 	padding-top: 0px;
-	color: white;
-	background-color: #82c347;
+	padding-right: 2px;
+	padding-bottom: 0px;
+	padding-left: 2px;
 }
 .fc_activeSearch > a, .fc_activeSearch {
-	color: #cccccc;
+	color: #77818a;
 }
 .fc_matchedSearch > a, .fc_matchedSearch {
 	color: white;
 	font-weight: bold;
 }
 #fc_search_page_options {
-	width: 100%;
-	display: none;
-	z-index: 9999;
-	top: 30px;
-	position: absolute;
+	position:		absolute;
+	top:			30px;
+	z-index:		9999;
+	display:		none;
+	max-width:		100%;
 }
 #fc_search_page_options ul {
-	margin-left: 0px;
-	margin-bottom: 0px;
-	margin-right: 10px;
-	margin-top: 0px;
-	padding: 0px;
-	z-index: 0;
-	height: 100%;
-	display: block;
-	background-color: #f8f8f8;
+	z-index:			0;
+	display:			block;
+	margin:				0px 20px 0px 0px;
+	padding:			0px;
+	height:				100%;
+	background-color:	#f8f8f8;
 }
-#fc_search_page_options li {
-	padding-right: 10px;
-	padding-left: 10px;
-}
-#fc_search_page_options li:hover, .fc_activeSearchOption {
-	color: white;
-	background-color: #82c347;
-}
+	#fc_search_page_options li {
+		padding-right: 10px;
+		padding-left: 10px;
+	}
+
 #fc_searchOption {
-	background-color: #cccccc;
-	padding-right: 10px;
-	font-size: 11px;
-	margin-top: 2px;
-	line-height: 20px;
-	height: 20px;
-	float: left;
 	display: inline-block;
+	float: left;
+	margin-top: 2px;
+	padding-right: 10px;
+	height: 20px;
+	font-size:	0.9em;
+	line-height: 20px;
 }
 #fc_searchOption span {
 	margin-left: 0px;
@@ -358,62 +330,50 @@ span.fc_page_tree_restore_page {
 	padding-left: 8px;
 	display: inline-block;
 	color: white;
-	background-color: #82c347;
 }
 .fc_page_tree_search_dl {
 	display: none;
 }
 #fc_search_page_tree_default {
-	background-color: white;
-	display: block;
-	font-size: 11px;
-	left: 0px;
-	top: 0px;
-	z-index: 999;
-	height: 100%;
-	width: 100%;
 	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 999;
+	display: block;
+	width: 100%;
+	height: 100%;
+	background-color: white;
+	font-size: 11px;
 }
 #fc_search_page_tree_default span {
-	display: inline-block;
-	padding-top: 2px;
-	padding-right: 10px;
-	padding-left: 10px;
+	display:	inline-block;
+	padding:	0px 10px;
 }
 .fc_page_link .fc_page_tree_menu_ID {
-	color: #cccccc;
-	font-size: 11px;
+	color:		#282a2e;
+	font-size:	0.8em;
 }
 .fc_page_tree_options .fc_close {
+	position: absolute;
 	top: 8px;
 	right: 10px;
-	position: absolute;
 }
 .fc_page_intro {
-	border-top-color: #cccccc;
-	border-top-width: 1px;
-	border-top-style: dashed;
-	margin-bottom: 5px;
-	border-bottom-color: #4a5f81;
-	border-bottom-width: 1px;
-	border-bottom-style: dotted;
+	margin:			5px 0px;
+	border-top:		1px solid white;
+	border-bottom:	1px solid #77818a;
 }
-.fc_page_intro a {
-	border-bottom-color: #cccccc;
-	border-bottom-width: 1px;
-	border-bottom-style: dashed;
-	background-image: url(images/file_icons/page_intro.png);
-}
+
 .fc_page_tree_arrow {
-	background-position: right center;
+	position: absolute;
 	top: 3px;
 	left: -14px;
-	position: absolute;
 	display: inline-block;
-	height: 25px;
 	width: 14px;
-	background-repeat: no-repeat;
+	height: 25px;
 	background-image: url(images/arrow_left.png);
+	background-position: right center;
+	background-repeat: no-repeat;
 }
 .fc_page_tree_label {
 }
@@ -421,6 +381,6 @@ span.fc_page_tree_restore_page {
 	padding-top: 20px;
 	padding-right: 10px;
 	padding-left: 10px;
-	font-weight: bold;
 	color: white;
+	font-weight: bold;
 }

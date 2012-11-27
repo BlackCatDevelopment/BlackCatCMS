@@ -329,6 +329,7 @@ class admin extends wb
 					'current'				=> ( 'settings' == strtolower($this->section_name) ) ? true : false
 					);
 				$data_dwoo['MAIN_MENU'][3]	= array(
+					'link'					=> ADMIN_URL . '/addons/index.php',
 					'title'					=> $MENU['ADDONS'],
 					'permission_title'		=> 'addons',
 					'permission'			=> ( $this->get_link_permission('addons') ) ? true : false,
@@ -348,21 +349,6 @@ class admin extends wb
 					'current'				=> ( 'access' == strtolower($this->section_name) ) ? true : false
 					);
 
-				// ======================================= 
-				// ! Seperate addons-link by permissions   
-				// ======================================= 
-				if ( $this->get_permission('modules') )
-				{
-					$data_dwoo['MAIN_MENU'][3]['link']	= ADMIN_URL . '/modules/index.php';
-				}
-				elseif ( $this->get_permission('templates') )
-				{
-					$data_dwoo['MAIN_MENU'][3]['link']	= ADMIN_URL . '/templates/index.php';
-				}
-				elseif ( $this->get_permission('languages') )
-				{
-					$data_dwoo['MAIN_MENU'][3]['link']	= ADMIN_URL . '/languages/index.php';
-				}
 				// ======================================= 
 				// ! Seperate access-link by permissions   
 				// ======================================= 

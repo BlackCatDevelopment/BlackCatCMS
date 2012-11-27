@@ -10,8 +10,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
- *
+  *
  */
 
 (function ($) {
@@ -60,25 +59,101 @@
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
 				$(this).closest('li').children('.fc_page_tree_options_parent').fadeOut(300);
 			})
-
-			element.find('.fc_page_tree_options_open').click(function()
+			element.find('.fc_page_tree_options_open').click( function(event)
 			{
+				event.preventDefault();
+				var current_button	= $(this),
+					page_id			= current_button.closest('li').children('input').val(),
+					dates			= {
+										'page_id' : page_id,
+										'leptoken' : getToken()
+									},
+					link			= ADMIN_URL + '/pages/ajax_page_settings.php';
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
-				$('.fc_page_tree_options_parent').fadeOut(400);
-				var current_button			= $(this);
-				var options_container		= current_button.closest('li').children('.fc_page_tree_options_parent');
-
 				current_button.closest('li').addClass('page_tree_open_options');
-
-				options_container.fadeIn(50).position(
+				$.ajax(
 				{
-					of:		options_container.closest( 'li' ),
-					my:		'left top',
-					at:		'right top',
-					offset:	'5 -5'
+					type:		'GET',
+					url:		link,
+					dataType:	'json',
+					data:		dates,
+					cache:		false,
+					beforeSend:	function()
+					{
+						if ( $('#fc_add_page').is(':visible') )
+						{
+							$('#fc_add_page').stop().animate({width: 'toggle'}, 200);
+						}
+					},
+					success:	function(data)
+					{
+						var form	= $('#fc_add_page');
+						form.find('.fc_addPageOnly').hide();
+						form.find('.fc_changePageOnly').show();
+						form.animate({width: 'toggle'});
+						// Set textfields
+						$('#fc_addPage_title').val(data.menu_title);
+						$('#fc_addPage_page_title').val(data.page_title);
+						$('#fc_addPage_description').val(data.description);
+						$('#fc_addPage_keywords').val(data.keywords);
+						$('#fc_addPage_page_link').val(data.short_link);
+			
+						// Set selectfields
+						//$('#fc_addPage_type[value=' + data.MENU_TITLE + ']').val(data.MENU_TITLE);
+						$('#fc_addPage_parent option').removeAttr('selected');
+						$('#fc_addPage_parent option[value=' + data.parent + ']').attr('selected', true);
+						$('#fc_addPage_menu option').removeAttr('selected');
+						$('#fc_addPage_menu option[value=' + data.menu + ']').attr('selected',true);
+						$('#fc_addPage_target option').removeAttr('selected');
+						$('#fc_addPage_target option[value=' + data.target + ']').attr('selected',true);
+						$('#fc_addPage_template option').removeAttr('selected');
+						if (data.template == '')
+						{
+							$('#fc_addPage_template option:first').attr('selected',true);
+						}
+						else {
+							$('#fc_addPage_template option[value=' + data.template + ']').attr('selected',true);
+						}
+						$('#fc_addPage_language option').removeAttr('selected');
+						$('#fc_addPage_language option[value=' + data.language + ']').attr('selected',true);
+						$('#fc_addPage_visibility option').removeAttr('selected');
+						$('#fc_addPage_visibility option[value=' + data.visibility + ']').attr('selected',true);
+			
+						// Set checkboxesfields
+						$('#fc_addPage_Searching').attr('checked', data.searching);
+						$('#fc_addPage_admin_groups input').each( function()
+						{
+							var current		= $(this),
+								currenVal	= current.val(),
+								groups		= data.admin_groups;
+							if ( $.inArray( currenVal, groups ) )
+							{
+								current.attr('checked',false);
+							}
+							else {
+								current.attr('checked',true);
+							}
+						});
+						$('#fc_addPage_allowed_viewers input').each( function()
+						{
+							var current		= $(this),
+								currenVal	= current.val(),
+								groups		= data.viewing_groups;
+							if ( $.inArray( currenVal, groups ) )
+							{
+								current.attr('checked',false);
+							}
+							else {
+								current.attr('checked',true);
+							}
+						});
+			
+					},
+					error:		function(jqXHR, textStatus, errorThrown)
+					{
+						alert(textStatus + ': ' + errorThrown );
+					}
 				});
-
-				return false;
 			});
 
 			// bind elements with click event
@@ -218,12 +293,12 @@
 
 			function setSearchTreeOption()
 			{
-				var option					= options.options_ul.find('.fc_activeSearchOption').attr('id'),
-					searchTerm				= element.val();
+				var option			= options.options_ul.find('.fc_activeSearchOption').attr('id'),
+					searchTerm		= element.val();
 
 				search_page_tree( searchTerm );
 
-				$('<div id="fc_searchOption" class="ui-corner-all"><span class="ui-corner-left">' + option + '</span><strong>' + searchTerm + '</strong></div>').prependTo('#fc_search_tree');
+				$('<div id="fc_searchOption" class="fc_br_all fc_border fc_gradient1 fc_gradient_hover"><span class="fc_br_left fc_gradient_blue">' + option + '</span><strong>' + searchTerm + '</strong></div>').prependTo('#fc_search_tree');
 				$('#fc_searchOption').click( function()
 				{
 					search_page_tree( '' );
@@ -345,7 +420,7 @@ jQuery(document).ready(function()
 									parent.find('.fc_page_tree_search_dl > .fc_search_MenuTitle:first').html( menu_title );
 									parent.find('.fc_page_tree_search_dl > .fc_search_PageTitle:first').html( page_title );
 									parent.find('.fc_page_link > a > .fc_page_tree_menu_title:first').html( menu_title );
-									parent.find('.fc_page_link > a:first').attr( 'title', leptranslate('Page title') + ': ' + page_title );
+									parent.find('.fc_page_link > a:first').attr( 'title', 'Page title: ' + page_title );
 									//alert(parent.find('.fc_page_tree_search_dl > .fc_search_MenuTitle').html());
 								};
 		dialog_ajax( link, dates, beforeSend, afterSend, current, 'POST' );

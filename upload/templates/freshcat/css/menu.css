@@ -10,78 +10,60 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
- *
+  *
  */
 
 #fc_menu {
-	margin: 0px;
-	float: left;
-	display: inline-block;
+	margin:		0px;
+	float:		left;
+	display:	inline-block;
 }
 
-#fc_menu li {
-	float: left;
-	padding: 0px;
-	margin-right: 5px;
-	margin-left: 5px;
-	list-style-type: none;
-}
+	#fc_menu li {
+		float:				left;
+		padding:			0px;
+		margin:				0px 5px;
+		list-style-type:	none;
+	}
 
-#fc_menu li a {
-	font-weight: bold;
-	display: inline-block;
-	padding-right: 10px;
-	padding-left: 10px;
-	padding-top: 28px;
-	font-size: 10px;
-	color: #1d2023;
-}
+		#fc_menu li a {
+			display:		inline-block;
+			padding:		0.6em 0.6em 0px 0.6em;
+			margin:			0px 0.6em;
+			height:			50px;
+			line-height:	2.2em;
+			text-align:		center;
+			font-weight:	800;
+			font-size:		0.8em;
+			color:			#77818a;
+		}
+		#fc_menu li a:hover, #fc_menu li a.fc_current {
+			color:			black;
+		}
 
-#fc_menu li a.fc_start {
-	margin-left: 20px;
-	background-repeat: no-repeat;
-	background-image: url(images/header/menu_home.png);
-	background-position: center -70px;
-	margin-right: 160px;
-}
-
-#fc_menu li a.fc_media {
-	background-repeat: no-repeat;
-	background-image: url(images/header/menu_media.png);
-	background-position: center -70px;
-}
-
-#fc_menu li a.fc_settings {
-	background-image: url(images/header/menu_settings.png);
-	background-repeat: no-repeat;
-	background-position: center -70px;
-}
-
-#fc_menu li a.fc_addons {
-	background-repeat: no-repeat;
-	background-image: url(images/header/menu_addons.png);
-	background-position: center -70px;
-}
-
-#fc_menu li a.fc_admintools {
-	background-repeat: no-repeat;
-	background-image: url(images/header/menu_admintools.png);
-	background-position: center -70px;
-}
-
-#fc_menu li a.fc_access {
-	background-image: url(images/header/menu_access.png);
-	background-repeat: no-repeat;
-	background-position: center -70px;
-}
-
-#fc_menu li a:hover {
-	background-position: center -140px;
-}
-
-#fc_menu li a.fc_current {
-	color: #0d3601;
-	background-position: center top;
-}
-
+		[class^="icon-fc"]:before, [class*=" icon-fc"]:before {
+			display:		block;
+			font-size:		2em;
+		}
+		#fc_menu li a.icon-fc_start {
+			/*margin-left: 20px;
+			margin-right: 160px;*/
+		}
+		#fc_menu li a.icon-fc_start:before {
+			content:		"\e021";
+		}
+		#fc_menu li a.icon-fc_media:before {
+			content:		"\e004";
+		}
+		#fc_menu li a.icon-fc_settings:before {
+			content:		"\e019";
+		}
+		#fc_menu li a.icon-fc_addons:before {
+			content:		"\e023";
+		}
+		#fc_menu li a.icon-fc_admintools:before {
+			content:		"\e01e";
+		}
+		#fc_menu li a.icon-fc_access:before {
+			content:		"\e015";
+		}

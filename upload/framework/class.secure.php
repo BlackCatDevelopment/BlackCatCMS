@@ -13,7 +13,6 @@
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
- *
  */
 
 // THIS IS A TEMPORARY AND SMALL SOLUTION!
@@ -53,6 +52,14 @@ if (! defined ( 'LEPTON_PATH' ))
 		$direct_access_allowed = array(
 			PAGES_DIRECTORY.'/index.php',
 
+			// Dwoo
+			$admin_dir.'/addons/index.php',
+			$admin_dir.'/addons/manual_install.php',
+			$admin_dir.'/addons/install.php',
+			$admin_dir.'/addons/uninstall.php',
+			//////////////////////////////////////////
+
+
 			// phplib ////////////////////////////////
 			$admin_dir.'/access/index.php',
 			$admin_dir.'/addons/index.php',
@@ -76,13 +83,16 @@ if (! defined ( 'LEPTON_PATH' ))
 
 			// phplib
 			$admin_dir.'/languages/details.php',
-			//////////////////////////////////////////
-
 			$admin_dir.'/languages/index.php',
 			$admin_dir.'/languages/install.php',
 			$admin_dir.'/languages/uninstall.php',
 			$admin_dir.'/login/index.php',
-            $admin_dir.'/login/index_ajax.php',
+			//////////////////////////////////////////
+
+			// Dwoo
+			$admin_dir.'/login/index_ajax.php',
+			//////////////////////////////////////////
+
 			$admin_dir.'/login/forgot/index.php',
 			$admin_dir.'/logout/index.php',
 
@@ -96,18 +106,17 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/media/get_contents.php',
 			$admin_dir.'/media/rename.php',
 			$admin_dir.'/media/upload.php',
+			$admin_dir.'/media/ajax_get_contents.php',
+			$admin_dir.'/media/ajax_delete.php',
+			$admin_dir.'/media/ajax_create_folder.php',
 			//////////////////////////////////////////
 
 			// phplib
 			$admin_dir.'/modules/details.php',
-			//////////////////////////////////////////
-
 			$admin_dir.'/modules/index.php',
 			$admin_dir.'/modules/install.php',
 			$admin_dir.'/modules/manual_install.php',
 			$admin_dir.'/modules/uninstall.php',
-
-			// phplib
 			$admin_dir.'/modules/save_permissions.php',
 			//////////////////////////////////////////
 
@@ -116,12 +125,18 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/pages/empty_trash.php',
 			$admin_dir.'/pages/index.php',
 
+			// Dwoo
+			$admin_dir.'/pages/lang_settings.php',
+ 	 		$admin_dir.'/pages/lang_settings_save.php',
+			//////////////////////////////////////////
+
 			// phplib
 			$admin_dir.'/pages/move_down.php',
 			$admin_dir.'/pages/move_up.php',
 			//////////////////////////////////////////
 
 			// Dwoo
+			$admin_dir.'/pages/ajax_page_settings.php',
 			$admin_dir.'/pages/get_page_tree.php',
 			$admin_dir.'/pages/reorder.php',
 			//////////////////////////////////////////
@@ -149,8 +164,6 @@ if (! defined ( 'LEPTON_PATH' ))
 			//////////////////////////////////////////
 
 			$admin_dir.'/pages/settings.php',
-            $admin_dir.'/pages/lang_settings.php',
-            $admin_dir.'/pages/lang_settings_save.php',
 
 			// phplib
 			$admin_dir.'/pages/settings2.php',
@@ -158,6 +171,8 @@ if (! defined ( 'LEPTON_PATH' ))
 
 			// Dwoo
 			$admin_dir.'/pages/settings_save.php',
+			$admin_dir.'/pages/lang_settings.php',
+			$admin_dir.'/pages/lang_settings_save.php',
 			//////////////////////////////////////////
 
 			$admin_dir.'/pages/trash.php',
@@ -170,11 +185,11 @@ if (! defined ( 'LEPTON_PATH' ))
 
 			// phplib
 			$admin_dir.'/templates/details.php',
-			//////////////////////////////////////////
-
 			$admin_dir.'/templates/index.php',
 			$admin_dir.'/templates/install.php',
 			$admin_dir.'/templates/uninstall.php',
+			//////////////////////////////////////////
+
 			$admin_dir.'/users/add.php',
 			$admin_dir.'/users/index.php',
 			$admin_dir.'/users/save.php',

@@ -8,11 +8,12 @@
  *  @license terms		see info.php of this template
  *  @platform			LEPTON, see info.php of this template
  *  @requirements		PHP 5.2.x and higher
+  * @version			$Id$
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('LEPTON_PATH')) {
+	include(LEPTON_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,7 +35,7 @@ if (defined('WB_PATH')) {
 $template_directory			= 'freshcat';
 $template_name				= 'FreshCat Backend Theme';
 $template_function			= 'theme';
-$template_version			= '0.7';
+$template_version			= '0.7.2';
 $template_platform			= '2.x';
 $template_author			= 'Matthias Glienke, creativecat';
 $template_license			= '<a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>';

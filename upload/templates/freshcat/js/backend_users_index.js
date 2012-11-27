@@ -10,8 +10,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
- *
+  *
  */
  
 
@@ -21,70 +20,46 @@
 		var defaults =
 		{
 			toggle_speed:		300,
-			individual_class:	'fc_individual',
+			standard_class:		'fc_checkbox_jq',
+			individual_class:	'fc_checkbox_ind',
 			active_class:		'fc_active'
 		};
 		var options = $.extend(defaults, options);
 		return this.each(function ()
 		{
 			var element				= $(this), // .advanced_group
-				advanced_label		= element.attr('rel');
+				advanced_label		= $('#' + element.attr('rel'));
+
+			// Function to check whether all children inputs are checked=true, checked=false or different checked
 			function check_inputs(element)
 			{
-				if ( element.children('input').size() == element.children('input:checked').size() )
+				if ( advanced_label.children('input').size() == advanced_label.children('input:checked').size() )
 				{
-					$('#' + advanced_label).attr('checked' , true).change();
+					element.attr('checked' , true).addClass(options.standard_class).removeClass(options.individual_class);
 				}
-				else if ( element.children('input').size() == element.children('input').not(':checked').size() )
+				else if ( advanced_label.children('input').size() == advanced_label.children('input').not(':checked').size() )
 				{
-					$('#' + advanced_label).attr('checked' , false).change();
+					element.attr('checked' , false).addClass(options.standard_class).removeClass(options.individual_class);
 				}
 				else
 				{
-					$('label[for=' + advanced_label + ']').addClass(options.individual_class);
+					element.attr('checked' , true).addClass(options.individual_class).removeClass(options.standard_class);
 				}
 			}
 
-			// Bind advanced-buttons to toggle advanced options on click
-			element.prev('span').click( function()
-			{
-				var advanced_button		= $(this);
-				advanced_button.toggleClass(options.active_class);
-				if ( advanced_button.hasClass(options.active_class) )
-				{
-					element.slideUp(0, function()
-					{
-						element.removeClass('hidden').slideDown(options.toggle_speed);
-					});
-				}
-				else
-				{
-					element.slideUp(options.toggle_speed , function(){
-						element.addClass('hidden');
-					});
-				}
-			});
-			// Function to check the inputs in the according advanced-div, if parent button is changed to set all of them true/false
-			$('#' + advanced_label).change( function()
-			{
-				var value	= $(this);
-				$('label[for='+advanced_label+']').removeClass(options.individual_class);
-
-				if ( value.is(':checked') )
-				{
-					element.find('input').attr( 'checked', true ).change();
-				}
-				else {
-					element.children('input').attr( 'checked', false ).change();
-				}
-			});
 			// Function to check the each inputs in the advanced-div, to set the parent button to false/true/individual
-			element.children('input').click( function()
+			advanced_label.children('input').click( function()
 			{
-				check_inputs(element);
+				check_inputs( element );
 			});
-			check_inputs(element);
-			element.slideUp(0).addClass('hidden');
+			element.change( function()
+			{
+				var checked	= element.is(':checked');
+				advanced_label.children('input').attr('checked' , checked);
+				check_inputs( element );
+			});
+			// Initial calling of function
+			check_inputs( element );
 		})
 	}
 })(jQuery);
@@ -141,7 +116,7 @@ function validateUserAdd(element)
 
 jQuery(document).ready(function()
 {
-	$('.fc_advanced_groups').set_individual_buttons();
+	$('input.fc_advanced_groups').set_individual_buttons();
 	$('#fc_list_overview li').fc_set_tab_list();
 
 	// Show submitbuttons only if form is valid
@@ -154,6 +129,21 @@ jQuery(document).ready(function()
 		validateUserAdd( $('#fc_add_user') );
 	});
 
+	$('ul.fc_groups_tabs').find('a').click( function(e)
+	{
+		e.preventDefault();
+		var current	= $(this),
+			buttons	= current.closest('ul').find('a').not(current),
+			rel		= current.attr('href'),
+			tabs	= $('.fc_toggle_tabs');
+
+		buttons.removeClass('fc_active');
+		current.addClass('fc_active');
+
+		tabs.not(rel).addClass('hidden');
+		$(rel).removeClass('hidden');
+
+	}).filter(':first').click();
 
 	dialog_form( $('#fc_add_user, #fc_add_group'), false, function()
 	{
@@ -220,7 +210,7 @@ jQuery(document).ready(function()
 
 								set_buttons( new_form );
 							}
-							new_form.find('.fc_advanced_groups').set_individual_buttons();
+							//new_form.find('.fc_advanced_groups').set_individual_buttons();
 						}
 					});
 					
