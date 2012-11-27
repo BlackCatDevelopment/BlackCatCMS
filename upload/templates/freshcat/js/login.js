@@ -251,9 +251,8 @@ jQuery(document).ready(function(){
 				},
 				success:	function(data)
 				{
-					alert(data.token);
 					$('.loader').fadeOut(300).addClass('hidden');
-					if ( data.token == false )
+					if ( data.lepToken == false )
 					{
 						$('#fc_forms').effect( 'shake', { times: 3 }, 80);
 						data = 'Something went wrong!';
@@ -264,12 +263,11 @@ jQuery(document).ready(function(){
 					}
 					else
 					{
-						window.location		= ADMIN_URL + '/start/index.php?leptoken=' + data.token;
+						window.location		= ADMIN_URL + '/start/index.php?leptoken=' + data.lepToken;
 					}
 				},
 				error:		function(data)
 				{
-					alert(data);
 					$('.loader').fadeOut(300).addClass('hidden');
 					$('#fc_message').html('Something went wrong!').slideDown(300);
 				}

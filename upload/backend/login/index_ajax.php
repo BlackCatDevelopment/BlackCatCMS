@@ -18,7 +18,7 @@
  
 if(!defined('LEPTON_PATH')) require dirname(__FILE__).'/../../config.php';
 
-require_once( WB_PATH . '/framework/class.login.php');
+require_once( LEPTON_PATH . '/framework/class.login.php');
 
 $salt = md5(microtime());
 // ================================================ 
@@ -53,7 +53,7 @@ $thisApp = new Login(
     false
 );
 
-$token['token']	= $thisApp->is_authenticated() ? $thisApp->getToken() : false;
+$token['lepToken']	= $thisApp->is_authenticated() ? $thisApp->getToken() : false;
 
 print json_encode( $token );
 
