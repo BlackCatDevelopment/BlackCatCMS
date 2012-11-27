@@ -242,8 +242,8 @@ jQuery(document).ready(function(){
 				type:		'POST',
 				url:		link,
 				data:		dates,
-				dataType:	'html',
-                async:      false,
+				dataType:	'json',
+				async:		false,
 				beforeSend:	function(data)
 				{
 					$('.loader').removeClass('hidden').fadeIn(0);
@@ -251,8 +251,9 @@ jQuery(document).ready(function(){
 				},
 				success:	function(data)
 				{
+					alert(data.token);
 					$('.loader').fadeOut(300).addClass('hidden');
-					if ( data != 1 )
+					if ( data.token == false )
 					{
 						$('#fc_forms').effect( 'shake', { times: 3 }, 80);
 						data = 'Something went wrong!';
@@ -263,11 +264,12 @@ jQuery(document).ready(function(){
 					}
 					else
 					{
-						window.location		= ADMIN_URL + '/start/index.php?leptoken=' + lepToken;
+						window.location		= ADMIN_URL + '/start/index.php?leptoken=' + data.token;
 					}
 				},
 				error:		function(data)
 				{
+					alert(data);
 					$('.loader').fadeOut(300).addClass('hidden');
 					$('#fc_message').html('Something went wrong!').slideDown(300);
 				}

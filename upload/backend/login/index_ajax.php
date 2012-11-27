@@ -16,9 +16,9 @@
  *
  */
  
-if(!defined('WB_PATH')) require dirname(__FILE__).'/../../config.php';
+if(!defined('LEPTON_PATH')) require dirname(__FILE__).'/../../config.php';
 
-require_once(WB_PATH."/framework/class.login.php");
+require_once( WB_PATH . '/framework/class.login.php');
 
 $salt = md5(microtime());
 // ================================================ 
@@ -26,6 +26,8 @@ $salt = md5(microtime());
 // ================================================ 
 $username_fieldname		= 'username_'.substr($salt, 0, 7);
 $password_fieldname		= 'password_'.substr($salt, -7);
+
+header('Content-type: application/json');
 
 $thisApp = new Login(
 	array(
@@ -51,8 +53,10 @@ $thisApp = new Login(
     false
 );
 
-if($thisApp->is_authenticated()) {
-    echo $thisApp->getToken();
-}
+$token['token']	= $thisApp->is_authenticated() ? $thisApp->getToken() : false;
+
+print json_encode( $token );
+
+exit();
 
 ?>
