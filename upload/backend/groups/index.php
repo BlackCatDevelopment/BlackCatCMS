@@ -13,11 +13,12 @@
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
+ *
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('WB_PATH')) {
+	include(WB_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,7 +35,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(WB_PATH.'/framework/class.admin.php');
 $admin = new admin('Access', 'groups');
 
 // =========================== 
@@ -51,9 +52,8 @@ $data_dwoo['permissions']['USERS']			= $admin->get_permission('users')			? true 
 // =========================================================================== 
 global $parser;
 
-require_once( LEPTON_PATH . '/framework/class.pages.php');
+require_once(WB_PATH . '/framework/class.pages.php');
 $pages = new pages();
-// $items	= $admin->get_controller('Pages')->get_linked_by_language($page_id);
 
 $data_dwoo['templates']			= $pages->get_addons( DEFAULT_TEMPLATE , 'template' );
 $data_dwoo['languages']			= $pages->get_addons( DEFAULT_LANGUAGE , 'language' );
