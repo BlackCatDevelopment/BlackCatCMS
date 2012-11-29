@@ -440,7 +440,7 @@ class pages extends wb
 	 */
 	public function parent_list($parent=0)
 	{
-		$get_pages = $this->db_handle->query("SELECT * FROM ".TABLE_PREFIX."pages WHERE parent = '$parent' AND visibility!='deleted' ORDER BY position ASC");
+		$get_pages = $this->db_handle->query("SELECT * FROM " . TABLE_PREFIX . "pages WHERE parent = '$parent' AND visibility!='deleted' ORDER BY position ASC");
 
 		while ( $page = $get_pages->fetchRow( MYSQL_ASSOC ) )
 		{
@@ -535,7 +535,7 @@ class pages extends wb
 		// ==================
 		$addons_array = array();
 
-		$addons = $this->db_handle->query("SELECT * FROM ".TABLE_PREFIX."addons WHERE ".$get_type.$get_function." ORDER BY ".htmlspecialchars( $order ) );
+		$addons = $this->db_handle->query("SELECT * FROM " . TABLE_PREFIX . "addons WHERE ".$get_type.$get_function." ORDER BY ".htmlspecialchars( $order ) );
 		if ( $addons->numRows() > 0 )
 		{
 			$counter = 1;
@@ -574,7 +574,7 @@ class pages extends wb
 		// ================
 		// ! Getting Groups
 		// ================
-		$get_groups = $this->db_handle->query("SELECT * FROM ".TABLE_PREFIX."groups");
+		$get_groups = $this->db_handle->query("SELECT * FROM " . TABLE_PREFIX . "groups");
 
 		// ==============================================
 		// ! Insert admin group and current group first
@@ -600,11 +600,11 @@ class pages extends wb
 		$counter	= 1;
 		while ( $group = $get_groups->fetchRow( MYSQL_ASSOC ) )
 		{
-			$system_permissions			= preg_split( '/,/', $group['system_permissions']);
+			$system_permissions			= explode( ',', $group['system_permissions']);
 			array_unshift( $system_permissions, 'placeholder' );
-			$module_permissions			= preg_split( '/,/', $group['module_permissions']);
+			$module_permissions			= explode( ',', $group['module_permissions']);
 			array_unshift( $module_permissions, 'placeholder' );
-			$template_permissions			= preg_split( '/,/', $group['template_permissions']);
+			$template_permissions			= explode( ',', $group['template_permissions']);
 			array_unshift( $template_permissions, 'placeholder' );
 
 			$groups['viewers'][$counter]		=	array(
@@ -628,9 +628,9 @@ class pages extends wb
 					'NAME'					=> $group['name'],
 					'CHECKED'				=> is_numeric( array_search($group['group_id'], $admin_groups) )	? true : false,
 					'DISABLED'				=> in_array( $group["group_id"], $this->get_groups_id() )			? true : false,
-					'system_permissions'	=> array_flip( preg_split('/,/',$group['system_permissions']) ),
-					'module_permissions'	=> array_flip( preg_split('/,/',$group['module_permissions']) ),
-					'template_permissions'	=> array_flip( preg_split('/,/',$group['template_permissions']) )
+					'system_permissions'	=> array_flip( explode(',',$group['system_permissions']) ),
+					'module_permissions'	=> array_flip( explode(',',$group['module_permissions']) ),
+					'template_permissions'	=> array_flip( explode(',',$group['template_permissions']) )
 				);
 			}
 			$counter++;
