@@ -30,7 +30,6 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-
 // OBLIGATORY WEBSITE BAKER VARIABLES
 $template_directory			= 'freshcat';
 $template_name				= 'FreshCat Backend Theme';
@@ -43,6 +42,5 @@ $template_license_terms		= '-';
 $template_description		= 'First backend theme for Lepton using the template engine Dwoo.<br/>Introduced with Lepton 2.0 in 2012.<br/><br/>Done by Matthias Glienke, <a href="http://creativecat.de">creativecat</a>';
 $template_engine			= 'dwoo';
 $template_guid				= 'AD6296ED-31BD-49EB-AE23-4DD76B7ED776';
-
 
 ?>
