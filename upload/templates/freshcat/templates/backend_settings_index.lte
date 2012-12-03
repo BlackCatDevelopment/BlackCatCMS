@@ -545,7 +545,7 @@
 
 			<div class="clear"></div>
 			<hr/>
-			<button class="fc_gradient_blue fc_gradient_hover right" dir="ltr" id="fc_checkmail" name="checkmail" onclick="send_testmail('{$ADMIN_URL}/settings/ajax_testmail.php');return false;">{translate('Send test mail')}</button>
+			<button class="icon-mail right" dir="ltr" type="submit" id="fc_checkmail" name="checkmail" onclick="send_testmail('{$ADMIN_URL}/settings/ajax_testmail.php');return false;"> {translate('Send test mail')}</button>
 			<div class="clear_sp"></div>
 			<p class="submit_settings fc_gradient1">
 				<input type="submit" name="submit" value="{translate('Save')}" />

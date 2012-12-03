@@ -68,8 +68,6 @@ function byte_convert($bytes)
 	return sprintf('%.2f '.$symbol[$exp], $converted_value);
 }
 
-
-
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
@@ -105,7 +103,7 @@ if ($admin->get_permission('media')==true){
         : sanitize_path(MEDIA_DIRECTORY.$admin->get_home_folder());
 }
 else {
-	header('Location: '.ADMIN_URL);
+	header('Location: ' . ADMIN_URL);
 }
 
 // ======================================== 

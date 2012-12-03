@@ -27,8 +27,6 @@ body,html {
 html {
 	color: white;
 	background-color: #2b323f;
-	background-image: url(images/brushed_alu_dark.png);
-	background-repeat: repeat;
 }
 img {
 	border-width: 0px;
@@ -115,19 +113,10 @@ input[type=text],input[type=password] {
 	padding-right: 15px;
 	padding-left: 15px;
 	text-shadow: 1px 1px 1px #1d2023;
-	background-repeat: repeat-x;
-	background-image: url(images/button.png);
 	color: white;
 	background-color: #38951c;
 	border-color: #318018;
-	background-position: 0 -110px;
 	cursor: pointer;
-}
-.submit:hover {
-	background-position: 0 -200px;
-}
-.submit:active {
-	background-position: 0 -150px;
 }
 .fc_license {
 	background-position: center center;
@@ -164,11 +153,9 @@ input[type=text],input[type=password] {
 	border-color: #1d2023;
 	border-width: 1px;
 	border-style: solid;
-	background-image: url(images/background_paper.png);
 	padding: 0px;
 	display: none;
 	background-color: #e3e3e3;
-	background-repeat: repeat;
 	margin-top: -150px;
 	top: 50%;
 	margin-left: -201px;
@@ -269,5 +256,5 @@ input, button, .ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-b
 #fc_home_site { margin-top: 13px; margin-left: 15px; background-image: url(images/login/home.png); background-repeat: no-repeat; height: 23px; display: inline-block; width: 23px; }
 #fc_home_site:hover { background-position: -24px 0px; }
 #fc_home_site .fc_show_description { display: none; }
-#fc_home_login { background-position: 0 0px; height: 26px; border-color: #cccccc; border-style: solid; border-left-width: 1px; border-bottom-width: 0px; border-right-width: 1px; border-top-width: 1px; color: #23272a; background-repeat: repeat-x; background-image: url(images/button.png); text-align: center; margin-left: auto; margin-bottom: 0px; margin-right: auto; margin-top: 10px; padding-right: 20px; display: inline-block; padding-left: 20px; cursor: pointer;}
+#fc_home_login { background-position: 0 0px; height: 26px; border-color: #cccccc; border-style: solid; border-left-width: 1px; border-bottom-width: 0px; border-right-width: 1px; border-top-width: 1px; color: #23272a; text-align: center; margin-left: auto; margin-bottom: 0px; margin-right: auto; margin-top: 10px; padding-right: 20px; display: inline-block; padding-left: 20px; cursor: pointer;}
 #fc_home_login:hover { color: white; background-position: 0 -50px; }

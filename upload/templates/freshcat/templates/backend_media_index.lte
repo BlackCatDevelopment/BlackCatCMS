@@ -1,16 +1,23 @@
 <div id="fc_content_header">
 	{translate('Media')}
-	<div class="fc_header_buttons">
-		{if $permissions.media_upload}<a class="show_popup fc_gradient1 fc_gradient_hover icon-upload form_fc_media_index_upload" id="fc_upload_button"> {translate('Upload')}</a>{/if}
+	<div class="fc_header_buttons fc_br_all">
+		{if $permissions.media_upload}
+		<ul id="fc_header_button_dropdown_toggle">
+			<li><a href="#" class="fc_gradient1 fc_gradient_hover icon-upload fc_toggle_element fc_br_right show___fc_media_index_upload_ul"> {translate('Upload')}</a></li>
+			<li>
+				{include('form_upload_files.lte')}
+			</li>
+		</ul>
+		{/if}
 		{if $permissions.media_create || $permissions.media_rename || $permissions.media_delete}
 		<ul class="fc_header_button_dropdown">
-			<li><a href="#" class="fc_gradient1 fc_gradient_hover icon-tools"> {translate('Options')}</a></li>
+			<li><a href="#" class="fc_gradient1 fc_gradient_hover icon-tools fc_br_left"> {translate('Options')}</a></li>
 			<li>
-				<ul class="fc_br_bottom fc_gradient4 fc_shadow_small">
-					{if $permissions.media_create}<li class="fc_create_new_folder icon-plus"> {translate('Create new folder')}</li>{/if}
-					{if $permissions.media_rename}<li class="fc_rename_file icon-pencil"> {translate('Rename folder/file')}</li>{/if}
-					{if $permissions.media_create}<li class="hidden fc_inactive_button"> {translate('Duplicate folder/file')}</li>{/if}
-					{if $permissions.media_delete}<li class="fc_delete_file icon-remove fc_br_bottom"> {translate('Delete folder/file')}</li>{/if}
+				<ul class="fc_br_bottom fc_br_topleft fc_gradient4 fc_shadow_small">
+					{if $permissions.media_create}<li class="fc_create_new_folder icon-plus fc_gradient4 fc_gradient_hover"> {translate('Create new folder')}</li>{/if}
+					{if $permissions.media_rename}<li class="fc_rename_file icon-pencil fc_gradient4 fc_gradient_hover"> {translate('Rename folder/file')}</li>{/if}
+					{if $permissions.media_create}<li class="hidden fc_inactive_button fc_gradient4 fc_gradient_hover"> {translate('Duplicate folder/file')}</li>{/if}
+					{if $permissions.media_delete}<li class="fc_delete_file icon-remove fc_gradient4 fc_br_bottom fc_gradient_hover"> {translate('Delete folder/file')}</li>{/if}
 					<li class="hidden">{translate('Change settings')}</li>
 				</ul>
 			</li>
@@ -63,51 +70,4 @@
 			</div>
 		</div>
 	</div>
-	<form name="upload" action="upload.php" method="post" enctype="multipart/form-data" id="fc_media_index_upload">
-		<div class="clear">
-			<input type="hidden" name="form_title" value="{translate('Upload File(s)')}" />
-			<input type="hidden" name="folder_path" value="{$initial_folder}" />
-		</div>
-		<div class="fc_form_content">
-			<span id="fc_add_upload_field">+</span>
-			<label for="fc_overwrite">{translate('Overwrite existing files')}</label>
-			<input type="checkbox" class="fc_checkbox_jq" name="overwrite" id="fc_overwrite" value="true" />
-			<div class="clear"></div>
-			<hr/>
-			<div id="fc_upload_field_add" class="hidden">
-				<input type="hidden" name="upload_counter_replace" value="" />
-				<input type="file" size="33" name="upload_" maxlength="{$maxUploadFiles}" accept="{$allowed_file_types}" />
-				<span class="fc_upload_choose">{translate('Choose a file...')}</span>
-				<span class="fc_upload_file">{translate('No file selected...')}</span>
-				<span class="fc_upload_close"></span>
-				<div class="fc_upload_zip hidden">
-					<label for="unzip_">{translate('Unpack zip archive')}</label>
-					<input type="checkbox" name="unzip_" id="unzip_" value="true" rel="fc_delete_zip_div_" />
-					<div id="fc_delete_zip_div_">
-						<label for="delete_zip_">{translate('Delete zip archive after unpacking')}</label>
-						<input type="checkbox" name="delete_zip_" id="delete_zip_" value="true" />
-					</div>
-				</div>
-			</div>
-			<div class="fc_upload_fields">
-				<input type="hidden" name="upload_counter[]" value="0" />
-				<input type="file" size="33" name="upload_0" maxlength="{$maxUploadFiles}" accept="{$allowed_file_types}" />
-				<span class="fc_upload_choose">{translate('Choose a file...')}</span>
-				<span class="fc_upload_file">{translate('No file selected...')}</span>
-				<span class="fc_upload_close"></span>
-				<div class="fc_upload_zip hidden">
-					<label for="unzip_0">{translate('Unpack zip archive')}</label>
-					<input type="checkbox" class="fc_checkbox_jq fc_toggle_element" name="unzip_0" id="unzip_0" value="true" rel="fc_delete_zip_div_0" />
-					<div id="fc_delete_zip_div_0">
-						<label for="delete_zip_0">{translate('Delete zip archive after unpacking')}</label>
-						<input type="checkbox" class="fc_checkbox_jq" name="delete_zip_0" id="delete_zip_0" value="true" />
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="fc_confirm_bar">
-			<input type="submit" name="upload_files" value="{translate('Upload File(s)')}" />
-			<input type="reset" name="reset_form" value="{translate('Close')}" />
-		</div>
-	</form>
 </div>

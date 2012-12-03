@@ -106,9 +106,11 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/media/get_contents.php',
 			$admin_dir.'/media/rename.php',
 			$admin_dir.'/media/upload.php',
+
 			$admin_dir.'/media/ajax_get_contents.php',
 			$admin_dir.'/media/ajax_delete.php',
 			$admin_dir.'/media/ajax_create_folder.php',
+			$admin_dir.'/media/ajax_rename.php',
 			//////////////////////////////////////////
 
 			// phplib

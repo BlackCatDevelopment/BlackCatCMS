@@ -449,53 +449,6 @@ function dialog_form( currentForm, beforeSend, afterSend )
 // Function to activate buttons (for example if a some new elements where added to the body with ajax)
 function set_buttons( element )
 {
-	/*$( element ).find('input.fc_checkbox_jq').each( function()
-	{
-		var current_select		= $(this);
-		if ( typeof current_select.attr('id') == 'undefined' )
-		{
-			current_select.attr( 'id', current_select.attr('name') );
-		}
-	});*/
-
-	// Activate jQuery UI Buttons for radio-buttons
-	/*$( element ).find('input.fc_radio_jq').each( function()
-	{
-		// Get the id of each element
-		var input_id	= $(this).attr('id');
-
-		// Check if the input has label
-		// This needs to be done as there are some coder that don't know the importance of semantic html ;-)
-		if ( $('label[for=' + input_id + ']').size() > 0 )
-		{
-			$(this).button(
-			{
-				icons: {
-					secondary:		"ui-icon-radio"
-				}
-			});
-		}
-	});
-/*
-	// Activate jQuery UI Buttons for checkboxes
-	$( element ).find('input.fc_checkbox_jq').each( function()
-	{
-		// Get the id of each element
-		var input_id	= $(this).attr('id');
-
-		// Check if the input has label
-		// This needs to be done as there are some coder that don't know the importance of semantic html ;-)
-		if ( $('label[for=' + input_id + ']').size() > 0 )
-		{
-			$(this).button(
-			{
-				icons: {
-					secondary:		"ui-icon-on-off"
-				}
-			});
-		}
-	});
-*/
 	// Activate toggle for select
 	element.find( '.fc_toggle_element' ).fc_toggle_element();
 }

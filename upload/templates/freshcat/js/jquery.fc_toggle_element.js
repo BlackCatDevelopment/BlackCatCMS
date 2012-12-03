@@ -29,7 +29,7 @@
 			var current = $(this);
 			var action = 'show';
 
-			current.addClass('toggle_element');
+			//current.addClass('toggle_element');
 
 			if ( current.is('select') )
 			{

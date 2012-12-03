@@ -362,7 +362,8 @@ label {
 	background-image:	-webkit-linear-gradient(top, #f7f8f7, #bbc5c7); /* Safari 5.1+, Chrome 10+ */
 	background-image:	-o-linear-gradient(top, #f7f8f7, #bbc5c7); /* Opera 11.1+ */
 	background-image:	-ms-linear-gradient(top, #f7f8f7, #bbc5c7); /* IE10+ */
-	color:				#181a21;
+	color:				#282a2e;
+	text-shadow:		1px 1px 1px white;
 	-ms-filter:			"progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7f8f7', endColorstr='#bbc5c7')"; /* IE8+ */
 	filter:				progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7f8f7', endColorstr='#bbc5c7'); /* IE6,IE7 */
 }

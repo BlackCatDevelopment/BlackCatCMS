@@ -13,9 +13,7 @@
   *
  */
 
-#fc_media_index_upload {
-	display: none;
-}
+
 #fc_media_browser {
 	position: relative;
 	overflow-y: auto;
@@ -36,17 +34,33 @@
 
 .fc_filetype_folder,
 .fc_filetype_file {
-	display: block;
-	margin: 0px;
-	padding: 0px;
-	height: 26px;
-	line-height: 26px;
-	cursor: pointer;
+	position:		relative;
+	display:		block;
+	margin: 		0px;
+	padding:		0px;
+	height: 		26px;
+	line-height:	26px;
+	cursor: 		pointer;
 }
+	.fc_media_folder input[type=text] {
+		width:	214px;
+	}
+	.fc_save_rename {
+		position:	absolute;
+		top:		0px;
+		right:		0px;
+		display:	inline-block;
+		width:		24px;
+		height:		24px;
+		text-align:	center;
+	}
 
 .fc_filetype_folder .fc_name_short,
 .fc_filetype_file .fc_name_short {
 	padding: 0px 5px;
+}
+.fc_name_short {
+	white-space: nowrap;
 }
 	.fc_name_short p {
 		display:	block;
@@ -105,76 +119,48 @@
 		color:			#687a8a;
 		text-align:		right;
 	}
-.fc_name_short {
-	white-space: nowrap;
-}
-ul.fc_header_button_dropdown {
+
+
+ul.fc_header_button_dropdown, ul#fc_header_button_dropdown_toggle {
 	position: relative;
 	z-index: 4;
 	float: right;
 	height: auto;
 }
-.fc_header_button_dropdown li {
-	float: none;
-	margin: 0px;
-	padding: 0px;
-	white-space: nowrap;
-}
-.fc_header_button_dropdown ul {
-	position:		absolute;
-	top:			2.8em;
-	right:			0px;
-	z-index:		1;
-	display:		none;
-	margin:			0px;
-	padding:		0.6em 0px 0px 0px;
-	border:			1px solid black;
-	text-shadow:	1px 1px 1px black;
-}
-.fc_header_button_dropdown:hover ul {
-	display: block;
-}
-.fc_header_button_dropdown ul li {
-	margin: 0px;
-	padding:	0.6em 1em;
-	color: #f8f8f8;
-	font-weight: normal;
-	font-style: normal;
-	line-height: 1em;
-	cursor: pointer;
-}
-.fc_header_button_dropdown ul li:hover {
-	background-color: #f8f8f8;
-	color: #1d2023;
-	text-shadow: 1px 1px 1px white;
-}
-.fc_header_button_dropdown ul li.fc_inactive_button {
-	color: #9e9e9e;
-	cursor: default;
-}
-.fc_header_button_dropdown ul li.fc_inactive_button:hover {
-	background-color: #23272a;
-	color: #9e9e9e;
-	text-shadow: 1px 1px 1px black;
-}
+	ul.fc_header_button_dropdown li, ul#fc_header_button_dropdown_toggle li {
+		float: none;
+		margin: 0px;
+		padding: 0px;
+		white-space: nowrap;
+	}
+		ul.fc_header_button_dropdown ul, ul#fc_header_button_dropdown_toggle ul {
+			position:		absolute;
+			top:			2.8em;
+			right:			0px;
+			z-index:		2;
+			display:		none;
+			margin:			0px;
+			padding:		0.6em 0px 0px 0px;
+			border:			1px solid black;
+		}
+		ul.fc_header_button_dropdown:hover ul {
+			display: block;
+		}
+			ul.fc_header_button_dropdown ul li, ul#fc_header_button_dropdown_toggle ul li {
+				margin:			0px;
+				padding:		0.6em 1em;
+				font-weight:	normal;
+				font-style:		normal;
+				line-height:	1em;
+				cursor:			pointer;
+			}
+
 li.fc_loader {
 	position: absolute;
 	margin: 0px;
 	padding: 0px;
 }
-.fc_save_rename {
-	position: absolute;
-	top: 2px;
-	right: 2px;
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-	background-position: 0 0px;
-	background-repeat: no-repeat;
-}
-.fc_save_rename:hover {
-	background-position: -20px 0px;
-}
+
 .fc_input_rename_file {
 	position: relative;
 }
@@ -184,93 +170,68 @@ li.fc_loader {
 .fc_no_preview_pdf {
 	background-color: #ff5572;
 }
-.fc_upload_fields {
-	position: relative;
-	clear: both;
+
+#fc_media_index_upload {
+	width: 400px;
 }
-.fc_upload_choose {
-	position: relative;
-	z-index: 2;
-	display: inline-block;
-	float: left;
-	margin-right: 10px;
-	padding-right: 10px;
-	padding-left: 20px;
-	height: 40px;
-	background-color: #f8f8f8;
-	background-position: left top;
-	background-repeat: no-repeat;
-	color: white;
-	line-height: 40px;
-	cursor: pointer;
-}
-.fc_upload_choose:hover {
-	background-position: 0 bottom;
-}
-.fc_upload_close {
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	z-index: 2;
-	display: inline-block;
-	padding-right: 10px;
-	width: 50px;
-	height: 40px;
-	background-color: #f8f8f8;
-	background-position: left top;
-	background-repeat: no-repeat;
-	cursor: pointer;
-}
-.fc_upload_close:hover {
-	background-position: 0 bottom;
-}
- .fc_upload_fields input {
-	position: absolute;
-	z-index: 0;
-	height: 10px;
-	border-width: 0px;
-	background-color: transparent;
-	background-image: none;
-	font-size: 8px;
-	line-height: 0px;
-}
-.fc_upload_file {
-	position: relative;
-	z-index: 1;
-	display: block;
-	padding: 0px;
-	height: 40px;
-	background-color: #f8f8f8;
-	background-repeat: repeat-x;
-	line-height: 40px;
-}
-#fc_add_upload_field {
-	float: right;
-	margin-right: 20px;
-	width: 70px;
-	height: 45px;
-	background-color: #82c347;
-	background-position: center top;
-	background-repeat: no-repeat;
-	color: white;
-	text-align: center;
-	text-indent: -9999px;
-	font-weight: bold;
-	font-size: 2em;
-	cursor: pointer;
-}
-#fc_add_upload_field:hover {
-	background-position: center -45px;
-}
-label[for=fc_overwrite] {
-	margin-top: 8px;
-	margin-bottom: 0px;
-	margin-left: 20px;
-}
-.fc_upload_zip {
-	margin-bottom: 8px;
-	padding-bottom: 8px;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	border-bottom-color: #9da8b2;
-}
+	#fc_media_index_upload p {
+		margin-bottom:	0.5em;
+		text-align:		center;
+	}
+	.fc_upload_field {
+		position:		relative;
+		clear:			both;
+		margin:			1em 0em;
+		height:			30px;
+		line-height:	30px;
+	}
+		.fc_upload_field input[type=file] {
+			position:		absolute;
+			z-index:		2;
+			margin:			0px;
+			padding:		0px;
+			width:			100%;
+			height:			30px;
+			font-size:		0.9em;
+			line-height:	30px;
+			opacity:		0;
+			cursor:			pointer;
+		}
+		.fc_upload_field input[type=text] {
+			position:		absolute;
+			z-index:		0;
+			padding:		0px;
+			width:			100%;
+			height:			30px;
+			border:			none;
+			background:		transparent;
+			color:			white;
+			text-align:		center;
+			font-size:		0.9em;
+			line-height:	30px;
+		}
+		.fc_upload_field .fc_upload_close {
+			position:		absolute;
+			top:			0px;
+			right:			0px;
+			z-index:		3;
+			display:		inline-block;
+			width:			30px;
+			height:			28px;
+			text-align:		center;
+		}
+	
+	#fc_upload_submit {
+		display:			block;
+		-webkit-box-sizing:	border-box;
+		-moz-box-sizing:	border-box;
+		box-sizing:			border-box;
+		width:				100%;
+		-ms-box-sizing:		border-box;
+		-khtml-box-sizing:	border-box;
+	}
+	
+	.fc_upload_zip {
+		margin-bottom: 8px;
+		padding-bottom: 8px;
+	}

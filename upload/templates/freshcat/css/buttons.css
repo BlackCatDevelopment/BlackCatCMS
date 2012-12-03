@@ -45,7 +45,7 @@ textarea, input[type=text],input[type=password] {
 .button:active, button:active, input[type=button]:active, #info a:active {
 }
 
-input[type="submit"]::-moz-focus-inner { border:0; }
+input[type=submit]::-moz-focus-inner { border:0; }
 
 input[type=submit], button[type=submit], .submit {
 	padding:			0px 15px;

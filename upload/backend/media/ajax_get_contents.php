@@ -91,26 +91,26 @@ header('Content-type: application/json');
 //$open_folder	= $admin->get_get('open_folder');
 $load_file		= $admin->get_get('load_url');
 $load_url		= $admin->get_get('folder_path') . '/' . $load_file;
+$load_path		= LEPTON_PATH . $load_url;// should be sanitize_path( LEPTON_PATH . $load_url );
 
 // =========================================================================== 
 // ! Create the controller, it is reusable and can render multiple templates 	
 // =========================================================================== 
 $ajax	= array(
-	'initial_folder'		=> $load_url,
-	'MEDIA_DIRECTORY'		=> MEDIA_DIRECTORY,
-	'is_folder'				=> is_dir( LEPTON_PATH . $load_url ) ? true : false
+	'initial_folder'		=> sanitize_path( $load_url),
+	'MEDIA_DIRECTORY'		=> MEDIA_DIRECTORY
 );
+$ajax['check']	= 'Loadfile: ' . $load_file . '***LoadURL: ' . $load_url . '***LoadPATH: ' . $load_path;
 
 $allowed_img_types			= array('jpg','jpeg','png','gif','tif');
 
-if ( is_dir( LEPTON_PATH . $load_url ) )
+if ( is_dir( $load_path ) )
 {
-	
+	$ajax['is_folder']	= true;
 	// ======================================== 
 	// ! Get contents for the intitial folder   
 	// ======================================== 
-	$dir	= scan_current_dir( LEPTON_PATH . $load_url );
-	
+	$dir	= scan_current_dir( $load_path );
 	// ============================= 
 	// ! Add folders to $ajax   
 	// ============================= 
@@ -130,8 +130,8 @@ if ( is_dir( LEPTON_PATH . $load_url ) )
 		$files_array	= array();
 		foreach ( $dir['filename'] as $counter => $file )
 		{
-			$file_path		= LEPTON_PATH . $load_url . '/' . $file;
-			$filetype		= strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+			$file_path		= $load_path . '/' . $file;
+			$filetype		= strtolower( pathinfo($file_path, PATHINFO_EXTENSION) );
 			$ajax['files'][]	= array(
 				'filetype'			=> $filetype,
 				'show_preview'		=> in_array( strtolower($filetype), $allowed_img_types ) ? true : false,
@@ -146,13 +146,14 @@ if ( is_dir( LEPTON_PATH . $load_url ) )
 }
 else
 {
-	$filetype		= strtolower(pathinfo( LEPTON_PATH . $load_url , PATHINFO_EXTENSION));
-	$ajax['files']	= array(
+	$ajax['is_folder']	= false;
+	$filetype			= strtolower(pathinfo( $load_path , PATHINFO_EXTENSION));
+	$ajax['files']		= array(
 		'filetype'			=> $filetype,
 		'show_preview'		=> in_array( strtolower($filetype), $allowed_img_types ) ? true : false,
-		'filesize'			=> byte_convert(getSize( LEPTON_PATH . $load_url )),
-		'filedate'			=> date (DEFAULT_DATE_FORMAT, filemtime( LEPTON_PATH . $load_url )),
-		'filetime'			=> date (DEFAULT_TIME_FORMAT, filemtime( LEPTON_PATH . $load_url )),
+		'filesize'			=> byte_convert(getSize( $load_path )),
+		'filedate'			=> date (DEFAULT_DATE_FORMAT, filemtime( $load_path )),
+		'filetime'			=> date (DEFAULT_TIME_FORMAT, filemtime( $load_path )),
 		'full_name'			=> $load_file,
 		'filename'			=> substr($load_file , 0 , -( strlen($filetype) + 1 ) ),
 		'load_url'			=> $load_url
