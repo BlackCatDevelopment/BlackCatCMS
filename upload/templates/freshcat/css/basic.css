@@ -31,6 +31,7 @@
 @import url(calendar.css);
 @import url(users.css);
 @import url(admintools.css);
+@import url(../../../modules/lib_jquery/jquery-ui/themes/base/jquery-ui.css);
 @import url(../../../modules/lib_jquery/plugins/tag-it/tag-it.css);
 
 /**

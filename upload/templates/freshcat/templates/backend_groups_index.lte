@@ -34,7 +34,7 @@
 	{if $permissions.GROUPS_MODIFY}
 	<div class="fc_all_forms">
 		{if $permissions.GROUPS_ADD}
-		<form action="{$ADMIN_URL}/groups/add.php" method="post" id="fc_install_new" class="fc_list_forms">
+		<form action="{$ADMIN_URL}/groups/add.php" method="post" id="fc_install_new" class="fc_list_forms ajaxForm">
 			<p class="submit_settings fc_gradient1">
 				<strong>{translate('Add group')}</strong>
 				<input type="submit" name="submit" value="{translate('Add group')}">
@@ -237,7 +237,7 @@
 		{/if}
 		{foreach $groups.viewers as group}
 		{if $group.VALUE != 1}
-		<form action="{$ADMIN_URL}/groups/save.php" method="post" id="fc_list_{$group.VALUE}" class="fc_list_forms">
+		<form action="{$ADMIN_URL}/groups/save.php" method="post" id="fc_list_{$group.VALUE}" class="fc_list_forms ajaxForm">
 			<p class="submit_settings fc_gradient1">
 				<strong>{translate('Modify group')}: {$group.NAME}</strong>
 				<input type="submit" name="submit" value="{translate('Save group')}">

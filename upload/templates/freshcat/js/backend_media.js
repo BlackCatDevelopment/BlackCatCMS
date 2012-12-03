@@ -57,12 +57,9 @@ function save_name( rename_input, extension )
 
 	// Create link for ajax
 	var current_active	= rename_input.parent('li'),
-		current_ul		= current_active.closest('ul.fc_media_folder');
-	if ( current_active.hasClass('fc_filetype_folder') )
-	{
-		extension = '';
-	}
-	var dates			= {
+		current_ul		= current_active.closest('ul.fc_media_folder'),
+		extension		= ( current_active.hasClass('fc_filetype_folder') || typeof extension == 'undefined' ) ? '' : extension;
+		dates			= {
 			'file_path':		current_ul.children('input[name=folder_path]').val(),
 			'rename_file':		current_active.children('input[name=load_url]').val(),
 			'new_name':			rename_input.val(),
@@ -79,11 +76,12 @@ function save_name( rename_input, extension )
 		cache:		false,
 		beforeSend:	function( data )
 		{
+			data.process	= set_activity( 'Save name' );
 			rename_input.addClass('fc_name_update_process');
 			$('#fc_media_info').hide();
 			current_ul.prepend('<li class="fc_loader" />');
 		},
-		success:	function( data )
+		success:	function( data, textStatus, jqXHR  )
 		{
 			var current_active	= $(this);
 				current_ul		= current_active.closest('ul.fc_media_folder'),
@@ -93,12 +91,13 @@ function save_name( rename_input, extension )
 
 			if ( data.renamed === true )
 			{
+				return_success( jqXHR.process , data.message);
 				current_ul.addClass('fc_media_folder_active');
 				current_ul.children('li').remove();
 				reload_folder( current_ul );
 			}
 			else {
-				alert(data.message);
+				return_error( jqXHR.process , data.message);
 			}
 			// Scroll to the very right to put the new loaded files into viewable area
 			scrollToRight();
@@ -209,6 +208,7 @@ function reload_folder( current_ul, folder_path, load_url )
 	});
 }
 
+
 /**
  * automatically scroll to the very right if an item was clicked
  *
@@ -217,9 +217,10 @@ function scrollToRight()
 {
 	var browser_width = $('#fc_media_browser').width();
 
-	$('#fc_media_browser').animate({'scrollLeft': browser_width},0);
+	$('#fc_media_browser').animate({'scrollLeft': browser_width}, 0);
 
 }
+
 
 /**
  * (re)activate different events 'click' to set the active directoy and get optionally information about file/ contents of a given folder
@@ -353,6 +354,7 @@ function copy_upload_field( upload_field )
 	});
 }
 
+
 /**
  * (re)activate different events 'click' to for the delete and rename-buttons
  *
@@ -374,7 +376,6 @@ function add_new_upload_field ()
 	new_field.find( '.fc_toggle_element' ).fc_toggle_element();
 	copy_upload_field( new_field.children('.fc_upload_field') );
 }
-
 
 
 jQuery(document).ready(function()
@@ -435,12 +436,14 @@ jQuery(document).ready(function()
 			if ( current_active.hasClass('fc_filetype_file') )
 			{
 				var name		= '<br/><strong>'+current_active.find('.fc_name_short').text()+'</strong>',
-					message		= LEPTON_TEXT['MEDIA_CONFIRM_DELETE_FILE'].replace( /\{name\}/g, name );
+					message		= LEPTON_TEXT['MEDIA_CONFIRM_DELETE_FILE'].replace( /\{name\}/g, name ),
+					type		= 'file';
 			}
 			else
 			{
 				var name		= '<br/><strong>' + current_active.find('.fc_name_short').text() + '</strong>',
-					message		= LEPTON_TEXT['MEDIA_CONFIRM_DELETE_DIR'].replace( /\{name\}/g, name );
+					message		= LEPTON_TEXT['MEDIA_CONFIRM_DELETE_DIR'].replace( /\{name\}/g, name ),
+					type		= 'folder';
 			}
 			// Create link for ajax
 			var link			= ADMIN_URL + '/media/ajax_delete.php',
@@ -448,6 +451,7 @@ jQuery(document).ready(function()
 									'load_url':		current_active.children('input[name=load_url]').val(),
 									'file_path':	current_active.closest('ul.fc_media_folder').find('input[name=folder_path]').val(),
 									'file':			current_active.find('input[name=load_url]').val(),
+									'type':			type,
 									'leptoken':		getToken()
 								};
 			$.ajax(
@@ -460,14 +464,17 @@ jQuery(document).ready(function()
 				cache:		false,
 				beforeSend:	function( data )
 				{
+					data.process	= set_activity('Delete ' + data.type);
 					$('#fc_media_browser li.fc_active').closest('ul').prepend('<li class="fc_loader" />');
 				},
-				success:	function( data )
+				success:	function( data, textStatus, jqXHR  )
 				{
 					$('#fc_media_info').hide();
 					$('li.fc_loader').remove();
 					if ( data.deleted == true )
 					{
+						return_success( jqXHR.process , data.message);
+
 						var current		= $(this),
 							current_ul	= current.closest('ul');
 						if ( current_ul.children('li').size() == 1 )
@@ -491,7 +498,7 @@ jQuery(document).ready(function()
 					}
 					else
 					{
-						alert( data );
+						alert( data.message );
 					}
 				},
 				error:		function( jqXHR, textStatus, errorThrown )
@@ -510,8 +517,8 @@ jQuery(document).ready(function()
 
 		// Get the previous name of the file that is supposed to be renamed (files and folders has to be seperated!)
 		var get_name	= current_active.children('input[name=load_url]').val(),
-			old_name	= get_name.substr( 0, (get_name.lastIndexOf('.') ) ),
-			extension	= get_name.substr( (get_name.lastIndexOf('.') + 1) );
+			old_name	= current_active.hasClass('fc_filetype_folder') ? get_name : get_name.substr( 0, (get_name.lastIndexOf('.') ) ),
+			extension	= current_active.hasClass('fc_filetype_folder') ? '' : get_name.substr( (get_name.lastIndexOf('.') + 1) );
 
 		// add the input field to the list item that should be renamed
 		var rename_input	= $('<input type="text" name="rename" value="' + old_name + '" />').appendTo( current_active ).slideUp(0).slideDown(200).focus();
@@ -561,6 +568,7 @@ jQuery(document).ready(function()
 		var current_ul		= get_active_media(),
 			dates			= {
 								'folder_path':	current_ul.children('input[name=folder_path]').val(),
+								'test':			'test',
 								'leptoken':		getToken()
 							};
 
@@ -574,18 +582,22 @@ jQuery(document).ready(function()
 			cache:		false,
 			beforeSend:	function( data )
 			{
+				data.process	= set_activity('Create folder');
 				$('#fc_media_info').hide();
 				current_ul.children('li').remove().prepend('<li class="fc_loader" />');
 			},
-			success:	function( data )
+			success:	function( data, textStatus, jqXHR  )
 			{
 				current_ul.children('.fc_loader').remove();
+
 				if ( data.created == true )
 				{
+					return_success( jqXHR.process , data.message);
 					reload_folder( current_ul );
 				}
 				else
 				{
+					return_error( jqXHR.process , data.message);
 					alert( data.message );
 				}
 			},
@@ -608,14 +620,17 @@ jQuery(document).ready(function()
 		{
 			var media_upload	= $('#fc_media_index_upload'),
 				reload_ul		= get_active_media();
+
 			reload_ul.children('li').remove();
+
 			reload_folder( reload_ul );
+
 			media_upload.children('.fc_upload_fields:first').nextAll('.fc_upload_fields').remove();
 			media_upload.find('.fc_upload_field').removeClass('fc_inactive');
 			media_upload.find( '.fc_toggle_element' ).attr( 'checked', false ).click();
 			media_upload.find('.fc_upload_zip').addClass('hidden');
-			$('#fc_media_index_upload').find('input[type="reset"]').click(); 
-			$('#fc_header_button_dropdown_toggle a').click();
+
+			$('#fc_media_index_upload').find('input[type="reset"]').click();
 		}
 	);
 });

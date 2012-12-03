@@ -33,7 +33,7 @@
 	{if $permissions.USERS_MODIFY}
 	<div class="fc_all_forms">
 		{if $permissions.USERS_ADD}
-		<form name="add_user" action="{$ADMIN_URL}/users/add.php" method="post" id="fc_install_new" class="fc_list_forms">
+		<form name="add_user" action="{$ADMIN_URL}/users/add.php" method="post" id="fc_install_new" class="fc_list_forms ajaxForm">
 			<p class="submit_settings fc_gradient1">
 				<strong>{translate('Add user')}</strong>
 				<input type="submit" name="submit_add_user" value="{translate('Add user')}">

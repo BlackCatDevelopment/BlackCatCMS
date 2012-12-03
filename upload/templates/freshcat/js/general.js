@@ -14,25 +14,23 @@
  */
 
 function jqueryContainsI(text) {
-    return function (elem) {
-        return (elem.textContent || elem.innerText || $.text(elem)).toLowerCase().indexOf(text.toLowerCase()) > -1;
-    };
+	return function (elem) {
+		return (elem.textContent || elem.innerText || $.text(elem)).toLowerCase().indexOf(text.toLowerCase()) > -1;
+	};
 }
 
 jqueryContainsI.sizzleFilter = true;
 
 // add case insensitive :contains filter called :containsi (see the last i)
 $.extend($.expr[':'], {
-    'containsi': jqueryContainsI
+	'containsi': jqueryContainsI
 });
 
 // Plugin to validate email
 function isValidEmailAddress(emailAddress) {
-    var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-    return pattern.test(emailAddress);
+	var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+	return pattern.test(emailAddress);
 }
-
-
 
 
 // ===================== 
@@ -53,35 +51,29 @@ function getThemeName()
 // match css class with given prefix
 function match_class_prefix(prefix,elem)
 {
-    var classes = elem.attr('class').split(' ');
-    var regex   = new RegExp('^'+prefix+'(.+)',"g");
-    for (var i = 0; i < classes.length; i++) {
-        var matches = regex.exec(classes[i]);
-        if (matches != null) {
-            return matches[1];
-        }
-    }
+	var classes = elem.attr('class').split(' ');
+	var regex   = new RegExp('^'+prefix+'(.+)',"g");
+	for (var i = 0; i < classes.length; i++)
+	{
+		var matches = regex.exec(classes[i]);
+		if (matches != null)
+		{
+			return matches[1];
+		}
+	}
 }
 
 // Function to show the dialog with error message if an ajax reports an error
-function return_error( data, process_div )
+function return_error( process_div, message )
 {
-	$('.fc_loader').remove();
-	if ( process_div != false )
+	// Remove previously generated .process if an error occured
+	process_div.slideUp(1200,function()
 	{
-		// Remove previously generated .process if an error occured
-		process_div.slideUp(1200,function()
-		{
-			process_div.remove();
-		});
-	}
-
-	// Find the error message inside the returned data
-	var content		= $( data );
-	var message		= content.find('.fc_error_box').html();
+		process_div.remove();
+	});
 
 	// Check if .popup exists - if not add div.popup before #admin_header
-	if ( $('.popup').size()==0 )
+	if ( $('.popup').size() == 0 )
 	{
 		$('#fc_admin_header').prepend('<div class="popup" />');
 	}
@@ -89,22 +81,12 @@ function return_error( data, process_div )
 	// add error message to popup
 	$('.popup').html(message);
 
-	// Remove JS-Fallback from success message and backlink
-	$('.popup').find('.fc_fallback').remove();
-
 	// get title for dialog
-	title = set_popup_title();
+	var title = set_popup_title();
 
 	// Activate dialog on popup
 	$('.popup').dialog(
 	{
-		create: function(event, ui)
-		{
-			// Only some cosmetical style changes ;-)
-			$('.ui-widget-header').removeClass('ui-corner-all').addClass('ui-corner-top');
-		},
-		// Only some cosmetical style changes (adding shadow);-)
-		dialogClass:	'ui-widget-shadow',
 		modal:			true,
 		show:			'fade',
 		closeOnEscape:	true,
@@ -124,30 +106,11 @@ function return_error( data, process_div )
 }
 
 // Function to display the success of an ajax submit in the #activity -- process_div is the div.process you got before from set_activity();
-function return_success(data,process_div)
+function return_success( process_div, message )
 {
-	// Find the error message inside the returned data
-	var message		= $( data ).find('.fc_success_box').html();
-	if ( message == '' ) return;
-
-	// Check if .popup exists - if not add div.popup before #admin_header
-	if ( $('.popup').size() == 0 )
+	if ( typeof message != 'undefined' )
 	{
-		$('#fc_admin_header').prepend('<div class="popup" />');
-	}
-
-	// add success message to popup to use function set_popup_title();
-	$('.popup').html(message);
-
-	// Remove JS-Fallback from success message and backlink
-	$('.popup').find('.fc_fallback').remove();
-
-	// Get complete message
-	var message		= $('.popup').html();
-
-	if ( typeof process_div != 'undefined' )
-	{
-		process_div.html(message);
+		process_div.html(message).addClass('fc_active');
 
 		// Show success message for 5000 ms, slide it up and remove it from #activity
 		setTimeout(function()
@@ -157,6 +120,12 @@ function return_success(data,process_div)
 				process_div.remove();
 			});
 		},5000);
+	}
+	else {
+		process_div.slideUp(1200,function()
+		{
+			process_div.remove();
+		});
 	}
 }
 
@@ -168,7 +137,7 @@ function set_activity( title )
 		var title	= 'Loading';
 	}
 	// Add a div.process to #activity and store in a variable to use it later
-	var process		= $('<div class="fc_process" />').appendTo('#fc_activity');
+	var process		= $('<div class="fc_process fc_gradient1" />').appendTo('#fc_activity');
 
 	// initial hide the .process...
 	process.slideUp(0,function()
@@ -198,7 +167,6 @@ function set_popup_title()
 	}
 	return title;
 }
-
 
 // Function to show a confirm popup to confirm clicks, like delete page, user, groups etc.
 // you can optionally define a function that is called before (beforeSend) ajaxRequest and one that is called after (afterSend)
@@ -239,18 +207,22 @@ function dialog_confirm( message, link, beforeSend, afterSend, jQcontext )
 					dataType:	'html',
 					beforeSend:	function( data )
 					{
-						// Add a .process to #activity bar to show user, the data is send to server
-						process_div		= set_activity(title);
+						// Set activity and store in a variable to use it later
+						data.process	= set_activity( title );
+
 						// Hide .popup
-						$('.popup').dialog('destroy');
+						$('.popup').dialog('destroy').remove();
+
 						// check if a function beforeSend is defined and call it if true
 						if ( typeof beforeSend != 'undefined' && beforeSend != false )
 						{
 							beforeSend.call(this);
 						}
 					},
-					success:	function( data )
+					success:	function( data, textStatus, jqXHR )
 					{
+						return_success( jqXHR.process , data.message );
+
 						// Check if there is a div.success_box in returned data that implements that the request was completely successful
 						if ( $( data ).find('.fc_success_box').size() > 0 )
 						{
@@ -332,14 +304,19 @@ function dialog_ajax( link, dates, beforeSend, afterSend, jQcontext, type )
 		{
 			// deactive .popup before send data
 			$('.popup').dialog('destroy');
+
+			// Set activity and store in a variable to use it later
+			data.process	= set_activity( title );
+
 			// check if a function beforeSend is defined and call it if true
 			if ( typeof beforeSend != 'undefined' && beforeSend != false )
 			{
 				beforeSend.call(this);
 			}
 		},
-		success:	function( data )
+		success:		function( data, textStatus, jqXHR )
 		{
+			return_success( jqXHR.process , data.message );
 			// Check if there is a div.success_box in returned data that implements that the request was completely successful
 			if( $( data ).find('.fc_success_box').size() > 0 )
 			{
@@ -391,20 +368,19 @@ function dialog_form( currentForm, beforeSend, afterSend )
 		// Define ajax for form
 		currentForm.ajaxSubmit(
 		{
-			clearForm:		true,
 			beforeSend:		function( data )
 			{
 				// Check if the form has a (mostly hidden) input field with a title for the form (if not 'loading' is used
-				if ( currentForm.find('input[name=form_title]').size() > 0 )
+				if ( currentForm.find('input[name=fc_form_title]').size() > 0 )
 				{
-					var title	= currentForm.find('input[name=form_title]').val();
+					var title	= currentForm.find('input[name=fc_form_title]').val();
 				}
 				else {
 					var title = 'Loading';
 				}
 
 				// Set activity and store in a variable to use it later
-				process_div		= set_activity(title);
+				data.process	= set_activity( title );
 
 				// Destroy dialog to hide the 
 				currentForm.dialog('destroy');
@@ -415,14 +391,12 @@ function dialog_form( currentForm, beforeSend, afterSend )
 					beforeSend.call(this);
 				}
 			},
-			success:		function( data )
+			success:		function( data, textStatus, jqXHR )
 			{
 				// Check if there is a div.success_box in returned data that implements that the request was completely successful
 				if( $( data ).find('.fc_success_box').size() > 0 )
 				{
-					// Return success message --- process_div is the previously generated .process inside #activity
-					return_success( data, process_div );
-
+					return_success( jqXHR.process , $( data ).find('.fc_success_box > p').text() );
 					// check if a function afterSend is defined and call it if true
 					if ( typeof afterSend != 'undefined' && afterSend != false )
 					{
@@ -431,12 +405,13 @@ function dialog_form( currentForm, beforeSend, afterSend )
 				}
 				else {
 					// else return error
-					return_error(data,process_div);
+					return_error( jqXHR.process , data.message);
 				}
 			},
-			error:		function( data )
+			error:		function( jqXHR, textStatus, errorThrown )
 			{
-				return_error(data,process_div);
+				jqXHR.process.remove();
+				alert(textStatus + ': ' + errorThrown );
 			}
 		});
 
@@ -444,7 +419,6 @@ function dialog_form( currentForm, beforeSend, afterSend )
 		return false;
 	});
 }
-
 
 // Function to activate buttons (for example if a some new elements where added to the body with ajax)
 function set_buttons( element )

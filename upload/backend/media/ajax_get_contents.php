@@ -100,7 +100,6 @@ $ajax	= array(
 	'initial_folder'		=> sanitize_path( $load_url),
 	'MEDIA_DIRECTORY'		=> MEDIA_DIRECTORY
 );
-$ajax['check']	= 'Loadfile: ' . $load_file . '***LoadURL: ' . $load_url . '***LoadPATH: ' . $load_path;
 
 $allowed_img_types			= array('jpg','jpeg','png','gif','tif');
 
