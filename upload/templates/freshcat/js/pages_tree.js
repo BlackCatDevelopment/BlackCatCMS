@@ -54,11 +54,6 @@
 				});
 			}
 
-			element.find('.fc_page_tree_options .fc_close').click( function()
-			{
-				$('.page_tree_open_options').removeClass('page_tree_open_options');
-				$(this).closest('li').children('.fc_page_tree_options_parent').fadeOut(300);
-			})
 			element.find('.fc_page_tree_options_open').click( function(event)
 			{
 				event.preventDefault();

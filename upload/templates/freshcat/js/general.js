@@ -562,6 +562,7 @@ jQuery(document).ready( function()
 	$('#fc_add_page').slideUp(0);
 	$('#fc_add_page input:reset').click( function()
 	{
+		$('.page_tree_open_options').removeClass('page_tree_open_options');
 		var form	= $('#fc_add_page');
 		form.find('.fc_addPageOnly').show();
 		form.find('.fc_changePageOnly').hide();

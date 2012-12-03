@@ -384,6 +384,9 @@ class admin extends wb
 				}
 
 				$data_dwoo['section_name']		= strtolower($this->section_name);
+				$data_dwoo['page_id']			= ( is_numeric( $this->get_get('page_id') ) && $this->get_get('page_id') != '' ) ?
+														$this->get_get('page_id') : ( ( is_numeric( $this->get_post('page_id') ) && $this->get_post('page_id') != '' ) ? 
+														$this->get_post('page_id') : false );
 
 				// ==================== 
 				// ! Parse the header 	

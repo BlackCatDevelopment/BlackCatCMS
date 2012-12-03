@@ -17,25 +17,29 @@ jQuery(document).ready(function()
 {
 	$('.fc_toggle_section_block').click(function()
 	{
-		var current_block	= $(this).parents('.fc_module_block');
+		var current			= $(this),
+			current_block	= current.parents('.fc_module_block');
+
 		current_block.toggleClass('fc_active')
 		if ( current_block.hasClass('fc_active') )
 		{
+			current.switchClass( 'icon-eye-blocked-2', 'icon-eye-2' );
 			current_block.find('.fc_blocks_content').slideDown(300);
 		}
 		else
 		{
+			current.switchClass( 'icon-eye-2', 'icon-eye-blocked-2' );
 			current_block.find('.fc_blocks_content').slideUp(300);
 		}
 	});
 	$('#hide_modules').click( function()
 	{
-		$('.fc_toggle_section_block').removeClass('fc_active');
+		$('.fc_toggle_section_block').removeClass('fc_active').switchClass( 'icon-eye-2', 'icon-eye-blocked-2' );
 		$('.fc_blocks_content').slideUp(100);
 	});
 	$('#show_modules').click( function()
 	{
-		$('.fc_toggle_section_block').addClass('fc_active');
+		$('.fc_toggle_section_block').addClass('fc_active').switchClass( 'icon-eye-blocked-2', 'icon-eye-2' );
 		$('.fc_blocks_content').slideDown(100);
 	});
 

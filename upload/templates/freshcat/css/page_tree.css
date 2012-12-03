@@ -15,36 +15,27 @@
 
 
 #fc_pages {
-	margin: 0px;
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-bottom: 15px;
-	padding-left: 0px;
+	margin:			0px;
+	padding:		0px 0px 15px 0px;
 	text-shadow:	none;
 }
 #fc_pages ul {
-	margin: 0px;
-	padding: 0px;
+	margin:		0px;
+	padding:	0px;
 }
 #fc_pages ul ul {
-	margin: 0px;
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 15px;
+	margin:		0px;
+	padding:	0px 0px 0px 15px;
 }
 #fc_pages li {
-	margin: 0px;
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-bottom: 1px;
-	padding-left: 0px;
-	min-height: 25px;
-	white-space: nowrap;
-	line-height: 26px;
+	margin:			0px;
+	padding:		0px;
+	min-height:		25px;
+	white-space:	nowrap;
+	line-height:	25px;
 }
 .fc_page_link {
-	position: relative;
+	position:	relative;
 }
 .fc_page_link > a {
 	display:	block;
@@ -52,11 +43,10 @@
 	padding:	0px 0px 0px 25px;
 	height:		25px;
 	color:		white;
+	border-top:		1px solid transparent;
+	border-bottom:	1px solid transparent;
 }
-.fc_page_link:hover > a, .fc_page_tree_item > a.fc_pages_tree_options_button_active, .page_tree_open_options > .fc_page_link > a {
-	background-color:	#f8f8f8;
-	color:				#1d2023;
-}
+
 .fc_page_link.fc_page_intro > a {
 	color:		#282a2e;
 }
@@ -108,16 +98,17 @@
 	display: none;
 }
 .fc_pages_tree_options_button {
-	display: none;
-	width: 25px;
-	height: 23px;
-	text-align: center;
-	cursor: pointer;
+	display:	none;
+	width:		25px;
+	height:		24px;
+	text-align:	center;
+	cursor:		pointer;
 }
 
-.fc_page_link:hover > .fc_pages_tree_options_button {
+.fc_page_link:hover > .fc_pages_tree_options_button,
+.page_tree_open_options > .fc_page_link > .fc_pages_tree_options_button {
 	position:	absolute;
-	top:		0px;
+	top:		1px;
 	right:		0px;
 	display:	inline-block;
 }

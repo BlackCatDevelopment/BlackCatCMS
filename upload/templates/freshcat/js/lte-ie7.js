@@ -82,7 +82,9 @@ window.onload = function() {
 			'icon-file-xml' : '&#xe049;',
 			'icon-file-css' : '&#xe04a;',
 			'icon-folder-add' : '&#xe04b;',
-			'icon-folder' : '&#xe04c;'
+			'icon-folder' : '&#xe04c;',
+			'icon-move' : '&#xe04d;',
+			'icon-menu' : '&#xe04e;'
 		},
 		els = document.getElementsByTagName('*'),
 		i, attr, html, c, el;
