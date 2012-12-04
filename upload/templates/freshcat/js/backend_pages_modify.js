@@ -77,11 +77,13 @@ jQuery(document).ready(function()
 										i++;
 									});
 								}
+								/*
 								if ( typeof editAreaLoader != 'undefined')
 								{
 									editAreaLoader.delete_instance('content13');
 									//editAreaLoader.execCommand('content13', 'set_editable', false);
 								}
+								*/
 								if ( typeof CKEDITOR != 'undefined')
 								{
 									myinstances = new Array();
