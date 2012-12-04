@@ -18,7 +18,7 @@
 
 // include class.secure.php to protect this file and the whole CMS!
 if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+	include(LEPTON_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -41,10 +41,12 @@ if (defined('LEPTON_PATH')) {
 require_once ( LEPTON_PATH . '/framework/class.admin.php' );
 $admin		= new admin('Pages', 'pages_settings', false);
 
+header('Content-type: application/json');
+
 if ( !$admin->get_permission('pages_settings') )
 {
 	$ajax	= array(
-		'message'	=> 'You don\'t have the permission to change page settings.',
+		'message'	=>  $admin->lang->translate('You don\'t have the permission to change page settings.'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -57,7 +59,7 @@ if ( !$admin->get_permission('pages_settings') )
 if ( !is_numeric( $admin->get_get('page_id') ) )
 {
 	$ajax	= array(
-		'message'	=> 'You send an empty value.',
+		'message'	=>  $admin->lang->translate('You send an empty value.'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -67,7 +69,6 @@ else
 {
 	$page_id	= $admin->get_get('page_id');
 }
-header('Content-type: application/json');
 
 require_once( LEPTON_PATH . '/framework/functions-utf8.php' );
 
@@ -80,11 +81,21 @@ $results_array	= $results->fetchRow( MYSQL_ASSOC );
 
 if ( $database->is_error() )
 {
-	$admin->print_error( $database->get_error() );
+	$ajax	= array(
+		'message'	=> $database->get_error(),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 if ( $results->numRows() == 0 )
 {
-	$admin->print_error( 'Page not found' );
+	$ajax	= array(
+		'message'	=>  $admin->lang->translate( 'Page not found' ),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 
 $old_admin_groups	= explode(',', $results_array['admin_groups']);
@@ -100,7 +111,12 @@ foreach ( $admin->get_groups_id() as $cur_gid )
 }
 if ( !$in_old_group && !is_numeric(array_search($admin->get_user_id(), $old_admin_users)) )
 {
-	$admin->print_error('You do not have permissions to modify this page');
+	$ajax	= array(
+		'message'	=>  $admin->lang->translate( 'You do not have permissions to modify this page' ),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 
 // ========================================================= 
