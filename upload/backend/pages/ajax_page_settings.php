@@ -43,8 +43,12 @@ $admin		= new admin('Pages', 'pages_settings', false);
 
 if ( !$admin->get_permission('pages_settings') )
 {
-	header("Location: index.php");
-	exit(0);
+	$ajax	= array(
+		'message'	=> 'You don\'t have the permission to change page settings.',
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 
 // =============== 
@@ -52,8 +56,12 @@ if ( !$admin->get_permission('pages_settings') )
 // =============== 
 if ( !is_numeric( $admin->get_get('page_id') ) )
 {
-	header("Location: index.php");
-	exit(0);
+	$ajax	= array(
+		'message'	=> 'You send an empty value.',
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 else
 {

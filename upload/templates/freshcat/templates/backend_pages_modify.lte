@@ -55,7 +55,7 @@
 									<span class="fc_section_button icon-eye-2 fc_toggle_section_block" title="show/hide section"></span>
 									<div class="fc_section_modify_div_parent">
 										<span class="fc_section_button fc_open_section_modify icon-calendar" title="{translate('Modify section')}"></span>
-										<div class="fc_section_modify_div fc_gradient1">
+										<div class="fc_section_modify_div fc_gradient1 fc_border_all_light fc_shadow_small fc_br_all">
 											<div class="fc_arrow_up"></div>
 											<form action="{$ADMIN_URL}/pages/sections_save.php" name="modify_section" class="fc_modify_section">
 												<div>

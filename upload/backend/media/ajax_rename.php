@@ -61,7 +61,7 @@ $new_extension	= trim( $admin->strip_slashes($admin->get_get('extension')) );
 if ( $new_name == '' || $rename_file == '' || $file_path == '' || $admin->get_permission('media_rename') !== true )
 {
 	$ajax['message']	= $admin->get_permission('media_rename') != true ? $admin->lang->translate('You don\'t have the permission to rename files') : $admin->lang->translate('You send an empty value.');
-	$ajax['renamed']	= false;
+	$ajax['success']	= false;
 
 	print json_encode( $ajax );
 	exit();
@@ -99,7 +99,7 @@ else {
 				'message'	=> $admin->lang->translate('Rename successful.'),
 				'new_name'	=> $new_name,
 				'extension'	=> $new_extension,
-				'renamed'	=> true
+				'success'	=> true
 			);
 		}
 		else {
@@ -107,14 +107,14 @@ else {
 				'message'	=> $admin->lang->translate('Rename unsuccessful.'),
 				'new_name'	=> $rename_file,
 				'extension'	=> $new_extension,
-				'renamed'	=> false
+				'success'	=> false
 			);
 		}
 	}
 	else {
 		$ajax	= array(
 			'message'	=> $admin->lang->translate('Unable to write to the target directory.'),
-			'renamed'	=> false
+			'success'	=> false
 		);
 	}
 }

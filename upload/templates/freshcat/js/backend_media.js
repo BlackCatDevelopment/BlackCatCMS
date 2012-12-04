@@ -89,7 +89,7 @@ function save_name( rename_input, extension )
 
 			current_ul.children('.fc_loader').remove();
 
-			if ( data.renamed === true )
+			if ( data.success === true )
 			{
 				return_success( jqXHR.process , data.message);
 				current_ul.addClass('fc_media_folder_active');
