@@ -56,7 +56,7 @@ jQuery(document).ready(function()
 
 	// activate sortable function for sections
 	$( "#fc_all_blocks" ).sortable({
-		iframeFix:			true,
+		//iframeFix:			true,
 		handle:				'.fc_section_drag',
 		axis:				'y',
 		cursor:				'move',
@@ -87,13 +87,10 @@ jQuery(document).ready(function()
 									myinstances = new Array();
 									
 									//this is the foreach loop
-									for(var i in CKEDITOR.instances) {
-									   /* this retrieve the data of each instances and store it into an associative array with
-									       the names of the textareas as keys... */
-									       //alert(CKEDITOR.instances[i].name);
-									   myinstances[CKEDITOR.instances[i].name] = CKEDITOR.instances[i].getData(); 
-									   CKEDITOR.instances[i].destroy();
-									
+									for(var i in CKEDITOR.instances)
+									{
+										myinstances[CKEDITOR.instances[i].name] = CKEDITOR.instances[i].getData(); 
+										CKEDITOR.instances[i].destroy();
 									}
 								}
 							},
@@ -109,8 +106,7 @@ jQuery(document).ready(function()
 								{
 									for(var i in myinstances)
 									{
-										alert(i);
-										$('textarea[name=' + i + ']').ckeditor();
+										CKEDITOR.replace(i).setData(myinstances[i]);
 									};
 								}
 								//editAreaLoader.execCommand('content13', 'set_editable', true);
