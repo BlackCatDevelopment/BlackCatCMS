@@ -377,6 +377,7 @@ else
 		'message'	=> $admin->lang->translate('Page settings saved successfully'),
 		'menu_title'	=> $menu_title,
 		'page_title'	=> $page_title,
+		'visibility'	=> $visibility,
 		'success'	=> true
 	);
 	print json_encode( $ajax );

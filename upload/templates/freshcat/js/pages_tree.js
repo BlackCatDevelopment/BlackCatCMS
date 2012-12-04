@@ -484,10 +484,26 @@ jQuery(document).ready(function()
 
 					var current			= $(this);
 					$('#fc_add_page input[type=reset]').click();
-
+					switch (data.visibility) {
+						case 'public':
+							var newIcon	= 'icon-screen';
+							break;
+						case 'private':
+							var newIcon	= 'icon-key';
+							break;
+						case 'registered':
+							var newIcon	= 'icon-users';
+							break;
+						case 'hidden':
+							var newIcon	= 'icon-eye-blocked';
+							break;
+						default:
+							var newIcon	= 'icon-screen-2';
+							break;
+					}
 					current.children('dl').children('.fc_search_MenuTitle').text( data.menu_title );
 					current.children('dl').children('.fc_search_PageTitle').text( data.page_title );
-					current.children('.fc_page_link').children('a').children('.fc_page_tree_menu_title').text( ' ' + data.menu_title );
+					current.children('.fc_page_link').children('a').children('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title ' + newIcon).text( ' ' + data.menu_title );
 					current.children('.fc_page_link > a:first').attr( 'title', 'Page title: ' + data.page_title );
 				}
 				else {
