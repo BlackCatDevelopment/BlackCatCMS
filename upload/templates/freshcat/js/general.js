@@ -13,17 +13,10 @@
   *
  */
 
-function jqueryContainsI(text) {
-	return function (elem) {
-		return (elem.textContent || elem.innerText || $.text(elem)).toLowerCase().indexOf(text.toLowerCase()) > -1;
-	};
-}
-
-jqueryContainsI.sizzleFilter = true;
-
-// add case insensitive :contains filter called :containsi (see the last i)
-$.extend($.expr[':'], {
-	'containsi': jqueryContainsI
+$.expr[":"].containsi = $.expr.createPseudo(function (selector, context, isXml) {
+    return function (elem) {
+        return (elem.textContent || elem.innerText || $.text(elem)).toLowerCase().indexOf(selector.toLowerCase()) > -1;
+    };
 });
 
 // Plugin to validate email

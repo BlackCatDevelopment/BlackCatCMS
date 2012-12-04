@@ -7,18 +7,17 @@
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- * @version         $Id$
+ * @author			LEPTON Project
+ * @copyright		2012, LEPTON Project
+ * @link			http://www.LEPTON-cms.org
+ * @license			http://www.gnu.org/licenses/gpl.html
+ * @license_terms	please see LICENSE and COPYING files in your package
  *
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('LEPTON_PATH')) {
+	include(LEPTON_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -60,7 +59,7 @@ if ( $file == '' || !( strpos($file, '..') === false ) )
 }
 
 // include WB functions file
-require_once(WB_PATH . '/framework/functions.php');
+require_once(LEPTON_PATH . '/framework/functions.php');
 
 // create Admin object with admin header
 $admin		= new admin('Addons', '', true, false);
@@ -71,7 +70,7 @@ $js_back	= ADMIN_URL . '/modules/index.php';
  */
  
 // check if specified module folder exists
-$mod_path		= WB_PATH . '/modules/' . basename(WB_PATH . '/' . $file);
+$mod_path		= LEPTON_PATH . '/modules/' . basename(LEPTON_PATH . '/' . $file);
 
 // let the old variablename if module use it
 $module_dir		= $mod_path;
@@ -81,7 +80,7 @@ if ( !file_exists( $mod_path . '/' . $action . '.php') )
 }
 
 // Perform Add-on requirement checks before proceeding
-require ( WB_PATH . '/framework/addon.precheck.inc.php' );
+require ( LEPTON_PATH . '/framework/addon.precheck.inc.php' );
 preCheckAddon( NULL, $mod_path, false );
 
 // include modules install.php script
