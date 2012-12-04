@@ -25,7 +25,7 @@
 }
 #fc_pages ul ul {
 	margin:		0px;
-	padding:	0px 0px 0px 15px;
+	padding:	0px;
 }
 #fc_pages li {
 	margin:			0px;
@@ -34,15 +34,17 @@
 	white-space:	nowrap;
 	line-height:	25px;
 }
+#fc_pages li li {
+	padding:	0px 0px 0px 15px;
+}
 .fc_page_link {
 	position:	relative;
 }
 .fc_page_link > a {
-	display:	block;
-	margin:		0px;
-	padding:	0px 0px 0px 25px;
-	height:		25px;
-	color:		white;
+	display:		block;
+	margin:			0px;
+	padding:		0px 0px 0px 25px;
+	color:			white;
 	border-top:		1px solid transparent;
 	border-bottom:	1px solid transparent;
 }
@@ -108,7 +110,7 @@
 .fc_page_link:hover > .fc_pages_tree_options_button,
 .page_tree_open_options > .fc_page_link > .fc_pages_tree_options_button {
 	position:	absolute;
-	top:		1px;
+	top:		2px;
 	right:		0px;
 	display:	inline-block;
 }

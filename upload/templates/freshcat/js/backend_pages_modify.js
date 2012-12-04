@@ -56,7 +56,6 @@ jQuery(document).ready(function()
 
 	// activate sortable function for sections
 	$( "#fc_all_blocks" ).sortable({
-		//iframeFix:			true,
 		handle:				'.fc_section_drag',
 		axis:				'y',
 		cursor:				'move',

@@ -558,20 +558,4 @@ jQuery(document).ready( function()
 		}
 		return false;
 	});
-
-	$('#fc_add_page').slideUp(0);
-	$('#fc_add_page input:reset').click( function()
-	{
-		$('.page_tree_open_options').removeClass('page_tree_open_options');
-		var form	= $('#fc_add_page');
-		form.find('.fc_addPageOnly').show();
-		form.find('.fc_changePageOnly').hide();
-		form.animate({width: 'toggle'});
-	});
-	$('.fc_side_add').click( function()
-	{
-		var form	= $('#fc_add_page');
-		form.find('a:first').click();
-		form.find('input:reset').click();
-	});
 });

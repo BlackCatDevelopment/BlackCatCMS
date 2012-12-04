@@ -121,8 +121,8 @@
 		</li>
 	</ul>
 	<p>
-		<button type="submit" name="add_page" class="icon-checkmark fc_addPageOnly"> {translate('Add page')}</button>
-		<button type="submit" name="save_page" class="icon-checkmark fc_changePageOnly"> {translate('Save page')}</button>
+		<button type="submit" name="add_page" class="icon-checkmark fc_addPageOnly" id="fc_addPageSubmit"> {translate('Add page')}</button>
+		<button type="submit" name="save_page" class="icon-checkmark fc_changePageOnly" id="fc_savePageSubmit"> {translate('Save page')}</button>
 		<button type="submit" name="remove_page" class="icon-remove fc_gradient_red fc_changePageOnly"> {translate('Remove page')}</button>
 		<input type="reset" name="reset" value="{translate('Close & Reset')}" />
 	</p>

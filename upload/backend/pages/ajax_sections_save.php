@@ -63,7 +63,7 @@ $page_id		= $admin->get_get('page_id');
 if ( !is_numeric( $page_id ) || $page_id == '' )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You send an empty value.'),
+		'message'	=> $admin->lang->translate('You send an invalid value.'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
