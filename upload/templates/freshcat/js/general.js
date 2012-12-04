@@ -306,7 +306,7 @@ function dialog_ajax( link, dates, beforeSend, afterSend, jQcontext, type )
 			$('.popup').dialog('destroy');
 
 			// Set activity and store in a variable to use it later
-			data.process	= set_activity( title );
+			data.process	= set_activity( );
 
 			// check if a function beforeSend is defined and call it if true
 			if ( typeof beforeSend != 'undefined' && beforeSend != false )

@@ -124,16 +124,12 @@
 	position: relative;
 }
 .fc_section_modify_div {
-	position: absolute;
-	top: 30px;
-	right: 0px;
-	z-index: 10;
-	display: none;
-	width: 300px;
-	border-width: 1px;
-	border-style: solid;
-	border-color: #9e9e9e;
-	background-color: #f8f8f8;
+	position:	absolute;
+	top:		30px;
+	right:		0px;
+	z-index:	10;
+	display:	none;
+	width:		310px;
 }
 .fc_arrow_up {
 	position:			absolute;
@@ -162,42 +158,14 @@
 .fc_save_section input {
 	width: 100%;
 }
-.fc_close_section_modify {
-	height: 26px;
-	border-top-width: 1px;
-	border-top-style: solid;
-	border-top-color: white;
-	background-color: #cccccc;
-	background-image: url(images/header/header_back.png);
-	background-position: 0 top;
-	background-repeat: repeat-x;
-	text-align: center;
-	text-shadow: 1px 1px 1px white;
-	line-height: 26px;
-	cursor: pointer;
-}
-.fc_close_section_modify:hover {
-	background-color: #9e9e9e;
-	background-position: 0 -50px;
-}
 .fc_modify_section {
-	clear: both;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	border-style: solid;
-	border-top-width: 1px;
-	border-top-color: #f8f8f8;
-	border-right-width: 0px;
-	border-bottom-width: 1px;
-	border-bottom-color: #9e9e9e;
-	border-left-width: 0px;
+	clear:				both;
+	padding-top:		10px;
+	padding-bottom:		10px;
 }
 .fc_modify_section_item {
-	clear: both;
-	padding-top: 5px;
-	padding-right: 10px;
-	padding-bottom: 5px;
-	padding-left: 10px;
+	clear:			both;
+	padding-top:	5px 10px;
 }
 #fc_add_module_form, #fc_linked_languages {
 	display:		inline-block;
@@ -246,4 +214,7 @@
 }
 fc_page_list_pageid {
 	width: 10%;
+}
+.fc_sortable_placeholder {
+	height:		30px;
 }

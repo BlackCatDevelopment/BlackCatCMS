@@ -479,7 +479,7 @@ input[type=submit].fc_gradient_red:hover,
 	box-shadow:			black 0px 0px 12px -1px;
 }
 
-.fc_border
+.fc_border,
 .fc_page_link:hover > a,
 .fc_page_tree_item > a.fc_pages_tree_options_button_active,
 .page_tree_open_options > .fc_page_link > a {
