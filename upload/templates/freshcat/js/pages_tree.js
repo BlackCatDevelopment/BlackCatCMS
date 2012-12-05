@@ -566,10 +566,13 @@ jQuery(document).ready(function()
 							var newIcon	= 'icon-users';
 							break;
 						case 'hidden':
-							var newIcon	= 'icon-eye-blocked';
+							var newIcon	= 'icon-eye-2';
+							break;
+						case 'deleted':
+							var newIcon	= 'icon-remove';
 							break;
 						default:
-							var newIcon	= 'icon-screen-2';
+							var newIcon	= 'icon-eye-blocked';
 							break;
 					}
 					current.children('dl').children('.fc_search_MenuTitle').text( data.menu_title );

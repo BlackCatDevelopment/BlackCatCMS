@@ -36,16 +36,16 @@
 	<img src="{$THEME_URL}/css/images/login/radial.png" alt="radial" class="fc_login_radial" />
 	<div class="fc_img_no_save fc_start_black"></div>
 	<noscript>
-		<img src="{$THEME_URL}/css/images/js_required.jpg" alt="JavaScript is required" />
-		<div id="fc_JS_needed" class="fc_br_all fc_shadow_big">
-			<h1>JavaScript is required</h1>
-			<p>To use Lepton, please enable JavaScript in your browser and try again.</p>
+		<img src="{$THEME_URL}/css/images/login/js_required.png" alt="JavaScript is required" />
+		<div id="fc_JS_needed" class="fc_br_all fc_shadow_big fc_gradient1 fc_border_all_light">
+			<h1>{translate('JavaScript is required')}</h1>
+			<p>{translate('To use <span class="icon-logo"> Lepton2</span>, please enable JavaScript in your browser and try again.')}</p>
 		</div>
 	</noscript>
 	<div id="fc_forms" class="fc_br_all fc_shadow_big">
 		<div id="fc_login_header" class="fc_br_top fc_gradient4">
-			<img src="{$THEME_URL}/css/images/login/beta_state.png" alt="This is a beta version" id="fc_beta"/>
-			<a href="{$WB_URL}" class="icon-screen-2 fc_border_all fc_border_all_light fc_gradient1 fc_gradient_hover" id="fc_home_site" title="{translate('Home')}"></a>
+			<img src="{$THEME_URL}/css/images/login/beta_state.png" alt="This is a beta version" id="fc_beta" />
+			<a href="{$WB_URL}" class="icon-home fc_border_all fc_border_all_light fc_gradient1 fc_gradient_hover" id="fc_home_site" title="{translate('Home')}"></a>
 		</div>
 		<form name="login" action="{$ACTION_URL}" method="post" id="fc_login_form" class="fc_gradient1 fc_br_bottom fc_border">
 			<p>

@@ -84,7 +84,10 @@ window.onload = function() {
 			'icon-folder-add' : '&#xe04b;',
 			'icon-folder' : '&#xe04c;',
 			'icon-move' : '&#xe04d;',
-			'icon-menu' : '&#xe04e;'
+			'icon-menu' : '&#xe04e;',
+			'icon-home' : '&#xe04f;',
+			'icon-logo' : '&#xe052;',
+			'icon-creativecat' : '&#xe051;'
 		},
 		els = document.getElementsByTagName('*'),
 		i, attr, html, c, el;

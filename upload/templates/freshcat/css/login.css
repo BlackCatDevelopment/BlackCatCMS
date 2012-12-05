@@ -21,21 +21,6 @@ img {
 	border-style: none;
 }
 
-hr {
-	margin-top: 1em;
-	margin-bottom: 1em;
-	height: 1px;
-	border-top-width: 1px;
-	border-top-style: solid;
-	border-top-color: white;
-	border-right-width: 0px;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	border-bottom-color: white;
-	border-left-width: 0px;
-	background-color: #cccccc;
-}
-
 #fc_ie6 {
 	display: none;
 }
@@ -96,12 +81,12 @@ input[type=text],input[type=password] {
 }
 	#fc_warning_message p {
 		display:	block;
-	}
+}
 	#fc_warning_message .highlight {
 		font-size:		1.6em;
 		line-height:	1.2em;
 		padding:		0.6em 0em;
-	}
+}
 
 #fc_forms p {
 	position:	relative;
@@ -110,7 +95,7 @@ input[type=text],input[type=password] {
 }
 	#fc_forms p.fc_loader {
 		padding:	0px;
-	}
+}
 #fc_login_header {
 	height:		50px;
 	color:		white;
@@ -150,9 +135,6 @@ noscript div {
 	background-color: #5b9c14;
 	color: white;
 }
-#fc_JS_needed h1 {
-	color: white;
-}
 noscript img {
 	position: absolute;
 	top: -93px;
@@ -182,19 +164,9 @@ noscript img {
 	height: 100%;
 }
 .fc_start_black {
-	z-index: 0;
-	background-color: black;
-}
-.loader {
-	z-index: 0;
-	clear: both;
-	margin-right: 10px;
-	margin-left: 10px;
-	height: 18px;
-	background-image: url(images/loader.gif);
-	background-position: 0 0px;
-	background-repeat: repeat-x;
-	opacity: 1;
+	display:			none;
+	z-index:			0;
+	background-color:	black;
 }
 
 label{
@@ -203,7 +175,6 @@ label{
 	left:			0px;
 	padding-left:	1.2em;
 }
-
 
 #fc_beta {
 	position:	absolute;
@@ -214,8 +185,9 @@ label{
 	display:				inline-block;
 	margin-top:				12px;
 	margin-left:			15px;
-	width:					23px;
-	height:					23px;
+	width:					25px;
+	height:					25px;
+	font-size:				15px;
 	-webkit-border-radius:	50%;
 	-moz-border-radius:		50%;
 	border-radius:			50%;
@@ -225,7 +197,7 @@ label{
 
 #fc_home_site .fc_show_description {
 	display: none;
-	}
+}
 #fc_home_login {
 	display:		inline-block;
 	margin-top:		10px;

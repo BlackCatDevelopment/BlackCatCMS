@@ -32,6 +32,57 @@
 	padding-right:	0.5em;
 	content:		"\e042";
 }
+.icon-pictures:before,
+.icon-file-png:before,
+.icon-file-jpg:before,
+.icon-file-jepg:before,
+.icon-file-gif:before,
+.icon-file-bmp:before {
+	content: "\e004";
+}
+
+.icon-file-word:before,
+.icon-file-doc:before,
+.icon-file-docx:before {
+	content: "\e045";
+}
+.icon-file-excel:before,
+.icon-file-xls:before,
+.icon-file-xlsm:before,
+.icon-file-xlsx:before,
+.icon-file-xlsb:before,
+.icon-file-xlam:before,
+.icon-file-xltx:before,
+.icon-file-xlk:before,
+.icon-file-xll:before,
+.icon-file-xls:before,
+.icon-file-xla:before,
+.icon-file-xlt:before {
+	content: "\e046";
+}
+.icon-file-powerpoint:before,
+.icon-file-pptx:before,
+.icon-file-ppt:before {
+	content: "\e047";
+}
+.icon-file-zip:before,
+.icon-file-rar:before {
+	content: "\e048";
+}
+.icon-file-xml:before,
+.icon-file-html:before,
+.icon-file-htm:before,
+.icon-file-php:before {
+	content: "\e049";
+}
+
+.icon-folder-add:before {
+	content: "\e04b";
+}
+.icon-folder:before {
+	padding-right:	0.5em;
+	content:		"\e04c";
+}
 .icon-pencil:before {
 	content: "\e001";
 }
@@ -41,12 +92,7 @@
 .icon-color-palette:before {
 	content: "\e003";
 }
-.icon-pictures:before,
-.icon-file-png:before,
-.icon-file-jpg:before,
-.icon-file-jepg:before,
-.icon-file-gif:before,
-.icon-file-bmp:before {
+.icon-pictures:before {
 	content: "\e004";
 }
 .icon-library:before {
@@ -235,45 +281,28 @@
 .icon-github:before {
 	content: "\e041";
 }
-.icon-openoffice:before {
-	content: "\e044";
+.icon-libreoffice:before {
+	content: "\e042";
 }
 .icon-file-pdf:before {
 	content: "\e043";
 }
-
-.icon-file-word:before,
-.icon-file-doc:before,
-.icon-file-docx:before {
+.icon-file-openoffice:before {
+	content: "\e044";
+}
+.icon-file-word:before {
 	content: "\e045";
 }
-.icon-file-excel:before,
-.icon-file-xls:before,
-.icon-file-xlsm:before,
-.icon-file-xlsx:before,
-.icon-file-xlsb:before,
-.icon-file-xlam:before,
-.icon-file-xltx:before,
-.icon-file-xlk:before,
-.icon-file-xll:before,
-.icon-file-xls:before,
-.icon-file-xla:before,
-.icon-file-xlt:before {
+.icon-file-excel:before {
 	content: "\e046";
 }
-.icon-file-powerpoint:before,
-.icon-file-pptx:before,
-.icon-file-ppt:before {
+.icon-file-powerpoint:before {
 	content: "\e047";
 }
-.icon-file-zip:before,
-.icon-file-rar:before {
+.icon-file-zip:before {
 	content: "\e048";
 }
-.icon-file-xml:before,
-.icon-file-html:before,
-.icon-file-htm:before,
-.icon-file-php:before {
+.icon-file-xml:before {
 	content: "\e049";
 }
 .icon-file-css:before {
@@ -283,13 +312,20 @@
 	content: "\e04b";
 }
 .icon-folder:before {
-	padding-right:	0.5em;
-	content:		"\e04c";
+	content: "\e04c";
 }
-
 .icon-move:before {
 	content: "\e04d";
 }
 .icon-menu:before {
 	content: "\e04e";
+}
+.icon-home:before {
+	content: "\e04f";
+}
+.icon-logo:before {
+	content: "\e052";
+}
+.icon-creativecat:before {
+	content: "\e051";
 }
