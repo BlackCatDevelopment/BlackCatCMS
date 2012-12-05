@@ -437,10 +437,10 @@ class frontend extends wb {
 		global $MESSAGE;
 
 		$search_files = array(
-			LEPTON_PATH."/templates/".DEFAULT_TEMPLATE."/templates/under_construction.htt",
-			LEPTON_PATH."/templates/".DEFAULT_TEMPLATE."/htt/under_construction.htt",
-			LEPTON_PATH."/templates/".DEFAULT_TEMPLATE."/under_construction.htt",
-			LEPTON_PATH."/templates/".DEFAULT_THEME."/templates/under_construction.htt"			
+			LEPTON_PATH."/templates/" . DEFAULT_TEMPLATE . "/templates/under_construction.htt",
+			LEPTON_PATH."/templates/" . DEFAULT_TEMPLATE . "/htt/under_construction.htt",
+			LEPTON_PATH."/templates/" . DEFAULT_TEMPLATE . "/under_construction.htt",
+			LEPTON_PATH."/templates/" . DEFAULT_THEME . "/templates/under_construction.lte"
 		);
 
 		$template_file = NULL;
@@ -459,7 +459,7 @@ class frontend extends wb {
 				'{TITLE}' => $MESSAGE['GENERIC_WEBSITE_UNDER_CONSTRUCTION'],
 				'{UNDER_CONSTRUCTION}' => $MESSAGE['GENERIC_WEBSITE_UNDER_CONSTRUCTION'],
 				'{PLEASE_CHECK_BACK_SOON}' => $MESSAGE['GENERIC_PLEASE_CHECK_BACK_SOON'],
-				'{THEME_URL}' => LEPTON_URL."/templates/".DEFAULT_THEME."/"
+				'{THEME_URL}' => LEPTON_URL."/templates/" . DEFAULT_THEME . "/"
 			);
 			$html = str_replace(array_keys($values),array_values($values), $html);
 		}
@@ -580,8 +580,8 @@ class frontend extends wb {
 		if (defined("PAGE_CONTENT") ) {
 			$look_up = array(
 				'/account/css/preferences.css',
-				"/templates/".DEFAULT_THEME."/preferences.css",
-				"/templates/".DEFAULT_THEME."/css/preferences.css",              
+				"/templates/" . DEFAULT_THEME . "/preferences.css",
+				"/templates/" . DEFAULT_THEME . "/css/preferences.css",              
 				"/templates/".TEMPLATE.'/css/preferences.css',
 				"/templates/".TEMPLATE.'/preferences.css'
 			);

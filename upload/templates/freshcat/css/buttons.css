@@ -183,7 +183,7 @@ input[type=checkbox].fc_checkbox_jq:checked + label {
 	background-repeat:		no-repeat;
 	background-position:	right center;
 	color:					#3f7bb3;
-	min-height:					22px;
+	min-height:				22px;
 	display:				block;
 	padding:				0px 60px 0px 0px;
 	cursor:					pointer;
@@ -211,7 +211,7 @@ input[type=checkbox].fc_checkbox_ind:checked + label {
 	background-repeat:		no-repeat;
 	background-position:	right center;
 	color:					#3f7bb3;
-	min-height:					22px;
+	min-height:				22px;
 	display:				block;
 	padding:				0px 60px 0px 0px;
 	cursor:					pointer;

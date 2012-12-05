@@ -545,7 +545,7 @@ jQuery(document).ready(function()
 			cache:		false,
 			beforeSend:	function( data )
 			{
-				data.process	= set_activity( 'Save page' );
+				data.process	= set_activity( 'Saving page' );
 			},
 			success:	function( data, textStatus, jqXHR  )
 			{
@@ -588,29 +588,54 @@ jQuery(document).ready(function()
 		});
 	});
 
-	$('.page_tree_delete_page').click( function ()
+	$('#fc_removePageSubmit').click( function (e)
 	{
+		e.preventDefault();
 		var current			= $(this),
-			page_id			= current.closest('li').attr('rel'),
-			link			= ADMIN_URL + '/pages/delete.php?page_id=' + page_id + '&request_from=ajax',
-			message			= 'Are you sure you want to delete this page and all child pages?',
-			afterSend		= function ()
-								{
-									var current		= $(this).closest('li');
-									$('.page_tree_open_options').removeClass('page_tree_open_options');
-									if ( current.children('.fc_page_link').hasClass('fc_page_type_deleted') )
-									{
-										current.remove();
-									}
-									else
-									{
-										current.find('.fc_page_tree_quick_changes').addClass('hidden');
-										current.find('.fc_page_tree_restore').removeClass('hidden');
-										current.children('.fc_page_tree_options_parent').fadeOut(300);
-										current.find('.fc_page_link').addClass('fc_page_type_deleted');
-									}
-								};
-		dialog_confirm(message,link,false,afterSend,current);
+			current_form	= current.closest('form'),
+			current_pT		= $('.page_tree_open_options'),
+			dates	= {
+				'page_id':			current_pT.children('input[name=pageid]').val(),
+				'leptoken':			getToken()
+			};
+		$.ajax(
+		{
+			context:	current_pT,
+			type:		'POST',
+			url:		ADMIN_URL + '/pages/ajax_delete_page.php',
+			dataType:	'json',
+			data:		dates,
+			cache:		false,
+			beforeSend:	function( data )
+			{
+				data.process	= set_activity( 'Deleting page' );
+			},
+			success:	function( data, textStatus, jqXHR  )
+			{
+				if ( data.success === true )
+				{
+					$('#fc_add_page input[type=reset]').click();
+
+					return_success( jqXHR.process , data.message );
+
+					var current		= $(this);
+					if ( data.status == 0 )
+					{
+						current.remove();
+					}
+					else {
+						current.children('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove')
+					}
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			},
+			error:		function(jqXHR, textStatus, errorThrown)
+			{
+				alert(textStatus + ': ' + errorThrown );
+			}
+		});
 	});
 
 	$('.fc_page_tree_restore_page').click( function ()
@@ -626,7 +651,6 @@ jQuery(document).ready(function()
 									current.find('.fc_page_tree_quick_changes').removeClass('hidden');
 									current.find('.fc_page_tree_restore').addClass('hidden');
 									current.children('.fc_page_tree_options_parent').fadeOut(300);
-									current.find('.fc_page_link').removeClass('fc_page_type_deleted');
 								};
 		dialog_ajax( link, dates, false, afterSend, current, 'POST' );
 	});

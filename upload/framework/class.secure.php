@@ -90,7 +90,7 @@ if (! defined ( 'LEPTON_PATH' ))
 			//////////////////////////////////////////
 
 			// Dwoo
-			$admin_dir.'/login/index_ajax.php',
+			$admin_dir.'/login/ajax_index.php',
 			//////////////////////////////////////////
 
 			$admin_dir.'/login/forgot/index.php',
@@ -123,7 +123,7 @@ if (! defined ( 'LEPTON_PATH' ))
 			//////////////////////////////////////////
 
 			$admin_dir.'/pages/add.php',
-			$admin_dir.'/pages/delete.php',
+			$admin_dir.'/pages/ajax_delete_page.php',
 			$admin_dir.'/pages/empty_trash.php',
 			$admin_dir.'/pages/index.php',
 

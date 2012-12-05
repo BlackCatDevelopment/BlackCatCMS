@@ -42,7 +42,7 @@ require_once(LEPTON_PATH.'/framework/class.wb.php');
 // Include PHPLIB template class
 require_once(LEPTON_PATH."/include/phplib/template.inc");
 
-// Get WB version
+// Get LEPTON version
 require_once(ADMIN_PATH.'/interface/version.php');
 
 // Include EditArea wrapper functions

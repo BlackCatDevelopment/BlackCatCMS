@@ -52,17 +52,6 @@
 .fc_page_link.fc_page_intro > a {
 	color:		#282a2e;
 }
-
-.fc_page_type_deleted > a {
-}
-.fc_page_type_none > a {
-}
-.fc_page_type_hidden > a {
-}
-.fc_page_type_registered > a {
-}
-.fc_page_type_private > a {
-}
 .fc_toggle_tree {
 	position: relative;
 	z-index: 3;

@@ -5,10 +5,10 @@
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ * @author		  LEPTON Project
+ * @copyright	   2012, LEPTON Project
+ * @link			http://www.LEPTON-cms.org
+ * @license		 http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  * @version			$Id$
  *
@@ -16,182 +16,33 @@
 
 
 /*
- * In-Field Label jQuery Plugin
- * http://fuelyourcoding.com/scripts/infield.html
- *
- * Copyright (c) 2009 Doug Neiner
- * Dual licensed under the MIT and GPL licenses.
- * Uses the same license as jQuery, see:
- * http://docs.jquery.com/License
- *
- * @version 0.1
- */
-(function($){
-	$.InFieldLabels = function(label,field, options){
-		// To avoid scope issues, use 'base' instead of 'this'
-		// to reference this class from internal events and functions.
-		var base = this;
-		
-		// Access to jQuery and DOM versions of each element
-		base.$label = $(label);
-		base.label = label;
+ In-Field Label jQuery Plugin
+ http://fuelyourcoding.com/scripts/infield.html
 
- 		base.$field = $(field);
-		base.field = field;
-		
-		base.$label.data("InFieldLabels", base);
-		base.showing = true;
-		
-		base.init = function(){
-			// Merge supplied options with default options
-			base.options = $.extend({},$.InFieldLabels.defaultOptions, options);
+ Copyright (c) 2009 Doug Neiner
+ Dual licensed under the MIT and GPL licenses.
+ Uses the same license as jQuery, see:
+ http://docs.jquery.com/License
 
-			// Check if the field is already filled in
-			if(base.$field.val() != ""){
-				base.$label.hide();
-				base.showing = false;
-			};
-			
-			base.$field.focus(function(){
-				base.fadeOnFocus();
-			}).blur(function(){
-				base.checkForEmpty(true);
-			}).bind('keydown.infieldlabel',function(e){
-				// Use of a namespace (.infieldlabel) allows us to
-				// unbind just this method later
-				base.hideOnChange(e);
-			}).change(function(e){
-				base.checkForEmpty();
-			}).bind('onPropertyChange', function(){
-				base.checkForEmpty();
-			});
-		};
-
-		// If the label is currently showing
-		// then fade it down to the amount
-		// specified in the settings
-		base.fadeOnFocus = function(){
-			if(base.showing){
-				base.setOpacity(base.options.fadeOpacity);
-			};
-		};
-		
-		base.setOpacity = function(opacity){
-			base.$label.stop().animate({ opacity: opacity }, base.options.fadeDuration);
-			base.showing = (opacity > 0.0);
-		};
-		
-		// Checks for empty as a fail safe
-		// set blur to true when passing from
-		// the blur event
-		base.checkForEmpty = function(blur){
-			if(base.$field.val() == ""){
-				base.prepForShow();
-				base.setOpacity( blur ? 1.0 : base.options.fadeOpacity );
-			} else {
-				base.setOpacity(0.0);
-			};
-		};
-		
-		base.prepForShow = function(e){
-			if(!base.showing) {
-				// Prepare for a animate in...
-				base.$label.css({opacity: 0.0}).show();
-				
-				// Reattach the keydown event
-				base.$field.bind('keydown.infieldlabel',function(e){
-					base.hideOnChange(e);
-				});
-			};
-		};
-
-		base.hideOnChange = function(e){
-			if(
-				(e.keyCode == 16) || // Skip Shift
-				(e.keyCode == 9) // Skip Tab
-			  ) return; 
-			
-			if(base.showing){
-				base.$label.hide();
-				base.showing = false;
-			};
-			
-			// Remove keydown event to save on CPU processing
-			base.$field.unbind('keydown.infieldlabel');
-		};
-  	
-		// Run the initialization method
-		base.init();
-	};
-	
-	$.InFieldLabels.defaultOptions = {
-		fadeOpacity: 0.5, // Once a field has focus, how transparent should the label be
-		fadeDuration: 300 // How long should it take to animate from 1.0 opacity to the fadeOpacity
-	};
-	
-
-	$.fn.inFieldLabels = function(options){
-		return this.each(function(){
-			// Find input or textarea based on for= attribute
-			// The for attribute on the label must contain the ID
-			// of the input or textarea element
-			var for_attr = $(this).attr('for');
-			if( !for_attr ) return; // Nothing to attach, since the for field wasn't used
-			
-			
-			// Find the referenced input or textarea element
-			var $field = $(
-				"input#" + for_attr + "[type='text']," + 
-				"input#" + for_attr + "[type='password']," + 
-				"textarea#" + for_attr
-				);
-				
-			if( $field.length == 0) return; // Again, nothing to attach
-			
-			// Only create object for input[text], input[password], or textarea
-			(new $.InFieldLabels(this, $field[0], options));
-		});
-	};
-	
-})(jQuery);
-
-function dialog_ajax(link,dates,beforeSend,afterSend){
-	$.ajax({
-		type: 'GET',
-		url: link,
-		dataType: 'html',
-		data: dates,
-		beforeSend: function(data)
-		{
-			if ( typeof(beforeSend) != 'undefined' && beforeSend != false )
-			{
-				beforeSend.call(this);
-			}
-		},
-		success: function(data)
-		{
-			//$('.popup').html($(data).find('#main_content').parent().html());
-		},
-		error: function(data)
-		{
-			return_error(data);
-		}
-	});
-}
+*/
+(function(d){d.InFieldLabels=function(e,b,f){var a=this;a.$label=d(e);a.label=e;a.$field=d(b);a.field=b;a.$label.data("InFieldLabels",a);a.showing=true;a.init=function(){a.options=d.extend({},d.InFieldLabels.defaultOptions,f);if(a.$field.val()!==""){a.$label.hide();a.showing=false}a.$field.focus(function(){a.fadeOnFocus()}).blur(function(){a.checkForEmpty(true)}).bind("keydown.infieldlabel",function(c){a.hideOnChange(c)}).bind("paste",function(){a.setOpacity(0)}).change(function(){a.checkForEmpty()}).bind("onPropertyChange",
+function(){a.checkForEmpty()})};a.fadeOnFocus=function(){a.showing&&a.setOpacity(a.options.fadeOpacity)};a.setOpacity=function(c){a.$label.stop().animate({opacity:c},a.options.fadeDuration);a.showing=c>0};a.checkForEmpty=function(c){if(a.$field.val()===""){a.prepForShow();a.setOpacity(c?1:a.options.fadeOpacity)}else a.setOpacity(0)};a.prepForShow=function(){if(!a.showing){a.$label.css({opacity:0}).show();a.$field.bind("keydown.infieldlabel",function(c){a.hideOnChange(c)})}};a.hideOnChange=function(c){if(!(c.keyCode===
+16||c.keyCode===9)){if(a.showing){a.$label.hide();a.showing=false}a.$field.unbind("keydown.infieldlabel")}};a.init()};d.InFieldLabels.defaultOptions={fadeOpacity:0.5,fadeDuration:300};d.fn.inFieldLabels=function(e){return this.each(function(){var b=d(this).attr("for");if(b){b=d("input#"+b+"[type='text'],input#"+b+"[type='search'],input#"+b+"[type='tel'],input#"+b+"[type='url'],input#"+b+"[type='email'],input#"+b+"[type='password'],textarea#"+b);b.length!==0&&new d.InFieldLabels(this,b[0],e)}})}})(jQuery);
 
 jQuery(document).ready(function(){
 
 	$('label').inFieldLabels();
 
-	$('.loader').addClass('hidden').fadeOut(0);
+	$('.fc_loader').addClass('hidden').fadeOut(0);
 
 	setTimeout(function()
 	{
 		$('#fc_login_username').focus();
 	}, 10);
 
-	$('#fc_forms').slideUp(0);
-	$('#fc_forms').slideDown(300);
+	$('#fc_forms').show();
+	$('#fc_login_form').slideUp(0);
+	$('#fc_login_form').slideDown(300);
 
 	$('.fc_img_no_save').fadeOut(5000, function()
 	{
@@ -222,99 +73,104 @@ jQuery(document).ready(function(){
 		}
 	});
 
-	$('.ajaxLogin').submit( function()
-	{
-		var current					= $(this),
-			username_fieldname		= current.find('input[name=username_fieldname]').val(),
-			password_fieldname		= current.find('input[name=password_fieldname]').val(),
-			user					= current.find('input[name=' + username_fieldname + ']').val(),
-			password				= current.find('input[name=' + password_fieldname + ']').val(),
-			dates					= 'username_fieldname=' + username_fieldname + '&password_fieldname=' + password_fieldname + '&' + username_fieldname + '=' + user + '&' + password_fieldname + '=' + password,
-			link					= ADMIN_URL + '/login/index_ajax.php';
-			current.find('button').fadeOut(0);
-			current.find('.loader').fadeIn(0).removeClass('hidden');
 
-		if ( password != '' )
+	$('.fc_login_button').click( function(e)
+	{
+		e.preventDefault();
+
+		var current				= $(this),
+			current_form		= current.closest('form'),
+			username_fieldname	= current_form.find('input[name=username_fieldname]').val(),
+			password_fieldname	= current_form.find('input[name=password_fieldname]').val(),
+			dates				= {
+				'username_fieldname':	username_fieldname,
+				'password_fieldname':	password_fieldname
+			};
+			dates[username_fieldname]	= current_form.find('input[name=' + username_fieldname + ']').val();
+			dates[password_fieldname]	= current_form.find('input[name=' + password_fieldname + ']').val();
+
+		if ( dates.password != '' &&  dates.user != '' )
 		{
-			// Formular abschicken
 			$.ajax(
 			{
 				type:		'POST',
-				url:		link,
-				data:		dates,
+				context:	current,
+				url:		ADMIN_URL + '/login/ajax_index.php',
 				dataType:	'json',
-				async:		false,
-				beforeSend:	function(data)
+				data:		dates,
+				cache:		false,
+				beforeSend:	function( data )
 				{
-					$('.loader').removeClass('hidden').fadeIn(0);
-					$('#fc_message').slideUp(0);
+					current.fadeOut(0);
+					current_form.find('.fc_loader').fadeIn(0).removeClass('hidden');
+					$('#fc_message, #fc_message_login').slideUp(0);
 				},
-				success:	function(data)
+				success:	function( data, textStatus, jqXHR  )
 				{
-					$('.loader').fadeOut(300).addClass('hidden');
-					if ( data.lepToken == false )
+					$('.fc_loader').fadeOut(0).addClass('hidden');
+					$(this).fadeIn(0);
+					if ( data.success === true )
 					{
-						$('#fc_forms').effect( 'shake', { times: 3 }, 80);
-						data = 'Something went wrong!';
-						$('#fc_message').html(data).slideDown(300);
+						window.location		= data.url + '?leptoken=' + data.lepToken;
+					}
+					else {
+						$('#fc_forms').effect( 'shake', { times: 2 }, 400);
+						$('#fc_message_login').addClass('icon-warning highlight').removeClass('icon-info').text(' ' + data.message).slideDown(300);
 						$('input[name=' + password_fieldname + ']').val('').focus();
-						current.find('.loader').fadeOut(0).addClass('hidden');
-						current.find('button').fadeIn(0);
-					}
-					else
-					{
-						window.location		= ADMIN_URL + '/start/index.php?leptoken=' + data.lepToken;
 					}
 				},
-				error:		function(data)
+				error:		function(jqXHR, textStatus, errorThrown)
 				{
-					$('.loader').fadeOut(300).addClass('hidden');
-					$('#fc_message').html('Something went wrong!').slideDown(300);
+					$('.fc_loader').fadeOut(300).addClass('hidden');
+					$(this).fadeIn(0);
+					alert(textStatus + ': ' + errorThrown );
 				}
 			});
 		}
-		return false;
 	});
 
-	$('.ajaxForm').submit( function()
+	$('.fc_forgot_button').click( function(e)
 	{
-		var current = $(this);
+		e.preventDefault();
 
-		dates		= 'email='+$('#fc_forgot').val();
-		link		= ADMIN_URL+'/login/forgot/index.php';
-		if ( dates != 'email=' )
+		var current	= $(this).closest('form');
+		dates			= {
+			'email':		$('#fc_forgot').val()
+		};
+		if ( dates.email != '' )
 		{
-			// Formular abschicken
-			$.ajax({
+			$.ajax(
+			{
 				type:		'POST',
-				url:		link,
+				url:		ADMIN_URL + '/login/forgot/index.php',
+				dataType:	'json',
 				data:		dates,
-				dataType:	'html',
-			
-				beforeSend:	function(data)
+				cache:		false,
+				beforeSend:	function( data )
 				{
-					$('.loader').removeClass('hidden').fadeIn(0);
-					$('#fc_message').slideUp(0);
+					$('.fc_loader').removeClass('hidden').fadeIn(0);
+					$('#fc_message, #fc_message_login').slideUp(0);
 				},
-			
-				success:	function(data)
+				success:	function( data, textStatus, jqXHR  )
 				{
-					$('.loader').fadeOut(300).addClass('hidden');
-
-					if ( data == '' )
+					$('.fc_loader').fadeOut(300).addClass('hidden');
+			
+					if ( data.success === true )
 					{
-						data = 'Something went wrong!';
+						$('#fc_message').removeClass('icon-warning highlight').addClass('icon-info').text( ' ' + data.message).slideDown(300);
 					}
-					$('#fc_message').html(data).slideDown(300);
+					else {
+						$('#fc_forms').effect( 'shake', { times: 2 }, 300);
+						$('#fc_message').addClass('icon-warning highlight').removeClass('icon-info').text(' ' + data.message).slideDown(300);
+						$('#fc_forgot').focus();
+					}
 				},
-
-				error:		function(data)
+				error:		function(jqXHR, textStatus, errorThrown)
 				{
-					$('.loader').fadeOut(300).addClass('hidden');
-					$('#fc_message').html('Something went wrong!').slideDown(300);
+					$('.fc_loader').fadeOut(300).addClass('hidden');
+					alert(textStatus + ': ' + errorThrown );
 				}
 			});
 		}
-		return false;
 	});
 });

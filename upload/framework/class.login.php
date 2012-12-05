@@ -41,7 +41,8 @@ define('LOGIN_CLASS_LOADED', true);
 
 // Load the other required class files if they are not already loaded
 require_once(LEPTON_PATH."/framework/class.admin.php");
-// Get WB version
+
+// Get LEPTON version
 require_once(ADMIN_PATH.'/interface/version.php');
 
 class login extends admin {
@@ -64,6 +65,7 @@ class login extends admin {
 		$this->forgotten_details_app	= $config_array['FORGOTTEN_DETAILS_APP'];
 		$this->max_username_len			= $config_array['MAX_USERNAME_LEN'];
 		$this->max_password_len			= $config_array['MAX_PASSWORD_LEN'];
+		$this->output					= $config_array['OUTPUT'];
 
 		// Get the supplied username and password
 		if ( $this->get_post('username_fieldname') != '' )
@@ -272,9 +274,12 @@ class login extends admin {
 		}
 		else
 		{
-			$_SESSION['ATTEMPS'] = $this->get_session('ATTEMPS')+1;
+			$_SESSION['ATTEMPS'] = $this->get_session('ATTEMPS') + 1;
 		}
-		$this->display_login();
+		if ( $this->output )
+		{
+			$this->display_login();
+		}
 	}
 	
 	// ============================ 
@@ -372,53 +377,6 @@ class login extends admin {
 					// ! Parse the site   
 					// ==================== 
 					$parser->output('login.lte', $data_dwoo);
-				}
-				/**
-				 * Marked as deprecated
-				 * This is only for the old TE and will be removed in future versions
-				*/
-				else
-				{
-					require_once(LEPTON_PATH.'/include/phplib/template.inc');
-					$template = new Template($this->template_dir);
-					$template->set_file('page', $this->template_file);
-					$template->set_block('page', 'mainBlock', 'main');
-					
-					$template->set_var(array(
-							'ACTION_URL' => $this->login_url,
-							'ATTEMPS' => $this->get_session('ATTEMPS'),
-							'USERNAME' => $this->username,
-							'USERNAME_FIELDNAME' => $this->username_fieldname,
-							'PASSWORD_FIELDNAME' => $this->password_fieldname,
-							'MESSAGE' => $this->message,
-							'INTERFACE_DIR_URL' =>  ADMIN_URL.'/interface',
-							'MAX_USERNAME_LEN' => $this->max_username_len,
-							'MAX_PASSWORD_LEN' => $this->max_password_len,
-							'LEPTON_URL' => LEPTON_URL,
-							'THEME_URL' => THEME_URL,
-							'VERSION' => VERSION,
-							/**
-							 *	marked as deprecated
-							 */
-							# 'REVISION' => REVISION,
-							'LANGUAGE' => strtolower(LANGUAGE),
-							'FORGOTTEN_DETAILS_APP' => $this->forgotten_details_app,
-							'TEXT_FORGOTTEN_DETAILS' => $TEXT['FORGOTTEN_DETAILS'],
-							'TEXT_USERNAME' => $TEXT['USERNAME'],
-							'TEXT_PASSWORD' => $TEXT['PASSWORD'],
-							'TEXT_LOGIN' => $MENU['LOGIN'],
-							'TEXT_HOME' => $TEXT['HOME'],
-							'PAGES_DIRECTORY' => PAGES_DIRECTORY,
-							'SECTION_LOGIN' => $MENU['LOGIN']
-							)
-					);
-					
-					$charset = (defined('DEFAULT_CHARSET')) ? DEFAULT_CHARSET : "utf-8";
-					
-					$template->set_var('CHARSET', $charset);	
-											
-					$template->parse('main', 'mainBlock', false);
-					$template->pparse('output', 'page');
 				}
 			}
 			// If the script couldn't include the info.php, print an error message

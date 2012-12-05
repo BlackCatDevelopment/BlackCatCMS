@@ -13,7 +13,6 @@
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
- *
  */
  
 // include class.secure.php to protect this file and the whole CMS!
@@ -36,58 +35,92 @@ if (defined('LEPTON_PATH')) {
 // end include class.secure.php
 
 require_once(LEPTON_PATH . '/framework/class.admin.php');
-$admin = new admin('Pages', 'pages_delete');
+$admin = new admin('Pages', 'pages_delete', false);
 
-$page_id		= $admin->get_get('page_id');
+header('Content-type: application/json');
+
+// Get perms
+if ( !$admin->get_permission('pages_delete') )
+{
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('You do not have the permission to delete a page.'),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
+}
+
+// Include the LEPTON functions file
+require_once(LEPTON_PATH . '/framework/functions.php');
+
+$page_id		= $admin->get_post('page_id');
 
 // Get page id
 if ( $page_id == '' || !is_numeric($page_id) )
 {
-	header("Location: index.php");
-	exit(0);
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('You send an invalid value'),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 
-// Include the WB functions file
-require_once(LEPTON_PATH . '/framework/functions.php');
-
-// Get perms
-if ( !$admin->get_page_permission($page_id,'admin') )
+if ( !$admin->get_page_permission( $page_id, 'admin' ) )
 {
-	$admin->print_error('You do not have permissions to modify this page');
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('You do not have permissions to modify this page'),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 
 // Find out more about the page
-$results = $database->query("SELECT * FROM " . TABLE_PREFIX . "pages WHERE page_id = '$page_id'");
+$results	= $database->query("SELECT * FROM " . TABLE_PREFIX . "pages WHERE page_id = '$page_id'");
 if ( $database->is_error() )
 {
-	$admin->print_error($database->get_error());
+	$ajax	= array(
+		'message'	=> $database->get_error(),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 if ( $results->numRows() == 0 )
 {
-	$admin->print_error('Page not found');
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('Page not found'),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 
-$results_array = $results->fetchRow();
-
-$visibility = $results_array['visibility'];
+$results_array	= $results->fetchRow();
+$visibility		= $results_array['visibility'];
 
 // Check if we should delete it or just set the visibility to 'deleted'
-if ( PAGE_TRASH != 'disabled' AND $visibility != 'deleted')
+if ( PAGE_TRASH != 'disabled' && $visibility != 'deleted' )
 {
+	$ajax_status	= 1;
 	// Page trash is enabled and page has not yet been deleted
 	// Function to change all child pages visibility to deleted
-	function trash_subs($parent = 0) {
+	function trash_subs($parent = 0)
+	{
 		global $database;
 		// Query pages
-		$query_menu = $database->query("SELECT page_id FROM " . TABLE_PREFIX . "pages WHERE parent = '$parent' ORDER BY position ASC");
+		$query_menu	= $database->query("SELECT page_id FROM " . TABLE_PREFIX . "pages WHERE parent = '$parent' ORDER BY position ASC");
 		// Check if there are any pages to show
-		if($query_menu->numRows() > 0) {
+		if($query_menu->numRows() > 0)
+		{
 			// Loop through pages
-			while($page = $query_menu->fetchRow()) {
+			while($page = $query_menu->fetchRow())
+			{
 				// Update the page visibility to 'deleted'
 				$database->query("UPDATE " . TABLE_PREFIX . "pages SET visibility = 'deleted' WHERE page_id = '".$page['page_id']."' LIMIT 1");
 				// Run this function again for all sub-pages
-				trash_subs($page['page_id']);
+				trash_subs( $page['page_id'] );
 			}
 		}
 	}
@@ -96,13 +129,15 @@ if ( PAGE_TRASH != 'disabled' AND $visibility != 'deleted')
 	$database->query("UPDATE " . TABLE_PREFIX . "pages SET visibility = 'deleted' WHERE page_id = '$page_id.' LIMIT 1");
 	
 	// Run trash subs for this page
-	trash_subs($page_id);
+	trash_subs( $page_id );
 } else {
+	$ajax_status	= 0;
 	// Really dump the page
 	// Delete page subs
 	$sub_pages = get_subs($page_id, array());
-	foreach($sub_pages AS $sub_page_id) {
-		delete_page($sub_page_id);
+	foreach($sub_pages AS $sub_page_id)
+	{
+		delete_page( $sub_page_id );
 	}
 	// Delete page
 	delete_page($page_id);
@@ -111,11 +146,22 @@ if ( PAGE_TRASH != 'disabled' AND $visibility != 'deleted')
 // Check if there is a db error, otherwise say successful
 if ( $database->is_error() )
 {
-	$admin->print_error($database->get_error());
+	$ajax	= array(
+		'message'	=> $database->get_error(),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 else
 {
-	$admin->print_success('Page deleted successfully');
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('Page deleted successfully'),
+		'status'	=> $ajax_status,
+		'success'	=> true
+	);
+	print json_encode( $ajax );
+	exit();
 }
-
+exit();
 ?>

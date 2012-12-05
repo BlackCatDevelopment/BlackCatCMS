@@ -48,10 +48,10 @@
 					<dd class="fc_search_SectionName">{$section.name}</dd>
 					{/foreach}
 				</dl>
-				<div class="fc_page_link fc_page_type_{$page.visibility}{if !$page.editable} fc_page_tree_not_editable{/if}">
+				<div class="fc_page_link {if !$page.editable} fc_page_tree_not_editable{/if}">
 					{if $page.is_parent}<span class="fc_toggle_tree">+</span>{/if}
 					<a href="{if !$page.editable}#{else}{$ADMIN_URL}/pages/modify.php?page_id={$page.page_id}{/if}" title="{translate('Page title')}: {$page.page_title}"{if $page.page_id == $page_id} class="fc_gradient3"{/if}>
-						<span class="fc_page_tree_menu_title icon-{if $page.visibility == 'public'}screen{elseif $page.visibility == 'private'}key{elseif $page.visibility == 'registered'}users{elseif $page.visibility == 'hidden'}eye-blocked{else}screen-2{/if}"> {$page.menu_title}</span> <span class="fc_page_tree_menu_ID">(ID: {$page.page_id})</span>
+						<span class="fc_page_tree_menu_title icon-{if $page.visibility == 'public'}screen{elseif $page.visibility == 'private'}key{elseif $page.visibility == 'registered'}users{elseif $page.visibility == 'hidden'}eye-blockeds{elseif $page.visibility == 'deleted'}remove{else}screen-2{/if}"> {$page.menu_title}</span> <span class="fc_page_tree_menu_ID">(ID: {$page.page_id})</span>
 					</a>
 					<span class="fc_page_tree_options_open fc_pages_tree_options_button icon-tools fc_gradient1 fc_gradient_hover"></span>
 				</div>

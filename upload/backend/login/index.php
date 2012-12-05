@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('LEPTON_PATH')) {	
+	include(LEPTON_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -37,7 +37,7 @@ if (defined('WB_PATH')) {
 
 
 
-require_once(WB_PATH."/framework/class.login.php");
+require_once(LEPTON_PATH . "/framework/class.login.php");
 
 $salt = md5(microtime());
 // ================================================ 
@@ -49,7 +49,7 @@ $password_fieldname		= 'password_'.substr($salt, -7);
 $thisApp = new Login(
 	array(
 	'MAX_ATTEMPTS'			=> MAX_ATTEMPTS,
-	'WARNING_URL'			=> THEME_URL.'/templates/warning.html',
+	'WARNING_URL'			=> THEME_URL . '/templates/warning.html',
 	'USERNAME_FIELDNAME'	=> $username_fieldname,
 	'PASSWORD_FIELDNAME'	=> $password_fieldname,
 	'MIN_USERNAME_LEN'		=> AUTH_MIN_LOGIN_LENGTH,
@@ -61,11 +61,13 @@ $thisApp = new Login(
 	'TEMPLATE_DIR'			=> THEME_PATH.'/templates',
 	'TEMPLATE_FILE'			=> 'login.lte',
 	'FRONTEND'				=> false,
-	'REDIRECT_URL'			=> ADMIN_URL.'/start/index.php',
-	'FORGOTTEN_DETAILS_APP'	=> ADMIN_URL.'/login/forgot/index.php',
-	'USERS_TABLE'			=> TABLE_PREFIX.'users',
-	'GROUPS_TABLE'			=> TABLE_PREFIX.'groups',
-	'PAGE_ID'				=> ''
+	'REDIRECT_URL'			=> ADMIN_URL . '/start/index.php',
+	'FORGOTTEN_DETAILS_APP'	=> ADMIN_URL . '/login/forgot/index.php',
+	'USERS_TABLE'			=> TABLE_PREFIX . 'users',
+	'GROUPS_TABLE'			=> TABLE_PREFIX . 'groups',
+	'OUTPUT'				=> true,
+	'PAGE_ID'				=> '',
+	true,
 	)
 );
 ?>

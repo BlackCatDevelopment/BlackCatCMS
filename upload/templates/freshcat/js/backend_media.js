@@ -144,7 +144,6 @@ function reload_folder( current_ul, folder_path, load_url )
 		{
 			var current_ul	= $(this);
 			current_ul.children('.fc_loader').remove();
-			alert(data.login);
 			if ( data.is_folder )
 			{
 				//var current_ul	= $('ul.fc_media_folder:last');
