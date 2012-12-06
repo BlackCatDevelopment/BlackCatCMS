@@ -65,20 +65,20 @@ function return_error( process_div, message )
 		process_div.remove();
 	});
 
-	// Check if .popup exists - if not add div.popup before #admin_header
-	if ( $('.popup').size() == 0 )
+	// Check if .fc_popup exists - if not add div.fc_popup before #admin_header
+	if ( $('.fc_popup').size() == 0 )
 	{
-		$('#fc_admin_header').prepend('<div class="popup" />');
+		$('#fc_admin_header').prepend('<div class="fc_popup" />');
 	}
 
 	// add error message to popup
-	$('.popup').html(message);
+	$('.fc_popup').html(message);
 
 	// get title for dialog
 	var title = set_popup_title();
 
 	// Activate dialog on popup
-	$('.popup').dialog(
+	$('.fc_popup').dialog(
 	{
 		modal:			true,
 		show:			'fade',
@@ -90,7 +90,7 @@ function return_error( process_div, message )
 				'text':		'Ok',
 				'click':	function()
 				{
-					$('.popup').dialog('destroy'); 
+					$('.fc_popup').dialog('destroy'); 
 				},
 				'class':	'submit'
 			}
@@ -130,7 +130,7 @@ function set_activity( title )
 		var title	= 'Loading';
 	}
 	// Add a div.process to #activity and store in a variable to use it later
-	var process		= $('<div class="fc_process fc_gradient1" />').appendTo('#fc_activity');
+	var process		= $('<div class="fc_process fc_gradient1 fc_border" />').appendTo('#fc_activity');
 
 	// initial hide the .process...
 	process.slideUp(0,function()
@@ -149,97 +149,94 @@ function set_popup_title()
 	// Set a default value
 	var title		= LEPTON_TEXT['DEFAULT_MESSAGE_TITLE'];
 
-	// Check if the .popup has a .popup_header
-	if ( $('.popup .popup_header').size() > 0 )
+	// Check if the .fc_popup has a .fc_popup_header
+	if ( $('.fc_popup .fc_popup_header').size() > 0 )
 	{
-		// Get the content (text) of the .popup_header and set title
-		var title	= $('.popup .popup_header').text();
+		// Get the content (text) of the .fc_popup_header and set title
+		var title	= $('.fc_popup .fc_popup_header').text();
 
 		// Remove Popup
-		$('.popup .popup_header').remove();
+		$('.fc_popup .fc_popup_header').remove();
 	}
 	return title;
 }
 
 // Function to show a confirm popup to confirm clicks, like delete page, user, groups etc.
 // you can optionally define a function that is called before (beforeSend) ajaxRequest and one that is called after (afterSend)
-function dialog_confirm( message, link, beforeSend, afterSend, jQcontext )
+function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSend, afterSend, ajaxjQcontext )
 {
-	// Check if .popup exists - if not add div.popup before #admin_header
-	if ( $('.popup').size()==0 )
+	// Check if .fc_popup exists - if not add div.fc_popup before #admin_header
+	if ( $('.fc_popup').size()==0 )
 	{
-		$('#fc_admin_header').prepend('<div class="popup" />');
+		$('#fc_admin_header').prepend('<div class="fc_popup" />');
 	}
 
-	if ( typeof jQcontext == 'undefined' )
-	{
-		jQcontext = 'document.body';
-	}
+	// Add message to .fc_popup to use function set_popup_title();
+	$('.fc_popup').html( message );
 
-	link	= link + '&leptoken=' + getToken();
-
-	// Add message to .popup to use function set_popup_title();
-	$('.popup').html(message);
-
-	// Get title for dialog
-	title = set_popup_title();
+	// check for all necessary values
+	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl == false					? alert( 'You send an invalid url' ) : ajaxUrl,
+		ajaxData		= typeof ajaxData == 'undefined' || ajaxData == false				? alert( 'No leptoken!' ) : ajaxData,
+		ajaxType		= typeof ajaxType == 'undefined' || ajaxType == false				? 'POST' : ajaxType,
+		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType == false		? 'JSON' : ajaxDataType,
+		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext == false		? $('document.body') : ajaxjQcontext;
+		title			= typeof title == 'undefined' || title == false						? set_popup_title() : title,
 
 	// Set the array for confirm-buttons
 	buttonsOpts = new Array();
 
+	if ( typeof ajaxData.leptoken == 'undefined' || ajaxData.leptoken == false )
+	{
+		ajaxData.leptoken	= getToken();
+	}
+
 	// define button for confirm dialog positive
 	buttonsOpts.push(
 	{
-		'text':		LEPTON_TEXT['YES'], 'click':  function()
+		'text':		'YES', 'click':  function()
 			{
 				$.ajax(
 				{
-					type:		'GET',
-					context:	jQcontext,
-					url:		link,
-					dataType:	'html',
+					type:		ajaxType,
+					context:	ajaxjQcontext,
+					url:		ajaxUrl,
+					dataType:	ajaxDataType,
+					data:		ajaxData,
+					cache:		false,
 					beforeSend:	function( data )
 					{
 						// Set activity and store in a variable to use it later
 						data.process	= set_activity( title );
 
-						// Hide .popup
-						$('.popup').dialog('destroy').remove();
+						// Hide .fc_popup
+						$('.fc_popup').dialog('destroy').remove();
 
 						// check if a function beforeSend is defined and call it if true
 						if ( typeof beforeSend != 'undefined' && beforeSend != false )
 						{
-							beforeSend.call(this);
+							beforeSend.call(this, data);
 						}
 					},
 					success:	function( data, textStatus, jqXHR )
 					{
-						return_success( jqXHR.process , data.message );
-
-						// Check if there is a div.success_box in returned data that implements that the request was completely successful
-						if ( $( data ).find('.fc_success_box').size() > 0 )
+						if ( data.success == true )
 						{
-							// Return success message --- process_div is the previously generated .process inside #activity
-							if ( typeof process_div != 'undefined' )
-							{
-								return_success( data, process_div );
-							}
+							// Check if there is a div.success_box in returned data that implements that the request was completely successful
+							return_success( jqXHR.process , data.message );
 							// check if a function afterSend is defined and call it if true
 							if ( typeof afterSend != 'undefined' && afterSend != false )
 							{
 								afterSend.call(this, data);
 							}
 						}
-						else if ( $( data ).find('.fc_error_box').size() > 0 )
-						{
+						else {
 							// return error
-							return_error( data, process_div );
+							return_error( jqXHR.process , data.message );
 						}
-						else return;
 					},
-					error:		function( data )
+					error:		function( data, textStatus, jqXHR )
 					{
-						return_error( data, process_div );
+						return_error( jqXHR.process , data.message );
 					}
 				});
 			},
@@ -251,21 +248,14 @@ function dialog_confirm( message, link, beforeSend, afterSend, jQcontext )
 	{
 		'text':		LEPTON_TEXT['NO'], 'click':  function()
 			{
-				$('.popup').dialog('destroy');
+				$('.fc_popup').dialog('destroy');
 			},
 		'class':	'reset'
 	});
 
 	// acitvate dialog on popup
-	$('.popup').dialog(
+	$('.fc_popup').dialog(
 	{
-		create: function(event, ui)
-		{
-			// Only some cosmetical style changes ;-)
-			$('.ui-widget-header').removeClass('ui-corner-all').addClass('ui-corner-top');
-		},
-		// Only some cosmetical style changes
-		dialogClass:	'ui-widget-shadow',
 		modal:			true,
 		show:			'fade',
 		closeOnEscape:	true,
@@ -295,8 +285,8 @@ function dialog_ajax( link, dates, beforeSend, afterSend, jQcontext, type )
 		data:		dates,
 		beforeSend:	function( data )
 		{
-			// deactive .popup before send data
-			$('.popup').dialog('destroy');
+			// deactive .fc_popup before send data
+			$('.fc_popup').dialog('destroy');
 
 			// Set activity and store in a variable to use it later
 			data.process	= set_activity( );
@@ -445,27 +435,19 @@ function searchUsers( searchTerm )
 
 // Marked as deprecated!
 
-function confirm_link ( message, link )
+function confirm_link ( message, url )
 {
 	var afterSend		= function()
 	{
 		location.reload(true);
 	}
-	dialog_confirm( message, link, false, afterSend, false );
+	dialog_confirm( message, false, url, false, 'GET', 'HTML', false, afterSend );
 
 }
 
 
 jQuery(document).ready( function()
 {
-	// Activate tagit for Keywords in the adding
-	$('#fc_addPage_keywords_ul').tagit(
-	{
-		allowSpaces:		true,
-		singleField:		true,
-		singleFieldNode:	$('#fc_addPage_keywords')
-	});
-
 	// Check if a cookie for sidebar is defined
 	if ( typeof $.cookie('sidebar') != 'undefined' )
 	{

@@ -65,8 +65,9 @@
 
 			
 			// Bind the delete button with ajax-send
-			element_item.find('.fc_list_remove').click(function()
+			element_item.find('.fc_list_remove').click( function(e)
 			{
+				e.preventDefault();
 				// find the current active list-item
 				var current_clicked		= $(this),
 					current_item		= current_clicked.closest('.fc_list_forms');
@@ -76,8 +77,12 @@
 					// get the id and the name of list-item
 					var user_id		= current_item.find('input[name=user_id]').val(),
 						user_name	= current_item.find('#fc_name_'+user_id).val(),
-						link		= ADMIN_URL + '/users/delete.php?user_id=' + user_id,
+						url			= ADMIN_URL + '/users/delete.php',
 						title		= LEPTON_TEXT["MANAGE_USERS"],
+						dates		= {
+							'user_id':		user_id,
+							'leptoken':		getToken()
+						},
 						message		= LEPTON_TEXT["USERS_CONFIRM_DELETE"]+':<br/><strong>' + user_name + '</strong>';
 				}
 				else if (current_clicked.hasClass('fc_group_remove') )
@@ -85,7 +90,11 @@
 					// get the id and the name of list-item
 					var user_id		= current_item.find('input[name=group_id]').val(),
 						user_name	= current_item.find('input[name=name]').val(),
-						link		= ADMIN_URL + '/groups/delete.php?group_id=' + user_id,
+						url			= ADMIN_URL + '/groups/delete.php',
+						dates		= {
+							'group_id':		user_id,
+							'leptoken':		getToken()
+						},
 						title		= LEPTON_TEXT["MANAGE_GROUPS"],
 						message		= LEPTON_TEXT["GROUPS_CONFIRM_DELETE"]+':<br/><strong>' + user_name + '</strong>';
 				}
@@ -95,7 +104,7 @@
 				}
 			
 				// Define function afterSend
-				var afterDelete = function()
+				var afterDelete	= function( data, textStatus, jqXHR )
 				{
 					var element				= $(this),
 						removeForm			= $('#' + element.attr('rel')),
@@ -121,7 +130,7 @@
 						options.fc_list_add.click();
 					}
 				}
-				dialog_confirm( '<div class="popup_header">'+title+'</div><div class="popup_content">'+message+'</div>', link, false, afterDelete, element);
+				dialog_confirm( message, title, url, dates, 'GET', 'HTML', false, afterDelete, element );
 			});
 		});
 	}

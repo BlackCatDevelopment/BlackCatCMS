@@ -88,6 +88,7 @@
 					link			= ADMIN_URL + '/pages/ajax_page_settings.php';
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
 				current_button.closest('li').addClass('page_tree_open_options');
+				$('#fc_addPage_keywords_ul').remove();
 				$.ajax(
 				{
 					type:		'GET',
@@ -164,7 +165,19 @@
 								current.attr('checked',true);
 							}
 						});
-			
+						// Activate tagit for Keywords in the adding
+						$('#fc_addPage_keywords_ul').remove();
+						$('<ul id="fc_addPage_keywords_ul" />').insertBefore( $('#fc_addPage_keywords') ).tagit(
+						{
+							allowSpaces:			true,
+							singleField:			true,
+							singleFieldDelimiter:	',',
+							singleFieldNode:		$('#fc_addPage_keywords'),
+							beforeTagAdded:			function(event, ui)
+							{
+								ui.tag.addClass('icon-tag');
+							}
+						});
 					},
 					error:		function(jqXHR, textStatus, errorThrown)
 					{
@@ -418,6 +431,21 @@ jQuery(document).ready(function()
 		form.find('.fc_addPageOnly').show();
 		form.find('.fc_changePageOnly').hide();
 		form.animate({width: 'toggle'});
+		
+		// Activate tagit for Keywords in the adding
+		$('#fc_addPage_keywords_ul').remove();
+		$('#fc_addPage_keywords').val('');
+		$('<ul id="fc_addPage_keywords_ul" />').insertBefore( $('#fc_addPage_keywords') ).tagit(
+		{
+			allowSpaces:			true,
+			singleField:			true,
+			singleFieldDelimiter:	',',
+			singleFieldNode:		$('#fc_addPage_keywords'),
+			beforeTagAdded:			function(event, ui)
+			{
+				ui.tag.addClass('icon-tag');
+			}
+		});
 	});
 
 	$('.fc_side_add').click( function()
@@ -600,45 +628,21 @@ jQuery(document).ready(function()
 			dates	= {
 				'page_id':			current_pT.children('input[name=pageid]').val(),
 				'leptoken':			getToken()
-			};
-		$.ajax(
-		{
-			context:	current_pT,
-			type:		'POST',
-			url:		ADMIN_URL + '/pages/ajax_delete_page.php',
-			dataType:	'json',
-			data:		dates,
-			cache:		false,
-			beforeSend:	function( data )
-			{
-				data.process	= set_activity( 'Deleting page' );
 			},
-			success:	function( data, textStatus, jqXHR  )
+			afterSend		= function( data, textStatus, jqXHR )
 			{
-				if ( data.success === true )
+				$('#fc_add_page input[type=reset]').click();
+				var current		= $(this);
+				if ( data.status == 0 )
 				{
-					$('#fc_add_page input[type=reset]').click();
-
-					return_success( jqXHR.process , data.message );
-
-					var current		= $(this);
-					if ( data.status == 0 )
-					{
-						current.remove();
-					}
-					else {
-						current.children('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove')
-					}
+					current.remove();
 				}
 				else {
-					return_error( jqXHR.process , data.message);
+					current.children('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove')
 				}
-			},
-			error:		function(jqXHR, textStatus, errorThrown)
-			{
-				alert(textStatus + ': ' + errorThrown );
-			}
-		});
+			};
+
+		dialog_confirm( 'You really want to delete?!?', 'Removing page', ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
 
 	$('.fc_page_tree_restore_page').click( function ()

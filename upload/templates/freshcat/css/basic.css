@@ -192,7 +192,7 @@ label {
 	background-repeat: repeat-x;
 	opacity: 1;
 }
-.popup {
+.fc_popup {
 	display: none;
 }
 
@@ -482,6 +482,10 @@ input[type=submit].fc_gradient_red:hover,
 .page_tree_open_options > .fc_page_link > a {
 	border-top:		1px solid white;
 	border-bottom:	1px solid #9da8b2;
+}
+.fc_gradient_blue.fc_border, .fc_active.fc_border {
+	border-top:		1px solid #5aa2da;
+	border-bottom:	1px solid #5aa2da;
 }
 
 .fc_border_all_light {

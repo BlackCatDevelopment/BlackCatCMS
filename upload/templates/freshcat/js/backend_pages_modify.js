@@ -46,13 +46,6 @@ jQuery(document).ready(function()
 	//	If you want to have all sections hidden on startup activate following row
 	// $('.module_block').removeClass('active').find('.blocks_content').slideUp(0);
 
-	// Activate tagit for Keywords
-	$('#fc_keywords').tagit(
-	{
-		allowSpaces:		true,
-		singleField:		true,
-		singleFieldNode:	$('input[name=keywords]')
-	});
 
 	// activate sortable function for sections
 	$( "#fc_all_blocks" ).sortable({

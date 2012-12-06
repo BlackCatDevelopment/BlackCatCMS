@@ -66,9 +66,7 @@
 }
 
 	#fc_activity > div {
-		padding:			10px;
-		border-top:		1px solid #9da8b2;
-		border-bottom:	1px solid #9e9e9e;
+		padding:			1em 0.5em;
 	}
 
 #fc_add_page {
@@ -90,13 +88,13 @@
 		padding:		1.4em 10px 0px 10px;
 		text-align: 	center;
 	}
-	#fc_add_page_ul li {
+	#fc_add_page_ul > li {
 		display:	none;
 	}
-	#fc_add_page_ul li.fc_active {
+	#fc_add_page_ul > li.fc_active {
 		display:	list-item;
 	}
-	#fc_add_page li {
+	#fc_add_page_nav > li, #fc_add_page_ul > li {
 		margin:			0px;
 		padding:		0px;
 	}

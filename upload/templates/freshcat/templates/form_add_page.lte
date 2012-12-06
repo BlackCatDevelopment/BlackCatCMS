@@ -78,8 +78,7 @@
 			<label for="fc_addPage_description">{translate('Description')}:</label>
 			<textarea name="description" id="fc_addPage_description" rows="10" cols="1" ></textarea>
 
-			<label>{translate('Keywords')}:</label>
-			<ul id="fc_addPage_keywords_ul"><li></li></ul>
+			<label for="fc_addPage_keywords">{translate('Keywords')}:</label>
 			<input name="keywords" type="hidden" id="fc_addPage_keywords" value="" />
 		</li>
 	
