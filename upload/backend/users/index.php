@@ -1,24 +1,24 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of LEPTON2 Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ * @author			LEPTON2 Project
+ * @copyright		2012, LEPTON2 Project
+ * @link			http://lepton2.org
+ * @license			http://www.gnu.org/licenses/gpl.html
+ * @license_terms	please see LICENSE and COPYING files in your package
  *
  *
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('LEPTON_PATH')) {
+	include(LEPTON_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,10 +35,10 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-require_once(WB_PATH.'/framework/class.admin.php');
+require_once(LEPTON_PATH.'/framework/class.admin.php');
 $admin = new admin('Access', 'users');
 
-require_once(WB_PATH.'/framework/functions.php');
+require_once(LEPTON_PATH.'/framework/functions.php');
 
 // =========================================================================== 
 // ! Create the controller, it is reusable and can render multiple templates 	
@@ -132,7 +132,7 @@ $data_dwoo['NEWUSERHINT']					= preg_split('/, /',sprintf($TEXT['NEW_USER_HINT']
 // ============================ 
 // ! Add groups to $data_dwoo   
 // ============================ 
-require_once(WB_PATH . '/framework/class.pages.php');
+require_once(LEPTON_PATH . '/framework/class.pages.php');
 $pages = new pages();
 $data_dwoo['groups']						= $pages->get_groups();
 
@@ -142,10 +142,10 @@ $data_dwoo['groups']						= $pages->get_groups();
 $data_dwoo['is_admin']						= in_array(1, $admin->get_groups_id()) ? true : false;
 
 // Add media folders to home folder list
-foreach ( directory_list(WB_PATH.MEDIA_DIRECTORY) as $index => $name )
+foreach ( directory_list(LEPTON_PATH.MEDIA_DIRECTORY) as $index => $name )
 {
-	$data_dwoo['home_folders'][$index]['NAME']		= str_replace(WB_PATH, '', $name);
-	$data_dwoo['home_folders'][$index]['FOLDER']	= str_replace(WB_PATH.MEDIA_DIRECTORY, '', $name);
+	$data_dwoo['home_folders'][$index]['NAME']		= str_replace(LEPTON_PATH, '', $name);
+	$data_dwoo['home_folders'][$index]['FOLDER']	= str_replace(LEPTON_PATH.MEDIA_DIRECTORY, '', $name);
 }
 
 // ==================== 

@@ -497,7 +497,7 @@ jQuery(document).ready(function()
 					}
 					else
 					{
-						alert( data.message );
+						return_error( jqXHR.process , data.message);
 					}
 				},
 				error:		function( jqXHR, textStatus, errorThrown )
@@ -597,7 +597,6 @@ jQuery(document).ready(function()
 				else
 				{
 					return_error( jqXHR.process , data.message);
-					alert( data.message );
 				}
 			},
 			error:		function(jqXHR, textStatus, errorThrown)

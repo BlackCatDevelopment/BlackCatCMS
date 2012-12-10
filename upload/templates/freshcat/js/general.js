@@ -346,8 +346,10 @@ function dialog_ajax( link, dates, beforeSend, afterSend, jQcontext, type )
 function dialog_form( currentForm, beforeSend, afterSend )
 {
 	// If form is submitted
-	currentForm.submit(function()
+	currentForm.submit(function(e)
 	{
+		// Prevent form from being send twice!
+		e.preventDefault();
 		// Define ajax for form
 		currentForm.ajaxSubmit(
 		{
@@ -366,7 +368,9 @@ function dialog_form( currentForm, beforeSend, afterSend )
 				data.process	= set_activity( title );
 
 				// Destroy dialog to hide the 
-				currentForm.dialog('destroy');
+				if ( currentForm.is(':data(dialog)') ) {
+					currentForm.dialog('destroy');
+				}
 
 				// check if a function beforeSend is defined and call it if true
 				if ( typeof beforeSend != 'undefined' && beforeSend != false )
@@ -397,9 +401,6 @@ function dialog_form( currentForm, beforeSend, afterSend )
 				alert(textStatus + ': ' + errorThrown );
 			}
 		});
-
-		// Prevent form from being send twice!
-		return false;
 	});
 }
 

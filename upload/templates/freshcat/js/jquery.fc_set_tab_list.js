@@ -65,7 +65,7 @@
 
 			
 			// Bind the delete button with ajax-send
-			element_item.find('.fc_list_remove').click( function(e)
+			/*element_item.find('.fc_list_remove').click( function(e)
 			{
 				e.preventDefault();
 				// find the current active list-item
@@ -132,6 +132,7 @@
 				}
 				dialog_confirm( message, title, url, dates, 'GET', 'HTML', false, afterDelete, element );
 			});
+			*/
 		});
 	}
 })(jQuery);

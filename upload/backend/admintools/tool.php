@@ -1,24 +1,24 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of LEPTON2 Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ * @author			LEPTON2 Project
+ * @copyright		2012, LEPTON2 Project
+ * @link			http://lepton2.org
+ * @license			http://www.gnu.org/licenses/gpl.html
+ * @license_terms	please see LICENSE and COPYING files in your package
  *
  *
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('LEPTON_PATH')) {
+	include(LEPTON_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,8 +35,8 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-require_once(WB_PATH.'/framework/class.admin.php');
-require_once(WB_PATH.'/framework/functions.php');
+require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(LEPTON_PATH.'/framework/functions.php');
 
 $admin		= new admin('admintools', 'admintools');
 $get_tool	= $admin->add_slashes( $admin->get_get('tool') );
@@ -67,16 +67,16 @@ $tool	= $result->fetchRow();
 $data_dwoo['TOOL_NAME']		= $tool['name'];
 
 // Check if folder of tool exists
-if ( file_exists(WB_PATH.'/modules/'.$tool['directory'].'/tool.php') )
+if ( file_exists(LEPTON_PATH.'/modules/'.$tool['directory'].'/tool.php') )
 {
 	if (
-		  file_exists( WB_PATH.'/modules/'.$tool['directory'].'/languages/'.$admin->lang->getLang().'.php' )
+		  file_exists( LEPTON_PATH.'/modules/'.$tool['directory'].'/languages/'.$admin->lang->getLang().'.php' )
 	) {
-		$admin->lang->addFile( $admin->lang->getLang().'.php', WB_PATH.'/modules/'.$tool['directory'].'/languages' );
+		$admin->lang->addFile( $admin->lang->getLang().'.php', LEPTON_PATH.'/modules/'.$tool['directory'].'/languages' );
 	}
 	// Cache the tool and add it to dwoo
 	ob_start();
-	require(WB_PATH.'/modules/'.$tool['directory'].'/tool.php');
+	require(LEPTON_PATH.'/modules/'.$tool['directory'].'/tool.php');
 	$data_dwoo['TOOL']	= ob_get_contents();
 	ob_end_clean();
 }

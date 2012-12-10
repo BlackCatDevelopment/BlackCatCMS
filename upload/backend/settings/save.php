@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of LEPTON2 Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -9,7 +9,7 @@
  *
  * @author          LEPTON Project
  * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ * @link            http://lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  * @version 		$Id$
@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('LEPTON_PATH')) {	
+	include(LEPTON_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -51,7 +51,7 @@ $js_back = "javascript: history.go(-1);";
 // $advanced = ($_POST['advanced'] == 'yes') ? '?advanced=yes' : '';
 // $submit = isset ($_POST['submit']) && ($_POST['submit'] == $TEXT['SAVE']) ? 'save' : 'advanced';
 
-require_once (WB_PATH.'/framework/class.admin.php');
+require_once (LEPTON_PATH.'/framework/class.admin.php');
 /**
  *	Getting the admin-instance and print the "admin header"
  *
@@ -229,7 +229,7 @@ function save_settings(&$admin, &$database)
 		$settings['string_dir_mode'] = '0755';
 	}
 
-	include WB_PATH.'/framework/backend_switch.php';
+	include LEPTON_PATH.'/framework/backend_switch.php';
 
 	// check home folder settings
 	// remove home folders for all users if the option is changed to "false"

@@ -61,25 +61,17 @@ if (! defined ( 'LEPTON_PATH' ))
 
 
 			// phplib ////////////////////////////////
-			$admin_dir.'/access/index.php',
 			$admin_dir.'/addons/index.php',
 			$admin_dir.'/addons/reload.php',
 			//////////////////////////////////////////
 
 			$admin_dir.'/admintools/index.php',
 			$admin_dir.'/admintools/tool.php',
-			$admin_dir.'/groups/add.php',
 
-			// Dwoo
-			$admin_dir.'/groups/delete.php',
-			//////////////////////////////////////////
-
-			// phplib
-			$admin_dir.'/groups/groups.php',
-			//////////////////////////////////////////
-
+			$admin_dir.'/groups/ajax_delete_group.php',
+			$admin_dir.'/groups/ajax_get_group.php',
+			$admin_dir.'/groups/ajax_save_group.php',
 			$admin_dir.'/groups/index.php',
-			$admin_dir.'/groups/save.php',
 
 			// phplib
 			$admin_dir.'/languages/details.php',
@@ -95,10 +87,6 @@ if (! defined ( 'LEPTON_PATH' ))
 
 			$admin_dir.'/login/forgot/index.php',
 			$admin_dir.'/logout/index.php',
-
-			// phplib
-			$admin_dir.'/media/thumb.php',
-			//////////////////////////////////////////
 
 			// Dwoo
 			$admin_dir.'/media/create_folder.php',
@@ -188,23 +176,13 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/settings/save.php',
 			$admin_dir.'/start/index.php',
 
-			// phplib
-			$admin_dir.'/templates/details.php',
-			$admin_dir.'/templates/index.php',
-			$admin_dir.'/templates/install.php',
-			$admin_dir.'/templates/uninstall.php',
-			//////////////////////////////////////////
 
-			$admin_dir.'/users/add.php',
 			$admin_dir.'/users/index.php',
-			$admin_dir.'/users/save.php',
 
 			// Dwoo
-			$admin_dir.'/users/delete.php',
-			//////////////////////////////////////////
-
-			// phplib
-			$admin_dir.'/users/users.php',
+			$admin_dir.'/users/ajax_delete_user.php',
+			$admin_dir.'/users/ajax_get_user.php',
+			$admin_dir.'/users/ajax_save_user.php',
 			//////////////////////////////////////////
 
 			'/account/forgot.php',
