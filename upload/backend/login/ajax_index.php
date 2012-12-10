@@ -1,4 +1,4 @@
-<?php
+1<?php
 
 /**
  * This file is part of LEPTON2 Core, released under the GNU GPL
@@ -60,7 +60,7 @@ $ajax	= array(
 	'lepToken'		=> $thisApp->is_authenticated() ? $thisApp->getToken() : false,
 	'url'			=> $thisApp->url,
 	'success'		=> $thisApp->is_authenticated(),
-	'message'		=> $thisApp->message
+	'message'		=> isset($thisApp->message) ? $thisApp->message : false
 );
 
 print json_encode( $ajax );
