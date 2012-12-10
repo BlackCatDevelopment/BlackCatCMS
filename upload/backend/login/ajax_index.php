@@ -1,4 +1,4 @@
-1<?php
+<?php
 
 /**
  * This file is part of LEPTON2 Core, released under the GNU GPL
@@ -54,8 +54,6 @@ $thisApp = new Login(
 );
 
 header('Content-type: application/json');
-
-
 $ajax	= array(
 	'lepToken'		=> $thisApp->is_authenticated() ? $thisApp->getToken() : false,
 	'url'			=> $thisApp->url,

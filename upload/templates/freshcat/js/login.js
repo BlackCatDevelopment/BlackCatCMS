@@ -122,7 +122,7 @@ jQuery(document).ready(function(){
 				{
 					$('.fc_loader').fadeOut(300).addClass('hidden');
 					$(this).fadeIn(0);
-					alert(textStatus + ': ' + errorThrown );
+					alert(textStatus + ': ' + jqXHR.responseText );
 				}
 			});
 		}
