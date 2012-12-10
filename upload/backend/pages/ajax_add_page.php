@@ -254,23 +254,23 @@ if ( $language == '' || $template == '')
 // ================================ 
 // ! Insert page into pages table   
 // ================================ 
-$sql  = 'INSERT INTO `'.TABLE_PREFIX.'pages` SET ';
-$sql .= '`parent` = '.$parent.', ';
-$sql .= '`target` = "'.$target.'", ';
-$sql .= '`page_title` = "'.$page_title.'", ';
-$sql .= '`menu_title` = "'.$menu_title.'", ';
-$sql .= '`description` = "'.$description.'", ';
-$sql .= '`keywords` = "'.$keywords.'", ';
-$sql .= '`template` = "'.$template.'", ';
-$sql .= '`visibility` = "'.$visibility.'", ';
-$sql .= '`position` = '.$position.', ';
-$sql .= '`menu` = '.$menu.', ';
-$sql .= '`language` = "'.$language.'", ';
-$sql .= '`searching` = '.$searching.', ';
-$sql .= '`modified_when` = '.time().', ';
-$sql .= '`modified_by` = '.$admin->get_user_id().', ';
-$sql .= '`admin_groups` = "'.$admin_groups.'", ';
-$sql .= '`viewing_groups` = "'.$viewing_groups.'"';
+$sql	 = 'INSERT INTO `'.TABLE_PREFIX.'pages` SET ';
+$sql	.= '`parent` = '.$parent.', ';
+$sql	.= '`target` = "'.$target.'", ';
+$sql	.= '`page_title` = "'.$page_title.'", ';
+$sql	.= '`menu_title` = "'.$menu_title.'", ';
+$sql	.= '`description` = "'.$description.'", ';
+$sql	.= '`keywords` = "'.$keywords.'", ';
+$sql	.= '`template` = "'.$template.'", ';
+$sql	.= '`visibility` = "'.$visibility.'", ';
+$sql	.= '`position` = '.$position.', ';
+$sql	.= '`menu` = '.$menu.', ';
+$sql	.= '`language` = "'.$language.'", ';
+$sql	.= '`searching` = '.$searching.', ';
+$sql	.= '`modified_when` = '.time().', ';
+$sql	.= '`modified_by` = '.$admin->get_user_id().', ';
+$sql	.= '`admin_groups` = "'.$admin_groups.'", ';
+$sql	.= '`viewing_groups` = "'.$viewing_groups.'"';
 
 $database->query($sql);
 
@@ -296,12 +296,12 @@ $page_trail		= get_page_trail($page_id);
 // ======================================= 
 // ! Update page with new level and link   
 // ======================================= 
-$sql  = 'UPDATE `'.TABLE_PREFIX.'pages` SET ';
-$sql .= '`root_parent` = '.$root_parent.', ';
-$sql .= '`level` = '.$level.', ';
-$sql .= '`link` = "'.$link.'", ';
-$sql .= '`page_trail` = "'.$page_trail.'"';
-$sql .= 'WHERE `page_id` = '.$page_id;
+$sql	 = 'UPDATE `'.TABLE_PREFIX.'pages` SET ';
+$sql	.= '`root_parent` = '.$root_parent.', ';
+$sql	.= '`level` = '.$level.', ';
+$sql	.= '`link` = "'.$link.'", ';
+$sql	.= '`page_trail` = "'.$page_trail.'"';
+$sql	.= 'WHERE `page_id` = '.$page_id;
 $database->query($sql);
 
 if ( $database->is_error() )

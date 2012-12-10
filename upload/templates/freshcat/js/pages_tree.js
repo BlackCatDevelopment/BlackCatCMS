@@ -76,7 +76,7 @@
 				});
 			}
 
-			element.find('.fc_page_tree_options_open').click( function(event)
+			element.find('.fc_page_tree_options_open').live( 'click', function(event)
 			{
 				event.preventDefault();
 				var current_button	= $(this),
@@ -91,21 +91,38 @@
 				$('#fc_addPage_keywords_ul').remove();
 				$.ajax(
 				{
-					type:		'GET',
+					type:		'POST',
 					url:		link,
 					dataType:	'json',
 					data:		dates,
 					cache:		false,
-					beforeSend:	function()
+					beforeSend:	function( data )
 					{
 						if ( $('#fc_add_page').is(':visible') )
 						{
 							$('#fc_add_page').stop().animate({width: 'toggle'}, 200);
 						}
 					},
-					success:	function(data)
+					success:	function( data, textStatus, jqXHR  )
 					{
-						var form	= $('#fc_add_page');
+					current_is_parent: false
+						console.log( data.check );
+						var form	= $('#fc_add_page')
+							option	= '<select name="parent" id="fc_addPage_parent">';
+						$.each(data.parent_list, function(index, value)
+						{
+							option	= option + '<option value="' + value.id + '"';
+							option	= value.disabled == true || value.id == dates.page_id ? option + ' disabled="disabled">' : option+ '>';
+							for ( var i = 0; i < value.level; i++ )
+							{
+								option	= option + '-';
+							}
+							option	= option + value.menu_title + '</option>';
+						});
+						option	= option + '</select>';
+						console.log(option);
+						$('#fc_addPage_parent').replaceWith(option);
+						
 						form.find('.fc_addPageOnly').hide();
 						form.find('.fc_changePageOnly').show();
 						form.animate({width: 'toggle'});
@@ -187,7 +204,7 @@
 			});
 
 			// bind elements with click event
-			element.find('li').click( function()
+			element.find('li').live( 'click', function()
 			{
 				// Storing $(this) in a variable
 				var clicked_element			= $(this);
@@ -493,6 +510,7 @@ jQuery(document).ready(function()
 			'viewing_groups':	viewing_groups,
 			'leptoken':			getToken()
 		};
+
 		$.ajax(
 		{
 			context:	current_pT,
@@ -580,9 +598,12 @@ jQuery(document).ready(function()
 				if ( data.success === true )
 				{
 					return_success( jqXHR.process , data.message );
+					var current			= $(this),
+						new_parent		= $('#pageid_' + data.parent ),
+						old_parent		= current.parent().closest('li');
 
-					var current			= $(this);
-					$('#fc_add_page input[type=reset]').click();
+					$('#fc_add_page input:reset').click();
+
 					switch (data.visibility) {
 						case 'public':
 							var newIcon	= 'icon-screen';
@@ -602,6 +623,24 @@ jQuery(document).ready(function()
 						default:
 							var newIcon	= 'icon-eye-blocked';
 							break;
+					};
+					if ( dates.parent != data.parent )
+					{
+						if ( new_parent.children('ul').size() > 0 )
+						{
+							if ( current.siblings('li').size() == 0 )
+							{
+								old_parent.removeClass('fc_tree_open');
+								old_parent.find('ul').remove();
+								old_parent.find('.fc_toggle_tree').remove();
+							}
+							current.appendTo( new_parent.children('ul') );
+						}
+						else {
+							new_parent.children('.fc_page_link').prepend('<span class="fc_toggle_tree" />');
+							$('<ul class="ui-sortable" />').appendTo( new_parent ).append( current );
+						}
+						new_parent.parentsUntil('#fc_page_tree_top', 'li').andSelf().addClass('fc_expandable fc_tree_open').removeClass('fc_tree_close');
 					}
 					current.children('dl').children('.fc_search_MenuTitle').text( data.menu_title );
 					current.children('dl').children('.fc_search_PageTitle').text( data.page_title );

@@ -374,11 +374,13 @@ if ( $database->is_error() )
 else
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('Page settings saved successfully'),
+		'message'		=> $admin->lang->translate('Page settings saved successfully'),
 		'menu_title'	=> $menu_title,
 		'page_title'	=> $page_title,
 		'visibility'	=> $visibility,
-		'success'	=> true
+		'parent'		=> $parent,
+		'position'		=> $position,
+		'success'		=> true
 	);
 	print json_encode( $ajax );
 	exit();
