@@ -3,7 +3,7 @@
 	{translate('Success')}
 </div>
 <div class="fc_success_box">
-	{$MESSAGE}
+	<p>{$MESSAGE}</p>
 	<div class="fc_fallback">
 		{if $REDIRECT_TIMER}
 		<script type="text/javascript">

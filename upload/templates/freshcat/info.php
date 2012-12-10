@@ -8,11 +8,12 @@
  *  @license terms		see info.php of this template
  *  @platform			LEPTON, see info.php of this template
  *  @requirements		PHP 5.2.x and higher
+  * @version			$Id$
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('LEPTON_PATH')) {
+	include(LEPTON_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -29,18 +30,18 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-
 // OBLIGATORY WEBSITE BAKER VARIABLES
 $template_directory			= 'freshcat';
 $template_name				= 'FreshCat Backend Theme';
 $template_function			= 'theme';
-$template_version			= '0.7';
+$template_version			= '0.7.3';
 $template_platform			= '2.x';
 $template_author			= 'Matthias Glienke, creativecat';
 $template_license			= '<a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>';
 $template_license_terms		= '-';
-$template_description		= 'First backend theme for Lepton using the template engine Dwoo.<br/>Introduced with Lepton 2.0 in 2012.<br/><br/>Done by Matthias Glienke, <a href="http://creativecat.de">creativecat</a>';
+$template_description		= 'Introduced with Lepton2 in 2013.<br/><br/>Done by Matthias Glienke, <a class="icon-creativecat" href="http://creativecat.de"> creativecat</a>';
 $template_engine			= 'dwoo';
 $template_guid				= 'AD6296ED-31BD-49EB-AE23-4DD76B7ED776';
+
 
 ?>

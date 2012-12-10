@@ -10,30 +10,20 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
- *
+  *
  */
 
-function jqueryContainsI(text) {
+$.expr[":"].containsi = $.expr.createPseudo(function (selector, context, isXml) {
     return function (elem) {
-        return (elem.textContent || elem.innerText || $.text(elem)).toLowerCase().indexOf(text.toLowerCase()) > -1;
+        return (elem.textContent || elem.innerText || $.text(elem)).toLowerCase().indexOf(selector.toLowerCase()) > -1;
     };
-}
-
-jqueryContainsI.sizzleFilter = true;
-
-// add case insensitive :contains filter called :containsi (see the last i)
-$.extend($.expr[':'], {
-    'containsi': jqueryContainsI
 });
 
 // Plugin to validate email
 function isValidEmailAddress(emailAddress) {
-    var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-    return pattern.test(emailAddress);
+	var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+	return pattern.test(emailAddress);
 }
-
-
 
 
 // ===================== 
@@ -54,58 +44,42 @@ function getThemeName()
 // match css class with given prefix
 function match_class_prefix(prefix,elem)
 {
-    var classes = elem.attr('class').split(' ');
-    var regex   = new RegExp('^'+prefix+'(.+)',"g");
-    for (var i = 0; i < classes.length; i++) {
-        var matches = regex.exec(classes[i]);
-        if (matches != null) {
-            return matches[1];
-        }
-    }
+	var classes = elem.attr('class').split(' ');
+	var regex   = new RegExp('^'+prefix+'(.+)',"g");
+	for (var i = 0; i < classes.length; i++)
+	{
+		var matches = regex.exec(classes[i]);
+		if (matches != null)
+		{
+			return matches[1];
+		}
+	}
 }
 
 // Function to show the dialog with error message if an ajax reports an error
-function return_error( data, process_div )
+function return_error( process_div, message )
 {
-	$('.fc_loader').remove();
-	if ( process_div != false )
+	// Remove previously generated .process if an error occured
+	process_div.slideUp(1200,function()
 	{
-		// Remove previously generated .process if an error occured
-		process_div.slideUp(1200,function()
-		{
-			process_div.remove();
-		});
-	}
+		process_div.remove();
+	});
 
-	// Find the error message inside the returned data
-	var content		= $( data );
-	var message		= content.find('.fc_error_box').html();
-
-	// Check if .popup exists - if not add div.popup before #admin_header
-	if ( $('.popup').size()==0 )
+	// Check if .fc_popup exists - if not add div.fc_popup before #admin_header
+	if ( $('.fc_popup').size() == 0 )
 	{
-		$('#fc_admin_header').prepend('<div class="popup" />');
+		$('#fc_admin_header').prepend('<div class="fc_popup" />');
 	}
 
 	// add error message to popup
-	$('.popup').html(message);
-
-	// Remove JS-Fallback from success message and backlink
-	$('.popup').find('.fc_fallback').remove();
+	$('.fc_popup').html(message);
 
 	// get title for dialog
-	title = set_popup_title();
+	var title = set_popup_title();
 
 	// Activate dialog on popup
-	$('.popup').dialog(
+	$('.fc_popup').dialog(
 	{
-		create: function(event, ui)
-		{
-			// Only some cosmetical style changes ;-)
-			$('.ui-widget-header').removeClass('ui-corner-all').addClass('ui-corner-top');
-		},
-		// Only some cosmetical style changes (adding shadow);-)
-		dialogClass:	'ui-widget-shadow',
 		modal:			true,
 		show:			'fade',
 		closeOnEscape:	true,
@@ -116,7 +90,7 @@ function return_error( data, process_div )
 				'text':		'Ok',
 				'click':	function()
 				{
-					$('.popup').dialog('destroy'); 
+					$('.fc_popup').dialog('destroy'); 
 				},
 				'class':	'submit'
 			}
@@ -125,30 +99,11 @@ function return_error( data, process_div )
 }
 
 // Function to display the success of an ajax submit in the #activity -- process_div is the div.process you got before from set_activity();
-function return_success(data,process_div)
+function return_success( process_div, message )
 {
-	// Find the error message inside the returned data
-	var message		= $( data ).find('.fc_success_box').html();
-	if ( message == '' ) return;
-
-	// Check if .popup exists - if not add div.popup before #admin_header
-	if ( $('.popup').size() == 0 )
+	if ( typeof message != 'undefined' )
 	{
-		$('#fc_admin_header').prepend('<div class="popup" />');
-	}
-
-	// add success message to popup to use function set_popup_title();
-	$('.popup').html(message);
-
-	// Remove JS-Fallback from success message and backlink
-	$('.popup').find('.fc_fallback').remove();
-
-	// Get complete message
-	var message		= $('.popup').html();
-
-	if ( typeof process_div != 'undefined' )
-	{
-		process_div.html(message);
+		process_div.html(message).addClass('fc_active');
 
 		// Show success message for 5000 ms, slide it up and remove it from #activity
 		setTimeout(function()
@@ -158,6 +113,12 @@ function return_success(data,process_div)
 				process_div.remove();
 			});
 		},5000);
+	}
+	else {
+		process_div.slideUp(1200,function()
+		{
+			process_div.remove();
+		});
 	}
 }
 
@@ -169,7 +130,7 @@ function set_activity( title )
 		var title	= 'Loading';
 	}
 	// Add a div.process to #activity and store in a variable to use it later
-	var process		= $('<div class="fc_process" />').appendTo('#fc_activity');
+	var process		= $('<div class="fc_process fc_gradient1 fc_border" />').appendTo('#fc_activity');
 
 	// initial hide the .process...
 	process.slideUp(0,function()
@@ -188,94 +149,94 @@ function set_popup_title()
 	// Set a default value
 	var title		= LEPTON_TEXT['DEFAULT_MESSAGE_TITLE'];
 
-	// Check if the .popup has a .popup_header
-	if ( $('.popup .popup_header').size() > 0 )
+	// Check if the .fc_popup has a .fc_popup_header
+	if ( $('.fc_popup .fc_popup_header').size() > 0 )
 	{
-		// Get the content (text) of the .popup_header and set title
-		var title	= $('.popup .popup_header').text();
+		// Get the content (text) of the .fc_popup_header and set title
+		var title	= $('.fc_popup .fc_popup_header').text();
 
 		// Remove Popup
-		$('.popup .popup_header').remove();
+		$('.fc_popup .fc_popup_header').remove();
 	}
 	return title;
 }
 
-
 // Function to show a confirm popup to confirm clicks, like delete page, user, groups etc.
 // you can optionally define a function that is called before (beforeSend) ajaxRequest and one that is called after (afterSend)
-function dialog_confirm( message, link, beforeSend, afterSend, jQcontext )
+function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSend, afterSend, ajaxjQcontext )
 {
-	// Check if .popup exists - if not add div.popup before #admin_header
-	if ( $('.popup').size()==0 )
+	// Check if .fc_popup exists - if not add div.fc_popup before #admin_header
+	if ( $('.fc_popup').size()==0 )
 	{
-		$('#fc_admin_header').prepend('<div class="popup" />');
+		$('#fc_admin_header').prepend('<div class="fc_popup" />');
 	}
 
-	if ( typeof jQcontext == 'undefined' )
-	{
-		jQcontext = 'document.body';
-	}
+	// Add message to .fc_popup to use function set_popup_title();
+	$('.fc_popup').html( message );
 
-	link	= link + '&leptoken=' + getToken();
-
-	// Add message to .popup to use function set_popup_title();
-	$('.popup').html(message);
-
-	// Get title for dialog
-	title = set_popup_title();
+	// check for all necessary values
+	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl == false					? alert( 'You send an invalid url' ) : ajaxUrl,
+		ajaxData		= typeof ajaxData == 'undefined' || ajaxData == false				? alert( 'No leptoken!' ) : ajaxData,
+		ajaxType		= typeof ajaxType == 'undefined' || ajaxType == false				? 'POST' : ajaxType,
+		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType == false		? 'JSON' : ajaxDataType,
+		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext == false		? $('document.body') : ajaxjQcontext;
+		title			= typeof title == 'undefined' || title == false						? set_popup_title() : title,
 
 	// Set the array for confirm-buttons
 	buttonsOpts = new Array();
 
+	if ( typeof ajaxData.leptoken == 'undefined' || ajaxData.leptoken == false )
+	{
+		ajaxData.leptoken	= getToken();
+	}
+
 	// define button for confirm dialog positive
 	buttonsOpts.push(
 	{
-		'text':		LEPTON_TEXT['YES'], 'click':  function()
+		'text':		'YES', 'click':  function()
 			{
 				$.ajax(
 				{
-					type:		'GET',
-					context:	jQcontext,
-					url:		link,
-					dataType:	'html',
+					type:		ajaxType,
+					context:	ajaxjQcontext,
+					url:		ajaxUrl,
+					dataType:	ajaxDataType,
+					data:		ajaxData,
+					cache:		false,
 					beforeSend:	function( data )
 					{
-						// Add a .process to #activity bar to show user, the data is send to server
-						process_div		= set_activity(title);
-						// Hide .popup
-						$('.popup').dialog('destroy');
+						// Set activity and store in a variable to use it later
+						data.process	= set_activity( title );
+
+						// Hide .fc_popup
+						$('.fc_popup').dialog('destroy').remove();
+
 						// check if a function beforeSend is defined and call it if true
 						if ( typeof beforeSend != 'undefined' && beforeSend != false )
 						{
-							beforeSend.call(this);
+							beforeSend.call(this, data);
 						}
 					},
-					success:	function( data )
+					success:	function( data, textStatus, jqXHR )
 					{
-						// Check if there is a div.success_box in returned data that implements that the request was completely successful
-						if ( $( data ).find('.fc_success_box').size() > 0 )
+						if ( data.success == true )
 						{
-							// Return success message --- process_div is the previously generated .process inside #activity
-							if ( typeof process_div != 'undefined' )
-							{
-								return_success( data, process_div );
-							}
+							// Check if there is a div.success_box in returned data that implements that the request was completely successful
+							return_success( jqXHR.process , data.message );
 							// check if a function afterSend is defined and call it if true
 							if ( typeof afterSend != 'undefined' && afterSend != false )
 							{
 								afterSend.call(this, data);
 							}
 						}
-						else if ( $( data ).find('.fc_error_box').size() > 0 )
-						{
+						else {
 							// return error
-							return_error( data, process_div );
+							return_error( jqXHR.process , data.message );
 						}
-						else return;
 					},
-					error:		function( data )
+					error:		function( data, textStatus, jqXHR )
 					{
-						return_error( data, process_div );
+						return_error( jqXHR.process , data.message );
 					}
 				});
 			},
@@ -287,21 +248,14 @@ function dialog_confirm( message, link, beforeSend, afterSend, jQcontext )
 	{
 		'text':		LEPTON_TEXT['NO'], 'click':  function()
 			{
-				$('.popup').dialog('destroy');
+				$('.fc_popup').dialog('destroy');
 			},
 		'class':	'reset'
 	});
 
 	// acitvate dialog on popup
-	$('.popup').dialog(
+	$('.fc_popup').dialog(
 	{
-		create: function(event, ui)
-		{
-			// Only some cosmetical style changes ;-)
-			$('.ui-widget-header').removeClass('ui-corner-all').addClass('ui-corner-top');
-		},
-		// Only some cosmetical style changes
-		dialogClass:	'ui-widget-shadow',
 		modal:			true,
 		show:			'fade',
 		closeOnEscape:	true,
@@ -331,16 +285,21 @@ function dialog_ajax( link, dates, beforeSend, afterSend, jQcontext, type )
 		data:		dates,
 		beforeSend:	function( data )
 		{
-			// deactive .popup before send data
-			$('.popup').dialog('destroy');
+			// deactive .fc_popup before send data
+			$('.fc_popup').dialog('destroy');
+
+			// Set activity and store in a variable to use it later
+			data.process	= set_activity( );
+
 			// check if a function beforeSend is defined and call it if true
 			if ( typeof beforeSend != 'undefined' && beforeSend != false )
 			{
 				beforeSend.call(this);
 			}
 		},
-		success:	function( data )
+		success:		function( data, textStatus, jqXHR )
 		{
+			return_success( jqXHR.process , data.message );
 			// Check if there is a div.success_box in returned data that implements that the request was completely successful
 			if( $( data ).find('.fc_success_box').size() > 0 )
 			{
@@ -387,28 +346,31 @@ function dialog_ajax( link, dates, beforeSend, afterSend, jQcontext, type )
 function dialog_form( currentForm, beforeSend, afterSend )
 {
 	// If form is submitted
-	currentForm.submit(function()
+	currentForm.submit(function(e)
 	{
+		// Prevent form from being send twice!
+		e.preventDefault();
 		// Define ajax for form
 		currentForm.ajaxSubmit(
 		{
-			clearForm:		$(this).hasClass('clearForm'),
 			beforeSend:		function( data )
 			{
 				// Check if the form has a (mostly hidden) input field with a title for the form (if not 'loading' is used
-				if ( currentForm.find('input[name=form_title]').size() > 0 )
+				if ( currentForm.find('input[name=fc_form_title]').size() > 0 )
 				{
-					var title	= currentForm.find('input[name=form_title]').val();
+					var title	= currentForm.find('input[name=fc_form_title]').val();
 				}
 				else {
 					var title = 'Loading';
 				}
 
 				// Set activity and store in a variable to use it later
-				process_div		= set_activity(title);
+				data.process	= set_activity( title );
 
 				// Destroy dialog to hide the 
-				currentForm.dialog('destroy');
+				if ( currentForm.is(':data(dialog)') ) {
+					currentForm.dialog('destroy');
+				}
 
 				// check if a function beforeSend is defined and call it if true
 				if ( typeof beforeSend != 'undefined' && beforeSend != false )
@@ -416,14 +378,12 @@ function dialog_form( currentForm, beforeSend, afterSend )
 					beforeSend.call(this);
 				}
 			},
-			success:		function( data )
+			success:		function( data, textStatus, jqXHR )
 			{
 				// Check if there is a div.success_box in returned data that implements that the request was completely successful
 				if( $( data ).find('.fc_success_box').size() > 0 )
 				{
-					// Return success message --- process_div is the previously generated .process inside #activity
-					return_success( data, process_div );
-
+					return_success( jqXHR.process , $( data ).find('.fc_success_box > p').text() );
 					// check if a function afterSend is defined and call it if true
 					if ( typeof afterSend != 'undefined' && afterSend != false )
 					{
@@ -432,101 +392,21 @@ function dialog_form( currentForm, beforeSend, afterSend )
 				}
 				else {
 					// else return error
-					return_error(data,process_div);
+					return_error( jqXHR.process , data.message);
 				}
 			},
-			error:		function( data )
+			error:		function( jqXHR, textStatus, errorThrown )
 			{
-				return_error(data,process_div);
+				jqXHR.process.remove();
+				alert(textStatus + ': ' + errorThrown );
 			}
 		});
-
-		// Prevent form from being send twice!
-		return false;
 	});
 }
-
 
 // Function to activate buttons (for example if a some new elements where added to the body with ajax)
 function set_buttons( element )
 {
-	// Add ids to select, to fix a bug of selectmenu, if there is no id set to the label
-	$( element ).find('select').each( function()
-	{
-		var current_select		= $(this);
-		if ( typeof current_select.attr('id') == 'undefined' )
-		{
-			current_select.attr( 'id', current_select.attr('name') );
-		}
-	});
-
-	$( element ).find('input.fc_checkbox_jq').each( function()
-	{
-		var current_select		= $(this);
-		if ( typeof current_select.attr('id') == 'undefined' )
-		{
-			current_select.attr( 'id', current_select.attr('name') );
-		}
-	});
-
-	// Activate jQuery selectmenu
-	$( element ).find('select').selectmenu(
-	{
-		style:		'popup',
-		width:		200,
-		icons:		{
-			primary:			"ui-icon-carat-2-n-s"
-		}
-	});
-
-	// Activate jQuery UI Tabs, if there are tabs
-	if ( $( element ).find('#fc_tabs').size() > 0 )
-	{
-		$( element ).find('#fc_tabs').tabs();
-	}
-	if ( $( element ).find('.fc_tabs').size() > 0 )
-	{
-		$( element ).find('.fc_tabs').tabs();
-	}
-
-	// Activate jQuery UI Buttons for radio-buttons
-	$( element ).find('input.fc_radio_jq').each( function()
-	{
-		// Get the id of each element
-		var input_id	= $(this).attr('id');
-
-		// Check if the input has label
-		// This needs to be done as there are some coder that don't know the importance of semantic html ;-)
-		if ( $('label[for=' + input_id + ']').size() > 0 )
-		{
-			$(this).button(
-			{
-				icons: {
-					secondary:		"ui-icon-radio"
-				}
-			});
-		}
-	});
-
-	// Activate jQuery UI Buttons for checkboxes
-	$( element ).find('input.fc_checkbox_jq').each( function()
-	{
-		// Get the id of each element
-		var input_id	= $(this).attr('id');
-
-		// Check if the input has label
-		// This needs to be done as there are some coder that don't know the importance of semantic html ;-)
-		if ( $('label[for=' + input_id + ']').size() > 0 )
-		{
-			$(this).button(
-			{
-				icons: {
-					secondary:		"ui-icon-on-off"
-				}
-			});
-		}
-	});
-
 	// Activate toggle for select
 	element.find( '.fc_toggle_element' ).fc_toggle_element();
 }
@@ -536,10 +416,10 @@ function searchUsers( searchTerm )
 	$('#fc_list_overview li').removeClass('fc_activeSearch').slideDown(0);
 	if ( searchTerm.length > 0 )
 	{
-		$('#fc_list_overview li:containsi(' + searchTerm + ')').addClass('fc_activeSearch');
+		$('#fc_list_overview li:containsi(' + searchTerm + ')').not('.fc_no_search').addClass('fc_activeSearch');
 		if ( $('#fc_list_overview').hasClass('fc_settings_list') )
 		{
-			$('.fc_form_content:containsi(' + searchTerm + ')').each( function()
+			$('.fc_list_forms:containsi(' + searchTerm + ')').each( function()
 			{
 				var id	= $(this).attr('id');
 				$('#fc_list_overview li[rel=' + id + ']').addClass('fc_activeSearch');
@@ -549,34 +429,26 @@ function searchUsers( searchTerm )
 	}
 	else
 	{
-		$('#fc_list_overview li').slideDown(300);
+		$('#fc_list_overview li').not('fc_no_search').slideDown(300);
 	}
 
 }
 
 // Marked as deprecated!
 
-function confirm_link ( message, link )
+function confirm_link ( message, url )
 {
 	var afterSend		= function()
 	{
 		location.reload(true);
 	}
-	dialog_confirm( message, link, false, afterSend, false );
+	dialog_confirm( message, false, url, false, 'GET', 'HTML', false, afterSend );
 
 }
 
 
 jQuery(document).ready( function()
 {
-	// Activate tagit for Keywords in the adding
-	$('#fc_addPage_keywords_ul').tagit(
-	{
-		allowSpaces:		true,
-		singleField:		true,
-		singleFieldNode:	$('#fc_addPage_keywords')
-	});
-
 	// Check if a cookie for sidebar is defined
 	if ( typeof $.cookie('sidebar') != 'undefined' )
 	{
@@ -613,6 +485,7 @@ jQuery(document).ready( function()
 			// resize also some elements
 			$('#fc_content_container, #fc_content_footer').css({width: ( window_width - ui.size.width )+'px'});
 			$('#fc_sidebar_footer, #fc_sidebar, #fc_activity, #fc_sidebar_content').css({width: ui.size.width+'px'});
+			$('#fc_add_page').css({left: ui.size.width+'px'});
 		},
 		stop: function(event, ui)
 		{
@@ -623,15 +496,6 @@ jQuery(document).ready( function()
 
 	// Initial activation of click events
 	set_buttons($('body'));
-
-	// Bind reset button with timeout reset, to reset even jQuery UI-Buttons and Dropdowns
-	$('input:reset').click(function()
-	{
-		setTimeout( function()
-		{
-			$('.fc_advanced_groups input').change();
-		}, 10 );
-	});
 
 	$('#fc_list_search input').livesearch(
 	{
@@ -655,5 +519,19 @@ jQuery(document).ready( function()
 	});
 
 	// Bind buttons to show popups
-	$('.show_popup').fc_show_popup();
+	//$('.show_popup').fc_show_popup();
+
+	// Bind navigation of AddPage-Form
+	$('#fc_add_page_nav').find('a').click( function()
+	{
+		var current		= $(this);
+		if ( !current.hasClass('fc_active') )
+		{
+			$('#fc_add_page').find('.fc_active').removeClass('fc_active');
+			current.addClass('fc_active');
+			var target	= current.attr('href');
+			$(target).addClass('fc_active');
+		}
+		return false;
+	});
 });

@@ -1,9 +1,0 @@
-<h1>{$header}</h1>
-{if $message}<div>{$message}</div>{/if}
-{if $pages}
-<ul>
-	{foreach $pages as page}
-	<li><a href="{$ADMIN_URL}/pages/modify.php?page_id={$page.id}">{$page.title} ({$page.id})</a></li>
-	{/foreach}
-</ul>
-{/if}

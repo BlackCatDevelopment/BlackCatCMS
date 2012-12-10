@@ -1,24 +1,24 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of LEPTON2 Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ * @author			LEPTON2 Project
+ * @copyright		2012, LEPTON2 Project
+ * @link			http://lepton2.org
+ * @license			http://www.gnu.org/licenses/gpl.html
+ * @license_terms	please see LICENSE and COPYING files in your package
  *
  *
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('LEPTON_PATH')) {
+	include(LEPTON_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -44,7 +44,7 @@ if(isset($_GET) && sizeof($_GET) > 1)
 // test if valid $admin-object already exists (bit complicated about PHP4 Compatibility)
 if ( !(isset($admin) && is_object($admin) && (get_class($admin) == 'admin')) )
 {
-	require_once( WB_PATH.'/framework/class.admin.php' );
+	require_once( LEPTON_PATH.'/framework/class.admin.php' );
 }
 
 $admin = new admin('Settings', 'settings_advanced');
@@ -53,8 +53,8 @@ global $parser;
 $data_dwoo = array();
 
 // Include the WB functions file
-require_once(WB_PATH.'/framework/functions.php');
-require_once(WB_PATH.'/framework/functions-utf8.php');
+require_once(LEPTON_PATH.'/framework/functions.php');
+require_once(LEPTON_PATH.'/framework/functions-utf8.php');
 
 // check if theme language file exists for the language set by the user (e.g. DE, EN)
 $lang	= (file_exists(THEME_PATH .'/languages/'.LANGUAGE .'.php')) ? LANGUAGE : 'EN';
@@ -240,7 +240,7 @@ foreach ( $ER_LEVELS AS $value => $title )
 // =============================== 
 date_default_timezone_set($old_tz);
 
-require_once(WB_PATH . '/framework/class.pages.php');
+require_once(LEPTON_PATH . '/framework/class.pages.php');
 $pages = new pages();
 
 // ============================ 

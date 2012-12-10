@@ -11,7 +11,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
+  *
  */
 
 // include class.secure.php to protect this file and the whole CMS!
@@ -49,9 +49,9 @@ $mod_headers = array(
 			array(
 				'core'			=> true,
 				'ui'			=> true,
-				'ui-components'	=> array ( 'widget' , 'mouse', 'position' , 'resizable' , 'sortable' , 'autocomplete' , 'button' , 'dialog' , 'tabs' , 'selectmenu' ),
+				'ui-components'	=> array ( 'widget' , 'mouse', 'position' , 'resizable' , 'sortable' , 'menu' , 'autocomplete' , 'button' , 'dialog' , 'tabs' ),
 				'ui-effects'	=> array ( 'fade' ),
-				'all'			=> array ( 'jquery.highlight', 'jquery.cookies', 'tag-it', 'jquery.form' , 'jquery.livesearch' , 'jquery.smarttruncation', 'leptranslate' ),
+				'all'			=> array ( 'jquery.highlight', 'jquery.cookies', 'tag-it', 'jquery.form' , 'jquery.livesearch' , 'jquery.smarttruncation' )
 			)
 		),
 		'js' => array(

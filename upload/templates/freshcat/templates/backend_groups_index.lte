@@ -2,438 +2,245 @@
 
 <div id="fc_content_header">
 	{translate('Modify groups')}
+
 	<div class="fc_header_buttons">
-		{if $permissions.USERS}<a href="{$ADMIN_URL}/users/index.php" class="ui-corner-left fc_header_button">{translate('Manage users')}</a>{/if}
-		<a href="{$ADMIN_URL}/groups/index.php" class="ui-corner-right {if !$permissions.USERS}ui-corner-left {/if}fc_header_button fc_current">{translate('Manage groups')}</a>
+		{if $permissions.USERS}<a href="{$ADMIN_URL}/users/index.php" class="fc_br_left fc_gradient1 fc_gradient_hover">{translate('Manage users')}</a>{/if}
+		<a href="{$ADMIN_URL}/groups/index.php" class="{if !$permissions.USERS}fc_br_all {else}fc_br_right {/if}fc_gradient1 fc_gradient_hover fc_active">{translate('Manage groups')}</a>
 	</div>
+
 	<div class="clear"></div>
 </div>
-<div id="fc_main_content" class="c_16">
-	<div class="clear sp_clear"></div>
-	
-	<div id="fc_lists_overview" class="g_4 ui-corner-top">
-		<div id="fc_list_search" class="ui-corner-top">
+
+<div id="fc_main_content">
+	<div id="fc_lists_overview">
+		<div id="fc_list_search">
 			<div class="fc_input_fake">
-				<input type="text" name="fc_list_search" id="fc_list_search_input" value="{translate('Search')}" />
+				<input type="text" name="fc_list_search" id="fc_list_search_input" value="{translate('Search...')}" />
 				<label class="fc_close" for="fc_list_search_input"></label>
 			</div>
 		</div>
-		{if $permissions.GROUPS_ADD}<div id="fc_list_add">+ {translate('Add group')}</div>{/if}
+
+		<div class="fc_gradient1 fc_border">
+			{if $permissions.GROUPS_ADD}<button id="fc_list_add" class="icon-plus fc_cell_one fc_gradient1 fc_gradient_hover" title="{translate('Add group')}"></button>{/if}
+			<div class="clear"></div>
+		</div>
+
 		<ul id="fc_list_overview" class="fc_group_list">
 			{foreach $groups.viewers as group}
-			<li class="fc_group_item fc_list_{$group.VALUE}" rel="fc_list_{$group.VALUE}">
+			<li class="fc_group_item icon-users fc_border fc_gradient1 fc_gradient_hover">
 				<span class="fc_groups_name">{$group.NAME}</span>
+				<input type="hidden" name="group_id" value="{$group.VALUE}" />
 			</li>
 			{/foreach}
 		</ul>
 	</div>
 	{if $permissions.GROUPS_MODIFY}
-	
-	<div class="g_12 fc_all_forms" id="fc_group_list">
-		{if $permissions.GROUPS_ADD}
-		<div id="fc_install_new" class="fc_list_forms">
-			<form name="add_group" action="{$ADMIN_URL}/groups/add.php" method="post" id="fc_add_group" class="c_16">
-				<div class="fc_form_content ui-corner-top">
-					<div class="fc_form_content_title ui-corner-top">
-						<p class="g_16">{translate('Add group')}</p>
-						<input type="hidden" name="group_id" value="" />
-						<input type="hidden" name="form_title" value="{translate('Add group')}" />
-					</div>
-					<label for="fc_name_newgroup" class="g_4">{translate('Name')}:</label>
-					<input type="text" name="name" id="fc_name_newgroup" class="g_11" value="" />
-					<div class="clear sp_clear"></div>
-					<div id="fc_tabs_group" class="fc_tabs">
-						<ul class="fc_groups_tabs">
-							<li><a href="#fc_tabs_system_permissions">{translate('System permissions')}</a></li>
-							<li><a href="#fc_tabs_modules">{translate('Module permissions')}</a></li>
-							<li><a href="#fc_tabs_admintools">{translate('Admintools')}</a></li>
-							<li><a href="#fc_tabs_templates">{translate('Template permissions')}</a></li>
-						</ul>
-						<div id="fc_tabs_system_permissions" class="g_14 pre_1">
-							<div class="clear sp_clear"></div>
-							<label for="fc_pages_newgroup">{translate('Pages')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="pages" id="fc_pages_newgroup" maxlength="255" value="1" />
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_pages_newgroup">
-								<label for="fc_pages_view_newgroup">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_view" id="fc_pages_view_newgroup" maxlength="255" value="1" />
-								<label for="fc_pages_add_newgroup">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_add" id="fc_pages_add_newgroup" maxlength="255" value="1" />
-								<label for="fc_pages_add_l0_newgroup">{translate('Level')} 0</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_add_l0" id="fc_pages_add_l0_newgroup" maxlength="255" value="1" />
-								<label for="fc_pages_settings_newgroup">{translate('Modify settings')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_settings" id="fc_pages_settings_newgroup" maxlength="255" value="1" />
-								<label for="fc_pages_modify_newgroup">{translate('Modify content')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_modify" id="fc_pages_modify_newgroup" maxlength="255" value="1" />
-								<label for="fc_pages_intro_newgroup">{translate('Modify intro page')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_intro" id="fc_pages_intro_newgroup" maxlength="255" value="1" />
-								<label for="fc_pages_delete_newgroup">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_delete" id="fc_pages_delete_newgroup" maxlength="255" value="1" />
-							</div>
-							<div class="clear"></div>
-				
-							<label for="fc_media_newgroup">{translate('Media')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="media" id="fc_media_newgroup" maxlength="255" value="1" />
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_media_newgroup">
-									<label for="fc_media_view_newgroup">{translate('View')}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="media_view" id="fc_media_view_newgroup" maxlength="255" value="1" />
-									<label for="fc_media_upload_newgroup">{translate('Upload files')}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="media_upload" id="fc_media_upload_newgroup" maxlength="255" value="1" />
-									<label for="fc_media_rename_newgroup">{translate('Rename')}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="media_rename" id="fc_media_rename_newgroup" maxlength="255" value="1" />
-									<label for="fc_media_delete_newgroup">{translate('Delete')}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="media_delete" id="fc_media_delete_newgroup" maxlength="255" value="1" />
-									<label for="fc_media_create_newgroup">{translate('Create folder')}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="media_create" id="fc_media_create_newgroup" maxlength="255" value="1" />
-							</div>
-							<div class="clear"></div>
-				
-							<label for="fc_modules_newgroup">{translate('Modules')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="modules" id="fc_modules_newgroup" maxlength="255" value="1" />
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_modules_newgroup">
-								<label for="fc_modules_view_newgroup">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="modules_view" id="fc_modules_view_newgroup" maxlength="255" value="1" />
-								<label for="fc_modules_install_newgroup">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="modules_install" id="fc_modules_install_newgroup" maxlength="255" value="1" />
-								<label for="fc_modules_uninstall_newgroup">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="modules_uninstall" id="fc_modules_uninstall_newgroup" maxlength="255" value="1" />
-							</div>
-							<div class="clear"></div>
-				
-							<label for="fc_templates_newgroup">{translate('Templates')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="templates" id="fc_templates_newgroup" maxlength="255" value="1" />
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_templates_newgroup">
-								<label for="fc_templates_view_newgroup">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="templates_view" id="fc_templates_view_newgroup" maxlength="255" value="1" />
-								<label for="fc_templates_install_newgroup">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="templates_install" id="fc_templates_install_newgroup" maxlength="255" value="1" />
-								<label for="fc_templates_uninstall_newgroup">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="templates_uninstall" id="fc_templates_uninstall_newgroup" maxlength="255" value="1" />
-							</div>
-							<div class="clear"></div>
-				
-							<label for="fc_languages_newgroup">{translate('Languages')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="languages" id="fc_languages_newgroup" maxlength="255" value="1" />
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_languages_newgroup">
-								<label for="fc_languages_view_newgroup">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="languages_view" id="fc_languages_view_newgroup" maxlength="255" value="1" />
-								<label for="fc_languages_install_newgroup">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="languages_install" id="fc_languages_install_newgroup" maxlength="255" value="1" />
-								<label for="fc_languages_uninstall_newgroup">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="languages_uninstall" id="fc_languages_uninstall_newgroup" maxlength="255" value="1" />
-							</div>
-							<div class="clear"></div>
-				
-							<label for="fc_settings_newgroup">{translate('Settings')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="settings" id="fc_settings_newgroup" maxlength="255" value="1" />
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_settings_newgroup">
-								<label for="fc_settings_basic_newgroup">{translate('Basic')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="settings_basic" id="fc_settings_basic_newgroup" maxlength="255" value="1" />
-								<label for="fc_settings_advanced_newgroup">{translate('Advanced')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="settings_advanced" id="fc_settings_advanced_newgroup" maxlength="255" value="1" />
-							</div>
-							<div class="clear"></div>
-				
-							<label for="fc_lists_newgroup">{translate('Users')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="users" id="fc_lists_newgroup" maxlength="255" value="1" />
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_lists_newgroup">
-								<label for="fc_lists_view_newgroup">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="users_view" id="fc_lists_view_newgroup" maxlength="255" value="1" />
-								<label for="fc_lists_add_newgroup">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="users_add" id="fc_lists_add_newgroup" maxlength="255" value="1" />
-								<label for="fc_lists_modify_newgroup">{translate('Modify')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="users_modify" id="fc_lists_modify_newgroup" maxlength="255" value="1" />
-								<label for="fc_lists_delete_newgroup">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="users_delete" id="fc_lists_delete_newgroup" maxlength="255" value="1" />
-							</div>
-							<div class="clear"></div>
-				
-							<label for="fc_groups_newgroup">{translate('Groups')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="groups" id="fc_groups_newgroup" maxlength="255" value="1" />
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_groups_newgroup">
-								<label for="fc_groups_view_newgroup">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="groups_view" id="fc_groups_view_newgroup" maxlength="255" value="1" />
-								<label for="fc_groups_add_newgroup">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="groups_add" id="fc_groups_add_newgroup" maxlength="255" value="1" />
-								<label for="fc_groups_modify_newgroup">{translate('Modify')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="groups_modify" id="fc_groups_modify_newgroup" maxlength="255" value="1" />
-								<label for="fc_groups_delete_newgroup">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="groups_delete" id="fc_groups_delete_newgroup" maxlength="255" value="1" />
-							</div>
-							<div class="clear"></div>
-				
-							<label for="fc_admintools_newgroup">{translate('Admintools')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="admintools" id="fc_admintools_newgroup" maxlength="255" value="1" />
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_admintools_newgroup">
-								<label for="fc_admintools_settings_newgroup">{translate('Modify settings')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="admintools_settings" id="fc_admintools_settings_newgroup" maxlength="255" value="1" />
-							</div>
-							<div class="clear"></div>
-						</div>
-				
-						<div id="fc_tabs_modules" class="g_14 pre_1">
-							<div class="clear sp_clear"></div>
-							<ul>
-								{foreach $modules as module}
-								<li>
-									<label for="fc_m_newgroup_{$module.VALUE}">{$module.NAME}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="module_permissions[]" id="fc_m_newgroup_{$module.VALUE}" value="{$module.VALUE}" />
-								</li>
-								{/foreach}
-							</ul>
-						</div>
-				
-						<div id="fc_tabs_admintools" class="g_14 pre_1">
-							<div class="clear sp_clear"></div>
-							<ul>
-								{foreach $admintools as admintool}
-								<li>
-									<label for="fc_am_newgroup_{$admintool.VALUE}">{$admintool.NAME}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="module_permissions[]" id="fc_am_newgroup_{$admintool.VALUE}" value="{$admintool.VALUE}" />
-								</li>
-								{/foreach}
-							</ul>
-						</div>
-				
-						<div id="fc_tabs_templates" class="g_14 pre_1">
-							<div class="clear sp_clear"></div>
-							<ul>
-								{foreach $templates as template}
-								<li>
-									<label for="fc_t_newgroup_{$template.VALUE}">{$template.NAME}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="template_permissions[]" id="fc_t_newgroup_{$template.VALUE}" value="{$template.VALUE}" />
-								</li>
-								{/foreach}
-							</ul>
-						</div>
-						<div class="clear"></div>
-					</div>
-				</div>
-				<div class="fc_confirm_bar ui-corner-bottom">
-					<input type="submit" name="submit_add_group" value="{translate('Save')}" />
-					<input type="reset" name="reset" value="{translate('Reset')}" />
-				</div>
-			
-			</form>
-		</div>
-		{/if}
-	
-		{foreach $groups.viewers as group}
-		{if $group.VALUE != 1}
-		<div id="fc_list_{$group.VALUE}" class="fc_list_forms">
-			<form name="group_{$group.VALUE}" action="{$ADMIN_URL}/groups/save.php" method="post" class="ajaxForm">
-				<div class="fc_form_content">
-					<div class="fc_form_content_title ui-corner-top">
-						<p class="g_16">{translate('Modify group')}: <strong>{$group.NAME}</strong></p>
-					</div>
-					<input type="hidden" name="group_id" value="{$group.VALUE}" />
-					<input type="hidden" name="form_title" value="{translate('Modify group')}" />
-					<input type="hidden" name="group_name" value="{$group.NAME}" />
+	<div class="fc_all_forms">
+		<form action="{$ADMIN_URL}/groups/ajax_save_group.php" method="post" id="fc_Group_form" class="fc_list_forms">
+			<p class="submit_settings fc_gradient1">
+				<strong class="fc_addGroup">{translate('Add group')}</strong>
+				<strong class="fc_modifyGroup">{translate('Modify group')}</strong>
+				<input type="submit" name="addGroup" value="{translate('Add group')}" class="fc_addGroup" />
+				<input type="submit" name="saveGroup" value="{translate('Save group')}" class="fc_modifyGroup" />
+				<input type="reset" name="reset" value="{translate('Reset')}">
+				<input type="hidden" name="group_id" id="fc_Group_group_id" value="" />
+			</p>
+			<div class="clear_sp"></div>
+			<label for="fc_Group_name">{translate('Name of group')}:</label>
+			<input type="text" name="name" id="fc_Group_name" value="">
+			<div class="clear_sp"></div>
+			<ul class="fc_groups_tabs fc_gradient1 fc_border clearfix">
+				<li><a class="fc_gradient1 fc_gradient_hover fc_active" href="#fc_tabs_system_permissions"><span class="icon-cog"></span> {translate('General System')}</a></li>
+				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_modules"><span class="icon-puzzle"></span> {translate('Modules')}</a></li>
+				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_admintools"><span class="icon-wrench"></span> {translate('Admintools')}</a></li>
+				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_templates"><span class="icon-color-palette"></span> {translate('Templates')}</a></li>
+				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_media"><span class="icon-pictures"></span> {translate('Media')}</a></li>
+				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_groups"><span class="icon-users"></span> {translate('User & Groups')}</a></li>
+				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_languages"><span class="icon-comments"></span> {translate('Languages')}</a></li>
+			</ul>
 
-					<div class="clear"></div>
-					<label for="fc_name_{$group.VALUE}" class="g_4">{translate('Name')}:</label>
-					<input type="text" name="name" id="fc_name_{$group.VALUE}" class="g_11" value="{$group.NAME}" />
-					<div class="clear sp_clear"></div>
+			<div class="fc_toggle_tabs" id="fc_tabs_system_permissions">
+				<div class="clear_sp"></div>
+				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_GROUPpages" name="pages" id="fc_Group_pages" value="1" />
+				<label class="fc_settings_max" for="fc_Group_pages">{translate('Pages')}</label>
+				<div id="fc_GROUPpages">
+					<div class="clear_sp"></div>
+					<input type="checkbox" class="fc_checkbox_jq" name="pages_view" id="fc_Group_pages_view" value="1" />
+					<label class="fc_settings_max" for="fc_Group_pages_view">{translate('View')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="pages_add" id="fc_Group_pages_add" value="1" />
+					<label class="fc_settings_max "for="fc_Group_pages_add">{translate('Add')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="pages_add_l0" id="fc_Group_pages_add_l0" value="1" />
+					<label class="fc_settings_max "for="fc_Group_pages_add_l0">{translate('Level')} 0</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="pages_settings" id="fc_Group_pages_settings" value="1" />
+					<label class="fc_settings_max "for="fc_Group_pages_settings">{translate('Modify settings')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="pages_modify" id="fc_Group_pages_modify" value="1" />
+					<label class="fc_settings_max "for="fc_Group_pages_modify">{translate('Modify content')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="pages_intro" id="fc_Group_pages_intro" value="1" />
+					<label class="fc_settings_max "for="fc_Group_pages_intro">{translate('Modify intro page')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="pages_delete" id="fc_Group_pages_delete" value="1" />
+					<label class="fc_settings_max "for="fc_Group_pages_delete">{translate('Delete')}</label>
+				</div>
+				<hr/>
+				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_settings" name="settings" id="fc_Group_settings" value="1" />
+				<label class="fc_settings_max" for="fc_Group_settings">{translate('Settings')}</label>
+				<div id="fc_settings">
+					<div class="clear_sp"></div>
 
-					<div id="fc_tabs_{$group.VALUE}" class="fc_tabs">
-						<ul class="fc_groups_tabs">
-							<li><a href="#fc_tabs_system_permissions_{$group.VALUE}">{translate('System permissions')}</a></li>
-							<li><a href="#fc_tabs_modules_{$group.VALUE}">{translate('Module permissions')}</a></li>
-							<li><a href="#fc_tabs_admintools_{$group.VALUE}">{translate('Admintools')}</a></li>
-							<li><a href="#fc_tabs_templates_{$group.VALUE}">{translate('Template permissions')}</a></li>
-						</ul>
-						<div id="fc_tabs_system_permissions_{$group.VALUE}" class="g_14 pre_1">
-							<div class="clear sp_clear"></div>
-							<label for="fc_pages_{$group.VALUE}">{translate('Pages')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="pages" id="fc_pages_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.pages}checked="checked" {/if}/>
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_pages_{$group.VALUE}">
-								<label for="fc_pages_view_{$group.VALUE}">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_view" id="fc_pages_view_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.pages_view}checked="checked" {/if}/>
-								<label for="fc_pages_add_{$group.VALUE}">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_add" id="fc_pages_add_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.pages_add}checked="checked" {/if}/>
-								<label for="fc_pages_add_l0_{$group.VALUE}">{translate('Level')} 0</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_add_l0" id="fc_pages_add_l0_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.pages_add_l0}checked="checked" {/if}/>
-								<label for="fc_pages_settings_{$group.VALUE}">{translate('Modify settings')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_settings" id="fc_pages_settings_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.pages_settings}checked="checked" {/if}/>
-								<label for="fc_pages_modify_{$group.VALUE}">{translate('Modify content')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_modify" id="fc_pages_modify_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.pages_modify}checked="checked" {/if}/>
-								<label for="fc_pages_intro_{$group.VALUE}">{translate('Modify intro page')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_intro" id="fc_pages_intro_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.pages_intro}checked="checked" {/if}/>
-								<label for="fc_pages_delete_{$group.VALUE}">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="pages_delete" id="fc_pages_delete_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.pages_delete}checked="checked" {/if}/>
-							</div>
-							<div class="clear"></div>
-					
-							<label for="fc_media_{$group.VALUE}">{translate('Media')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="media" id="fc_media_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.media}checked="checked" {/if}/>
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_media_{$group.VALUE}">
-									<label for="fc_media_view_{$group.VALUE}">{translate('View')}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="media_view" id="fc_media_view_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.media_view}checked="checked" {/if}/>
-									<label for="fc_media_upload_{$group.VALUE}">{translate('Upload files')}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="media_upload" id="fc_media_upload_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.media_upload}checked="checked" {/if}/>
-									<label for="fc_media_rename_{$group.VALUE}">{translate('Rename')}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="media_rename" id="fc_media_rename_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.media_rename}checked="checked" {/if}/>
-									<label for="fc_media_delete_{$group.VALUE}">{translate('Delete')}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="media_delete" id="fc_media_delete_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.media_delete}checked="checked" {/if}/>
-									<label for="fc_media_create_{$group.VALUE}">{translate('Create folder')}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="media_create" id="fc_media_create_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.media_create}checked="checked" {/if}/>
-							</div>
-							<div class="clear"></div>
-					
-							<label for="fc_modules_{$group.VALUE}">{translate('Modules')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="modules" id="fc_modules_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.modules}checked="checked" {/if}/>
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_modules_{$group.VALUE}">
-								<label for="fc_modules_view_{$group.VALUE}">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="modules_view" id="fc_modules_view_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.modules_view}checked="checked" {/if}/>
-								<label for="fc_modules_install_{$group.VALUE}">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="modules_install" id="fc_modules_install_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.modules_install}checked="checked" {/if}/>
-								<label for="fc_modules_uninstall_{$group.VALUE}">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="modules_uninstall" id="fc_modules_uninstall_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.modules_uninstall}checked="checked" {/if}/>
-							</div>
-							<div class="clear"></div>
-					
-							<label for="fc_templates_{$group.VALUE}">{translate('Templates')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="templates" id="fc_templates_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.templates}checked="checked" {/if}/>
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_templates_{$group.VALUE}">
-								<label for="fc_templates_view_{$group.VALUE}">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="templates_view" id="fc_templates_view_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.templates_view}checked="checked" {/if}/>
-								<label for="fc_templates_install_{$group.VALUE}">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="templates_install" id="fc_templates_install_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.templates_install}checked="checked" {/if}/>
-								<label for="fc_templates_uninstall_{$group.VALUE}">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="templates_uninstall" id="fc_templates_uninstall_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.templates_uninstall}checked="checked" {/if}/>
-							</div>
-							<div class="clear"></div>
-					
-							<label for="fc_languages_{$group.VALUE}">{translate('Languages')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="languages" id="fc_languages_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.languages}checked="checked" {/if}/>
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_languages_{$group.VALUE}">
-								<label for="fc_languages_view_{$group.VALUE}">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="languages_view" id="fc_languages_view_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.languages_view}checked="checked" {/if}/>
-								<label for="fc_languages_install_{$group.VALUE}">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="languages_install" id="fc_languages_install_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.languages_install}checked="checked" {/if}/>
-								<label for="fc_languages_uninstall_{$group.VALUE}">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="languages_uninstall" id="fc_languages_uninstall_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.languages_uninstall}checked="checked" {/if}/>
-							</div>
-							<div class="clear"></div>
-					
-							<label for="fc_settings_{$group.VALUE}">{translate('Settings')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="settings" id="fc_settings_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.settings}checked="checked" {/if}/>
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_settings_{$group.VALUE}">
-								<label for="fc_settings_basic_{$group.VALUE}">{translate('Basic')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="settings_basic" id="fc_settings_basic_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.settings_basic}checked="checked" {/if}/>
-								<label for="fc_settings_advanced_{$group.VALUE}">{translate('Advanced')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="settings_advanced" id="fc_settings_advanced_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.settings_advanced}checked="checked" {/if}/>
-							</div>
-							<div class="clear"></div>
-					
-							<label for="fc_lists_{$group.VALUE}">{translate('Users')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="users" id="fc_lists_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.users}checked="checked" {/if}/>
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_lists_{$group.VALUE}">
-								<label for="fc_lists_view_{$group.VALUE}">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="users_view" id="fc_lists_view_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.users_view}checked="checked" {/if}/>
-								<label for="fc_lists_add_{$group.VALUE}">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="users_add" id="fc_lists_add_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.users_add}checked="checked" {/if}/>
-								<label for="fc_lists_modify_{$group.VALUE}">{translate('Modify')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="users_modify" id="fc_lists_modify_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.users_modify}checked="checked" {/if}/>
-								<label for="fc_lists_delete_{$group.VALUE}">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="users_delete" id="fc_lists_delete_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.users_delete}checked="checked" {/if}/>
-							</div>
-							<div class="clear"></div>
-					
-							<label for="fc_groups_{$group.VALUE}">{translate('Groups')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="groups" id="fc_groups_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.groups}checked="checked" {/if}/>
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_groups_{$group.VALUE}">
-								<label for="fc_groups_view_{$group.VALUE}">{translate('View')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="groups_view" id="fc_groups_view_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.groups_view}checked="checked" {/if}/>
-								<label for="fc_groups_add_{$group.VALUE}">{translate('Add')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="groups_add" id="fc_groups_add_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.groups_add}checked="checked" {/if}/>
-								<label for="fc_groups_modify_{$group.VALUE}">{translate('Modify')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="groups_modify" id="fc_groups_modify_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.groups_modify}checked="checked" {/if}/>
-								<label for="fc_groups_delete_{$group.VALUE}">{translate('Delete')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="groups_delete" id="fc_groups_delete_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.groups_delete}checked="checked" {/if}/>
-							</div>
-							<div class="clear"></div>
-					
-							<label for="fc_admintools_{$group.VALUE}">{translate('Admintools')}</label>
-							<input type="checkbox" class="fc_checkbox_jq fc_advanced_label" name="admintools" id="fc_admintools_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.admintools}checked="checked" {/if}/>
-							<span class="fc_advanced_button">&nbsp;</span>
-							<div class="fc_advanced_groups" rel="fc_admintools_{$group.VALUE}">
-								<label for="fc_admintools_settings_{$group.VALUE}">{translate('Modify settings')}</label>
-								<input type="checkbox" class="fc_checkbox_jq" name="admintools_settings" id="fc_admintools_settings_{$group.VALUE}" maxlength="255" value="1" {if $group.system_permissions.admintools_settings}checked="checked" {/if}/>
-							</div>
-							<div class="clear"></div>
-						</div>
-		
-						<div id="fc_tabs_modules_{$group.VALUE}" class="g_14 pre_1">
-							<div class="clear sp_clear"></div>
-							<ul>
-								{foreach $modules as module}
-								{$name = lower($module.VALUE)}
-								<li>
-									<label for="fc_m_{$group.VALUE}_{$module.VALUE}">{$module.NAME}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="module_permissions[]" id="fc_m_{$group.VALUE}_{$module.VALUE}" value="{$module.VALUE}"{if !$group.module_permissions.$name} checked="checked"{/if}/>
-								</li>
-								{/foreach}
-							</ul>
-						</div>
-		
-						<div id="fc_tabs_admintools_{$group.VALUE}" class="g_14 pre_1">
-							<div class="clear sp_clear"></div>
-							<ul>
-								{foreach $admintools as admintool}
-								{$name = lower($admintool.VALUE)}
-								<li>
-									<label for="fc_am_{$group.VALUE}_{$admintool.VALUE}">{$admintool.NAME}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="module_permissions[]" id="fc_am_{$group.VALUE}_{$admintool.VALUE}" value="{$admintool.VALUE}"{if !$group.module_permissions.$name} checked="checked"{/if}/>
-								</li>
-								{/foreach}
-							</ul>
-						</div>
-		
-						<div id="fc_tabs_templates_{$group.VALUE}" class="g_14 pre_1">
-							<div class="clear sp_clear"></div>
-							<ul>
-								{foreach $templates as template}
-								{$name = lower($template.VALUE)}
-								<li>
-									<label for="fc_t_{$group.VALUE}_{$template.VALUE}">{$template.NAME}</label>
-									<input type="checkbox" class="fc_checkbox_jq" name="template_permissions[]" id="fc_t_{$group.VALUE}_{$template.VALUE}" value="{$template.VALUE}"{if !$group.template_permissions.$name == true} checked="checked"{/if}/>
-								</li>
-								{/foreach}
-							</ul>
-						</div>
-					</div>
-					<div class="clear sp_clear"></div>
+					<input type="checkbox" class="fc_checkbox_jq" name="settings_basic" id="fc_Group_settings_basic" value="1" />
+					<label class="fc_settings_max "for="fc_Group_settings_basic">{translate('Basic')}</label>
+
+					<input type="checkbox" class="fc_checkbox_jq" name="settings_advanced" id="fc_Group_settings_advanced" value="1" />
+					<label class="fc_settings_max "for="fc_Group_settings_advanced">{translate('Advanced')}</label>
 				</div>
-				<div class="fc_confirm_bar ui-corner-bottom">
-					{if $permissions.GROUPS_DELETE}
-					<span class="fc_list_remove fc_group_remove ui-corner-all red_button">
-						{translate('Delete group')}
-					</span>
-					{/if}
-					<input type="submit" name="submit_group" value="{translate('Save')}" />
-					<input type="reset" name="reset" value="{translate('Reset')}" />
+			</div>
+
+			<div class="fc_toggle_tabs" id="fc_tabs_modules">
+				<div class="clear_sp"></div>
+				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_modules" name="modules" id="fc_Group_modules" value="1" />
+				<label class="fc_settings_max" for="fc_Group_modules">{translate('Modules')}</label>
+				<div id="fc_modules">
+					<div class="clear_sp"></div>
+					<input type="checkbox" class="fc_checkbox_jq" name="modules_view" id="fc_Group_modules_view" value="1" />
+					<label class="fc_settings_max" for="fc_Group_modules_view">{translate('View')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="modules_install" id="fc_Group_modules_install" value="1" />
+					<label class="fc_settings_max" for="fc_Group_modules_install">{translate('Add')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="modules_uninstall" id="fc_Group_modules_uninstall" value="1" />
+					<label class="fc_settings_max" for="fc_Group_modules_uninstall">{translate('Delete')}</label>
 				</div>
-			</form>
-		</div>
-		{/if}
-		{/foreach}
+				<hr/>
+				<strong>{translate('Installed modules')}</strong>
+				<div class="clear_sp"></div>
+				<ul>
+					{foreach $modules as module}
+					<li>
+						<input type="checkbox" class="fc_checkbox_jq" name="module_permissions[]" id="fc_Group_m_{$module.VALUE}" value="{$module.VALUE}">
+						<label class="fc_settings_max" for="fc_Group_m_{$module.VALUE}">{$module.NAME}</label>
+					</li>
+					{/foreach}
+				</ul>
+			</div>
+
+			<div class="fc_toggle_tabs" id="fc_tabs_admintools">
+				<div class="clear_sp"></div>
+				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_Group_admintools_div" name="admintools" id="fc_Group_admintools" value="1" />
+				<label class="fc_settings_max" for="fc_Group_admintools">{translate('Admintools')}</label>
+				<div id="fc_Group_admintools_div">
+					<div class="clear_sp"></div>
+					<input type="checkbox" class="fc_checkbox_jq" name="admintools_settings" id="fc_Group_admintools_settings" value="1" />
+					<label class="fc_settings_max" for="fc_Group_admintools_settings">{translate('Modify settings')}</label>
+				</div>
+				<hr/>
+				<strong>{translate('Installed admintools')}</strong>
+				<div class="clear_sp"></div>
+				<ul>
+					{foreach $admintools as admintool}
+					<li>
+						<input type="checkbox" class="fc_checkbox_jq" name="module_permissions[]" id="fc_Group_m_{$admintool.VALUE}" value="{$admintool.VALUE}">
+						<label class="fc_settings_max" for="fc_Group_m_{$admintool.VALUE}">{$admintool.NAME}</label>
+					</li>
+					{/foreach}
+				</ul>
+			</div>
+
+			<div class="fc_toggle_tabs" id="fc_tabs_templates">
+				<div class="clear_sp"></div>
+				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_templates" name="templates" id="fc_Group_templates" value="1" />
+				<label class="fc_settings_max" for="fc_Group_templates">{translate('Templates')}</label>
+				<div id="fc_templates">
+					<div class="clear_sp"></div>
+					<input type="checkbox" class="fc_checkbox_jq" name="templates_view" id="fc_Group_templates_view" value="1" />
+					<label class="fc_settings_max" for="fc_Group_templates_view">{translate('View')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="templates_install" id="fc_Group_templates_install" value="1" />
+					<label class="fc_settings_max" for="fc_Group_templates_install">{translate('Add')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="templates_uninstall" id="fc_Group_templates_uninstall" value="1" />
+					<label class="fc_settings_max" for="fc_Group_templates_uninstall">{translate('Delete')}</label>
+				</div>
+				<hr/>
+				<strong>{translate('Installed templates')}</strong>
+				<div class="clear_sp"></div>
+				<ul>
+					{foreach $templates as template}
+					<li>
+						<input type="checkbox" class="fc_checkbox_jq" name="template_permissions[]" id="fc_Group_t_{$template.VALUE}" value="{$template.VALUE}">
+						<label class="fc_settings_max" for="fc_Group_t_{$template.VALUE}">{$template.NAME}</label>
+					</li>
+					{/foreach}
+				</ul>
+			</div>
+
+			<div class="fc_toggle_tabs" id="fc_tabs_media">
+				<div class="clear_sp"></div>
+				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_media" name="media" id="fc_Group_media" value="1" />
+				<label class="fc_settings_max" for="fc_Group_media">{translate('Media')}</label>
+				<div id="fc_media">
+					<div class="clear_sp"></div>
+					<input type="checkbox" class="fc_checkbox_jq" name="media_view" id="fc_Group_media_view" value="1" />
+					<label class="fc_settings_max" for="fc_Group_media_view">{translate('View')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="media_upload" id="fc_Group_media_upload" value="1" />
+					<label class="fc_settings_max" for="fc_Group_media_upload">{translate('Upload files')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="media_rename" id="fc_Group_media_rename" value="1" />
+					<label class="fc_settings_max" for="fc_Group_media_rename">{translate('Rename')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="media_delete" id="fc_Group_media_delete" value="1" />
+					<label class="fc_settings_max" for="fc_Group_media_delete">{translate('Delete')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="media_create" id="fc_Group_media_create" value="1" />
+					<label class="fc_settings_max" for="fc_Group_media_create">{translate('Create folder')}</label>
+				</div>
+			</div>
+
+			<div class="fc_toggle_tabs" id="fc_tabs_groups">
+				<div class="clear_sp"></div>
+				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_users" name="users" id="fc_Group_users" value="1" />
+				<label class="fc_settings_max" for="fc_Group_users">{translate('Users')}</label>
+				<div id="fc_users">
+					<div class="clear_sp"></div>
+					<input type="checkbox" class="fc_checkbox_jq" name="users_view" id="fc_Group_users_view" value="1" />
+					<label class="fc_settings_max" for="fc_Group_users_view">{translate('View')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="users_add" id="fc_Group_users_add" value="1" />
+					<label class="fc_settings_max" for="fc_Group_users_add">{translate('Add')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="users_modify" id="fc_Group_users_modify" value="1" />
+					<label class="fc_settings_max" for="fc_Group_users_modify">{translate('Modify')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="users_delete" id="fc_Group_users_delete" value="1" />
+					<label class="fc_settings_max" for="fc_Group_users_delete">{translate('Delete')}</label>
+				</div>
+				<hr/>
+				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_groups" name="groups" id="fc_Group_groups" value="1" />
+				<label class="fc_settings_max" for="fc_Group_groups">{translate('Groups')}</label>
+				<div id="fc_groups">
+					<div class="clear_sp"></div>
+					<input type="checkbox" class="fc_checkbox_jq" name="groups_view" id="fc_Group_groups_view" value="1" />
+					<label class="fc_settings_max" for="fc_Group_groups_view">{translate('View')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="groups_add" id="fc_Group_groups_add" value="1" />
+					<label class="fc_settings_max" for="fc_Group_groups_add">{translate('Add')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="groups_modify" id="fc_Group_groups_modify" value="1" />
+					<label class="fc_settings_max" for="fc_Group_groups_modify">{translate('Modify')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="groups_delete" id="fc_Group_groups_delete" value="1" />
+					<label class="fc_settings_max" for="fc_Group_groups_delete">{translate('Delete')}</label>
+				</div>
+			</div>
+
+			<div class="fc_toggle_tabs" id="fc_tabs_languages">
+				<div class="clear_sp"></div>
+				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_languages" name="languages" id="fc_Group_languages" value="1" />
+				<label class="fc_settings_max" for="fc_Group_languages">{translate('Languages')}</label>
+				<div id="fc_languages">
+					<div class="clear_sp"></div>
+					<input type="checkbox" class="fc_checkbox_jq" name="languages_view" id="fc_Group_languages_view" value="1" />
+					<label class="fc_settings_max" for="fc_Group_languages_view">{translate('View')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="languages_install" id="fc_Group_languages_install" value="1" />
+					<label class="fc_settings_max" for="fc_Group_languages_install">{translate('Add')}</label>
+					<input type="checkbox" class="fc_checkbox_jq" name="languages_uninstall" id="fc_Group_languages_uninstall" value="1" />
+					<label class="fc_settings_max" for="fc_Group_languages_uninstall">{translate('Delete')}</label>
+				</div>
+			</div>
+
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
+				{if $permissions.GROUPS_DELETE}<input type="submit" id="fc_removeGroup" class="fc_modifyGroup fc_list_remove fc_gradient_red" name="removeGroup" value="{translate('Delete group')}" />{/if}
+				<input type="submit" name="addGroup" value="{translate('Add group')}" class="fc_addGroup">
+				<input type="submit" name="saveGroup" value="{translate('Save group')}" class="fc_modifyGroup">
+				<input type="reset" name="reset" value="{translate('Reset')}">
+			</p>
+		</form>
 	</div>
 	{/if}
 </div>

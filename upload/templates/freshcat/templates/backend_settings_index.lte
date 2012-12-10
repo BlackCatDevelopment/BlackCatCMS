@@ -1,180 +1,185 @@
 <div id="fc_content_header">
 	{translate('Settings')}
 </div>
-
-<div id="fc_main_content" class="c_16">
-<div class="clear sp_clear"></div>
-<form name="settings" action="{$ADMIN_URL}/settings/save.php" method="post" class="ajaxForm">
-	<div id="fc_lists_overview" class="g_4 ui-corner-top">
-		<div id="fc_list_search" class="ui-corner-top">
+<div id="fc_main_content">
+	<form name="settings" action="{$ADMIN_URL}/settings/save.php" method="post" class="ajaxForm">
+	<div id="fc_lists_overview">
+		<div id="fc_list_search" class="fc_gradient1">
 			<div class="fc_input_fake">
-				<input type="text" name="fc_list_search" id="fc_list_search_input" value="{translate('Search')}" />
+				<input type="text" name="fc_list_search" id="fc_list_search_input" value="{translate('Search...')}" />
 				<label class="fc_close" for="fc_list_search_input"></label>
 			</div>
 		</div>
 		<ul id="fc_list_overview" class="fc_group_list fc_settings_list">
-			<li class="fc_setting_item fc_seo_item" rel="fc_SEO">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-binocular" rel="fc_SEO">
 				<span class="fc_groups_name">{translate('SEO settings')}</span>
 			</li>
-			<li class="fc_setting_item fc_frontend_item" rel="fc_FRONTEND">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-screen-2" rel="fc_FRONTEND">
 				<span class="fc_groups_name">{translate('Frontend settings')}</span>
 			</li>
-			<li class="fc_setting_item fc_backend_item" rel="fc_BACKEND">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-equalizer" rel="fc_BACKEND">
 				<span class="fc_groups_name">{translate('Backend settings')}</span>
 			</li>
-			<li class="fc_setting_item fc_system_item" rel="fc_SYSTEM">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-cog" rel="fc_SYSTEM">
 				<span class="fc_groups_name">{translate('System settings')}</span>
 			</li>
-			<li class="fc_setting_item fc_lists_item" rel="fc_list">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-users" rel="fc_list">
 				<span class="fc_groups_name">{translate('User settings')}</span>
 			</li>
-			<li class="fc_setting_item fc_time_language_item" rel="fc_TIME_LANGUAGE">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-alarm" rel="fc_TIME_LANGUAGE">
 				<span class="fc_groups_name">{translate('Language & time')}</span>
 			</li>
-			<li class="fc_setting_item fc_searching_item" rel="fc_SEARCHING">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-search" rel="fc_SEARCHING">
 				<span class="fc_groups_name">{translate('Search settings')}</span>
 			</li>
-			<li class="fc_setting_item fc_server_item" rel="fc_SERVER">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-database" rel="fc_SERVER">
 				<span class="fc_groups_name">{translate('Server settings')}</span>
 			</li>
-			<li class="fc_setting_item fc_mail_item" rel="fc_MAIL">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-mail" rel="fc_MAIL">
 				<span class="fc_groups_name">{translate('Mailer settings')}</span>
 			</li>
 		</ul>
 	</div>
-	<div class="g_12 fc_all_forms">
-		<div id="fc_SEO" class="fc_form_content fc_list_forms ui-corner-top">
-			<div class="clear sp_clear"></div>
-			<label for="fc_website_title" class="g_6">{translate('Website title')}:</label>
-			<input type="text" name="website_title" id="fc_website_title" class="g_9"  value="{$values.website_title}" />
-			<div class="clear sp_clear"></div>
-
-			<label for="fc_website_description" class="g_6">{translate('Website description')}:</label>
-			<textarea name="website_description" id="fc_website_description" class="g_9" cols="80" rows="6" >{$values.website_description}</textarea>
-			<div class="clear"></div>
+	<p class="submit_settings fc_gradient1">
+		<input type="submit" name="submit" value="{translate('Save')}" />
+		<input type="reset" name="reset" value="{translate('Reset')}" />
+	</p>
+	<div class="fc_gradient1 fc_all_forms">
+		<div id="fc_SEO" class="fc_gradient1 fc_list_forms ui-corner-top">
+			<label class="fc_label_120" for="fc_website_title">{translate('Website title')}:</label>
+			<input type="text" name="website_title" id="fc_website_title"  value="{$values.website_title}" />
 			<hr/>
-			<label for="fc_website_keywords" class="g_6">{translate('Website keywords')}:</label>
-			<textarea name="website_keywords" id="fc_website_keywords" class="g_9" cols="80" rows="6" >{$values.website_keywords}</textarea>
-			<div class="clear sp_clear"></div>
+
+			<label class="fc_label_120" for="fc_website_description">{translate('Website description')}:</label><br/>
+			<textarea name="website_description" id="fc_website_description" cols="80" rows="6" >{$values.website_description}</textarea>
+			<div class="clear_sp"></div>
+			<label class="fc_label_120" for="fc_website_keywords">{translate('Website keywords')}:</label><br/>
+			<textarea name="website_keywords" id="fc_website_keywords" cols="80" rows="6" >{$values.website_keywords}</textarea>
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit" value="{translate('Save')}" />
+				<input type="reset" name="reset" value="{translate('Reset')}" />
+			</p>
 		</div>
 
-		<div id="fc_FRONTEND" class="fc_form_content fc_list_forms ui-corner-top">
-			<div class="clear sp_clear"></div>
-			<label for="fc_default_template" class="g_6">{translate('Template')}:</label>
-			<select class="g_7" name="default_template" id="fc_default_template">
+		<div id="fc_FRONTEND" class="fc_gradient1 fc_list_forms ui-corner-top">
+			<label class="fc_label_120" for="fc_default_template">{translate('Template')}:</label>
+			<select name="default_template" id="fc_default_template">
 				{foreach $templates template}
 				<option value="{$template.VALUE}"{if $template.SELECTED} selected="selected"{/if}>{$template.NAME}</option>
 				{/foreach}
 			</select>
-			<div class="clear sp_clear"></div>
+			<hr/>
 
-			<label for="fc_website_header" class="g_6">{translate('Website header')}:</label>
-			<textarea name="website_header" id="fc_website_header" class="g_9" cols="80" rows="6" >{$values.website_header}</textarea>
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_website_header">{translate('Website header')}:</label><br/>
+			<textarea name="website_header" id="fc_website_header" cols="80" rows="6" >{$values.website_header}</textarea>
+			<div class="clear_sp"></div>
 
-			<label for="fc_website_footer" class="g_6">{translate('Website footer')}:</label>
-			<textarea name="website_footer" id="fc_website_footer" class="g_9" cols="80" rows="6" >{$values.website_footer}</textarea>
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_website_footer">{translate('Website footer')}:</label><br/>
+			<textarea name="website_footer" id="fc_website_footer" cols="80" rows="6" >{$values.website_footer}</textarea>
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit" value="{translate('Save')}" />
+				<input type="reset" name="reset" value="{translate('Reset')}" />
+			</p>
 		</div>
 
 
-		<div id="fc_BACKEND" class="fc_form_content fc_list_forms ui-corner-top">
-			<div class="clear sp_clear"></div>
-			<label for="fc_default_template" class="g_6">{translate('Backend theme')}:</label>
-			<select class="g_7" name="default_theme" id="fc_default_theme">
+		<div id="fc_BACKEND" class="fc_gradient1 fc_list_forms ui-corner-top">
+			<label class="fc_label_200" for="fc_default_template">{translate('Backend theme')}:</label>
+			<select name="default_theme" id="fc_default_theme">
 				{foreach $backends backend}
 				<option value="{$backend.VALUE}"{if $backend.SELECTED} selected="selected"{/if}>{$backend.NAME}</option>
 				{/foreach}
 			</select>
-			<div class="clear sp_clear"></div>
+			<hr/>
 
-			<label for="fc_wysiwyg_editor" class="g_6">{translate('WYSIWYG Editor')}:</label>
-			<select class="g_6" name="wysiwyg_editor" id="fc_wysiwyg_editor">
+			<label class="fc_label_200" for="fc_wysiwyg_editor">{translate('WYSIWYG Editor')}:</label>
+			<select name="wysiwyg_editor" id="fc_wysiwyg_editor">
 				{foreach $wysiwyg module}
 				<option value="{$module.VALUE}"{if $module.SELECTED} selected="selected"{/if}>{$module.NAME}</option>
 				{/foreach}
 			</select>
-			<div class="clear sp_clear"></div>
 
 			{if $DISPLAY_ADVANCED}
-			<label for="fc_er_level" class="g_6">{translate('PHP Error Reporting Level')}:</label>
-			<select class="g_6" name="er_level" id="fc_er_level">
+			<hr/>
+			<label class="fc_label_200" for="fc_er_level">{translate('PHP Error Reporting Level')}:</label>
+			<select name="er_level" id="fc_er_level">
 				<option value="">{translate('Please select')}...</option>
 				{foreach $er_levels er}
 				<option value="{$er.VALUE}"{if $er.SELECTED} selected="selected"{/if}>{$er.NAME}</option>
 				{/foreach}
 			</select>
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
 
-			<label for="fc_redirect_timer" class="g_6">{translate('Redirect after')}:</label>
-			<input type="text" name="redirect_timer" id="fc_redirect_timer" class="g_6"  value="{$values.redirect_timer}" />ms
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_200" for="fc_redirect_timer">{translate('Redirect after')}:</label>
+			<input type="text" name="redirect_timer" id="fc_redirect_timer"  value="{$values.redirect_timer}" />ms
+			<div class="clear_sp"></div>
 
-			<label for="fc_leptoken_lifetime" class="g_6">{translate('Leptoken lifetime')}:</label>
-			<input type="text" name="leptoken_lifetime" id="fc_leptoken_lifetime" class="g_6"  value="{$values.leptoken_lifetime}" /> s
-			<p class="g_7">
+			<label class="fc_label_200" for="fc_leptoken_lifetime">{translate('Leptoken lifetime')}:</label>
+			<input type="text" name="leptoken_lifetime" id="fc_leptoken_lifetime"  value="{$values.leptoken_lifetime}" /> s
+			<p>
 				{translate('0 means no CSRF protection!')}
 			</p>
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
 
-			<label for="fc_max_attempts" class="g_6">{translate('Allowed wrong login attempts')}:</label>
-			<input type="text" name="max_attempts" id="fc_max_attempts" class="g_6"  value="{$values.max_attempts}" />
-			<p class="g_7">
+			<label class="fc_label_200" for="fc_max_attempts">{translate('Allowed wrong login attempts')}:</label>
+			<input type="text" name="max_attempts" id="fc_max_attempts"  value="{$values.max_attempts}" />
+			<p>
 				{translate('When reaching this number, more login attempts are not possible for this session.')}
 			</p>
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
 			{else}
-				<input type="hidden" name="er_level" value="{$ER_LEVEL}" />
-				<input type="hidden" name="redirect_timer" value="{$values.redirect_timer}" />
-				<input type="hidden" name="leptoken_lifetime" value="{$values.leptoken_lifetime}" />
-				<input type="hidden" name="max_attempts" value="{$values.max_attempts}" />
+			<input type="hidden" name="er_level" value="{$ER_LEVEL}" />
+			<input type="hidden" name="redirect_timer" value="{$values.redirect_timer}" />
+			<input type="hidden" name="leptoken_lifetime" value="{$values.leptoken_lifetime}" />
+			<input type="hidden" name="max_attempts" value="{$values.max_attempts}" />
 			{/if}
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit" value="{translate('Save')}" />
+				<input type="reset" name="reset" value="{translate('Reset')}" />
+			</p>
 		</div>
 
 
-		<div id="fc_SYSTEM" class="fc_form_content fc_list_forms ui-corner-top">
-			<div class="clear sp_clear"></div>
+		<div id="fc_SYSTEM" class="fc_gradient1 fc_list_forms ui-corner-top">
 			{if $DISPLAY_ADVANCED}
-			<label for="fc_page_level_limit" class="g_6">{translate('Page level limit')}:</label>
-			<select class="g_6" name="page_level_limit" id="fc_page_level_limit">
+			<label class="fc_label_120" for="fc_page_level_limit">{translate('Page level limit')}:</label>
+			<select name="page_level_limit" id="fc_page_level_limit">
 				{for count 0 10 1}
 				<option value="{$count}"{if $count == $PAGE_LEVEL_LIMIT} selected="selected"{/if}>{$count}</option>
 				{/for}
 			</select>
-			<div class="clear sp_clear"></div>
+			<hr/>
 
-			<label for="fc_page_trash" class="g_6">{translate('Page trash')}:</label>
-			<div class="fc_settings_label g_9" id="fc_page_trash">
-				<label for="fc_page_trash_disabled">{translate('Disabled')}</label>
-				<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_disabled" value="disabled"{if $PAGE_TRASH == 'disabled'} checked="checked"{/if}/>
-				<label for="fc_page_trash_inline">{translate('Inline')}</label>
-				<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_inline" value="inline"{if $PAGE_TRASH == 'inline'} checked="checked"{/if}/>
-				{if $PAGE_TRASH == 'separate'}
-				<label for="fc_page_trash_separate">{translate('Separate')}</label>
-				<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_separate" value="separate"{if $PAGE_TRASH == 'separate'} checked="checked"{/if}/>
-				{/if}
+			<div class="fc_settings_max">
+				<strong>{translate('Page trash')}:</strong>
+				<div class="fc_settings_label" id="fc_page_trash">
+					<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_disabled" value="disabled"{if $PAGE_TRASH == 'disabled'} checked="checked"{/if}/>
+					<label for="fc_page_trash_disabled">{translate('Disabled')}</label>
+					<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_inline" value="inline"{if $PAGE_TRASH == 'inline'} checked="checked"{/if}/>
+					<label for="fc_page_trash_inline">{translate('Inline')}</label>
+					{if $PAGE_TRASH == 'separate'}
+					<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_separate" value="separate"{if $PAGE_TRASH == 'separate'} checked="checked"{/if}/>
+					<label for="fc_page_trash_separate">{translate('Separate')}</label>
+					{/if}
+				</div>
 			</div>
-			<div class="clear sp_clear"></div>
-
-			<div class="pre_4 g_9">
-				<label for="fc_manage_sections">{translate('Manage sections')}</label>
+				<hr/>
+			<div class="fc_settings_max">
 				<input type="checkbox" class="fc_checkbox_jq" name="manage_sections" id="fc_manage_sections" value="true" {if $MANAGE_SECTIONS} checked="checked"{/if}/>
-			</div>
+				<label for="fc_manage_sections">{translate('Manage sections')}</label>
 
-			<div class="pre_4 g_9">
-				<label for="fc_section_blocks">{translate('Sections blocks')}</label>
 				<input type="checkbox" class="fc_checkbox_jq" name="section_blocks" id="fc_section_blocks" value="true" {if $SECTION_BLOCKS} checked="checked"{/if}/>
-			</div>
+				<label for="fc_section_blocks">{translate('Sections blocks')}</label>
 
-			<div class="pre_4 g_9">
-				<label for="fc_multiple_menus">{translate('Multiple menus')}</label>
 				<input type="checkbox" class="fc_checkbox_jq" name="multiple_menus" id="fc_multiple_menus" value="true" {if $MULTIPLE_MENUS} checked="checked"{/if}/>
-			</div>
+				<label for="fc_multiple_menus">{translate('Multiple menus')}</label>
 
-			<div class="pre_4 g_9">
-				<label for="fc_page_languages">{translate('Page languages')}</label>
 				<input type="checkbox" class="fc_checkbox_jq" name="page_languages" id="fc_page_languages" value="true" {if $PAGE_LANGUAGES} checked="checked"{/if}/>
-			</div>
+				<label for="fc_page_languages">{translate('Page languages')}</label>
+
 			{else}
 				<input type="hidden" name="page_level_limit" value="{$PAGE_LEVEL_LIMIT}" />
 				<input type="hidden" name="page_trash" value="{$PAGE_TRASH}" />
@@ -184,294 +189,282 @@
 				<input type="hidden" name="page_languages" value="{$PAGE_LANGUAGES}" />
 			{/if}
 
-			<div class="pre_4 g_9">
-				<label for="fc_intro_page">{translate('Intro page')}</label>
 				<input type="checkbox" class="fc_checkbox_jq" name="intro_page" id="fc_intro_page" value="true" {if $INTRO_PAGE} checked="checked"{/if}/>
-			</div>
+				<label for="fc_intro_page">{translate('Intro page')}</label>
 
 			{if $DISPLAY_ADVANCED}
-			<div class="pre_4 g_9">
-				<label for="fc_homepage_redirection">{translate('Homepage redirection')}</label>
 				<input type="checkbox" class="fc_checkbox_jq" name="homepage_redirection" id="fc_homepage_redirection" value="true" {if $HOMEPAGE_REDIRECTION} checked="checked"{/if}/>
-			</div>
+				<label for="fc_homepage_redirection">{translate('Homepage redirection')}</label>
 			{else}
 				<input type="hidden" name="homepage_redirection" value="{if $HOMEPAGE_REDIRECTION}true{else}false{/if}" />
 			{/if}
-			<div class="clear sp_clear"></div>
+			</div>
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit" value="{translate('Save')}" />
+				<input type="reset" name="reset" value="{translate('Reset')}" />
+			</p>
 		</div>
 
 
-		<div id="fc_list" class="fc_form_content fc_list_forms ui-corner-top">
-			<div class="clear sp_clear"></div>
-			<label for="fc_frontend_signup" class="g_6">{translate('Signup')}:</label>
+		<div id="fc_list" class="fc_gradient1 fc_list_forms ui-corner-top">
+			<label class="fc_label_120" for="fc_frontend_signup">{translate('Signup')}:</label>
 			{if !$groups.viewers}
-			<div class="g_6" id="fc_frontend_signup">
+			<div id="fc_frontend_signup">
 				{translate('No groups found')}
 				<input type="hidden" name="frontend_signup" value="false" />
 			</div>
 			{else}
-			<select class="g_6" name="frontend_signup" id="fc_frontend_signup">
+			<select name="frontend_signup" id="fc_frontend_signup">
 				<option value="false">--- {translate('Disabled')} ---</option>
 				{foreach $groups.viewers group}
 				<option value="{$group.VALUE}"{if $group.CHECKED} selected="selected"{/if}>{$group.NAME}</option>
 				{/foreach}
 			</select>
 			{/if}
-			<div class="clear sp_clear"></div>
-
-			<div class="pre_4 g_9">
-				<label for="fc_frontend_login">{translate('Login')}</label>
+			<hr/>
+			<div class="fc_settings_max">
 				<input type="checkbox" class="fc_checkbox_jq" name="frontend_login" id="fc_frontend_login" value="true" {if $FRONTEND_LOGIN} checked="checked"{/if}/>
-			</div>
+				<label for="fc_frontend_login">{translate('Login')}</label>
 
-			{if $DISPLAY_ADVANCED}
-			<div class="pre_4 g_9">
-				<label for="fc_smart_login">{translate('Smart login')}</label>
+				{if $DISPLAY_ADVANCED}
 				<input type="checkbox" class="fc_checkbox_jq" name="smart_login" id="fc_smart_login" value="true" {if $SMART_LOGIN} checked="checked"{/if}/>
-			</div>
-			{else}
+				<label for="fc_smart_login">{translate('Smart login')}</label>
+				{else}
 				<input type="hidden" name="smart_login" value="{if $SMART_LOGIN}true{else}false{/if}" />
-			{/if}
-
-			<div class="pre_4 g_9">
-				<label for="fc_home_folders">{translate('Personal folders')}</label>
-				<input type="checkbox" class="fc_checkbox_jq" name="home_folders" id="fc_home_folders" value="true" {if $HOME_FOLDERS} checked="checked"{/if}/>
+				{/if}
 			</div>
-			<div class="clear sp_clear"></div>
+			<hr/>
+			<div class="fc_settings_max">
+				<input type="checkbox" class="fc_checkbox_jq" name="home_folders" id="fc_home_folders" value="true" {if $HOME_FOLDERS} checked="checked"{/if}/>
+				<label for="fc_home_folders">{translate('Personal folders')}</label>
+			</div>
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit" value="{translate('Save')}" />
+				<input type="reset" name="reset" value="{translate('Reset')}" />
+			</p>
 		</div>
 	
-		<div id="fc_TIME_LANGUAGE" class="fc_form_content fc_list_forms ui-corner-top">
-			<div class="clear sp_clear"></div>
-			<label for="fc_default_language" class="g_7">{translate('Language')}:</label>
-			<select class="g_6" name="default_language" id="fc_default_language">
+		<div id="fc_TIME_LANGUAGE" class="fc_gradient1 fc_list_forms ui-corner-top">
+			<label class="fc_label_120" for="fc_default_language">{translate('Language')}:</label>
+			<select name="default_language" id="fc_default_language">
 				{foreach $languages language}
 				<option value="{$language.CODE}"{if $language.SELECTED} selected="selected"{/if}>{$language.NAME} ({$language.CODE})</option>
 				{/foreach}
 			</select>
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
 
 			{if $DISPLAY_ADVANCED}
-			<label for="fc_default_charset" class="g_7">{translate('Charset')}:</label>
-			<select class="g_6" name="default_charset" id="fc_default_charset">
+			<label class="fc_label_120" for="fc_default_charset">{translate('Charset')}:</label>
+			<select name="default_charset" id="fc_default_charset">
 				<option value="">{translate('Please select')}...</option>
 				{foreach $charsets charset}
 				<option value="{$charset.VALUE}"{if $charset.SELECTED} selected="selected"{/if}>{$charset.NAME}</option>
 				{/foreach}
 			</select>
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
 			{else}
 				<input type="hidden" name="default_charset" value="{$DEFAULT_CHARSET}" />
 			{/if}
-
-			<label for="fc_default_timezone_string" class="g_7">{translate('Timezone')}:</label>
-			<select class="g_6" name="default_timezone_string" id="fc_default_timezone_string">
+			<hr/>
+			<label class="fc_label_120" for="fc_default_timezone_string">{translate('Timezone')}:</label>
+			<select name="default_timezone_string" id="fc_default_timezone_string">
 				<option value="0">{translate('Please select')}...</option>
 				{foreach $timezones timezone}
 				<option {if $timezone.SELECTED} selected="selected"{/if}>{$timezone.NAME}</option>
 				{/foreach}
 			</select>
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
 
-			<label for="fc_default_date_format" class="g_7">{translate('Date format')}:</label>
-			<select class="g_6" name="default_date_format" id="fc_default_date_format">
+			<label class="fc_label_120" for="fc_default_date_format">{translate('Date format')}:</label>
+			<select name="default_date_format" id="fc_default_date_format">
 				<option value="M d Y">{translate('Please select')}...</option>
 				{foreach $dateformats dateformat}
 				<option value="{$dateformat.VALUE}"{if $dateformat.SELECTED} selected="selected"{/if}>{$dateformat.NAME}</option>
 				{/foreach}
 			</select>
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
 
-			<label for="fc_default_time_format" class="g_7">{translate('Time format')}:</label>
-			<select class="g_6" name="default_time_format" id="fc_default_time_format">
+			<label class="fc_label_120" for="fc_default_time_format">{translate('Time format')}:</label>
+			<select name="default_time_format" id="fc_default_time_format">
 				<option value="g:i A">{translate('Please select')}...</option>
 				{foreach $timeformats timeformat}
 				<option value="{$timeformat.VALUE}"{if $timeformat.SELECTED} selected="selected"{/if}>{$timeformat.NAME}</option>
 				{/foreach}
 			</select>
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit" value="{translate('Save')}" />
+				<input type="reset" name="reset" value="{translate('Reset')}" />
+			</p>
 		</div>
 
 
-		<div id="fc_SEARCHING" class="fc_form_content fc_list_forms ui-corner-top">
-			<div class="clear sp_clear"></div>
-			<label for="fc_search" class="g_6">{translate('Visibility')}:</label>
-			<div class="g_5">
-				<select class="g_3" name="search" id="fc_search">
-					<option value="public"{if $SEARCH == 'public'} selected="selected"{/if}>{translate('Public')}</option>
-					<option value="private"{if $SEARCH == 'private'} selected="selected"{/if}>{translate('Private')}</option>
-					<option value="registered"{if $SEARCH == 'registered'} selected="selected"{/if}>{translate('Registered')}</option>
-					<option value="none"{if $SEARCH == 'none'} selected="selected"{/if}>{translate('None')}</option>
-				</select>
-			</div>
-			<div class="clear sp_clear"></div>
+		<div id="fc_SEARCHING" class="fc_gradient1 fc_list_forms ui-corner-top">
+			<label class="fc_label_120" for="fc_search">{translate('Visibility')}:</label>
+			<select name="search" id="fc_search">
+				<option value="public"{if $SEARCH == 'public'} selected="selected"{/if}>{translate('Public')}</option>
+				<option value="private"{if $SEARCH == 'private'} selected="selected"{/if}>{translate('Private')}</option>
+				<option value="registered"{if $SEARCH == 'registered'} selected="selected"{/if}>{translate('Registered')}</option>
+				<option value="none"{if $SEARCH == 'none'} selected="selected"{/if}>{translate('None')}</option>
+			</select>
+			<div class="clear_sp"></div>
 
 			{if $DISPLAY_ADVANCED}
-			<label for="fc_search_cfg_search_library" class="g_6">{translate('Search library')}:</label>
-			<input type="text" name="search_cfg_search_library" id="fc_search_library" class="g_9" value="{$search.cfg_search_library}" />
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_search_library">{translate('Search library')}:</label>
+			<input type="text" name="search_cfg_search_library" id="fc_search_library" value="{$search.cfg_search_library}" />
+			<div class="clear_sp"></div>
 
-			<label for="fc_search_template" class="g_6">{translate('Standard page: Template for search result')}:</label>
-			<div class="g_5">
-				<select class="g_6" name="search_template" id="fc_search_template">
-					{foreach $search_templates search_template}
-					<option value="{$search_template.VALUE}"{if $search_template.SELECTED} selected="selected"{/if}>{$search_template.NAME}</option>
-					{/foreach}
-				</select>
-			</div>
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_template">{translate('Standard page: Template for search result')}:</label>
+			<select name="search_template" id="fc_search_template">
+				{foreach $search_templates search_template}
+				<option value="{$search_template.VALUE}"{if $search_template.SELECTED} selected="selected"{/if}>{$search_template.NAME}</option>
+				{/foreach}
+			</select>
+			<div class="clear_sp"></div>
 
-			<label for="fc_search_cfg_search_use_page_id" class="g_6">{translate('Individual page: PAGE_ID for search result')}:</label>
-			<input type="text" name="search_cfg_search_use_page_id" id="fc_search_cfg_search_use_page_id" class="g_9" value="{$search.cfg_search_use_page_id}" />
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_search_use_page_id">{translate('Individual page: PAGE_ID for search result')}:</label>
+			<input type="text" name="search_cfg_search_use_page_id" id="fc_search_cfg_search_use_page_id" value="{$search.cfg_search_use_page_id}" />
+			<div class="clear_sp"></div>
 
-			<label for="fc_search_cfg_search_droplep" class="g_6">{translate('Individual page: DropLEP for search result')}:</label>
-			<input type="text" name="search_cfg_search_droplep" id="fc_search_cfg_search_droplep" class="g_9" value="{$search.cfg_search_droplep}" />
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_search_droplep">{translate('Individual page: DropLEP for search result')}:</label>
+			<input type="text" name="search_cfg_search_droplep" id="fc_search_cfg_search_droplep" value="{$search.cfg_search_droplep}" />
+			<div class="clear_sp"></div>
 
-			<label for="fc_search_cfg_search_images" class="g_6">{translate('Search for images')}:</label>
-			<div class="g_5">
-				<select class="g_3" name="search_cfg_search_images" id="fc_search_cfg_search_images">
-					<option value="true"{if $search.cfg_search_images == 'true'} selected="selected"{/if}>{translate('Yes')}</option>
-					<option value="false"{if $search.cfg_search_images == 'false'} selected="selected"{/if}>{translate('No')}</option>
-				</select>
-			</div>
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_search_images">{translate('Search for images')}:</label>
+			<select name="search_cfg_search_images" id="fc_search_cfg_search_images">
+				<option value="true"{if $search.cfg_search_images == 'true'} selected="selected"{/if}>{translate('Yes')}</option>
+				<option value="false"{if $search.cfg_search_images == 'false'} selected="selected"{/if}>{translate('No')}</option>
+			</select>
+			<div class="clear_sp"></div>
 
-			<label for="fc_search_cfg_content_image" class="g_6">{translate('Use image from content page in search result')}:</label>
-			<div class="g_5">
-				<select class="g_3" name="search_cfg_content_image" id="fc_searchcfg_content_image">
-					<option value="none"{if $search.cfg_content_image == 'none'} selected="selected"{/if}>{translate('None')}</option>
-					<option value="first"{if $search.cfg_content_image == 'first'} selected="selected"{/if}>{translate('First')}</option>
-					<option value="last"{if $search.cfg_content_image == 'last'} selected="selected"{/if}>{translate('Last')}</option>
-					<option value="random"{if $search.cfg_content_image == 'random'} selected="selected"{/if}>{translate('Random')}</option>
-				</select>
-			</div>
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_content_image">{translate('Use image from content page in search result')}:</label>
+			<select name="search_cfg_content_image" id="fc_searchcfg_content_image">
+				<option value="none"{if $search.cfg_content_image == 'none'} selected="selected"{/if}>{translate('None')}</option>
+				<option value="first"{if $search.cfg_content_image == 'first'} selected="selected"{/if}>{translate('First')}</option>
+				<option value="last"{if $search.cfg_content_image == 'last'} selected="selected"{/if}>{translate('Last')}</option>
+				<option value="random"{if $search.cfg_content_image == 'random'} selected="selected"{/if}>{translate('Random')}</option>
+			</select>
+			<div class="clear_sp"></div>
 
-			<label for="fc_search_cfg_thumbs_width" class="g_6">{translate('Max. width/height of images in search result')}:</label>
-			<input type="text" name="search_cfg_thumbs_width" id="fc_search_cfg_thumbs_width" class="g_9" value="{$search.cfg_thumbs_width}" />
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_thumbs_width">{translate('Max. width/height of images in search result')}:</label>
+			<input type="text" name="search_cfg_thumbs_width" id="fc_search_cfg_thumbs_width" value="{$search.cfg_thumbs_width}" />
+			<div class="clear_sp"></div>
 
-			<label for="fc_search_cfg_search_description" class="g_6">{translate('Search for page descriptions')}:</label>
-			<div class="g_5">
-				<select class="g_3" name="search_cfg_search_description" id="fc_search_cfg_search_description">
-					<option value="true"{if $search.cfg_search_description == 'true'} selected="selected"{/if}>{translate('Yes')}</option>
-					<option value="false"{if $search.cfg_search_description == 'false'} selected="selected"{/if}>{translate('No')}</option>
-				</select>
-			</div>
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_search_description">{translate('Search for page descriptions')}:</label>
+			<select name="search_cfg_search_description" id="fc_search_cfg_search_description">
+				<option value="true"{if $search.cfg_search_description == 'true'} selected="selected"{/if}>{translate('Yes')}</option>
+				<option value="false"{if $search.cfg_search_description == 'false'} selected="selected"{/if}>{translate('No')}</option>
+			</select>
+			<div class="clear_sp"></div>
 
-			<label for="fc_search_cfg_show_description" class="g_6">{translate('Show page description in search result')}:</label>
-			<div class="g_5">
-				<select class="g_3" name="search_cfg_show_description" id="fc_search_cfg_show_description">
-					<option value="true"{if $search.cfg_show_description == 'true'} selected="selected"{/if}>{translate('Yes')}</option>
-					<option value="false"{if $search.cfg_show_description == 'false'} selected="selected"{/if}>{translate('No')}</option>
-				</select>
-			</div>
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_show_description">{translate('Show page description in search result')}:</label>
+			<select name="search_cfg_show_description" id="fc_search_cfg_show_description">
+				<option value="true"{if $search.cfg_show_description == 'true'} selected="selected"{/if}>{translate('Yes')}</option>
+				<option value="false"{if $search.cfg_show_description == 'false'} selected="selected"{/if}>{translate('No')}</option>
+			</select>
+			<div class="clear_sp"></div>
 
-      <label for="fc_search_cfg_search_keywords" class="g_6">{translate('Search for page keywords')}:</label>
-			<div class="g_5">
-				<select class="g_3" name="search_cfg_search_keywords" id="fc_search_cfg_search_keywords">
-					<option value="true"{if $search.cfg_search_keywords == 'true'} selected="selected"{/if}>{translate('Yes')}</option>
-					<option value="false"{if $search.cfg_search_keywords == 'false'} selected="selected"{/if}>{translate('No')}</option>
-				</select>
-			</div>
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_search_keywords">{translate('Search for page keywords')}:</label>
+			<select name="search_cfg_search_keywords" id="fc_search_cfg_search_keywords">
+				<option value="true"{if $search.cfg_search_keywords == 'true'} selected="selected"{/if}>{translate('Yes')}</option>
+				<option value="false"{if $search.cfg_search_keywords == 'false'} selected="selected"{/if}>{translate('No')}</option>
+			</select>
+			<div class="clear_sp"></div>
 
-      <label for="fc_search_cfg_search_non_public_content" class="g_6">{translate('Search in non-public content')}:</label>
-			<div class="g_5">
-				<select class="g_3" name="search_cfg_search_non_public_content" id="fc_search_cfg_search_non_public_content">
-					<option value="true"{if $search.cfg_search_non_public_content == 'true'} selected="selected"{/if}>{translate('Yes')}</option>
-					<option value="false"{if $search.cfg_search_non_public_content == 'false'} selected="selected"{/if}>{translate('No')}</option>
-				</select>
-			</div>
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_search_non_public_content">{translate('Search in non-public content')}:</label>
 
-      <label for="fc_search_cfg_link_non_public_content" class="g_6">{translate('Redirect link (URL) for non-public content')}:</label>
-			<input type="text" name="search_cfg_link_non_public_content" id="fc_search_cfg_non_public_content" class="g_9" value="{$search.cfg_link_non_public_content}" />
-			<div class="clear sp_clear"></div>
+			<select name="search_cfg_search_non_public_content" id="fc_search_cfg_search_non_public_content">
+				<option value="true"{if $search.cfg_search_non_public_content == 'true'} selected="selected"{/if}>{translate('Yes')}</option>
+				<option value="false"{if $search.cfg_search_non_public_content == 'false'} selected="selected"{/if}>{translate('No')}</option>
+			</select>
 
-      <label for="fc_search_module_order" class="g_6">{translate('Module-order for searching')}:</label>
-			<input type="text" name="search_module_order" id="fc_search_module_order" class="g_9" value="{$search.module_order}" />
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
 
-			<label for="fc_search_max_excerpt" class="g_6">{translate('Max lines of excerpt')}:</label>
-			<input type="text" name="search_max_excerpt" id="fc_search_max_excerpt" class="g_9" value="{$search.max_excerpt}" />
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_120" for="fc_search_cfg_link_non_public_content">{translate('Redirect link (URL) for non-public content')}:</label>
+			<input type="text" name="search_cfg_link_non_public_content" id="fc_search_cfg_non_public_content" value="{$search.cfg_link_non_public_content}" />
+			<div class="clear_sp"></div>
 
-			<label for="fc_search_time_limit" class="g_6">{translate('Max time to gather excerpts per module')}:</label>
-			<input type="text" name="search_time_limit" id="fc_search_time_limit" class="g_9" value="{$search.time_limit}" />
+			<label class="fc_label_120" for="fc_search_module_order">{translate('Module-order for searching')}:</label>
+			<input type="text" name="search_module_order" id="fc_search_module_order" value="{$search.module_order}" />
+			<div class="clear_sp"></div>
+
+			<label class="fc_label_120" for="fc_search_max_excerpt">{translate('Max lines of excerpt')}:</label>
+			<input type="text" name="search_max_excerpt" id="fc_search_max_excerpt" value="{$search.max_excerpt}" />
+			<div class="clear_sp"></div>
+
+			<label class="fc_label_120" for="fc_search_time_limit">{translate('Max time to gather excerpts per module')}:</label>
+			<input type="text" name="search_time_limit" id="fc_search_time_limit" value="{$search.time_limit}" />
 			{else}
-        <input type="hidden" name="search_template" value="{$search_template.VALUE}" />				
-        <input type="hidden" name="search_cfg_content_image" value="{$search.cfg_content_image}" />
-				<input type="hidden" name="search_cfg_search_droplet" value="{$search.cfg_search_droplet}" />
-        <input type="hidden" name="search_cfg_search_use_page_id" value="{$search.cfg_search_use_page_id}" />
-        <input type="hidden" name="search_cfg_search_images" value="{$search.cfg_search_images}" />
-				<input type="hidden" name="search_cfg_show_description" value="{$search.cfg_show_description}" />
-				<input type="hidden" name="search_cfg_search_description" value="{$search.cfg_search_description}" />
-				<input type="hidden" name="search_cfg_search_keywords" value="{$search.cfg_search_keywords}" />
-				<input type="hidden" name="search_cfg_link_non_public_content" value="{$search.cfg_link_non_public_content}" />
-        <input type="hidden" name="search_cfg_search_non_public_content" value="{$search.cfg_search_non_public_content}" />
-        <input type="hidden" name="search_cfg_thumbs_width" value="{$search.cfg_thumbs_width}" />			
-        <input type="hidden" name="seach_cfg_search_library" value="{$search.cfg_search_library}" />
-				<input type="hidden" name="search_module_order" value="{$search.module_order}" />
-				<input type="hidden" name="search_max_excerpt" value="{$search.max_excerpt}" />
-				<input type="hidden" name="search_time_limit" value="{$search.time_limit}" />
+			<input type="hidden" name="search_template" value="{$search_template.VALUE}" />				
+			<input type="hidden" name="search_cfg_content_image" value="{$search.cfg_content_image}" />
+			<input type="hidden" name="search_cfg_search_droplet" value="{$search.cfg_search_droplet}" />
+			<input type="hidden" name="search_cfg_search_use_page_id" value="{$search.cfg_search_use_page_id}" />
+			<input type="hidden" name="search_cfg_search_images" value="{$search.cfg_search_images}" />
+			<input type="hidden" name="search_cfg_show_description" value="{$search.cfg_show_description}" />
+			<input type="hidden" name="search_cfg_search_description" value="{$search.cfg_search_description}" />
+			<input type="hidden" name="search_cfg_search_keywords" value="{$search.cfg_search_keywords}" />
+			<input type="hidden" name="search_cfg_link_non_public_content" value="{$search.cfg_link_non_public_content}" />
+			<input type="hidden" name="search_cfg_search_non_public_content" value="{$search.cfg_search_non_public_content}" />
+			<input type="hidden" name="search_cfg_thumbs_width" value="{$search.cfg_thumbs_width}" />			
+			<input type="hidden" name="seach_cfg_search_library" value="{$search.cfg_search_library}" />
+			<input type="hidden" name="search_module_order" value="{$search.module_order}" />
+			<input type="hidden" name="search_max_excerpt" value="{$search.max_excerpt}" />
+			<input type="hidden" name="search_time_limit" value="{$search.time_limit}" />
 			{/if}
-     
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit" value="{translate('Save')}" />
+				<input type="reset" name="reset" value="{translate('Reset')}" />
+			</p>
 		</div>
 
 
-		<div id="fc_SERVER" class="fc_form_content fc_list_forms ui-corner-top">
-			<div class="clear sp_clear"></div>
-			<label for="fc_operating_system" class="g_6">{translate('Server Operating System')}:</label>
-			<div class="settings_label g_9" id="fc_operating_system">
-				<label for="fc_operating_system_linux">{translate('Linux/Unix based')}</label>
+		<div id="fc_SERVER" class="fc_gradient1 fc_list_forms ui-corner-top">
+			<div class="clear_sp"></div>
+			<label class="fc_label_120" for="fc_operating_system">{translate('Server Operating System')}:</label>
+			<div class="settings_label fc_settings_max" id="fc_operating_system">
 				<input type="radio" class="fc_radio_jq fc_toggle_element show___fc_linux" name="operating_system" id="fc_operating_system_linux" value="linux" {if $OPERATING_SYSTEM == 'linux'} checked="checked"{/if}/>
-				<label for="fc_operating_system_windows">{translate('Windows')}</label>
+				<label for="fc_operating_system_linux">{translate('Linux/Unix based')}</label>
 				<input type="radio" class="fc_radio_jq fc_toggle_element hide___fc_linux" name="operating_system" id="fc_operating_system_windows" value="windows" {if $OPERATING_SYSTEM == 'windows'} checked="checked"{/if}/>
+				<label for="fc_operating_system_windows">{translate('Windows')}</label>
 			</div>
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
 
 			<div id="fc_linux">
-				<div class="g_11">
-					<label for="fc_world_writeable">{translate('World-writeable file permissions')} (777)</label>
+				<div class="fc_settings_max">
 					<input type="checkbox" class="fc_checkbox_jq" name="world_writeable" id="fc_world_writeable" value="true" {if $WORLD_WRITEABLE_SELECTED} checked="checked"{/if}/>
+					<label for="fc_world_writeable">{translate('World-writeable file permissions')} (777)</label>
 				</div>
 				<div class="clear"></div>
-				<p class="fc_important g_16">({translate('Please note: this is only recommended for testing environments')})</p>
+				<p class="fc_important">({translate('Please note: this is only recommended for testing environments')})</p>
 			</div>
 			{if $DISPLAY_ADVANCED}
 			<div class="clear"></div>
 			<hr/>
-			<label for="fc_pages_directory" class="g_4">{translate('Pages directory')}:</label>
-			<input type="text" name="pages_directory" id="fc_pages_directory" class="g_3" value="{$values.pages_directory}" />
-
-			<label for="fc_page_extension" class="g_4">{translate('Pages extension')}:</label>
-			<input type="text" name="page_extension" id="fc_page_extension" class="g_3" value="{$values.page_extension}" />
-			<div class="clear sp_clear"></div>
-
-			<label for="fc_media_directory" class="g_4">{translate('Media directory')}:</label>
-			<input type="text" name="media_directory" id="fc_media_directory" class="g_3" value="{$values.media_directory}" />
-
-			<label for="fc_page_spacer" class="g_4">{translate('Page spacer')}:</label>
-			<input type="text" name="page_spacer" id="fc_page_spacer" class="g_3" value="{$values.page_spacer}" />
-
+			<label class="fc_label_120" for="fc_pages_directory">{translate('Pages directory')}:</label>
+			<input type="text" name="pages_directory" id="fc_pages_directory" value="{$values.pages_directory}" />
+			<div class="clear"></div>
+			<label class="fc_label_120" for="fc_page_extension">{translate('Pages extension')}:</label>
+			<input type="text" name="page_extension" id="fc_page_extension" value="{$values.page_extension}" />
+			<div class="clear_sp"></div>
+			<label class="fc_label_120" for="fc_media_directory">{translate('Media directory')}:</label>
+			<input type="text" name="media_directory" id="fc_media_directory" value="{$values.media_directory}" />
+			<div class="clear"></div>
+			<label class="fc_label_120" for="fc_page_spacer">{translate('Page spacer')}:</label>
+			<input type="text" name="page_spacer" id="fc_page_spacer" value="{$values.page_spacer}" />
 			<div class="clear"></div>
 			<hr/>
-			<label for="fc_rename_files_on_upload" class="g_6">{translate('Allowed filetypes on upload')}:</label>
-			<input type="text" name="rename_files_on_upload" id="fc_rename_files_on_upload" class="g_9" value="{$values.rename_files_on_upload}" />
-
+			<label class="fc_label_120" for="fc_rename_files_on_upload">{translate('Allowed filetypes on upload')}:</label>
+			<input type="text" name="rename_files_on_upload" id="fc_rename_files_on_upload" value="{$values.rename_files_on_upload}" />
 			<div class="clear"></div>
 			<hr/>
-
-			<label for="fc_app_name" class="g_4">{translate('Session identifier')}:</label>
-			<input type="text" name="app_name" id="fc_app_name" class="g_3" value="{$values.app_name}" />
-
-			<label for="fc_sec_anchor" class="g_4">{translate('Section-Anchor text')}:</label>
-			<input type="text" name="sec_anchor" id="fc_sec_anchor" class="g_3" value="{$values.sec_anchor}" />
+			<label class="fc_label_120" for="fc_app_name">{translate('Session identifier')}:</label>
+			<input type="text" name="app_name" id="fc_app_name" value="{$values.app_name}" />
+			<div class="clear"></div>
+			<label class="fc_label_120" for="fc_sec_anchor">{translate('Section-Anchor text')}:</label>
+			<input type="text" name="sec_anchor" id="fc_sec_anchor" value="{$values.sec_anchor}" />
 			{else}
 				<input type="hidden" name="pages_directory" value="{$values.pages_directory}" />
 				<input type="hidden" name="page_extension" value="{$values.page_extension}" />
@@ -481,64 +474,65 @@
 				<input type="hidden" name="app_name" value="{$values.app_name}" />
 				<input type="hidden" name="sec_anchor" value="{$values.sec_anchor}" />
 			{/if}
-			<div class="clear sp_clear"></div>
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit" value="{translate('Save')}" />
+				<input type="reset" name="reset" value="{translate('Reset')}" />
+			</p>
 		</div>
 
 
-		<div id="fc_MAIL" class="fc_form_content fc_list_forms ui-corner-top">
-			<div class="clear sp_clear"></div>
-			<p class="g_16">{translate('Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by LEPTON. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.')}
+		<div id="fc_MAIL" class="fc_gradient1 fc_list_forms ui-corner-top">
+			<p>{translate('Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by LEPTON. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.')}
 			</p>
 			<div class="clear"></div>
 			<hr/>
-			<div class="clear sp_clear"></div>
-			<label for="fc_server_email" class="g_6">{translate('Default from mail')}:</label>
-			<input type="text" name="server_email" id="fc_server_email" class="g_8" value="{$values.server_email}" />
+			<div class="clear_sp"></div>
+			<label class="fc_label_200" for="fc_server_email">{translate('Default from mail')}:</label>
+			<input type="text" name="server_email" id="fc_server_email" value="{$values.server_email}" />
 			<div class="clear"></div>
 
-			<label for="fc_wbmailer_default_sendername" class="g_6">{translate('Default sender name')}:</label>
-			<input type="text" name="wbmailer_default_sendername" id="fc_wbmailer_default_sendername" class="g_8" value="{$values.wb_default_sendername}" />
-			<div class="clear sp_clear"></div>
+			<label class="fc_label_200" for="fc_wbmailer_default_sendername">{translate('Default sender name')}:</label>
+			<input type="text" name="wbmailer_default_sendername" id="fc_wbmailer_default_sendername" value="{$values.wb_default_sendername}" />
+			<div class="clear_sp"></div>
 
 			{if $DISPLAY_ADVANCED}
-			<label for="fc_wbmailer_routine" class="g_4">{translate('Mail routine')}:</label>
-			<div class="settings_label g_11" id="fc_wbmailer_routine">
-				<label for="fc_wbmailer_routine_phpmail">{translate('PHP mail')}</label>
+			<label class="fc_label_200" for="fc_wbmailer_routine">{translate('Mail routine')}:</label>
+			<div class="settings_label fc_settings_max" id="fc_wbmailer_routine">
 				<input type="radio" class="fc_radio_jq fc_toggle_element hide___fc_smtp" name="wbmailer_routine" id="fc_wbmailer_routine_phpmail" value="phpmail" {if $WBMAILER_ROUTINE == 'phpmail'} checked="checked"{/if}/>
-				<label for="fc_wbmailer_routine_smtp">{translate('SMTP')}</label>
+				<label for="fc_wbmailer_routine_phpmail">{translate('PHP mail')}</label>
 				<input type="radio" class="fc_radio_jq fc_toggle_element show___fc_smtp" name="wbmailer_routine" id="fc_wbmailer_routine_smtp" value="smtp" {if $WBMAILER_ROUTINE == 'smtp'} checked="checked"{/if}/>
+				<label for="fc_wbmailer_routine_smtp">{translate('SMTP')}</label>
 			</div>
 			<div class="clear"></div>
 
 			<div id="fc_smtp">
 				<hr/>
-				<p class="g_16">
+				<p>
 					{translate('<strong>SMTP Mailer Settings:</strong><br />The settings below are only required if you want to send mails via <acronym title="Simple mail transfer protocol">SMTP</acronym>. If you do not know your SMTP host or you are not sure about the required settings, simply stay with the default mail routine: PHP MAIL.')}
 				</p>
 				<div class="clear"></div>
 				<hr/>
-				<label for="fc_wbmailer_smtp_host" class="g_6">{translate('SMTP host')}:</label>
-				<input type="text" name="wbmailer_smtp_host" id="fc_wbmailer_smtp_host" class="g_9" value="{$values.wbmailer_smtp_host}"{if $WBMAILER_SMTP_AUTH} checked="checked"{/if}/>
-				<div class="clear sp_clear"></div>
+				<label class="fc_label_200" for="fc_wbmailer_smtp_host">{translate('SMTP host')}:</label>
+				<input type="text" name="wbmailer_smtp_host" id="fc_wbmailer_smtp_host" value="{$values.wbmailer_smtp_host}"{if $WBMAILER_SMTP_AUTH} checked="checked"{/if}/>
+				<div class="clear_sp"></div>
 	
-				<div class="g_8">
+				<div class="fc_settings_max">
+					<input type="checkbox" class="fc_checkbox_jq fc_toggle_element show___fc_smtp_aut" name="wbmailer_smtp_auth" id="fc_wbmailer_smtp_auth" value="true" {if $WBMAILER_SMTP_AUTH && $WBMAILER_ROUTINE=='smtp'} checked="checked"{/if}/>
 					<label for="fc_wbmailer_smtp_auth">{translate('SMTP authentification')}</label>
-					<input type="checkbox" class="fc_checkbox_jq fc_toggle_element" name="wbmailer_smtp_auth" id="fc_wbmailer_smtp_auth" value="true" rel="fc_smtp_aut"{if $WBMAILER_SMTP_AUTH && $WBMAILER_ROUTINE=='smtp'} checked="checked"{/if}/>
 				</div>
 				<div class="clear"></div>
-
-				<p class="fc_important g_16">({translate('only activate if your SMTP host requires authentification')})</p>
-				<div class="clear"></div>
+				<p class="fc_important">({translate('only activate if your SMTP host requires authentification')})</p>
 
 				<div id="fc_smtp_aut"{if $WBMAILER_ROUTINE == 'phpmail'} class="fc_inactive_element"{/if}>
-					<hr/>
-					<label for="fc_wbmailer_smtp_username" class="g_6">{translate('SMTP username')}:</label>
-					<input type="text" name="wbmailer_smtp_username" id="fc_wbmailer_smtp_username" class="g_9" value="{$values.wbmailer_smtp_username}" />
-					<div class="clear"></div>
-
-					<label for="fc_wbmailer_smtp_password" class="g_6">{translate('SMTP password')}:</label>
-					<input type="password" name="wbmailer_smtp_password" id="fc_wbmailer_smtp_username" class="g_9" value="{$values.wbmailer_smtp_password}" />
-					<div class="clear"></div>
+				<hr/>
+					<div class="fc_settings_max">
+						<label class="fc_label_120" for="fc_wbmailer_smtp_username">{translate('SMTP username')}:</label>
+						<input type="text" name="wbmailer_smtp_username" id="fc_wbmailer_smtp_username" value="{$values.wbmailer_smtp_username}" />
+						<div class="clear"></div>
+						<label class="fc_label_120" for="fc_wbmailer_smtp_password">{translate('SMTP password')}:</label>
+						<input type="password" name="wbmailer_smtp_password" id="fc_wbmailer_smtp_username" value="{$values.wbmailer_smtp_password}" />
+					</div>
 				</div>
 			</div>
 			{else}
@@ -551,14 +545,14 @@
 
 			<div class="clear"></div>
 			<hr/>
-			<button class="fc_button g_6 right" dir="ltr" id="fc_checkmail" name="checkmail" onclick="send_testmail('{$ADMIN_URL}/settings/ajax_testmail.php');return false;">{translate('Send test mail')}</button>
-			<div class="clear sp_clear"></div>
-		</div>
-		<div class="fc_confirm_bar ui-corner-bottom">
-			<input type="submit" name="submit" value="{translate('Save')}" />
-			<input type="reset" name="reset" value="{translate('Reset')}" />
+			<button class="icon-mail right" dir="ltr" type="submit" id="fc_checkmail" name="checkmail" onclick="send_testmail('{$ADMIN_URL}/settings/ajax_testmail.php');return false;"> {translate('Send test mail')}</button>
+			<div class="clear_sp"></div>
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit" value="{translate('Save')}" />
+				<input type="reset" name="reset" value="{translate('Reset')}" />
+			</p>
 		</div>
 	</div>
 </form>
-<script src="{$ADMIN_URL}/settings/setting.js" type="text/javascript"></script>
+{*<script src="{$ADMIN_URL}/settings/setting.js" type="text/javascript"></script>*}
 </div>

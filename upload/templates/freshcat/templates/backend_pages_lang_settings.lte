@@ -1,6 +1,5 @@
 {include('backend_pages_header.lte')}
 <div id="fc_main_content">
-
 	<div class="fc_modified_header">
 		<div class="fc_current_page">
 			{translate('Current page')}: <strong>{$PAGE_TITLE}</strong> (<strong>ID: {$PAGE_ID}</strong>)

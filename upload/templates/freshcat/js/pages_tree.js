@@ -5,13 +5,12 @@
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- *
- *
+ * @author			LEPTON Project
+ * @copyright		2012, LEPTON Project
+ * @link			http://www.LEPTON-cms.org
+ * @license			http://www.gnu.org/licenses/gpl.html
+ * @license_terms	please see LICENSE and COPYING files in your package
+  *
  */
 
 (function ($) {
@@ -35,50 +34,156 @@
 					helper:			'clone',
 					handle:			'div.fc_page_link',
 					axis:			'y',
-					update:			function(event, ui) {
-						var dates		= $(this).sortable("serialize")+'&table=pages';
-						var link		= ADMIN_URL+'/pages/reorder.php';
-
-						var beforeSend	= function ()
+					update:			function(event, ui)
+					{
+						var dates			= {
+							'pageid':			$(this).sortable('toArray'),
+							'table':			'pages',
+							'leptoken':			getToken()
+						};
+						$.ajax(
 						{
-							process_div = set_activity();
-						}
-
-						var afterSend	= function ()
-						{
-							element.children('span').removeClass('fc_page_loader');
-						}
-
-						dialog_ajax(link,dates,beforeSend,afterSend,element);
-
+							type:		'GET',
+							url:		ADMIN_URL + '/pages/ajax_reorder.php',
+							dataType:	'json',
+							data:		dates,
+							cache:		false,
+							beforeSend:	function( data )
+							{
+								data.process	= set_activity( 'Reorder pages' );
+							},
+							success:	function( data, textStatus, jqXHR  )
+							{
+								var current	= $(this);
+								$('.popup').dialog('destroy').remove();
+								element.children('span').removeClass('fc_page_loader');
+								if ( data.success === true )
+								{
+									return_success( jqXHR.process , data.message );
+									current.slideUp(300, function() { current.remove(); });
+								}
+								else {
+									return_error( jqXHR.process , data.message);
+								}
+							},
+							error:		function(jqXHR, textStatus, errorThrown)
+							{
+								$('.popup').dialog('destroy').remove();
+								alert(textStatus + ': ' + errorThrown );
+							}
+						});
 					}
 				});
 			}
 
-			element.find('.fc_page_tree_options .fc_close').click( function()
+			element.find('.fc_page_tree_options_open').click( function(event)
 			{
+				event.preventDefault();
+				var current_button	= $(this),
+					page_id			= current_button.closest('li').children('input').val(),
+					dates			= {
+										'page_id' : page_id,
+										'leptoken' : getToken()
+									},
+					link			= ADMIN_URL + '/pages/ajax_page_settings.php';
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
-				$(this).closest('li').children('.fc_page_tree_options_parent').fadeOut(300);
-			})
-
-			element.find('.fc_page_tree_options_open').click(function()
-			{
-				$('.page_tree_open_options').removeClass('page_tree_open_options');
-				$('.fc_page_tree_options_parent').fadeOut(400);
-				var current_button			= $(this);
-				var options_container		= current_button.closest('li').children('.fc_page_tree_options_parent');
-
 				current_button.closest('li').addClass('page_tree_open_options');
-
-				options_container.fadeIn(50).position(
+				$('#fc_addPage_keywords_ul').remove();
+				$.ajax(
 				{
-					of:		options_container.closest( 'li' ),
-					my:		'left top',
-					at:		'right top',
-					offset:	'5 -5'
+					type:		'GET',
+					url:		link,
+					dataType:	'json',
+					data:		dates,
+					cache:		false,
+					beforeSend:	function()
+					{
+						if ( $('#fc_add_page').is(':visible') )
+						{
+							$('#fc_add_page').stop().animate({width: 'toggle'}, 200);
+						}
+					},
+					success:	function(data)
+					{
+						var form	= $('#fc_add_page');
+						form.find('.fc_addPageOnly').hide();
+						form.find('.fc_changePageOnly').show();
+						form.animate({width: 'toggle'});
+						// Set textfields
+						$('#fc_addPage_title').val(data.menu_title);
+						$('#fc_addPage_page_title').val(data.page_title);
+						$('#fc_addPage_description').val(data.description);
+						$('#fc_addPage_keywords').val(data.keywords);
+						$('#fc_addPage_page_link').val(data.short_link);
+			
+						// Set selectfields
+						//$('#fc_addPage_type[value=' + data.MENU_TITLE + ']').val(data.MENU_TITLE);
+						$('#fc_addPage_parent option').removeAttr('selected');
+						$('#fc_addPage_parent option[value=' + data.parent + ']').attr('selected', true);
+						$('#fc_addPage_menu option').removeAttr('selected');
+						$('#fc_addPage_menu option[value=' + data.menu + ']').attr('selected',true);
+						$('#fc_addPage_target option').removeAttr('selected');
+						$('#fc_addPage_target option[value=' + data.target + ']').attr('selected',true);
+						$('#fc_addPage_template option').removeAttr('selected');
+						if (data.template == '')
+						{
+							$('#fc_addPage_template option:first').attr('selected',true);
+						}
+						else {
+							$('#fc_addPage_template option[value=' + data.template + ']').attr('selected',true);
+						}
+						$('#fc_addPage_language option').removeAttr('selected');
+						$('#fc_addPage_language option[value=' + data.language + ']').attr('selected',true);
+						$('#fc_addPage_visibility option').removeAttr('selected');
+						$('#fc_addPage_visibility option[value=' + data.visibility + ']').attr('selected',true);
+			
+						// Set checkboxesfields
+						$('#fc_addPage_Searching').attr('checked', data.searching);
+						$('#fc_addPage_admin_groups input').each( function()
+						{
+							var current		= $(this),
+								currenVal	= current.val(),
+								groups		= data.admin_groups;
+							if ( $.inArray( currenVal, groups ) )
+							{
+								current.attr('checked',false);
+							}
+							else {
+								current.attr('checked',true);
+							}
+						});
+						$('#fc_addPage_allowed_viewers input').each( function()
+						{
+							var current		= $(this),
+								currenVal	= current.val(),
+								groups		= data.viewing_groups;
+							if ( $.inArray( currenVal, groups ) )
+							{
+								current.attr('checked',false);
+							}
+							else {
+								current.attr('checked',true);
+							}
+						});
+						// Activate tagit for Keywords in the adding
+						$('#fc_addPage_keywords_ul').remove();
+						$('<ul id="fc_addPage_keywords_ul" />').insertBefore( $('#fc_addPage_keywords') ).tagit(
+						{
+							allowSpaces:			true,
+							singleField:			true,
+							singleFieldDelimiter:	',',
+							singleFieldNode:		$('#fc_addPage_keywords'),
+							beforeTagAdded:			function(event, ui)
+							{
+								ui.tag.addClass('icon-tag');
+							}
+						});
+					},
+					error:		function(jqXHR, textStatus, errorThrown)
+					{
+						alert(textStatus + ': ' + errorThrown );
+					}
 				});
-
-				return false;
 			});
 
 			// bind elements with click event
@@ -218,12 +323,12 @@
 
 			function setSearchTreeOption()
 			{
-				var option					= options.options_ul.find('.fc_activeSearchOption').attr('id'),
-					searchTerm				= element.val();
+				var option			= options.options_ul.find('.fc_activeSearchOption').attr('id'),
+					searchTerm		= element.val();
 
 				search_page_tree( searchTerm );
 
-				$('<div id="fc_searchOption" class="ui-corner-all"><span class="ui-corner-left">' + option + '</span><strong>' + searchTerm + '</strong></div>').prependTo('#fc_search_tree');
+				$('<div id="fc_searchOption" class="fc_br_all fc_border fc_gradient1 fc_gradient_hover"><span class="fc_br_left fc_gradient_blue">' + option + '</span><strong>' + searchTerm + '</strong></div>').prependTo('#fc_search_tree');
 				$('#fc_searchOption').click( function()
 				{
 					search_page_tree( '' );
@@ -312,68 +417,232 @@ jQuery(document).ready(function()
 {
 	$('#fc_page_tree_top').page_tree();
 	$("#fc_search_page_tree").page_treeSearch();
-	$('fc_page_tree_not_editable > a').click( function()
+	$('fc_page_tree_not_editable > a').click( function(e)
 	{
-		return false;
+		e.preventDefault();
 	});
 
-	$('.fc_page_tree_save_and_close').click( function ()
+	$('#fc_add_page').slideUp(0);
+
+	$('#fc_add_page input:reset').click( function()
 	{
-		var current			= $(this),
-			page_id			= current.closest('li').attr('rel'),
-			menu_title		= current.closest('.fc_page_tree_options').find('input[name=MenuTitle]').val(),
-			page_title		= current.closest('.fc_page_tree_options').find('input[name=PageTitle]').val(),
-			parent			= current.closest('.fc_page_tree_options').find('input[name=parent]').val(),
-			page_link		= current.closest('.fc_page_tree_options').find('input[name=PageLink]').val(),
-			dates			= 'page_id=' + page_id + '&menu_title=' + menu_title + '&page_title=' + page_title + '&parent=' + parent + '&page_link=' + page_link + '&request_from=ajax',
-			link			= ADMIN_URL + '/pages/settings_save.php',
-			beforeSend		= function ()
-								{
-									process_div		= set_activity('Save settings');
-								},
-			afterSend		= function ()
-								{
-									var currentStyle	= $(this),
-										menu_title		= current.closest('.fc_page_tree_options').find('input[name=MenuTitle]').val(),
-										page_title		= current.closest('.fc_page_tree_options').find('input[name=PageTitle]').val(),
-										parent			= current.closest('li');
-
-									$('.page_tree_open_options').removeClass('page_tree_open_options');
-
-									parent.children('.fc_page_tree_options_parent').fadeOut(300);
-
-									parent.find('.fc_page_tree_search_dl > .fc_search_MenuTitle:first').html( menu_title );
-									parent.find('.fc_page_tree_search_dl > .fc_search_PageTitle:first').html( page_title );
-									parent.find('.fc_page_link > a > .fc_page_tree_menu_title:first').html( menu_title );
-									parent.find('.fc_page_link > a:first').attr( 'title', leptranslate('Page title') + ': ' + page_title );
-									//alert(parent.find('.fc_page_tree_search_dl > .fc_search_MenuTitle').html());
-								};
-		dialog_ajax( link, dates, beforeSend, afterSend, current, 'POST' );
+		$('.page_tree_open_options').removeClass('page_tree_open_options');
+		var form	= $('#fc_add_page');
+		form.find('.fc_addPageOnly').show();
+		form.find('.fc_changePageOnly').hide();
+		form.animate({width: 'toggle'});
+		
+		// Activate tagit for Keywords in the adding
+		$('#fc_addPage_keywords_ul').remove();
+		$('#fc_addPage_keywords').val('');
+		$('<ul id="fc_addPage_keywords_ul" />').insertBefore( $('#fc_addPage_keywords') ).tagit(
+		{
+			allowSpaces:			true,
+			singleField:			true,
+			singleFieldDelimiter:	',',
+			singleFieldNode:		$('#fc_addPage_keywords'),
+			beforeTagAdded:			function(event, ui)
+			{
+				ui.tag.addClass('icon-tag');
+			}
+		});
 	});
 
-	$('.page_tree_delete_page').click( function ()
+	$('.fc_side_add').click( function()
 	{
+		var form	= $('#fc_add_page');
+		form.find('a:first').click();
+		form.find('input:reset').click();
+	});
+
+	$('#fc_addPageSubmit').click( function (e)
+	{
+		e.preventDefault();
 		var current			= $(this),
-			page_id			= current.closest('li').attr('rel'),
-			link			= ADMIN_URL + '/pages/delete.php?page_id=' + page_id + '&request_from=ajax',
-			message			= 'Are you sure you want to delete this page and all child pages?',
-			afterSend		= function ()
-								{
-									var current		= $(this).closest('li');
-									$('.page_tree_open_options').removeClass('page_tree_open_options');
-									if ( current.children('.fc_page_link').hasClass('fc_page_type_deleted') )
-									{
-										current.remove();
-									}
-									else
-									{
-										current.find('.fc_page_tree_quick_changes').addClass('hidden');
-										current.find('.fc_page_tree_restore').removeClass('hidden');
-										current.children('.fc_page_tree_options_parent').fadeOut(300);
-										current.find('.fc_page_link').addClass('fc_page_type_deleted');
-									}
-								};
-		dialog_confirm(message,link,false,afterSend,current);
+			current_form	= current.closest('form'),
+			current_pT		= $('.page_tree_open_options'),
+			admin_groups	= [],
+			viewing_groups	= [];
+
+		$('#fc_addPage_admin_groups').children('input:checked').each( function()
+		{
+			admin_groups.push( $(this).val() );
+		});
+		$('#fc_addPage_viewers_groups').children('input:checked').each( function()
+		{
+			viewing_groups.push( $(this).val() );
+		});
+
+		var dates	= {
+			'page_id':			current_pT.children('input[name=pageid]').val(),
+			'page_title':		$('#fc_addPage_page_title').val(),
+			'menu_title':		$('#fc_addPage_title').val(),
+			'type':				$('#fc_addPage_type option:selected').val(),
+			'parent':			$('#fc_addPage_parent option:selected').val(),
+			'menu':				$('#fc_addPage_menu option:selected').val(),
+			'target':			$('#fc_addPage_target option:selected').val(),
+			'template':			$('#fc_addPage_template option:selected').val(),
+			'language':			$('#fc_addPage_language option:selected').val(),
+			'description':		$('#fc_addPage_description').val(),
+			'keywords':			$('#fc_addPage_keywords').val(),
+			'searching':		$('#fc_addPage_Searching').is(':checked') ? 1 : 0,
+			'visibility':		$('#fc_addPage_visibility option:selected').val(),
+			'page_groups':		$('#fc_addPage_page_groups').val(),
+			'visibility':		$('#fc_addPage_visibility option:selected').val(),
+			'admin_groups':		admin_groups,
+			'viewing_groups':	viewing_groups,
+			'leptoken':			getToken()
+		};
+		$.ajax(
+		{
+			context:	current_pT,
+			type:		'POST',
+			url:		ADMIN_URL + '/pages/ajax_add_page.php',
+			dataType:	'json',
+			data:		dates,
+			cache:		false,
+			beforeSend:	function( data )
+			{
+				data.process	= set_activity( 'Save page' );
+			},
+			success:	function( data, textStatus, jqXHR  )
+			{
+				if ( data.success === true )
+				{
+					return_success( jqXHR.process , data.message );
+
+					var current			= $(this);
+					$('#fc_add_page input[type=reset]').click();
+					window.location.replace( data.url );
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			},
+			error:		function(jqXHR, textStatus, errorThrown)
+			{
+				alert(textStatus + ': ' + errorThrown );
+			}
+		});
+	});
+
+	$('#fc_savePageSubmit').click( function (e)
+	{
+		e.preventDefault();
+		var current			= $(this),
+			current_form	= current.closest('form'),
+			current_pT		= $('.page_tree_open_options'),
+			admin_groups	= [],
+			viewing_groups	= [];
+
+		$('#fc_addPage_admin_groups').children('input:checked').each( function()
+		{
+			admin_groups.push( $(this).val() );
+		});
+		$('#fc_addPage_viewers_groups').children('input:checked').each( function()
+		{
+			viewing_groups.push( $(this).val() );
+		});
+		var dates	= {
+			'page_id':			current_pT.children('input[name=pageid]').val(),
+			'page_title':		$('#fc_addPage_page_title').val(),
+			'menu_title':		$('#fc_addPage_title').val(),
+			'parent':			$('#fc_addPage_parent option:selected').val(),
+			'menu':				$('#fc_addPage_menu option:selected').val(),
+			'target':			$('#fc_addPage_target option:selected').val(),
+			'template':			$('#fc_addPage_template option:selected').val(),
+			'language':			$('#fc_addPage_language option:selected').val(),
+			'page_link':		$('#fc_addPage_page_link').val(),
+			'description':		$('#fc_addPage_description').val(),
+			'keywords':			$('#fc_addPage_keywords').val(),
+			'searching':		$('#fc_addPage_Searching').is(':checked') ? 1 : 0,
+			'visibility':		$('#fc_addPage_visibility option:selected').val(),
+			'page_groups':		$('#fc_addPage_page_groups').val(),
+			'visibility':		$('#fc_addPage_visibility option:selected').val(),
+			'admin_groups':		admin_groups,
+			'viewing_groups':	viewing_groups,
+			'leptoken':			getToken()
+		};
+		$.ajax(
+		{
+			context:	current_pT,
+			type:		'POST',
+			url:		ADMIN_URL + '/pages/ajax_settings_save.php',
+			dataType:	'json',
+			data:		dates,
+			cache:		false,
+			beforeSend:	function( data )
+			{
+				data.process	= set_activity( 'Saving page' );
+			},
+			success:	function( data, textStatus, jqXHR  )
+			{
+				if ( data.success === true )
+				{
+					return_success( jqXHR.process , data.message );
+
+					var current			= $(this);
+					$('#fc_add_page input[type=reset]').click();
+					switch (data.visibility) {
+						case 'public':
+							var newIcon	= 'icon-screen';
+							break;
+						case 'private':
+							var newIcon	= 'icon-key';
+							break;
+						case 'registered':
+							var newIcon	= 'icon-users';
+							break;
+						case 'hidden':
+							var newIcon	= 'icon-eye-2';
+							break;
+						case 'deleted':
+							var newIcon	= 'icon-remove';
+							break;
+						default:
+							var newIcon	= 'icon-eye-blocked';
+							break;
+					}
+					current.children('dl').children('.fc_search_MenuTitle').text( data.menu_title );
+					current.children('dl').children('.fc_search_PageTitle').text( data.page_title );
+					current.children('.fc_page_link').children('a').children('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title ' + newIcon).text( ' ' + data.menu_title );
+					current.children('.fc_page_link > a:first').attr( 'title', 'Page title: ' + data.page_title );
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			},
+			error:		function(jqXHR, textStatus, errorThrown)
+			{
+				alert(textStatus + ': ' + errorThrown );
+			}
+		});
+	});
+
+	$('#fc_removePageSubmit').click( function (e)
+	{
+		e.preventDefault();
+		var current			= $(this),
+			current_form	= current.closest('form'),
+			current_pT		= $('.page_tree_open_options'),
+			dates	= {
+				'page_id':			current_pT.children('input[name=pageid]').val(),
+				'leptoken':			getToken()
+			},
+			afterSend		= function( data, textStatus, jqXHR )
+			{
+				$('#fc_add_page input[type=reset]').click();
+				var current		= $(this);
+				if ( data.status == 0 )
+				{
+					current.remove();
+				}
+				else {
+					current.children('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove')
+				}
+			};
+
+		dialog_confirm( 'You really want to delete?!?', 'Removing page', ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
 
 	$('.fc_page_tree_restore_page').click( function ()
@@ -389,7 +658,6 @@ jQuery(document).ready(function()
 									current.find('.fc_page_tree_quick_changes').removeClass('hidden');
 									current.find('.fc_page_tree_restore').addClass('hidden');
 									current.children('.fc_page_tree_options_parent').fadeOut(300);
-									current.find('.fc_page_link').removeClass('fc_page_type_deleted');
 								};
 		dialog_ajax( link, dates, false, afterSend, current, 'POST' );
 	});

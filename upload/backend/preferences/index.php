@@ -1,24 +1,24 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of LEPTON2 Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ * @author			LEPTON2 Project
+ * @copyright		2012, LEPTON2 Project
+ * @link			http://lepton2.org
+ * @license			http://www.gnu.org/licenses/gpl.html
+ * @license_terms	please see LICENSE and COPYING files in your package
  *
  *
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('LEPTON_PATH')) {
+	include(LEPTON_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -36,18 +36,18 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 
-require_once(WB_PATH . '/framework/class.admin.php');
+require_once(LEPTON_PATH . '/framework/class.admin.php');
 $admin = new admin('Preferences');
 
 global $parser;
 $data_dwoo	= array();
 
-include_once(WB_PATH . '/framework/functions-utf8.php');
+include_once(LEPTON_PATH . '/framework/functions-utf8.php');
 
 // ========================= 
 // ! Initial page addition   
 // ========================= 
-require_once( WB_PATH . '/modules/initial_page/classes/c_init_page.php' );
+require_once( LEPTON_PATH . '/modules/initial_page/classes/c_init_page.php' );
 $ref		= new c_init_page( $database );
 $info		= $ref->get_user_info( $_SESSION['USER_ID'] );
 
@@ -110,7 +110,7 @@ else
 // ============================================================================ 
 // ! read available languages from table addons and assign it to the template   
 // ============================================================================ 
-require_once(WB_PATH . '/framework/class.pages.php');
+require_once(LEPTON_PATH . '/framework/class.pages.php');
 $pages = new pages();
 $data_dwoo['languages']				= $pages->get_addons( LANGUAGE , 'language', false, false, 'directory' );
 

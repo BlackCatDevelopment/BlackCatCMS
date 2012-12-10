@@ -173,7 +173,7 @@ $target = $page['target'];
 
 /*]]>*/
 </script>
-<form name="menulink" action="<?php echo WB_URL ?>/modules/menu_link/save.php" method="post">
+<form name="menulink" action="<?php echo WB_URL ?>/modules/menu_link/save.php" method="post" class="ajaxForm">
 <input type="hidden" name="page_id" value="<?php echo $page_id ?>" />
 <input type="hidden" name="section_id" value="<?php echo $section_id ?>" />
 <table>

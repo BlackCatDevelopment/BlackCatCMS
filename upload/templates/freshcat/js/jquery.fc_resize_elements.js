@@ -10,8 +10,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
- *
+  *
  */
 
 // Function to resize sidebar, sidebar_footer (both only height) on left side and the content_container (height and width) on the right side, after while user is resizing the browser
@@ -22,10 +21,12 @@
 		{
 			sidebar:			$('#fc_sidebar'),
 			sidebar_content:	$('#fc_sidebar_content'),
-			main:				$('#fc_main_content'),
+			main_content:		$('#fc_main_content'),
 			leftside:			$('#fc_sidebar, #fc_content_container'),
 			rightside:			$('#fc_content_container, #fc_content_footer'),
-			overview_list:		$('#fc_list_overview')
+			overview_list:		$('#fc_list_overview'),
+			side_add:			$('#fc_add_page'),
+			media:				$('#fc_media_browser')
 		};
 		var options = $.extend(defaults, options);
 		return this.each(function ()
@@ -39,27 +40,28 @@
 					window_width	= parseInt( window.width() ),
 					sidebar_width	= parseInt( options.sidebar.width() );
 				// set some values
-				options.leftside.css(
+				options.main_content.css(
 				{
-					height:		window_height - 80 + 'px'
+					maxHeight:	window_height - 133 + 'px'
 				});
-				options.sidebar_content.css(
+				options.media.css(
 				{
-					height:		window_height - 102 + 'px'
+					maxHeight:	window_height - 133 + 'px'
 				});
+				options.leftside.height(window_height - 80);
+				options.rightside.width(window_width - sidebar_width);
+				options.sidebar_content.height(window_height - 102);
+
 				options.overview_list.css(
 				{
-					maxHeight:	window_height - 204 + 'px'
+					maxHeight:	window_height - 192 + 'px'
 				});
-				options.main.css(
+				options.side_add.css(
 				{
-					height:		window_height - 124 + 'px'
+					left:	sidebar_width + 'px',
+					height:	window_height - 80 + 'px'
 				});
-				// set some values
-				options.rightside.css(
-				{
-					width:	( window_width - sidebar_width ) + 'px'
-				});
+
 			}).resize();
 		});
 	}

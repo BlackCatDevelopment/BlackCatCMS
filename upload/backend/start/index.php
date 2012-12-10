@@ -1,23 +1,23 @@
 <?php
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of LEPTON2 Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ * @author			LEPTON2 Project
+ * @copyright		2012, LEPTON2 Project
+ * @link			http://lepton2.org
+ * @license			http://www.gnu.org/licenses/gpl.html
+ * @license_terms	please see LICENSE and COPYING files in your package
  *
  *
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('LEPTON_PATH')) {	
+	include(LEPTON_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -34,17 +34,17 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 // exec initial_page
-if(file_exists(WB_PATH .'/modules/initial_page/classes/c_init_page.php') && isset($_SESSION['USER_ID'])) {
-	require_once (WB_PATH .'/modules/initial_page/classes/c_init_page.php');
+if(file_exists(LEPTON_PATH .'/modules/initial_page/classes/c_init_page.php') && isset($_SESSION['USER_ID'])) {
+	require_once (LEPTON_PATH .'/modules/initial_page/classes/c_init_page.php');
 	$ins = new c_init_page($database, $_SESSION['USER_ID'], $_SERVER['SCRIPT_NAME']);
 }
-require_once(WB_PATH.'/framework/class.admin.php');$admin = new admin('Start','start');
+require_once(LEPTON_PATH.'/framework/class.admin.php');$admin = new admin('Start','start');
 
 
 // ================================================ 
 // ! Check if installation directory still exists   
 // ================================================ 
-if( file_exists(WB_PATH.'/install/') ) {
+if( file_exists(LEPTON_PATH.'/install/') ) {
 	// Check if user is part of Adminstrators group
 	if( in_array (1, $admin->get_groups_id() ) )
 	{
@@ -52,7 +52,7 @@ if( file_exists(WB_PATH.'/install/') ) {
 		 *	Try to delete it - it's still not needed anymore.
 		 */
 		if (function_exists('rm_full_dir') ) {
-			rm_full_dir(WB_PATH.'/install/');
+			rm_full_dir(LEPTON_PATH.'/install/');
 		}
 	}
 }

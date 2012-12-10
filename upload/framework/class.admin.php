@@ -42,7 +42,7 @@ require_once(LEPTON_PATH.'/framework/class.wb.php');
 // Include PHPLIB template class
 require_once(LEPTON_PATH."/include/phplib/template.inc");
 
-// Get WB version
+// Get LEPTON version
 require_once(ADMIN_PATH.'/interface/version.php');
 
 // Include EditArea wrapper functions
@@ -329,6 +329,7 @@ class admin extends wb
 					'current'				=> ( 'settings' == strtolower($this->section_name) ) ? true : false
 					);
 				$data_dwoo['MAIN_MENU'][3]	= array(
+					'link'					=> ADMIN_URL . '/addons/index.php',
 					'title'					=> $MENU['ADDONS'],
 					'permission_title'		=> 'addons',
 					'permission'			=> ( $this->get_link_permission('addons') ) ? true : false,
@@ -348,21 +349,6 @@ class admin extends wb
 					'current'				=> ( 'access' == strtolower($this->section_name) ) ? true : false
 					);
 
-				// ======================================= 
-				// ! Seperate addons-link by permissions   
-				// ======================================= 
-				if ( $this->get_permission('modules') )
-				{
-					$data_dwoo['MAIN_MENU'][3]['link']	= ADMIN_URL . '/modules/index.php';
-				}
-				elseif ( $this->get_permission('templates') )
-				{
-					$data_dwoo['MAIN_MENU'][3]['link']	= ADMIN_URL . '/templates/index.php';
-				}
-				elseif ( $this->get_permission('languages') )
-				{
-					$data_dwoo['MAIN_MENU'][3]['link']	= ADMIN_URL . '/languages/index.php';
-				}
 				// ======================================= 
 				// ! Seperate access-link by permissions   
 				// ======================================= 
@@ -398,6 +384,9 @@ class admin extends wb
 				}
 
 				$data_dwoo['section_name']		= strtolower($this->section_name);
+				$data_dwoo['page_id']			= ( is_numeric( $this->get_get('page_id') ) && $this->get_get('page_id') != '' ) ?
+														$this->get_get('page_id') : ( ( is_numeric( $this->get_post('page_id') ) && $this->get_post('page_id') != '' ) ? 
+														$this->get_post('page_id') : false );
 
 				// ==================== 
 				// ! Parse the header 	

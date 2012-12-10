@@ -1,24 +1,23 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of LEPTON2 Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- *
+ * @author			LEPTON2 Project
+ * @copyright		2012, LEPTON2 Project
+ * @link			http://lepton2.org
+ * @license			http://www.gnu.org/licenses/gpl.html
+ * @license_terms	please see LICENSE and COPYING files in your package
  *
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('LEPTON_PATH')) {	
+	include(LEPTON_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -36,22 +35,13 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 // Include the database class file and initiate an object
-require(WB_PATH.'/framework/class.admin.php');
+require( LEPTON_PATH . '/framework/class.admin.php' );
 $admin		= new admin('Start', 'start', false, false);
-
 $database	= new database();
 
+header('Content-type: application/json');
 
-// =========================================================================== 
-// ! Create the controller, it is reusable and can render multiple templates 	
-// =========================================================================== 
-global $parser;
-
-$data_dwoo = array();
-
-$parser->setPath(THEME_PATH . '/templates');
-$parser->setFallbackPath(THEME_PATH . '/templates');
-
+$ajax		= array();
 
 // Check if the user has already submitted the form, otherwise show it
 if ( $admin->get_post('email') != '' )
@@ -59,22 +49,26 @@ if ( $admin->get_post('email') != '' )
 	$email			= htmlspecialchars( $admin->get_post('email'), ENT_QUOTES );
 
 	// Check if the email exists in the database
-	$query			= "SELECT user_id,username,display_name,email,last_reset,password FROM ".TABLE_PREFIX."users WHERE email = '".$admin->add_slashes($_POST['email'])."'";
-	$results		= $database->query($query);
+	$results		= $database->query( "SELECT user_id,username,display_name,email,last_reset,password FROM " . TABLE_PREFIX . "users WHERE email = '" . $admin->add_slashes( $admin->get_post('email') ) . "'" );
 	if ( $results->numRows() > 0 )
 	{
 		// Get the id, username, email, and last_reset from the above db query
-		$results_array	= $results->fetchRow();
+		$results_array		= $results->fetchRow();
 
 		// Check if the password has been reset in the last 2 hours
 		$last_reset			= $results_array['last_reset'];
-		$time_diff			= time()-$last_reset; // Time since last reset in seconds
-		$time_diff			= $time_diff/60/60; // Time since last reset in hours
+		$time_diff			= time() - $last_reset; // Time since last reset in seconds
+		$time_diff			= $time_diff / 60 / 60; // Time since last reset in hours
 
 		if ( $time_diff < 2 )
 		{
 			// Tell the user that their password cannot be reset more than once per hour
-			$data_dwoo['REPLY']		= $MESSAGE['FORGOT_PASS_ALREADY_RESET'];
+			$ajax	= array(
+				'message'	=> $admin->lang->translate('Password cannot be reset more than once per hour, sorry'),
+				'success'	=> false
+			);
+			print json_encode( $ajax );
+			exit();
 		}
 		else
 		{
@@ -91,44 +85,94 @@ if ( $admin->get_post('email') != '' )
 				$new_pass	.= $tmp;
 			}
 
-			$database->query("UPDATE ".TABLE_PREFIX."users SET password = '".md5($new_pass)."', last_reset = '".time()."' WHERE user_id = '".$results_array['user_id']."'");
+			$database->query("UPDATE " . TABLE_PREFIX . "users SET password = '".md5($new_pass)."', last_reset = '".time()."' WHERE user_id = '" . $results_array['user_id'] . "'");
 			if ( $database->is_error() )
 			{
 				// Error updating database
-				$data_dwoo['REPLY']			= $database->get_error();
+				$database->query("UPDATE " . TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array['user_id'] . "'");
+				$ajax	= array(
+					'message'	=> $database->get_error(),
+					'success'	=> false
+				);
+				print json_encode( $ajax );
+				exit();
 			}
 			else
 			{
 				// Setup email to send
 				$mail_to		= $email;
-				$mail_subject	= $MESSAGE['SIGNUP2_SUBJECT_LOGIN_INFO'];
+				$mail_subject	= $admin->lang->translate('Your LEPTON login details...');
 				// Replace placeholders from language variable with values
-				$search			= array('{LOGIN_DISPLAY_NAME}', '{LOGIN_WEBSITE_TITLE}', '{LOGIN_NAME}', '{LOGIN_PASSWORD}');
-				$replace		= array($results_array['display_name'], WEBSITE_TITLE, $results_array['username'], $new_pass); 
-				$mail_message	= str_replace($search, $replace, $MESSAGE['SIGNUP2_BODY_LOGIN_FORGOT']);
+				$values	= array(
+					'LOGIN_DISPLAY_NAME'		=> $results_array['display_name'],
+					'LOGIN_WEBSITE_TITLE'		=> WEBSITE_TITLE,
+					'LOGIN_NAME'				=> $results_array['username'],
+					'LOGIN_PASSWORD'			=> $new_pass
+				);
+				$mail_message	= $admin->lang->translate('
+Hello {{LOGIN_DISPLAY_NAME}},
+
+This mail was sent because the \'forgot password\' function has been applied to your account.
+
+Your new \'{{LOGIN_WEBSITE_TITLE}}\' login details are:
+
+Username:	{{LOGIN_NAME}}
+Password:	{{LOGIN_PASSWORD}}
+
+Your password has been reset to the one above.
+This means that your old password will no longer work anymore!
+If you\'ve got any questions or problems within the new login-data
+you should contact the website-team or the admin of \'{{LOGIN_WEBSITE_TITLE}}\'.
+Please remember to clean you browser-cache before using the new one to avoid unexpected fails.
+
+Regards
+------------------------------------
+This message was automatic generated
+
+', $values );
 
 				// Try sending the email
-				if ( $admin->mail(SERVER_EMAIL,$mail_to,$mail_subject,$mail_message) )
+				if ( $admin->mail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message ) )
 				{
-					$data_dwoo['REPLY']		= $MESSAGE['FORGOT_PASS_PASSWORD_RESET'];
+					$database->query("UPDATE " . TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array['user_id'] . "'");
+					$ajax	= array(
+						'message'	=> $admin->lang->translate('Your username and password have been sent to your email address'),
+						'success'	=> true
+					);
+					print json_encode( $ajax );
+					exit();
 				}
 				else
 				{
-					$database->query("UPDATE ".TABLE_PREFIX."users SET password = '".$old_pass."' WHERE user_id = '".$results_array['user_id']."'");
-					$data_dwoo['REPLY']		= $MESSAGE['FORGOT_PASS_CANNOT_EMAIL'];
+					$database->query("UPDATE " . TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array['user_id'] . "'");
+					$ajax	= array(
+						'message'	=> $admin->lang->translate('Unable to email password, please contact system administrator'),
+						'success'	=> false
+					);
+					print json_encode( $ajax );
+					exit();
 				}
 			}
 		}
 	}
 	else
 	{
-		// Email doesn't exist, so tell the user
-		$data_dwoo['REPLY']		= $MESSAGE['FORGOT_PASS_EMAIL_NOT_FOUND'];
+		$ajax	= array(
+			'message'	=> $admin->lang->translate('The email that you entered cannot be found in the database'),
+			'success'	=> false
+		);
+		print json_encode( $ajax );
+		exit();
 	}
 }
 else
 {
-	$data_dwoo['REPLY']		= $MESSAGE['SIGNUP_NO_EMAIL'];
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('You must enter an email address'),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
-	$parser->output('login_forgot.lte', $data_dwoo);
+exit();
 ?>

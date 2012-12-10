@@ -1,195 +1,87 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="{$META.LANGUAGE}">
 <head>
-<title>{$META.WEBSITE_TITLE} &raquo; {translate('Administration')} - {$HEAD.SECTION_NAME}</title>
+	<title>{$META.WEBSITE_TITLE} &raquo; {translate('Administration')} - {$HEAD.SECTION_NAME}</title>
 
-<link rel="shortcut icon" href="{$THEME_URL}/images/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="{$THEME_URL}/images/favicon.ico" type="image/x-icon" />
 
-<meta http-equiv="content-type" content="text/html; charset={$META.CHARSET}" />
-<meta http-equiv="content-language" content="{$META.LANGUAGE}" />
-<meta name="description" content="{translate('Administration')}" />
-<meta name="keywords" content="{translate('Administration')}" />
-<meta name="author" content="LEPTON CMS" />
+	<meta charset="{$META.CHARSET}">
 
-<script type="text/javascript">
-	var WB_URL									= '{$LEPTON_URL}', {* Marked as deprecated *}
-		LEPTON_URL								= '{$LEPTON_URL}',
-		THEME_URL								= '{$THEME_URL}',
-		ADMIN_URL								= '{$ADMIN_URL}',
-		DATE_FORMAT								= '{$DATE_FORMAT}',
-		TIME_FORMAT								= '{$TIME_FORMAT}';
-	var LEPTON_TEXT								= new Array();
-	LEPTON_TEXT["SEARCH"]						= '{translate('Search')}';
-	LEPTON_TEXT["BACK"]							= '{translate('Back')}';
-	LEPTON_TEXT["YES"]							= '{translate('Yes')}';
-	LEPTON_TEXT["NO"]							= '{translate('No')}';
-	LEPTON_TEXT["DEFAULT_MESSAGE_TITLE"]		= '{translate('Notification')}';
-	LEPTON_TEXT["GROUPS_CONFIRM_DELETE"]		= '{translate('Are you sure you want to delete the selected group (and any users that belong to it)?')}';
-	LEPTON_TEXT["USERS_CONFIRM_DELETE"]			= '{translate('Are you sure you want to delete the selected user?')}';
-	LEPTON_TEXT["MANAGE_GROUPS"]				= '{translate('Manage groups')}';
-	LEPTON_TEXT["MANAGE_USERS"]					= '{translate('Manage users')}';
-	LEPTON_TEXT["MEDIA_CONFIRM_DELETE_FILE"]	= '{translate('Are you sure you want to delete file {name}')}';
-	LEPTON_TEXT["MEDIA_CONFIRM_DELETE_DIR"]		= '{translate('Are you sure you want to delete the directory {name}')}';
-	LEPTON_TEXT["SECTION_CONFIRM_DELETE"]		= '{translate('Are you sure you want to delete this section?')}';
-	LEPTON_TEXT["SECTION_DELETE"]				= '{translate('Delete section')}';
-</script>
+	<meta name="description" content="{translate('Administration')}" />
+	<meta name="keywords" content="{translate('Administration')}" />
+	<meta name="author" content="Matthias Glienke, creativecat" />
 
-{get_page_headers( "backend" , true , "$section_name")}
+	<script type="text/javascript">
+		var WB_URL									= '{$LEPTON_URL}', {* Marked as deprecated *}
+			LEPTON_URL								= '{$LEPTON_URL}',
+			THEME_URL								= '{$THEME_URL}',
+			ADMIN_URL								= '{$ADMIN_URL}',
+			DATE_FORMAT								= '{$DATE_FORMAT}',
+			TIME_FORMAT								= '{$TIME_FORMAT}';
+		var LEPTON_TEXT								= new Array();
+		LEPTON_TEXT["SEARCH"]						= '{translate('Search')}';
+		LEPTON_TEXT["BACK"]							= '{translate('Back')}';
+		LEPTON_TEXT["YES"]							= '{translate('Yes')}';
+		LEPTON_TEXT["NO"]							= '{translate('No')}';
+		LEPTON_TEXT["DEFAULT_MESSAGE_TITLE"]		= '{translate('Notification')}';
+		LEPTON_TEXT["GROUPS_CONFIRM_DELETE"]		= '{translate('Are you sure you want to delete the selected group (and any users that belong to it)?')}';
+		LEPTON_TEXT["USERS_CONFIRM_DELETE"]			= '{translate('Are you sure you want to delete the selected user?')}';
+		LEPTON_TEXT["MANAGE_GROUPS"]				= '{translate('Manage groups')}';
+		LEPTON_TEXT["MANAGE_USERS"]					= '{translate('Manage users')}';
+		LEPTON_TEXT["MEDIA_CONFIRM_DELETE_FILE"]	= '{translate('Are you sure you want to delete file {name}')}';
+		LEPTON_TEXT["MEDIA_CONFIRM_DELETE_DIR"]		= '{translate('Are you sure you want to delete the directory {name}')}';
+		LEPTON_TEXT["SECTION_CONFIRM_DELETE"]		= '{translate('Are you sure you want to delete this section?')}';
+		LEPTON_TEXT["SECTION_DELETE"]				= '{translate('Delete section')}';
+	</script>
+
+	{get_page_headers( "backend" , true , "$section_name")}
 
 </head>
-<body>
-<div class="fc_popup"></div>
-<div id="fc_admin_header">
-	<div id="fc_header_content">
+<body class="fc_gradient1">
+
+	<header id="fc_admin_header" class="fc_gradient1 fc_border">
+		{*Here the selection of different sides will be added*}
+		<span id="fc_side_choose">Lepton 2</span>
 		{*main navigation*}
-		<ul id="fc_menu">
-			{foreach $MAIN_MENU as menu}
-			{if $menu.permission == true}
-			<li>
-				<a href="{$menu.link}" target="_self" class="fc_{$menu.permission_title}{if $menu.current == true} fc_current{/if}">{$menu.title}</a>
-			</li>
-			{/if}
-			{/foreach}
-		</ul>
+		<nav>
+			<ul id="fc_menu">
+				{foreach $MAIN_MENU as menu}
+				{if $menu.permission == true}
+				<li>
+					<a href="{$menu.link}" target="_self" class="icon-fc_{$menu.permission_title}{if $menu.current == true} fc_current{/if}">{$menu.title}</a>
+				</li>
+				{/if}
+				{/foreach}
+			</ul>
+		</nav>
 
 		{*user/displayname and link to userpreferences*}
 		<div id="fc_account">
-			<a href="{$PREFERENCES.link}" id="fc_user_preferences"{if $PREFERENCES.current == true} class="fc_current"{/if} title="{$PREFERENCES.title}">
-				<strong>
-					<span class="fc_display_name">{$USER.display_name}</span>
-					<span class="fc_username">{$USER.username}</span>
+			<a href="{$PREFERENCES.link}" id="fc_user_preferences" class="icon-user fc_gradient1 fc_gradient_hover{if $PREFERENCES.current == true} fc_current{/if}" title="{$PREFERENCES.title}">
+				<strong id="fc_display_name">
+					{$USER.display_name}
+					<span id="fc_username">{$USER.username}</span>
 				</strong>
 			</a>
 			{*logout*}
-			<a href="{$ADMIN_URL}/logout/" id="fc_logout" title=" {translate('Logout')}"><span>&nbsp;</span></a>
+			<a href="{$ADMIN_URL}/logout/" id="fc_logout" title=" {translate('Logout')}" class="icon-switch fc_gradient1 fc_gradient_hover"></a>
 		</div>
 
-	</div>
-	<div class="clear"></div>
-</div>
+	</header>
+
 {*if user is allowed to see pages, sidebar will be shown - I will have to think about that, as the activity-bar is inside this div, so it is also needed for users, who can't see pages*}
 {if $permission.pages}
-<div id="fc_sidebar">
-	<div id="fc_sidebar_header">{translate('Pages')}<span class="fc_side_add show_popup form_fc_add_page" title="{translate('Add page')}">+ {translate('Add page')}</span></div>
-	<div id="fc_sidebar_content">
-		<div id="fc_pages">
-			{if $pages}
-			<div id="fc_search_tree" class="ui-corner-all">
-				<div id="fc_search_page_tree_default" class="ui-corner-all"><span>{translate('Search')}</span></div>
-				<input type="text" name="search_page_tree" id="fc_search_page_tree" value="" />
-				<span class="fc_close"></span>
-				<div id="fc_search_page_options">
-					<ul>
-						<li title="{translate('Check all')}" id="{translate('Any')}" class="fc_activeSearchOption">{translate('Check all')}</li>
-						<li title="{translate('Menu title contains')}" id="{translate('Menu')}">{translate('Menu title contains')}</li>
-						<li title="{translate('Page title contains')}" id="{translate('Title')}">{translate('Page title contains')}</li>
-						<li title="{translate('Section title contains')}" id="{translate('Section')}">{translate('Section name contains')}</li>
-						<li title="{translate('Page ID is')}" id="{translate('PID')}">{translate('Page ID is')}</li>
-						<li title="{translate('Section ID is')}" id="{translate('SID')}">{translate('Section ID is')}</li>
-					</ul>
-				</div>
-			</div>
-			{/if}
-			{if $permission.pages_intro}
-			<div class="fc_page_link fc_page_intro">
-				<a href="{$ADMIN_URL}/pages/intro.php" title="{translate('Modify intro page')}">{translate('Intro page')}</a>
-			</div>
-			{/if}
-			{if $pages_editable != 0}
-			<div id="fc_page_tree_top">
-				<ul>
-				{foreach $pages page}
-					{if $page.close_parent}
-					{for close 0 $page.close_parent}
-					{if $close > 0}
-						</ul>
-					</li>
-					{/if}
-					{/for}
-					{/if}
-					<li id="pageid_{$page.page_id}" rel="{$page.page_id}" class="fc_page_tree_item{if $page.is_parent} fc_expandable{if $page.cookie} fc_tree_open{else} fc_tree_close{/if}{/if}">
-						<dl class="fc_page_tree_search_dl">
-							<dt>PageID</dt>
-							<dd class="fc_search_PageID">{$page.page_id}</dd>
-							<dt>MenuTitle</dt>
-							<dd class="fc_search_MenuTitle">{$page.menu_title}</dd>
-							<dt>PageTitle</dt>
-							<dd class="fc_search_PageTitle">{$page.page_title}</dd>
-							{foreach $page.sections as section}
-							<dt>SectionID</dt>
-							<dd class="fc_search_SectionID">{$section.section_id}</dd>
-							<dt>SectionName</dt>
-							<dd class="fc_search_SectionName">{$section.name}</dd>
-							{/foreach}
-						</dl>
-						<div class="fc_page_tree_options_parent ui-corner-all ui-shadow">
-							<div class="fc_page_tree_options ui-corner-all">
-								<span class="fc_page_tree_arrow"></span>
-								<span class="fc_close"></span>
-								<div class="fc_page_tree_quick_changes{if $page.visibility == 'deleted'} hidden{/if}">
-									<strong>{translate('Quick changes')}</strong>
-									<hr/>
-									<p>
-										<span class="fc_page_tree_label">{translate('Menu Title')}</span><input type="text" name="MenuTitle" value="{$page.menu_title}" /><br/>
-										<span class="fc_page_tree_label">{translate('Page Title')}</span><input type="text" name="PageTitle" value="{$page.page_title}" /><br/>
-										<span class="fc_page_tree_label">{translate('URL')}</span><input type="text" name="PageLink" class="fc_page_tree_PageLink" value="{$page.page_link}" />{$PAGE_EXTENSION}
-										<input type="hidden" name="parent" value="{$page.parent}" />
-									</p>
-									<hr/>
-									<span class="button submit ui-corner-left fc_page_tree_save_and_close">{translate('Save & Close')}</span>
-									<a class="button ui-corner-right fc_page_tree_goto" href="{$ADMIN_URL}/pages/settings.php?page_id={$page.page_id}">{translate('Page settings')} &raquo;</a>
-									<div class="clear"></div>
-									<hr />
-									<span class="red_button ui-corner-all page_tree_delete_page">{translate('Delete page')}</span>
-									<div class="clear sp_clear"></div>
-								</div>
-								<div class="fc_page_tree_restore{if $page.visibility != 'deleted'} hidden{/if}">
-									<strong>{translate('Options for deleted pages')}</strong>
-									<hr/>
-									<span class="button submit ui-corner-all fc_page_tree_restore_page">{translate('Restore page')}</span>
-									<div class="clear"></div>
-									<hr />
-									<span class="red_button ui-corner-all page_tree_delete_page">{translate('Delete page finally')}</span>
-									<div class="clear sp_clear"></div>
-								</div>
-							</div>
-						</div>
-						<div class="fc_page_link fc_page_type_{$page.visibility}{if !$page.editable} fc_page_tree_not_editable{/if}">
-							{if $page.is_parent}<span class="fc_toggle_tree">+</span>{/if}
-							<a href="{if !$page.editable}#{else}{$ADMIN_URL}/pages/modify.php?page_id={$page.page_id}{/if}" title="{translate('Page title')}: {$page.page_title}">
-								<span class="fc_page_tree_menu_title">{$page.menu_title}</span> <span class="fc_page_tree_menu_ID">(ID: {$page.page_id})</span>
-							</a>
-							<span class="fc_page_tree_options_open fc_pages_tree_options_button"></span>
-						</div>
-						<input type="hidden" name="pageid" value="{$page.page_id}" />
-						{if $page.is_parent}
-						<ul>
-						{else}
-					</li>
-					{/if}
-					{$last_level = $page.level}
-				{/foreach}
-				{if $last_level > 0}
-					{for close 0 $last_level}
-					{if $close > 0}
-						</ul>
-					</li>
-					{/if}
-					{/for}
-				{/if}
-				</ul>
-			</div>
-			{else}
-			<ul class="fc_no_page_found">
-				<li>{translate('No editable pages were found')}</li>
-			</ul>
-			{/if}
-		</div>
+<aside id="fc_sidebar" class="fc_gradient3">
+	<div id="fc_sidebar_header" class="fc_gradient1 fc_border">
+		{translate('Pages')}<span class="icon-plus fc_gradient1 fc_gradient_hover fc_side_add" title="{translate('Add page')}"></span>
 	</div>
-	{if $permission.pages_add}
-    {include('form_add_page.lte')}
-	{/if}
+	<div id="fc_sidebar_content">
+		{include('backend_pageTree.lte')}
+	</div>
 	<div id="fc_activity"></div>
-</div>
+</aside>
+	{if $permission.pages_add}
+	{include('form_add_page.lte')}
+	{/if}
 {/if}
 <div id="fc_content_container"{if !$pages} class="fc_no_sidebar"{/if}>

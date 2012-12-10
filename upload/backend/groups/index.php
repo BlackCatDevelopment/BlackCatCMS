@@ -1,24 +1,23 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of LEPTON2 Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- *
+ * @author			LEPTON2 Project
+ * @copyright		2012, LEPTON2 Project
+ * @link			http://lepton2.org
+ * @license			http://www.gnu.org/licenses/gpl.html
+ * @license_terms	please see LICENSE and COPYING files in your package
  *
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('LEPTON_PATH')) {
+	include(LEPTON_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,7 +34,7 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-require_once(WB_PATH.'/framework/class.admin.php');
+require_once(LEPTON_PATH.'/framework/class.admin.php');
 $admin = new admin('Access', 'groups');
 
 // =========================== 
@@ -52,8 +51,9 @@ $data_dwoo['permissions']['USERS']			= $admin->get_permission('users')			? true 
 // =========================================================================== 
 global $parser;
 
-require_once(WB_PATH . '/framework/class.pages.php');
+require_once( LEPTON_PATH . '/framework/class.pages.php');
 $pages = new pages();
+// $items	= $admin->get_controller('Pages')->get_linked_by_language($page_id);
 
 $data_dwoo['templates']			= $pages->get_addons( DEFAULT_TEMPLATE , 'template' );
 $data_dwoo['languages']			= $pages->get_addons( DEFAULT_LANGUAGE , 'language' );

@@ -3,22 +3,21 @@
 	<div class="clear"></div>
 </div>
 <div class="clear"></div>
-<div id="fc_footer">
+<div id="fc_footer" class="fc_gradient1 fc_border">
 	{if $permissions.pages}
 	<div id="fc_sidebar_footer">
-		<span class="fc_side_add show_popup form_fc_add_page" title="{$HEADING.ADD_PAGE}">+</span>
+		<span class="icon-plus fc_gradient1 fc_gradient_hover fc_side_add" title="{$HEADING.ADD_PAGE}"></span>
 	</div>
 	{/if}
-	<div id="fc_content_footer"{if !$permissions.pages} class="fc_no_sidebar"{/if}>
+	<div id="fc_content_footer" {if !$permissions.pages} class="fc_no_sidebar"{/if}>
 		<div id="fc_hidden_inputs">
 			<input type="hidden" name="leptoken" value="" />
 		</div>
 		{$CORE}: {$VERSION} | {$THEME_NAME}: {$THEME_VERSION} - 
 		<!-- Please note: the below reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
-		<a href="{$URL_HELP}" title="LEPTON CMS" target="_blank">LEPTON Core</a> is released under the
-		<a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON Core is GPL" target="_blank">GNU General Public License</a>.
-		<!-- Please note: the above reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
-		<a href="{$URL_HELP}" title="LEPTON Package" target="_blank">LEPTON CMS Package</a> is released under several different licenses.
+		<a href="{$URL_HELP}" title="LEPTON2" target="_blank">LEPTON2</a> is released under the <a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON Core is GPL" target="_blank">GNU General Public License</a>.
+		<!-- Please note: the above reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. 
+		<a href="{$URL_HELP}" title="LEPTON Package" target="_blank">LEPTON2</a> is released under several different licenses.-->
 	</div>
 </div>
 </body>

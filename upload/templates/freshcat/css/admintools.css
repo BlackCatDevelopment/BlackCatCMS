@@ -10,8 +10,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
- *
+  *
  */
 
 #fc_admintools {
@@ -20,31 +19,29 @@
 	background-color: #f8f8f8;
 }
 
-#fc_admintools li {
-	background-position: 15px center;
-	background-repeat: no-repeat;
-	background-image: url(images/list_icons/admintools_list.png);
-	border-top-width: 1px;
-	border-top-style: solid;
-	border-top-color: white;
-	border-bottom-color: #cccccc;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	padding-left: 70px;
-	padding-bottom: 5px;
-	padding-right: 10px;
-	padding-top: 5px;
-	margin: 0px;
-}
-
-.fc_admintool_title {
-	display: block;
-	font-weight: bold;
-	font-size: 1.2em;
-}
-
-.fc_admintool_description {
-	color: #23272a;
-	font-size: 1em;
-}
+	#fc_admintools li {
+		margin: 0px;
+	}
+		#fc_admintools li .fc_admintool_link {
+			padding:	0.4em 1em;
+			display:	block;
+		}
+			#fc_admintools li img {
+				float:	left;
+			}
+			#fc_admintools .fc_admintool_icon {
+				color:		#9da8b2;
+				font-size:	1.6em;
+			}
+			#fc_admintools .fc_admintool_title {
+				padding-left:	0.5em;
+				font-weight:	bold;
+				font-size:		1.2em;
+			}
+			
+			#fc_admintools .fc_admintool_description {
+				padding-left:	50px;;
+				color:			#282a2e;
+				font-size:		1em;
+			}
 
