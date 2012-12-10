@@ -138,6 +138,7 @@ $permission['pages_intro']		= ( $admin->get_permission('pages_intro') != true ||
 require_once(LEPTON_PATH . '/framework/class.pages.php');
 $dropdown	= new pages( $permission );
 // list of all parent pages for dropdown parent
+$dropdown->current_page['id']	= $page_id;
 $dropdown_list		= $dropdown->pages_list( 0 , 0 );
 
 
@@ -158,6 +159,7 @@ $ajax	= array(
 		'template'					=> $results_array['template'],
 		'language'					=> $results_array['language'],
 		'target'					=> $results_array['target'],
+		'level'						=> $results_array['level'],
 		'modified_when'				=> ($results_array['modified_when'] != 0) ? date(TIME_FORMAT.', '.DATE_FORMAT, $results_array['modified_when']) : 'Unknown',
 		'searching'					=> $results_array['searching'] == 0 ? false : true,
 		'visibility'				=> $results_array['visibility'],

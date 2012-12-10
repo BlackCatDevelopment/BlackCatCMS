@@ -186,7 +186,7 @@ class pages extends wb
 				$this->pages[$key]						= $temp_values[$page];
 				$this->pages[$key]['page_link']			= substr($temp_values[$page]['link'],strripos($temp_values[$page]['link'],'/')+1);
 				$this->pages[$key]['sections']			= isset($sections_array[$page])							? $sections_array[$page] : false;
-				$this->pages[$key]['cookie']			= isset( $_COOKIE['p'.$this->pages[$key]['page_id']] )	?  true : false;
+				$this->pages[$key]['cookie']			= isset( $_COOKIE['pageid_'.$this->pages[$key]['page_id']] )	?  true : false;
 
 				// ==================
 				// ! Get user perms
@@ -233,95 +233,6 @@ class pages extends wb
 				$level									= $temp_values[$page]['level'];
 			}
 		}
-/*
-		// =====================================
-		// ! Insert values into main page list
-		// =====================================
-		if($get_pages->numRows() > 0) {
-			while ( $page = $get_pages->fetchRow( MYSQL_ASSOC ) )
-			{
-				// ==================
-				// ! Get user perms
-				// ==================
-				$admin_groups = explode(',', str_replace('_', '', $page['admin_groups']));
-				$admin_users = explode(',', str_replace('_', '', $page['admin_users']));
-				$in_group = FALSE;
-				foreach($this->get_groups_id() as $cur_gid) {
-					if (in_array($cur_gid, $admin_groups)) {
-						$in_group = TRUE;
-					}
-				}
-
-				// =================================================
-				// ! Check user perms and count for editable sites
-				// =================================================
-				if(($in_group) || is_numeric(array_search($this->get_user_id(), $admin_users))) {
-					if ( $page['visibility'] == 'deleted' )
-					{
-						if($this->preferences['PAGE_TRASH'] == 'inline') {
-							$this->pages[$this->pages['counter']]['editable'] = true;
-							$this->pages['editable'] = $this->pages['editable']+1;
-						} else {
-							$can_modify = false;
-						}
-					} elseif($page['visibility'] != 'deleted') {
-						$this->pages[$this->pages['counter']]['editable'] = true;
-						$this->pages['editable'] = $this->pages['editable']+1;
-					}
-				} else {
-					if($page['visibility'] == 'private') {
-						continue;
-					}
-					else {
-						$this->pages[$this->pages['counter']]['editable'] = false;
-					}
-				}
-
-				// =======================================
-				// ! Work out if pages has children pages
-				// =======================================
-				$sql = 'SELECT `page_id`,`admin_groups`,`admin_users` FROM `'.TABLE_PREFIX.'pages` WHERE `parent` = '.$page['page_id'].' ';
-				$sql .= ($this->preferences['PAGE_TRASH'] != 'inline') ?  'AND `visibility` != \'deleted\' ' : ' ';
-				$get_page_subs = $this->db_handle->query($sql);
-				$num_subs = $get_page_subs->numRows();
-				$this->pages[$this->pages['counter']]['children']			= ($get_page_subs->numRows() > 0) ? true :  false;
-				// =============================
-				// ! Set variables for the page
-				// =============================
-				$this->pages[$this->pages['counter']]['cookie']				= (isset($_COOKIE['p'.$page['page_id']])) ?  true : false;
-				$this->pages[$this->pages['counter']]['active']				= ($this->page_is_active($page)) ? true : false;
-				//$this->pages[$this->pages['counter']]['encode_title'] = str_replace(array(':', '@', '\''), array('&colon;', '&commat;', "&prime;"), url_encode($page['page_title'])); // IS NOT NEEDED ANY MORE?
-				$this->pages[$this->pages['counter']]['view_url']			= PAGES_DIRECTORY .$page['link']. PAGE_EXTENSION;
-				$this->pages[$this->pages['counter']]['menu_title']			= $page['menu_title'];
-				$this->pages[$this->pages['counter']]['page_title']			= $page['page_title'];
-				$this->pages[$this->pages['counter']]['page_id']			= $page['page_id'];
-				$this->pages[$this->pages['counter']]['level']				= $page['level'];
-				$this->pages[$this->pages['counter']]['visibility']			= $page['visibility'];
-				$this->pages[$this->pages['counter']]['visibility_title']	= $page['visibility']; // NEEDS TO BE CHECKED
-
-				// ===========================================================
-				// ! Check if a date is set in one of the sections of the page
-				// ===========================================================
-				$sql = 'SELECT `publ_start`, `publ_end` FROM `'.TABLE_PREFIX.'sections` ';
-				$sql .= 'WHERE `page_id` = '.$page['page_id'].' AND `module` != \'menu_link\' ';
-				$query_sections = $this->db_handle->query($sql);
-
-				if ( $query_sections->numRows() > 0)
-				{
-					$mdate_display=false;
-					while($mdate_res = $query_sections->fetchRow( MYSQL_ASSOC )) {
-						if($mdate_res['publ_start']!='0' || $mdate_res['publ_end']!='0') {
-							$this->pages[$this->pages['counter']]['cal'] = true;
-							break;
-						}
-						else $this->pages[$this->pages['counter']]['cal'] = false;
-					}
-				}
-				$this->pages['counter']++;
-				$this->pages = $this->make_list($page['page_id']);
-			}
-		}
-*/
 		return $this->pages;
 	}
 
@@ -411,9 +322,9 @@ class pages extends wb
 		// ==================================================================================
 		if ( $this->permissions['DISPLAY_ADD_L0'] == true || $level == 0)
 		{
-			$this->parent_page[0]['disabled'] = false;
-			$this->parent_page[0]['level'] = 0;
-			$this->parent_page[0]['id'] = 0;
+			$this->parent_page[0]['disabled']			= false;
+			$this->parent_page[0]['level']				= 0;
+			$this->parent_page[0]['id']					= 0;
 			$this->parent_page[0]['menu_title']			= $TEXT['NONE'];
 			$this->parent_page[0]['page_title']			= $TEXT['NONE'];
 			$this->parent_page[0]['current_is_parent']	= false;
@@ -438,7 +349,7 @@ class pages extends wb
 	 * @param int $parent (default: 0)
 	 * @return void
 	 */
-	public function parent_list($parent=0)
+	public function parent_list( $parent = 0 )
 	{
 		$get_pages = $this->db_handle->query("SELECT * FROM " . TABLE_PREFIX . "pages WHERE parent = '$parent' AND visibility!='deleted' ORDER BY position ASC");
 

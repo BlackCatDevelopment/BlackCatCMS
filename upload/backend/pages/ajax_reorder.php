@@ -58,9 +58,9 @@ if ( !$admin->get_permission('pages') )
 // =============== 
 // ! Get page id   
 // =============== 
-if ( ( !is_array( $admin->get_get('pageid') )		&& ( $admin->get_get('table') == 'pages' ) ) ||
-	 ( !is_array( $admin->get_get('sectionid') )	&& ( $admin->get_get('table') == 'sections' ) ) ||
-	 ( $admin->get_get('table') != 'pages' && $admin->get_get('table') != 'sections' ) )
+if ( ( !is_array( $admin->get_post('pageid') )		&& ( $admin->get_post('table') == 'pages' ) ) ||
+	 ( !is_array( $admin->get_post('sectionid') )	&& ( $admin->get_post('table') == 'sections' ) ) ||
+	 ( $admin->get_post('table') != 'pages' && $admin->get_post('table') != 'sections' ) )
 {
 	$ajax['message']	= $admin->lang->translate('You send corrupt data.' );
 	$ajax['success']	= false;
@@ -74,8 +74,8 @@ if ( ( !is_array( $admin->get_get('pageid') )		&& ( $admin->get_get('table') == 
 // ======================= 
 require(LEPTON_PATH . '/framework/class.order.php');
 
-$id_field	= ( $admin->get_get('table') == 'pages' ) ? 'page_id' : 'section_id';
-$new_array	= ( $admin->get_get('table') == 'pages' ) ? $admin->get_get('pageid') : $admin->get_get('sectionid');
+$id_field	= ( $admin->get_post('table') == 'pages' ) ? 'page_id' : 'section_id';
+$new_array	= ( $admin->get_post('table') == 'pages' ) ? $admin->get_post('pageid') : $admin->get_post('sectionid');
 
 foreach ( $new_array as $index => $element)
 {
@@ -83,7 +83,7 @@ foreach ( $new_array as $index => $element)
 }
 
 
-$order		= new order(TABLE_PREFIX.$admin->get_get('table'), 'position', $id_field);
+$order		= new order(TABLE_PREFIX.$admin->get_post('table'), 'position', $id_field);
 $reorder	= $order->reorder_by_array( $new_array );
 
 if ( $reorder === true )

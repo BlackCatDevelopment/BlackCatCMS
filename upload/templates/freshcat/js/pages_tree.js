@@ -43,7 +43,7 @@
 						};
 						$.ajax(
 						{
-							type:		'GET',
+							type:		'POST',
 							url:		ADMIN_URL + '/pages/ajax_reorder.php',
 							dataType:	'json',
 							data:		dates,
@@ -105,14 +105,15 @@
 					},
 					success:	function( data, textStatus, jqXHR  )
 					{
-					current_is_parent: false
-						console.log( data.check );
 						var form	= $('#fc_add_page')
 							option	= '<select name="parent" id="fc_addPage_parent">';
 						$.each(data.parent_list, function(index, value)
 						{
 							option	= option + '<option value="' + value.id + '"';
-							option	= value.disabled == true || value.id == dates.page_id ? option + ' disabled="disabled">' : option+ '>';
+							option	= value.disabled == true ||
+										value.id == dates.page_id ||
+										value.current_is_parent == true
+										? option + ' disabled="disabled">' : option+ '>';
 							for ( var i = 0; i < value.level; i++ )
 							{
 								option	= option + '-';
@@ -120,7 +121,6 @@
 							option	= option + value.menu_title + '</option>';
 						});
 						option	= option + '</select>';
-						console.log(option);
 						$('#fc_addPage_parent').replaceWith(option);
 						
 						form.find('.fc_addPageOnly').hide();
@@ -134,7 +134,6 @@
 						$('#fc_addPage_page_link').val(data.short_link);
 			
 						// Set selectfields
-						//$('#fc_addPage_type[value=' + data.MENU_TITLE + ']').val(data.MENU_TITLE);
 						$('#fc_addPage_parent option').removeAttr('selected');
 						$('#fc_addPage_parent option[value=' + data.parent + ']').attr('selected', true);
 						$('#fc_addPage_menu option').removeAttr('selected');
@@ -204,32 +203,22 @@
 			});
 
 			// bind elements with click event
-			element.find('li').live( 'click', function()
+			element.find('.fc_toggle_tree').live( 'click',  function()
 			{
-				// Storing $(this) in a variable
-				var clicked_element			= $(this);
-
-				clicked_element.children('.fc_page_link').find('.fc_toggle_tree').unbind().click( function()
+				var clicked_element		= $(this).closest('li'),
+					set_cookie			= clicked_element.attr('id');
+			
+				if ( clicked_element.hasClass('fc_tree_open') )
 				{
-					var page_id		= clicked_element.attr('rel');
-
-					if ( clicked_element.hasClass('fc_tree_open') )
-					{
-						clicked_element.removeClass('fc_tree_open').addClass('fc_tree_close');
-						$.cookie( 'p' + page_id, null, { path: '/' } );
-						//clicked_element.children('ul').addClass('fc_page_inactive');
-					}
-					else
-					{
-						clicked_element.addClass('fc_tree_open').removeClass('fc_tree_close');
-						$.cookie( 'p' + page_id, 'open', { path: '/' } );
-					}
-				});
-				/*clicked_element.children('span > a').click( function(){
-					
-					// return false;
-				});*/
-			}).click();
+					clicked_element.removeClass('fc_tree_open').addClass('fc_tree_close');
+					$.cookie( set_cookie, null, { path: '/' } );
+				}
+				else
+				{
+					clicked_element.addClass('fc_tree_open').removeClass('fc_tree_close');
+					$.cookie( set_cookie, 'open', { path: '/' } );
+				}
+			});
 
 			// Cosmetical class to change white to black arrows ;-)
 			element.find('li > a').mouseenter( function()
@@ -624,9 +613,13 @@ jQuery(document).ready(function()
 							var newIcon	= 'icon-eye-blocked';
 							break;
 					};
-					if ( dates.parent != data.parent )
+					if ( dates.parent != old_parent.children('input[name=pageid]').val() )
 					{
-						if ( new_parent.children('ul').size() > 0 )
+						if ( dates.parent == 0 )
+						{
+							$('#fc_page_tree_top').children('ul').append( current );
+						}
+						else if ( new_parent.children('ul').size() > 0 )
 						{
 							if ( current.siblings('li').size() == 0 )
 							{
