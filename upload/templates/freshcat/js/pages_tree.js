@@ -729,7 +729,7 @@ jQuery(document).ready(function()
 					current.remove();
 				}
 				else {
-					current.children('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove');
+					current.find('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove');
 				}
 			};
 
@@ -752,7 +752,7 @@ jQuery(document).ready(function()
 				var current		= $(this);
 				if ( data.success == true )
 				{
-					current.children('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-screen');
+					current.find('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-screen');
 				}
 				else {
 					return_error( jqXHR.process , data.message);
