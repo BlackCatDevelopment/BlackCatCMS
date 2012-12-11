@@ -11,27 +11,27 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
- *
+ * @version         $Id: tool.php 1903 2012-04-19 09:15:27Z webbird $
  *
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-    if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {	
+	include(WB_PATH.'/framework/class.secure.php'); 
 } else {
-    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
-    $inc = false;
-    foreach ($subs as $sub) {
-        if (empty($sub)) continue; $dir .= '/'.$sub;
-        if (file_exists($dir.'/framework/class.secure.php')) {
-            include($dir.'/framework/class.secure.php'); $inc = true;    break;
-        }
-    }
-    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	$root = "../";
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= "../";
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) { 
+		include($root.'/framework/class.secure.php'); 
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
 }
-// end include LEPTON class.secure.php
+// end include class.secure.php
 
 include dirname(__FILE__).'/library_info.php';
 
@@ -55,7 +55,7 @@ include dirname(__FILE__).'/library_info.php';
   <p>Please note: This is a library module which has no Admin Tool functionality.
   If you need an Admin Tool to manage your jQuery Plugins, please install
   <a href="http://www.websitebakers.com/pages/libs/libraryadmin.php">LibraryAdmin</a>.</p>
-  <p>Hinweis: Dies ist ein Bibliotheksmodul ohne Admin Tool FunktionalitÃ¤t.
-  Wenn Sie ein Admin Tool benÃ¶tigen, um Ihre jQuery Plugins zu verwalten, installieren
+  <p>Hinweis: Dies ist ein Bibliotheksmodul ohne Admin Tool Funktionalität.
+  Wenn Sie ein Admin Tool benötigen, um Ihre jQuery Plugins zu verwalten, installieren
   Sie bitte <a href="http://www.websitebakers.com/pages/libs/libraryadmin.php">LibraryAdmin</a>.</p>
 </div>

@@ -11,7 +11,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
- *
+ * @version         $Id: upgrade.php 1756 2012-02-09 13:23:56Z erpe $
  *
  */
 
