@@ -573,12 +573,11 @@ jQuery(document).ready(function()
 			},
 			success:	function( data, textStatus, jqXHR  )
 			{
-				if ( data.success === true )
+				if ( data.success == true )
 				{
 					return_success( jqXHR.process , data.message );
-
 					var current			= $(this);
-					$('#fc_add_page input[type=reset]').click();
+					//$('#fc_add_page input[type=reset]').click();
 					window.location.replace( data.url );
 				}
 				else {
