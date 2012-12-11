@@ -157,14 +157,10 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/settings/save.php',
 			$admin_dir.'/start/index.php',
 
-
-			$admin_dir.'/users/index.php',
-
-			// Dwoo
 			$admin_dir.'/users/ajax_delete_user.php',
 			$admin_dir.'/users/ajax_get_user.php',
 			$admin_dir.'/users/ajax_save_user.php',
-			//////////////////////////////////////////
+			$admin_dir.'/users/index.php',
 
 			'/account/forgot.php',
 			'/account/login.php',

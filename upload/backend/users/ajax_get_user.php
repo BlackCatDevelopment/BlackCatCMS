@@ -80,7 +80,6 @@ if ( $user = $get_user->fetchRow( MYSQL_ASSOC ) )
 		$username_fieldname		.= $salt[ $num ];
 	}
 
-	$data_dwoo['users'][$counter]['USERNAME_FIELDNAME']		= $username_fieldname;
 	$ajax	= array(
 		'user_id'				=> $user['user_id'],
 		'username'				=> $user['username'],

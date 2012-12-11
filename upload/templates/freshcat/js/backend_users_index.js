@@ -175,6 +175,7 @@
 					},
 					error:		function(jqXHR, textStatus, errorThrown)
 					{
+						console.log('Error: ' + jqXHR.responseText);
 						alert(textStatus + ': ' + errorThrown );
 					}
 				});
