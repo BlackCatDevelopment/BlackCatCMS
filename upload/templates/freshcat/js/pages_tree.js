@@ -107,93 +107,100 @@
 					{
 						var form	= $('#fc_add_page'),
 							option	= '<select name="parent" id="fc_addPage_parent">';
-						$.each(data.parent_list, function(index, value)
+						if ( data.visibility == 'deleted' )
 						{
-							option	= option + '<option value="' + value.id + '"';
-							option	= value.disabled == true ||
-										value.id == dates.page_id ||
-										value.current_is_parent == true
-										? option + ' disabled="disabled">' : option+ '>';
-							for ( var i = 0; i < value.level; i++ )
-							{
-								option	= option + '-';
-							}
-							option	= option + value.menu_title + '</option>';
-						});
-						option	= option + '</select>';
-						$('#fc_addPage_parent').replaceWith(option);
-						
-						form.find('.fc_addPageOnly').hide();
-						form.find('.fc_changePageOnly').show();
-						form.animate({width: 'toggle'});
-						// Set textfields
-						$('#fc_addPage_title').val(data.menu_title);
-						$('#fc_addPage_page_title').val(data.page_title);
-						$('#fc_addPage_description').val(data.description);
-						$('#fc_addPage_keywords').val(data.keywords);
-						$('#fc_addPage_page_link').val(data.short_link);
-			
-						// Set selectfields
-						$('#fc_addPage_parent option').removeAttr('selected');
-						$('#fc_addPage_parent option[value=' + data.parent + ']').attr('selected', true);
-						$('#fc_addPage_menu option').removeAttr('selected');
-						$('#fc_addPage_menu option[value=' + data.menu + ']').attr('selected',true);
-						$('#fc_addPage_target option').removeAttr('selected');
-						$('#fc_addPage_target option[value=' + data.target + ']').attr('selected',true);
-						$('#fc_addPage_template option').removeAttr('selected');
-						if (data.template == '')
-						{
-							$('#fc_addPage_template option:first').attr('selected',true);
+							form.find('nav, ul, .fc_changePageOnly, .fc_addPageOnly').hide();
+							form.find('.fc_restorePageOnly').show();
 						}
 						else {
-							$('#fc_addPage_template option[value=' + data.template + ']').attr('selected',true);
+							form.find('.fc_restorePageOnly, .fc_addPageOnly').hide();
+							form.find('nav, ul, .fc_changePageOnly').show();
+							$.each(data.parent_list, function(index, value)
+							{
+								option	= option + '<option value="' + value.id + '"';
+								option	= value.disabled == true ||
+											value.id == dates.page_id ||
+											value.current_is_parent == true
+											? option + ' disabled="disabled">' : option+ '>';
+								for ( var i = 0; i < value.level; i++ )
+								{
+									option	= option + '-';
+								}
+								option	= option + value.menu_title + '</option>';
+							});
+							option	= option + '</select>';
+							$('#fc_addPage_parent').replaceWith(option);
+
+							// Set textfields
+							$('#fc_addPage_title').val(data.menu_title);
+							$('#fc_addPage_page_title').val(data.page_title);
+							$('#fc_addPage_description').val(data.description);
+							$('#fc_addPage_keywords').val(data.keywords);
+							$('#fc_addPage_page_link').val(data.short_link);
+							
+							// Set selectfields
+							$('#fc_addPage_parent option').removeAttr('selected');
+							$('#fc_addPage_parent option[value=' + data.parent + ']').attr('selected', true);
+							$('#fc_addPage_menu option').removeAttr('selected');
+							$('#fc_addPage_menu option[value=' + data.menu + ']').attr('selected',true);
+							$('#fc_addPage_target option').removeAttr('selected');
+							$('#fc_addPage_target option[value=' + data.target + ']').attr('selected',true);
+							$('#fc_addPage_template option').removeAttr('selected');
+							if (data.template == '')
+							{
+								$('#fc_addPage_template option:first').attr('selected',true);
+							}
+							else {
+								$('#fc_addPage_template option[value=' + data.template + ']').attr('selected',true);
+							}
+							$('#fc_addPage_language option').removeAttr('selected');
+							$('#fc_addPage_language option[value=' + data.language + ']').attr('selected',true);
+							$('#fc_addPage_visibility option').removeAttr('selected');
+							$('#fc_addPage_visibility option[value=' + data.visibility + ']').attr('selected',true);
+							
+							// Set checkboxesfields
+							$('#fc_addPage_Searching').attr('checked', data.searching);
+							$('#fc_addPage_admin_groups input').each( function()
+							{
+								var current		= $(this),
+									currenVal	= current.val(),
+									groups		= data.admin_groups;
+								if ( $.inArray( currenVal, groups ) )
+								{
+									current.attr('checked',false);
+								}
+								else {
+									current.attr('checked',true);
+								}
+							});
+							$('#fc_addPage_allowed_viewers input').each( function()
+							{
+								var current		= $(this),
+									currenVal	= current.val(),
+									groups		= data.viewing_groups;
+								if ( $.inArray( currenVal, groups ) )
+								{
+									current.attr('checked',false);
+								}
+								else {
+									current.attr('checked',true);
+								}
+							});
+							// Activate tagit for Keywords in the adding
+							$('#fc_addPage_keywords_ul').remove();
+							$('<ul id="fc_addPage_keywords_ul" />').insertBefore( $('#fc_addPage_keywords') ).tagit(
+							{
+								allowSpaces:			true,
+								singleField:			true,
+								singleFieldDelimiter:	',',
+								singleFieldNode:		$('#fc_addPage_keywords'),
+								beforeTagAdded:			function(event, ui)
+								{
+									ui.tag.addClass('icon-tag');
+								}
+							});
 						}
-						$('#fc_addPage_language option').removeAttr('selected');
-						$('#fc_addPage_language option[value=' + data.language + ']').attr('selected',true);
-						$('#fc_addPage_visibility option').removeAttr('selected');
-						$('#fc_addPage_visibility option[value=' + data.visibility + ']').attr('selected',true);
-			
-						// Set checkboxesfields
-						$('#fc_addPage_Searching').attr('checked', data.searching);
-						$('#fc_addPage_admin_groups input').each( function()
-						{
-							var current		= $(this),
-								currenVal	= current.val(),
-								groups		= data.admin_groups;
-							if ( $.inArray( currenVal, groups ) )
-							{
-								current.attr('checked',false);
-							}
-							else {
-								current.attr('checked',true);
-							}
-						});
-						$('#fc_addPage_allowed_viewers input').each( function()
-						{
-							var current		= $(this),
-								currenVal	= current.val(),
-								groups		= data.viewing_groups;
-							if ( $.inArray( currenVal, groups ) )
-							{
-								current.attr('checked',false);
-							}
-							else {
-								current.attr('checked',true);
-							}
-						});
-						// Activate tagit for Keywords in the adding
-						$('#fc_addPage_keywords_ul').remove();
-						$('<ul id="fc_addPage_keywords_ul" />').insertBefore( $('#fc_addPage_keywords') ).tagit(
-						{
-							allowSpaces:			true,
-							singleField:			true,
-							singleFieldDelimiter:	',',
-							singleFieldNode:		$('#fc_addPage_keywords'),
-							beforeTagAdded:			function(event, ui)
-							{
-								ui.tag.addClass('icon-tag');
-							}
-						});
+						form.animate({width: 'toggle'});
 					},
 					error:		function(jqXHR, textStatus, errorThrown)
 					{
@@ -426,6 +433,7 @@ jQuery(document).ready(function()
 	$('fc_page_tree_not_editable > a').click( function(e)
 	{
 		e.preventDefault();
+		console.log('check');
 	});
 
 	$('#fc_add_page').slideUp(0);
@@ -502,6 +510,12 @@ jQuery(document).ready(function()
 	$('.fc_side_add').click( function()
 	{
 		var form	= $('#fc_add_page');
+		if ( $('#fc_add_page').is(':visible') )
+		{
+			$('#fc_add_page').stop().animate({width: 'toggle'}, 200);
+		}
+		form.find('.fc_restorePageOnly, .fc_changePageOnly').hide();
+		form.find('nav, ul, .fc_addPageOnly').show();
 		form.find('a:first').click();
 		form.find('input:reset').click();
 	});
@@ -710,32 +724,40 @@ jQuery(document).ready(function()
 			{
 				$('#fc_add_page input[type=reset]').click();
 				var current		= $(this);
-				if ( data.status == 0 )
+				if ( data.success == true && data.status == 0 )
 				{
 					current.remove();
 				}
 				else {
-					current.children('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove')
+					current.children('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove');
 				}
 			};
 
 		dialog_confirm( 'You really want to delete?!?', 'Removing page', ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
 
-	$('.fc_page_tree_restore_page').click( function ()
+	$('#fc_restorePageSubmit').click( function (e)
 	{
+		e.preventDefault();
 		var current			= $(this),
-			page_id			= current.closest('li').attr('rel'),
-			link			= ADMIN_URL + '/pages/restore.php',
-			dates			= 'page_id=' + page_id,
-			afterSend		= function ()
-								{
-									var current		= $(this).closest('li');
-									$('.page_tree_open_options').removeClass('page_tree_open_options');
-									current.find('.fc_page_tree_quick_changes').removeClass('hidden');
-									current.find('.fc_page_tree_restore').addClass('hidden');
-									current.children('.fc_page_tree_options_parent').fadeOut(300);
-								};
-		dialog_ajax( link, dates, false, afterSend, current, 'POST' );
+			current_form	= current.closest('form'),
+			current_pT		= $('.page_tree_open_options'),
+			dates	= {
+				'page_id':			current_pT.children('input[name=pageid]').val(),
+				'leptoken':			getToken()
+			},
+			afterSend		= function( data, textStatus, jqXHR )
+			{
+				$('#fc_add_page input[type=reset]').click();
+				var current		= $(this);
+				if ( data.success == true )
+				{
+					current.children('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-screen');
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			};
+		dialog_ajax( 'Restoring page', ADMIN_URL + '/pages/ajax_restore_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
 });

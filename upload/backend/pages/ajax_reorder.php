@@ -47,9 +47,10 @@ header('Content-type: application/json');
 
 if ( !$admin->get_permission('pages') )
 {
-	$ajax['message']	= $admin->lang->translate('You don\'t have the permission to proceed this action.');
-	$ajax['success']	= false;
-
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('You do not have the permission to proceed this action'),
+		'success'	=> false
+	);
 	print json_encode( $ajax );
 	exit();
 }
@@ -62,9 +63,10 @@ if ( ( !is_array( $admin->get_post('pageid') )		&& ( $admin->get_post('table') =
 	 ( !is_array( $admin->get_post('sectionid') )	&& ( $admin->get_post('table') == 'sections' ) ) ||
 	 ( $admin->get_post('table') != 'pages' && $admin->get_post('table') != 'sections' ) )
 {
-	$ajax['message']	= $admin->lang->translate('You send corrupt data.' );
-	$ajax['success']	= false;
-
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('You send invalid data'),
+		'success'	=> false
+	);
 	print json_encode( $ajax );
 	exit();
 }
@@ -88,19 +90,21 @@ $reorder	= $order->reorder_by_array( $new_array );
 
 if ( $reorder === true )
 {
-	$ajax['message']	= $admin->lang->translate('Page re-ordered successfully.');
-	$ajax['success']	= true;
-
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('Page re-ordered successfully'),
+		'success'	=> true
+	);
 	print json_encode( $ajax );
 	exit();
 }
 else
 {
-	$ajax['message']	= $admin->lang->translate( $reorder.': Error re-ordering page');
-	$ajax['success']	= false;
-
+	$ajax	= array(
+		'message'	=> $admin->lang->translate( $reorder.': Error re-ordering page'),
+		'success'	=> false
+	);
 	print json_encode( $ajax );
 	exit();
 }
-
+exit();
 ?>

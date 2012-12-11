@@ -36,15 +36,22 @@ if (defined('LEPTON_PATH')) {
 // end include class.secure.php
 
 require_once( LEPTON_PATH . '/framework/class.admin.php' );
-$admin		= new admin('Pages', 'pages_delete');
+$admin		= new admin('Pages', 'pages_delete', false);
+
+// Set header for json
+header('Content-type: application/json');
 
 $page_id	= $admin->get_post('page_id');
 
 // Get page id
 if ( $page_id == '' || !is_numeric( $page_id ) )
 {
-	header('Location: index.php');
-	exit(0);
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('You send invalid data'),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 
 // Include the WB functions file
@@ -54,11 +61,22 @@ require_once( LEPTON_PATH . '/framework/functions.php' );
 $results = $database->query("SELECT * FROM " . TABLE_PREFIX . "pages WHERE page_id = '$page_id'");
 if ( $database->is_error() )
 {
-	$admin->print_error($database->get_error());
+	$ajax	= array(
+		'message'	=> $database->get_error(),
+		'success'	=> false
+	);
+
+	print json_encode( $ajax );
+	exit();
 }
 if ( $results->numRows() == 0 )
 {
-	$admin->print_error('Page not found');
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('Page not found'),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 $results_array			= $results->fetchRow( MYSQL_ASSOC );
 $old_admin_groups		= explode( ',', str_replace( '_', '', $results_array['admin_groups'] ) );
@@ -74,7 +92,12 @@ foreach ( $admin->get_groups_id() as $cur_gid )
 }
 if ( (!$in_old_group) && !is_numeric( array_search( $admin->get_user_id(), $old_admin_users ) ) )
 {
-	$admin->print_error('You do not have permissions to modify this page');
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('You do not have the permission to modify this page'),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 
 $visibility		= $results_array['visibility'];
@@ -111,14 +134,21 @@ if ( PAGE_TRASH )
 // Check if there is a db error, otherwise say successful
 if ( $database->is_error() )
 {
-	$admin->print_error($database->get_error());
+	$ajax	= array(
+		'message'	=> $database->get_error(),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 else
 {
-	$admin->print_success('Page restored successfully');
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('Page restored successfully'),
+		'success'	=> true
+	);
+	print json_encode( $ajax );
+	exit();
 }
-
-// Print admin footer
-$admin->print_footer();
-
+exit();
 ?>
