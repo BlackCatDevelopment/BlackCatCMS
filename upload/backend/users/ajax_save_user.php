@@ -215,7 +215,7 @@ $fields = array(
 
 	'group_id'			=> $addUser != '' ? $group_id : false,
 	'timezone_string'	=> $addUser != '' ? DEFAULT_TIMEZONE_STRING : false,
-	'language'			=> $addUser != '' ? $default_language : false
+	'language'			=> $addUser != '' ? DEFAULT_LANGUAGE : false
 );
 
 $fields		= array_map( 'mysql_real_escape_string', $fields );
