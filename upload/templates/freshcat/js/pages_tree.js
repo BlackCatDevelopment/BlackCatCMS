@@ -105,7 +105,7 @@
 					},
 					success:	function( data, textStatus, jqXHR  )
 					{
-						var form	= $('#fc_add_page')
+						var form	= $('#fc_add_page'),
 							option	= '<select name="parent" id="fc_addPage_parent">';
 						$.each(data.parent_list, function(index, value)
 						{
@@ -450,6 +450,51 @@ jQuery(document).ready(function()
 			beforeTagAdded:			function(event, ui)
 			{
 				ui.tag.addClass('icon-tag');
+			}
+		});
+		var dates	= {
+			'leptoken':			getToken()
+		};
+		$.ajax(
+		{
+			context:	form,
+			type:		'POST',
+			url:		ADMIN_URL + '/pages/ajax_get_dropdown.php',
+			dataType:	'json',
+			data:		dates,
+			cache:		false,
+			success:	function( data, textStatus, jqXHR )
+			{
+				if ( data.success === true )
+				{
+					var form	= $(this),
+						option	= '<select name="parent" id="fc_addPage_parent">';
+					$.each(data.parent_list, function(index, value)
+					{
+						option	= option + '<option value="' + value.id + '"';
+						option	= value.disabled == true ||
+									value.id == dates.page_id ||
+									value.current_is_parent == true
+									? option + ' disabled="disabled">' : option+ '>';
+						for ( var i = 0; i < value.level; i++ )
+						{
+							option	= option + '-';
+						}
+						option	= option + value.menu_title + '</option>';
+					});
+					option	= option + '</select>';
+					$('#fc_addPage_parent').replaceWith(option);
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			},
+			error:		function(jqXHR, textStatus, errorThrown)
+			{
+				console.log(jqXHR);
+				console.log(textStatus);
+				console.log(errorThrown);
+				alert(textStatus + ': ' + errorThrown );
 			}
 		});
 	});

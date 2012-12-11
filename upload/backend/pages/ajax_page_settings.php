@@ -174,21 +174,14 @@ $ajax	= array(
 		'admin_groups'				=> explode(',', str_replace('_', '', $results_array['admin_groups']) ),
 		'viewing_groups'			=> explode(',', str_replace('_', '', $results_array['viewing_groups']) ),
 
-		'parent_list'				=> $dropdown_list
+		'parent_list'				=> $dropdown_list,
+		'PAGE_EXTENSION'			=> $database->get_one("SELECT value FROM " . TABLE_PREFIX . "settings WHERE name = 'page_extension'")
 );
-
-// ====================================== 
-// Get Page Extension (Filename Suffix)   
-// ====================================== 
-$settings						= $database->query( "SELECT value FROM ".TABLE_PREFIX."settings WHERE name = 'page_extension'" );
-$settings_array					= $settings->fetchRow( MYSQL_ASSOC );
-$ajax['PAGE_EXTENSION']			= $settings_array['value'];
-
 
 // ==================== 
 // ! Return values 	
 // ==================== 
 
 print json_encode( $ajax );
-
+exit();
 ?>
