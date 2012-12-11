@@ -114,7 +114,7 @@ jQuery(document).ready(function()
 								};
 								$.ajax(
 								{
-									type:		'GET',
+									type:		'POST',
 									url:		ADMIN_URL + '/pages/ajax_reorder.php',
 									dataType:	'json',
 									data:		dates,
