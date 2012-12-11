@@ -131,8 +131,9 @@
 						{
 							options.addOnly.hide();
 							options.modifyOnly.show();
-
-							$('#fc_Group_form, #fc_User_form').find('input[type=checkbox]').prop( 'checked', false );
+							var checkboxes	= $('#fc_Group_form, #fc_User_form').find('input:checkbox');
+							checkboxes.not('[id*=fc_Group_m_], [id*=fc_Group_t_]').prop( 'checked', false );
+							checkboxes.filter('[id*=fc_Group_m_], [id*=fc_Group_t_]').prop( 'checked', true );
 
 							if ( options.get_id == 'group_id' )
 							{
@@ -145,11 +146,11 @@
 								});
 								$.each(data.module_permissions, function(index, value)
 								{
-									$('#fc_Group_m_' + value).prop( {checked: true});
+									$('#fc_Group_m_' + value).prop( {checked: false});
 								});
 								$.each(data.template_permissions, function(index, value)
 								{
-									$('#fc_Group_t_' + value).prop( {checked: true});
+									$('#fc_Group_t_' + value).prop( {checked: false});
 								});
 
 								$('input[class*=set_advanced___]').unbind().set_individual_buttons();
@@ -288,11 +289,27 @@ jQuery(document).ready(function()
 			dates					= {
 				'leptoken':	getToken()
 			};
+			templates				= new Array();
+			modules					= new Array();
 		dates[current.attr('name')]	= current.val();
 		currentForm.find('input[type=checkbox]:checked, input[type=text], #fc_Group_group_id').map( function()
 		{
-			return dates[$(this).attr('name')]	= $(this).val();
+			var fieldname	= $(this).attr('name'),
+				value		= $(this).val();
+			if ( fieldname == 'module_permissions[]' )
+			{
+				return dates['module_permissions']		= modules.push( value );
+			}
+			else if( fieldname == 'template_permissions[]' ) {
+				return dates['template_permissions']	= templates.push( value )
+			}
+			else {
+				return dates[fieldname]					= value;
+			}
 		});
+		dates['module_permissions']			= modules;
+		dates['template_permissions']		= templates;
+		console.log(dates);
 		$.ajax(
 		{
 			type:		'POST',
