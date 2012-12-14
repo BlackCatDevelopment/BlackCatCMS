@@ -112,38 +112,7 @@ jQuery(document).ready(function()
 									'table':				'sections',
 									'leptoken':				getToken()
 								};
-								$.ajax(
-								{
-									type:		'POST',
-									url:		ADMIN_URL + '/pages/ajax_reorder.php',
-									dataType:	'json',
-									data:		dates,
-									cache:		false,
-									beforeSend:	function( data )
-									{
-										data.process	= set_activity( 'Reorder pages' );
-									},
-									success:	function( data, textStatus, jqXHR  )
-									{
-										var current	= $(this);
-										$('.popup').dialog('destroy').remove();
-								
-										if ( data.success === true )
-										{
-											return_success( jqXHR.process , data.message );
-											current.slideUp(300, function() { current.remove(); });
-										}
-										else {
-											return_error( jqXHR.process , data.message);
-										}
-									},
-									error:		function(jqXHR, textStatus, errorThrown)
-									{
-										$('.popup').dialog('destroy').remove();
-										alert(textStatus + ': ' + errorThrown );
-									}
-								});
-								//dialog_ajax(link,dates,beforeSend,false);
+								dialog_ajax( 'Reorder pages', ADMIN_URL + '/pages/ajax_reorder.php', dates, 'POST', 'json', false, false, false );
 							}
 	});
 	
