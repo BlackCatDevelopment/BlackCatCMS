@@ -518,6 +518,7 @@ jQuery(document).ready(function()
 		form.find('nav, ul, .fc_addPageOnly').show();
 		form.find('a:first').click();
 		form.find('input:reset').click();
+		form.find('input:text:first').focus();
 	});
 
 	$('#fc_addPageSubmit').click( function (e)
