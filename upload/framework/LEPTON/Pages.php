@@ -543,10 +543,10 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	     * @return void
 	     *
 	     **/
-	    private function _analyze_javascripts( &$arr, $for = 'frontend', $path_prefix = NULL, $section = false )
+		private function _analyze_javascripts( &$arr, $for = 'header', $path_prefix = NULL, $section = false )
 	    {
 	    
-        	if ( $for == 'frontend' )
+			if ( $for == 'header' )
 	    {
 		        $static =& LEPTON_Pages::$js;
 		    }
@@ -821,6 +821,11 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 				{
 				    $this->_analyze_jquery_components($mod_footers[$for]['jquery'][0], $for, $section );
 				}
+                // ----- other JS -----
+				if ( isset($mod_headers[$for]['js']) && is_array($mod_headers[$for]['js']) && count($mod_headers[$for]['js']) )
+				{
+					$this->_analyze_javascripts($mod_headers[$for]['js'][0], 'footer', $path_prefix.'/js', $section );
+				}
 			}
         }   // end function _load_footers_inc()
 		
@@ -852,7 +857,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 				// ----- other JS -----
 				if ( isset($mod_headers[$for]['js']) && is_array($mod_headers[$for]['js']) && count($mod_headers[$for]['js']) )
 				{
-                    $this->_analyze_javascripts($mod_headers[$for]['js'][0], $for, $path_prefix.'/js', $section );
+					$this->_analyze_javascripts($mod_headers[$for]['js'][0], 'header', $path_prefix.'/js', $section );
 				}
 			}
 		}
