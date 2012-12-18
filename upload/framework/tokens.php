@@ -8,7 +8,7 @@
  *
  * @author          Frank Heyne for the LEPTON Project 
  * @copyright       2011, Frank Heyne, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ * @link            http://www.lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *

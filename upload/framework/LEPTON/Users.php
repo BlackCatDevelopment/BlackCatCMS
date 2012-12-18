@@ -8,9 +8,9 @@
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ * @author          LEPTON v2.0 Black Cat Edition Development
+ * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
+ * @link            http://www.lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  * @version         $Id: Directory.php 1501 2011-12-21 13:22:57Z webbird $

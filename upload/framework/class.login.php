@@ -9,8 +9,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
+ * @link            http://www.lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -337,7 +337,7 @@ class login extends admin {
 						$data_dwoo['LEPTON_PATH']		= LEPTON_PATH;
 						$data_dwoo['ADMIN_URL']		= ADMIN_URL;
 						$data_dwoo['THEME_URL']		= THEME_URL;
-						$data_dwoo['URL_HELP']		= 'http://www.lepton-cms.org/';
+						$data_dwoo['URL_HELP']		= 'http://www.lepton2.org/';
 
 						// ============================= 
 						// ! Add languages to Dwoo 	

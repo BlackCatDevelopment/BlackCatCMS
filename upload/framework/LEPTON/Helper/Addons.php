@@ -8,9 +8,9 @@
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ * @author          LEPTON v2.0 Black Cat Edition Development
+ * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
+ * @link            http://www.lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -652,6 +652,47 @@ if (!class_exists('LEPTON_Helper_Addons')) {
 	            }
 	        }
 		}   // end function installModule()
+
+        /**
+         * Allows modules to register a file which should be allowed to load the
+         * config.php directly.
+         *
+         * This is only allowed in installation context!
+         *
+         * @access public
+         * @param  string  $module   - module name
+         * @param  string  $filepath - relative file path
+         **/
+        public function sec_register_file( $module, $filepath )
+        {
+            global $database;
+            if ( ! is_dir( LEPTON_PATH.'/modules/'.$module ) )
+            {
+                error_log("sec_register_file() called for non existing module [$module] (path: [$filepath])", 0);
+                return false;
+            }
+            if ( ! file_exists( LEPTON_PATH.'/modules/'.$module.$filepath ) )
+            {
+                error_log("sec_register_file() called for non existing file [$filepath] (module: [$module])", 0);
+                return false;
+            }
+            if ( ! $database )
+            {
+                $database = new database();
+            }
+            $q = $database->query( 'SELECT * FROM '.TABLE_PREFIX.'addons WHERE directory = "'.$module.'"' );
+            if ( ! $q->numRows() )
+            {
+                error_log("sec_register_file() called for non existing module [$module] (path: [$filepath]) - not found in addons table!", 0);
+                return false;
+            }
+            $row = $q->fetchRow();
+            $q   = $database->query( 'SELECT * FROM '.TABLE_PREFIX.'class_secure WHERE module="'.$row['addon_id'].'" AND filepath="'.$filepath.'"' );
+            if ( ! $q->numRows() )
+            {
+                $database->query( 'INSERT INTO '.TABLE_PREFIX.'class_secure VALUES ( "", "'.$row['addon_id'].'", "'.$filepath.'"' );
+            }
+        }   // end function sec_register_file()
 
 		/**
 		 * sort the $PRECHECK array by keys

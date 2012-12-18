@@ -9,8 +9,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
+ * @link            http://www.lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -207,7 +207,7 @@ class admin extends wb
 					$data_dwoo['LEPTON_PATH']	= LEPTON_PATH;
 					$data_dwoo['ADMIN_URL']		= ADMIN_URL;
 					$data_dwoo['THEME_URL']		= THEME_URL;
-					$data_dwoo['URL_HELP']		= 'http://www.lepton-cms.org/';
+					$data_dwoo['URL_HELP']		= 'http://www.lepton2.org/';
 					// ============================= 
 					// ! Add languages to Dwoo 	
 					// ============================= 
@@ -447,7 +447,7 @@ class admin extends wb
 						'TITLE_HELP' => $MENU['HELP'],
 						'TITLE_LOGOUT' =>  $MENU['LOGOUT'],
 						'URL_VIEW' => $view_url,
-						'URL_HELP' => 'http://www.lepton-cms.org/',
+						'URL_HELP' => 'http://www.lepton2.org/',
 						'BACKEND_MODULE_FILES' => $this->__admin_register_backend_modfiles(),
 						'THEME_VERSION'	=> $backend_theme_version,
 						'THEME_NAME'	=> DEFAULT_THEME
@@ -530,7 +530,7 @@ class admin extends wb
 					$data['LEPTON_PATH']		= LEPTON_PATH;
 					$data['ADMIN_URL']		= ADMIN_URL;
 					$data['THEME_URL']		= THEME_URL;
-					$data['URL_HELP']		= 'http://www.lepton-cms.org/';
+					$data['URL_HELP']		= 'http://www.lepton2.org/';
 					// ============================= 
 					// ! Add languages to Dwoo 	
 					// ============================= 
