@@ -74,7 +74,7 @@ if ( ! class_exists( 'LEPTON_Helper_Directory', false ) ) {
 		{
 		
 		    // remove / at end of string; this will make sanitizePath fail otherwise!
-		    $path       = preg_replace( '~/$~', '', $path );
+		    $path       = preg_replace( '~/{1,}$~', '', $path );
 		    
 		    // make all slashes forward
 			$path       = str_replace( '\\', '/', $path );
