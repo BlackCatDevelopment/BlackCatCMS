@@ -671,7 +671,7 @@ if (!class_exists('LEPTON_Helper_Addons')) {
                 error_log("sec_register_file() called for non existing module [$module] (path: [$filepath])", 0);
                 return false;
             }
-            if ( ! file_exists( LEPTON_PATH.'/modules/'.$module.$filepath ) )
+            if ( ! file_exists( LEPTON_PATH.'/modules/'.$module.'/'.$filepath ) )
             {
                 error_log("sec_register_file() called for non existing file [$filepath] (module: [$module])", 0);
                 return false;
@@ -690,9 +690,10 @@ if (!class_exists('LEPTON_Helper_Addons')) {
             $q   = $database->query( 'SELECT * FROM '.TABLE_PREFIX.'class_secure WHERE module="'.$row['addon_id'].'" AND filepath="'.$filepath.'"' );
             if ( ! $q->numRows() )
             {
-                $database->query( 'INSERT INTO '.TABLE_PREFIX.'class_secure VALUES ( "", "'.$row['addon_id'].'", "'.$filepath.'"' );
+                $database->query( 'INSERT INTO '.TABLE_PREFIX.'class_secure VALUES ( "", "'.$row['addon_id'].'", "/modules/'.$module.'/'.$filepath.'" )' );
             }
         }   // end function sec_register_file()
+
 
 		/**
 		 * sort the $PRECHECK array by keys
