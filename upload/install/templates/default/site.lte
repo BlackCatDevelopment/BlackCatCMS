@@ -25,6 +25,13 @@
         {if $errors.installer_admin_email}<br /><span>{$errors.installer_admin_email}</span>{/if}
 	  </td>
 	</tr>
+    <tr{if $errors.installer_admin_password || $errors.global} class="fail"{/if}>
+      <td><label for="installer_no_validate_admin_password">{translate("Don't check admin password")}</label></td>
+      <td>
+        <input type="checkbox" tabindex="12" name="installer_no_validate_admin_password" id="installer_no_validate_admin_password" value="true" {if $installer_no_validate_admin_password}checked="checked"{/if} />
+        <span style="font-size: 10px; color: #666666;">{translate("If you wish to set a password that doesn't meet common security constraints, please check this checkbox. Please note that this is a security risk in public environments! Use empty and/or short passwords in (local) testing environments only.")}</span>
+      </td>
+    </tr>
 	<tr{if $errors.installer_admin_password || $errors.global} class="fail"{/if}>
       <td><label for="installer_admin_password">{translate('Password')}</label></td>
       <td>

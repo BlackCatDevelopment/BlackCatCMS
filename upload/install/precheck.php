@@ -7,9 +7,9 @@
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project <info@lepton-cms.org>
+ * @author          LEPTON Project <info@lepton2.org>
  * @copyright       2010-2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ * @link            http://www.lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @category        LEPTON_Core
  * @package         Installation

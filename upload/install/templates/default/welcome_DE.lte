@@ -1,9 +1,9 @@
-<h1>Willkommen bei LEPTON!</h1>
+<h1>Willkommen bei LEPTON v2.0 BLACK CAT EDITION!</h1>
 
-<p>LEPTON ist ein Open Source Content Management System (kurz CMS), welches 
-das Management Ihrer Webinhalte leicht macht. Es ist für kleinere Unternehmen
-ebenso geeignet wie für Großunternehmen, dabei aber so einfach zu bedienen,
-dass es sich auch für private Homepages bestens eignet.</p>
+<p><strong>LEPTON v2.0 BLACK CAT EDITION</strong> ist ein Open Source Content
+Management System (kurz CMS), welches das Management Ihrer Webinhalte leicht macht.
+Es ist für kleinere Unternehmen ebenso geeignet wie für Großunternehmen, dabei
+aber so einfach zu bedienen, dass es sich auch für private Homepages bestens eignet.</p>
 
 <p>Die LEPTON-Installation ist ebenso einfach wie das Erstellen der ersten
 Seiten, und - was sicherlich besonders wichtig ist -, Sie können es problemlos
@@ -11,7 +11,7 @@ an Ihre besonderen Anforderungen und Bedürfnisse anpassen.</p>
 
 <p><strong>Der LEPTON Installation Wizard führt Sie durch den Installationsprozeß.</strong></p>
 
-<p>LEPTON unterliegt der GNU General Public License (GPL). Bitte
+<p>LEPTON v2.0 BLACK CAT EDITION unterliegt der GNU General Public License (GPL). Bitte
 <a href="http://www.gnu.org/licenses/gpl.html" class="fancybox iframe">lesen Sie die Lizenzbedingungen</a> (englisch)
 bevor Sie mit der Installation fortfahren.</p>
 

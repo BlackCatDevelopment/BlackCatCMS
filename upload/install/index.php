@@ -7,9 +7,9 @@
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project <info@lepton-cms.org>
+ * @author          LEPTON Project <info@lepton2.org>
  * @copyright       2010-2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ * @link            http://www.lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @category        LEPTON_Core
  * @package         Installation
@@ -447,7 +447,7 @@ function show_step_db( $step ) {
             'installer_database_name' 	  => ( isset($config['database_name'])     ? $config['database_name'] 	  : 'my-db-name'   ),
             'installer_table_prefix'      => ( isset($config['table_prefix'])      ? $config['table_prefix']      : 'lep_'         ),
             'installer_install_tables'    => ( isset($config['install_tables'])    ? $config['install_tables']    : 'y'            ),
-            'installer_empty_db_password' => ( isset($config['empty_db_password']) ? $config['empty_db_password'] : ''             ),
+            'installer_no_validate_db_password' => ( isset($config['no_validate_db_password']) ? $config['no_validate_db_password'] : ''             ),
             'errors'            		  => $step['errors']
 		)
 	);
@@ -477,7 +477,7 @@ function show_step_site( $step ) {
 	$output = $parser->get(
         'site.lte',
         array(
-            'installer_website_title'    => ( isset($config['website_title'])    ? $config['website_title']    : 'LEPTON CMS "Black Cat Edition"' ),
+            'installer_website_title'    => ( isset($config['website_title'])    ? $config['website_title']    : 'LEPTON v2.0 Black Cat Edition' ),
             'installer_admin_username'   => ( isset($config['admin_username'])   ? $config['admin_username']   : ''    		  ),
             'installer_admin_password'   => ( isset($config['admin_password'])   ? $config['admin_password']   : ''    		  ),
             'installer_admin_repassword' => ( isset($config['admin_repassword']) ? $config['admin_repassword'] : ''    		  ),
@@ -516,6 +516,8 @@ function check_step_site() {
 	}
 	
 	// check admin password
+    if ( ! isset($config['no_validate_admin_password']) )
+    {
 	if ( ! isset($config['admin_password']) || $config['admin_password'] == '' ) {
 	    $errors['installer_admin_password'] = $lang->translate( 'Please enter an admin password!' );
 	}
@@ -536,6 +538,7 @@ function check_step_site() {
 		$errors['installer_admin_password'] = $lang->translate('Invalid password!')
 											. ' (' . $users->getPasswordError() . ')';
 	}
+    }
 	
 	// check admin email address
 	if ( ! isset($config['admin_email']) || $config['admin_email'] == '' ) {
@@ -565,6 +568,9 @@ function show_step_postcheck() {
 		if ( preg_match( '~repassword~i', $key ) ) {
 		    unset($config[$key]);
 		}
+        if ( preg_match( '~no_validate_admin_password~i', $key ) ) {
+            unset($config[$key]);
+        }
 	}
 	$output = $parser->get(
         'postcheck.lte',
@@ -662,13 +668,15 @@ function __lep_check_db_config() {
 	if ( !isset( $config['database_password'] ) || $config['database_password'] == '' )
 	{
 		$database_password = '';
-		if ( ! isset($config['empty_db_password']) )
+		if ( ! isset($config['no_validate_db_password']) )
 		{
             $errors['installer_database_password_empty'] = true;
 		}
 	}
 	else
 	{
+        if ( ! isset($config['no_validate_db_password']) )
+        {
 	    if ( ! $users->validatePassword($config['database_password']) )
 	    {
 			$errors['installer_database_password'] = $lang->translate('Invalid database password!')
@@ -678,6 +686,7 @@ function __lep_check_db_config() {
 		{
 		    $database_password = $users->getLastValidatedPassword();
 		}
+	}
 	}
 
 	// Check if user has entered a database name
@@ -1281,7 +1290,7 @@ function check_tables($database) {
 
 function create_default_page($database) {
     global $config;
-    $url    = "http://www.lepton-cms.org/_packinstall/start-package.html";
+    $url    = "http://www.lepton2.org/_packinstall/start-package.html";
     // look if page already exists
 	$result = $database->query('SELECT * FROM '.TABLE_PREFIX."mod_wrapper WHERE url='$url';" );
 	if ( $result->numRows() == 0 ) {
@@ -1323,10 +1332,10 @@ function pre_installation_error( $msg ) {
     <div style="float:left;margin:0;padding:0;padding-left:50px;"><h3>feel free to keep it strictly simple...</h3></div>
     <div>
       <!-- Please note: the below reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
-      <a href="http://www.lepton-cms.org" title="LEPTON CMS" target="_blank">LEPTON Core</a> is released under the
-      <a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON Core is GPL" target="_blank">GNU General Public License</a>.<br />
+      <a href="http://www.lepton2.org" title="LEPTON v2.0 Black Cat Edition" target="_blank">LEPTON v2.0 Black Cat Edition Core</a> is released under the
+      <a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON v2.0 Black Cat Edition Core is GPL" target="_blank">GNU General Public License</a>.<br />
       <!-- Please note: the above reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
-      <a href="http://www.lepton-cms.org" title="LEPTON Package" target="_blank">LEPTON CMS Package</a> is released under several different licenses.
+      <a href="http://www.lepton2.org" title="LEPTON Package" target="_blank">LEPTON v2.0 Black Cat Edition Package</a> is released under several different licenses.
     </div>
   </div>
   </body>

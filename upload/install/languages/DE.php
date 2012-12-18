@@ -9,7 +9,7 @@
  * @author          LEPTON Project
  * @author          B. Martinovic (translation)
  * @copyright       2010-2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ * @link            http://www.lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  *
  *
@@ -74,12 +74,12 @@ $LANG = array(
 	    => 'Nur die Zeichen a-z, A-Z, 0-9, - und _ sind erlaubt. Bitte beachten, dass ein Datenbankname nicht ausschließlich aus Zahlen bestehen darf.',
     'Only characters a-z, A-Z, 0-9 and _ allowed in table_prefix.'
         => 'Nur die Zeichen a-z, A-Z, 0-9, - und _ sind als table_prefix erlaubt.',
-    'Empty database password' => 'Leeres Datenbankkennwort',
+    "Don't check database password" => 'Datenbankkennwort nicht prüfen',
     'You have set an empty password. Please check the checkbox above to confirm that this is really what you want.'
 		=> 'Das Datenbankkennwort ist leer. Zur Bestätigung bitte obige Checkbox markieren.',
     'Please check the database password!' => 'Bitte das Datenbankkennwort prüfen',
-    "If you don't have a database password, please check this checkbox. Please note that this is a security risk in public environments. Use empty passwords in (local) testing environments only."
-		=> 'Wenn das Datenbankkennwort leer bleiben soll, bitte nebenstehende Checkbox anhaken. Hinweis: Dies ist ein Sicherheitsrisiko! Leere Kennworte sollten nur in (lokalen) Testumgebungen verwendet werden.',
+    "If you don't have a database password, or a password that doesn't meet common security constraints, please check this checkbox. Please note that this is a security risk in public environments! Use empty and/or short passwords in (local) testing environments only."
+		=> 'Wenn das Datenbankkennwort leer bleiben soll, oder nicht den üblichen Sicherheitskriterien entspricht, bitte nebenstehende Checkbox anhaken. Hinweis: Dies ist ein Sicherheitsrisiko! Leere und/oder sehr kurze Kennworte sollten nur in (lokalen) Testumgebungen verwendet werden.',
 // ----- site -----
 	'Site settings' => 'Site Einstellungen',
 	'Website title' => 'Webseitentitel',
@@ -106,6 +106,9 @@ $LANG = array(
         => 'Nur die Zeichen a-z, A-Z, 0-9, - und _ sind in der Administrator-Kennung erlaubt.',
 	'Invalid password!' => 'Das Kennwort ist ungültig!',
 	'The password is too short.' => 'Das Kennwort ist zu kurz.',
+    "Don't check admin password" => 'Administrator-Kennwort nicht prüfen',
+    "If you wish to set a password that doesn't meet common security constraints, please check this checkbox. Please note that this is a security risk in public environments! Use empty and/or short passwords in (local) testing environments only."
+        => 'Wenn das Kennwort nicht auf die üblichen Sicherheitskriterien geprüft werden soll, bitte nebenstehende Checkbox anhaken. Hinweis: Dies ist ein Sicherheitsrisiko! Leere und/oder sehr kurze Kennworte sollten nur in (lokalen) Testumgebungen verwendet werden.',
 // ----- postcheck -----
     'Please check your settings before finishing the installation process.'
         => 'Bitte überprüfen Sie nochmals Ihre Einstellungen, bevor Sie fortfahren',

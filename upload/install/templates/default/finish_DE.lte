@@ -1,7 +1,9 @@
 </form>
 <h1>Installation fertiggestellt!</h1>
 
-<p>LEPTON ist nun installiert und kann verwendet werden!</p>
+<p><strong>LEPTON v2.0 Black Cat Edition</strong> ist nun installiert und kann verwendet werden!</p>
+
+<p>Bitte beachten: Durch Klick auf [Login] wird dieser Installer gelöscht!</p>
 
 <form method="get" action="{$lepton_url}/{$backend_path}/start/index.php">
   <input type="submit" value="{translate('Login')}" />
@@ -12,7 +14,7 @@
 <h2>Wie weiter?</h2>
 
 <p>Wenn Sie weitere Informationen oder Hilfe benötigen, besuchen Sie bitte unsere
-<a href="http://www.lepton-cms.org/" target="_blank">Homepage</a>
-und/oder <a href="http://forum.lepton-cms.org/" target="_blank">das Forum</a>.
+<a href="http://www.lepton2.org/" target="_blank">Homepage</a>
+und/oder <a href="http://forum.lepton2.org/" target="_blank">das Forum</a>.
 
-<p><strong>Vielen Dank, dass Sie LEPTON verwenden!</strong></p>
+<p><strong>Vielen Dank, dass Sie LEPTON v2.0 Black Cat Edition verwenden!</strong></p>
