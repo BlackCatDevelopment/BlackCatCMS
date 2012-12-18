@@ -148,6 +148,19 @@ if(defined('WB_URL'))
     	$database->query("INSERT INTO ".TABLE_PREFIX."mod_news_settings (section_id,page_id, `header`, `post_loop`, `footer`, `post_header`, `post_footer`, `comments_header`, `comments_loop`, `comments_footer`, `comments_page`) VALUES ('0', '0', '', '', '', '', '', '', '', '', '')");
     }
 
+    // add files to class_secure
+    foreach(
+        array( 'add_group.php', 'add_post.php', 'comment.php', 'delete_comment.php', 'delete_group.php', 'delete_post.php',
+               'modify_comment.php', 'modify_group.php', 'modify_post.php', 'modify_settings.php', 'move_down.php', 'move_up.php',
+               'rss.php', 'save_comment.php', 'save_group.php', 'save_post.php', 'save_settings.php', 'submit_comment.php' )
+        as $file
+    ) {
+        if ( false === $admin->get_helper('Addons')->sec_register_file( 'news', $file ) )
+        {
+             error_log( "Unable to register file -$file-!" );
+        }
+    }
+
 	// Make news post access files dir
 	require_once(WB_PATH.'/framework/functions.php');
 	make_dir(WB_PATH.MEDIA_DIRECTORY.'/newspics'); // create directory for images

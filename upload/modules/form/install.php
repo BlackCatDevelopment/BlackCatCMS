@@ -85,4 +85,18 @@ $mod_form = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_form_submissions` (
 	. ' `body` TEXT NOT NULL,'
 	. ' PRIMARY KEY ( `submission_id` ) '
 	. ' )';
-$database->query($mod_form);		
+$database->query($mod_form);
+
+// add files to class_secure
+foreach(
+    array( 'add_field.php', 'delete_field.php', 'delete_submission.php',
+           'modify_field.php', 'modify_settings.php', 'move_down.php',
+           'move_up.php', 'save_field.php', 'save_settings.php', 'view_submission.php' )
+    as $file
+) {
+    if ( false === $admin->get_helper('Addons')->sec_register_file( 'news', $file ) )
+    {
+         error_log( "Unable to register file -$file-!" );
+    }
+}
+
