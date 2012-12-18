@@ -54,13 +54,11 @@ $thisApp = new Login(
 );
 
 header('Content-type: application/json');
-
-
 $ajax	= array(
 	'lepToken'		=> $thisApp->is_authenticated() ? $thisApp->getToken() : false,
 	'url'			=> $thisApp->url,
 	'success'		=> $thisApp->is_authenticated(),
-	'message'		=> $thisApp->message
+	'message'		=> isset($thisApp->message) ? $thisApp->message : false
 );
 
 print json_encode( $ajax );

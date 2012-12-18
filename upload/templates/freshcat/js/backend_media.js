@@ -98,6 +98,7 @@ function save_name( rename_input, extension )
 			}
 			else {
 				return_error( jqXHR.process , data.message);
+				rename_input.focus();
 			}
 			// Scroll to the very right to put the new loaded files into viewable area
 			scrollToRight();

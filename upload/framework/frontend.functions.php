@@ -501,7 +501,7 @@ function language_menu()
         $pages = new LEPTON_Pages();
         $items = $pages->get_linked_by_language(PAGE_ID);
     }
-    if(count($items))
+    if( isset($items) && count($items) )
     {
         // initialize template search path
         $parser->setPath(LEPTON_PATH.'/templates/'.TEMPLATE.'/templates');

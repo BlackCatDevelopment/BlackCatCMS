@@ -166,7 +166,7 @@ function set_popup_title()
 function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSend, afterSend, ajaxjQcontext )
 {
 	// Check if .fc_popup exists - if not add div.fc_popup before #admin_header
-	if ( $('.fc_popup').size()==0 )
+	if ( $('.fc_popup').size() == 0 )
 	{
 		$('#fc_admin_header').prepend('<div class="fc_popup" />');
 	}
@@ -176,7 +176,6 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 
 	// check for all necessary values
 	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl == false					? alert( 'You send an invalid url' ) : ajaxUrl,
-		ajaxData		= typeof ajaxData == 'undefined' || ajaxData == false				? alert( 'No leptoken!' ) : ajaxData,
 		ajaxType		= typeof ajaxType == 'undefined' || ajaxType == false				? 'POST' : ajaxType,
 		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType == false		? 'JSON' : ajaxDataType,
 		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext == false		? $('document.body') : ajaxjQcontext;
@@ -265,32 +264,31 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 }
 
 // Function to simply send an ajaxRequest with option to call functions before and after sending data
-function dialog_ajax( link, dates, beforeSend, afterSend, jQcontext, type )
+function dialog_ajax( title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSend, afterSend, ajaxjQcontext )
 {
-	if ( typeof jQcontext == 'undefined' )
+	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl == false					? alert( 'You send an invalid url' ) : ajaxUrl,
+		ajaxType		= typeof ajaxType == 'undefined' || ajaxType == false				? 'POST' : ajaxType,
+		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType == false		? 'JSON' : ajaxDataType,
+		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext == false		? $('document.body') : ajaxjQcontext,
+		title			= typeof title == 'undefined' || title == false						? set_popup_title() : title;
+
+	if ( typeof ajaxData.leptoken == 'undefined' || ajaxData.leptoken == false )
 	{
-		jQcontext = 'document.body';
+		ajaxData.leptoken	= getToken();
 	}
-	if ( typeof type == 'undefined' )
-	{
-		type = 'GET';
-	}
-	dates			= dates + '&leptoken=' + getToken();
-	var req			= $.ajax(
-	{
-		type:		type,
-		url:		link,
-		dataType:	'html',
-		context:	jQcontext,
-		data:		dates,
+
+	$.ajax({
+		type:		ajaxType,
+		url:		ajaxUrl,
+		dataType:	ajaxDataType,
+		context:	ajaxjQcontext,
+		data:		ajaxData,
 		beforeSend:	function( data )
 		{
 			// deactive .fc_popup before send data
-			$('.fc_popup').dialog('destroy');
-
+			$('.fc_popup').remove();
 			// Set activity and store in a variable to use it later
-			data.process	= set_activity( );
-
+			data.process	= set_activity( title );
 			// check if a function beforeSend is defined and call it if true
 			if ( typeof beforeSend != 'undefined' && beforeSend != false )
 			{
@@ -301,7 +299,7 @@ function dialog_ajax( link, dates, beforeSend, afterSend, jQcontext, type )
 		{
 			return_success( jqXHR.process , data.message );
 			// Check if there is a div.success_box in returned data that implements that the request was completely successful
-			if( $( data ).find('.fc_success_box').size() > 0 )
+			if ( data.success == true )
 			{
 				// check if a function afterSend is defined and call it if true
 				if ( typeof afterSend != 'undefined' && afterSend != false )
@@ -309,35 +307,14 @@ function dialog_ajax( link, dates, beforeSend, afterSend, jQcontext, type )
 					afterSend.call(this, data);
 				}
 			}
-			else if ( $( data ).find('.fc_error_box').size() > 0 )
-			{
-				if ( typeof process_div == 'undefined' )
-				{
-					var process_div = false;
-				}
+			else {
 				// return error
-				return_error( data, process_div );
+				return_error( jqXHR.process , data.message );
 			}
-			else return;
 		},
 		error:		function( data )
 		{
-			if ( typeof process_div != 'undefined' )
-			{
-				var process_div = false;
-			}
-			return_error( data, process_div );
-		}
-	}).success( function( data )
-	{
-		// Check if there is a div.success_box in returned data that implements that the request was completely successful
-		if( $( data ).find('.fc_success_box').size() > 0 )
-		{
-			// Return success message --- process_div is the previously generated .process inside #activity
-			if ( typeof process_div != 'undefined' )
-			{
-				return_success( data, process_div );
-			}
+			return_error( jqXHR.process , data.message );
 		}
 	});
 }

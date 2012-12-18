@@ -56,10 +56,10 @@ if ( !$admin->get_permission('pages_settings') )
 // =============== 
 // ! Get page id   
 // =============== 
-if ( !is_numeric( $admin->get_get('page_id') ) )
+if ( !is_numeric( $admin->get_post('page_id') ) )
 {
 	$ajax	= array(
-		'message'	=>  $admin->lang->translate('You send an empty value.'),
+		'message'	=>  $admin->lang->translate('You send an invalid value'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -67,7 +67,7 @@ if ( !is_numeric( $admin->get_get('page_id') ) )
 }
 else
 {
-	$page_id	= $admin->get_get('page_id');
+	$page_id	= $admin->get_post('page_id');
 }
 
 require_once( LEPTON_PATH . '/framework/functions-utf8.php' );
@@ -124,24 +124,42 @@ if ( !$in_old_group && !is_numeric(array_search($admin->get_user_id(), $old_admi
 // ========================================================= 
 $user									= $admin->get_user_details( $results_array['modified_by'] );
 
+// ================================= 
+// ! Add permissions to $data_dwoo   
+// ================================= 
+$permission['pages']			= $admin->get_permission('pages') ? true : false;
+$permission['pages_add']		= $admin->get_permission('pages_add') ? true : false;
+$permission['pages_add_l0']		= $admin->get_permission('pages_add_l0') ? true : false;
+$permission['pages_modify']		= $admin->get_permission('pages_modify') ? true : false;
+$permission['pages_delete']		= $admin->get_permission('pages_delete') ? true : false;
+$permission['pages_settings']	= $admin->get_permission('pages_settings') ? true : false;
+$permission['pages_intro']		= ( $admin->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
+
+require_once(LEPTON_PATH . '/framework/class.pages.php');
+$dropdown	= new pages( $permission );
+// list of all parent pages for dropdown parent
+$dropdown->current_page['id']	= $page_id;
+$dropdown_list		= $dropdown->pages_list( 0 , 0 );
+
+
 // ============================================= 
 // ! Add result_array to the template variable   
 // ============================================= 
 $ajax	= array(
 		'page_id'					=> $results_array['page_id'],
 		'page_title'				=> $results_array['page_title'],
-//		'link'						=> $admin->page_link($results_array['link']),
 		'short_link'				=> substr( $results_array['link'], strripos( $results_array['link'], '/' ) + 1 ),
 		'menu_title'				=> $results_array['menu_title'],
 		'parent'					=> $results_array['parent'],
 		'description'				=> $results_array['description'],
-		'keywords'					=> $results_array['keywords'],//explode( ',', $results_array['keywords']),
+		'keywords'					=> $results_array['keywords'],
 		'parent'					=> $results_array['parent'],
 		'menu'						=> $results_array['menu'],
 		'visibility'				=> $results_array['visibility'],
 		'template'					=> $results_array['template'],
 		'language'					=> $results_array['language'],
 		'target'					=> $results_array['target'],
+		'level'						=> $results_array['level'],
 		'modified_when'				=> ($results_array['modified_when'] != 0) ? date(TIME_FORMAT.', '.DATE_FORMAT, $results_array['modified_when']) : 'Unknown',
 		'searching'					=> $results_array['searching'] == 0 ? false : true,
 		'visibility'				=> $results_array['visibility'],
@@ -153,22 +171,17 @@ $ajax	= array(
 		'DISPLAY_LANGUAGE_LIST'		=> PAGE_LANGUAGES	!= false ? true : false,
 		'DISPLAY_SEARCHING'			=> SEARCH			!= false ? true : false,
 
-		'admin_groups'				=> explode(',', str_replace('_', '', $results_array['admin_groups'])),
-		'viewing_groups'			=> explode(',', str_replace('_', '', $results_array['viewing_groups']))
+		'admin_groups'				=> explode(',', str_replace('_', '', $results_array['admin_groups']) ),
+		'viewing_groups'			=> explode(',', str_replace('_', '', $results_array['viewing_groups']) ),
+
+		'parent_list'				=> $dropdown_list,
+		'PAGE_EXTENSION'			=> $database->get_one("SELECT value FROM " . TABLE_PREFIX . "settings WHERE name = 'page_extension'")
 );
-
-// ====================================== 
-// Get Page Extension (Filename Suffix)   
-// ====================================== 
-$settings						= $database->query( "SELECT value FROM ".TABLE_PREFIX."settings WHERE name = 'page_extension'" );
-$settings_array					= $settings->fetchRow( MYSQL_ASSOC );
-$ajax['PAGE_EXTENSION']			= $settings_array['value'];
-
 
 // ==================== 
 // ! Return values 	
 // ==================== 
 
 print json_encode( $ajax );
-
+exit();
 ?>

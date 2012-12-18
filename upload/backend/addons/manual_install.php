@@ -63,7 +63,7 @@ require_once(LEPTON_PATH . '/framework/functions.php');
 
 // create Admin object with admin header
 $admin		= new admin('Addons', '', true, false);
-$js_back	= ADMIN_URL . '/modules/index.php';
+$js_back	= ADMIN_URL . '/addons/index.php';
 
 /**
  * Manually execute the specified module file (install.php, upgrade.php or uninstall.php)

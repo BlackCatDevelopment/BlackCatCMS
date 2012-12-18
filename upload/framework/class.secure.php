@@ -74,10 +74,6 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/groups/index.php',
 
 			// phplib
-			$admin_dir.'/languages/details.php',
-			$admin_dir.'/languages/index.php',
-			$admin_dir.'/languages/install.php',
-			$admin_dir.'/languages/uninstall.php',
 			$admin_dir.'/login/index.php',
 			//////////////////////////////////////////
 
@@ -101,17 +97,6 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/media/ajax_rename.php',
 			//////////////////////////////////////////
 
-			// phplib
-			$admin_dir.'/modules/details.php',
-			$admin_dir.'/modules/index.php',
-			$admin_dir.'/modules/install.php',
-			$admin_dir.'/modules/manual_install.php',
-			$admin_dir.'/modules/uninstall.php',
-			$admin_dir.'/modules/save_permissions.php',
-			//////////////////////////////////////////
-
-			$admin_dir.'/pages/add.php',
-			$admin_dir.'/pages/ajax_delete_page.php',
 			$admin_dir.'/pages/empty_trash.php',
 			$admin_dir.'/pages/index.php',
 
@@ -126,11 +111,14 @@ if (! defined ( 'LEPTON_PATH' ))
 			//////////////////////////////////////////
 
 			// Dwoo
+			$admin_dir.'/pages/ajax_add_page.php',
+			$admin_dir.'/pages/ajax_delete_page.php',
+			$admin_dir.'/pages/ajax_get_dropdown.php',
 			$admin_dir.'/pages/ajax_page_settings.php',
+			$admin_dir.'/pages/ajax_reorder.php',
+			$admin_dir.'/pages/ajax_restore_page.php',
 			$admin_dir.'/pages/ajax_sections_save.php',
 			$admin_dir.'/pages/ajax_settings_save.php',
-			$admin_dir.'/pages/ajax_reorder.php',
-			$admin_dir.'/pages/ajax_add_page.php',
 			$admin_dir.'/pages/get_page_tree.php',
 			//////////////////////////////////////////
 
@@ -156,12 +144,6 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/pages/sections.php',
 			//////////////////////////////////////////
 
-			$admin_dir.'/pages/settings.php',
-
-			// phplib
-			$admin_dir.'/pages/settings2.php',
-			//////////////////////////////////////////
-
 			// Dwoo
 			$admin_dir.'/pages/settings_save.php',
 			$admin_dir.'/pages/lang_settings.php',
@@ -176,14 +158,10 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/settings/save.php',
 			$admin_dir.'/start/index.php',
 
-
-			$admin_dir.'/users/index.php',
-
-			// Dwoo
 			$admin_dir.'/users/ajax_delete_user.php',
 			$admin_dir.'/users/ajax_get_user.php',
 			$admin_dir.'/users/ajax_save_user.php',
-			//////////////////////////////////////////
+			$admin_dir.'/users/index.php',
 
 			'/account/forgot.php',
 			'/account/login.php',

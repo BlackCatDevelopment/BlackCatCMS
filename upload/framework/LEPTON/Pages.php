@@ -677,7 +677,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 				foreach( $arr['ui-effects'] as $item ) {
 					$static[] = $this->space
 							  . '<script type="text/javascript" src="'
-							  . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.ui.effect-'.$item.'.min.js')
+							  . sanitize_url(LEPTON_URL.'/modules/lib_jquery/jquery-ui/ui/jquery.effects.'.$item.'.min.js')
 							  . '"></script>' . "\n";
 				}
 			}

@@ -88,7 +88,6 @@ jQuery(document).ready(function(){
 			};
 			dates[username_fieldname]	= current_form.find('input[name=' + username_fieldname + ']').val();
 			dates[password_fieldname]	= current_form.find('input[name=' + password_fieldname + ']').val();
-
 		if ( dates.password != '' &&  dates.user != '' )
 		{
 			$.ajax(
@@ -119,11 +118,11 @@ jQuery(document).ready(function(){
 						$('input[name=' + password_fieldname + ']').val('').focus();
 					}
 				},
-				error:		function(jqXHR, textStatus, errorThrown)
+				error:		function( jqXHR, textStatus, errorThrown )
 				{
 					$('.fc_loader').fadeOut(300).addClass('hidden');
 					$(this).fadeIn(0);
-					alert(textStatus + ': ' + errorThrown );
+					alert(textStatus + ': ' + jqXHR.responseText );
 				}
 			});
 		}

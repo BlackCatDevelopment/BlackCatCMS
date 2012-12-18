@@ -1,6 +1,6 @@
 <?php
 /**
- *  @template			FreshCat - Backend-Theme for Lepton
+ *  @template			FreshCat - Backend-Theme for Lepton2
  *  @version			see info.php of this template
  *  @author				Matthias Glienke (creativecat)
  *  @copyright			2012 Matthias Glienke (creativecat)
@@ -8,7 +8,6 @@
  *  @license terms		see info.php of this template
  *  @platform			LEPTON, see info.php of this template
  *  @requirements		PHP 5.2.x and higher
-  * @version			$Id$
  */
 
 // include class.secure.php to protect this file and the whole CMS!
@@ -30,11 +29,11 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-// OBLIGATORY WEBSITE BAKER VARIABLES
+// OBLIGATORY LEPTON VARIABLES
 $template_directory			= 'freshcat';
 $template_name				= 'FreshCat Backend Theme';
 $template_function			= 'theme';
-$template_version			= '0.7.3';
+$template_version			= '0.7.4';
 $template_platform			= '2.x';
 $template_author			= 'Matthias Glienke, creativecat';
 $template_license			= '<a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>';

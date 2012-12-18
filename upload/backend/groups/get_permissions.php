@@ -208,12 +208,10 @@ $system_permissions							= $imploded_system_permissions;
 // ========================== 
 // ! Get module permissions   
 // ========================== 
-$modules = array();
-$module_permissions = '';
-
-$dirs = scan_current_dir(LEPTON_PATH.'/modules');
-
-if ( is_array($admin->get_post('module_permissions')) )
+$modules			= array();
+$module_permissions	= '';
+$dirs				= scan_current_dir( LEPTON_PATH . '/modules' );
+if ( is_array( $admin->get_post('module_permissions') ) )
 {
 	foreach($admin->get_post('module_permissions') AS $selected_name)
 	{
@@ -230,11 +228,10 @@ $module_permissions							= implode(',', $modules);
 // ============================ 
 // ! Get template permissions   
 // ============================ 
-$templates = array();
-$template_permissions = '';
-$dirs = scan_current_dir(LEPTON_PATH.'/templates');
-
-if(is_array($admin->get_post('template_permissions')))
+$templates				= array();
+$template_permissions	= '';
+$dirs					= scan_current_dir(LEPTON_PATH.'/templates');
+if ( is_array( $admin->get_post('template_permissions') ) )
 {
 	foreach($admin->get_post('template_permissions') AS $selected_name)
 	{

@@ -11,7 +11,7 @@
  * @link            http://www.LEPTON-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
- *
+ * @version         $Id: index.php 1240 2011-10-21 12:24:40Z frankh $
  *
  */
 
