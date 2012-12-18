@@ -115,7 +115,7 @@ class login extends admin {
 		} elseif($this->username_len < $config_array['MIN_USERNAME_LEN']) {
 			$this->message = $MESSAGE['LOGIN_USERNAME_TOO_SHORT'];
 			$this->increase_attemps();
-		} elseif($this->password_len < $config_array['MIN_PASSWORD_LEN']) {
+		} elseif( !defined('ALLOW_SHORT_PASSWORDS') && $this->password_len < $config_array['MIN_PASSWORD_LEN']) {
 			$this->message = $MESSAGE['LOGIN_PASSWORD_TOO_SHORT'];
 			$this->increase_attemps();
 		} elseif($this->username_len > $config_array['MAX_USERNAME_LEN']) {
