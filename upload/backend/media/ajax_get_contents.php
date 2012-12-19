@@ -105,7 +105,8 @@ $allowed_img_types			= array('jpg','jpeg','png','gif','tif');
 
 if ( is_dir( $load_path ) )
 {
-	$ajax['is_folder']	= true;
+	$ajax['is_folder']		= true;
+	$ajax['is_writable']	= is_writable($load_path);
 	// ======================================== 
 	// ! Get contents for the intitial folder   
 	// ======================================== 

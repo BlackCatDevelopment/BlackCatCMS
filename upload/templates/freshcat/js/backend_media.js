@@ -173,6 +173,16 @@ function reload_folder( current_ul, folder_path, load_url )
 				current_ul.find('.fc_name_short p').smartTruncation({ 'truncateCenter' : true });
 				// Activate all click-events to the new added list
 				set_media_functions( current_ul );
+				console.log(data.is_writable);
+				if ( !data.is_writable )
+				{
+					$('#fc_media_upload_not_writable').removeClass('hidden');
+					$('#fc_media_index_upload').addClass('hidden');
+				}
+				else {
+					$('#fc_media_index_upload').removeClass('hidden');
+					$('#fc_media_upload_not_writable').addClass('hidden');
+				}
 			}
 			else
 			{
@@ -608,7 +618,7 @@ jQuery(document).ready(function()
 	});
 
 	// Activate the upload form to send data with ajax
-	dialog_form(
+/*	dialog_form(
 		$('#fc_media_index_upload'), function( data )
 		{
 			var current_ul		= get_active_media(),
@@ -631,5 +641,5 @@ jQuery(document).ready(function()
 
 			$('#fc_media_index_upload').find('input[type="reset"]').click();
 		}
-	);
+	);*/
 });

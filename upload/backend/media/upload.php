@@ -70,23 +70,25 @@ else if ( is_array($admin->get_post('upload_counter')) )
 	$allowed_file_types		= explode(',', RENAME_FILES_ON_UPLOAD);
 	foreach ( $upload_counter as $file_id )
 	{
-		$file_name	= 'upload_' . $file_id;
+		$field_name	= 'upload_' . $file_id;
 
-		if ( isset( $_FILES[$file_name]['name'] ) && $_FILES[$file_name]['name'] != '' )
+		if ( isset( $_FILES[$field_name]['name'] ) && $_FILES[$field_name]['name'] != '' )
 		{
 			// =========================================== 
 			// ! Get file extension of the uploaded file   
 			// =========================================== 
-			$file_extension		= (strtolower( pathinfo( $_FILES[$file_name]['name'], PATHINFO_EXTENSION ) ) == '') ? false : strtolower( pathinfo($_FILES[$file_name]['name'], PATHINFO_EXTENSION));
+			$file_extension		= (strtolower( pathinfo( $_FILES[$field_name]['name'], PATHINFO_EXTENSION ) ) == '') ? false : strtolower( pathinfo($_FILES[$field_name]['name'], PATHINFO_EXTENSION));
 			// ====================================== 
 			// ! Check if file extension is allowed   
 			// ====================================== 
 			if ( isset( $file_extension ) && in_array( $file_extension, $allowed_file_types ) )
 			{
+				echo $field_name;
 				// ======================================= 
 				// ! Try to include the upload.class.php   
 				// ======================================= 
-				$files		= $admin->get_helper('LEPTON_Helper_Upload', $_FILES[$file_name]);
+				$files		= $admin->get_helper( 'Upload', $_FILES[$field_name] );
+									echo $files->_handles['Upload']['__args__'];
 
 				if ( $files->uploaded )
 				{
@@ -99,7 +101,6 @@ else if ( is_array($admin->get_post('upload_counter')) )
 					{
 						$files->file_overwrite		= false;
 					}
-		
 					// Replace with allowed images
 					//$files->allowed = array('image/*');
 		
@@ -151,14 +152,14 @@ else if ( is_array($admin->get_post('upload_counter')) )
 						$admin->print_error( 'An error occurred: ' . $files->error, false );
 					}
 				}
-				else $admin->print_error( 'An error occured:' . $files->error, $files->log, false );
+				else $admin->print_error( 'An error occurred: ' . $files->error, $files->log, false );
 			}
 			else $admin->print_error( 'No file extension were found.', false );
 		}
 	}
 	$admin->print_success('All files have been uploaded successfully.', false );
 }
-else $admin->print_error( 'File couldn\'t be uploaded. Maybe it is too big?', false );
+else $admin->print_error( 'File could not be uploaded. Maybe it is too big?', false );
 // ====================== 
 // ! Print admin footer   
 // ====================== 
