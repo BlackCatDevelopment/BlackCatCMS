@@ -27,9 +27,10 @@
 	left:			0px;
 	margin:			0px;
 	padding:		0px;
-	min-height:		100%;
+	height:			100%;
 	width:			249px;
 	border-right:	1px solid #9da8b2;
+	overflow-y:		scroll;
 }
 
 .fc_filetype_folder,
