@@ -311,14 +311,11 @@ class wb extends SecureCMS
      * @access public
      * @param  string $name - name of the class
      **/
-	public function get_helper($name)
+	public function get_helper($name,$args=NULL)
 	{
 		// name must not contain LEPTON_Helper_...
 	    $name      = preg_replace( '~^lepton_helper_~i', '', $name );
-        $args      = func_get_args();
-        // remove first element (it's the name)
-        array_shift($args);
-        return $this->int_get_handle('Helper',$name,(count($args)?$args:NULL));
+        return $this->int_get_handle('Helper',$name,$args);
 	}   // end function get_helper()
 
     /* ****************
@@ -654,10 +651,22 @@ class wb extends SecureCMS
      * @param  mixed   $args      - optional arguments
      *
      **/
-    private function int_get_handle( $namespace, $name, $args )
+    private function int_get_handle( $namespace, $name )
     {
 
         $classname = 'LEPTON_' . ( $namespace != '' ? $namespace.'_' : '' ) . $name;
+        $numargs   = func_num_args();
+        $argstring = '';
+
+        if ( $numargs > 2 )
+        {
+            $arg_list = func_get_args();
+            for ( $x=2; $x<$numargs; $x++ )
+            {
+                $argstring .= '$arg_list['.$x.']';
+                if ($x != $numargs-1) $argstring .= ',';
+            }
+        }
 
 		// do we already have a handle?
 	    if (
@@ -668,9 +677,9 @@ class wb extends SecureCMS
 	        // if we have additional arguments, compare them with the ones
 	        // we used in the last call
 	        if (
-					count($args)
+					$argstring
 				&&  isset($this->_handles[$classname]['__args__'])
-				&&  $args == $this->_handles[$classname]['__args__'] )
+				&&  $argstring == $this->_handles[$classname]['__args__'] )
 	        {
 	        	return $this->_handles[$classname]['__handle__'];
 			}
@@ -696,17 +705,22 @@ class wb extends SecureCMS
 				! isset( $this->_handles[$classname]['__handle__'] )
 			||
 			    (
-				    $args
+				    $argstring
 					&&  isset($this->_handles[$classname]['__args__'])
-					&&  $args != $this->_handles[$classname]['__args__']
+					&&  $argstring != $this->_handles[$classname]['__args__']
 				)
 		) {
 	        // the class exists, but we don't have a handle
-            $args = ( count($args) ? '"'.implode('", "',$args).'"' : NULL );
-            $this->_handles[$classname]['__handle__'] = eval ( "return new $classname($args);" );
-            if ( $args )
+            try {
+                $this->_handles[$classname]['__handle__'] = eval( "return new $classname($argstring);" );
+            }
+            catch( Exception $e ) {
+                trigger_error(sprintf('Callback failed: %s($args)',$func), E_USER_ERROR);
+            }
+            
+            if ( $argstring )
 			{
-                $this->_handles[$classname]['__args__'] = $args;
+                $this->_handles[$classname]['__args__'] = $argstring;
             }
 		}
 
