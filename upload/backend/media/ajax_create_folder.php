@@ -44,7 +44,7 @@ $admin			= new admin('Media', 'media', false);
 
 header('Content-type: application/json');
 
-$ajax['folder_path'] = $admin->get_get('folder_path');
+$ajax['folder_path'] = $admin->get_post('folder_path');
 
 if ( $ajax['folder_path'] == '' || $admin->get_permission('media_create') !== true )
 {

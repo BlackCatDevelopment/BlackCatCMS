@@ -81,16 +81,16 @@ $admin = new admin('Media', 'media', false);
 
 include_once(LEPTON_PATH . '/framework/functions.php');
 
-if ( $admin->get_get('load_url') == '' || $admin->get_permission('media') !== true )
+if ( $admin->get_post('load_url') == '' || $admin->get_permission('media') !== true )
 {
 	header('Location: ' . ADMIN_URL);
 	exit();
 }
 header('Content-type: application/json');
 
-//$open_folder	= $admin->get_get('open_folder');
-$load_file		= $admin->get_get('load_url');
-$load_url		= $admin->get_get('folder_path') . '/' . $load_file;
+//$open_folder	= $admin->get_post('open_folder');
+$load_file		= $admin->get_post('load_url');
+$load_url		= $admin->get_post('folder_path') . '/' . $load_file;
 $load_path		= LEPTON_PATH . $load_url;// should be sanitize_path( LEPTON_PATH . $load_url );
 
 // =========================================================================== 

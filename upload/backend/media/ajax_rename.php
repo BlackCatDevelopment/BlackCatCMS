@@ -48,10 +48,10 @@ header('Content-type: application/json');
 // ================== 
 // ! Get user input   
 // ================== 
-$file_path		= sanitize_path( ($admin->strip_slashes($admin->get_get('file_path')) ) );
-$rename_file 	= $admin->strip_slashes($admin->get_get('rename_file'));
-$new_name		= trim( $admin->strip_slashes($admin->get_get('new_name')) );
-$new_extension	= trim( $admin->strip_slashes($admin->get_get('extension')) );
+$file_path		= sanitize_path( ($admin->strip_slashes($admin->get_post('file_path')) ) );
+$rename_file 	= $admin->strip_slashes($admin->get_post('rename_file'));
+$new_name		= trim( $admin->strip_slashes($admin->get_post('new_name')) );
+$new_extension	= trim( $admin->strip_slashes($admin->get_post('extension')) );
 
 //unset($ajax);
 

@@ -68,7 +68,7 @@ function save_name( rename_input, extension )
 		};
 	$.ajax(
 	{
-		type:		'GET',
+		type:		'POST',
 		context:	current_active,
 		url:		ADMIN_URL + '/media/ajax_rename.php',
 		dataType:	'json',
@@ -129,7 +129,7 @@ function reload_folder( current_ul, folder_path, load_url )
 
 	$.ajax(
 	{
-		type:		'GET',
+		type:		'POST',
 		context:	current_ul,
 		url:		ADMIN_URL + '/media/ajax_get_contents.php',
 		dataType:	'json',
@@ -141,7 +141,7 @@ function reload_folder( current_ul, folder_path, load_url )
 			current_ul.nextAll('ul').remove();
 			current_ul.prepend('<li class="fc_loader" />');
 		},
-		success:	function( data )
+		success:	function( data, textStatus, jqXHR )
 		{
 			var current_ul	= $(this);
 			current_ul.children('.fc_loader').remove();
@@ -173,7 +173,6 @@ function reload_folder( current_ul, folder_path, load_url )
 				current_ul.find('.fc_name_short p').smartTruncation({ 'truncateCenter' : true });
 				// Activate all click-events to the new added list
 				set_media_functions( current_ul );
-				console.log(data.is_writable);
 				if ( !data.is_writable )
 				{
 					$('#fc_media_upload_not_writable').removeClass('hidden');
@@ -267,7 +266,6 @@ function set_media_functions( element )
 			current_ul	= current.closest('ul.fc_media_folder'),
 			load_url	= current.children('input[name=load_url]').val(),
 			folder_path	= current_ul.children('input[name=folder_path]').val();
-
 		// Remove active-Class from all other list-items
 		$('ul.fc_media_folder_active').removeClass('fc_media_folder_active');
 
@@ -430,8 +428,9 @@ jQuery(document).ready(function()
 	 *
 	 *
 	 **/
-	$('.fc_delete_file').unbind().click(function()
+	$('.fc_delete_file').unbind().click( function(e)
 	{
+		e.preventDefault();
 		// Check if any item is active
 		if ( $('#fc_media_browser li.fc_active').size() == 0 )
 		{
@@ -455,36 +454,24 @@ jQuery(document).ready(function()
 					message		= LEPTON_TEXT['MEDIA_CONFIRM_DELETE_DIR'].replace( /\{name\}/g, name ),
 					type		= 'folder';
 			}
-			// Create link for ajax
-			var link			= ADMIN_URL + '/media/ajax_delete.php',
-				dates			= {
+			// Create dates for ajax
+			var dates			= {
 									'load_url':		current_active.children('input[name=load_url]').val(),
 									'file_path':	current_active.closest('ul.fc_media_folder').find('input[name=folder_path]').val(),
 									'file':			current_active.find('input[name=load_url]').val(),
 									'type':			type,
 									'leptoken':		getToken()
-								};
-			$.ajax(
-			{
-				type:		'GET',
-				context:	current_active,
-				url:		link,
-				dataType:	'json',
-				data:		dates,
-				cache:		false,
-				beforeSend:	function( data )
+								},
+				beforeSend		= function( data )
 				{
-					data.process	= set_activity('Delete ' + data.type);
 					$('#fc_media_browser li.fc_active').closest('ul').prepend('<li class="fc_loader" />');
-				},
-				success:	function( data, textStatus, jqXHR  )
-				{
 					$('#fc_media_info').hide();
+				},
+				afterSend		= function( data, textStatus, jqXHR )
+				{
 					$('li.fc_loader').remove();
-					if ( data.deleted == true )
+					if ( data.success == true )
 					{
-						return_success( jqXHR.process , data.message);
-
 						var current		= $(this),
 							current_ul	= current.closest('ul');
 						if ( current_ul.children('li').size() == 1 )
@@ -510,13 +497,9 @@ jQuery(document).ready(function()
 					{
 						return_error( jqXHR.process , data.message);
 					}
-				},
-				error:		function( jqXHR, textStatus, errorThrown )
-				{
-					$('li.fc_loader').remove();
-					alert(textStatus + ': ' + errorThrown );
-				}
-			});
+				};
+			
+			dialog_confirm( 'You really want to delete this ' + type + '?', 'Delete' + type, ADMIN_URL + '/media/ajax_delete.php', dates, 'POST', 'JSON', beforeSend, afterSend, current_active );
 		}
 	});
 
@@ -584,7 +567,7 @@ jQuery(document).ready(function()
 
 		$.ajax(
 		{
-			type:		'GET',
+			type:		'POST',
 			context:	current_ul,
 			url:		ADMIN_URL + '/media/ajax_create_folder.php',
 			dataType:	'json',

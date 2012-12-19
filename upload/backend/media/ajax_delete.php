@@ -45,15 +45,15 @@ $admin			= new admin('Media', 'media', false);
 
 header('Content-type: application/json');
 
-$ajax['file']			= $admin->get_get('file');
-$ajax['file_path']		= $admin->get_get('file_path');
+$ajax['file']			= $admin->get_post('file');
+$ajax['file_path']		= $admin->get_post('file_path');
 
 
 if (  $ajax['file'] == '' ||  $ajax['file_path'] == '' || $admin->get_permission('media_delete') !== true )
 {
 	$ajax	= array(
 		'message'	=> 'You don\'t have the permission to delete this file. Check your system settings.',
-		'deleted'	=> false
+		'success'	=> false
 	);
 	//header( 'Location: ' . ADMIN_URL );
 	print json_encode( $ajax );
@@ -71,18 +71,18 @@ else {
 		if ( rm_full_dir( $link ) )
 		{
 			$ajax['message']		= $kind == 'dir' ? $admin->lang->translate( 'Folder deleted successfully' ) : $admin->lang->translate( 'File deleted successfully' );
-			$ajax['deleted']		= true;
+			$ajax['success']		= true;
 		}
 		else
 		{
-			$ajax['message']		= $kind == 'dir' ? $admin->lang->translate( 'Can\'t delete the selected directory' ) : $admin->lang->translate( 'an\'t delete the selected file' );
-			$ajax['deleted']		= false;
+			$ajax['message']		= $kind == 'dir' ? $admin->lang->translate( 'Can not delete the selected directory' ) : $admin->lang->translate( 'Can not delete the selected file' );
+			$ajax['success']		= false;
 		}
 	}
 	else
 	{
 		$ajax['message']	= $admin->lang->translate( 'Couldn\'t find the folder or file' );
-		$ajax['deleted']	= false;
+		$ajax['success']	= false;
 	}
 	print json_encode( $ajax );
 }
