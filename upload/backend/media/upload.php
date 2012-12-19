@@ -83,12 +83,10 @@ else if ( is_array($admin->get_post('upload_counter')) )
 			// ====================================== 
 			if ( isset( $file_extension ) && in_array( $file_extension, $allowed_file_types ) )
 			{
-				echo $field_name;
 				// ======================================= 
 				// ! Try to include the upload.class.php   
 				// ======================================= 
 				$files		= $admin->get_helper( 'Upload', $_FILES[$field_name] );
-									echo $files->_handles['Upload']['__args__'];
 
 				if ( $files->uploaded )
 				{
