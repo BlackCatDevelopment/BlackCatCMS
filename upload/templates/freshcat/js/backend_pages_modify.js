@@ -15,6 +15,10 @@
 
 jQuery(document).ready(function()
 {
+	if ( $('#fc_main_content').size() == 0 )
+	{
+		$('#fc_content_container').wrapInner('<div id="fc_main_content" />');
+	}
 	$('.fc_toggle_section_block').click(function()
 	{
 		var current			= $(this),

@@ -104,7 +104,8 @@
 					</table>
 				</div>
 				<div class="fc_blocks_content">
-				{$block.content}
+					{$block.content}
+					<div class="clear"></div>
 				</div>
 				<div class="fc_blocks_footer fc_br_bottom fc_gradient1 fc_border"></div>
 			</div>
