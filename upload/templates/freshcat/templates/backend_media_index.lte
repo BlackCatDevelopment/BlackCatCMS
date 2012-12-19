@@ -4,7 +4,10 @@
 		{if $permissions.media_upload}
 		<ul id="fc_header_button_dropdown_toggle">
 			<li><a href="#" class="fc_gradient1 fc_gradient_hover icon-upload fc_toggle_element fc_br_right show___fc_media_index_upload_ul"> {translate('Upload')}</a></li>
-			<li>
+            <li id="fc_media_upload_not_writable" style="display:none;">
+                <div class="fc_br_bottom fc_br_topleft fc_gradient4 fc_shadow_small">{translate('Please note: This folder is not writable! You cannot upload files to it!')}</div>
+            </li>
+			<li id="fc_media_upload_is_writable">
 				{include('form_upload_files.lte')}
 			</li>
 		</ul>
