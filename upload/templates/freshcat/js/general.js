@@ -402,10 +402,13 @@ function searchUsers( searchTerm )
 			$('.fc_list_forms:containsi(' + searchTerm + ')').each( function()
 			{
 				var id	= $(this).attr('id');
-				$('#fc_list_overview li[rel=' + id + ']').addClass('fc_activeSearch');
+				$('input[value*=' + id.substr(8) + ']').closest('li').addClass('fc_activeSearch');
 			});
 		}
 		$('#fc_list_overview li').not('.fc_activeSearch').slideUp(300);
+		if ( $('#fc_list_overview li.fc_activeSearch').size() == 1 ){
+			$('#fc_list_overview li.fc_activeSearch').click();
+		}
 	}
 	else
 	{

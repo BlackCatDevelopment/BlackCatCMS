@@ -119,7 +119,6 @@ if (! defined ( 'LEPTON_PATH' ))
 			$admin_dir.'/pages/ajax_restore_page.php',
 			$admin_dir.'/pages/ajax_sections_save.php',
 			$admin_dir.'/pages/ajax_settings_save.php',
-			$admin_dir.'/pages/get_page_tree.php',
 			//////////////////////////////////////////
 
 			$admin_dir.'/pages/intro.php',

@@ -49,7 +49,7 @@
 		</div>
 		<form name="login" action="{$ACTION_URL}" method="post" id="fc_login_form" class="fc_gradient1 fc_br_bottom fc_border">
 			<p>
-				{*Currently not active <input type="hidden" name="url" value="{$REDIRECT}" rel="login" />*}
+				{*Currently not active <input type="hidden" name="url" value="{$REDIRECT}" />*}
 				<input type="hidden" name="username_fieldname" value="{$USERNAME_FIELDNAME}" />
 				<input type="hidden" name="password_fieldname" value="{$PASSWORD_FIELDNAME}" />
 	

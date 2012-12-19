@@ -11,32 +11,41 @@
 			</div>
 		</div>
 		<ul id="fc_list_overview" class="fc_group_list fc_settings_list">
-			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-binocular" rel="fc_SEO">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-binocular">
 				<span class="fc_groups_name">{translate('SEO settings')}</span>
+				<input type="hidden" name="rel" value="SEO" />
 			</li>
-			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-screen-2" rel="fc_FRONTEND">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-screen-2">
 				<span class="fc_groups_name">{translate('Frontend settings')}</span>
+				<input type="hidden" name="rel" value="FRONTEND" />
 			</li>
-			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-equalizer" rel="fc_BACKEND">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-equalizer">
 				<span class="fc_groups_name">{translate('Backend settings')}</span>
+				<input type="hidden" name="rel" value="BACKEND" />
 			</li>
-			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-cog" rel="fc_SYSTEM">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-cog">
 				<span class="fc_groups_name">{translate('System settings')}</span>
+				<input type="hidden" name="rel" value="SYSTEM" />
 			</li>
-			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-users" rel="fc_list">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-users">
 				<span class="fc_groups_name">{translate('User settings')}</span>
+				<input type="hidden" name="rel" value="USERS" />
 			</li>
-			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-alarm" rel="fc_TIME_LANGUAGE">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-alarm">
 				<span class="fc_groups_name">{translate('Language & time')}</span>
+				<input type="hidden" name="rel" value="TIME_LANGUAGE" />
 			</li>
-			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-search" rel="fc_SEARCHING">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-search">
 				<span class="fc_groups_name">{translate('Search settings')}</span>
+				<input type="hidden" name="rel" value="SEARCHING" />
 			</li>
-			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-database" rel="fc_SERVER">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-database">
 				<span class="fc_groups_name">{translate('Server settings')}</span>
+				<input type="hidden" name="rel" value="SERVER" />
 			</li>
-			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-mail" rel="fc_MAIL">
+			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-mail">
 				<span class="fc_groups_name">{translate('Mailer settings')}</span>
+				<input type="hidden" name="rel" value="MAIL" />
 			</li>
 		</ul>
 	</div>
@@ -45,7 +54,7 @@
 		<input type="reset" name="reset" value="{translate('Reset')}" />
 	</p>
 	<div class="fc_gradient1 fc_all_forms">
-		<div id="fc_SEO" class="fc_gradient1 fc_list_forms ui-corner-top">
+		<div id="fc_list_SEO" class="fc_gradient1 fc_list_forms ui-corner-top">
 			<label class="fc_label_120" for="fc_website_title">{translate('Website title')}:</label>
 			<input type="text" name="website_title" id="fc_website_title"  value="{$values.website_title}" />
 			<hr/>
@@ -62,7 +71,7 @@
 			</p>
 		</div>
 
-		<div id="fc_FRONTEND" class="fc_gradient1 fc_list_forms ui-corner-top">
+		<div id="fc_list_FRONTEND" class="fc_gradient1 fc_list_forms ui-corner-top">
 			<label class="fc_label_120" for="fc_default_template">{translate('Template')}:</label>
 			<select name="default_template" id="fc_default_template">
 				{foreach $templates template}
@@ -85,7 +94,7 @@
 		</div>
 
 
-		<div id="fc_BACKEND" class="fc_gradient1 fc_list_forms ui-corner-top">
+		<div id="fc_list_BACKEND" class="fc_gradient1 fc_list_forms ui-corner-top">
 			<label class="fc_label_200" for="fc_default_template">{translate('Backend theme')}:</label>
 			<select name="default_theme" id="fc_default_theme">
 				{foreach $backends backend}
@@ -143,7 +152,7 @@
 		</div>
 
 
-		<div id="fc_SYSTEM" class="fc_gradient1 fc_list_forms ui-corner-top">
+		<div id="fc_list_SYSTEM" class="fc_gradient1 fc_list_forms ui-corner-top">
 			{if $DISPLAY_ADVANCED}
 			<label class="fc_label_120" for="fc_page_level_limit">{translate('Page level limit')}:</label>
 			<select name="page_level_limit" id="fc_page_level_limit">
@@ -207,15 +216,15 @@
 		</div>
 
 
-		<div id="fc_list" class="fc_gradient1 fc_list_forms ui-corner-top">
-			<label class="fc_label_120" for="fc_frontend_signup">{translate('Signup')}:</label>
+		<div id="fc_list_USERS" class="fc_gradient1 fc_list_forms ui-corner-top">
+			<label class="fc_label_120" for="fc_list_FRONTEND_signup">{translate('Signup')}:</label>
 			{if !$groups.viewers}
-			<div id="fc_frontend_signup">
+			<div id="fc_list_FRONTEND_signup">
 				{translate('No groups found')}
 				<input type="hidden" name="frontend_signup" value="false" />
 			</div>
 			{else}
-			<select name="frontend_signup" id="fc_frontend_signup">
+			<select name="frontend_signup" id="fc_list_FRONTEND_signup">
 				<option value="false">--- {translate('Disabled')} ---</option>
 				{foreach $groups.viewers group}
 				<option value="{$group.VALUE}"{if $group.CHECKED} selected="selected"{/if}>{$group.NAME}</option>
@@ -224,8 +233,8 @@
 			{/if}
 			<hr/>
 			<div class="fc_settings_max">
-				<input type="checkbox" class="fc_checkbox_jq" name="frontend_login" id="fc_frontend_login" value="true" {if $FRONTEND_LOGIN} checked="checked"{/if}/>
-				<label for="fc_frontend_login">{translate('Login')}</label>
+				<input type="checkbox" class="fc_checkbox_jq" name="frontend_login" id="fc_list_FRONTEND_login" value="true" {if $FRONTEND_LOGIN} checked="checked"{/if}/>
+				<label for="fc_list_FRONTEND_login">{translate('Login')}</label>
 
 				{if $DISPLAY_ADVANCED}
 				<input type="checkbox" class="fc_checkbox_jq" name="smart_login" id="fc_smart_login" value="true" {if $SMART_LOGIN} checked="checked"{/if}/>
@@ -246,7 +255,7 @@
 			</p>
 		</div>
 	
-		<div id="fc_TIME_LANGUAGE" class="fc_gradient1 fc_list_forms ui-corner-top">
+		<div id="fc_list_TIME_LANGUAGE" class="fc_gradient1 fc_list_forms ui-corner-top">
 			<label class="fc_label_120" for="fc_default_language">{translate('Language')}:</label>
 			<select name="default_language" id="fc_default_language">
 				{foreach $languages language}
@@ -301,7 +310,7 @@
 		</div>
 
 
-		<div id="fc_SEARCHING" class="fc_gradient1 fc_list_forms ui-corner-top">
+		<div id="fc_list_SEARCHING" class="fc_gradient1 fc_list_forms ui-corner-top">
 			<label class="fc_label_120" for="fc_search">{translate('Visibility')}:</label>
 			<select name="search" id="fc_search">
 				<option value="public"{if $SEARCH == 'public'} selected="selected"{/if}>{translate('Public')}</option>
@@ -421,7 +430,7 @@
 		</div>
 
 
-		<div id="fc_SERVER" class="fc_gradient1 fc_list_forms ui-corner-top">
+		<div id="fc_list_SERVER" class="fc_gradient1 fc_list_forms ui-corner-top">
 			<div class="clear_sp"></div>
 			<label class="fc_label_120" for="fc_operating_system">{translate('Server Operating System')}:</label>
 			<div class="settings_label fc_settings_max" id="fc_operating_system">
@@ -482,14 +491,14 @@
 		</div>
 
 
-		<div id="fc_MAIL" class="fc_gradient1 fc_list_forms ui-corner-top">
+		<div id="fc_list_MAIL" class="fc_gradient1 fc_list_forms ui-corner-top">
 			<p>{translate('Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by LEPTON. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.')}
 			</p>
 			<div class="clear"></div>
 			<hr/>
 			<div class="clear_sp"></div>
-			<label class="fc_label_200" for="fc_server_email">{translate('Default from mail')}:</label>
-			<input type="text" name="server_email" id="fc_server_email" value="{$values.server_email}" />
+			<label class="fc_label_200" for="fc_list_SERVER_email">{translate('Default from mail')}:</label>
+			<input type="text" name="server_email" id="fc_list_SERVER_email" value="{$values.server_email}" />
 			<div class="clear"></div>
 
 			<label class="fc_label_200" for="fc_wbmailer_default_sendername">{translate('Default sender name')}:</label>

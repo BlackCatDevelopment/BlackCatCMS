@@ -18,8 +18,8 @@ jQuery(document).ready(function(){
 	$('#fc_mark_all').click( function(e)
 	{
 		e.preventDefault();
-		var current		= $(this);
-		var input_div	= $('#' + current.attr('rel'));
+		var current		= $(this),
+			input_div	= $('#fc_perm_groups');
 		current.toggleClass( 'fc_marked' );
 		if ( current.hasClass( 'fc_marked' ) )
 		{
