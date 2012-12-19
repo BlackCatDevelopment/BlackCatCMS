@@ -1,6 +1,6 @@
 <ul class="fc_br_bottom fc_br_topleft fc_gradient1 fc_shadow_small" id="fc_media_index_upload_ul">
 	<li>
-		<form name="upload" action="upload.php" method="post" enctype="multipart/form-data" id="fc_media_index_upload">
+		<form name="upload" action="{$ADMIN_URL}/media/upload.php" method="post" enctype="multipart/form-data" id="fc_media_index_upload">
 			<div class="clear">
 				<input type="hidden" name="form_title" value="{translate('Upload File(s)')}" />
 				<input type="hidden" name="folder_path" value="{$initial_folder}" />

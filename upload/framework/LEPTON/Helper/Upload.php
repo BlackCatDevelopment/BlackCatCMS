@@ -709,7 +709,7 @@ if ( ! class_exists( 'LEPTON_Helper_Upload' ) )
 				{
 					$this->no_upload_check = TRUE;
 					// this is a local filename, i.e.not uploaded
-					$this->log .= '<b>' . $this->translate("source is a local file") . ' ' . $file . '</b><br />';
+					$this->log .= '<b>Source is a local file ' . $file . '</b><br />';
 
 					if ($this->uploaded && !file_exists($file))
 					{

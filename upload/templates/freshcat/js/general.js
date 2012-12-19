@@ -369,12 +369,15 @@ function dialog_form( currentForm, beforeSend, afterSend )
 				}
 				else {
 					// else return error
-					return_error( jqXHR.process , data.message);
+					return_error( jqXHR.process , $( data ).find('.fc_error_box > p').text());
 				}
 			},
 			error:		function( jqXHR, textStatus, errorThrown )
 			{
 				jqXHR.process.remove();
+				console.log(jqXHR);
+				console.log(textStatus);
+				console.log(errorThrown);
 				alert(textStatus + ': ' + errorThrown );
 			}
 		});

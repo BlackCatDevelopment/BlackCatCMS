@@ -609,13 +609,13 @@ jQuery(document).ready(function()
 
 	// Activate the upload form to send data with ajax
 	dialog_form(
-		$('#fc_media_index_upload'), function()
+		$('#fc_media_index_upload'), function( data )
 		{
 			var current_ul		= get_active_media(),
 				folder_path		= current_ul.find('input[name=folder_path]').val(); 
 
 			$('#fc_media_index_upload input[name=folder_path]').val( folder_path );
-		}, function()
+		}, function( data, textStatus, jqXHR )
 		{
 			var media_upload	= $('#fc_media_index_upload'),
 				reload_ul		= get_active_media();

@@ -12,7 +12,6 @@
  * @license			http://www.gnu.org/licenses/gpl.html
  * @license_terms	please see LICENSE and COPYING files in your package
  *
- *
  */
  
 // include class.secure.php to protect this file and the whole CMS!
@@ -59,6 +58,10 @@ else if ( is_array($admin->get_post('upload_counter')) )
 	{
 		$admin->print_error( 'No directory was selected', false );
 	}
+	if ( !is_writeable($file_path) )
+	{
+		$admin->print_error( 'Directory is not writeable.', false );
+	}
 	$upload_counter		= $admin->get_post('upload_counter');
 	$file_overwrite		= $admin->get_post('overwrite');
 	// ============================================================================ 
@@ -83,22 +86,7 @@ else if ( is_array($admin->get_post('upload_counter')) )
 				// ======================================= 
 				// ! Try to include the upload.class.php   
 				// ======================================= 
-				// ======================================= 
-				// ! Try to include the Zip-Helper.php   
-				// ======================================= 
-				$helper_link		= sanitize_path( LEPTON_PATH . '/framework/LEPTON/Helper/Upload.php' );
-				if ( file_exists( $helper_link ) )
-				{
-					require_once( $helper_link );
-				}
-				else {
-					$admin->print_error('The Upload helper was not found. Please check if "' . $helper_link . '" is installed.', false);
-				}
-	
-				// =============================== 
-				// ! Create the class for PclZip   
-				// =============================== 
-				$files		= new LEPTON_Helper_Upload( $_FILES[$file_name] );
+				$files		= $admin->get_helper('LEPTON_Helper_Upload', $_FILES[$file_name]);
 
 				if ( $files->uploaded )
 				{
