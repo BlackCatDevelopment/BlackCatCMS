@@ -618,7 +618,7 @@ jQuery(document).ready(function()
 	});
 
 	// Activate the upload form to send data with ajax
-/*	dialog_form(
+	dialog_form(
 		$('#fc_media_index_upload'), function( data )
 		{
 			var current_ul		= get_active_media(),
@@ -641,5 +641,5 @@ jQuery(document).ready(function()
 
 			$('#fc_media_index_upload').find('input[type="reset"]').click();
 		}
-	);*/
+	);
 });
