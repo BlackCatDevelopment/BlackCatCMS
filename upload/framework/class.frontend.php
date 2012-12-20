@@ -47,6 +47,9 @@ require_once(LEPTON_PATH.'/framework/class.wb.php');
  *
  */
 class frontend extends wb {
+
+    private static $pg;
+
 	// defaults
 	var $default_link,$default_page_id;
 	// when multiple blocks are used, show home page blocks on 
@@ -61,7 +64,6 @@ class frontend extends wb {
 	var $page_trail=array();
 	
 	var $page_access_denied;
-	var $page_no_active_sections;
 	
 	// website settings
 	var $website_title,$website_description,$website_keywords,$website_header,$website_footer;
@@ -69,179 +71,18 @@ class frontend extends wb {
 	// ugly database stuff
 	var $extra_where_sql, $sql_where_language;
 
-	function page_select() {
-		global $page_id,$no_intro;
-		global $database;
-		// We have no page id and are supposed to show the intro page
-		if((INTRO_PAGE AND !isset($no_intro)) AND (!isset($page_id) OR !is_numeric($page_id))) {
-			// Since we have no page id check if we should go to intro page or default page
-			// Get intro page content
-			$filename = LEPTON_PATH.PAGES_DIRECTORY.'/intro'.PAGE_EXTENSION;
-			if(file_exists($filename)) {
-				$handle = @fopen($filename, "r");
-				$content = @fread($handle, filesize($filename));
-				@fclose($handle);
-				$this->preprocess($content);
-				header("Location: ".LEPTON_URL.PAGES_DIRECTORY."/intro".PAGE_EXTENSION."");   // send intro.php as header to allow parsing of php statements
-				echo ($content);
-				return false;
+    public function __construct()
+    {
+       self::$pg = new LEPTON_Pages();
 			}
-		}
-		// Check if we should add page language sql code
-		if(PAGE_LANGUAGES) {
-			$this->sql_where_language = " AND language = '".LANGUAGE."'";
-		}
-		// Get default page
-		// Check for a page id
-		$table_p = TABLE_PREFIX.'pages';
-		$table_s = TABLE_PREFIX.'sections';
-		$now = time();
-		$query_default = "
-			SELECT `p`.`page_id`, `link`
-			FROM `$table_p` AS `p` INNER JOIN `$table_s` USING(`page_id`)
-			WHERE `parent` = '0' AND `visibility` = 'public'
-			AND (($now>=`publ_start` OR `publ_start`=0) AND ($now<=`publ_end` OR `publ_end`=0))
-			$this->sql_where_language
-			ORDER BY `p`.`position` ASC LIMIT 1";
-		$get_default = $database->query($query_default);
-		$default_num_rows = $get_default->numRows();
-		if(!isset($page_id) OR !is_numeric($page_id)){
-			// Go to or show default page
-			if($default_num_rows > 0) {
-				$fetch_default = $get_default->fetchRow( MYSQL_ASSOC );
-				$this->default_link = $fetch_default['link'];
-				$this->default_page_id = $fetch_default['page_id'];
-				// Check if we should redirect or include page inline
-				if(HOMEPAGE_REDIRECTION) {
-					// Redirect to page
-					header("Location: ".$this->page_link($this->default_link));
-					exit();
-				} else {
-					// Include page inline
-					$this->page_id = $this->default_page_id;
-				}
-			} else {
-		   		// No pages have been added, so print under construction page
-				$this->print_under_construction();
-				exit();
-			}
-		} else {
-			$this->page_id=$page_id;
-		}
-		// Get default page link
-		if(!isset($fetch_default)) {
-		  	$fetch_default = $get_default->fetchRow( MYSQL_ASSOC );
-	 		$this->default_link = $fetch_default['link'];
-			$this->default_page_id = $fetch_default['page_id'];
-		}
-		return true;
-	}
 
-	function get_page_details() {
-		global $database;
-	    if($this->page_id != 0) {
-			// Query page details
-			$query_page = "SELECT * FROM ".TABLE_PREFIX."pages WHERE page_id = '{$this->page_id}'";
-			$get_page = $database->query($query_page);
-			// Make sure page was found in database
-			if($get_page->numRows() == 0) {
-				// Print page not found message
-				exit("Page not found");
-			}
-			// Fetch page details
-			$this->page = $get_page->fetchRow( MYSQL_ASSOC );
-			// Check if the page language is also the selected language. If not, send headers again.
-			if ($this->page['language']!=LANGUAGE) {
-				if(isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != '') { // check if there is an query-string
-					header('Location: '.$this->page_link($this->page['link']).'?'.$_SERVER['QUERY_STRING'].'&lang='.$this->page['language']);
-				} else {
-					header('Location: '.$this->page_link($this->page['link']).'?lang='.$this->page['language']);
-				}
-				exit();
-			}
-			// Begin code to set details as either variables of constants
-			// Page ID
-			if(!defined('PAGE_ID')) {define('PAGE_ID', $this->page['page_id']);}
-			// Page Title
-			if(!defined('PAGE_TITLE')) {define('PAGE_TITLE', $this->page['page_title']);}
-			$this->page_title=PAGE_TITLE;
-			// Menu Title
-			$menu_title = $this->page['menu_title'];
-			if($menu_title != '') {
-				if(!defined('MENU_TITLE')) {define('MENU_TITLE', $menu_title);}
-			} else {
-				if(!defined('MENU_TITLE')) {define('MENU_TITLE', PAGE_TITLE);}
-			}
-			$this->menu_title = MENU_TITLE;
-			// Page parent
-			if(!defined('PARENT')) {define('PARENT', $this->page['parent']);}
-			$this->parent=$this->page['parent'];
-			// Page root parent
-			if(!defined('ROOT_PARENT')) {define('ROOT_PARENT', $this->page['root_parent']);}
-			$this->root_parent=$this->page['root_parent'];
-			// Page level
-			if(!defined('LEVEL')) {define('LEVEL', $this->page['level']);}
-			$this->level=$this->page['level'];
-			$this->position = $this->page['position'];
-			// Page visibility
-			if(!defined('VISIBILITY')) {define('VISIBILITY', $this->page['visibility']);}
-			$this->visibility = $this->page['visibility'];
-			// Page trail
-			foreach(explode(',', $this->page['page_trail']) AS $pid) {
-				$this->page_trail[$pid]=$pid;
-			}
-			// Page description
-			$this->page_description=$this->page['description'];
-			if($this->page_description != '') {
-				define('PAGE_DESCRIPTION', $this->page_description);
-			} else {
-				define('PAGE_DESCRIPTION', WEBSITE_DESCRIPTION);
-			}
-			// Page keywords
-			$this->page_keywords=$this->page['keywords'];
-			// Page link
-			$this->link=$this->page_link($this->page['link']);
-
-		// End code to set details as either variables of constants
-		}
-
-		// Figure out what template to use
-		if(!defined('TEMPLATE')) {
-			if(isset($this->page['template']) AND $this->page['template'] != '') {
-				if(file_exists(LEPTON_PATH.'/templates/'.$this->page['template'].'/index.php')) {
-					define('TEMPLATE', $this->page['template']);
-				} else {
-					define('TEMPLATE', DEFAULT_TEMPLATE);
-				}
-			} else {
-				define('TEMPLATE', DEFAULT_TEMPLATE);
-			}
-		}
-		// Set the template dir
-		define('TEMPLATE_DIR', LEPTON_URL.'/templates/'.TEMPLATE);
-
-		// Check if user is allowed to view this page
-		if($this->page && $this->page_is_visible($this->page) == false) {
-			if(VISIBILITY == 'deleted' OR VISIBILITY == 'none') {
-				// User isnt allowed on this page so tell them
-				$this->page_access_denied=true;
-			} elseif(VISIBILITY == 'private' OR VISIBILITY == 'registered') {
-				// Check if the user is authenticated
-				if($this->is_authenticated() == false) {
-					// User needs to login first
-					header("Location: ".LEPTON_URL."/account/login.php?redirect=".$this->link);
-					exit(0);
-				} else {
-					// User isnt allowed on this page so tell them
-					$this->page_access_denied=true;
+	public function page_select() {
+        global $no_intro, $page_id;
+        return self::$pg->getPage($no_intro,$page_id);
 				}
 				
-			}
-		}
-		// check if there is at least one active section
-		if($this->page && $this->page_is_active($this->page) == false) {
-			$this->page_no_active_sections=true;
-		}
+	public function get_page_details() {
+        return self::$pg->getPageDetails();
 	}
 
 	function get_website_settings()
