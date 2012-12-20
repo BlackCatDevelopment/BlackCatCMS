@@ -360,7 +360,38 @@ if ( ! class_exists( 'LEPTON_Helper_Directory', false ) ) {
             }
 
         }   // end function recursiveCreateIndex()
-		
+
+
+		/**
+		 * Create directories recursive
+		 *
+		 * @access public
+		 * @param string   $dir_name - directory to create
+		 * @param ocatal   $dir_mode - access mode
+		 * @return boolean result of operation
+		 *
+		 *  THIS METHOD WAS MOVED TO LEPTON_Helper_Addons!
+		 *
+		 * @internal ralf 2011-08-05 - added recursive parameter for mkdir()
+		 * @todo ralf 2011-08-05     - checking for !is_dir() is not a good idea, perhaps $dirname
+		 * is not a valid path, i.e. a file - any better ideas?
+		  */
+		function createDirectory( $dir_name, $dir_mode = OCTAL_DIR_MODE, $createIndex = false )
+		{
+		     if ( $dir_name != '' && !is_dir($dir_name) )
+		     {
+		         $umask = umask(0);
+		         mkdir($dir_name, $dir_mode, true);
+		         umask($umask);
+		         if ( $createIndex )
+		         {
+			         $this->recursiveCreateIndex( $dir_name );
+		         }
+		         return true;
+		     }
+		     return false;
+		 }   // end function createDirectory()
+
 		/**
 		 * remove directory recursively
 		 *

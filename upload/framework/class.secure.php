@@ -1,6 +1,6 @@
 <?php
 
- /**
+/**
  * This file is part of LEPTON Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
@@ -15,96 +15,40 @@
  *
  */
 
-// THIS IS A TEMPORARY AND SMALL SOLUTION!
-// @todo integration of IP check and check of requested params!
-
-if (! defined ( 'LEPTON_PATH' ))
+if ( !defined( 'LEPTON_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
 {
-	if (! defined( 'LEPTON_INSTALL' ) )
-	{
 		// try to load config.php
-		if (strpos(__FILE__, '/framework/class.secure.php') !== false)
+	if ( strpos( __FILE__, '/framework/class.secure.php' ) !== false )
 		{
-			$config_path = str_replace('/framework/class.secure.php', '', __FILE__);
+		$config_path = str_replace( '/framework/class.secure.php', '', __FILE__ );
 		}
 		else
 		{
-			$config_path = str_replace('\framework\class.secure.php', '', __FILE__);	
+		$config_path = str_replace( '\framework\class.secure.php', '', __FILE__ );
 		}
-		if (!file_exists($config_path.'/config.php'))
+	if ( !file_exists( $config_path . '/config.php' ) )
 		{
-			if (file_exists($config_path.'/install/index.php'))
+		if ( file_exists( $config_path . '/install/index.php' ) )
 			{
-				header("Location: ../install/index.php");
+			header( "Location: ../install/index.php" );
 				exit();
 			}
 			else
 			{
 				// Problem: no config.php nor installation files...
-				exit('<p><b>Sorry, but this installation seems to be damaged! Please contact your webmaster!</b></p>');
+			exit( '<p><b>Sorry, but this installation seems to be damaged! Please contact your webmaster!</b></p>' );
 			}
 		}
-		require_once($config_path.'/config.php');
 		
-		$admin_dir = str_replace(LEPTON_PATH, '', ADMIN_PATH);
+	require_once( $config_path . '/config.php' );
+    $admin_dir             = str_replace( LEPTON_PATH, '', ADMIN_PATH );
 		
-		// some core files must be allowed to load the config.php by themself!
-		$direct_access_allowed = array(
-			PAGES_DIRECTORY.'/index.php',
+    //require_once( $config_path . '/framework/class.database.php' );
 
-			// Dwoo
-			$admin_dir.'/addons/index.php',
-			$admin_dir.'/addons/manual_install.php',
-			$admin_dir.'/addons/install.php',
-			$admin_dir.'/addons/uninstall.php',
-			//////////////////////////////////////////
+    $db                    = new database();
+    $direct_access_allowed = array();
 
-
-			// phplib ////////////////////////////////
-			$admin_dir.'/addons/index.php',
-			$admin_dir.'/addons/reload.php',
-			//////////////////////////////////////////
-
-			$admin_dir.'/admintools/index.php',
-			$admin_dir.'/admintools/tool.php',
-
-			$admin_dir.'/groups/ajax_delete_group.php',
-			$admin_dir.'/groups/ajax_get_group.php',
-			$admin_dir.'/groups/ajax_save_group.php',
-			$admin_dir.'/groups/index.php',
-
-			// phplib
-			$admin_dir.'/login/index.php',
-			//////////////////////////////////////////
-
-			// Dwoo
-			$admin_dir.'/login/ajax_index.php',
-			//////////////////////////////////////////
-
-			$admin_dir.'/login/forgot/index.php',
-			$admin_dir.'/logout/index.php',
-
-			// Dwoo
-			$admin_dir.'/media/create_folder.php',
-			$admin_dir.'/media/delete.php',
-			$admin_dir.'/media/get_contents.php',
-			$admin_dir.'/media/rename.php',
-			$admin_dir.'/media/upload.php',
-
-			$admin_dir.'/media/ajax_get_contents.php',
-			$admin_dir.'/media/ajax_delete.php',
-			$admin_dir.'/media/ajax_create_folder.php',
-			$admin_dir.'/media/ajax_rename.php',
-			//////////////////////////////////////////
-
-			$admin_dir.'/pages/empty_trash.php',
-			$admin_dir.'/pages/index.php',
-
-			// Dwoo
-			$admin_dir.'/pages/lang_settings.php',
- 	 		$admin_dir.'/pages/lang_settings_save.php',
-			//////////////////////////////////////////
-
+<<<<<<< HEAD
 			// phplib
 			$admin_dir.'/pages/move_down.php',
 			$admin_dir.'/pages/move_up.php',
@@ -209,47 +153,55 @@ if (! defined ( 'LEPTON_PATH' ))
 			'/modules/jsadmin/move_to.php',
 			'/search/index.php'
 		);
+=======
+	// some core files must be allowed to load the config.php by themself!
+    $q = $db->query('SELECT * FROM '.TABLE_PREFIX.'class_secure');
+    if( $q->numRows()>0 )
+    {
+        while( false !== ( $row = $q->fetchRow(MYSQL_ASSOC) ) )
+        {
+            $direct_access_allowed[] = $row['filepath'];
+        }
+    }
+>>>>>>> 55346be886e1fbc76637dc31c14dc302bb7b8a02
 
 		$allowed = false;
-		foreach ($direct_access_allowed as $allowed_file)
+	foreach ( $direct_access_allowed as $allowed_file )
 		{
-			if (strpos($_SERVER['SCRIPT_NAME'], $allowed_file) !== false)
+		if ( strpos( $_SERVER[ 'SCRIPT_NAME' ], $allowed_file ) !== false )
 			{
 				$allowed = true; 
 				break;
 			}
 		}
-		if (!$allowed)
+
+	if ( !$allowed )
 		{
-			if (((strpos($_SERVER['SCRIPT_NAME'], $admin_dir.'/media/index.php')) !== false) ||
-					((strpos($_SERVER['SCRIPT_NAME'], $admin_dir.'/preferences/index.php')) !== false) ||
-					((strpos($_SERVER['SCRIPT_NAME'], $admin_dir.'/support/index.php')) !== false))
+		if ( ( ( strpos( $_SERVER[ 'SCRIPT_NAME' ], $admin_dir . '/media/index.php' ) ) !== false ) || ( ( strpos( $_SERVER[ 'SCRIPT_NAME' ], $admin_dir . '/preferences/index.php' ) ) !== false ) || ( ( strpos( $_SERVER[ 'SCRIPT_NAME' ], $admin_dir . '/support/index.php' ) ) !== false ) )
 			{
 				// special: do absolute nothing!
 			}
-			elseif ((strpos($_SERVER['SCRIPT_NAME'], $admin_dir.'/index.php') !== false) ||
-					(strpos($_SERVER['SCRIPT_NAME'], $admin_dir.'/interface/index.php') !== false))
+		elseif ( ( strpos( $_SERVER[ 'SCRIPT_NAME' ], $admin_dir . '/index.php' ) !== false ) || ( strpos( $_SERVER[ 'SCRIPT_NAME' ], $admin_dir . '/interface/index.php' ) !== false ) )
 			{
 				// special: call start page of admins directory
-				header("Location: ".ADMIN_URL.'/start/index.php');
+			header( "Location: " . ADMIN_URL . '/start/index.php' );
 				exit();
 			}
-			elseif (strpos($_SERVER['SCRIPT_NAME'], '/index.php') !== false)
+		elseif ( strpos( $_SERVER[ 'SCRIPT_NAME' ], '/index.php' ) !== false )
 			{
 				// call the main page
-				header("Location: ../index.php");
+			header( "Location: ../index.php" );
 				exit();
 			}
 			else
 			{
-				if (!headers_sent())
+			if ( !headers_sent() )
 				{
 					// set header to 403
-					header($_SERVER['SERVER_PROTOCOL']." 403 Forbidden");
+				header( $_SERVER[ 'SERVER_PROTOCOL' ] . " 403 Forbidden" );
 				}
 				// stop program execution
-				exit('<p><b>ACCESS DENIED!</b> - Invalid call of <i>'.$_SERVER ['SCRIPT_NAME'].'</i></p>');
-			}
+			exit( '<p><b>ACCESS DENIED!</b> - Invalid call of <i>' . $_SERVER[ 'SCRIPT_NAME' ] . '</i></p>' );
 		}
 	}
 }
@@ -257,45 +209,57 @@ if (! defined ( 'LEPTON_PATH' ))
 /**
  * strip droplets
  **/
-if( ! function_exists('__lep_sec_formdata') )
+if ( !function_exists( '__lep_sec_formdata' ) )
 {
-	function __lep_sec_formdata(&$arr)
+	function __lep_sec_formdata( &$arr )
 	{
-		foreach( $arr as $key => $value )
+		foreach ( $arr as $key => $value )
 		{
 			if ( is_array( $value ) )
 			{
-				__lep_sec_formdata($value);
+				__lep_sec_formdata( $value );
 			}
 			else
 			{
 				// remove <script> tags
-				$value     = str_replace( array( '<script', '</script' ), array( '&lt;script', '&lt;/script' ), $value );
+				$value       = str_replace( array(
+					 '<script',
+					'</script'
+				), array(
+					 '&lt;script',
+					'&lt;/script'
+				), $value );
 				$value     = preg_replace( '#(\&lt;script.+?)>#i', '$1&gt;', $value );
 				$value     = preg_replace( '#(\&lt;\/script)>#i', '$1&gt;', $value );
 				//$arr[$key] = preg_replace( '#\[\[.+?\]\]#', '', __strip($value) );
-				$arr[$key] = str_replace( array( '[', ']' ), array( '&#91;', '&#93;' ), $value );
+				$arr[ $key ] = str_replace( array(
+					 '[',
+					']'
+				), array(
+					 '&#91;',
+					'&#93;'
+				), $value );
 			}
 		}
 	}
 }
 
 // secure form input
-if ( isset($_SESSION) && ! defined('LEP_SEC_FORMDATA') && ! isset( $_SESSION['USER_ID'] ) )
+if ( isset( $_SESSION ) && !defined( 'LEP_SEC_FORMDATA' ) && !isset( $_SESSION[ 'USER_ID' ] ) )
 {
-	if ( count($_GET) )
+	if ( count( $_GET ) )
 	{
-		__lep_sec_formdata($_GET);
+		__lep_sec_formdata( $_GET );
 	}
-	if ( count($_POST) )
+	if ( count( $_POST ) )
 	{
-		__lep_sec_formdata($_POST);
+		__lep_sec_formdata( $_POST );
 	}
-	if ( count($_REQUEST) )
+	if ( count( $_REQUEST ) )
 	{
-		__lep_sec_formdata($_REQUEST);
+		__lep_sec_formdata( $_REQUEST );
 	}
-	define('LEP_SEC_FORMDATA',true);
+	define( 'LEP_SEC_FORMDATA', true );
 }
 
 ?>

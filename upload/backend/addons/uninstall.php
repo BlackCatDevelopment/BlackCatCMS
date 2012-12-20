@@ -102,8 +102,8 @@ elseif ( $type == 'modules' )
 			'type_name'		=> $file,
 			'pages'			=> $add
 		);
-	
-		$data_dwoo['pages']		= array();
+	/*
+		$values['allpages']		= array();
 		while ( false != ( $data = $info->fetchRow( MYSQL_ASSOC ) ) )
 		{
 			// skip negative page id's
@@ -114,7 +114,7 @@ elseif ( $type == 'modules' )
 			$temp			= $database->query("SELECT page_title FROM " . TABLE_PREFIX . "pages WHERE page_id = " . $data['page_id']);
 			$temp_title		= $temp->fetchRow( MYSQL_ASSOC );
 	
-			$values['pages'][]	= array(
+			$values['allpages'][]	= array(
 				'id'		=> $data['page_id'],
 				'title'		=> $temp_title['page_title']
 			);
@@ -122,6 +122,7 @@ elseif ( $type == 'modules' )
 		// ============================================= 
 		// ! Printing out the error-message and die().   
 		// ============================================= 
+		print_r($values);*/
 		$admin->print_error( $admin->lang->translate( 'Cannot Uninstall: the selected {{type}} is in use.' , $values ), $js_back );
 	}
 	/**
