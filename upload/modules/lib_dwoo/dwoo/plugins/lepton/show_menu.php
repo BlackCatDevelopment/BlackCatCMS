@@ -41,7 +41,7 @@ function among_constants( $among_array )
 	$return		= 0;
 	if ( strpos($among_array, '+') )
 	{
-		$array		= split( '\+', $among_array );
+		$array		= explode( '\+', $among_array );
 		$among_array	= 0;
 		foreach( $array as $value )
 		{
@@ -50,7 +50,7 @@ function among_constants( $among_array )
 	}
 	if ( strpos($among_array, '|') !== false  )
 	{
-		$array		= split( '\|', $among_array );
+		$array		= explode( '\|', $among_array );
 		foreach($array as $value)
 		{
 			$return		= $return | $value;
