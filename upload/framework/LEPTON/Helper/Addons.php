@@ -666,12 +666,15 @@ if (!class_exists('LEPTON_Helper_Addons')) {
         public function sec_register_file( $module, $filepath )
         {
             global $database;
+            global $wb;
+            // this will remove ../.. from $filepath
+            $filepath = $wb->get_helper('Directory')->sanitizePath($filepath);
             if ( ! is_dir( LEPTON_PATH.'/modules/'.$module ) )
             {
                 error_log("sec_register_file() called for non existing module [$module] (path: [$filepath])", 0);
                 return false;
             }
-            if ( ! file_exists( LEPTON_PATH.'/modules/'.$module.'/'.$filepath ) )
+            if ( ! file_exists( $wb->get_helper('Directory')->sanitizePath(LEPTON_PATH.'/modules/'.$module.'/'.$filepath) ) )
             {
                 error_log("sec_register_file() called for non existing file [$filepath] (module: [$module])", 0);
                 return false;
