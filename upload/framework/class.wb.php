@@ -311,11 +311,11 @@ class wb extends SecureCMS
      * @access public
      * @param  string $name - name of the class
      **/
-	public function get_helper($name,$args=NULL)
+	public function get_helper($name)
 	{
 		// name must not contain LEPTON_Helper_...
 	    $name      = preg_replace( '~^lepton_helper_~i', '', $name );
-        return $this->int_get_handle('Helper',$name,$args);
+        return $this->int_get_handle('Helper',$name,$args=func_get_args());
 	}   // end function get_helper()
 
     /* ****************
@@ -660,8 +660,10 @@ class wb extends SecureCMS
 
         if ( $numargs > 2 )
         {
-            $arg_list = func_get_args();
-            for ( $x=2; $x<$numargs; $x++ )
+            $args     = func_get_args();
+            $arg_list = $args[2];
+            $numargs  = count($arg_list);
+            for ( $x=1; $x<$numargs; $x++ )
             {
                 $argstring .= '$arg_list['.$x.']';
                 if ($x != $numargs-1) $argstring .= ',';
