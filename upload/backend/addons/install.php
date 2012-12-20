@@ -120,7 +120,8 @@ if ( file_exists( $addon_dir ) )
 {
 	$action			= 'upgrade';
 	// look for old info.php
-	if ( $previous_info	= $addon_helper->checkInfo( $addon_dir )
+	$previous_info	= $addon_helper->checkInfo( $addon_dir );
+	if ( $previous_info
 		|| $addon_info['addon_function'] == 'language' )
 	{
 		/**
@@ -134,8 +135,6 @@ if ( file_exists( $addon_dir ) )
 	}
 }
 
-
-
 // Make sure the module dir exists, and chmod if needed
 if ( $addon_info['addon_function'] != 'language')
 {
@@ -147,7 +146,6 @@ if ( $addon_info['addon_function'] != 'language')
 		CLEANUP();
 		$admin->print_error( 'Actualization not possibly' );
 	}
-
 	// remove temp
 	CLEANUP();
 }
@@ -263,17 +261,14 @@ $admin->print_error( 'Install/Upgrade of add-on failed' );
 // remove temp dirs/files
 function CLEANUP()
 {
-	global $temp_unzip, $temp_file;
-	@rm_full_dir($temp_unzip);
-	if (file_exists($temp_file))
-	{
-		unlink($temp_file); // Remove temp file
-	}
+	global $admin, $temp_unzip, $temp_file;
+	$admin->get_helper('Directory')->removeDirectory($temp_unzip);
+	$admin->get_helper('Directory')->removeDirectory($temp_file);
 }
 
 // recursive function to copy
 // all subdirectories and contents:
-function COPY_RECURSIVE_DIRS($dirsource, $dirdest)
+function COPY_RECURSIVE_DIRS( $dirsource, $dirdest )
 {
 	global $admin;
 	if (is_dir($dirsource))
