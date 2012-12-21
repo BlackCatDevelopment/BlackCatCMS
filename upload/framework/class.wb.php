@@ -54,6 +54,7 @@ class wb extends SecureCMS
     private $lep_active_sections = NULL;
     private $_handles            = NULL;
     public  $lang                = NULL;
+    private static $pg           = NULL;
 
     // General initialization public function
     // performed when frontend or backend is loaded.
@@ -68,38 +69,7 @@ class wb extends SecureCMS
 		{
 		    $this->lang->addFile( LANGUAGE.'.php', NULL, $var );
 		}
-    }
-
-    // Check whether a page is visible or not.
-    // This will check page-visibility and user- and group-rights.
-    /* page_is_visible() returns
-     false: if page-visibility is 'none' or 'deleted', or page-vis. is 'registered' or 'private' and user isn't allowed to see the page.
-     true: if page-visibility is 'public' or 'hidden', or page-vis. is 'registered' or 'private' and user _is_ allowed to see the page.
-     */
-    public function page_is_visible($page)
-    {
-        // First check if visibility is 'none', 'deleted'
-        // shall we show the page?
-        $show_it = false;
-        switch ($page['visibility'])
-        {
-            case 'none':
-            case 'deleted':
-                $show_it = false;
-                break;
-            case 'hidden':
-            case 'public':
-                $show_it = true;
-                break;
-            case 'private':
-            case 'registered':
-                if ($this->is_authenticated() == true)
-                {
-                    $show_it = ($this->is_group_match($this->get_groups_id(), $page['viewing_groups']) || $this->is_group_match($this->get_user_id(), $page['viewing_users']));
-                }
-        }
-
-        return($show_it);
+        self::$pg = new LEPTON_Pages();
     }
 
     public function section_is_active($section_id)
@@ -110,17 +80,6 @@ class wb extends SecureCMS
         $sql .= 'WHERE (' . $now . ' BETWEEN `publ_start` AND `publ_end`) OR ';
         $sql .= '(' . $now . ' > `publ_start` AND `publ_end`=0) ';
         $sql .= 'AND `section_id`=' . $section_id;
-        return($database->get_one($sql) != false);
-    }
-    // Check if there is at least one active section on this page
-    public function page_is_active($page)
-    {
-        global $database;
-        $now = time();
-        $sql = 'SELECT COUNT(*) FROM `' . TABLE_PREFIX . 'sections` ';
-        $sql .= 'WHERE (' . $now . ' BETWEEN `publ_start` AND `publ_end`) OR ';
-        $sql .= '(' . $now . ' > `publ_start` AND `publ_end`=0) ';
-        $sql .= 'AND `page_id`=' . (int)$page['page_id'];
         return($database->get_one($sql) != false);
     }
 
@@ -184,19 +143,6 @@ class wb extends SecureCMS
     public function escape_backslashes($input)
     {
         return str_replace("\\", "\\\\", $input);
-    }
-
-    public function page_link($link)
-    {
-        // Check for :// in the link (used in URL's) as well as mailto:
-        if (strstr($link, '://') == '' && substr($link, 0, 7) != 'mailto:')
-        {
-            return LEPTON_URL . PAGES_DIRECTORY . $link . PAGE_EXTENSION;
-        }
-        else
-        {
-            return $link;
-        }
     }
 
     // Get POST data
@@ -736,5 +682,21 @@ class wb extends SecureCMS
 	    }
     
     }   // end function int_get_handle()
+
+
+    /***************************************************************************
+     * DEPRECATED FUNCTIONS
+     * These functions are moved to LEPTON_Pages class
+     **************************************************************************/
+    public function page_is_visible($page) { return self::$pg->isVisible($page); }
+    public function page_is_active($page)  { return self::$pg->isActive($page);  }
+    public function page_link($link)       {
+        if(!is_object(self::$pg))
+        {
+            self::$pg = new LEPTON_Pages();
+        }
+        return self::$pg->getLink($link);
+    }
+
 }
 ?>

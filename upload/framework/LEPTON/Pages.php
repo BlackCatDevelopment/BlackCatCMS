@@ -33,6 +33,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	    
 		// space before header items
 	    private $space = '    ';
+        private        $page_id         = NULL;
 	    
 	    private static $properties      = array();
 	    
@@ -50,6 +51,205 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	    private static $script   = array();
 	    private static $f_jquery = array();
 	    private static $f_js     = array();
+	    
+	    /**
+         *
+         *
+         *
+         *
+         **/
+        public function getPage($no_intro,$page_id)
+        {
+    		global $database;
+            $sql_where = NULL;
+    		// We have no page id and are supposed to show the intro page
+    		if((INTRO_PAGE AND !isset($no_intro)) AND (!isset($page_id) OR !is_numeric($page_id))) {
+    			// Get intro page content
+    			$filename = LEPTON_PATH.PAGES_DIRECTORY.'/intro'.PAGE_EXTENSION;
+    			if(file_exists($filename)) {
+    				$handle = @fopen($filename, "r");
+    				$content = @fread($handle, filesize($filename));
+    				@fclose($handle);
+    				$this->preprocess($content);
+    				header("Location: ".LEPTON_URL.PAGES_DIRECTORY."/intro".PAGE_EXTENSION."");   // send intro.php as header to allow parsing of php statements
+    				echo ($content);
+    				return false;
+    			}
+    		}
+    		// Check if we should add page language sql code
+    		if(PAGE_LANGUAGES) {
+    			$sql_where = " AND language = '".LANGUAGE."'";
+    		}
+    		if(!isset($page_id) OR !is_numeric($page_id)){
+                $this->page_id=$this->get_helper('Pages')->getDefaultPage($sql_where);
+    		} else {
+    			$this->page_id=$page_id;
+    		}
+    		return true;
+        }   // end function getPage()
+
+        /**
+         *
+         *
+         *
+         *
+         **/
+        public function getDefaultPage($where_lang)
+        {
+            global $database, $wb;
+      		// Check for a page id
+		    $table_p = TABLE_PREFIX.'pages';
+		    $table_s = TABLE_PREFIX.'sections';
+		    $now     = time();
+		    $query_default = "
+    			SELECT `p`.`page_id`, `link`
+    			FROM `$table_p` AS `p` INNER JOIN `$table_s` USING(`page_id`)
+    			WHERE `parent` = '0' AND `visibility` = 'public'
+    			AND (($now>=`publ_start` OR `publ_start`=0) AND ($now<=`publ_end` OR `publ_end`=0))
+    			$where_lang
+    			ORDER BY `p`.`position` ASC LIMIT 1";
+    		$get_default = $database->query($query_default);
+            if(!$get_default->numRows() > 0) {
+                // no default page for this lang, try without
+                $query_default = "
+        			SELECT `p`.`page_id`, `link`, `language`
+        			FROM `$table_p` AS `p` INNER JOIN `$table_s` USING(`page_id`)
+        			WHERE `parent` = '0' AND `visibility` = 'public'
+        			AND (($now>=`publ_start` OR `publ_start`=0) AND ($now<=`publ_end` OR `publ_end`=0))
+        			ORDER BY `p`.`position` ASC LIMIT 1";
+        		$get_default   = $database->query($query_default);
+             }
+             if($get_default->numRows() > 0) {
+				$fetch_default = $get_default->fetchRow( MYSQL_ASSOC );
+                if(!isset($fetch_default))
+                {
+                    $wb->print_under_construction();
+				    exit();
+                }
+				$this->default_link    = $fetch_default['link'];
+				$this->default_page_id = $fetch_default['page_id'];
+                $this->page_language   = $fetch_default['language'];
+                $this->page_id         = $this->default_page_id;
+				// Check for redirection
+				if(HOMEPAGE_REDIRECTION) {
+					header("Location: ".$wb->page_link($this->default_link));
+					exit();
+				}
+			} else {
+		   		// No pages have been added, so print under construction page
+				$wb->print_under_construction();
+				exit();
+			}
+echo "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
+print_r( $this );
+echo "</textarea>";
+        }   // end function getDefaultPage()
+
+        public function getPageDetails()
+        {
+      		global $database, $wb;
+    	    if($this->page_id != 0) {
+    			// Query page details
+    			$query_page = "SELECT * FROM ".TABLE_PREFIX."pages WHERE page_id = '{$this->page_id}'";
+    			$get_page   = $database->query($query_page);
+    			// Make sure page was found in database
+    			if($get_page->numRows() == 0) {
+    				// Print page not found message
+    				exit("Page not found");
+    			}
+    			// Fetch page details
+    			$this->page = $get_page->fetchRow( MYSQL_ASSOC );
+    			// Check if the page language is also the selected language. If not, send headers again.
+    			if ($this->page['language']!=LANGUAGE) {
+    				if(isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != '') { // check if there is an query-string
+    					header('Location: '.$this->getLink($this->page['link']).'?'.$_SERVER['QUERY_STRING'].'&lang='.$this->page['language']);
+    				} else {
+    					header('Location: '.$this->getLink($this->page['link']).'?lang='.$this->page['language']);
+    				}
+    				exit();
+    			}
+    			if(!defined('PAGE_ID'))     {define('PAGE_ID'    , $this->page['page_id']);    }
+    			if(!defined('PAGE_TITLE'))  {define('PAGE_TITLE' , $this->page['page_title']); }
+    			if(!defined('PARENT'))      {define('PARENT'     , $this->page['parent']);     }
+    			if(!defined('ROOT_PARENT')) {define('ROOT_PARENT', $this->page['root_parent']);}
+    			if(!defined('LEVEL'))       {define('LEVEL'      , $this->page['level']);      }
+       			if(!defined('VISIBILITY'))  {define('VISIBILITY' , $this->page['visibility']); }
+
+    			// Menu Title
+    			$menu_title = $this->page['menu_title'];
+    			if($menu_title != '') {
+    				if(!defined('MENU_TITLE')) {define('MENU_TITLE', $menu_title);}
+    			} else {
+    				if(!defined('MENU_TITLE')) {define('MENU_TITLE', PAGE_TITLE);}
+    			}
+    			// Page trail
+    			foreach(explode(',', $this->page['page_trail']) AS $pid) {
+    				$this->page_trail[$pid]=$pid;
+    			}
+    			// Page description
+    			$this->page_description=$this->page['description'];
+    			if($this->page_description != '') {
+    				define('PAGE_DESCRIPTION', $this->page_description);
+    			} else {
+    				define('PAGE_DESCRIPTION', WEBSITE_DESCRIPTION);
+    			}
+    			// Page keywords
+    			$this->page_keywords=$this->page['keywords'];
+    			// Page link
+    			$this->link=$wb->page_link($this->page['link']);
+    		}
+
+    		// Figure out what template to use
+    		if(!defined('TEMPLATE')) {
+    			if(isset($this->page['template']) AND $this->page['template'] != '') {
+    				if(file_exists(LEPTON_PATH.'/templates/'.$this->page['template'].'/index.php')) {
+    					define('TEMPLATE', $this->page['template']);
+    				} else {
+    					define('TEMPLATE', DEFAULT_TEMPLATE);
+    				}
+    			} else {
+    				define('TEMPLATE', DEFAULT_TEMPLATE);
+    			}
+    		}
+    		// Set the template dir
+    		define('TEMPLATE_DIR', LEPTON_URL.'/templates/'.TEMPLATE);
+
+    		// Check if user is allowed to view this page
+    		if($this->page && $wb->page_is_visible($this->page) == false) {
+    			if(VISIBILITY == 'deleted' OR VISIBILITY == 'none') {
+    				// User isnt allowed on this page so tell them
+    				$this->page_access_denied=true;
+    			} elseif(VISIBILITY == 'private' OR VISIBILITY == 'registered') {
+    				// Check if the user is authenticated
+    				if($this->is_authenticated() == false) {
+    					// User needs to login first
+    					header("Location: ".LEPTON_URL."/account/login.php?redirect=".$this->link);
+    					exit(0);
+    				} else {
+    					// User isnt allowed on this page so tell them
+    					$wb->page_access_denied=true;
+    				}
+
+    			}
+    		}
+    		// check if there is at least one active section
+    		if($this->page && $wb->page_is_active($this->page) == false) {
+    			$this->page_no_active_sections=true;
+    		}
+        }
+
+        public function getLink($link)
+        {
+            // Check for :// in the link (used in URL's) as well as mailto:
+            if (strstr($link, '://') == '' && substr($link, 0, 7) != 'mailto:')
+            {
+                return LEPTON_URL . PAGES_DIRECTORY . $link . PAGE_EXTENSION;
+            }
+            else
+            {
+                return $link;
+            }
+        }   // end function getLink()
 	    
 	    /**
 	     * calls appropriate function for analyzing and printing page footers
@@ -187,6 +387,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	    public function getBackendHeaders($section)
 	    {
 	    
+$this->_load_headers_inc( $this->sanitizePath( LEPTON_PATH.'/modules/clock_widget/headers.inc.php' ), 'backend', 'modules/clock_widget', $section );
 	        // -----------------------------------------------------------------
 	        // -----                    backend theme                      -----
 	        // -----------------------------------------------------------------
@@ -491,6 +692,50 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
             }
             return false;
         }   // end function get_linked_by_language()
+
+        public function isActive($page)
+        {
+            global $database;
+            $now = time();
+            $sql = 'SELECT COUNT(*) FROM `' . TABLE_PREFIX . 'sections` ';
+            $sql .= 'WHERE (' . $now . ' BETWEEN `publ_start` AND `publ_end`) OR ';
+            $sql .= '(' . $now . ' > `publ_start` AND `publ_end`=0) ';
+            $sql .= 'AND `page_id`=' . (int)$page['page_id'];
+            return($database->get_one($sql) != false);
+        }
+
+        /**
+         * Check whether a page is visible or not.
+         * This will check page-visibility and user- and group-rights.
+         *
+         * @param  array   $page
+         * @return boolean
+         */
+
+        public function isVisible($page)
+        {
+            global $wb;
+            // First check if visibility is 'none', 'deleted'
+            $show_it = false;
+            switch ($page['visibility'])
+            {
+                case 'none':
+                case 'deleted':
+                    $show_it = false;
+                    break;
+                case 'hidden':
+                case 'public':
+                    $show_it = true;
+                    break;
+                case 'private':
+                case 'registered':
+                    if ($wb->is_authenticated() == true)
+                    {
+                        $show_it = ($wb->is_group_match($wb->get_groups_id(), $page['viewing_groups']) || $wb->is_group_match($wb->get_user_id(), $page['viewing_users']));
+                    }
+            }
+            return($show_it);
+        }   // end function isVisible()
 	    
 	    /**
 	     *
