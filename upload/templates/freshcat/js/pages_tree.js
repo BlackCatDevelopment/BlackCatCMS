@@ -440,12 +440,14 @@ jQuery(document).ready(function()
 
 	$('#fc_add_page input:reset').click( function()
 	{
-		$('.page_tree_open_options').removeClass('page_tree_open_options');
 		var form	= $('#fc_add_page');
+
 		form.find('.fc_addPageOnly').show();
 		form.find('.fc_changePageOnly').hide();
-		form.animate({width: 'toggle'});
-		
+		form.animate({ width: 'toggle' },300);
+
+		$('.page_tree_open_options').removeClass('page_tree_open_options');
+
 		// Activate tagit for Keywords in the adding
 		$('#fc_addPage_keywords_ul').remove();
 		$('#fc_addPage_keywords').val('');
@@ -476,7 +478,8 @@ jQuery(document).ready(function()
 				if ( data.success === true )
 				{
 					var form	= $(this),
-						option	= '<select name="parent" id="fc_addPage_parent">';
+						option	= '<select name="parent" id="fc_addPage_parent">',
+						page_id	= $('#fc_addPage_parent_page_id').val();
 					$.each(data.parent_list, function(index, value)
 					{
 						option	= option + '<option value="' + value.id + '"';
@@ -491,7 +494,12 @@ jQuery(document).ready(function()
 						option	= option + value.menu_title + '</option>';
 					});
 					option	= option + '</select>';
-					$('#fc_addPage_parent').replaceWith(option);
+					$('#fc_addPage_parent').replaceWith( option );
+					console.log( page_id );
+					if ( page_id != '' )
+					{
+						$('#fc_addPage_parent').val( page_id );
+					}
 				}
 				else {
 					return_error( jqXHR.process , data.message);
@@ -507,18 +515,19 @@ jQuery(document).ready(function()
 		});
 	});
 
-	$('.fc_side_add').click( function()
+	$('.fc_side_add').click( function(e)
 	{
+		e.preventDefault();
 		var form	= $('#fc_add_page');
 		if ( $('#fc_add_page').is(':visible') )
 		{
-			$('#fc_add_page').stop().animate({width: 'toggle'}, 200);
+			$('#fc_add_page').stop().animate({width: 'toggle'}, 100);
 		}
 		form.find('.fc_restorePageOnly, .fc_changePageOnly').hide();
 		form.find('nav, ul, .fc_addPageOnly').show();
 		form.find('a:first').click();
-		form.find('input:reset').click();
 		form.find('input:text:first').focus();
+		form.find('input:reset').trigger('click');
 	});
 
 	$('#fc_addPageSubmit').click( function (e)
@@ -759,5 +768,12 @@ jQuery(document).ready(function()
 				}
 			};
 		dialog_ajax( 'Restoring page', ADMIN_URL + '/pages/ajax_restore_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
+	});
+	
+	$('#fc_addPageChildSubmit').click( function(e)
+	{
+		e.preventDefault();
+		$('#fc_addPage_parent_page_id').val( $('.page_tree_open_options').children('input[name=pageid]').val() );
+		$('.fc_side_add').click();
 	});
 });

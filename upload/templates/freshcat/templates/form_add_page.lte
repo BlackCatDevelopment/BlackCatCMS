@@ -24,6 +24,7 @@
 				</select>
 			</div>
 
+			<input type="hidden" name="parent_page_id" id="fc_addPage_parent_page_id" value=""/>
 			<label for="fc_addPage_parent">{translate('Parent')}:</label>
 			<select name="parent" id="fc_addPage_parent">
 				{foreach $parents_list as parent}
@@ -123,7 +124,11 @@
 		<button type="submit" name="add_page" class="icon-checkmark fc_addPageOnly" id="fc_addPageSubmit"> {translate('Add page')}</button>
 		<button type="submit" name="save_page" class="icon-checkmark fc_changePageOnly" id="fc_savePageSubmit"> {translate('Save page')}</button>
 		<button type="submit" name="restore_page" class="icon-checkmark fc_restorePageOnly" id="fc_restorePageSubmit"> {translate('Restore page')}</button>
-		<button type="submit" name="remove_page" class="icon-remove fc_gradient_red fc_changePageOnly fc_restorePageOnly" id="fc_removePageSubmit"> {translate('Remove page')}</button>
+		<button type="submit" name="add_child_page" class="icon-file-add fc_changePageOnly" id="fc_addPageChildSubmit"> {translate('Add child page')}</button>
 		<input type="reset" name="reset" value="{translate('Close & Reset')}" />
+	</p>
+	<hr class="fc_changePageOnly fc_restorePageOnly"/>
+	<p>
+		<button type="submit" name="remove_page" class="icon-remove fc_gradient_red fc_changePageOnly fc_restorePageOnly" id="fc_removePageSubmit"> {translate('Remove page')}</button>
 	</p>
 </form>
