@@ -57,7 +57,7 @@ class wb extends SecureCMS
     private $lep_active_sections = NULL;
     private $_handles            = NULL;
     public  $lang                = NULL;
-    private static $pg           = NULL;
+    public  static $pg           = NULL;
     private static $depre_func   = array(
         'bind_jquery' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers()</a>',
         'register_backend_modfiles' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers("backend", true, "$section_name")</a>',
@@ -82,7 +82,7 @@ class wb extends SecureCMS
 		{
 		    $this->lang->addFile( LANGUAGE.'.php', NULL, $var );
 		}
-        self::$pg = new LEPTON_Pages();
+        self::$pg = LEPTON_Pages::getInstance();
         set_error_handler( array('wb','lepton_error_handler') );
     }   // end constructor
 

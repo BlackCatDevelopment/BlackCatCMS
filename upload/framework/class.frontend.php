@@ -48,7 +48,7 @@ require_once(LEPTON_PATH.'/framework/class.wb.php');
  */
 class frontend extends wb {
 
-    private static $pg;
+    public static $pg;
 
 	// defaults
 	var $default_link,$default_page_id;
@@ -70,20 +70,6 @@ class frontend extends wb {
 
 	// ugly database stuff
 	var $extra_where_sql, $sql_where_language;
-
-    public function __construct()
-    {
-       self::$pg = new LEPTON_Pages();
-			}
-
-	public function page_select() {
-        global $no_intro, $page_id;
-        return self::$pg->getPage($no_intro,$page_id);
-				}
-				
-	public function get_page_details() {
-        return self::$pg->getPageDetails();
-	}
 
 	function get_website_settings()
     {
@@ -378,6 +364,20 @@ class frontend extends wb {
 			}
 		}
 	}
+
+    /***************************************************************************
+     * DEPRECATED
+     * moved to LEPTON_Pages
+     **************************************************************************/
+  	public function page_select() {
+        global $no_intro, $page_id;
+        return parent::$pg->getPage($no_intro,$page_id);
+	}
+
+	public function get_page_details() {
+        return parent::$pg->getPageDetails();
+	}
+
 }
 
 ?>

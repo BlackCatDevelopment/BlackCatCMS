@@ -680,7 +680,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 							{
 	        include sanitize_path( dirname(__FILE__).'/LEPTON/Pages.php' );
 							}
-	    $pg     = new LEPTON_Pages();
+	    $pg     = LEPTON_Pages::getInstance();
 	    $output = $pg->getHeaders( $for, $individual );
 		if ( $print_output )
 		{
@@ -718,7 +718,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
                 {
 	        include sanitize_path( dirname(__FILE__).'/LEPTON/Pages.php' );
                 }
-	    $pg     = new LEPTON_Pages();
+	    $pg     = LEPTON_Pages::getInstance();
 	    $output = $pg->getFooters( $for );
         if ( $print_output )
                     {

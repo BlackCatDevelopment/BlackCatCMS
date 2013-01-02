@@ -212,141 +212,6 @@ if ( !function_exists( 'search_highlight' ) )
 }
 
 
-if ( !function_exists( 'page_content' ) )
-{
-    function page_content( $block = 1 )
-    {
-        // Get outside objects
-        global $TEXT, $MENU, $HEADING, $MESSAGE;
-        global $logger;
-        global $globals;
-        global $database;
-        global $wb;
-        global $sec_h;
-        $admin =& $wb;
-
-		$logger->logDebug( sprintf( 'getting content for block [%s]', $block ) );
-		
-        if ( $wb->page_access_denied == true )
-        {
-            $logger->logDebug( 'Access denied' );
-            echo $MESSAGE[ 'FRONTEND_SORRY_NO_VIEWING_PERMISSIONS' ];
-            return;
-        }
-        if ( $sec_h->has_active_sections($wb->page_id) === false )
-        {
-            $logger->logDebug( 'no active sections found' );
-            echo $MESSAGE[ 'FRONTEND_SORRY_NO_ACTIVE_SECTIONS' ];
-            return;
-        }
-        
-        if ( isset( $globals ) and is_array( $globals ) )
-        {
-            $logger->logDebug( 'setting globals', $globals );
-            foreach ( $globals as $global_name )
-            {
-                global $$global_name;
-            }
-        }
-        // Make sure block is numeric
-        if ( !is_numeric( $block ) )
-        {
-            $block = 1;
-        }
-        // Include page content
-        if ( !defined( 'PAGE_CONTENT' ) or $block != 1 )
-        {
-            $page_id               = intval( $wb->page_id );
-            // set session variable to save page_id only if PAGE_CONTENT is empty
-            $_SESSION[ 'PAGE_ID' ] = !isset( $_SESSION[ 'PAGE_ID' ] ) ? $page_id : $_SESSION[ 'PAGE_ID' ];
-            // set to new value if page_id changed and not 0
-            if ( ( $page_id != 0 ) && ( $_SESSION[ 'PAGE_ID' ] <> $page_id ) )
-            {
-                $_SESSION[ 'PAGE_ID' ] = $page_id;
-            }
-            // get sections
-            $sections = $sec_h->get_active_sections( PAGE_ID, $block );
-            // no active sections found, so...
-            if ( !is_array( $sections ) || !count( $sections ) )
-            {
-                $logger->logDebug( 'no active sections found' );
-                // ...do we have default block content?
-                if ( $wb->default_block_content == 'none' )
-                {
-                    $logger->logDebug( 'no default content found' );
-                    return;
-                }
-                if ( is_numeric( $wb->default_block_content ) )
-                {
-                    $logger->logDebug( 'getting default content from default block' );
-                    // set page id to default block and get sections
-                    $page_id  = $wb->default_block_content;
-                    $sections = $sec_h->get_active_sections( $page_id, $block );
-                }
-                else
-                {
-                    $logger->logDebug( 'getting default content from default page' );
-                    // set page id to default page and get sections
-                    $page_id  = $wb->default_page_id;
-                    $sections = $sec_h->get_active_sections( $page_id, $block );
-                }
-                // still no sections?
-                if ( !is_array( $sections ) || !count( $sections ) )
-                {
-                    $logger->logDebug( 'still no sections, return undef' );
-                    return;
-                }
-            }
-            // Loop through them and include their module file
-            foreach ( $sections as $section )
-            {
-                $logger->logDebug( 'sections for this block', $sections );
-                $section_id = $section[ 'section_id' ];
-                $module     = $section[ 'module' ];
-                // make a anchor for every section.
-                if ( defined( 'SEC_ANCHOR' ) && SEC_ANCHOR != '' )
-                {
-                    echo '<a class="section_anchor" id="' . SEC_ANCHOR . $section_id . '"></a>';
-                }
-                // check if module exists - feature: write in errorlog
-                if ( file_exists( LEPTON_PATH . '/modules/' . $module . '/view.php' ) )
-                {
-                    // fetch content -- this is where to place possible output-filters (before highlighting)
-                    // fetch original content
-                    ob_start();
-                    require( LEPTON_PATH . '/modules/' . $module . '/view.php' );
-                    $content = ob_get_contents();
-                    ob_end_clean();
-                }
-                else
-                {
-                    continue;
-                }
-                
-                // highlights searchresults
-                if ( isset( $_GET[ 'searchresult' ] ) && is_numeric( $_GET[ 'searchresult' ] ) && !isset( $_GET[ 'nohighlight' ] ) && isset( $_GET[ 'sstring' ] ) && !empty( $_GET[ 'sstring' ] ) )
-                {
-                    $arr_string = explode( " ", $_GET[ 'sstring' ] );
-                    if ( $_GET[ 'searchresult' ] == 2 )
-                    {
-                        // exact match
-                        $arr_string[ 0 ] = str_replace( "_", " ", $arr_string[ 0 ] );
-                    }
-                    echo search_highlight( $content, $arr_string );
-                }
-                else
-                {
-                    echo $content;
-                }
-            }
-        }
-        else
-        {
-            require( PAGE_CONTENT );
-        }
-    }
-}   // if ( !function_exists( 'page_content' ) )
-
 /**
  *  Function to get or display the current page title
  *
@@ -498,7 +363,7 @@ function language_menu()
         {
 	        include sanitize_path( dirname(__FILE__).'/LEPTON/Pages.php' );
 		}
-        $pages = new LEPTON_Pages();
+        $pages = LEPTON_Pages::getInstance();
         $items = $pages->get_linked_by_language(PAGE_ID);
     }
     if( isset($items) && count($items) )
@@ -512,5 +377,8 @@ function language_menu()
         }
     }
 }
+
+function page_content( $block = 1 ) { return wb::$pg->getPageContent($block); }
+
 
 ?>
