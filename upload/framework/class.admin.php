@@ -546,7 +546,6 @@ class admin extends wb
 
 				$data['VERSION']					= VERSION;
 				$data['CORE']						= CORE;
-				$data['BACKEND_BODY_MODULE_JS']		= $this->register_backend_modfiles_body('js');
 				$data['permissions']['pages']		= ($this->get_permission('pages')) ? true : false;
 
 				// ======================================================================== 
@@ -594,7 +593,6 @@ class admin extends wb
 				$footer_template->set_file('page', 'footer.htt');
 				$footer_template->set_block('page', 'footer_block', 'header');
 				$footer_template->set_var(array(
-								'BACKEND_BODY_MODULE_JS' => get_page_footers('backend'),
 								'LEPTON_URL' => LEPTON_URL,
 								'LEPTON_PATH' => LEPTON_PATH,
 								'ADMIN_URL' => ADMIN_URL,
