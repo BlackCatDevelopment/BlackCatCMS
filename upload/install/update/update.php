@@ -200,7 +200,6 @@ function update_111() {
 	$upgrade_modules = array(
 	    "form",
 	    "news",
-	    "initial_page",
 	    "ckeditor",
 	    "show_menu2",
 	    "wysiwyg_admin"
@@ -256,7 +255,6 @@ function update_112 () {
 	 */
 	$upgrade_modules = array(
 	    "news",
-	    "initial_page",
 	    "ckeditor",
 	    "addon_file_editor",
 	    "edit_area",

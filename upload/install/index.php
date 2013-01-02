@@ -7,15 +7,15 @@
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON Project <info@lepton2.org>
- * @copyright       2010-2012, LEPTON Project
+ * @author          Website Baker Project, LEPTON Project
+ * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
  * @link            http://www.lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @category        LEPTON_Core
  * @package         Installation
  *
  */
- 
+
 $debug = false;
 
 define('LEPTON_PATH',dirname(__file__).'/..');
@@ -608,126 +608,6 @@ function show_step_finish() {
  *                 HELPER FUNCTIONS
  ******************************************************************************/
 
-function __lep_check_db_config() {
-
-	global $lang, $users, $config;
-	
-	$errors = array();
-	$regexp = '/^[^\x-\x1F]+$/D';
-
-	// Check if user has entered a database host
-	if ( ! isset( $config['database_host'] ) || $config['database_host'] == '' )
-	{
-		$errors['installer_database_host'] = $lang->translate('Please enter a database host name');
-	}
-	else
-	{
-		if ( preg_match( $regexp, $config['database_host'], $match ) )
-		{
-			$database_host = $match[0];
-		}
-		else
-		{
-			$errors['installer_database_host'] = $lang->translate('Invalid database hostname!');
-		}
-	}
-
-	// check for valid port number
-	if ( !isset( $config['database_port'] ) || $config['database_port'] == '' )
-	{
-		$errors['installer_database_port'] = $lang->translate('Please enter a database port');
-	}
-	else
-	{
-		if ( is_numeric( $config['database_port'] ) )
-		{
-			$database_port = $config['database_port'];
-		}
-		else
-		{
-			$errors['installer_database_port'] = $lang->translate('Invalid port number!');
-		}
-	}
-	// Check if user has entered a database username
-	if ( !isset( $config['database_username'] ) || $config['database_username'] == '' )
-	{
-		$errors['installer_database_username'] = $lang->translate('Please enter a database username');
-	}
-	else
-	{
-		if ( preg_match( $regexp, $config['database_username'], $match ) )
-		{
-			$database_username = $match[0];
-		}
-		else
-		{
-			$errors['installer_database_username'] = $lang->translate('Invalid database username!');
-		}
-	}
-	// Check if user has entered a database password
-	if ( !isset( $config['database_password'] ) || $config['database_password'] == '' )
-	{
-		$database_password = '';
-		if ( ! isset($config['no_validate_db_password']) )
-		{
-            $errors['installer_database_password_empty'] = true;
-		}
-	}
-	else
-	{
-        if ( ! isset($config['no_validate_db_password']) )
-        {
-	    if ( ! $users->validatePassword($config['database_password']) )
-	    {
-			$errors['installer_database_password'] = $lang->translate('Invalid database password!')
-												   . ' ' . $users->getPasswordError();
-		}
-		else
-		{
-		    $database_password = $users->getLastValidatedPassword();
-		}
-	}
-	}
-
-	// Check if user has entered a database name
-	if ( !isset( $config['database_name'] ) || $config['database_name'] == '' )
-	{
-		$errors['installer_database_name'] = $lang->translate('Please enter a database name');
-	}
-	else
-	{
-		// make sure only allowed characters are specified; it is not allowed to
-		// have a DB name with digits only!
-		if ( preg_match( '/^[a-z0-9][a-z0-9_-]+$/i', $config['database_name'] ) && ! is_numeric($config['database_name']) )
-		{
-			$database_name = $config['database_name'];
-		}
-		else
-		{
-			// contains invalid characters (only a-z, A-Z, 0-9 and _ allowed to avoid problems with table/field names)
-			$errors['installer_database_name'] = $lang->translate('Only characters a-z, A-Z, 0-9, - and _ allowed in database name. Please note that a database name must not be composed of digits only.');
-		}
-	}
-	// table prefix
-	if ( isset($config['table_prefix']) && $config['table_prefix'] != '' && ! preg_match('/^[a-z0-9_]+$/i', $config['table_prefix']) ) {
-	    $errors['installer_table_prefix'] = $lang->translate('Only characters a-z, A-Z, 0-9 and _ allowed in table_prefix.');
-	}
-
-	if ( !count( $errors ) )
-	{
-		// check database connection
-		$host = ( $database_port !== '3306' ) ? $database_host . ':' . $database_port : $database_host;
-		$ret  = @mysql_connect( $host, $database_username, $database_password );
-		if ( ! is_resource($ret) )
-		{
-			$errors['global'] = $lang->translate('Unable to connect to the database! Please check your settings!');
-		}
-	}
-
-	return $errors;
-
-}   // end function __lep_check_db_config()
-
 /**
  * find the default permissions for new files
  **/
@@ -764,7 +644,7 @@ function install_tables ($database) {
 	global $config ;
 	if (!defined('LEPTON_INSTALL_PROCESS')) define ('LEPTON_INSTALL_PROCESS', true);
     // import structure
-    _lep_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
+    __lep_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
 	
 	return array(
 		true,      // no error checks here! Maybe added later...
@@ -772,218 +652,6 @@ function install_tables ($database) {
 	);
 
 }   // end function install_tables()
-
-/**
- * INSTALLATION GOES HERE!!!
- **/
-function __do_install() {
-
-	global $config, $parser, $dirh;
-
-	include dirname(__FILE__).'/../framework/functions.php';
-	$lepton_path = sanitize_path( dirname(__FILE__).'/..' );
-	$inst_path   = sanitize_path( $lepton_path.'/'.pathinfo( dirname(__FILE__), PATHINFO_BASENAME ) );
-
-	if( isset($config['install_tables']) && $config['install_tables'] == 'true' ) {
-		$install_tables = true;
-	} else {
-		$install_tables = false;
-	}
-
-	// get server IP
-    if (array_key_exists('SERVER_ADDR', $_SERVER)) {
-	    $server_addr = $_SERVER['SERVER_ADDR'];
-	} else {
-	    $server_addr = '127.0.0.1';
-	}
-
-	// create a new GUID for this installation
-	$lepton_guid = createGUID();
-	// define service vars
-	$lepton_service_for = '';
-	$lepton_service_active = 0;
-
-	// check if file lepton.info exists within installation path
-	if (file_exists($lepton_path.'/'.$inst_path.'/lepton.info')) {
-		// read lepton.info into an array
-	  if (false !== ($lepton_info = file($lepton_path.'/'.$inst_path.'/lepton.info'))) {
-	    // walk through array
-	    foreach ($lepton_info as $item) {
-	      if (strpos($item, '=') !== false) {
-	        // split string into key and value
-	        list($key, $value) = explode('=', $item);
-					$key = strtolower(trim($key));
-	      	if (in_array($key, array('$lepton_guid', '$lepton_service_for', '$lepton_service_active'))) {
-	      		// get Lepton service values
-	      		$value = str_replace(array(' ', ';', "'", '"'), '', trim($value));
-	      		switch ($key):
-	      		case '$lepton_service_for':
-	      			if (!empty($value)) $lepton_service_for = $value;
-	      			break;
-	      		case '$lepton_service_active':
-	      			if (!empty($value) && is_numeric($value)) $lepton_service_active = intval($value);
-	      			break;
-	      		case '$lepton_guid':
-	      			if ((strlen($value) == 36) && (substr_count($value, '-') == 4)) $lepton_guid = $value;
-	      			break;
-	      		endswitch;
-	      	}
-	      }
-	    }
-	  }
-	}
-	
-	// remove trailing /
-	$config_lepton_url = rtrim( $config['lepton_url'], '/' );
-
-	$config_content = "" .
-"<?php\n".
-"\n".
-"if(defined('LEPTON_PATH')) { ".
-"    die('By security reasons it is not permitted to load \'config.php\' twice!! ".
-"Forbidden call from \''.\$_SERVER['SCRIPT_NAME'].'\'!'); }\n\n".
-"// *****************************************************************************\n".
-"// please set the path names for the Lepton backend subfolders here; that is,\n".
-"// if you rename 'admins' to 'myadmin', for example, set 'LEPTON_ADMINS_PATH'\n".
-"// to 'myadmin'.\n".
-"// *****************************************************************************\n\n".
-"// path to old (deprecated) admins subfolder; default name is 'admins'\n".
-"define('LEPTON_ADMINS_FOLDER', 'admins');\n".
-"// path to new admins subfolder; default name is 'backend'\n".
-"define('LEPTON_BACKEND_FOLDER', 'backend');\n".
-"// do not touch this line! It is set by the options tab in the backend!\n".
-"define('LEPTON_BACKEND_PATH', LEPTON_BACKEND_FOLDER );\n".
-"// *****************************************************************************\n\n".
-"define('DB_TYPE', 'mysql');\n".
-"define('DB_HOST', '".$config['database_host']."');\n".
-"define('DB_PORT', '".$config['database_port']."');\n".
-"define('DB_USERNAME', '".$config['database_username']."');\n".
-"define('DB_PASSWORD', '".$config['database_password']."');\n".
-"define('DB_NAME', '".$config['database_name']."');\n".
-"define('TABLE_PREFIX', '".$config['table_prefix']."');\n".
-"\n".
-"define('LEPTON_SERVER_ADDR', '".$server_addr."');\n".
-"define('LEPTON_PATH', dirname(__FILE__));\n".
-"define('LEPTON_URL', '".$config_lepton_url."');\n".
-"define('ADMIN_PATH', LEPTON_PATH.'/'.LEPTON_BACKEND_PATH);\n".
-"define('ADMIN_URL', LEPTON_URL.'/'.LEPTON_BACKEND_PATH);\n".
-"\n".
-"define('LEPTON_GUID', '".$lepton_guid."');\n".
-"define('LEPTON_SERVICE_FOR', '".$lepton_service_for."');\n".
-"define('LEPTON_SERVICE_ACTIVE', ".$lepton_service_active.");\n".
-"\n".
-"// wb2 backward compatibility\n".
-"include_once LEPTON_PATH.'/framework/wb2compat.php';\n".
-"\n".
-"if (!defined('LEPTON_INSTALL')) require_once(LEPTON_PATH.'/framework/initialize.php');\n".
-"\n".
-"?>";
-
-	$config_filename = $lepton_path.'/config.php';
-
-	// Check if the file exists and is writable first.
-	if(($handle = @fopen($config_filename, 'w')) === false) {
-		return array(
-			false,
-			$lang->translate(
-				"Cannot open the configuration file ({{ file }})",
-				array( 'file' => $config_filename )
-			)
-		);
-	} else {
-		if (fwrite($handle, $config_content, strlen($config_content) ) === FALSE) {
-			fclose($handle);
-			return array(
-			    false,
-				$lang->translate(
-					"Cannot write to the configuration file ({{ file }})",
-					array( 'file' => $config_filename )
-				)
-			);
-		}
-		// Close file
-		fclose($handle);
-	}
-
-	// avoid to lead config.php here
-	if ( ! defined('LEPTON_PATH') ) 		  { define('LEPTON_PATH',$lepton_path);                     }
-	if ( ! defined('LEPTON_ADMINS_FOLDER') )  { define('LEPTON_ADMINS_FOLDER', '/admins');              }
-	if ( ! defined('LEPTON_BACKEND_FOLDER') ) { define('LEPTON_BACKEND_FOLDER', '/backend');            }
-	if ( ! defined('LEPTON_BACKEND_PATH') )   { define('LEPTON_BACKEND_PATH', LEPTON_BACKEND_FOLDER );  }
-	if ( ! defined('ADMIN_PATH') )  		  { define('ADMIN_PATH', LEPTON_PATH.LEPTON_BACKEND_PATH);  }
-	if ( ! defined('ADMIN_URL') )   		  { define('ADMIN_URL', LEPTON_URL.LEPTON_BACKEND_PATH);    }
-
-	foreach( $config as $key => $value ) {
-		if ( ! defined( strtoupper($key) ) )
-		{
-			define( str_replace( 'DATABASE_', 'DB_', strtoupper($key) ),$value);
-		}
-	}
-
-	// WB compatibility
-	if ( ! defined('WB_URL') 	  ) { define('WB_URL',$config['lepton_url']); 	  }
-	if ( ! defined('WB_PATH')     ) { define('WB_PATH',$lepton_path); 			  }
-
- 	require $lepton_path.'/framework/class.login.php';
-	$database = new database();
-
-	// remove old inst.log
-	@unlink( LOGFILE );
-
-	// ---- install tables -----
-	if ( $install_tables ) {
-		list ( $result, $errors ) = install_tables($database);
-		// only try to fill tables if the creation succeeded
-		if ( $result && ! count($errors) ) {
-			// ----- fill tables -----
-			list ( $result, $fillerrors ) = fill_tables($database,$lepton_guid);
-			if ( ! $result || count($fillerrors) ) {
-				$errors['populate tables'] = $fillerrors;
-			}
-			// only try to install modules if fill tables succeeded
-			else {
-				// ----- install addons -----
-				list ( $result, $insterrors ) = install_modules($lepton_path);
-				if ( ! $result || count($insterrors) ) {
-					$errors['install modules'] = $insterrors;
-				}
-				// only check if all above succeeded
-				else {
-				    // ----- check tables ----
-					list ( $result, $checkerrors ) = check_tables($database);
-					if ( ! $result || count($checkerrors) ) {
-						$errors['check tables'] = $checkerrors;
-					}
-					else {
-						create_default_page($database);
-					}
-				}
-			}
-		}
-	}
-	
-	// ---- set index.php to read only ----
-	$dirh->setReadOnly( $lepton_path.'/index.php' );
-	
-	// ---- make sure we have an index.php everywhere ----
-	$dirh->recursiveCreateIndex( $lepton_path );
-
-	if ( count($errors) )
-	{
-		$output = $parser->get(
-	        'install_errors.lte',
-	        array( 'errors' => $errors )
-		);
-		return array(
-			( count($errors) ? false : true ),
-			$output
-		);
-	}
-	else {
-	    return array ( true, '' );
-	}
-
-}   // end function __do_install()
 
 /**
  * fills the tables created by install_tables()
@@ -1378,17 +1046,7 @@ function check_tables($database) {
 }   // end function check_tables()
 
 function create_default_page($database) {
-    global $config;
-    $url    = "http://www.lepton2.org/_packinstall/start-package.html";
-    // look if page already exists
-	$result = $database->query('SELECT * FROM '.TABLE_PREFIX."mod_wrapper WHERE url='$url';" );
-	if ( $result->numRows() == 0 ) {
-		require_once("c_lepton_init_page.php");
-		$p = new lepton_init_page( $database );
-		$p->url = $url;
-		$p->language = $config['default_language'];
-		$p->build_page();
-	}
+    __lep_installer_import_sql(dirname(__FILE__).'/db/default_page.sql',$database);
 }   // end function create_default_page()
 
 function pre_installation_error( $msg ) {
@@ -1437,7 +1095,7 @@ function pre_installation_error( $msg ) {
  * $file     is the name of the file
  * $database is the db handle
  **/
-function _lep_installer_import_sql($file,$database) {
+function __lep_installer_import_sql($file,$database) {
 
     $import = file_get_contents($file);
 
@@ -1455,4 +1113,336 @@ function _lep_installer_import_sql($file,$database) {
         }
     }
 
-}   // end function _lep_installer_import_sql()
+}   // end function __lep_installer_import_sql()
+
+/**
+ * INSTALLATION GOES HERE!!!
+ **/
+function __do_install() {
+
+	global $config, $parser, $dirh;
+
+	include dirname(__FILE__).'/../framework/functions.php';
+	$lepton_path = sanitize_path( dirname(__FILE__).'/..' );
+	$inst_path   = sanitize_path( $lepton_path.'/'.pathinfo( dirname(__FILE__), PATHINFO_BASENAME ) );
+
+	if( isset($config['install_tables']) && $config['install_tables'] == 'true' ) {
+		$install_tables = true;
+	} else {
+		$install_tables = false;
+	}
+
+	// get server IP
+    if (array_key_exists('SERVER_ADDR', $_SERVER)) {
+	    $server_addr = $_SERVER['SERVER_ADDR'];
+	} else {
+	    $server_addr = '127.0.0.1';
+	}
+
+	// create a new GUID for this installation
+	$lepton_guid = createGUID();
+	// define service vars
+	$lepton_service_for = '';
+	$lepton_service_active = 0;
+
+	// check if file lepton.info exists within installation path
+	if (file_exists($lepton_path.'/'.$inst_path.'/lepton.info')) {
+		// read lepton.info into an array
+	  if (false !== ($lepton_info = file($lepton_path.'/'.$inst_path.'/lepton.info'))) {
+	    // walk through array
+	    foreach ($lepton_info as $item) {
+	      if (strpos($item, '=') !== false) {
+	        // split string into key and value
+	        list($key, $value) = explode('=', $item);
+					$key = strtolower(trim($key));
+	      	if (in_array($key, array('$lepton_guid', '$lepton_service_for', '$lepton_service_active'))) {
+	      		// get Lepton service values
+	      		$value = str_replace(array(' ', ';', "'", '"'), '', trim($value));
+	      		switch ($key):
+	      		case '$lepton_service_for':
+	      			if (!empty($value)) $lepton_service_for = $value;
+	      			break;
+	      		case '$lepton_service_active':
+	      			if (!empty($value) && is_numeric($value)) $lepton_service_active = intval($value);
+	      			break;
+	      		case '$lepton_guid':
+	      			if ((strlen($value) == 36) && (substr_count($value, '-') == 4)) $lepton_guid = $value;
+	      			break;
+	      		endswitch;
+	      	}
+	      }
+	    }
+	  }
+	}
+
+	// remove trailing /
+	$config_lepton_url = rtrim( $config['lepton_url'], '/' );
+
+	$config_content = "" .
+"<?php\n".
+"\n".
+"if(defined('LEPTON_PATH')) { ".
+"    die('By security reasons it is not permitted to load \'config.php\' twice!! ".
+"Forbidden call from \''.\$_SERVER['SCRIPT_NAME'].'\'!'); }\n\n".
+"// *****************************************************************************\n".
+"// please set the path names for the Lepton backend subfolders here; that is,\n".
+"// if you rename 'admins' to 'myadmin', for example, set 'LEPTON_ADMINS_PATH'\n".
+"// to 'myadmin'.\n".
+"// *****************************************************************************\n\n".
+"// path to old (deprecated) admins subfolder; default name is 'admins'\n".
+"define('LEPTON_ADMINS_FOLDER', 'admins');\n".
+"// path to new admins subfolder; default name is 'backend'\n".
+"define('LEPTON_BACKEND_FOLDER', 'backend');\n".
+"// do not touch this line! It is set by the options tab in the backend!\n".
+"define('LEPTON_BACKEND_PATH', LEPTON_BACKEND_FOLDER );\n".
+"// *****************************************************************************\n\n".
+"define('DB_TYPE', 'mysql');\n".
+"define('DB_HOST', '".$config['database_host']."');\n".
+"define('DB_PORT', '".$config['database_port']."');\n".
+"define('DB_USERNAME', '".$config['database_username']."');\n".
+"define('DB_PASSWORD', '".$config['database_password']."');\n".
+"define('DB_NAME', '".$config['database_name']."');\n".
+"define('TABLE_PREFIX', '".$config['table_prefix']."');\n".
+"\n".
+"define('LEPTON_SERVER_ADDR', '".$server_addr."');\n".
+"define('LEPTON_PATH', dirname(__FILE__));\n".
+"define('LEPTON_URL', '".$config_lepton_url."');\n".
+"define('ADMIN_PATH', LEPTON_PATH.'/'.LEPTON_BACKEND_PATH);\n".
+"define('ADMIN_URL', LEPTON_URL.'/'.LEPTON_BACKEND_PATH);\n".
+"\n".
+"define('LEPTON_GUID', '".$lepton_guid."');\n".
+"define('LEPTON_SERVICE_FOR', '".$lepton_service_for."');\n".
+"define('LEPTON_SERVICE_ACTIVE', ".$lepton_service_active.");\n".
+"\n".
+"// wb2 backward compatibility\n".
+"include_once LEPTON_PATH.'/framework/wb2compat.php';\n".
+"\n".
+"if (!defined('LEPTON_INSTALL')) require_once(LEPTON_PATH.'/framework/initialize.php');\n".
+"\n".
+"?>";
+
+	$config_filename = $lepton_path.'/config.php';
+
+	// Check if the file exists and is writable first.
+	if(($handle = @fopen($config_filename, 'w')) === false) {
+		return array(
+			false,
+			$lang->translate(
+				"Cannot open the configuration file ({{ file }})",
+				array( 'file' => $config_filename )
+			)
+		);
+	} else {
+		if (fwrite($handle, $config_content, strlen($config_content) ) === FALSE) {
+			fclose($handle);
+			return array(
+			    false,
+				$lang->translate(
+					"Cannot write to the configuration file ({{ file }})",
+					array( 'file' => $config_filename )
+				)
+			);
+		}
+		// Close file
+		fclose($handle);
+	}
+
+	// avoid to lead config.php here
+	if ( ! defined('LEPTON_PATH') ) 		  { define('LEPTON_PATH',$lepton_path);                     }
+	if ( ! defined('LEPTON_ADMINS_FOLDER') )  { define('LEPTON_ADMINS_FOLDER', '/admins');              }
+	if ( ! defined('LEPTON_BACKEND_FOLDER') ) { define('LEPTON_BACKEND_FOLDER', '/backend');            }
+	if ( ! defined('LEPTON_BACKEND_PATH') )   { define('LEPTON_BACKEND_PATH', LEPTON_BACKEND_FOLDER );  }
+	if ( ! defined('ADMIN_PATH') )  		  { define('ADMIN_PATH', LEPTON_PATH.LEPTON_BACKEND_PATH);  }
+	if ( ! defined('ADMIN_URL') )   		  { define('ADMIN_URL', LEPTON_URL.LEPTON_BACKEND_PATH);    }
+
+	foreach( $config as $key => $value ) {
+		if ( ! defined( strtoupper($key) ) )
+		{
+			define( str_replace( 'DATABASE_', 'DB_', strtoupper($key) ),$value);
+		}
+	}
+
+	// WB compatibility
+	if ( ! defined('WB_URL') 	  ) { define('WB_URL',$config['lepton_url']); 	  }
+	if ( ! defined('WB_PATH')     ) { define('WB_PATH',$lepton_path); 			  }
+
+ 	require $lepton_path.'/framework/class.login.php';
+	$database = new database();
+
+	// remove old inst.log
+	@unlink( LOGFILE );
+
+	// ---- install tables -----
+	if ( $install_tables ) {
+		list ( $result, $errors ) = install_tables($database);
+		// only try to fill tables if the creation succeeded
+		if ( $result && ! count($errors) ) {
+			// ----- fill tables -----
+			list ( $result, $fillerrors ) = fill_tables($database,$lepton_guid);
+			if ( ! $result || count($fillerrors) ) {
+				$errors['populate tables'] = $fillerrors;
+			}
+			// only try to install modules if fill tables succeeded
+			else {
+				// ----- install addons -----
+				list ( $result, $insterrors ) = install_modules($lepton_path);
+				if ( ! $result || count($insterrors) ) {
+					$errors['install modules'] = $insterrors;
+				}
+				// only check if all above succeeded
+				else {
+				    // ----- check tables ----
+					list ( $result, $checkerrors ) = check_tables($database);
+					if ( ! $result || count($checkerrors) ) {
+						$errors['check tables'] = $checkerrors;
+					}
+					else {
+						create_default_page($database);
+					}
+				}
+			}
+		}
+	}
+
+	// ---- set index.php to read only ----
+	$dirh->setReadOnly( $lepton_path.'/index.php' );
+
+	// ---- make sure we have an index.php everywhere ----
+	$dirh->recursiveCreateIndex( $lepton_path );
+
+	if ( count($errors) )
+	{
+		$output = $parser->get(
+	        'install_errors.lte',
+	        array( 'errors' => $errors )
+		);
+		return array(
+			( count($errors) ? false : true ),
+			$output
+		);
+	}
+	else {
+	    return array ( true, '' );
+	}
+
+}   // end function __do_install()
+
+function __lep_check_db_config() {
+
+	global $lang, $users, $config;
+
+	$errors = array();
+	$regexp = '/^[^\x-\x1F]+$/D';
+
+	// Check if user has entered a database host
+	if ( ! isset( $config['database_host'] ) || $config['database_host'] == '' )
+	{
+		$errors['installer_database_host'] = $lang->translate('Please enter a database host name');
+	}
+	else
+	{
+		if ( preg_match( $regexp, $config['database_host'], $match ) )
+		{
+			$database_host = $match[0];
+		}
+		else
+		{
+			$errors['installer_database_host'] = $lang->translate('Invalid database hostname!');
+		}
+	}
+
+	// check for valid port number
+	if ( !isset( $config['database_port'] ) || $config['database_port'] == '' )
+	{
+		$errors['installer_database_port'] = $lang->translate('Please enter a database port');
+	}
+	else
+	{
+		if ( is_numeric( $config['database_port'] ) )
+		{
+			$database_port = $config['database_port'];
+		}
+		else
+		{
+			$errors['installer_database_port'] = $lang->translate('Invalid port number!');
+		}
+	}
+	// Check if user has entered a database username
+	if ( !isset( $config['database_username'] ) || $config['database_username'] == '' )
+	{
+		$errors['installer_database_username'] = $lang->translate('Please enter a database username');
+	}
+	else
+	{
+		if ( preg_match( $regexp, $config['database_username'], $match ) )
+		{
+			$database_username = $match[0];
+		}
+		else
+		{
+			$errors['installer_database_username'] = $lang->translate('Invalid database username!');
+		}
+	}
+	// Check if user has entered a database password
+	if ( !isset( $config['database_password'] ) || $config['database_password'] == '' )
+	{
+		$database_password = '';
+		if ( ! isset($config['no_validate_db_password']) )
+		{
+            $errors['installer_database_password_empty'] = true;
+		}
+	}
+	else
+	{
+        if ( ! isset($config['no_validate_db_password']) )
+        {
+	    if ( ! $users->validatePassword($config['database_password']) )
+	    {
+			$errors['installer_database_password'] = $lang->translate('Invalid database password!')
+												   . ' ' . $users->getPasswordError();
+		}
+		else
+		{
+		    $database_password = $users->getLastValidatedPassword();
+		}
+	}
+	}
+
+	// Check if user has entered a database name
+	if ( !isset( $config['database_name'] ) || $config['database_name'] == '' )
+	{
+		$errors['installer_database_name'] = $lang->translate('Please enter a database name');
+	}
+	else
+	{
+		// make sure only allowed characters are specified; it is not allowed to
+		// have a DB name with digits only!
+		if ( preg_match( '/^[a-z0-9][a-z0-9_-]+$/i', $config['database_name'] ) && ! is_numeric($config['database_name']) )
+		{
+			$database_name = $config['database_name'];
+		}
+		else
+		{
+			// contains invalid characters (only a-z, A-Z, 0-9 and _ allowed to avoid problems with table/field names)
+			$errors['installer_database_name'] = $lang->translate('Only characters a-z, A-Z, 0-9, - and _ allowed in database name. Please note that a database name must not be composed of digits only.');
+		}
+	}
+	// table prefix
+	if ( isset($config['table_prefix']) && $config['table_prefix'] != '' && ! preg_match('/^[a-z0-9_]+$/i', $config['table_prefix']) ) {
+	    $errors['installer_table_prefix'] = $lang->translate('Only characters a-z, A-Z, 0-9 and _ allowed in table_prefix.');
+	}
+
+	if ( !count( $errors ) )
+	{
+		// check database connection
+		$host = ( $database_port !== '3306' ) ? $database_host . ':' . $database_port : $database_host;
+		$ret  = @mysql_connect( $host, $database_username, $database_password );
+		if ( ! is_resource($ret) )
+		{
+			$errors['global'] = $lang->translate('Unable to connect to the database! Please check your settings!');
+		}
+	}
+
+	return $errors;
+
+}   // end function __lep_check_db_config()

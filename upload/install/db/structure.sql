@@ -19,7 +19,6 @@ DROP TABLE IF EXISTS `lep_mod_droplets`;
 DROP TABLE IF EXISTS `lep_mod_form_fields`;
 DROP TABLE IF EXISTS `lep_mod_form_settings`;
 DROP TABLE IF EXISTS `lep_mod_form_submissions`;
-DROP TABLE IF EXISTS `lep_mod_initial_page`;
 DROP TABLE IF EXISTS `lep_mod_menu_link`;
 DROP TABLE IF EXISTS `lep_mod_news_comments`;
 DROP TABLE IF EXISTS `lep_mod_news_groups`;
@@ -144,14 +143,6 @@ CREATE TABLE IF NOT EXISTS `lep_mod_form_submissions` (
   `submitted_by` int(11) NOT NULL DEFAULT '0',
   `body` text NOT NULL,
   PRIMARY KEY (`submission_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `lep_mod_initial_page` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL DEFAULT '1',
-  `init_page` text NOT NULL,
-  `page_param` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `lep_mod_menu_link` (
