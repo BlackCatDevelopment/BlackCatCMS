@@ -33,7 +33,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	    
 		// space before header items
 	    private $space = '    ';
-        private        $page_id         = NULL;
+        public         $page_id         = NULL;
 	    
 	    private static $properties      = array();
 	    
@@ -52,16 +52,26 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 	    private static $f_jquery = array();
 	    private static $f_js     = array();
 	    
+        // singleton
+        private static $instance        = NULL;
+
+        public static function getInstance()
+        {
+            if ( ! self::$instance ) { self::$instance = new self(); }
+            return self::$instance;
+        }
+
 	    /**
-         *
-         *
-         *
-         *
+         * identify the page to show
+         *   @access public
+         *   @param  boolean  $no_intro
+         *   @param  integer  $page_id
+         *   @return boolean
          **/
         public function getPage($no_intro,$page_id)
         {
-    		global $database;
-            $sql_where = NULL;
+    		global $database, $wb;
+            $wb->sql_where_language = NULL;
     		// We have no page id and are supposed to show the intro page
     		if((INTRO_PAGE AND !isset($no_intro)) AND (!isset($page_id) OR !is_numeric($page_id))) {
     			// Get intro page content
@@ -78,10 +88,11 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
     		}
     		// Check if we should add page language sql code
     		if(PAGE_LANGUAGES) {
-    			$sql_where = " AND language = '".LANGUAGE."'";
+                // needed for SM2, for example
+			    $wb->sql_where_language = ' AND `language`=\''.LANGUAGE.'\'';
     		}
     		if(!isset($page_id) OR !is_numeric($page_id)){
-                $this->page_id=$this->get_helper('Pages')->getDefaultPage($sql_where);
+                $this->page_id=$this->get_helper('Pages')->getDefaultPage($wb->sql_where_language);
     		} else {
     			$this->page_id=$page_id;
     		}
@@ -89,10 +100,10 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
         }   // end function getPage()
 
         /**
-         *
-         *
-         *
-         *
+         * determine default page
+         *   @access public
+         *   @param  string  $where_lang
+         *   @return void
          **/
         public function getDefaultPage($where_lang)
         {
@@ -140,11 +151,13 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
 				$wb->print_under_construction();
 				exit();
 			}
-echo "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
-print_r( $this );
-echo "</textarea>";
         }   // end function getDefaultPage()
 
+        /**
+         * load the page details
+         *   @access public
+         *   @return void
+         **/
         public function getPageDetails()
         {
       		global $database, $wb;
@@ -159,15 +172,6 @@ echo "</textarea>";
     			}
     			// Fetch page details
     			$this->page = $get_page->fetchRow( MYSQL_ASSOC );
-    			// Check if the page language is also the selected language. If not, send headers again.
-    			if ($this->page['language']!=LANGUAGE) {
-    				if(isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != '') { // check if there is an query-string
-    					header('Location: '.$this->getLink($this->page['link']).'?'.$_SERVER['QUERY_STRING'].'&lang='.$this->page['language']);
-    				} else {
-    					header('Location: '.$this->getLink($this->page['link']).'?lang='.$this->page['language']);
-    				}
-    				exit();
-    			}
     			if(!defined('PAGE_ID'))     {define('PAGE_ID'    , $this->page['page_id']);    }
     			if(!defined('PAGE_TITLE'))  {define('PAGE_TITLE' , $this->page['page_title']); }
     			if(!defined('PARENT'))      {define('PARENT'     , $this->page['parent']);     }
@@ -198,6 +202,10 @@ echo "</textarea>";
     			// Page link
     			$this->link=$wb->page_link($this->page['link']);
     		}
+            else
+            {
+                $this->print_error('Missing page_id!');
+            }
 
     		// Figure out what template to use
     		if(!defined('TEMPLATE')) {
@@ -236,6 +244,144 @@ echo "</textarea>";
     		if($this->page && $wb->page_is_active($this->page) == false) {
     			$this->page_no_active_sections=true;
     		}
+        }   // end function getPageDetails()
+
+        /**
+         * get page sections for given block
+         *   @access public
+         *   @param  integer $block
+         *   @return void (direct print to STDOUT)
+         **/
+        public function getPageContent($block=1)
+        {
+            // Get outside objects
+            global $TEXT, $MENU, $HEADING, $MESSAGE;
+            global $logger;
+            global $globals;
+            global $database;
+            global $wb;
+            global $sec_h;
+            $admin =& $wb;
+
+    		$logger->logDebug( sprintf( 'getting content for block [%s]', $block ) );
+
+            if ( $wb->page_access_denied == true )
+            {
+                $logger->logDebug( 'Access denied' );
+                echo $MESSAGE[ 'FRONTEND_SORRY_NO_VIEWING_PERMISSIONS' ];
+                return;
+            }
+            if ( $sec_h->has_active_sections($this->page_id) === false )
+            {
+                $logger->logDebug( 'no active sections found' );
+                echo $MESSAGE[ 'FRONTEND_SORRY_NO_ACTIVE_SECTIONS' ];
+                return;
+            }
+
+            if ( isset( $globals ) and is_array( $globals ) )
+            {
+                $logger->logDebug( 'setting globals', $globals );
+                foreach ( $globals as $global_name )
+                {
+                    global $$global_name;
+                }
+            }
+            // Make sure block is numeric
+            if ( !is_numeric( $block ) )
+            {
+                $block = 1;
+            }
+            // Include page content
+            if ( !defined( 'PAGE_CONTENT' ) or $block != 1 )
+            {
+                $page_id               = intval( $wb->page_id );
+                // set session variable to save page_id only if PAGE_CONTENT is empty
+                $_SESSION[ 'PAGE_ID' ] = !isset( $_SESSION[ 'PAGE_ID' ] ) ? $page_id : $_SESSION[ 'PAGE_ID' ];
+                // set to new value if page_id changed and not 0
+                if ( ( $page_id != 0 ) && ( $_SESSION[ 'PAGE_ID' ] <> $page_id ) )
+                {
+                    $_SESSION[ 'PAGE_ID' ] = $page_id;
+                }
+                // get sections
+                $sections = $sec_h->get_active_sections( PAGE_ID, $block );
+                // no active sections found, so...
+                if ( !is_array( $sections ) || !count( $sections ) )
+                {
+                    $logger->logDebug( 'no active sections found' );
+                    // ...do we have default block content?
+                    if ( $wb->default_block_content == 'none' )
+                    {
+                        $logger->logDebug( 'no default content found' );
+                        return;
+                    }
+                    if ( is_numeric( $wb->default_block_content ) )
+                    {
+                        $logger->logDebug( 'getting default content from default block' );
+                        // set page id to default block and get sections
+                        $page_id  = $wb->default_block_content;
+                        $sections = $sec_h->get_active_sections( $page_id, $block );
+                    }
+                    else
+                    {
+                        $logger->logDebug( 'getting default content from default page' );
+                        // set page id to default page and get sections
+                        $page_id  = $wb->default_page_id;
+                        $sections = $sec_h->get_active_sections( $page_id, $block );
+                    }
+                    // still no sections?
+                    if ( !is_array( $sections ) || !count( $sections ) )
+                    {
+                        $logger->logDebug( 'still no sections, return undef' );
+                        return;
+                    }
+                }
+                // Loop through them and include their module file
+                foreach ( $sections as $section )
+                {
+                    $logger->logDebug( 'sections for this block', $sections );
+                    $section_id = $section[ 'section_id' ];
+                    $module     = $section[ 'module' ];
+                    // make a anchor for every section.
+                    if ( defined( 'SEC_ANCHOR' ) && SEC_ANCHOR != '' )
+                    {
+                        echo '<a class="section_anchor" id="' . SEC_ANCHOR . $section_id . '"></a>';
+                    }
+                    // check if module exists - feature: write in errorlog
+                    if ( file_exists( LEPTON_PATH . '/modules/' . $module . '/view.php' ) )
+                    {
+                        // fetch content -- this is where to place possible output-filters (before highlighting)
+                        // fetch original content
+                        ob_start();
+                        require( LEPTON_PATH . '/modules/' . $module . '/view.php' );
+                        $content = ob_get_contents();
+                        ob_end_clean();
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    // highlights searchresults
+                    if ( isset( $_GET[ 'searchresult' ] ) && is_numeric( $_GET[ 'searchresult' ] ) && !isset( $_GET[ 'nohighlight' ] ) && isset( $_GET[ 'sstring' ] ) && !empty( $_GET[ 'sstring' ] ) )
+                    {
+                        $arr_string = explode( " ", $_GET[ 'sstring' ] );
+                        if ( $_GET[ 'searchresult' ] == 2 )
+                        {
+                            // exact match
+                            $arr_string[ 0 ] = str_replace( "_", " ", $arr_string[ 0 ] );
+                        }
+                        echo search_highlight( $content, $arr_string );
+                    }
+                    else
+                    {
+                        echo $content;
+                    }
+                }
+            }
+            else
+            {
+                require( PAGE_CONTENT );
+            }
         }
 
         public function getLink($link)
@@ -685,7 +831,8 @@ $this->_load_headers_inc( $this->sanitizePath( LEPTON_PATH.'/modules/clock_widge
                 $items = array();
                 while( ( $row = $results->fetchRow( MYSQL_ASSOC ) ) !== false )
                 {
-                    $row['href'] = $wb->page_link($row['link']);
+                    $row['href'] = $wb->page_link($row['link'])
+                                 . ( ($row['lang']!='') ? '?lang='.$row['lang'] : NULL );
                     $items[] = $row;
                 }
                 return $items;
@@ -702,7 +849,7 @@ $this->_load_headers_inc( $this->sanitizePath( LEPTON_PATH.'/modules/clock_widge
             $sql .= '(' . $now . ' > `publ_start` AND `publ_end`=0) ';
             $sql .= 'AND `page_id`=' . (int)$page['page_id'];
             return($database->get_one($sql) != false);
-        }
+        }   // end function isActive()
 
         /**
          * Check whether a page is visible or not.
