@@ -1266,9 +1266,9 @@ $this->_load_headers_inc( $this->sanitizePath( LEPTON_PATH.'/modules/clock_widge
 	        {
 	        	foreach( LEPTON_Pages::$js_search_path as $directory )
 				{
-					$file = $this->sanitizePath( $directory.'/backend.js' );
+					$file = $this->sanitizePath( $directory.'/'.$for.'.js' );
 					if ( file_exists(LEPTON_PATH.'/'.$file) ) {
-						LEPTON_Pages::$js = '<script type="text/javascript" src="'
+						LEPTON_Pages::$js[] = '<script type="text/javascript" src="'
 										  . sanitize_url( LEPTON_URL.$file )
 										  . '"></script>' . "\n";
 					}
