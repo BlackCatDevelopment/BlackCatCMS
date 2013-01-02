@@ -48,6 +48,9 @@ require_once(LEPTON_PATH . "/framework/class.wbmailer.php");
 // new internationalization helper class
 include LEPTON_PATH.'/framework/LEPTON/Helper/I18n.php';
 
+// new pages class
+include LEPTON_PATH.'/framework/LEPTON/Pages.php';
+
 class wb extends SecureCMS
 {
     public  $password_chars      = 'a-zA-Z0-9\_\-\!\#\*\+';
@@ -55,6 +58,16 @@ class wb extends SecureCMS
     private $_handles            = NULL;
     public  $lang                = NULL;
     private static $pg           = NULL;
+    private static $depre_func   = array(
+        'bind_jquery' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers()</a>',
+        'register_backend_modfiles' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers("backend", true, "$section_name")</a>',
+        'register_backend_modfiles_body' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_footers()">get_page_footers("backend")</a>',
+        'register_frontend_modfiles' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers()</a>',
+        'register_frontend_modfiles_body' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_footers()">get_page_footers()</a>',
+        'page_menu()' => 'show_menu2()',
+        'show_menu()' => 'show_menu2()',
+        'show_breadcrumbs()' => 'show_menu2()',
+    );
 
     // General initialization public function
     // performed when frontend or backend is loaded.
@@ -70,7 +83,51 @@ class wb extends SecureCMS
 		    $this->lang->addFile( LANGUAGE.'.php', NULL, $var );
 		}
         self::$pg = new LEPTON_Pages();
+        set_error_handler( array('wb','lepton_error_handler') );
+    }   // end constructor
+
+    public function __call($name, $arguments)
+    {
+        if (array_key_exists($name,self::$depre_func))
+        {
+            trigger_error('Method ## '.$name.'() ## is deprecated, use ## '.self::$depre_func[$name].' ## instead!',E_USER_ERROR);
+        }
+        else
+        {
+            trigger_error('Unknown method '.$name, E_USER_ERROR);
+        }
+    }   // end function __call()
+
+    public static function lepton_error_handler($errno,$errstr,$errfile=NULL,$errline=NULL,array $errcontext)
+    {
+        if (!(error_reporting() & $errno))
+        {
+            return;
+        }
+        switch ($errno)
+        {
+            case E_USER_ERROR:
+                echo "<b>LEPTON ERROR</b> [$errno] $errstr<br />\n";
+                echo "  Fatal error on line $errline in file $errfile";
+                echo ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
+                echo "Aborting...<br />\n";
+                exit(1);
+                break;
+
+            case E_USER_WARNING:
+                echo "<b>LEPTON WARNING</b> [$errno] $errstr<br />\n";
+                break;
+
+            case E_USER_NOTICE:
+                echo "<b>LEPTON NOTICE</b> [$errno] $errstr<br />\n";
+                break;
+
+            default:
+                echo "Unknown error type: [$errno] $errstr<br />\n";
+                break;
     }
+        return true;
+    }   // end error handler
 
     public function section_is_active($section_id)
     {
