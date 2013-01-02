@@ -513,38 +513,4 @@ function language_menu()
     }
 }
 
-function bind_jquery( $file_id = 'jquery' )
-{
-    /**
-     * @deprecated bind_jquery() is deprecated and will be removed in LEPTON 1.3
-     */
-    trigger_error( 'The function bind_jquery() is deprecated and will be removed in LEPTON 1.3. Please use the function get_page_headers() instead!', E_USER_NOTICE );
-}
-
-// Function to add optional module Javascript into the <body> section of the frontend
-if ( !function_exists( 'register_frontend_modfiles_body' ) )
-{
-    function register_frontend_modfiles_body( $file_id = "js" )
-    {
-        /**
-         * @deprecated register_frontend_modfiles_body() is deprecated and will be removed in LEPTON 1.3
-         */
-        trigger_error( 'The function register_frontend_modfiles_body() is deprecated and will be removed in LEPTON 1.3. Please use the function get_page_footers() instead!', E_USER_NOTICE );
-    }
-}
-
-// Function to add optional module Javascript or CSS stylesheets into the <head> section of the frontend;
-// kept for backward compatibility
-if ( !function_exists( 'register_frontend_modfiles' ) )
-{
-    function register_frontend_modfiles( $file_id = "css" )
-    {
-        /**
-         * @deprecated register_frontend_modfiles() is deprecated and will be removed in LEPTON 1.3
-         */
-        trigger_error( 'The function register_frontend_modfiles() is deprecated and will be removed in LEPTON 1.3. Please use the function get_page_headers() instead!', E_USER_NOTICE );
-        get_page_headers();
-        return;
-    }
-}
 ?>
