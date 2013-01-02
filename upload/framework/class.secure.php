@@ -48,112 +48,6 @@ if ( !defined( 'LEPTON_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
     $db                    = new database();
     $direct_access_allowed = array();
 
-<<<<<<< HEAD
-			// phplib
-			$admin_dir.'/pages/move_down.php',
-			$admin_dir.'/pages/move_up.php',
-			//////////////////////////////////////////
-
-			// Dwoo
-			$admin_dir.'/pages/ajax_add_page.php',
-			$admin_dir.'/pages/ajax_delete_page.php',
-			$admin_dir.'/pages/ajax_get_dropdown.php',
-			$admin_dir.'/pages/ajax_page_settings.php',
-			$admin_dir.'/pages/ajax_reorder.php',
-			$admin_dir.'/pages/ajax_restore_page.php',
-			$admin_dir.'/pages/ajax_sections_save.php',
-			$admin_dir.'/pages/ajax_settings_save.php',
-			//////////////////////////////////////////
-
-			$admin_dir.'/pages/intro.php',
-
-			// phplib
-			$admin_dir.'/pages/intro2.php',
-			//////////////////////////////////////////
-
-			// Dwoo
-			$admin_dir.'/pages/intro_save.php',
-			//////////////////////////////////////////
-
-			$admin_dir.'/pages/modify.php',
-			$admin_dir.'/pages/restore.php',
-			$admin_dir.'/pages/save.php',
-
-			// Dwoo
-			$admin_dir.'/pages/sections_save.php',
-			//////////////////////////////////////////
-
-			// phplib
-			$admin_dir.'/pages/sections.php',
-			//////////////////////////////////////////
-
-			// Dwoo
-			$admin_dir.'/pages/settings_save.php',
-			$admin_dir.'/pages/lang_settings.php',
-			$admin_dir.'/pages/lang_settings_save.php',
-			//////////////////////////////////////////
-
-			$admin_dir.'/pages/trash.php',
-			$admin_dir.'/preferences/save.php',
-			$admin_dir.'/profiles/index.php',
-			$admin_dir.'/settings/ajax_testmail.php',
-			$admin_dir.'/settings/index.php',
-			$admin_dir.'/settings/save.php',
-			$admin_dir.'/start/index.php',
-
-			$admin_dir.'/users/ajax_delete_user.php',
-			$admin_dir.'/users/ajax_get_user.php',
-			$admin_dir.'/users/ajax_save_user.php',
-			$admin_dir.'/users/index.php',
-
-			'/account/forgot.php',
-			'/account/login.php',
-			'/account/logout.php',
-			'/account/preferences.php',
-			'/account/signup.php',
-			'/include/captcha/captchas/calc_image.php',
-			'/include/captcha/captchas/calc_ttf_image.php',
-			'/include/captcha/captchas/old_image.php',
-			'/include/captcha/captchas/ttf_image.php',
-			'/include/captcha/captcha.php',
-			'/modules/edit_modules_files.php',
-			'/modules/edit_module_files.php',
-			'/modules/code2/save.php',
-			'/modules/news/add_group.php',
-			'/modules/news/modify_group.php',
-			'/modules/news/save_group.php',
-			'/modules/news/save_settings.php',
-			'/modules/news/delete_group.php',
-			'/modules/news/modify_post.php',
-			'/modules/news/move_up.php',
-			'/modules/news/move_down.php',
-			'/modules/news/save_post.php',
-			'/modules/news/delete_post.php',
-			'/modules/news/comment.php',
-			'/modules/news/submit_comment.php',
-			'/modules/news/modify_comment.php',
-			'/modules/news/save_comment.php',
-			'/modules/news/delete_comment.php',
-			'/modules/news/add_post.php',
-			'/modules/news/modify_settings.php',
-			'/modules/news/rss.php',
-			'/modules/wysiwyg/save.php',
-			'/modules/form/modify_settings.php',
-			'/modules/form/save_settings.php',
-			'/modules/form/modify_field.php',
-			'/modules/form/move_up.php',
-			'/modules/form/move_down.php',
-			'/modules/form/save_field.php',
-			'/modules/form/add_field.php',
-			'/modules/form/delete_field.php',
-			'/modules/form/delete_submission.php',
-			'/modules/form/view_submission.php',
-			'/modules/menu_link/save.php',
-			'/modules/wrapper/save.php',
-			'/modules/jsadmin/move_to.php',
-			'/search/index.php'
-		);
-=======
 	// some core files must be allowed to load the config.php by themself!
     $q = $db->query('SELECT * FROM '.TABLE_PREFIX.'class_secure');
     if( $q->numRows()>0 )
@@ -163,7 +57,6 @@ if ( !defined( 'LEPTON_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
             $direct_access_allowed[] = $row['filepath'];
         }
     }
->>>>>>> 55346be886e1fbc76637dc31c14dc302bb7b8a02
 
 		$allowed = false;
 	foreach ( $direct_access_allowed as $allowed_file )
