@@ -77,6 +77,11 @@ if ( ! class_exists( 'LEPTON_Helper_Zip', false ) )
 		    $this->zip = new PclZip($zipfile);
 		    return $this->zip;
 		}   // end function __construct()
+
+        public function add($p_filelist)
+        {
+            return $this->zip->add($p_filelist);
+        }
 		
 		/**
 		 * accessor to create() method; only argument is the file list (or a
