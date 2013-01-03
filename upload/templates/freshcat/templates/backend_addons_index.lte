@@ -49,8 +49,8 @@
 			<hr/>
 			<h3>{translate('Addon permissions')}</h3>
 			<p>
-				{translate('You can set permissions for each group to use this addon.')}<br/>
-				{translate('You can customize permissions later on group administration.')}<br/>
+				{translate('You can set permissions for each group to use this addon.')}<br />
+				{translate('You can customize permissions later on group administration.')}<br />
 				{translate('If you upgrade a module, those settings will have no effect on current permissions.')}
 			</p>
 			<button class="fc_gradient1 fc_gradient_hover" id="fc_mark_all">
