@@ -30,6 +30,7 @@ if ( ! class_exists( 'LEPTON_Helper_Directory', false ) ) {
 if ( ! class_exists( 'LEPTON_Helper_I18n', false ) ) {
 	class LEPTON_Helper_I18n extends LEPTON_Object
 	{
+        protected      $debugLevel    = 8; // 8 = OFF
 	    // default language
 	    protected      $_config       = array( 'defaultlang' => 'EN', 'langPath' => '/languages' );
 	    // array to store language strings
