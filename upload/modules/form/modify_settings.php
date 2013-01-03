@@ -86,7 +86,7 @@ if(function_exists('edit_module_css')) {
 
 <table class="row_a" cellpadding="2" cellspacing="0" border="0" width="100%">
 	<tr>
-		<td colspan="2"><strong><?php echo $HEADING['GENERAL_SETTINGS']; ?></strong></td>
+		<td colspan="2"><strong><?php echo $admin->lang->translate('General Settings'); ?></strong></td>
 	</tr>
 	<tr>
 		<td class="setting_name"><?php echo $TEXT['CAPTCHA_VERIFICATION']; ?>:</td>

@@ -60,6 +60,7 @@ $LANG = array(
     'Page' => 'Seite',
     'Pages' => 'Seiten',
     'Add page' => 'Seite hinzufügen',
+    'Add Group' => 'Gruppe hinzuf&uuml;gen',
     'Add' => 'Anlegen',
     'Back' => 'Zurück',
     'Search' => 'Suche',
@@ -69,7 +70,10 @@ $LANG = array(
     'Save' => 'Speichern',
     'Reset' => 'Zurücksetzen',
     'Save & Close' => 'Speichern & Schließen',
+    'General Settings' => 'Allgemeine Optionen',
     // ----- page -----
+    'Add Page' => 'Seite hinzuf&uuml;gen',
+    'Add child page' => 'Unterseite hinzuf&uuml;gen',
     'Quick changes' => 'Expresseinstellungen',
     'Page settings' => 'Seiteneinstellungen',
     'Delete page' => 'Seite löschen',
@@ -122,6 +126,8 @@ $LANG = array(
     'No pages available' => 'Keine Seiten vorhanden',
     'No more languages available' => 'Keine weiteren Sprachen verfügbar',
     'There is already a page for this language!' => 'Für diese Sprache ist bereits eine Seite vorhanden!',
+    'Sorry, no active content to display' => 'Kein aktiver Inhalt auf dieser Seite vorhanden',#
+    'Sorry, you do not have permissions to view this page' => 'Sie sind nicht berechtigt, diese Seite zu sehen',
 
     // ----- media -----
     'Media' => 'Medien',
@@ -185,6 +191,8 @@ $LANG = array(
     'Allowed wrong login attempts' => 'Maximale fehlerhafte Anmeldeversuche',
     'When reaching this number, more login attempts are not possible for this session.'
         => 'Nach Erreichen dieser Anzahl sind keine weiteren Anmeldeversuche mehr möglich.',
+    // ----- addons -----
+    'Add-On requirements not met' => 'Add-On Voraussetzungen nicht erf&uuml;llt',
 );
 
 
@@ -600,22 +608,7 @@ $TEXT = array(
 );
 
 $HEADING = array(
-	'ADDON_PRECHECK_FAILED' => 'Add-On Voraussetzungen nicht erf&uuml;llt',
-	'ADD_CHILD_PAGE' 		=> 'Unterseite hinzuf&uuml;gen',
-	'ADD_GROUP' 			=> 'Gruppe hinzuf&uuml;gen',
-	'ADD_GROUPS' 			=> 'Gruppen hinzuf&uuml;gen',
-	'ADD_HEADING' 			=> 'Kopf hinzuf&uuml;gen',
-	'ADD_PAGE' 				=> 'Seite hinzuf&uuml;gen',
-	'ADD_USER' 				=> 'Benutzer hinzuf&uuml;gen',
-	'ADMINISTRATION_TOOLS' 	=> 'Verwaltungsprogramme',
-	'BACKEND_SETTINGS'		=> 'Backend Einstellungen',
-	'BROWSE_MEDIA' 			=> 'Medien durchsuchen',
-	'CREATE_FOLDER' 		=> 'Ordner erstellen',
-	'DEFAULT_SETTINGS' 		=> 'Standardeinstellungen',
-	'DELETED_PAGES' 		=> 'gel&ouml;schte Seiten',
-	'FILESYSTEM_SETTINGS' 	=> 'Dateisystemoptionen',
 	'FRONTEND_SETTINGS' 	=> 'Frontend Einstellungen',
-	'GENERAL_SETTINGS' 		=> 'Allgemeine Optionen',
 	'INSTALL_LANGUAGE' 		=> 'Sprache hinzuf&uuml;gen',
 	'INSTALL_MODULE' 		=> 'Modul installieren',
 	'INSTALL_TEMPLATE' 		=> 'Designvorlage installieren',
@@ -623,8 +616,6 @@ $HEADING = array(
 	'LANGUAGE_DETAILS' 		=> 'Details zur Sprache',
 	'LANGUAGE_TIME_SETTINGS' => 'Sprache und Datum/Zeit',
 	'MANAGE_SECTIONS' 		=> 'Abschnitte verwalten',
-	'MEDIA_OPTIONS'			=> 'Optionen',
-	'MEDIA_UPLOAD'			=> 'Hochladen',
 	'MODIFY_ADVANCED_PAGE_SETTINGS' => 'Erweiterte Seitenoptionen &auml;ndern',
 	'MODIFY_DELETE_GROUP' 	=> '&Auml;ndern/L&ouml;schen von Gruppen',
 	'MODIFY_DELETE_PAGE' 	=> 'Seite &auml;ndern/Seite l&ouml;schen',
@@ -676,8 +667,6 @@ $MESSAGE = array(
 	'FORGOT_PASS_EMAIL_NOT_FOUND' => 'Die angegebene E-Mail Adresse wurde nicht in der Datenbank gefunden',
 	'FORGOT_PASS_NO_DATA' 		=> 'Bitte geben Sie nachfolgend Ihre E-Mail Adresse an',
 	'FORGOT_PASS_PASSWORD_RESET' => 'Ihr Benutzername und Ihr Passwort wurden an Ihre E-Mail Adresse gesendet',
-	'FRONTEND_SORRY_NO_ACTIVE_SECTIONS' => 'Kein aktiver Inhalt auf dieser Seite vorhanden',
-	'FRONTEND_SORRY_NO_VIEWING_PERMISSIONS' => 'Sie sind nicht berechtigt, diese Seite zu sehen',
 	'GENERIC_ALREADY_INSTALLED' => 'Bereits installiert.',
 	'GENERIC_BAD_PERMISSIONS' 	=> 'Kann im Zielverzeichnis nicht schreiben.',
 	'GENERIC_CANNOT_UNINSTALL'							=> 'Deinstallation fehlgeschlagen.',

@@ -5,7 +5,7 @@
 <div id="fc_footer" class="fc_gradient1 fc_border">
 	{if $permissions.pages}
 	<div id="fc_sidebar_footer">
-		<span class="icon-plus fc_gradient1 fc_gradient_hover fc_side_add" title="{$HEADING.ADD_PAGE}"></span>
+		<span class="icon-plus fc_gradient1 fc_gradient_hover fc_side_add" title="{translate('Add Page')}"></span>
 	</div>
 	{/if}
 	<div id="fc_content_footer" {if !$permissions.pages} class="fc_no_sidebar"{/if}>
