@@ -80,7 +80,20 @@ if ( ! class_exists( 'LEPTON_Helper_Zip', false ) )
 
         public function add($p_filelist)
         {
-            return $this->zip->add($p_filelist);
+            // generate function call
+			$ret     = NULL;
+
+			if ( is_scalar($p_filelist) )
+			{
+			    $p_filelist = $this->dirh->sanitizePath($p_filelist);
+			}
+
+			$code = '$ret = $this->zip->add( $p_filelist'
+			   . $this->compile_options()
+			   . ' );';
+
+			eval ( $code );
+			return $ret;
         }
 		
 		/**
@@ -101,37 +114,15 @@ if ( ! class_exists( 'LEPTON_Helper_Zip', false ) )
 		public function create($p_filelist)
 		{
 		    // generate function call
-			$options = array();
 			$ret     = NULL;
 
-			if ( isset($this->_config['addPath']) && $this->_config['addPath'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_ADD_PATH, "'.$this->dirh->sanitizePath($this->_config['addPath']).'"';
-			}
-			if ( isset($this->_config['removePath']) && $this->_config['removePath'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_REMOVE_PATH, "'.$this->dirh->sanitizePath($this->_config['removePath']).'"';
-			}
-			if ( isset($this->_config['setComment']) && $this->_config['setComment'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_COMMENT, "'.$this->_config['setComment'] . '"';
-			}
-			if ( isset($this->_config['removeAllPath']) && $this->_config['removeAllPath'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_REMOVE_ALL_PATH';
-			}
-			
 			if ( is_scalar($p_filelist) )
 			{
 			    $p_filelist = $this->dirh->sanitizePath($p_filelist);
 			}
 			
 			$code = '$ret = $this->zip->create( $p_filelist'
-			   . (
-			   		( is_array($options) && count($options) )
-				  ? ', ' . implode( ', ', $options )
-				  : ''
-				 )
+			   . $this->compile_options()
 			   . ' );';
 
 			eval ( $code );
@@ -194,6 +185,32 @@ if ( ! class_exists( 'LEPTON_Helper_Zip', false ) )
   		{
   		    return $this->zip->errorInfo();
   		}
+
+        private function compile_options()
+        {
+            $options = array();
+            if ( isset($this->_config['addPath']) && $this->_config['addPath'] != '' )
+			{
+			    $options[] = 'PCLZIP_OPT_ADD_PATH, "'.$this->dirh->sanitizePath($this->_config['addPath']).'"';
+			}
+			if ( isset($this->_config['removePath']) && $this->_config['removePath'] != '' )
+			{
+			    $options[] = 'PCLZIP_OPT_REMOVE_PATH, "'.$this->dirh->sanitizePath($this->_config['removePath']).'"';
+			}
+			if ( isset($this->_config['setComment']) && $this->_config['setComment'] != '' )
+			{
+			    $options[] = 'PCLZIP_OPT_COMMENT, "'.$this->_config['setComment'] . '"';
+			}
+			if ( isset($this->_config['removeAllPath']) && $this->_config['removeAllPath'] != '' )
+			{
+			    $options[] = 'PCLZIP_OPT_REMOVE_ALL_PATH';
+			}
+            return (
+			      ( is_array($options) && count($options) )
+			    ? ', ' . implode( ', ', $options )
+				: ''
+			 );
+        }
 
 	}   // end class
 
