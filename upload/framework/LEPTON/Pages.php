@@ -256,11 +256,7 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
         {
             // Get outside objects
             global $TEXT, $MENU, $HEADING, $MESSAGE;
-            global $logger;
-            global $globals;
-            global $database;
-            global $wb;
-            global $sec_h;
+            global $logger, $globals, $database, $wb, $sec_h, $parser;
             $admin =& $wb;
 
     		$logger->logDebug( sprintf( 'getting content for block [%s]', $block ) );
@@ -268,13 +264,13 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
             if ( $wb->page_access_denied == true )
             {
                 $logger->logDebug( 'Access denied' );
-                echo $MESSAGE[ 'FRONTEND_SORRY_NO_VIEWING_PERMISSIONS' ];
+                echo $wb->lang->translate('Sorry, you do not have permissions to view this page');
                 return;
             }
             if ( $sec_h->has_active_sections($this->page_id) === false )
             {
                 $logger->logDebug( 'no active sections found' );
-                echo $MESSAGE[ 'FRONTEND_SORRY_NO_ACTIVE_SECTIONS' ];
+                echo $wb->lang->translate('Sorry, no active content to display');
                 return;
             }
 
@@ -349,6 +345,18 @@ if ( ! class_exists( 'LEPTON_Pages', false ) ) {
                     // check if module exists - feature: write in errorlog
                     if ( file_exists( LEPTON_PATH . '/modules/' . $module . '/view.php' ) )
                     {
+                        // load language file (if any)
+                        $wb->lang->addFile( LANGUAGE.'.php', sanitize_path(LEPTON_PATH.'/modules/'.$module.'/languages'));
+                        // set template path
+                        if(file_exists(sanitize_path(LEPTON_PATH.'/modules/'.$module.'/templates')))
+                            $parser->setPath(sanitize_path(LEPTON_PATH.'/modules/'.$module.'/templates'));
+                        if(file_exists(sanitize_path(LEPTON_PATH.'/modules/'.$module.'/templates/default')))
+                            $parser->setPath(sanitize_path(LEPTON_PATH.'/modules/'.$module.'/templates/default'));
+                        if(file_exists(sanitize_path(LEPTON_PATH.'/modules/'.$module.'/templates/'.DEFAULT_TEMPLATE)))
+                        {
+                            $parser->setFallbackPath(sanitize_path(LEPTON_PATH.'/modules/'.$module.'/templates/default'));
+                            $parser->setPath(sanitize_path(LEPTON_PATH.'/modules/'.$module.'/templates/'.DEFAULT_TEMPLATE));
+                        }
                         // fetch content -- this is where to place possible output-filters (before highlighting)
                         // fetch original content
                         ob_start();
