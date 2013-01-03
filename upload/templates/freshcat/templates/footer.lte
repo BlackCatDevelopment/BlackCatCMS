@@ -1,4 +1,3 @@
-	{$BACKEND_BODY_MODULE_JS}
 	{get_page_footers('backend')}
 	<div class="clear"></div>
 </div>

@@ -31,6 +31,7 @@
 @import url(calendar.css);
 @import url(users.css);
 @import url(admintools.css);
+@import url(grid.css);
 @import url(../../../modules/lib_jquery/jquery-ui/themes/base/jquery-ui.css);
 @import url(../../../modules/lib_jquery/plugins/tag-it/tag-it.css);
 
@@ -503,4 +504,17 @@ input[type=submit].fc_gradient_red:hover,
 }
 .fc_cell_four {
 	width:	25%
+}
+
+.fc_info {
+    background: transparent url(images/info.png) left center no-repeat;
+    padding-left: 50px;
+}
+ /**
+  * Tables
+  *
+  */
+.fc_table th {
+    text-align: left;
+    font-weight: bold;
 }
