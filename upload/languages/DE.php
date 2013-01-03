@@ -120,6 +120,7 @@ $LANG = array(
     'Map to language' => 'Zielsprache',
     'Map to page' => 'Zielseite',
     'No pages available' => 'Keine Seiten vorhanden',
+    'No more languages available' => 'Keine weiteren Sprachen verfügbar',
     'There is already a page for this language!' => 'Für diese Sprache ist bereits eine Seite vorhanden!',
 
     // ----- media -----
