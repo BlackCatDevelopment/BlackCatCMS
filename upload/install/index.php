@@ -709,7 +709,7 @@ function fill_tables($database,$lepton_guid) {
 		." ('intro_page', 'false'),"
 		." ('page_trash', 'inline'),"
 		." ('homepage_redirection', 'false'),"
-		." ('page_languages', 'false'),"
+		." ('page_languages', 'true'),"
 		." ('wysiwyg_editor', 'ckeditor'),"
 		." ('manage_sections', 'true'),"
 		." ('section_blocks', 'true'),"
@@ -769,7 +769,7 @@ function fill_tables($database,$lepton_guid) {
 	}
 
     // files that are allowed to include config.php
-    $secrows = "INSERT INTO `".TABLE_PREFIX."class_secure "
+    $secrows = "INSERT INTO `".TABLE_PREFIX."class_secure` "
         . "(`id`, `module`, `filepath`) VALUES "
         . "( '', 0, '/account/forgot.php' ),"
         . "( '', 0, '/account/login.php' ),"
@@ -1181,17 +1181,15 @@ function __do_install() {
 	$config_content = "" .
 "<?php\n".
 "\n".
-"if(defined('LEPTON_PATH')) { ".
+"if(defined('LEPTON_PATH')) {\n".
 "    die('By security reasons it is not permitted to load \'config.php\' twice!! ".
-"Forbidden call from \''.\$_SERVER['SCRIPT_NAME'].'\'!'); }\n\n".
+"Forbidden call from \''.\$_SERVER['SCRIPT_NAME'].'\'!');\n}\n\n".
 "// *****************************************************************************\n".
 "// please set the path names for the Lepton backend subfolders here; that is,\n".
-"// if you rename 'admins' to 'myadmin', for example, set 'LEPTON_ADMINS_PATH'\n".
+"// if you rename 'backend' to 'myadmin', for example, set 'LEPTON_BACKEND_FOLDER'\n".
 "// to 'myadmin'.\n".
 "// *****************************************************************************\n\n".
-"// path to old (deprecated) admins subfolder; default name is 'admins'\n".
-"define('LEPTON_ADMINS_FOLDER', 'admins');\n".
-"// path to new admins subfolder; default name is 'backend'\n".
+"// path to backend subfolder; default name is 'backend'\n".
 "define('LEPTON_BACKEND_FOLDER', 'backend');\n".
 "// do not touch this line! It is set by the options tab in the backend!\n".
 "define('LEPTON_BACKEND_PATH', LEPTON_BACKEND_FOLDER );\n".
