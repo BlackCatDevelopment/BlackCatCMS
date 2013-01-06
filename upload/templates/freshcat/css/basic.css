@@ -374,6 +374,9 @@ label {
 #fc_search_page_options li:hover,
 .fc_activeSearchOption,
 .fc_gradient1.fc_active,
+.fc_gradient2.fc_active,
+.fc_gradient3.fc_active,
+.fc_gradient4.fc_active,
 .fc_media_folder li.fc_active,
 .fc_media_folder li.fc_open_folder {
 	background-image:	-moz-linear-gradient(top, #5aa2da, #3f7bb3); /* FF3.6 */
@@ -389,7 +392,11 @@ label {
 	cursor:				pointer;
 }
 .fc_gradient_blue.fc_gradient_hover:hover,
-.fc_gradient1.fc_active:hover {
+.fc_gradient1.fc_active:hover,
+.fc_gradient1.fc_active:hover,
+.fc_gradient2.fc_active:hover,
+.fc_gradient3.fc_active:hover,
+.fc_gradient4.fc_active:hover {
 	background-image:	-moz-linear-gradient(top, #3f7bb3, #5aa2da); /* FF3.6 */
 	background-image:	-webkit-gradient(linear, left top, left bottom, color-stop(0, #3f7bb3), color-stop(1, #5aa2da)); /* Safari 4+, Chrome 2+ */
 	background-image:	-webkit-linear-gradient(top, #3f7bb3, #5aa2da); /* Safari 5.1+, Chrome 10+ */
