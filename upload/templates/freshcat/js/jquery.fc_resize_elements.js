@@ -42,11 +42,11 @@
 				// set some values
 				options.main_content.css(
 				{
-					maxHeight:	window_height - 133 + 'px'
+					maxHeight:	window_height - 131 + 'px'
 				});
 				options.media.css(
 				{
-					maxHeight:	window_height - 133 + 'px'
+					maxHeight:	window_height - 131 + 'px'
 				});
 				options.leftside.height(window_height - 80);
 				options.rightside.width(window_width - sidebar_width);
@@ -54,7 +54,7 @@
 
 				options.overview_list.css(
 				{
-					maxHeight:	window_height - 192 + 'px'
+					maxHeight:	window_height - 187 + 'px'
 				});
 				options.side_add.css(
 				{
