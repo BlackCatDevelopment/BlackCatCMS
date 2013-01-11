@@ -30,31 +30,33 @@ if (!class_exists('LEPTON_Pages', false))
 {
     class LEPTON_Pages extends LEPTON_Object
     {
-        protected $debugLevel = 8; // 8 = OFF
+        protected $debugLevel           = 8; // 8 = OFF
 
         // space before header items
-        private $space = '    ';
-        public $page_id = NULL;
+        private $space                  = '    ';
+        public $page_id                 = NULL;
 
-        private static $properties = array();
+        private static $properties      = array();
 
         // header components
-        private static $css = array();
-        private static $meta = array();
-        private static $js = array();
-        private static $jquery = array();
+        private static $css             = array();
+        private static $meta            = array();
+        private static $js              = array();
+        private static $jquery          = array();
+        private static $jquery_core     = false;
+        private static $jquery_ui_core  = false;
 
         // scan dirs
         private static $css_search_path = array();
-        private static $js_search_path = array();
+        private static $js_search_path  = array();
 
         // footer components
-        private static $script = array();
-        private static $f_jquery = array();
-        private static $f_js = array();
+        private static $script          = array();
+        private static $f_jquery        = array();
+        private static $f_js            = array();
 
         // singleton
-        private static $instance = NULL;
+        private static $instance        = NULL;
 
         public static function getInstance()
         {
@@ -1039,7 +1041,7 @@ if (!class_exists('LEPTON_Pages', false))
                         $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL . $item) . '"></script>';
                     }
                 }
-                
+
             }
             else
             {
@@ -1081,15 +1083,17 @@ if (!class_exists('LEPTON_Pages', false))
             }
 
             // core is always added to header
-            if (isset($arr['core']) && $arr['core'] === true)
+            if (!LEPTON_Pages::$jquery_core && isset($arr['core']) && $arr['core'] === true)
             {
                 LEPTON_Pages::$jquery[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL . '/modules/lib_jquery/jquery-core/jquery-core.min.js') . '"></script>' . "\n";
+                LEPTON_Pages::$jquery_core = true;
             }
 
             // ui is always added to header
-            if (isset($arr['ui']) && $arr['ui'] === true)
+            if (!LEPTON_Pages::$jquery_ui_core && isset($arr['ui']) && $arr['ui'] === true)
             {
                 LEPTON_Pages::$jquery[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL . '/modules/lib_jquery/jquery-ui/ui/jquery.ui.core.min.js') . '"></script>' . "\n";
+                LEPTON_Pages::$jquery_ui_core = true;
             }
 
             if (isset($arr['ui-effects']) && is_array($arr['ui-effects']))
