@@ -13,7 +13,8 @@
  * @link            http://www.lepton2.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
- *
+ * @category        LEPTON_Core
+ * @package         LEPTON_Core
  *
  */
 
@@ -413,8 +414,8 @@ function preCheckAddon($temp_addon_file, $temp_path = NULL, $delete_on_fail = tr
 
     // output summary table with requirements not fullfilled
     echo <<< EOT
-	<h2>{$HEADING['ADDON_PRECHECK_FAILED']}</h2>
-	<p>{$MESSAGE['ADDON_PRECHECK_FAILED']}</p>
+	<h2>{translate('Add-On requirements not met')}</h2>
+	<p>{translate('Add-On requirements not met')}</p>
 
 	<table width="700px" cellpadding="4" border="0" style="margin: 0.5em; border-collapse: collapse; border: 1px solid silver;">
 	<tr>
