@@ -242,16 +242,6 @@ CREATE TABLE IF NOT EXISTS `lep_mod_wysiwyg` (
   PRIMARY KEY (`section_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_wysiwyg_admin` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `skin` varchar(255) NOT NULL DEFAULT 'cirkuit',
-  `menu` varchar(255) NOT NULL DEFAULT 'Smart',
-  `width` varchar(64) NOT NULL DEFAULT '100%',
-  `height` varchar(64) NOT NULL DEFAULT '250px',
-  `editor` varchar(255) NOT NULL DEFAULT 'tiny_mce_jq',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE IF NOT EXISTS `lep_pages` (
   `page_id` int(11) NOT NULL AUTO_INCREMENT,
   `parent` int(11) NOT NULL DEFAULT '0',
@@ -364,6 +354,15 @@ CREATE TABLE IF NOT EXISTS `lep_class_secure` (
 )
 COLLATE='utf8_general_ci' ENGINE=InnoDB;
 
+CREATE TABLE `lep_mod_wysiwyg_admin` (
+	`editor` VARCHAR(50) NOT NULL,
+	`set_name` VARCHAR(50) NOT NULL,
+	`set_value` VARCHAR(50) NOT NULL,
+	UNIQUE INDEX `editor_set_name_set_value` (`editor`, `set_name`, `set_value`)
+)
+COMMENT='WYSIWYG Admin for LEPTON v2.0 Black Cat Edition'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
 
 /*!40014 SET FOREIGN_KEY_CHECKS=1 */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
