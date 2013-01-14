@@ -857,10 +857,12 @@ if (!class_exists('LEPTON_Helper_Addons'))
                 return false;
             }
             $row = $q->fetchRow();
-            $q   = $database->query('SELECT * FROM ' . TABLE_PREFIX . 'class_secure WHERE module="' . $row['addon_id'] . '" AND filepath="' . $filepath . '"');
+            // remove trailing / from $filepath
+            $filepath = preg_replace( '~^/~', '', $filepath );
+            $q   = $database->query('SELECT * FROM ' . TABLE_PREFIX . 'class_secure WHERE module="' . $row['addon_id'] . '" AND filepath="/modules/' . $module . '/' . $filepath . '"');
             if (!$q->numRows())
             {
-                $database->query('INSERT INTO ' . TABLE_PREFIX . 'class_secure VALUES ( "", "' . $row['addon_id'] . '", "/modules/' . $module . '/' . $filepath . '" )');
+                $database->query('REPLACE INTO ' . TABLE_PREFIX . 'class_secure VALUES ( "' . $row['addon_id'] . '", "/modules/' . $module . '/' . $filepath . '" )');
             }
         } // end function sec_register_file()
 
