@@ -1,0 +1,64 @@
+/**
+ *
+ * @module          initial_page
+ * @author          Ralf Hertsch, Dietrich Roland Pehlke 
+ * @copyright       2010-2011, Ralf Hertsch, Dietrich Roland Pehlke
+ * @link            http://www.LEPTON-cms.org
+ * @license         copyright, all rights reserved
+ * @license_terms   please see info.php of this module
+ *
+ *
+ */
+
+
+
+Please note: This change log may not be accurate
+
+================================================================================
+Legend:
++ = Added
+- = Removed
+# = Bugfix
+! = Update/Change
+
+-------------------------- LEPTON 2 Black Cat Edition --------------------------
+2013-01-14  LEPTON 2 BC Development
+            ! Adapted for LEPTON 2 (no admin subfolder anymore)
+
+------------------------------------- pre alpha --------------------------------
+2010-10-14	Dietrich Roland Pehlke
+			# inside c_init_page class to avoid recursive reloading of the startpage.
+
+2010-10-13	Dietrich Roland Pehlke
+			# Some typos inside the "EN.php".
+			! Change "code-patch" inside "preferences/index.php" so admin see all backend pages,
+			  users only "frontend-relevant" pages.
+			+ Add "lable" to the preferences.htt and a new class-method in c_init_page for language-support.
+			
+2010-10-11	Dietrich Roland Pehlke
+			+ Folder "Utilities" within core- and template-replacements.
+
+2010-10-10	Ralf Hertsch
+			+ Added field 'page_param' to mod_initial_page
+			+ Added class c_patch.php for automatically patching /admin/start/index.php
+			! changed call of c_init_page.php within /admin/start/index.php
+			! update read_me.txt
+			
+			Dietrich Roland Pehlke
+			! update read_me: some typos fixed and some cosmetic changes.
+			+ Simple textfield for the new "page_param" field in the backend-interface.
+			+ Language support to the backend-interface.
+			+ Column-Labels to the table.
+			+ Add sha1-Hash to the form.
+			+ Protected method to synch the user_ids inside the table.
+			
+2010-10-09	Dietrich Roland Pehlke
+			# Bugfix innerhalb von "c_init_page.php": fehlerhafter MySQL-Query.
+			+ Read Me; Beschreibung, welche zwei Zeilen in die "admin/start/index.php" eingefügt werden müssen.
+			+ 'Tools' und 'Pages' innerhalb der Selects! (I am a WebsiteBaker - and i'm proud about this!)
+
+2010-10-09	Dietrich Roland Pehlke
+			+ First succesfull update on the svn within svnX.
+
+2010-10-08	Dietrich Roland Pehlke
+			+ Init pre alpha and first commit.
