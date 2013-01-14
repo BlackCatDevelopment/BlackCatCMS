@@ -2,13 +2,16 @@
 
 /**
  *
- * @module          initial_page
- * @author          Ralf Hertsch, Dietrich Roland Pehlke 
- * @copyright       2010-2011, Ralf Hertsch, Dietrich Roland Pehlke
- * @link            http://www.LEPTON-cms.org
- * @license         copyright, all rights reserved
- * @license_terms   please see info.php of this module
- *
+ *   @module          initial_page
+ *   @author          Ralf Hertsch, Dietrich Roland Pehlke, LEPTON v2.0 Black Cat Edition Development
+ *   @copyright       2010-2011, Ralf Hertsch, Dietrich Roland Pehlke
+ *   @copyright       2013, LEPTON v2.0 Black Cat Edition Development
+ *   @link            http://www.LEPTON-cms.org
+ *   @link            http://www.lepton2.org
+ *   @license         copyright, all rights reserved
+ *   @license_terms   please see info.php of this module
+ *   @category        LEPTON2BCE_Modules
+ *   @package         initial_page
  *
  */
  

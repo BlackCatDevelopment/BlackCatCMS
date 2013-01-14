@@ -1,0 +1,14 @@
+<textarea name="{$name}" id="{$id}" style="width:{$width};height:{$height};">{$content}</textarea>
+<script>
+    CKEDITOR.replace( 
+        '{$name}',
+        {
+            baseHref: '{$LEPTON_URL}'
+            ,customConfig: '/custom/config.js'
+            ,removePlugins: 'autogrow'
+            {foreach $config cfg}
+            ,{$cfg.set_name}: {if $cfg.set_value != 'true' && $cfg.set_value != 'false' }'{/if}{$cfg.set_value}{if $cfg.set_value != 'true' && $cfg.set_value != 'false' }'{/if}
+            {/foreach}
+        }
+    );
+</script>

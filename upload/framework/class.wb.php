@@ -750,7 +750,7 @@ class wb extends SecureCMS
     public function page_link($link)       {
         if(!is_object(self::$pg))
         {
-            self::$pg = new LEPTON_Pages();
+            self::$pg = LEPTON_Pages::getInstance();
         }
         return self::$pg->getLink($link);
     }
