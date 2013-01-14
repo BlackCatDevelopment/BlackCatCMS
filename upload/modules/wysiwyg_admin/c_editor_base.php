@@ -19,7 +19,7 @@
  *   @link            http://www.lepton2.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        LEPTON2BCE_Modules
- *   @package         wysiwyg_admin
+ *   @package         ckeditor4
  *
  */
 
@@ -41,17 +41,45 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-if ( !defined('LEPTON_PATH')) die(header('Location: ../../index.php'));
+if ( !defined('WB_PATH')) die(header('Location: ../../index.php'));
 
-$LANG = array(
-	'Editor width' => 'Editor Breite',
-	'Editor height' => 'Editor H&ouml;he',
-	'Editor toolbar' => 'Editor Toolbar',
-	'Mandatory! Allowed values: "px", "%" or "em".' => "Erlaubt ist 'px', '%' oder 'em'. Dieses Feld darf nicht leer sein!",
-    'autoParagraph' => 'Bestimmt, ob Inline-Inhalte innerhalb des Body in Blöcke eingefaßt werden.',
-    'CKEditor v4.0 does not have traditional toolbars. See <a href="http://docs.ckeditor.com/#!/guide/dev_toolbar">'
-    . 'http://docs.ckeditor.com/#!/guide/dev_toolbar</a> to learn how to configure the toolbar.'
-        =>  'CKEditor v4.0 besitzt keine traditionellen Toolbars mehr. Lesen Sie die Dokumentation unter '
-          . '<a href="http://docs.ckeditor.com/#!/guide/dev_toolbar">http://docs.ckeditor.com/#!/guide/dev_toolbar</a>'
-          . ' für nähere Informationen.',
-);
+$debug = false;
+if (true === $debug) {
+	ini_set('display_errors', 1);
+	error_reporting(E_ALL|E_STRICT);
+}
+
+abstract class c_editor_base
+{
+    abstract public function getSkinPath();
+    abstract public function getToolbars();
+
+    public function getHeight(&$config)
+    {
+        foreach($config as $item)
+        {
+            if($item['set_name']=='height') return $item['set_value'];
+        }
+        return '250px';
+    }
+
+    public function getWidth(&$config)
+    {
+        foreach($config as $item)
+        {
+            if($item['set_name']=='width') return $item['set_value'];
+        }
+        return '100%';
+    }
+
+    public function getSkins($skin_path)
+    {
+        global $admin;
+        $admin->get_helper('Directory')->setRecursion(false);
+        $skins = $admin->get_helper('Directory')->getDirectories($skin_path,$skin_path.'/');
+        $admin->get_helper('Directory')->setRecursion(true);
+        return $skins;
+    }
+}
+
+?>

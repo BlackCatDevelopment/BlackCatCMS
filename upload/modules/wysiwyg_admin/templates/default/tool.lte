@@ -1,0 +1,65 @@
+<form id="wysiwyg_admin" method="post" action="{$action}" onsubmit="return testform( this );">
+<input type="hidden" name="job" value="save" />
+<input type="hidden" name="id" value="{$id}" />
+<table>
+	<tr>
+		<td><label for="editor_skin">{translate('Skin')}</label></td>
+		<td colspan="2">
+        {if is_array($skins)}
+          <select name="editor_skin" id="editor_skin">
+            {foreach $skins as skin}
+            <option value="{$skin}">{$skin}</option>
+            {/foreach}
+          </select>
+        {/if}
+		</td>
+	</tr>
+	<tr>
+		<td><label for="editor_toolbar">{translate('Editor Toolbar')}</label></td>
+		<td colspan="2">
+        {if is_array($toolbars)}
+          <select name="editor_toolbar" id="editor_toolbar">
+            {foreach $toolbars as toolbar}
+            <option value="{$toolbar}">{$toolbar}</option>
+            {/foreach}
+          </select>
+        {else}
+          {if is_scalar($toolbars)}{$toolbars}{/if}
+        {/if}
+        </td>
+	</tr>
+	<tr>
+		<td>{translate('Editor width')}</td>
+		<td><input type="text" name="width" value="{$width}" /></td>
+        <td><span class="legend">{translate('Mandatory! Allowed values: "px", "%" or "em".')}</span></td>
+	</tr>
+	<tr>
+		<td>{translate('Editor height')}</td>
+		<td><input type="text" name="height" value="{$height}" /></td>
+        <td><span class="legend">{translate('Mandatory! Allowed values: "px", "%" or "em".')}</span></td>
+	</tr>
+    {foreach $config cfg}
+    {if ! ( $cfg.set_name == 'width' || $cfg.set_name == 'height' || $cfg.set_name == 'skin' ) }
+    <tr>
+        <td>{$cfg.set_name}</td>
+        <td>
+          {if $cfg.set_value == 'true' || $cfg.set_value == 'false' }
+            <input type="radio" name="{$cfg.set_name}" value="true" {if $cfg.set_value == 'true'}checked="checked"{/if} /> true
+            <input type="radio" name="{$cfg.set_name}" value="false" {if $cfg.set_value == 'false'}checked="checked"{/if} /> false
+          {else}
+            <input type="text" name="{$cfg.set_name}" value="{$cfg.set_value}" />
+          {/if}
+        </td>
+        <td>
+          {translate($cfg.set_name)}
+        </td>
+    </tr>
+    {/if}
+    {/foreach}
+	<tr>
+		<td><input type="submit" value="{$TEXT.SAVE}" /></td>
+		<td><input type="button" value="{$TEXT.CANCEL}" onclick="document.location='<?php echo ADMIN_URL; ?>/admintools/index.php<?php echo $leptoken; ?>';" /></td>
+	</tr>
+
+</table>
+</form>

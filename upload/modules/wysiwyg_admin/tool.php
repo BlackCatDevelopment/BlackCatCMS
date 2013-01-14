@@ -1,14 +1,26 @@
 <?php
 
 /**
- *	@module			wysiwyg Admin
- *	@version		see info.php of this module
- *	@authors		Dietrich Roland Pehlke
- *	@copyright		2010-2011 Dietrich Roland Pehlke
- *	@license		GNU General Public License
- *	@license terms	see info.php of this module
- *	@platform		see info.php of this module
- *	@requirements	PHP 5.2.x and higher
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          LEPTON v2.0 Black Cat Edition Development
+ *   @copyright       2013, LEPTON v2.0 Black Cat Edition Development
+ *   @link            http://www.lepton2.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        LEPTON2BCE_Modules
+ *   @package         ckeditor4
+ *
  */
 
 // include class.secure.php to protect this file and the whole CMS!
@@ -29,8 +41,9 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php  
  
-$debug = true;
+if ( !defined('WB_PATH')) die(header('Location: ../../index.php'));
 
+$debug = false;
 if (true === $debug) {
 	ini_set('display_errors', 1);
 	error_reporting(E_ALL|E_STRICT);
@@ -38,124 +51,47 @@ if (true === $debug) {
 
 if (!isset($admin) || !is_object($admin)) die();
 
-$lang = dirname(__FILE__)."/languages/".LANGUAGE.".php";
-include( file_exists($lang) ? $lang : dirname(__FILE__)."/languages/EN.php" );
+// check for config driver
+$cfg_file = sanitize_path(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
+if(file_exists($cfg_file))
+{
+    require $cfg_file;
+}
+elseif(file_exists(sanitize_path(dirname(__FILE__)."/driver/".WYSIWYG_EDITOR."/c_editor.php")))
+{
+    require_once( dirname(__FILE__)."/driver/".WYSIWYG_EDITOR."/c_editor.php");
+}
+else {
+    $admin->print_error($admin->lang->translate('No configuration file for editor ['.WYSIWYG_EDITOR.']'));
+}
 
-require_once( dirname(__FILE__)."/driver/".WYSIWYG_EDITOR."/c_editor.php");
-
-if (!isset($editor_ref) || !is_object($editor_ref)) $editor_ref = new c_editor();
-
-$editor_info = $editor_ref->info('all');
-
-$table = TABLE_PREFIX."mod_wysiwyg_admin";
-
-/**
- *	Something to save or delete?
- *
- */
-if (isset($_POST['job'])) {
-	if ($_POST['job']=="save") {
-		if (isset($_SESSION['wysiwyg_admin']) && $_POST['salt'] === $_SESSION['wysiwyg_admin']) {
-			
-			unset($_SESSION['wysiwyg_admin']);
-			
-			$_POST = array_map("mysql_real_escape_string",$_POST);
-			
-			/**
-			 *	Time?
-			 *
-			 */
-			$test_time = time() - $_POST['t'];
-			
-			if ($test_time <= (60*5)) {
-			
-				$q  = "update `".$table."` set ";
-				$q .= "`skin`='".$_POST['skin']."',";
-				$q .= "`menu`='".$_POST['menu']."',";
-				$q .= "`width`='".$_POST['width']."',";
-				$q .= "`height`='".$_POST['height']."' where id='".$_POST['id']."'";
-		
-				$database->query( $q );
-			}
+// get settings
+$query  = "SELECT * from `".TABLE_PREFIX."mod_wysiwyg_admin_v2` where `editor`='".WYSIWYG_EDITOR."'";
+$result = $database->query ($query );
+$config = array();
+if($result->numRows())
+{
+    while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+    {
+        if ( substr_count( $row['set_value'], '#####' ) ) // array values
+        {
+            $row['set_value'] = explode( '#####', $row['set_value'] );
 		}
+        $config[] = $row;
 	}
 }
 
-$query = "SELECT `id`,`skin`,`menu`,`height`,`width` from `".$table."` where `editor`='".WYSIWYG_EDITOR."'limit 0,1";
-$result = $database->query ($query );
-$data = $result->fetchRow( MYSQL_ASSOC );
+$c = new c_editor();
 
-$primes = array(
-	'176053', '176063', '176081', '176087', '176089', '176123', '176129', '176153', '176159',
-	'176161', '176179', '176191', '176201', '176207', '176213', '176221', '176227', '176237', 
-    '176299', '176303', '176317', '176321', '176327', '176243', '176261'
+$parser->setPath(dirname(__FILE__)."/templates/default");
+echo $parser->get(
+    'tool.lte',
+    array(
+        'action'    => ADMIN_URL.'/admintools/tool.php?tool=wysiwyg_admin',
+        'skins'     => $c->getSkins($c->getSkinPath()),
+        'toolbars'  => $c->getToolbars(),
+        'width'     => $c->getWidth($config),
+        'height'    => $c->getHeight($config),
+        'config'    => $config,
+    )
 );
-shuffle($primes);
-$s = array_shift($primes)."-".array_shift($primes);
-
-$salt = sha1( $s.time()." Sah ein Knab ein R&ouml;slein stehen. R&ouml;slein auf der Heide.".$_SERVER['HTTP_USER_AGENT'].microtime().$_SESSION['session_started']);
-
-if (isset($_SESSION['wysiwyg_admin'])) unset($_SESSION['wysiwyg_admin']);
-$_SESSION['wysiwyg_admin'] = $salt;
-
-$leptoken = (isset($_GET['leptoken']) ? "?leptoken=".$_GET['leptoken'] : "" );
-
-?>
-<form id="wysiwyg_admin" method="post" action="<?php echo ADMIN_URL."/admintools/tool.php?tool=wysiwyg_admin"; ?>" onsubmit="return testform( this );">
-<input type="hidden" name="salt" value="<?php echo $salt; ?>" />
-<input type="hidden" name="t" value="<?php echo time(); ?>" />
-<input type="hidden" name="job" value="save" />
-<input type="hidden" name="id" value="<?php echo $data['id']; ?>" />
-<table>
-	<tr>
-		<td class="cka_label"><?php echo $MOD_WYSIWYG_ADMIN['SKINS']; ?></td>
-		<td>
-			<?php echo $editor_ref->build_select("skins", "skin", $data['skin']); ?>
-		</td>
-	</tr>
-	<tr>
-		<td class="cka_label"><?php echo $MOD_WYSIWYG_ADMIN['TOOL']; ?></td>
-		<td>
-			<?php echo $editor_ref->build_select("toolbars", "menu", $data['menu']); ?> 
-		</td>
-	</tr>
-	<tr>
-		<td class="cka_label"><?php echo $MOD_WYSIWYG_ADMIN['WIDTH']; ?></td>
-		<td><input type="text" name="width" value="<?php echo $data['width']; ?>" /><span class="legend"><?php echo $MOD_WYSIWYG_ADMIN['LEGEND']; ?></span></td>
-	</tr>
-	<tr>
-		<td class="cka_label"><?php echo $MOD_WYSIWYG_ADMIN['HEIGHT']; ?></td>
-		<td><input type="text" name="height" value="<?php echo $data['height']; ?>" /></td>
-	</tr>
-	<tr>
-		<td class="cka_label"></td>
-		<td><input type="submit" value="<?php echo $TEXT['SAVE']; ?>" /></td>
-	</tr>
-	<tr>
-		<td class="cka_label"></td>
-		<td><input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="document.location='<?php echo ADMIN_URL; ?>/admintools/index.php<?php echo $leptoken; ?>';" /></td>
-	</tr>
-
-</table>
-</form>
-<hr size="1" />
-Preview:
-<?php
-	
-	$section_id = -1;
-	$page_id = -120;
-	$_GET['page_id'] = $page_id;
-	$preview = true;
-	$h = $data['height'];
-	$w = $data['width'];
-
-	global $id_list;
-	$id_list= array( 1 );
-	
-	require_once(WB_PATH."/modules/wysiwyg/modify.php");
-
-	$section_id *= -1;
-	
-	show_wysiwyg_editor('content'.$section_id,'content'.$section_id, $content, $w, $h);
-
-?>
