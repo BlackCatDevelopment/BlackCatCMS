@@ -247,7 +247,7 @@ class SM2_Formatter
         		
         		if(true === (strlen($class) > 0)) $retval .= $class;
         		
-        		if(!($this->flags & SM2_XHTML_STRICT)) $retval .= ' target="'.$this->page['target'].'"';
+        		if(!($this->flags & SM2_XHTML_STRICT)) $retval .= ( $this->page['target'] != '_self' ) ? ' target="'.$this->page['target'].'"' : '';
 				
 				$retval .= (($this->flags & SM2_NO_TITLE) ? '' : ' title="'.$this->page['page_title'].'"').'>';
 
