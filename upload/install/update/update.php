@@ -202,7 +202,8 @@ function update_111() {
 	    "news",
 	    "ckeditor",
 	    "show_menu2",
-	    "wysiwyg_admin"
+	    "wysiwyg_admin",
+        "initial_page",
 	);
 
 	upgrade_modules( $upgrade_modules );
@@ -266,7 +267,8 @@ function update_112 () {
 	    "wrapper",
 	    "phpmailer",
 	    "wysiwyg_admin",
-	    "lib_jquery"
+	    "lib_jquery",
+        "initial_page",
 	);
 
 	upgrade_modules( $upgrade_modules );
