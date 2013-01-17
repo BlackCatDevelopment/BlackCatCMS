@@ -56,6 +56,19 @@ function match_class_prefix(prefix,elem)
 	}
 }
 
+function togglePageTree()
+{
+	if ( !$('#fc_sidebar').is(':visible') )
+	{
+		var new_width	= typeof $.cookie('sidebar') != 'undefined' ? $.cookie('sidebar') : 200;
+		$('#fc_sidebar, #fc_sidebar_footer').css({width: new_width}).show();
+	}
+	else {
+		$('#fc_sidebar, #fc_sidebar_footer').css({width: 0}).hide();
+	}
+	$(window).resize();
+}
+
 // Function to show the dialog with error message if an ajax reports an error
 function return_error( process_div, message )
 {
