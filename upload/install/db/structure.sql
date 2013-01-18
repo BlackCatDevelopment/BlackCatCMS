@@ -354,11 +354,11 @@ CREATE TABLE IF NOT EXISTS `lep_class_secure` (
 )
 COLLATE='utf8_general_ci' ENGINE=InnoDB;
 
-CREATE TABLE `lep_mod_wysiwyg_admin` (
+CREATE TABLE `lep_mod_wysiwyg_admin_v2` (
 	`editor` VARCHAR(50) NOT NULL,
 	`set_name` VARCHAR(50) NOT NULL,
 	`set_value` VARCHAR(50) NOT NULL,
-	UNIQUE INDEX `editor_set_name_set_value` (`editor`, `set_name`, `set_value`)
+	UNIQUE INDEX `editor_set_name` (`editor`, `set_name`)
 )
 COMMENT='WYSIWYG Admin for LEPTON v2.0 Black Cat Edition'
 COLLATE='utf8_general_ci'
