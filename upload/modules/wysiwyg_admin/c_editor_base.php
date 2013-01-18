@@ -19,7 +19,7 @@
  *   @link            http://www.lepton2.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        LEPTON2BCE_Modules
- *   @package         ckeditor4
+ *   @package         wysiwyg_admin
  *
  */
 
@@ -51,25 +51,41 @@ if (true === $debug) {
 
 abstract class c_editor_base
 {
+
+    private $default_skin = NULL;
+    private $default_height = '250px';
+    private $default_width  = '100%';
+
     abstract public function getSkinPath();
     abstract public function getToolbars();
+    abstract public function getAdditionalSettings();
+
+    private function get($name,&$config)
+    {
+        if(isset($config[$name]))
+        {
+            $val = $config[$name];
+            unset($config[$name]);
+            return $val;
+        }
+    }
 
     public function getHeight(&$config)
     {
-        foreach($config as $item)
-        {
-            if($item['set_name']=='height') return $item['set_value'];
-        }
-        return '250px';
+        $val = $this->get('height',$config);
+        return ( $val != '' ) ? $val : $this->default_height;
     }
 
     public function getWidth(&$config)
     {
-        foreach($config as $item)
-        {
-            if($item['set_name']=='width') return $item['set_value'];
-        }
-        return '100%';
+        $val = $this->get('width',$config);
+        return ( $val != '' ) ? $val : $this->default_width;
+    }
+
+    public function getSkin(&$config)
+    {
+        $val = $this->get('skin',$config);
+        return ( $val != '' ) ? $val : $this->default_skin;
     }
 
     public function getSkins($skin_path)

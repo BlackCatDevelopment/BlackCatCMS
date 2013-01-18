@@ -44,14 +44,16 @@ if (defined('WB_PATH')) {
 if ( !defined('LEPTON_PATH')) die(header('Location: ../../index.php'));
 
 $LANG = array(
+    'Common options' => 'Allgemeine Einstellungen',
+    'Additional options' => 'Weitere Einstellungen',
+    'Skin preview' => 'Skin Vorschau',
 	'Editor width' => 'Editor Breite',
 	'Editor height' => 'Editor H&ouml;he',
 	'Editor toolbar' => 'Editor Toolbar',
-	'Mandatory! Allowed values: "px", "%" or "em".' => "Erlaubt ist 'px', '%' oder 'em'. Dieses Feld darf nicht leer sein!",
-    'autoParagraph' => 'Bestimmt, ob Inline-Inhalte innerhalb des Body in Blöcke eingefaßt werden.',
-    'CKEditor v4.0 does not have traditional toolbars. See <a href="http://docs.ckeditor.com/#!/guide/dev_toolbar">'
-    . 'http://docs.ckeditor.com/#!/guide/dev_toolbar</a> to learn how to configure the toolbar.'
-        =>  'CKEditor v4.0 besitzt keine traditionellen Toolbars mehr. Lesen Sie die Dokumentation unter '
-          . '<a href="http://docs.ckeditor.com/#!/guide/dev_toolbar">http://docs.ckeditor.com/#!/guide/dev_toolbar</a>'
-          . ' für nähere Informationen.',
+	'Invalid width: {{width}}% > 100%!' => 'Ungültige Breite: {{width}}% > 100%!',
+    'Invalid height: {{width}}% > 100%!' => 'Ungültige Höhe: {{width}}% > 100%!',
+    'Invalid width: Too large! (>10000)' => 'Ungültige Breite: Zu groß! (>10000)',
+    'Invalid height: Too large! (>10000)' => 'Ungültige Höhe: Zu groß! (>10000)',
+    'Invalid skin!' => 'Ungültiger Skin!',
+    'Invalid boolean value!' => 'Ungültiger Boolean Wert!',
 );

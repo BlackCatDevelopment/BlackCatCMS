@@ -1,38 +1,49 @@
 /**
- *  @module         wysiwyg Admin
- *  @version        see info.php of this module
- *  @authors        Dietrich Roland Pehlke
- *  @copyright      2010-2011 Dietrich Roland Pehlke
- *  @license        GNU General Public License
- *  @license terms  see info.php of this module
- *  @platform       see info.php of this module
- *  @requirements   PHP 5.2.x and higher
+ *
+ *   @author          LEPTON v2.0 Black Cat Edition Development
+ *   @copyright       2013, LEPTON v2.0 Black Cat Edition Development
+ *   @link            http://www.lepton2.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        LEPTON2BCE_Modules
+ *   @package         wysiwyg_admin
+ *
  */
- 
-td.cka_label {
-	display: block;
-	float: left;
-	width: 80px;
-	color: #660000;
-	font-size: 11px;
-	text-align: right;
-	padding-top: 3px;
-	margin-right:3px;
-}
 
-form#wysiwyg_admin input[type='text'] {
-	display: block;
-	width: 150px;
-	float: left;
-	border: 1px solid #999999;
+form#wysiwyg_admin {
+    margin: 5px;
 }
-
+form#wysiwyg_admin fieldset,
+form#wysiwyg_admin .buttons {
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 5px;
+}
+form#wysiwyg_admin legend {
+    margin-left: 25px;
+    padding: auto 5px;
+    font-size: 1.2em;
+    font-weight: 900;
+}
+form#wysiwyg_admin label {
+    width: 200px;
+    display: inline-block;
+    text-align: right;
+    margin: 5px 5px;
+}
+form#wysiwyg_admin input[type=text],
 form#wysiwyg_admin select,
-form#wysiwyg_admin input[type='submit'],
-form#wysiwyg_admin input[type='button']{
-	width: 150px;
+form#wysiwyg_admin .settings,
+form#wysiwyg_admin .error {
+    width: 200px;
+    display: inline-block;
 }
-
-.legend {
-	color: #990000;
+form#wysiwyg_admin #wysiwyg_admin_skin_preview {
+    float: right;
+}
+form#wysiwyg_admin .buttons{
+    border: 1px solid #ccc;
+}
+form#wysiwyg_admin .error {
+    margin-left: 210px;
+    color: #f00;
 }
