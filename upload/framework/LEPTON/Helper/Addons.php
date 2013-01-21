@@ -32,6 +32,8 @@ if (!class_exists('LEPTON_Helper_Addons'))
 
         public function __construct()
         {
+            // we need our own instance here, because this helper is used by
+            // the installer, which does not have a get_helper() method
             self::$dirh = new LEPTON_Helper_Directory();
         }
 
