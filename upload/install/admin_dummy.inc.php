@@ -2,7 +2,6 @@
 
 /**
  *	Dummy class to allow modules' install scripts to call $admin->print_error
- *
  */
 class admin_dummy
 {
@@ -37,4 +36,12 @@ class admin_dummy
 	{
 		return 1;
 	}
+
+    /**
+     * Fake this for installer
+     **/
+    public function get_permission()
+    {
+        return true;
+    }
 }
