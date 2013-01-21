@@ -83,7 +83,7 @@ if ( ! class_exists( 'LEPTON_Helper_I18n', false ) ) {
 	        $caller = debug_backtrace();
 	        if ( self::$_current_lang == '' )
 	        {
-	            $lang_files = $this->__lang_getfrombrowser();
+	            $lang_files = $this->getBrowserLangs();
 	        }
 	        else
 	        {
@@ -225,6 +225,11 @@ if ( ! class_exists( 'LEPTON_Helper_I18n', false ) ) {
 	     **/
 	    public function getLang()
 	    {
+            if ( ! isset(self::$_current_lang) || self::$_current_lang === NULL )
+            {
+                $langs = $this->getBrowserLangs();
+                return $langs[1];
+            }
 	        return self::$_current_lang;
 	    } // end function getLang()
 
@@ -385,8 +390,14 @@ if ( ! class_exists( 'LEPTON_Helper_I18n', false ) ) {
 	     *
 	     *
 	     **/
-	    private function __lang_getfrombrowser( $strict_mode = true )
+	    private function getBrowserLangs( $strict_mode = true )
 	    {
+
+            if ( ! isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) )
+            {
+                return $this->_config[ 'defaultlang' ];
+            }
+
 	        $browser_langs = array();
 	        $lang_variable = $_SERVER[ 'HTTP_ACCEPT_LANGUAGE' ];
 
@@ -447,7 +458,7 @@ if ( ! class_exists( 'LEPTON_Helper_I18n', false ) ) {
 
 	        return $ret;
 
-	    } // end __lang_getfrombrowser()
+	    } // end getBrowserLangs()
 
 	}
 
