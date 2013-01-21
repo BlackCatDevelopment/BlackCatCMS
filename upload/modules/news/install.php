@@ -148,6 +148,8 @@ if(defined('WB_URL'))
     	$database->query("INSERT INTO ".TABLE_PREFIX."mod_news_settings (section_id,page_id, `header`, `post_loop`, `footer`, `post_header`, `post_footer`, `comments_header`, `comments_loop`, `comments_footer`, `comments_page`) VALUES ('0', '0', '', '', '', '', '', '', '', '', '')");
     }
 
+    $addons_helper = new LEPTON_Helper_Addons();
+
     // add files to class_secure
     foreach(
         array( 'add_group.php', 'add_post.php', 'comment.php', 'delete_comment.php', 'delete_group.php', 'delete_post.php',
@@ -155,7 +157,7 @@ if(defined('WB_URL'))
                'rss.php', 'save_comment.php', 'save_group.php', 'save_post.php', 'save_settings.php', 'submit_comment.php' )
         as $file
     ) {
-        if ( false === $admin->get_helper('Addons')->sec_register_file( 'news', $file ) )
+        if ( false === $addons_helper->sec_register_file( 'news', $file ) )
         {
              error_log( "Unable to register file -$file-!" );
         }

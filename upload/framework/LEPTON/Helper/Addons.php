@@ -27,6 +27,14 @@ if (!class_exists('LEPTON_Helper_Addons'))
 
     class LEPTON_Helper_Addons extends LEPTON_Object
     {
+
+        private static $dirh;
+
+        public function __construct()
+        {
+            self::$dirh = new LEPTON_Helper_Directory();
+        }
+
         /**
          * Register the Addon $module_name in  $module_directory for $page_id
          * for sending a page title to LEPTON before displaying the page.
@@ -835,13 +843,13 @@ if (!class_exists('LEPTON_Helper_Addons'))
                 return false;
             }
             // this will remove ../.. from $filepath
-            $filepath = $admin->get_helper('Directory')->sanitizePath($filepath);
+            $filepath = self::$dirh->sanitizePath($filepath);
             if (!is_dir(LEPTON_PATH . '/modules/' . $module))
             {
                 error_log("sec_register_file() called for non existing module [$module] (path: [$filepath])", 0);
                 return false;
             }
-            if (!file_exists($admin->get_helper('Directory')->sanitizePath(LEPTON_PATH . '/modules/' . $module . '/' . $filepath)))
+            if (!file_exists(self::$dirh->sanitizePath(LEPTON_PATH . '/modules/' . $module . '/' . $filepath)))
             {
                 error_log("sec_register_file() called for non existing file [$filepath] (module: [$module])", 0);
                 return false;
