@@ -1,0 +1,59 @@
+<table style="font-size:0.8em">
+  <tbody>
+    <tr>
+      <td style="text-align:left;font-size:1.2em;font-weight:bold;">Interactions</td>
+      <td style="text-align:left;font-size:1.2em;font-weight:bold;">Effects</td>
+    </tr>
+    <tr>
+      <td style="text-align:left">
+        <ul>
+        <li>Draggable</li>
+        <li>Droppable</li>
+        <li>Resizable</li>
+        <li>Selectable</li>
+        <li>Sortable</li>
+        </ul>
+      </td>
+      <td style="text-align:left">
+        <ul>
+        <li>Add Class</li>
+        <li>Color Animation</li>
+        <li>Effect</li>
+        <li>Hide</li>
+        <li>Remove Class</li>
+        <li>Show</li>
+        <li>Switch Class</li>
+        <li>Toggle</li>
+        <li>Toggle Class</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left;font-size:1.2em;font-weight:bold;border-top:1px solid #ccc;">Widgets</td>
+      <td style="text-align:left;font-size:1.2em;font-weight:bold;border-top:1px solid #ccc;">Utilities</td>
+    </tr>
+    <tr>
+      <td style="text-align:left;">
+        <ul>
+        <li>Accordion</li>
+        <li>Autocomplete</li>
+        <li>Button</li>
+        <li>Datepicker</li>
+        <li>Dialog</li>
+        <li>Menu</li>
+        <li>Progressbar</li>
+        <li>Slider</li>
+        <li>Spinner</li>
+        <li>Tabs</li>
+        <li>Tooltip</li>
+        </ul>
+      </td>
+      <td style="text-align:left;">
+        <ul>
+        <li>Position</li>
+        <li>Widget Factory</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
