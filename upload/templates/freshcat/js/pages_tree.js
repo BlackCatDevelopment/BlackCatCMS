@@ -76,7 +76,7 @@
 				});
 			}
 
-			element.find('.fc_page_tree_options_open').live( 'click', function(event)
+			element.find('.fc_page_tree_options_open').on( 'click', function(event)
 			{
 				event.preventDefault();
 				var current_button	= $(this),
@@ -210,7 +210,7 @@
 			});
 
 			// bind elements with click event
-			element.find('.fc_toggle_tree').live( 'click',  function()
+			element.find('.fc_toggle_tree').on( 'click',  function()
 			{
 				var clicked_element		= $(this).closest('li'),
 					set_cookie			= clicked_element.attr('id');

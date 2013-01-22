@@ -1,19 +1,27 @@
 <?php
 
+<?php
+
 /**
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * This file is part of LEPTON Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * @author          LEPTON v2.0 Black Cat Edition Development
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- * @version         $Id: Directory.php 1501 2011-12-21 13:22:57Z webbird $
+ *   @author          LEPTON v2.0 Black Cat Edition Development
+ *   @copyright       2013, LEPTON v2.0 Black Cat Edition Development
+ *   @link            http://www.lepton2.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        LEPTON2BCE_Core
+ *   @package         LEPTON2BCE_Core
  *
  */
 
@@ -1061,19 +1069,10 @@ if (!class_exists('LEPTON_Pages', false))
 
             // make sure that we load the core if needed, even if the
             // author forgot to set the flags
-            if ((isset($arr['ui']) && $arr['ui'] === true) || (isset($arr['ui-effects']) && is_array($arr['ui-effects'])) || (isset($arr['ui-components']) && is_array($arr['ui-components'])))
+            if ( isset($arr['ui']) && $arr['ui'] === true )
             {
                 $arr['core'] = true;
-            }
-
-            // make sure we load the ui core if needed
-            if (isset($arr['ui-components']) && is_array($arr['ui-components']) || (isset($arr['ui-effects']) && is_array($arr['ui-effects'])))
-            {
                 $arr['ui'] = true;
-            }
-            if (isset($arr['ui-effects']) && is_array($arr['ui-effects']) && (!in_array('core', $arr['ui-effects'])))
-            {
-                array_unshift($arr['ui-effects'], 'core');
             }
 
             // load the components
@@ -1092,24 +1091,11 @@ if (!class_exists('LEPTON_Pages', false))
             // ui is always added to header
             if (!LEPTON_Pages::$jquery_ui_core && isset($arr['ui']) && $arr['ui'] === true)
             {
-                LEPTON_Pages::$jquery[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL . '/modules/lib_jquery/jquery-ui/ui/jquery.ui.core.min.js') . '"></script>' . "\n";
+                LEPTON_Pages::$jquery[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL . '/modules/lib_jquery/jquery-ui/ui/jquery-ui.min.js') . '"></script>' . "\n";
                 LEPTON_Pages::$jquery_ui_core = true;
             }
 
-            if (isset($arr['ui-effects']) && is_array($arr['ui-effects']))
-            {
-                foreach ($arr['ui-effects'] as $item)
-                {
-                    $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL . '/modules/lib_jquery/jquery-ui/ui/jquery.effects.' . $item . '.min.js') . '"></script>' . "\n";
-                }
-            }
-            if (isset($arr['ui-components']) && is_array($arr['ui-components']))
-            {
-                foreach ($arr['ui-components'] as $item)
-                {
-                    $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL . '/modules/lib_jquery/jquery-ui/ui/jquery.ui.' . $item . '.min.js') . '"></script>' . "\n";
-                }
-            }
+            // components to load on all pages (backend only)
             if (isset($arr['all']) && is_array($arr['all']))
             {
                 foreach ($arr['all'] as $item)
@@ -1129,6 +1115,8 @@ if (!class_exists('LEPTON_Pages', false))
                     $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(LEPTON_URL . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js') . '"></script>' . "\n";
                 }
             }
+
+            // components to load on individual pages only (backend only)
             if (isset($arr['individual']) && is_array($arr['individual']) && isset($section) && $section != '')
             {
                 foreach ($arr['individual'] as $section_name => $item)
@@ -1393,7 +1381,7 @@ if (!class_exists('LEPTON_Pages', false))
                     foreach ($sections as $section)
                     {
                         $module = $section['module'];
-                        $file   = $this->sanitizePath(LEPTON_PATH . '/modules/' . $module . '/headers.inc.php');
+                        $file   = $this->sanitizePath(LEPTON_PATH.'/modules/'.$module.'/headers.inc.php');
                         // find header definition file
                         if (file_exists($file))
                         {
