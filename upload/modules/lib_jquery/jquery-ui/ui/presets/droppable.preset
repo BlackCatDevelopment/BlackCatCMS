@@ -1,4 +1,0 @@
-<script src="{WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery.ui.widget.min.js" type="text/javascript"></script>
-<script src="{WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery.ui.mouse.min.js" type="text/javascript"></script>
-<script src="{WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery.ui.draggable.min.js" type="text/javascript"></script>
-{{ insert_files }}
