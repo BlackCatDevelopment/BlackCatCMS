@@ -29,6 +29,7 @@ class jQueryAdmin extends LibraryUtils {
         include_once dirname(__FILE__).'/../library_info.php';
         $this->lib_info = $lib_info;
         parent::__construct();
+        $this->lang()->addFile(LANGUAGE.'.php', dirname(__FILE__).'/../languages');
     }   // end function __construct()
     
     public function core_files() {
@@ -46,6 +47,28 @@ class jQueryAdmin extends LibraryUtils {
     }
     
     /**
+     * As there are no single files for UI components and effects, we use
+     * an info file to list them and a single checkbox to enable them all at
+     * once
+     **/
+    public function showUIComponents( $item, $type, $selected ) {
+        $info = file_get_contents( dirname(__FILE__).'/../jquery-ui/ui/info.txt');
+        $html = '<input type="checkbox" name="ui[]" id="ui"'
+              . ( ( is_array($selected) && isset($selected['jquery-ui.min.js']) ) ? 'checked="checked"' : '' )
+              . ' /> '
+              . $this->lang()->translate('Use jQuery UI')
+              . '<span style="float: right;"><a class="tt" href="#" target="_blank" '
+              .  'rel="lyteframe" rev="width: 800px; height: 600px; scrolling: auto;"'
+              .  '>'
+              .  '<img src="'.LA_IMG_URL.'/info.png" alt="Info" />'
+              .  '<span class="tooltip"><span class="top"></span><span class="middle">'
+              .  $info
+              .  '</span><span class="bottom"></span></span>'
+              .  '</a></span>';
+        return $html;
+    }   // end function showUIComponents()
+    
+    /**
      *
      *
      *
@@ -55,18 +78,10 @@ class jQueryAdmin extends LibraryUtils {
         return
             array(
                 'ui'       => array(
-                                  'label'     => 'UI Components',
+                                  'label'     => 'Use jQuery UI',
                                   'subdir'    => 'jquery-ui/ui',
-                                  'regexp'    => '/^(.*)\.ui\.(.*)\.min\.js$/',
-                                  'exclude'   => '/core/i',
-                                  'core'      => 'jquery.ui.core.min.js',
-                             ),
-                'effects'  => array(
-                                  'label'     => 'UI Effects',
-                                  'subdir'    => 'jquery-ui/ui',
-                                  'regexp'    => '/^(.*)\.effects\.(.*)\.min\.js$/',
-                                  'exclude'   => '/core/i',
-                                  'core'      => 'jquery.effects.core.min.js',
+                                  'core'      => 'jquery-ui.min.js',
+                                  'method'    => 'showUIComponents',
                              ),
                 'external' => array(
                                   'label'     => 'External',
