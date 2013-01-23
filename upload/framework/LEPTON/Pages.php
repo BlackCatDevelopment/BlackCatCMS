@@ -1034,6 +1034,11 @@ if (!class_exists('LEPTON_Pages', false))
                 {
                     foreach ($arr as $item)
                     {
+                        if ( preg_match('/^http(s)?:/', $item))
+                        {
+                            $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url($item) . '"></script>';
+                            continue;
+                        }
                         if (!preg_match('#/modules/#i', $item))
                         {
                             foreach ($check_paths as $subdir)
