@@ -119,10 +119,29 @@ if ( ! class_exists( 'LEPTON_Object', false ) ) {
          *
          **/
         public function printError( $msg = NULL, $args = NULL ) {
+            $print_footer = false;
             $caller       = debug_backtrace();
-            $caller_class = isset( $caller[1]['class'] )
-                          ? $caller[1]['class']
+            // remove first item (it's the printError() method itself)
+            array_shift($caller);
+            // if called by printFatalError()...
+            if ( isset( $caller[0]['function'] ) && $caller[0]['function'] == 'printFatalError' ) {
+                array_shift($caller);
+            }
+            $caller_class = isset( $caller[0]['class'] )
+                          ? $caller[0]['class']
                           : NULL;
+
+            if ( ! headers_sent() ) {
+                $print_footer = true;
+                echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+  <title>LEPTON v2.0 Black Cat Edition - '.$caller_class.' Fatal Error</title>
+  </head>
+  <body>';
+            }
+
             echo "<div id=\"leperror\">\n",
                  "  <h1>$caller_class Fatal Error</h1><br /><br />\n",
                  "  <div style=\"color: #FF0000; font-weight: bold; font-size: 1.2em;\">\n",
@@ -149,11 +168,15 @@ if ( ! class_exists( 'LEPTON_Object', false ) ) {
             if ( $this->debugLevel == DEBUG ) {
                 echo "<h2>Debug backtrace:</h2>\n",
                      "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
-                print_r( debug_backtrace() );
+                print_r( $caller );
                 echo "</textarea>";
             }
 
             echo "  </div>\n</div><!-- id=\"leperror\" -->\n";
+
+            if ( $print_footer ) {
+                echo "</body></html>\n";
+            }
 
         }   // end function printError()
         
@@ -166,7 +189,7 @@ if ( ! class_exists( 'LEPTON_Object', false ) ) {
          *
          **/
 		public function printFatalError( $msg = NULL, $args = NULL ) {
-		    $this->printError( $msg = NULL, $args = NULL );
+		    $this->printError( $msg, $args );
 		    exit;
 		}   // end function printFatalError()
 
