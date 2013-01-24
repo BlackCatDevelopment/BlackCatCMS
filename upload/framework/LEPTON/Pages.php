@@ -108,7 +108,7 @@ if (!class_exists('LEPTON_Pages', false))
             }
             if (!isset($page_id) OR !is_numeric($page_id))
             {
-                $this->page_id = $this->getDefaultPage($wb->sql_where_language);
+                $this->getDefaultPage($wb->sql_where_language);
             }
             else
             {
@@ -131,7 +131,7 @@ if (!class_exists('LEPTON_Pages', false))
             $table_s       = TABLE_PREFIX . 'sections';
             $now           = time();
             $query_default = "
-    			SELECT `p`.`page_id`, `link`
+    			SELECT `p`.`page_id`, `link`, `language`
     			FROM `$table_p` AS `p` INNER JOIN `$table_s` USING(`page_id`)
     			WHERE `parent` = '0' AND `visibility` = 'public'
     			AND (($now>=`publ_start` OR `publ_start`=0) AND ($now<=`publ_end` OR `publ_end`=0))
@@ -160,7 +160,7 @@ if (!class_exists('LEPTON_Pages', false))
                 $this->default_link    = $fetch_default['link'];
                 $this->default_page_id = $fetch_default['page_id'];
                 $this->page_language   = $fetch_default['language'];
-                $this->page_id         = $this->default_page_id;
+                $this->page_id         = $fetch_default['page_id'];
                 // Check for redirection
                 if (HOMEPAGE_REDIRECTION)
                 {
@@ -260,7 +260,7 @@ if (!class_exists('LEPTON_Pages', false))
             }
             else
             {
-                $this->printError('Missing page_id!');
+                $this->printFatalError('Missing page_id!');
             }
 
             // Figure out what template to use
