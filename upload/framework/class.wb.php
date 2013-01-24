@@ -38,7 +38,7 @@ if (defined('LEPTON_PATH')) {
 include_once(LEPTON_PATH . '/framework/class.securecms.php');
 
 // Include PHPLIB template class
-require_once(LEPTON_PATH . "/include/phplib/template.inc");
+//require_once(LEPTON_PATH . "/include/phplib/template.inc");
 
 require_once(LEPTON_PATH . '/framework/class.database.php');
 
@@ -104,12 +104,15 @@ class wb extends SecureCMS
         {
             return;
         }
+        // replace path in $errfile and $errstr to protect the data
+        $errfile = str_ireplace( LEPTON_PATH, '/abs/path/to', $errfile );
+        $errstr  = str_ireplace( LEPTON_PATH, '/abs/path/to', $errstr  );
         switch ($errno)
         {
             case E_USER_ERROR:
                 echo "<b>LEPTON ERROR</b> [$errno] $errstr<br />\n";
-                echo "  Fatal error on line $errline in file $errfile";
-                echo ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
+                echo "  Fatal error on line $errline in file $errfile<br />";
+                echo "  PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
                 echo "Aborting...<br />\n";
                 exit(1);
                 break;
