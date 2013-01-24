@@ -83,6 +83,19 @@ if(defined('WB_URL'))
 
 
     }
+
+    // add files to class_secure
+    $addons_helper = new LEPTON_Helper_Addons();
+    foreach(
+        array( 'save.php' )
+        as $file
+    ) {
+        if ( false === $addons_helper->sec_register_file( 'wysiwyg', $file ) )
+        {
+             error_log( "Unable to register file -$file-!" );
+        }
+    }
+
 }
 
 ?>
