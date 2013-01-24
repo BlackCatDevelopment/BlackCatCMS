@@ -108,7 +108,7 @@ if (!class_exists('LEPTON_Pages', false))
             }
             if (!isset($page_id) OR !is_numeric($page_id))
             {
-                $this->page_id = $this->get_helper('Pages')->getDefaultPage($wb->sql_where_language);
+                $this->page_id = $this->getDefaultPage($wb->sql_where_language);
             }
             else
             {
@@ -260,7 +260,7 @@ if (!class_exists('LEPTON_Pages', false))
             }
             else
             {
-                $this->print_error('Missing page_id!');
+                $this->printError('Missing page_id!');
             }
 
             // Figure out what template to use
