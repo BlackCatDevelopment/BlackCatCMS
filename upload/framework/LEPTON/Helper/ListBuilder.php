@@ -41,9 +41,59 @@ if ( ! class_exists( 'LEPTON_Helper_ListBuilder', false ) ) {
 	            '__current_key'         => 'current',
 	            // array key to mark items as hidden
 	            '__hidden_key'          => 'hidden',
+                // default CSS class for <select>
+                '__select_class'        => '',
+                // suppress html creation
+                '__no_html'             => false,
 			// ----- used for dropdown -----
 			    'space'                 => '    ',
 			);
+
+        /**
+         * sort array by children
+         **/
+        public function sort ( $list, $root_id ) {
+
+            if ( empty($list) || ! is_array( $list ) || count($list) == 0 ) {
+                return NULL;
+            }
+
+            $return    = array();
+            $children  = array();
+            $p_key     = $this->_config['__parent_key'];
+            $id_key    = $this->_config['__id_key'];
+
+            // create a list of children for each item
+            foreach ( $list as $item ) {
+                $children[$item[$p_key]][] = $item;
+            }
+
+            // loop will be false if the root has no children
+            $loop         = !empty( $children[$root_id] );
+
+            // initializing $parent as the root
+            $parent       = $root_id;
+            $parent_stack = array();
+
+            while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
+            {
+                if ( $option === false ) // no more children
+                {
+                    $parent = array_pop( $parent_stack );
+                }
+                // current item has children
+                elseif ( ! empty( $children[ $option['value'][$id_key] ] ) )
+                {
+                    $return[] = $option['value'];
+                    array_push( $parent_stack, $option['value'][$p_key] );
+                    $parent = $option['value'][$id_key];
+                }
+                else {
+                    $return[] = $option['value'];
+                }
+            }
+            return $return;
+        }
 
         /**
          *
@@ -123,13 +173,7 @@ if ( ! class_exists( 'LEPTON_Helper_ListBuilder', false ) ) {
                     if ( isset($selected) && $selected == $option['value'][$id_key] ) {
                         $sel = ' selected="selected"';
                     }
-                    $output[] = '<option value="'
-                              . $option['value'][ $id_key ]
-                              . '"'.$sel.'>'
-                              . $tab
-                              . ' '
-                              . $text
-                              . '</option>';
+                    $output[] = $this->getOption($option['value'][ $id_key ],$sel,$tab,$text);
 
                     array_push( $parent_stack, $option['value'][$p_key] );
                     $parent = $option['value'][$id_key];
@@ -146,22 +190,47 @@ if ( ! class_exists( 'LEPTON_Helper_ListBuilder', false ) ) {
                     if ( isset($selected) && $selected == $option['value'][$id_key] ) {
                         $sel = ' selected="selected"';
                     }
-                    $output[] = '<option value="'
-                              . $option['value'][ $id_key ]
-                              . '"'.$sel.'>'
-                              . $tab
-                              . ' '
-                              . $text
-                              . '</option>';
+                    $output[] = $this->getOption($option['value'][ $id_key ],$sel,$tab,$text);
                 }
 
             }
 
-            return '<select name="'.$name.'" id="'.$name.'">'."\n\t"
+            return $this->startSelect($name)
 				  . join( "\n\t", $output )."\n"
-				  . '</select>';
+				  . $this->closeSelect();
 
         }   // end function dropdown ()
+
+        /**
+         *
+         **/
+        private function startSelect($name) {
+            return
+                  $this->_config['__no_html']
+                ? NULL
+                : '<select name="'.$name.'" id="'.$name.'" class="'. $this->_config['__select_class'].'">'."\n\t";
+        }
+
+        /**
+         *
+         **/
+        private function closeSelect() {
+            return
+                $this->_config['__no_html']
+                ? NULL
+                : '</select>';
+        }
+
+        /**
+         *
+         **/
+        private function getOption($value,$sel,$tab,$text) {
+            $content = $tab . ' ' . $text;
+            return
+                $this->_config['__no_html']
+                ? $content
+                : '<option value="'.$value.'"'.$sel.'>'.$content.'</option>';
+        }
         
 	}
 }
