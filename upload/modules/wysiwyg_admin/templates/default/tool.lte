@@ -1,22 +1,21 @@
-<form id="wysiwyg_admin" method="post" action="{$action}" onsubmit="return testform( this );">
-<input type="hidden" name="job" value="save" />
-<input type="hidden" name="id" value="{$id}" />
-<table>
-	<tr>
-		<td><label for="editor_skin">{translate('Skin')}</label></td>
-		<td colspan="2">
+<form id="wysiwyg_admin" method="post" action="{$action}">
+    <input type="hidden" name="job" value="save" />
+    <input type="hidden" name="id" value="{$id}" />
+    <fieldset>
+        <legend>{translate('Common options')}</legend>
+        <label for="editor_skin">{translate('Skin')}</label>
         {if is_array($skins)}
-          <select name="editor_skin" id="editor_skin">
+              <select name="skin" id="skin">
             {foreach $skins as skin}
-            <option value="{$skin}">{$skin}</option>
+                <option value="{$skin}"{if $skin == $current_skin} selected="selected"{/if}>{$skin}</option>
             {/foreach}
           </select>
-        {/if}
-		</td>
-	</tr>
-	<tr>
-		<td><label for="editor_toolbar">{translate('Editor Toolbar')}</label></td>
-		<td colspan="2">
+              <div id="wysiwyg_admin_skin_preview">
+                  {translate('Skin preview')}<br />
+                  {$preview}
+              </div>
+            {/if}<br />
+        <label for="editor_toolbar">{translate('Editor Toolbar')}</label>
         {if is_array($toolbars)}
           <select name="editor_toolbar" id="editor_toolbar">
             {foreach $toolbars as toolbar}
@@ -25,41 +24,48 @@
           </select>
         {else}
           {if is_scalar($toolbars)}{$toolbars}{/if}
-        {/if}
-        </td>
-	</tr>
-	<tr>
-		<td>{translate('Editor width')}</td>
-		<td><input type="text" name="width" value="{$width}" /></td>
-        <td><span class="legend">{translate('Mandatory! Allowed values: "px", "%" or "em".')}</span></td>
-	</tr>
-	<tr>
-		<td>{translate('Editor height')}</td>
-		<td><input type="text" name="height" value="{$height}" /></td>
-        <td><span class="legend">{translate('Mandatory! Allowed values: "px", "%" or "em".')}</span></td>
-	</tr>
-    {foreach $config cfg}
-    {if ! ( $cfg.set_name == 'width' || $cfg.set_name == 'height' || $cfg.set_name == 'skin' ) }
-    <tr>
-        <td>{$cfg.set_name}</td>
-        <td>
-          {if $cfg.set_value == 'true' || $cfg.set_value == 'false' }
-            <input type="radio" name="{$cfg.set_name}" value="true" {if $cfg.set_value == 'true'}checked="checked"{/if} /> true
-            <input type="radio" name="{$cfg.set_name}" value="false" {if $cfg.set_value == 'false'}checked="checked"{/if} /> false
-          {else}
-            <input type="text" name="{$cfg.set_name}" value="{$cfg.set_value}" />
-          {/if}
-        </td>
-        <td>
-          {translate($cfg.set_name)}
-        </td>
-    </tr>
-    {/if}
-    {/foreach}
-	<tr>
-		<td><input type="submit" value="{$TEXT.SAVE}" /></td>
-		<td><input type="button" value="{$TEXT.CANCEL}" onclick="document.location='<?php echo ADMIN_URL; ?>/admintools/index.php<?php echo $leptoken; ?>';" /></td>
-	</tr>
+            {/if}<br />
+        <label for="width">{translate('Editor width')}</label>
+            <input type="text" name="width" value="{$width}" />
+            <input type="radio" id="width_unit_em" name="width_unit" value="em" {$width_unit_em} /> em
+            <input type="radio" id="width_unit_px" name="width_unit" value="px" {$width_unit_px} /> px
+            <input type="radio" id="width_unit_proz" name="width_unit" value="%" {$width_unit_proz} /> %
+            <br />
+            {if $errors.width}<span class="error">{$errors.width}</span><br />{/if}
+        <label for="height">{translate('Editor height')}</label>
+            <input type="text" name="height" value="{$height}" />
+            <input type="radio" id="height_unit_em" name="height_unit" value="em" {$height_unit_em} /> em
+            <input type="radio" id="height_unit_px" name="height_unit" value="px" {$height_unit_px} /> px
+            <input type="radio" id="height_unit_proz" name="height_unit" value="%" {$height_unit_proz} /> %
+            <br />
+            {if $errors.height}<span class="error">{$errors.height}</span><br />{/if}
+    </fieldset>
 
-</table>
+    {if is_array($settings)}
+    <fieldset>
+        <legend>{translate('Additional options')}</legend>
+        {foreach $settings as set}{assign "$set.name" val}
+        <label for="{$set.name}">{$set.name}</label>
+            <span class="settings">
+            {if $set.type == 'boolean'}
+            <input type="radio" name="{$set.name}" value="true" {if $config.$val == 'true' || ( $config.$val == '' && $set.default == 'true' )}checked="checked"{/if} /> true
+            <input type="radio" name="{$set.name}" value="false" {if $config.$val == 'false' || ( $config.$val == '' && $set.default == 'false' )}checked="checked"{/if} /> false
+            {else}
+            {if $set.type == 'select'}{assign $set.options options}
+            <select name="{$set.name}" id="{$set.name}">
+            {foreach $options as opt}<option value="{$opt}"{if $opt == $config.$val} selected="selected"{/if}>{$opt}</option>{/foreach}
+            </select>
+          {else}
+            <input type="text" name="{$set.name}" value="{if $config.$val == ''}{$set.default}{else}{$config.$val}{/if}" />
+            {/if}{/if}
+            </span>
+            <span class="infotext">{translate($set.name)}</span><br />
+        {/foreach}
+    </fieldset>
+          {/if}
+
+    <div class="buttons">
+        <input type="submit" value="{$TEXT.SAVE}" />
+        <input type="button" value="{$TEXT.CANCEL}" onclick="document.location='<?php echo ADMIN_URL; ?>/admintools/index.php<?php echo $leptoken; ?>';" />
+    </div>
 </form>

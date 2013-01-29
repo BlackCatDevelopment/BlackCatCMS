@@ -71,21 +71,7 @@ if (file_exists(sanitize_path(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages
     $admin->lang->addFile(LANGUAGE.'.php',sanitize_path(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages'));
 }
 
-// get current settings
-$query  = "SELECT * from `".TABLE_PREFIX."mod_wysiwyg_admin_v2` where `editor`='".WYSIWYG_EDITOR."'";
-$result = $database->query ($query );
-$config = array();
-if($result->numRows())
-{
-    while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
-    {
-        if ( substr_count( $row['set_value'], '#####' ) ) // array values
-        {
-            $row['set_value'] = explode( '#####', $row['set_value'] );
-        }
-        $config[$row['set_name']] = $row['set_value'];
-    }
-}
+$config       = wysiwyg_admin_config();
 
 // load driver class
 $c            = new c_editor();
@@ -174,6 +160,28 @@ if (isset($_POST['job']) && $_POST['job']=="save") {
         $database->query( 'REPLACE INTO '.TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'width\', \''.$width.$width_unit.'\' )' );
         $database->query( 'REPLACE INTO '.TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'height\', \''.$height.$height_unit.'\' )' );
         $database->query( 'REPLACE INTO '.TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'skin\', \''.$_POST['skin'].'\' )' );
+        // save additionals
+        if(count($settings))
+        {
+            foreach($settings as $item)
+            {
+                $value = NULL;
+                if(!isset($_POST[$item['name']]))
+                {
+                    if(isset($item['default']))
+                    {
+                        $value = $item['default'];
+                    }
+                }
+                else
+                {
+                    $value = $_POST[$item['name']];
+                }
+                $database->query( 'REPLACE INTO '.TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \''.$item['name'].'\', \''.$value.'\' )' );
+            }
+        }
+        // reload settings
+        $config       = wysiwyg_admin_config();
     }
 }
 
@@ -203,3 +211,22 @@ echo $parser->get(
         'height_unit_'.($height_unit=='%'?'proz':$height_unit) => 'checked="checked"',
     )
 );
+// get current settings
+function wysiwyg_admin_config() {
+    global $database;
+    $query  = "SELECT * from `".TABLE_PREFIX."mod_wysiwyg_admin_v2` where `editor`='".WYSIWYG_EDITOR."'";
+    $result = $database->query ($query );
+    $config = array();
+    if($result->numRows())
+    {
+        while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+        {
+            if ( substr_count( $row['set_value'], '#####' ) ) // array values
+            {
+                $row['set_value'] = explode( '#####', $row['set_value'] );
+            }
+            $config[$row['set_name']] = $row['set_value'];
+        }
+    }
+    return $config;
+}
