@@ -646,7 +646,7 @@ function copy_droplep( $id )
     // generate query
     $query = "INSERT INTO " . TABLE_PREFIX . "mod_droplets VALUES "
     //         ID      NAME         CODE              DESCRIPTION                            MOD_WHEN                     MOD_BY
-		   . "(''," . "'$new_name', " . "'$code', " . "'" . $data[ 'description' ] . "', " . "'" . time() . "', " . "'" . $admin->get_user_id() . "', " . "1,1,1,0,'" . $data[ 'comments' ] . " )";
+		   . "('', '$new_name', '$code', '" . $data[ 'description' ] . "', '" . time() . "', '" . $admin->get_user_id() . "', 1, 1, 1, 0, '" . $data[ 'comments' ] . "' )";
 
     // add new droplet
     $result = $database->query( $query );
