@@ -19,5 +19,6 @@
 define('WB_SERVER_ADDR', LEPTON_SERVER_ADDR );
 define('WB_PATH', LEPTON_PATH);
 define('WB_URL', LEPTON_URL);
+define('WB_PREPROCESS_PREG', '/\[wblink([0-9]+)\]/isU' );
 
 ?>

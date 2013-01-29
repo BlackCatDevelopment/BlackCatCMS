@@ -127,8 +127,10 @@ class frontend extends wb {
 	function preprocess( &$content )
 	{
 		global $database;
-		
-		if(preg_match_all( '/\[wblink([0-9]+)\]/isU', $content, $ids ) ) {
+		$regexp = array( '/\[cmsplink([0-9]+)\]/isU' );
+        if(defined('WB_PREPROCESS_PREG')) $regexp[] = WB_PREPROCESS_PREG;
+        foreach($regexp as $preg) {
+    		if(preg_match_all( $preg, $content, $ids ) ) {
 			$new_ids = array_unique($ids[1]);
 			foreach($new_ids as $key => &$page_id) {
 				$link = $database->get_one( 'SELECT `link` FROM `'.TABLE_PREFIX.'pages` WHERE `page_id` = '.$page_id );
@@ -141,6 +143,7 @@ class frontend extends wb {
 				}
 			}
 		}
+	}
 	}
 
 	function menu() {
