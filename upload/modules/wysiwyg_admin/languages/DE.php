@@ -43,6 +43,9 @@ if (defined('WB_PATH')) {
 
 if ( !defined('LEPTON_PATH')) die(header('Location: ../../index.php'));
 
+$module_description = 'WYSIWYG Admin ermöglicht die Verwaltung diverser Editor-Einstellung; standardmäßig sind das Skin, Toolbar, Breite und Höhe. '
+                    . 'Der Editor kann weitere Optionen definieren, die dann ebenfalls verwaltet werden können.';
+
 $LANG = array(
     'Common options' => 'Allgemeine Einstellungen',
     'Additional options' => 'Weitere Einstellungen',

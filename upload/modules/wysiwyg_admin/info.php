@@ -51,5 +51,5 @@ $module_platform	= '2.x';
 $module_author		= 'LEPTON v2.0 Black Cat Edition Development';
 $module_license		= '<a href="http://www.gnu.org/licenses/" target="_blank">GNU GPL</a>';
 $module_license_terms = '-';
-$module_description	= '';
+$module_description	= 'WYSIWYG Admin allows to manage some editor options, which are skin, toolbar, height and width by default. There may be additional options defined by the editor itself.';
 $module_guid		= '';
