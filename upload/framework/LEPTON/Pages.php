@@ -672,11 +672,11 @@ if (!class_exists('LEPTON_Pages', false))
             // -----------------------------------------------------------------
             // -----                  frontend theme                       -----
             // -----------------------------------------------------------------
-            $file = $this->sanitizePath(LEPTON_PATH . '/templates/' . DEFAULT_TEMPLATE . '/footers.inc.php');
+            $file = $this->sanitizePath(LEPTON_PATH . '/templates/' . TEMPLATE . '/footers.inc.php');
             if (file_exists($file))
             {
-                $this->log()->logDebug(sprintf('adding footer items for frontend template [%s]', DEFAULT_TEMPLATE));
-                $this->_load_footers_inc($file, 'frontend', 'templates/' . DEFAULT_TEMPLATE);
+                $this->log()->logDebug(sprintf('adding footer items for frontend template [%s]', TEMPLATE));
+                $this->_load_footers_inc($file, 'frontend', 'templates/' . TEMPLATE);
             } // end loading theme
 
             // -----------------------------------------------------------------
@@ -709,15 +709,21 @@ if (!class_exists('LEPTON_Pages', false))
             // -----------------------------------------------------------------
             // -----                  frontend theme                       -----
             // -----------------------------------------------------------------
-            $file = $this->sanitizePath(LEPTON_PATH . '/templates/' . DEFAULT_TEMPLATE . '/headers.inc.php');
+            $file = $this->sanitizePath(LEPTON_PATH . '/templates/' . TEMPLATE . '/headers.inc.php');
             if (file_exists($file))
             {
-                $this->log()->logDebug(sprintf('adding items for backend theme [%s]', DEFAULT_TEMPLATE));
-                $this->_load_headers_inc($file, 'frontend', 'templates/' . DEFAULT_TEMPLATE);
+                $this->log()->logDebug(sprintf('adding items for backend theme [%s]', TEMPLATE));
+                $this->_load_headers_inc($file, 'frontend', 'templates/' . TEMPLATE);
             }
 
             // add template path to CSS search path (frontend only)
-            array_push(LEPTON_Pages::$css_search_path, '/templates/' . DEFAULT_TEMPLATE, '/templates/' . DEFAULT_TEMPLATE . '/css');
+            array_push(
+                LEPTON_Pages::$css_search_path,
+                '/templates/' . TEMPLATE,
+                '/templates/' . TEMPLATE . '/css',
+                '/templates/' . TEMPLATE . '/default',
+                '/templates/' . TEMPLATE . '/default/css'
+            );
 
             // -----------------------------------------------------------------
             // -----                  sections (modules)                   -----
