@@ -35,6 +35,7 @@ if (!class_exists('CAT_Helper_Addons'))
     {
 
         private static $dirh;
+        private        $error = NULL;
 
         public function __construct()
         {
@@ -969,11 +970,13 @@ if (!class_exists('CAT_Helper_Addons'))
                     'page',
                     'library',
                     'tool',
-                    'snippet'
+                    'snippet',
+                    'wysiwyg',
+                    'widget'
                 );
                 $template_functions = array(
-                    'template',
-                    'theme'
+                    'template',   // frontend
+                    'theme'       // backend
                 );
 
                 require($directory . '/info.php');
@@ -992,7 +995,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 }
                 else
                 {
-                    $this->log()->logDebug('var $module_function/$template_function not set or invalid, check of info.php failed');
+                    $this->error = 'Invalid info.php - var module_function or var template_function not set';
+                    $this->log()->logDebug($this->error);
                     return false;
                 }
                 // Check if the file is valid
@@ -1000,7 +1004,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 {
                     if (!isset(${$varname}))
                     {
-                        $this->log()->logDebug('var ' . $varname . ' not set in info.php, check of info.php failed');
+                        $this->error = 'Invalid info.php - var ' . $varname . ' not set';
+                        $this->log()->logDebug($this->error);
                         return false;
                     }
                     else
@@ -1016,7 +1021,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 $content = file_get_contents($directory);
                 if (strpos($content, '<?php') === false)
                 {
-                    $this->log()->logDebug('invalid language file, check of language file failed');
+                    $this->error = 'Invalid language file - missing PHP delimiter';
+                    $this->log()->logDebug($this->error);
                     return false;
                 }
 
@@ -1029,7 +1035,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 {
                     if (!isset(${$varname}))
                     {
-                        $this->log()->logDebug('var ' . $varname . ' not set, check of language file failed');
+                        $this->error = 'Invalid language file - var ' . $varname . ' not set';
+                        $this->log()->logDebug($this->error);
                         return false;
                     }
                     else
@@ -1041,10 +1048,16 @@ if (!class_exists('CAT_Helper_Addons'))
             }
             else
             {
-                $this->log()->logDebug('invalid directory/language file or info.php is missing, check of language file failed');
+                $this->error = 'invalid directory/language file or info.php is missing, check of language file failed';
+                $this->log()->logDebug($this->error);
                 return false;
             }
         } // end function checkInfo()
+
+        public function getError()
+        {
+            return $this->lang->translate($this->error);
+        }
 
     } // class CAT_Helper_Addons
 

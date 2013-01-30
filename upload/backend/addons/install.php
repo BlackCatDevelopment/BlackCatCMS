@@ -16,8 +16,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -41,22 +41,22 @@ if (!isset($_FILES['userfile']) || $_FILES['userfile']['size'] == 0)
 	exit(0);
 }
 
-require_once( LEPTON_PATH . '/framework/class.admin.php' );
+require_once( CAT_PATH . '/framework/class.admin.php' );
 $admin = new admin('Addons', 'addons');
 
 // Include the WB functions file
-require_once( LEPTON_PATH . '/framework/functions.php' );
+require_once( CAT_PATH . '/framework/functions.php' );
 
 // Check if module dir is writable (doesn't make sense to go on if not)
-if ( !(is_writable( LEPTON_PATH .  '/modules/') && is_writable( LEPTON_PATH . '/templates/') && is_writable( LEPTON_PATH . '/languages/') ) )
+if ( !(is_writable( CAT_PATH .  '/modules/') && is_writable( CAT_PATH . '/templates/') && is_writable( CAT_PATH . '/languages/') ) )
 {
 	$admin->print_error( 'Unable to write to the target directory' );
 }
 
 // Set temp vars
-$temp_dir		= LEPTON_PATH . '/temp/';
+$temp_dir		= CAT_PATH . '/temp/';
 $temp_file		= $temp_dir . $_FILES['userfile']['name'];
-$temp_unzip		= LEPTON_PATH . '/temp/unzip ' . basename($_FILES['userfile']['tmp_name']) . '/';
+$temp_unzip		= CAT_PATH . '/temp/unzip ' . basename($_FILES['userfile']['tmp_name']) . '/';
 
 $addon_helper		= $admin->get_helper('Addons');
 
@@ -88,12 +88,12 @@ else if ( $extension == 'zip' ) {
 	if ( !( $list && file_exists( $temp_subdir . 'index.php' ) ) )
 	{
 		CLEANUP();
-		$admin->print_error( 'Invalid LEPTON installation file. Please check the *.zip format.' );
+		$admin->print_error( 'Invalid installation file. Please check the *.zip format.' );
 	}
 }
 else {
 	CLEANUP();
-	$admin->print_error( 'Invalid LEPTON installation file. Please check the *.zip format.' );
+	$admin->print_error( 'Invalid installation file. Please check the *.zip format.' );
 }
 
 // Check the info.php file / language file
@@ -103,17 +103,16 @@ if ( $addon_info = $addon_helper->checkInfo( $temp_subdir ) )
 }
 else {
 	CLEANUP();
-	$admin->print_error( '2Invalid LEPTON installation file. Please check the *.zip format.' );
+	$admin->print_error( 'Invalid installation file. Please check the *.zip format.' );
 }
 
 // So, now we have done all preinstall checks, lets see what to do next
-$addon_directory	= $addon_info['addon_function'] == 'language' ?
-						$addon_info[$addon_info['addon_function'] . '_code'] . '.php' :
-						$addon_info[$addon_info['addon_function'] . '_directory'];
+$addon_directory = $addon_info['addon_function'] == 'language'
+    ? $addon_info[$addon_info['addon_function'] . '_code'] . '.php'
+	: $addon_info[$addon_info['addon_function'] . '_directory'];
 
 // Set module directory
-$addon_dir			= LEPTON_PATH .  '/' . $addon_info['addon_function'] . 's/' . $addon_directory;
-
+$addon_dir			= CAT_PATH .  '/' . $addon_info['addon_function'] . 's/' . $addon_directory;
 $action				= 'install';
 
 if ( file_exists( $addon_dir ) )
@@ -144,7 +143,7 @@ if ( $addon_info['addon_function'] != 'language')
 	if ( COPY_RECURSIVE_DIRS( $temp_subdir, $addon_dir ) !== true )
 	{
 		CLEANUP();
-		$admin->print_error( 'Actualization not possibly' );
+		$admin->print_error( 'Unable to install - error copying files' );
 	}
 	// remove temp
 	CLEANUP();

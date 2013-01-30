@@ -192,7 +192,15 @@ $LANG = array(
     'When reaching this number, more login attempts are not possible for this session.'
         => 'Nach Erreichen dieser Anzahl sind keine weiteren Anmeldeversuche mehr möglich.',
     // ----- addons -----
+    'Already installed' => 'Bereits installiert',
+    'Unable to install - error copying files' => 'Installation nicht möglich - Fehler beim Kopieren der Dateien',
     'Add-On requirements not met' => 'Add-On Voraussetzungen nicht erf&uuml;llt',
+    'Invalid installation file. Please check the *.zip format.' => 'Ung&uuml;ltige Installationsdatei. Bitte *.zip Format pr&uuml;fen.',
+    'Install addon' => 'Erweiterung installieren',
+    'An error occured' => 'Es ist ein Fehler aufgetreten',
+    'Invalid info.php - var module_function or var template_function not set'
+        => 'Ungültige info.php - Variable module_function oder Variable template_function nicht gesetzt',
+    'Invalid language file - missing PHP delimiter' => 'Ungültige Sprachdatei - PHP Delimiter fehlt',
 );
 
 
@@ -685,7 +693,6 @@ $MESSAGE = array(
 	'GENERIC_INSTALLED' 		=> 'Erfolgreich installiert.',
 	'GENERIC_INVALID' 			=> 'Die &uuml;bertragene Datei ist ung&uuml;ltig.',
 	'GENERIC_INVALID_MODULE' => 'Ung&uuml;ltiges Modul! Keine info.php vorhanden, oder Versionsnummer fehlt.',
-	'GENERIC_INVALID_ADDON_FILE' => 'Ung&uuml;ltige LEPTON Installationsdatei. Bitte *.zip Format pr&uuml;fen.',
 	'GENERIC_INVALID_LANGUAGE_FILE' => 'Ung&uuml;ltige LEPTON Sprachdatei. Bitte Textdatei pr&uuml;fen.',
 	'GENERIC_MODULE_OK' => 'Das Modul wurde erfolgreich &uuml;berpr&uuml;ft',
 	'GENERIC_MODULE_VERSION_ERROR' => 'Das Modul ist nicht ordnungsgem&auml;ss installiert!',
