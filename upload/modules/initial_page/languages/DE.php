@@ -3,14 +3,14 @@
 /**
  *
  *   @module          initial_page
- *   @author          Ralf Hertsch, Dietrich Roland Pehlke, LEPTON v2.0 Black Cat Edition Development
+ *   @author          Ralf Hertsch, Dietrich Roland Pehlke, Black Cat Development
  *   @copyright       2010-2011, Ralf Hertsch, Dietrich Roland Pehlke
- *   @copyright       2013, LEPTON v2.0 Black Cat Edition Development
+ *   @copyright       2013, Black Cat Development
  *   @link            http://www.LEPTON-cms.org
- *   @link            http://www.lepton2.org
+ *   @link            http://blackcat-cms.org
  *   @license         copyright, all rights reserved
  *   @license_terms   please see info.php of this module
- *   @category        LEPTON2BCE_Modules
+ *   @category        CAT_Modules
  *   @package         initial_page
  *
  */

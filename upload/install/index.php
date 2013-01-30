@@ -1,24 +1,31 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @category        LEPTON_Core
- * @package         Installation
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Installer
  *
  */
 
 $debug = false;
 
-define('LEPTON_PATH',dirname(__file__).'/..');
+define('CAT_PATH',dirname(__file__).'/..');
 
 // check wether to call update.php or start installation
 if (file_exists('../config.php')) {
@@ -26,13 +33,13 @@ if (file_exists('../config.php')) {
     die();
 }
 
-define('LEPTON_INSTALL',true);
+define('CAT_INSTALL',true);
 define('LOGFILE',dirname(__FILE__).'/../temp/inst.log');
 define('WB_PATH',dirname(__file__).'/..');
 
 // Start a session
 if ( !defined( 'SESSION_STARTED' ) ) {
-	session_name( 'lepton_session_id' );
+	session_name( 'cat_session_id' );
 	session_start();
 	define( 'SESSION_STARTED', true );
 }
@@ -71,20 +78,20 @@ if ( count($pre_inst_err) )
 // *****************************************************************************
 
 // language helper
-include dirname(__FILE__).'/../framework/LEPTON/Helper/I18n.php';
-$lang = new LEPTON_Helper_I18n();
+include dirname(__FILE__).'/../framework/CAT/Helper/I18n.php';
+$lang = new CAT_Helper_I18n();
 
 // the admin dummy defines some methods needed for module installation and error handling
 include dirname(__FILE__).'/admin_dummy.inc.php';
 $admin = new admin_dummy();
 
 // user class for checking password
-include dirname(__FILE__).'/../framework/LEPTON/Users.php';
-$users  = new LEPTON_Users();
+include dirname(__FILE__).'/../framework/CAT/Users.php';
+$users  = new CAT_Users();
 
 // directory helper
-include dirname(__FILE__).'/../framework/LEPTON/Helper/Directory.php';
-$dirh   = new LEPTON_Helper_Directory();
+include dirname(__FILE__).'/../framework/CAT/Helper/Directory.php';
+$dirh   = new CAT_Helper_Directory();
 
 
 // *****************************************************************************
@@ -157,11 +164,11 @@ else {
     $config = array();
 }
 
-if ( isset($config['lepton_url']) && $config['lepton_url'] != '' )
+if ( isset($config['cat_url']) && $config['cat_url'] != '' )
 {
     $parser->setGlobals(
 		array(
-		    'lepton_url' => $config['lepton_url'],
+		    'cat_url' => $config['cat_url'],
 		)
 	);
 }
@@ -272,8 +279,8 @@ function show_step_precheck() {
 	$ok   = true;
 
 	// precheck.php
-	include dirname(__FILE__).'/../framework/LEPTON/Helper/Addons.php';
-	$addons = new LEPTON_Helper_Addons();
+	include dirname(__FILE__).'/../framework/CAT/Helper/Addons.php';
+	$addons = new CAT_Helper_Addons();
 	$result = $addons->preCheckAddon( NULL, dirname(__FILE__), false, true );
 	$parser->setPath( dirname(__FILE__).'/templates/default' );
 	$result = $parser->get(
@@ -403,7 +410,7 @@ function show_step_globals( $step ) {
     $output = $parser->get(
         'globals.lte',
         array(
-			'installer_lepton_url' 				=> dirname( $installer_uri ).'/',
+			'installer_cat_url' 				=> dirname( $installer_uri ).'/',
 			'timezones'  						=> $timezone_table,
 			'installer_default_timezone_string' => $config['default_timezone_string'],
 			'languages' 						=> $langs,
@@ -422,9 +429,9 @@ function show_step_globals( $step ) {
 function check_step_globals() {
 	global $config, $lang;
 	$errors = array();
-	if ( ! isset($config['lepton_url']) || $config['lepton_url'] == '' )
+	if ( ! isset($config['cat_url']) || $config['cat_url'] == '' )
 	{
-	    $errors['installer_lepton_url'] = $lang->translate('Please insert the base URL!');
+	    $errors['installer_cat_url'] = $lang->translate('Please insert the base URL!');
 	}
 	return array(
 		( count($errors) ? false : true ),
@@ -445,7 +452,7 @@ function show_step_db( $step ) {
             'installer_database_username' => ( isset($config['database_username']) ? $config['database_username'] : 'my-user-name' ),
             'installer_database_password' => ( isset($config['database_password']) ? $config['database_password'] : ''             ),
             'installer_database_name' 	  => ( isset($config['database_name'])     ? $config['database_name'] 	  : 'my-db-name'   ),
-            'installer_table_prefix'      => ( isset($config['table_prefix'])      ? $config['table_prefix']      : 'lep_'         ),
+            'installer_table_prefix'      => ( isset($config['table_prefix'])      ? $config['table_prefix']      : 'cat_'         ),
             'installer_install_tables'    => ( isset($config['install_tables'])    ? $config['install_tables']    : 'y'            ),
             'installer_no_validate_db_password' => ( isset($config['no_validate_db_password']) ? $config['no_validate_db_password'] : ''             ),
             'errors'            		  => $step['errors']
@@ -462,7 +469,7 @@ function check_step_db() {
 	if ( isset($_REQUEST['btn_back']) ) {
 	    return array( true, array() );
 	}
-	$errors = __lep_check_db_config();
+	$errors = __cat_check_db_config();
 	return array(
 		( count($errors) ? false : true ),
 		$errors
@@ -642,9 +649,9 @@ function default_dir_mode($temp_dir) {
  **/
 function install_tables ($database) {
 	global $config ;
-	if (!defined('LEPTON_INSTALL_PROCESS')) define ('LEPTON_INSTALL_PROCESS', true);
+	if (!defined('CAT_INSTALL_PROCESS')) define ('CAT_INSTALL_PROCESS', true);
     // import structure
-    __lep_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
+    __cat_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
 	
 	return array(
 		true,      // no error checks here! Maybe added later...
@@ -656,7 +663,7 @@ function install_tables ($database) {
 /**
  * fills the tables created by install_tables()
  **/
-function fill_tables($database,$lepton_guid) {
+function fill_tables($database) {
 
 	global $config;
 	
@@ -681,8 +688,7 @@ function fill_tables($database,$lepton_guid) {
 	
 	$settings_rows =	"INSERT INTO `".TABLE_PREFIX."settings` "
 		." (name, value) VALUES "
-		." ('lepton_version', '".VERSION."'),"
-		." ('lepton_guid', '$lepton_guid'),"
+		." ('cat_version', '".VERSION."'),"
 		." ('website_title', '".$config['website_title']."'),"
 		." ('website_description', ''),"
 		." ('website_keywords', ''),"
@@ -693,7 +699,7 @@ function fill_tables($database,$lepton_guid) {
 		." ('prompt_mysql_errors', 'true'),"
 		." ('default_language', '".$config['default_language']."'),"
 		." ('app_name', 'lep$session_rand'),"
-		." ('sec_anchor', 'lep_'),"
+		." ('sec_anchor', 'cat_'),"
 		." ('default_timezone_string', '".$config['default_timezone_string']."'),"
 		." ('default_date_format', 'M d Y'),"
 		." ('default_time_format', 'g:i A'),"
@@ -865,19 +871,19 @@ function fill_tables($database,$lepton_guid) {
 /**
  * installs all modules, templates, and languages
  **/
-function install_modules ($lepton_path) {
+function install_modules ($cat_path) {
 
 	global $admin;
 	
 	$errors = array();
 
-	require_once($lepton_path.'/framework/initialize.php');
+	require_once($cat_path.'/framework/initialize.php');
 
 	// Load addons into DB
 	$dirs = array(
-		'modules'	=> $lepton_path.'/modules/',
-		'templates'	=> $lepton_path.'/templates/',
-		'languages'	=> $lepton_path.'/languages/'
+		'modules'	=> $cat_path.'/modules/',
+		'templates'	=> $cat_path.'/templates/',
+		'languages'	=> $cat_path.'/languages/'
 	);
 	$ignore_files= array(
 		'admin.php',
@@ -997,8 +1003,8 @@ function check_tables($database) {
 	 */
 	$vars = array(
 		'DEFAULT_THEME'	=> "freshcat",
-		'THEME_URL'		=> LEPTON_URL."/templates/freshcat",
-		'THEME_PATH'	=> LEPTON_PATH."/templates/freshcat",
+		'THEME_URL'		=> CAT_URL."/templates/freshcat",
+		'THEME_PATH'	=> CAT_PATH."/templates/freshcat",
 		'LANGUAGE'		=> $_POST['default_language'],
 		'SERVER_EMAIL'	=> "admin@yourdomain.tld",
 		'PAGES_DIRECTORY' => '/page',
@@ -1012,7 +1018,7 @@ function check_tables($database) {
 		}
 	}
 
-	if (!isset($MESSAGE)) include (LEPTON_PATH."/languages/".LANGUAGE.".php");
+	if (!isset($MESSAGE)) include (CAT_PATH."/languages/".LANGUAGE.".php");
 
 	/**
 	 *	The important part ...
@@ -1044,7 +1050,7 @@ function check_tables($database) {
 
 function create_default_page($database) {
 
-    __lep_installer_import_sql(dirname(__FILE__).'/db/default_page.sql',$database);
+    __cat_installer_import_sql(dirname(__FILE__).'/db/default_page.sql',$database);
 
     $pg_content = "<?php
 /**
@@ -1056,11 +1062,11 @@ function create_default_page($database) {
 ?>
 ";
 
-    $fh = fopen(LEPTON_PATH.'/pages/welcome.php','w');
+    $fh = fopen(CAT_PATH.'/pages/welcome.php','w');
     fwrite($fh,str_replace('%%id%%',1,$pg_content));
     fclose($fh);
 
-    $fh = fopen(LEPTON_PATH.'/pages/willkommen.php','w');
+    $fh = fopen(CAT_PATH.'/pages/willkommen.php','w');
     fwrite($fh,str_replace('%%id%%',2,$pg_content));
     fclose($fh);
 
@@ -1096,10 +1102,10 @@ function pre_installation_error( $msg ) {
     <div style="float:left;margin:0;padding:0;padding-left:50px;"><h3>feel free to keep it strictly simple...</h3></div>
     <div>
       <!-- Please note: the below reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
-      <a href="http://www.lepton2.org" title="LEPTON v2.0 Black Cat Edition" target="_blank">LEPTON v2.0 Black Cat Edition Core</a> is released under the
+      <a href="http://blackcat-cms.org" title="LEPTON v2.0 Black Cat Edition" target="_blank">LEPTON v2.0 Black Cat Edition Core</a> is released under the
       <a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON v2.0 Black Cat Edition Core is GPL" target="_blank">GNU General Public License</a>.<br />
       <!-- Please note: the above reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
-      <a href="http://www.lepton2.org" title="LEPTON Package" target="_blank">LEPTON v2.0 Black Cat Edition Package</a> is released under several different licenses.
+      <a href="http://blackcat-cms.org" title="LEPTON Package" target="_blank">LEPTON v2.0 Black Cat Edition Package</a> is released under several different licenses.
     </div>
   </div>
   </body>
@@ -1112,14 +1118,14 @@ function pre_installation_error( $msg ) {
  * $file     is the name of the file
  * $database is the db handle
  **/
-function __lep_installer_import_sql($file,$database) {
+function __cat_installer_import_sql($file,$database) {
 
     $import = file_get_contents($file);
 
     $import = preg_replace( "%/\*(.*)\*/%Us", ''          , $import );
     $import = preg_replace( "%^--(.*)\n%mU" , ''          , $import );
     $import = preg_replace( "%^$\n%mU"      , ''          , $import );
-    $import = preg_replace( "%lep_%"        , TABLE_PREFIX, $import );
+    $import = preg_replace( "%cat_%"        , TABLE_PREFIX, $import );
     $import = preg_replace( "%\r?\n%"       , ''          , $import );
 
     $import = explode (";", $import);
@@ -1130,7 +1136,7 @@ function __lep_installer_import_sql($file,$database) {
         }
     }
 
-}   // end function __lep_installer_import_sql()
+}   // end function __cat_installer_import_sql()
 
 /**
  * INSTALLATION GOES HERE!!!
@@ -1140,8 +1146,8 @@ function __do_install() {
 	global $config, $parser, $dirh;
 
 	include dirname(__FILE__).'/../framework/functions.php';
-	$lepton_path = sanitize_path( dirname(__FILE__).'/..' );
-	$inst_path   = sanitize_path( $lepton_path.'/'.pathinfo( dirname(__FILE__), PATHINFO_BASENAME ) );
+	$cat_path = sanitize_path( dirname(__FILE__).'/..' );
+	$inst_path   = sanitize_path( $cat_path.'/'.pathinfo( dirname(__FILE__), PATHINFO_BASENAME ) );
 
 	if( isset($config['install_tables']) && $config['install_tables'] == 'true' ) {
 		$install_tables = true;
@@ -1156,87 +1162,46 @@ function __do_install() {
 	    $server_addr = '127.0.0.1';
 	}
 
-	// create a new GUID for this installation
-	$lepton_guid = createGUID();
-	// define service vars
-	$lepton_service_for = '';
-	$lepton_service_active = 0;
-
-	// check if file lepton.info exists within installation path
-	if (file_exists($lepton_path.'/'.$inst_path.'/lepton.info')) {
-		// read lepton.info into an array
-	  if (false !== ($lepton_info = file($lepton_path.'/'.$inst_path.'/lepton.info'))) {
-	    // walk through array
-	    foreach ($lepton_info as $item) {
-	      if (strpos($item, '=') !== false) {
-	        // split string into key and value
-	        list($key, $value) = explode('=', $item);
-					$key = strtolower(trim($key));
-	      	if (in_array($key, array('$lepton_guid', '$lepton_service_for', '$lepton_service_active'))) {
-	      		// get Lepton service values
-	      		$value = str_replace(array(' ', ';', "'", '"'), '', trim($value));
-	      		switch ($key):
-	      		case '$lepton_service_for':
-	      			if (!empty($value)) $lepton_service_for = $value;
-	      			break;
-	      		case '$lepton_service_active':
-	      			if (!empty($value) && is_numeric($value)) $lepton_service_active = intval($value);
-	      			break;
-	      		case '$lepton_guid':
-	      			if ((strlen($value) == 36) && (substr_count($value, '-') == 4)) $lepton_guid = $value;
-	      			break;
-	      		endswitch;
-	      	}
-	      }
-	    }
-	  }
-	}
-
 	// remove trailing /
-	$config_lepton_url = rtrim( $config['lepton_url'], '/' );
+	$config_cat_url = rtrim( $config['cat_url'], '/' );
 
 	$config_content = "" .
 "<?php\n".
 "\n".
-"if(defined('LEPTON_PATH')) {\n".
+"if(defined('CAT_PATH')) {\n".
 "    die('By security reasons it is not permitted to load \'config.php\' twice!! ".
 "Forbidden call from \''.\$_SERVER['SCRIPT_NAME'].'\'!');\n}\n\n".
 "// *****************************************************************************\n".
 "// please set the path names for the Lepton backend subfolders here; that is,\n".
-"// if you rename 'backend' to 'myadmin', for example, set 'LEPTON_BACKEND_FOLDER'\n".
+"// if you rename 'backend' to 'myadmin', for example, set 'CAT_BACKEND_FOLDER'\n".
 "// to 'myadmin'.\n".
-"// *****************************************************************************\n\n".
+"// *****************************************************************************\n".
 "// path to backend subfolder; default name is 'backend'\n".
-"define('LEPTON_BACKEND_FOLDER', 'backend');\n".
-"// do not touch this line! It is set by the options tab in the backend!\n".
-"define('LEPTON_BACKEND_PATH', LEPTON_BACKEND_FOLDER );\n".
+"define('CAT_BACKEND_FOLDER', 'backend');\n".
 "// *****************************************************************************\n\n".
-"define('DB_TYPE', 'mysql');\n".
-"define('DB_HOST', '".$config['database_host']."');\n".
-"define('DB_PORT', '".$config['database_port']."');\n".
-"define('DB_USERNAME', '".$config['database_username']."');\n".
-"define('DB_PASSWORD', '".$config['database_password']."');\n".
-"define('DB_NAME', '".$config['database_name']."');\n".
-"define('TABLE_PREFIX', '".$config['table_prefix']."');\n".
+"define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );\n".
+"define('CAT_DB_TYPE', 'mysql');\n".
+"define('CAT_DB_HOST', '".$config['database_host']."');\n".
+"define('CAT_DB_PORT', '".$config['database_port']."');\n".
+"define('CAT_DB_USERNAME', '".$config['database_username']."');\n".
+"define('CAT_DB_PASSWORD', '".$config['database_password']."');\n".
+"define('CAT_DB_NAME', '".$config['database_name']."');\n".
+"define('CAT_TABLE_PREFIX', '".$config['table_prefix']."');\n".
 "\n".
-"define('LEPTON_SERVER_ADDR', '".$server_addr."');\n".
-"define('LEPTON_PATH', dirname(__FILE__));\n".
-"define('LEPTON_URL', '".$config_lepton_url."');\n".
-"define('ADMIN_PATH', LEPTON_PATH.'/'.LEPTON_BACKEND_PATH);\n".
-"define('ADMIN_URL', LEPTON_URL.'/'.LEPTON_BACKEND_PATH);\n".
+"define('CAT_SERVER_ADDR', '".$server_addr."');\n".
+"define('CAT_PATH', dirname(__FILE__));\n".
+"define('CAT_URL', '".$config_cat_url."');\n".
+"define('CAT_ADMIN_PATH', CAT_PATH.'/'.CAT_BACKEND_PATH);\n".
+"define('CAT_ADMIN_URL', CAT_URL.'/'.CAT_BACKEND_PATH);\n".
 "\n".
-"define('LEPTON_GUID', '".$lepton_guid."');\n".
-"define('LEPTON_SERVICE_FOR', '".$lepton_service_for."');\n".
-"define('LEPTON_SERVICE_ACTIVE', ".$lepton_service_active.");\n".
+"// WB2/Lepton backward compatibility\n".
+"include_once CAT_PATH.'/framework/wb2compat.php';\n".
 "\n".
-"// wb2 backward compatibility\n".
-"include_once LEPTON_PATH.'/framework/wb2compat.php';\n".
-"\n".
-"if (!defined('LEPTON_INSTALL')) require_once(LEPTON_PATH.'/framework/initialize.php');\n".
+"if (!defined('CAT_INSTALL')) require_once(CAT_PATH.'/framework/initialize.php');\n".
 "\n".
 "?>";
 
-	$config_filename = $lepton_path.'/config.php';
+	$config_filename = $cat_path.'/config.php';
 
 	// Check if the file exists and is writable first.
 	if(($handle = @fopen($config_filename, 'w')) === false) {
@@ -1263,12 +1228,12 @@ function __do_install() {
 	}
 
 	// avoid to load config.php here
-	if ( ! defined('LEPTON_PATH') ) 		  { define('LEPTON_PATH',$lepton_path);                     }
-	if ( ! defined('LEPTON_ADMINS_FOLDER') )  { define('LEPTON_ADMINS_FOLDER', '/admins');              }
-	if ( ! defined('LEPTON_BACKEND_FOLDER') ) { define('LEPTON_BACKEND_FOLDER', '/backend');            }
-	if ( ! defined('LEPTON_BACKEND_PATH') )   { define('LEPTON_BACKEND_PATH', LEPTON_BACKEND_FOLDER );  }
-	if ( ! defined('ADMIN_PATH') )  		  { define('ADMIN_PATH', LEPTON_PATH.LEPTON_BACKEND_PATH);  }
-	if ( ! defined('ADMIN_URL') )   		  { define('ADMIN_URL', LEPTON_URL.LEPTON_BACKEND_PATH);    }
+	if ( ! defined('CAT_PATH') ) 		   { define('CAT_PATH',$cat_path);                     }
+	if ( ! defined('CAT_ADMINS_FOLDER') )  { define('CAT_ADMINS_FOLDER', '/admins');           }
+	if ( ! defined('CAT_BACKEND_FOLDER') ) { define('CAT_BACKEND_FOLDER', '/backend');         }
+	if ( ! defined('CAT_BACKEND_PATH') )   { define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );  }
+	if ( ! defined('CAT_ADMIN_PATH') )     { define('CAT_ADMIN_PATH', CAT_PATH.CAT_BACKEND_PATH);  }
+	if ( ! defined('CAT_ADMIN_URL') )      { define('CAT_ADMIN_URL', CAT_URL.CAT_BACKEND_PATH);    }
 
 	foreach( $config as $key => $value ) {
 		if ( ! defined( strtoupper($key) ) )
@@ -1278,10 +1243,13 @@ function __do_install() {
 	}
 
 	// WB compatibility
-	if ( ! defined('WB_URL') 	  ) { define('WB_URL',$config['lepton_url']); 	  }
-	if ( ! defined('WB_PATH')     ) { define('WB_PATH',$lepton_path); 			  }
+	if ( ! defined('WB_URL') 	  ) { define('WB_URL',$config['cat_url']); 	   }
+	if ( ! defined('WB_PATH')     ) { define('WB_PATH',$cat_path); 			   }
+    // LEPTON compatibility
+	if ( ! defined('LEPTON_URL')  ) { define('LEPTON_URL',$config['cat_url']); }
+	if ( ! defined('LEPTON_PATH') ) { define('LEPTON_PATH',$cat_path); 		   }
 
- 	require $lepton_path.'/framework/class.login.php';
+ 	require $cat_path.'/framework/class.login.php';
 	$database = new database();
 
 	// remove old inst.log
@@ -1293,14 +1261,14 @@ function __do_install() {
 		// only try to fill tables if the creation succeeded
 		if ( $result && ! count($errors) ) {
 			// ----- fill tables -----
-			list ( $result, $fillerrors ) = fill_tables($database,$lepton_guid);
+			list ( $result, $fillerrors ) = fill_tables($database);
 			if ( ! $result || count($fillerrors) ) {
 				$errors['populate tables'] = $fillerrors;
 			}
 			// only try to install modules if fill tables succeeded
 			else {
 				// ----- install addons -----
-				list ( $result, $insterrors ) = install_modules($lepton_path);
+				list ( $result, $insterrors ) = install_modules($cat_path);
 				if ( ! $result || count($insterrors) ) {
 					$errors['install modules'] = $insterrors;
 				}
@@ -1320,10 +1288,10 @@ function __do_install() {
 	}
 
 	// ---- set index.php to read only ----
-	$dirh->setReadOnly( $lepton_path.'/index.php' );
+	$dirh->setReadOnly( $cat_path.'/index.php' );
 
 	// ---- make sure we have an index.php everywhere ----
-	$dirh->recursiveCreateIndex( $lepton_path );
+	$dirh->recursiveCreateIndex( $cat_path );
 
 	if ( count($errors) )
 	{
@@ -1342,7 +1310,7 @@ function __do_install() {
 
 }   // end function __do_install()
 
-function __lep_check_db_config() {
+function __cat_check_db_config() {
 
 	global $lang, $users, $config;
 
@@ -1460,4 +1428,4 @@ function __lep_check_db_config() {
 
 	return $errors;
 
-}   // end function __lep_check_db_config()
+}   // end function __cat_check_db_config()

@@ -40,7 +40,7 @@ class LepDwoo extends Dwoo {
     protected $workdir         = NULL;
     protected $path            = NULL;
     protected $fallback_path   = NULL;
-    protected $debuglevel      = LEPTON_Helper_KLogger::CRIT;
+    protected $debuglevel      = CAT_Helper_KLogger::CRIT;
     protected $logger          = NULL;
     protected static $_globals = array();
     
@@ -61,10 +61,10 @@ class LepDwoo extends Dwoo {
             $this->setPath( $this->workdir.'/templates' );
         }
         
-        if ( ! class_exists('LEPTON_Helper_KLogger',false) ) {
-            include dirname(__FILE__).'/../../../framework/LEPTON/Helper/KLogger.php';
+        if ( ! class_exists('CAT_Helper_KLogger',false) ) {
+            include dirname(__FILE__).'/../../../framework/CAT/Helper/KLogger.php';
 		}
-        $this->logger = new LEPTON_Helper_KLogger( LEPTON_PATH.'/temp', $this->debuglevel );
+        $this->logger = new CAT_Helper_KLogger( CAT_PATH.'/temp', $this->debuglevel );
         
     }   // end function __construct()
 

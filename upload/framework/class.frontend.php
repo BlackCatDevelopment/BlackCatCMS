@@ -9,8 +9,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ * @copyright       2013, Black Cat Development
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -36,7 +36,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH.'/framework/class.wb.php');
+require_once(CAT_PATH.'/framework/class.wb.php');
 
 /**
  *	@version	2.8.3
@@ -267,10 +267,10 @@ class frontend extends wb {
 		global $MESSAGE;
 
 		$search_files = array(
-			LEPTON_PATH."/templates/" . DEFAULT_TEMPLATE . "/templates/under_construction.htt",
-			LEPTON_PATH."/templates/" . DEFAULT_TEMPLATE . "/htt/under_construction.htt",
-			LEPTON_PATH."/templates/" . DEFAULT_TEMPLATE . "/under_construction.htt",
-			LEPTON_PATH."/templates/" . DEFAULT_THEME . "/templates/under_construction.lte"
+			CAT_PATH."/templates/" . DEFAULT_TEMPLATE . "/templates/under_construction.htt",
+			CAT_PATH."/templates/" . DEFAULT_TEMPLATE . "/htt/under_construction.htt",
+			CAT_PATH."/templates/" . DEFAULT_TEMPLATE . "/under_construction.htt",
+			CAT_PATH."/templates/" . DEFAULT_THEME . "/templates/under_construction.lte"
 		);
 
 		$template_file = NULL;
@@ -360,7 +360,7 @@ class frontend extends wb {
 		foreach($aFilenames as $type=>$filenames) {
 			if (true == in_array($type, $exeptions)) continue;
 			foreach($filenames as $temp_name) {
-				$f = LEPTON_PATH.$aBasename.$temp_name;
+				$f = CAT_PATH.$aBasename.$temp_name;
 				if (file_exists($f)) {
 					$aStorrage[$type][] = $this->__wb_build_link($aBasename.$temp_name, $type);
 				}

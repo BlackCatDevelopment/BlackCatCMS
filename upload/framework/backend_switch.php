@@ -11,18 +11,18 @@ if ( strcasecmp( $old_settings['default_theme'], $settings['default_theme'] ) )
 	global $template_engine;
 	
 	// load old template engine
-	include LEPTON_PATH.'/templates/'.$old_settings['default_theme'].'/info.php';
+	include CAT_PATH.'/templates/'.$old_settings['default_theme'].'/info.php';
 	$old_engine      = isset($template_engine) ? $template_engine : NULL;
 	$template_engine = NULL; // reset
 	
 	// load new template engine
-	include LEPTON_PATH.'/templates/'.$settings['default_theme'].'/info.php';
+	include CAT_PATH.'/templates/'.$settings['default_theme'].'/info.php';
 	
 	// new TE differs from old TE
     if ( strcasecmp( $old_engine, $template_engine ) )
 	{
         // get config.php
-        $config = file( LEPTON_PATH.'/config.php' );
+        $config = file( CAT_PATH.'/config.php' );
         // define('LEPTON_BACKEND_PATH', LEPTON_BACKEND_FOLDER ); LEPTON_ADMINS_FOLDER
         foreach ( $config as $i => $line )
 		{
@@ -37,7 +37,7 @@ if ( strcasecmp( $old_settings['default_theme'], $settings['default_theme'] ) )
 		        break;
 		    }
 		}
-		$fh = fopen( LEPTON_PATH.'/config.php', 'w' );
+		$fh = fopen( CAT_PATH.'/config.php', 'w' );
 		if ( is_resource($fh) )
 		{
 		    fwrite($fh, implode('', $config));

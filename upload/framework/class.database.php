@@ -9,8 +9,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ * @copyright       2013, Black Cat Development
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -39,7 +39,7 @@ if (defined('LEPTON_PATH')) {
 
 
 
-require_once(LEPTON_PATH.'/framework/functions.php');
+require_once(CAT_PATH.'/framework/functions.php');
 	
 global $database;
 	

@@ -7,15 +7,15 @@
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
- * @author          LEPTON v2.0 Black Cat Edition Development
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ * @author          Black Cat Development
+ * @copyright       2013, Black Cat Development
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
  */
 
-if ( !defined( 'LEPTON_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
+if ( !defined( 'CAT_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
 {
 		// try to load config.php
 	if ( strpos( __FILE__, '/framework/class.secure.php' ) !== false )
@@ -41,7 +41,7 @@ if ( !defined( 'LEPTON_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
 		}
 		
 	require_once( $config_path . '/config.php' );
-    $admin_dir             = str_replace( LEPTON_PATH, '', ADMIN_PATH );
+    $admin_dir             = str_replace( CAT_PATH, '', ADMIN_PATH );
 		
     //require_once( $config_path . '/framework/class.database.php' );
 

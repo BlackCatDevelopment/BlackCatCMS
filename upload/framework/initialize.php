@@ -9,8 +9,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ * @copyright       2013, Black Cat Development
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -36,7 +36,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-//set_include_path(get_include_path() . PATH_SEPARATOR . LEPTON_PATH);
+//set_include_path(get_include_path() . PATH_SEPARATOR . CAT_PATH);
 if (file_exists(dirname(__FILE__).'/class.database.php')) {
 
 	require_once(dirname(__FILE__).'/sys.constants.php');
@@ -145,10 +145,10 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
     }
     // Load Language file
     if (!defined( 'LANGUAGE_LOADED' )) {
-        if (!file_exists( LEPTON_PATH.'/languages/'.LANGUAGE.'.php' )) {
+        if (!file_exists( CAT_PATH.'/languages/'.LANGUAGE.'.php' )) {
             exit ('Error loading language file '.LANGUAGE.', please check configuration');
         } else {
-            require_once (LEPTON_PATH.'/languages/'.LANGUAGE.'.php');
+            require_once (CAT_PATH.'/languages/'.LANGUAGE.'.php');
         }
     }
     
@@ -170,7 +170,7 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
     
     // Set Theme dir
     define( 'THEME_URL', LEPTON_URL.'/templates/'.DEFAULT_THEME );
-    define( 'THEME_PATH', LEPTON_PATH.'/templates/'.DEFAULT_THEME );
+    define( 'THEME_PATH', CAT_PATH.'/templates/'.DEFAULT_THEME );
     
     $database->prompt_on_error( PROMPT_MYSQL_ERRORS );
     
@@ -189,10 +189,10 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
     }        
 }
 
-if (file_exists(LEPTON_PATH.'/modules/lib_dwoo/library.php')) {
+if (file_exists(CAT_PATH.'/modules/lib_dwoo/library.php')) {
     global $parser;
 	// load Dwoo Template Engine
-	require_once LEPTON_PATH.'/modules/lib_dwoo/library.php';
+	require_once CAT_PATH.'/modules/lib_dwoo/library.php';
     // set some constants as globals so we don't need to set them later
     $defs = get_defined_constants(true);
     foreach($defs['user'] as $const => $value ) {

@@ -42,7 +42,7 @@ $mod_headers = array(
 		'css' => array(
 			array(
 				'media'		=> 'screen',
-				'file'		=> 'css/basic.css'
+				'file'		=> 'templates/freshcat/css/basic.css'
 			)
 		),
 		'jquery' => array(

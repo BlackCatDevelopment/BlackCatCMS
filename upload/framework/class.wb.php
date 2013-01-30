@@ -8,8 +8,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ * @copyright       2013, Black Cat Development
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -17,8 +17,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,21 +35,21 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-include_once(LEPTON_PATH . '/framework/class.securecms.php');
+include_once(CAT_PATH . '/framework/class.securecms.php');
 
 // Include PHPLIB template class
-//require_once(LEPTON_PATH . "/include/phplib/template.inc");
+//require_once(CAT_PATH . "/include/phplib/template.inc");
 
-require_once(LEPTON_PATH . '/framework/class.database.php');
+require_once(CAT_PATH . '/framework/class.database.php');
 
 // Include new wbmailer class (subclass of PHPmailer)
-require_once(LEPTON_PATH . "/framework/class.wbmailer.php");
+require_once(CAT_PATH . "/framework/class.wbmailer.php");
 
 // new internationalization helper class
-include LEPTON_PATH.'/framework/LEPTON/Helper/I18n.php';
+include CAT_PATH.'/framework/CAT/Helper/I18n.php';
 
 // new pages class
-include LEPTON_PATH.'/framework/LEPTON/Pages.php';
+include CAT_PATH.'/framework/CAT/Pages.php';
 
 class wb extends SecureCMS
 {
@@ -82,7 +82,7 @@ class wb extends SecureCMS
 		{
 		    $this->lang->addFile( LANGUAGE.'.php', NULL, $var );
 		}
-        self::$pg = LEPTON_Pages::getInstance();
+        self::$pg = CAT_Pages::getInstance();
         set_error_handler( array('wb','lepton_error_handler') );
     }   // end constructor
 
@@ -105,12 +105,12 @@ class wb extends SecureCMS
             return;
         }
         // replace path in $errfile and $errstr to protect the data
-        $errfile = str_ireplace( LEPTON_PATH, '/abs/path/to', $errfile );
-        $errstr  = str_ireplace( LEPTON_PATH, '/abs/path/to', $errstr  );
+        $errfile = str_ireplace( CAT_PATH, '/abs/path/to', $errfile );
+        $errstr  = str_ireplace( CAT_PATH, '/abs/path/to', $errstr  );
         switch ($errno)
         {
             case E_USER_ERROR:
-                echo "<b>LEPTON ERROR</b> [$errno] $errstr<br />\n";
+                echo "<b>CAT ERROR</b> [$errno] $errstr<br />\n";
                 echo "  Fatal error on line $errline in file $errfile<br />";
                 echo "  PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
                 echo "Aborting...<br />\n";
@@ -118,11 +118,11 @@ class wb extends SecureCMS
                 break;
 
             case E_USER_WARNING:
-                echo "<b>LEPTON WARNING</b> [$errno] $errstr<br />\n";
+                echo "<b>CAT WARNING</b> [$errno] $errstr<br />\n";
                 break;
 
             case E_USER_NOTICE:
-                echo "<b>LEPTON NOTICE</b> [$errno] $errstr<br />\n";
+                echo "<b>CAT NOTICE</b> [$errno] $errstr<br />\n";
                 break;
 
             default:
@@ -304,7 +304,7 @@ class wb extends SecureCMS
      **/
     public function get_controller($name)
     {
-		// name must not contain LEPTON_...
+		// name must not contain CAT_...
 	    $name      = preg_replace( '~^lepton_~i', '', $name );
         $args      = func_get_args();
         // remove first element (it's the name)
@@ -319,7 +319,7 @@ class wb extends SecureCMS
      **/
 	public function get_helper($name)
 	{
-		// name must not contain LEPTON_Helper_...
+		// name must not contain CAT_Helper_...
 	    $name      = preg_replace( '~^lepton_helper_~i', '', $name );
         return $this->int_get_handle('Helper',$name,$args=func_get_args());
 	}   // end function get_helper()
@@ -660,7 +660,7 @@ class wb extends SecureCMS
     private function int_get_handle( $namespace, $name )
     {
 
-        $classname = 'LEPTON_' . ( $namespace != '' ? $namespace.'_' : '' ) . $name;
+        $classname = 'CAT_' . ( $namespace != '' ? $namespace.'_' : '' ) . $name;
         $numargs   = func_num_args();
         $argstring = '';
 
@@ -693,7 +693,7 @@ class wb extends SecureCMS
 			}
 	    }
 
-        $filename = sanitize_path(LEPTON_PATH.'/framework/LEPTON/'.$namespace.'/'.$name.'.php');
+        $filename = sanitize_path(CAT_PATH.'/framework/CAT/'.$namespace.'/'.$name.'.php');
 
 		// check if the file exists
 		if ( ! file_exists( $filename ) )
@@ -746,14 +746,14 @@ class wb extends SecureCMS
 
     /***************************************************************************
      * DEPRECATED FUNCTIONS
-     * These functions are moved to LEPTON_Pages class
+     * These functions are moved to CAT_Pages class
      **************************************************************************/
     public function page_is_visible($page) { return self::$pg->isVisible($page); }
     public function page_is_active($page)  { return self::$pg->isActive($page);  }
     public function page_link($link)       {
         if(!is_object(self::$pg))
         {
-            self::$pg = LEPTON_Pages::getInstance();
+            self::$pg = CAT_Pages::getInstance();
         }
         return self::$pg->getLink($link);
     }

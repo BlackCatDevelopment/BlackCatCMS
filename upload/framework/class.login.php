@@ -9,8 +9,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ * @copyright       2013, Black Cat Development
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -40,7 +40,7 @@ if (defined('LEPTON_PATH')) {
 define('LOGIN_CLASS_LOADED', true);
 
 // Load the other required class files if they are not already loaded
-require_once(LEPTON_PATH."/framework/class.admin.php");
+require_once(CAT_PATH."/framework/class.admin.php");
 
 // Get LEPTON version
 require_once(ADMIN_PATH.'/interface/version.php');
@@ -334,10 +334,10 @@ class login extends admin {
 						// ! Add URLs to Dwoo 	
 						// ==================== 
 						$data_dwoo['LEPTON_URL']		= LEPTON_URL;
-						$data_dwoo['LEPTON_PATH']		= LEPTON_PATH;
+						$data_dwoo['CAT_PATH']		= CAT_PATH;
 						$data_dwoo['ADMIN_URL']		= ADMIN_URL;
 						$data_dwoo['THEME_URL']		= THEME_URL;
-						$data_dwoo['URL_HELP']		= 'http://www.lepton2.org/';
+						$data_dwoo['URL_HELP']		= 'http://blackcat-cms.org/';
 
 						// ============================= 
 						// ! Add languages to Dwoo 	

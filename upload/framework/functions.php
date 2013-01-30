@@ -1,23 +1,29 @@
 <?php
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://www.blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -46,15 +52,15 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 {
     define('FUNCTIONS_FILE_LOADED', true);
     
-    // set debug level here; see LEPTON_Helper_KLogger for available levels
+    // set debug level here; see CAT_Helper_KLogger for available levels
     // 7 = debug, 8 = off
 	$debug_level  = 8;
 
     // include helpers
 	global $lhd, $arrayh, $logger;
-    include dirname(__FILE__).'/LEPTON/Helper/Directory.php';
-	$lhd   = new LEPTON_Helper_Directory();
-	$logger = new LEPTON_Helper_KLogger( LEPTON_PATH.'/temp', $debug_level );
+    include dirname(__FILE__).'/CAT/Helper/Directory.php';
+	$lhd   = new CAT_Helper_Directory();
+	$logger = new CAT_Helper_KLogger( CAT_PATH.'/temp', $debug_level );
 
     
     /**
@@ -317,14 +323,14 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
             }
             function remove_home_subs($directory = '/', $home_folders = '')
             {
-                if (false !== ($handle = opendir(LEPTON_PATH . MEDIA_DIRECTORY . $directory)))
+                if (false !== ($handle = opendir(CAT_PATH . MEDIA_DIRECTORY . $directory)))
                 {
                     // Loop through the dirs to check the home folders sub-dirs are not shown
                     while (false !== ($file = readdir($handle)))
                     {
                         if ($file[0] != '.' && $file != 'index.php')
                         {
-                            if (is_dir(LEPTON_PATH . MEDIA_DIRECTORY . $directory . '/' . $file))
+                            if (is_dir(CAT_PATH . MEDIA_DIRECTORY . $directory . '/' . $file))
                             {
                                 if ($directory != '/')
                                 {
@@ -395,7 +401,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
             return array();
         }
         // at first read any dir and subdir from /media
-        $full_list = directory_list(LEPTON_PATH . MEDIA_DIRECTORY);
+        $full_list = directory_list(CAT_PATH . MEDIA_DIRECTORY);
         // add own home_folder to allow-list
         if ($wb->get_home_folder())
         {
@@ -460,7 +466,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         global $database;
         // if user is admin or home-folders not activated then there are no restrictions
         // at first read any dir and subdir from /media
-        $full_list = directory_list(LEPTON_PATH . MEDIA_DIRECTORY);
+        $full_list = directory_list(CAT_PATH . MEDIA_DIRECTORY);
         $allow_list = array();
         if (($wb->get_user_id() == 1) || !HOME_FOLDERS)
         {
@@ -520,16 +526,16 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      * @param ocatal   $dir_mode - access mode
      * @return boolean result of operation
      *
-     *  THIS METHOD WAS MOVED TO LEPTON_Helper_Addons!
+     *  THIS METHOD WAS MOVED TO CAT_Helper_Addons!
      *
      */
     function make_dir( $dir_name, $dir_mode = OCTAL_DIR_MODE )
     {
-        if ( ! class_exists( 'LEPTON_Helper_Directory' ) )
+        if ( ! class_exists( 'CAT_Helper_Directory' ) )
                 {
-	        @require_once dirname(__FILE__).'/LEPTON/Helper/Directory.php';
+	        @require_once dirname(__FILE__).'/CAT/Helper/Directory.php';
         }
-		$addons_helper = new LEPTON_Helper_Directory();
+		$addons_helper = new CAT_Helper_Directory();
 		return $addons_helper->createDirectory( $dir_name, $dir_mode );
     }   // end function make_dir()
 
@@ -665,7 +671,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     /**
      * get additions for page header (css, js, meta)
      *
-     * This is a wrapper for LEPTON_Pages->getHeaders()
+     * This is a wrapper for CAT_Pages->getHeaders()
      *
      * @access public
      * @param  string  $for - 'frontend' (default) / 'backend'
@@ -676,11 +682,11 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      **/
 	function get_page_headers( $for = 'frontend', $print_output = true, $individual = false )
 	{
-	    if ( ! class_exists( 'LEPTON_Pages', false ) )
+	    if ( ! class_exists( 'CAT_Pages', false ) )
 							{
-	        include sanitize_path( dirname(__FILE__).'/LEPTON/Pages.php' );
+	        include sanitize_path( dirname(__FILE__).'/CAT/Pages.php' );
 							}
-	    $pg     = LEPTON_Pages::getInstance();
+	    $pg     = CAT_Pages::getInstance();
 	    $output = $pg->getHeaders( $for, $individual );
 		if ( $print_output )
 		{
@@ -714,11 +720,11 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      **/
     function get_page_footers( $for = 'frontend', $print_output = true )
             {
-        if ( ! class_exists( 'LEPTON_Pages', false ) )
+        if ( ! class_exists( 'CAT_Pages', false ) )
                 {
-	        include sanitize_path( dirname(__FILE__).'/LEPTON/Pages.php' );
+	        include sanitize_path( dirname(__FILE__).'/CAT/Pages.php' );
                 }
-	    $pg     = LEPTON_Pages::getInstance();
+	    $pg     = CAT_Pages::getInstance();
 	    $output = $pg->getFooters( $for );
         if ( $print_output )
                     {
@@ -802,14 +808,14 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     // In case of error the returned string is unchanged, and a message is emitted.
     function entities_to_umlauts($string, $charset_out = DEFAULT_CHARSET)
     {
-        require_once(LEPTON_PATH . '/framework/functions-utf8.php');
+        require_once(CAT_PATH . '/framework/functions-utf8.php');
         return entities_to_umlauts2($string, $charset_out);
     }
     // Will convert a string in $charset_in encoding to a pure ASCII string with HTML-entities.
     // In case of error the returned string is unchanged, and a message is emitted.
     function umlauts_to_entities($string, $charset_in = DEFAULT_CHARSET)
     {
-        require_once(LEPTON_PATH . '/framework/functions-utf8.php');
+        require_once(CAT_PATH . '/framework/functions-utf8.php');
         return umlauts_to_entities2($string, $charset_in);
     }
     
@@ -877,7 +883,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     // Function to convert a page title to a page filename
     function page_filename($string)
     {
-        require_once(LEPTON_PATH . '/framework/functions-utf8.php');
+        require_once(CAT_PATH . '/framework/functions-utf8.php');
         $string = entities_to_7bit($string);
         // Now remove all bad characters
         $bad = array('\'', '"', '`', '!', '@', '#', '$', '%', '^', '&', '*', '=', '+', '|', '/', '\\', ';', ':', ',', '?');
@@ -897,7 +903,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     // Function to convert a desired media filename to a clean filename
     function media_filename($string)
     {
-        require_once(LEPTON_PATH . '/framework/functions-utf8.php');
+        require_once(CAT_PATH . '/framework/functions-utf8.php');
         $string = entities_to_7bit($string);
         // Now remove all bad characters
         $bad = array('\'', '"', '`', '!', '@', '#', '$', '%', '^', '&', '*', '=', '+', '|', '/', '\\', ';', ':', ',', '?');
@@ -943,7 +949,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     function create_access_file($filename, $page_id, $level, $opt_cmds = null)
     {
         global $admin, $MESSAGE;
-        $pages_path = LEPTON_PATH . PAGES_DIRECTORY;
+        $pages_path = CAT_PATH . PAGES_DIRECTORY;
         $rel_pages_dir = str_replace($pages_path, '', dirname($filename));
         $rel_filename = str_replace($pages_path, '', $filename);
         // root_check prevent system directories and importent files from being overwritten if PAGES_DIR = '/'
@@ -1187,9 +1193,9 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
                 // Set section id
                 $section_id = $section['section_id'];
                 // Include the modules delete file if it exists
-                if (file_exists(LEPTON_PATH . '/modules/' . $section['module'] . '/delete.php'))
+                if (file_exists(CAT_PATH . '/modules/' . $section['module'] . '/delete.php'))
                 {
-                    include(LEPTON_PATH . '/modules/' . $section['module'] . '/delete.php');
+                    include(CAT_PATH . '/modules/' . $section['module'] . '/delete.php');
                 }
             }
         }
@@ -1208,23 +1214,23 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
             $admin->print_error($database->get_error());
         }
         // Include the ordering class or clean-up ordering
-        include_once(LEPTON_PATH . '/framework/class.order.php');
+        include_once(CAT_PATH . '/framework/class.order.php');
         $order = new order(TABLE_PREFIX . 'pages', 'position', 'page_id', 'parent');
         $order->clean($parent);
         // Unlink the page access file and directory
-        $directory = LEPTON_PATH . PAGES_DIRECTORY . $link;
+        $directory = CAT_PATH . PAGES_DIRECTORY . $link;
         $filename = $directory . PAGE_EXTENSION;
         $directory .= '/';
         if (file_exists($filename))
         {
-            if (!is_writable(LEPTON_PATH . PAGES_DIRECTORY . '/'))
+            if (!is_writable(CAT_PATH . PAGES_DIRECTORY . '/'))
             {
                 $admin->print_error($MESSAGE['PAGES_CANNOT_DELETE_ACCESS_FILE']);
             }
             else
             {
                 unlink($filename);
-                if (file_exists($directory) && (rtrim($directory, '/') != LEPTON_PATH . PAGES_DIRECTORY) && (substr($link, 0, 1) != '.'))
+                if (file_exists($directory) && (rtrim($directory, '/') != CAT_PATH . PAGES_DIRECTORY) && (substr($link, 0, 1) != '.'))
                 {
                     rm_full_dir($directory);
                 }
@@ -1238,16 +1244,16 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      *  @param  string  Any valid directory(-path)
      *  @param  boolean Call the install-script of the module? Default: false
      *
-     *  THIS METHOD WAS MOVED TO LEPTON_Helper_Addons!
+     *  THIS METHOD WAS MOVED TO CAT_Helper_Addons!
      *
      */
     function load_module($directory, $install = false)
     {
-        if ( ! class_exists( 'LEPTON_Helper_Addons' ) )
+        if ( ! class_exists( 'CAT_Helper_Addons' ) )
                 {
-	        @require_once dirname(__FILE__).'/LEPTON/Helper/Addons.php';
+	        @require_once dirname(__FILE__).'/CAT/Helper/Addons.php';
         }
-		$addons_helper = new LEPTON_Helper_Addons();
+		$addons_helper = new CAT_Helper_Addons();
 		return $addons_helper->installModule($directory, $install);
     }   // end function load_module()
 
@@ -1256,16 +1262,16 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      *
      *  @param  string  Any valid directory(-path)
      *
-     *  THIS METHOD WAS MOVED TO LEPTON_Helper_Addons!
+     *  THIS METHOD WAS MOVED TO CAT_Helper_Addons!
      *
      */
     function load_template( $directory )
     {
-        if ( ! class_exists( 'LEPTON_Helper_Addons' ) )
+        if ( ! class_exists( 'CAT_Helper_Addons' ) )
                 {
-	        @require_once dirname(__FILE__).'/LEPTON/Helper/Addons.php';
+	        @require_once dirname(__FILE__).'/CAT/Helper/Addons.php';
         }
-		$addons_helper = new LEPTON_Helper_Addons();
+		$addons_helper = new CAT_Helper_Addons();
 		return $addons_helper->installTemplate( $directory );
     }   // end function load_template()
 
@@ -1274,16 +1280,16 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      *
      *  @param  string  Any valid file(-path)
      *
-     *  THIS METHOD WAS MOVED TO LEPTON_Helper_Addons!
+     *  THIS METHOD WAS MOVED TO CAT_Helper_Addons!
      *
      */
     function load_language( $file )
     {
-        if ( ! class_exists( 'LEPTON_Helper_Addons' ) )
+        if ( ! class_exists( 'CAT_Helper_Addons' ) )
                 {
-	        @require_once dirname(__FILE__).'/LEPTON/Helper/Addons.php';
+	        @require_once dirname(__FILE__).'/CAT/Helper/Addons.php';
         }
-		$addons_helper = new LEPTON_Helper_Addons();
+		$addons_helper = new CAT_Helper_Addons();
 		return $addons_helper->installLanguage( $file );
     }   // end function load_language()
 
@@ -1293,16 +1299,16 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      *  @param  string  Name of the modul-directory
      *  @param  bool  Optional boolean to run the upgrade-script of the module.
      *
-     *  THIS METHOD WAS MOVED TO LEPTON_Helper_Addons!
+     *  THIS METHOD WAS MOVED TO CAT_Helper_Addons!
      *
      */
     function upgrade_module( $directory, $upgrade = false )
     {
-        if ( ! class_exists( 'LEPTON_Helper_Addons' ) )
+        if ( ! class_exists( 'CAT_Helper_Addons' ) )
                 {
-	        @require_once dirname(__FILE__).'/LEPTON/Helper/Addons.php';
+	        @require_once dirname(__FILE__).'/CAT/Helper/Addons.php';
         }
-		$addons_helper = new LEPTON_Helper_Addons();
+		$addons_helper = new CAT_Helper_Addons();
 		return $addons_helper->upgradeModule( $directory, $upgrade );
     }   // end function upgrade_module()
 
@@ -1345,7 +1351,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         }
         else
         {
-            $info_file = LEPTON_PATH . '/modules/' . $modulname . '/info.php';
+            $info_file = CAT_PATH . '/modules/' . $modulname . '/info.php';
             if (file_exists($info_file))
             {
                 $module_version = null;

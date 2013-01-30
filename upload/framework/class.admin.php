@@ -9,8 +9,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ * @copyright       2013, Black Cat Development
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -37,16 +37,16 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH.'/framework/class.wb.php');
+require_once(CAT_PATH.'/framework/class.wb.php');
 
 // Include PHPLIB template class
-require_once(LEPTON_PATH."/include/phplib/template.inc");
+require_once(CAT_PATH."/include/phplib/template.inc");
 
 // Get LEPTON version
 require_once(ADMIN_PATH.'/interface/version.php');
 
 // Include EditArea wrapper functions
-require_once(LEPTON_PATH . '/include/editarea/wb_wrapper_edit_area.php');
+require_once(CAT_PATH . '/include/editarea/wb_wrapper_edit_area.php');
 
 class admin extends wb
 {
@@ -123,8 +123,8 @@ class admin extends wb
 		// prevent infinite loop if language file is not XX.php (e.g. DE_du.php)
 		$user_language = substr($user_language[0],0,2);
 		// obtain the admin folder (e.g. /admin)
-		$admin_folder = str_replace(LEPTON_PATH, '', ADMIN_PATH);
-		if((LANGUAGE != $user_language) && file_exists(LEPTON_PATH .'/languages/' .$user_language .'.php')
+		$admin_folder = str_replace(CAT_PATH, '', ADMIN_PATH);
+		if((LANGUAGE != $user_language) && file_exists(CAT_PATH .'/languages/' .$user_language .'.php')
 			&& strpos($_SERVER['SCRIPT_NAME'],$admin_folder.'/') !== false) {
 			// check if page_id is set
 			$page_id_url = (isset($_GET['page_id'])) ? '&page_id=' .(int) $_GET['page_id'] : '';
@@ -149,7 +149,7 @@ class admin extends wb
 		 *	Droplet support
 		 *
 		 */
-		if ( file_exists(LEPTON_PATH .'/modules/dropleps/droplets.php') ) {
+		if ( file_exists(CAT_PATH .'/modules/dropleps/droplets.php') ) {
 			/**
 			 *	avoid loading on the Droplets Admin Tool itself and on the
 			 *	Settings page (this would compile Droplets added to the
@@ -160,7 +160,7 @@ class admin extends wb
          		( $_GET['tool'] !== 'droplets' && $_GET['tool'] !== 'jqueryadmin' ) )
         		 && $this->section_name !== 'Settings' && $this->section_name !== 'Page'
     		) {
-				require_once(LEPTON_PATH .'/modules/dropleps/droplets.php');
+				require_once(CAT_PATH .'/modules/dropleps/droplets.php');
 				# $this->droplets_ok = true;
 			}
 		}
@@ -204,10 +204,10 @@ class admin extends wb
 					// ! Add URLs to Dwoo 	
 					// ==================== 
 					$data_dwoo['LEPTON_URL']	= LEPTON_URL;
-					$data_dwoo['LEPTON_PATH']	= LEPTON_PATH;
+					$data_dwoo['CAT_PATH']	= CAT_PATH;
 					$data_dwoo['ADMIN_URL']		= ADMIN_URL;
 					$data_dwoo['THEME_URL']		= THEME_URL;
-					$data_dwoo['URL_HELP']		= 'http://www.lepton2.org/';
+					$data_dwoo['URL_HELP']		= 'http://blackcat-cms.org/';
 					// ============================= 
 					// ! Add languages to Dwoo 	
 					// ============================= 
@@ -238,7 +238,7 @@ class admin extends wb
 				if ( $data_dwoo['permission']['pages'] == true )
 				{
 					// Will be reviewed and optimized!
-					require_once(LEPTON_PATH . '/framework/class.pages.php');
+					require_once(CAT_PATH . '/framework/class.pages.php');
 					$pages = new pages( $data_dwoo['permission'] );
 
 					$data_dwoo['DISPLAY_MENU_LIST']				= MULTIPLE_MENUS	!= false ? true : false;
@@ -447,7 +447,7 @@ class admin extends wb
 						'TITLE_HELP' => $MENU['HELP'],
 						'TITLE_LOGOUT' =>  $MENU['LOGOUT'],
 						'URL_VIEW' => $view_url,
-						'URL_HELP' => 'http://www.lepton2.org/',
+						'URL_HELP' => 'http://blackcat-cms.org/',
 						'BACKEND_MODULE_FILES' => $this->__admin_register_backend_modfiles(),
 						'THEME_VERSION'	=> $backend_theme_version,
 						'THEME_NAME'	=> DEFAULT_THEME
@@ -527,10 +527,10 @@ class admin extends wb
 					// ! Add URLs to Dwoo 	
 					// ==================== 
 					$data['LEPTON_URL']			= LEPTON_URL;
-					$data['LEPTON_PATH']		= LEPTON_PATH;
+					$data['CAT_PATH']		= CAT_PATH;
 					$data['ADMIN_URL']		= ADMIN_URL;
 					$data['THEME_URL']		= THEME_URL;
-					$data['URL_HELP']		= 'http://www.lepton2.org/';
+					$data['URL_HELP']		= 'http://blackcat-cms.org/';
 					// ============================= 
 					// ! Add languages to Dwoo 	
 					// ============================= 
@@ -577,8 +577,8 @@ class admin extends wb
 				// ! CSRF protection - add tokens to internal links 	
 				// ================================================== 
 				if ($this->is_authenticated()) {
-					if (file_exists(LEPTON_PATH .'/framework/tokens.php')) {
-						include_once(LEPTON_PATH .'/framework/tokens.php');
+					if (file_exists(CAT_PATH .'/framework/tokens.php')) {
+						include_once(CAT_PATH .'/framework/tokens.php');
 						if (function_exists('addTokens')) addTokens($this->html_output_storage, $this);
 					}
 				}
@@ -594,7 +594,7 @@ class admin extends wb
 				$footer_template->set_block('page', 'footer_block', 'header');
 				$footer_template->set_var(array(
 								'LEPTON_URL' => LEPTON_URL,
-								'LEPTON_PATH' => LEPTON_PATH,
+								'CAT_PATH' => CAT_PATH,
 								'ADMIN_URL' => ADMIN_URL,
 								'THEME_URL' => THEME_URL
 					 			));
@@ -612,8 +612,8 @@ class admin extends wb
 				
 				// CSRF protection - add tokens to internal links
 				if ($this->is_authenticated()) {
-					if (file_exists(LEPTON_PATH .'/framework/tokens.php')) {
-						include_once(LEPTON_PATH .'/framework/tokens.php');
+					if (file_exists(CAT_PATH .'/framework/tokens.php')) {
+						include_once(CAT_PATH .'/framework/tokens.php');
 						if (function_exists('addTokens')) addTokens($this->html_output_storage, $this);
 					}
 				}
@@ -804,7 +804,7 @@ class admin extends wb
 				foreach($files as $type=>$temp_files) {
 					foreach($temp_files as $filename) {
 						$f = $basepath.$filename;
-						if (true == file_exists(LEPTON_PATH.$f)) {
+						if (true == file_exists(CAT_PATH.$f)) {
 							$html_results[ $type ][] = $this->__admin_build_link($f, $type);
 						}
 					}

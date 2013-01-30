@@ -1,23 +1,30 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          LEPTON Project <info@lepton2.org>
- * @copyright       2010-2012, LEPTON Project
- * @link            http://www.lepton2.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @category        LEPTON_Core
- * @package         Installation
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Installer
  *
  */
 
 $PRECHECK = array(
-	'PHP_VERSION'  => array( 'VERSION' => '5.2.2', 'OPERATOR' => '>=' ),
+	'PHP_VERSION'  => array( 'VERSION' => '5.3.2', 'OPERATOR' => '>=' ),
 	'PHP_SETTINGS' => array(
 		'register_globals' => 0,
 		'safe_mode'        => 0,

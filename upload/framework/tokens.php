@@ -8,19 +8,19 @@
  *
  * @author          Frank Heyne for the LEPTON Project 
  * @copyright       2011, Frank Heyne, LEPTON Project
- * @link            http://www.lepton2.org
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
  *
  */
 
-if(!defined('LEPTON_PATH')) {
+if(!defined('CAT_PATH')) {
 	header('Location: ../index.php');
 	exit(0);
 }
 
-//require_once(LEPTON_PATH.'/framework/class.securecms.php');
+//require_once(CAT_PATH.'/framework/class.securecms.php');
 
 function addTokens( &$html, &$sf) {
 	if (!LEPTOKEN_LIFETIME) return;

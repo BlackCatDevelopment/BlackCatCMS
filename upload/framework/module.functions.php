@@ -9,8 +9,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ * @copyright       2013, Black Cat Development
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -26,8 +26,8 @@
 */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -55,7 +55,7 @@ if(!function_exists('check_module_dir')) {
 		// check if module directory is formal correct (only characters: "a-z,0-9,_,-")
 		if(!preg_match('/^[a-z0-9_-]+$/iD', $mod_dir)) return '';
 		// check if the module folder contains the required info.php file
-		return (file_exists(LEPTON_PATH .'/modules/' .$mod_dir .'/info.php')) ? $mod_dir : '';
+		return (file_exists(CAT_PATH .'/modules/' .$mod_dir .'/info.php')) ? $mod_dir : '';
 	}
 }
 
@@ -63,7 +63,7 @@ if(!function_exists('check_module_dir')) {
 if (!function_exists('mod_file_exists')) {
 	function mod_file_exists($mod_dir, $mod_file='frontend.css') {
   	// check if the module file exists
-		return file_exists(LEPTON_PATH .'/modules/' .$mod_dir .'/' .$mod_file);
+		return file_exists(CAT_PATH .'/modules/' .$mod_dir .'/' .$mod_file);
 	}
 }
 
@@ -73,7 +73,7 @@ if (!function_exists('edit_module_css')) {
 		global $page_id, $section_id, $TEXT;
 				
 		// check if the required edit_module_css.php file exists
-		if(!file_exists(LEPTON_PATH .'/modules/edit_module_files.php')) return;
+		if(!file_exists(CAT_PATH .'/modules/edit_module_files.php')) return;
 		
 		// check if specified module directory is valid
 		if(check_module_dir($mod_dir) == '') return;
@@ -104,7 +104,7 @@ if (!function_exists('toggle_css_file')) {
 	function toggle_css_file($mod_dir, $base_css_file = 'frontend.css') {
 		global $page_id, $section_id, $TEXT;
 		// check if the required edit_module_css.php file exists
-		if(!file_exists(LEPTON_PATH .'/modules/edit_module_files.php')) return;
+		if(!file_exists(CAT_PATH .'/modules/edit_module_files.php')) return;
 
 		// check if specified module directory is valid
 		if(check_module_dir($mod_dir) == '') return;
@@ -139,13 +139,13 @@ if (!function_exists('toggle_css_file')) {
 if (!function_exists('get_module_language_file')) {
 	function get_module_language_file($mymod_dir) {
 		$mymod_dir = strip_tags($mymod_dir);
-		if(file_exists(LEPTON_PATH .'/modules/' .$mymod_dir .'/languages/' .LANGUAGE .'.php')) {
+		if(file_exists(CAT_PATH .'/modules/' .$mymod_dir .'/languages/' .LANGUAGE .'.php')) {
 			// a module language file exists for the users backend language
-			return (LEPTON_PATH .'/modules/' .$mymod_dir .'/languages/' .LANGUAGE .'.php');
+			return (CAT_PATH .'/modules/' .$mymod_dir .'/languages/' .LANGUAGE .'.php');
 		} else {
 			// an English module language file must exist in all multi-lingual modules
-			if(file_exists(LEPTON_PATH .'/modules/' .$mymod_dir .'/languages/EN.php')) {
-				return (LEPTON_PATH .'/modules/' .$mymod_dir .'/languages/EN.php');
+			if(file_exists(CAT_PATH .'/modules/' .$mymod_dir .'/languages/EN.php')) {
+				return (CAT_PATH .'/modules/' .$mymod_dir .'/languages/EN.php');
 			} else {
 				echo '<p><strong>Error: </strong>';
 				echo 'Default language file (EN.php) of module "' .htmlentities($mymod_dir) .'" does not exist.</p><br />';
@@ -163,19 +163,19 @@ if (!function_exists('include_module_css')) {
 		if($css_file == 'frontend.css') {
 			// check if frontend.css needs to be included into the <body> section
 			if(!((!function_exists('register_frontend_modfiles') || !defined('MOD_FRONTEND_CSS_REGISTERED')) &&
-					file_exists(LEPTON_PATH .'/modules/' .$mymod_dir .'/frontend.css'))) {
+					file_exists(CAT_PATH .'/modules/' .$mymod_dir .'/frontend.css'))) {
 				return false;
 			} 
 		} else {
 			// check if backend.css needs to be included into the <body> section
 			global $admin;
-			if(!(!method_exists($admin, 'register_backend_modfiles') && file_exists(LEPTON_PATH .'/modules/' .$mymod_dir .'/backend.css'))) {
+			if(!(!method_exists($admin, 'register_backend_modfiles') && file_exists(CAT_PATH .'/modules/' .$mymod_dir .'/backend.css'))) {
 				return false;
 			}
 		}
 		// include frontend.css or backend.css into the <body> section
 		echo "\n".'<style type="text/css">'."\n";
-  	include(LEPTON_PATH .'/modules/' .$mymod_dir .'/' .$css_file);
+  	include(CAT_PATH .'/modules/' .$mymod_dir .'/' .$css_file);
   	echo "\n</style>\n";
 		return true;
 	}
@@ -209,7 +209,7 @@ if (!function_exists('requires_module_js')) {
 		} else {
 			// check if backend.js is included to the <head> section
 			global $admin;
-				if(!method_exists($admin, 'register_backend_modfiles') && file_exists(LEPTON_PATH .'/modules/' .$mymod_dir .'/backend.js')) {
+				if(!method_exists($admin, 'register_backend_modfiles') && file_exists(CAT_PATH .'/modules/' .$mymod_dir .'/backend.js')) {
 				echo '<p><strong>Note:</strong> The module: "' .htmlentities($mymod_dir) .'" requires WB 2.6.7 or higher</p>
 				<p>This module uses Javascript functions contained in backend.js of the module.<br />
 				You need WB 2.6.7 or higher to ensure that module backend.js files are automatically loaded if required.</p>
@@ -249,7 +249,7 @@ if (!function_exists('requires_module_body_js')) {
 		} else {
 			// check if backend_body.js is included to the <body> section
 			global $admin;
-				if(!method_exists($admin, 'register_backend_modfiles_body') && file_exists(LEPTON_PATH .'/modules/' .$mymod_dir .'/backend_body.js')) {
+				if(!method_exists($admin, 'register_backend_modfiles_body') && file_exists(CAT_PATH .'/modules/' .$mymod_dir .'/backend_body.js')) {
 				echo '<p><strong>Note:</strong> The module: "' .htmlentities($mymod_dir) .'" requires WB 2.6.7 or higher</p>
 				<p>This module uses Javascript functions contained in backend_body.js of the module.<br />
 				You need WB 2.6.7 or higher to ensure that module backend_body.js files are automatically loaded if required.</p>

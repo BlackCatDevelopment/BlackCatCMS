@@ -14,11 +14,11 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          LEPTON v2.0 Black Cat Edition Development
- *   @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- *   @link            http://www.lepton2.org
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        LEPTON2BCE_Modules
+ *   @category        CAT_Modules
  *   @package         wysiwyg_admin
  *
  */
@@ -48,7 +48,7 @@ $module_name		= 'WYSIWYG Admin';
 $module_function	= 'tool';
 $module_version		= '2.0';
 $module_platform	= '2.x';
-$module_author		= 'LEPTON v2.0 Black Cat Edition Development';
+$module_author		= 'Black Cat Development';
 $module_license		= '<a href="http://www.gnu.org/licenses/" target="_blank">GNU GPL</a>';
 $module_license_terms = '-';
 $module_description	= 'WYSIWYG Admin allows to manage some editor options, which are skin, toolbar, height and width by default. There may be additional options defined by the editor itself.';

@@ -14,18 +14,30 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * @author          LEPTON v2.0 Black Cat Edition Development
- *   @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
- * @license         http://www.gnu.org/licenses/gpl.html
- *   @category        LEPTON2BCE_Core
- *   @package         LEPTON2BCE_Core
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-define('WB_SERVER_ADDR', LEPTON_SERVER_ADDR );
-define('WB_PATH', LEPTON_PATH);
-define('WB_URL', LEPTON_URL);
+define('WB_SERVER_ADDR', CAT_SERVER_ADDR );
+define('WB_PATH', CAT_PATH);
+define('WB_URL', CAT_URL);
+define('ADMIN_PATH', CAT_ADMIN_PATH);
+define('ADMIN_URL', CAT_ADMIN_URL);
+define('LEPTON_SERVER_ADDR', CAT_SERVER_ADDR );
+define('LEPTON_PATH', CAT_PATH);
+define('LEPTON_URL', CAT_URL);
+define('TABLE_PREFIX', CAT_TABLE_PREFIX );
+define('DB_TYPE', CAT_DB_TYPE);
+define('DB_HOST', CAT_DB_HOST);
+define('DB_PORT', CAT_DB_PORT);
+define('DB_USERNAME', CAT_DB_USERNAME);
+define('DB_PASSWORD', CAT_DB_PASSWORD);
+define('DB_NAME', CAT_DB_NAME);
 define('WB_PREPROCESS_PREG', '/\[wblink([0-9]+)\]/isU' );
 
 ?>

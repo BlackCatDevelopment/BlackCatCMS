@@ -14,11 +14,11 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          LEPTON v2.0 Black Cat Edition Development
- *   @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- *   @link            http://www.lepton2.org
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        LEPTON2BCE_Modules
+ *   @category        CAT_Modules
  *   @package         wysiwyg_admin
  *
  */

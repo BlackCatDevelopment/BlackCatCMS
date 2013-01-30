@@ -28,11 +28,11 @@
       </td>
 	</tr>
 
-    <tr{if $errors.installer_lepton_url} class="fail"{/if}>
-      <td><label for="installer_lepton_url">{translate('Absolute URL')}</label></td>
+    <tr{if $errors.installer_cat_url} class="fail"{/if}>
+      <td><label for="installer_cat_url">{translate('Absolute URL')}</label></td>
       <td>
-        <input type="text" tabindex="1" name="installer_lepton_url" id="installer_lepton_url" style="width: 97%;" value="{$installer_lepton_url}" />
-        {if $errors.installer_lepton_url}<br /><span>{$errors.installer_lepton_url}</span>{/if}
+        <input type="text" tabindex="1" name="installer_cat_url" id="installer_cat_url" style="width: 97%;" value="{$installer_cat_url}" />
+        {if $errors.installer_cat_url}<br /><span>{$errors.installer_cat_url}</span>{/if}
       </td>
 	</tr>
 	<tr>

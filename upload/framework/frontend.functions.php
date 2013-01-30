@@ -8,8 +8,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ * @copyright       2013, Black Cat Development
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -17,9 +17,9 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if ( defined( 'LEPTON_PATH' ) )
+if ( defined( 'CAT_PATH' ) )
 {
-    include( LEPTON_PATH . '/framework/class.secure.php' );
+    include( CAT_PATH . '/framework/class.secure.php' );
 }
 else
 {
@@ -42,7 +42,7 @@ else
 }
 // end include class.secure.php
 
-// set debug level here; see LEPTON_Helper_KLogger for available levels
+// set debug level here; see CAT_Helper_KLogger for available levels
 $debug_level  = 8;
 
 // references to objects and variables that changed their names
@@ -58,7 +58,7 @@ if ( ! class_exists( 'LEPTON_Sections' ) )
 global $sec_h;
 $sec_h = new LEPTON_Sections();
 
-$logger = $wb->get_helper('KLogger', LEPTON_PATH.'/temp', $debug_level );
+$logger = $wb->get_helper('KLogger', CAT_PATH.'/temp', $debug_level );
 
 /**
  *  2011-08-17  Aldus  It's absolutly not clear why on earth thees following vars are double here.
@@ -80,25 +80,25 @@ if ( $query_result->numRows() > 0 )
     while ( $row = $query_result->fetchRow() )
     {
         $module_dir = $row[ 'directory' ];
-        if ( file_exists( LEPTON_PATH . '/modules/' . $module_dir . '/include.php' ) )
+        if ( file_exists( CAT_PATH . '/modules/' . $module_dir . '/include.php' ) )
         {
-            include( LEPTON_PATH . '/modules/' . $module_dir . '/include.php' );
+            include( CAT_PATH . '/modules/' . $module_dir . '/include.php' );
             /* check if frontend.css file needs to be included into the <head></head> of index.php
              */
-            if ( file_exists( LEPTON_PATH . '/modules/' . $module_dir . '/frontend.css' ) )
+            if ( file_exists( CAT_PATH . '/modules/' . $module_dir . '/frontend.css' ) )
             {
                 $include_head_link_css .= '<link href="' . LEPTON_URL . '/modules/' . $module_dir . '/frontend.css"';
                 $include_head_link_css .= ' rel="stylesheet" type="text/css" media="screen" />' . "\n";
                 $include_head_file = 'frontend.css';
             }
             // check if frontend.js file needs to be included into the <body></body> of index.php
-            if ( file_exists( LEPTON_PATH . '/modules/' . $module_dir . '/frontend.js' ) )
+            if ( file_exists( CAT_PATH . '/modules/' . $module_dir . '/frontend.js' ) )
             {
                 $include_head_links .= '<script src="' . LEPTON_URL . '/modules/' . $module_dir . '/frontend.js" type="text/javascript"></script>' . "\n";
                 $include_head_file = 'frontend.js';
             }
             // check if frontend_body.js file needs to be included into the <body></body> of index.php
-            if ( file_exists( LEPTON_PATH . '/modules/' . $module_dir . '/frontend_body.js' ) )
+            if ( file_exists( CAT_PATH . '/modules/' . $module_dir . '/frontend_body.js' ) )
             {
                 $include_body_links .= '<script src="' . LEPTON_URL . '/modules/' . $module_dir . '/frontend_body.js" type="text/javascript"></script>' . "\n";
                 $include_body_file = 'frontend_body.js';
@@ -135,12 +135,12 @@ if ( !function_exists( 'search_highlight' ) )
     function search_highlight($foo = '', $arr_string = array()) {
         global $database;
         
-        require_once( LEPTON_PATH . '/framework/functions.php' );
+        require_once( CAT_PATH . '/framework/functions.php' );
         
         static $string_ul_umlaut = false;
         static $string_ul_regex = false;
         if ($string_ul_umlaut === false || $string_ul_regex === false) {
-            require_once LEPTON_PATH. '/modules/'.SEARCH_LIBRARY.'/search.convert.php';        
+            require_once CAT_PATH. '/modules/'.SEARCH_LIBRARY.'/search.convert.php';        
         }
         $foo = entities_to_umlauts( $foo, 'UTF-8' );
         array_walk( $arr_string, create_function( '&$v,$k', '$v = preg_quote($v, \'~\');' ) );
@@ -361,7 +361,7 @@ function language_menu()
     {
         if ( ! class_exists( 'LEPTON_Pages', false ) )
         {
-	        include sanitize_path( dirname(__FILE__).'/LEPTON/Pages.php' );
+	        include sanitize_path( dirname(__FILE__).'/CAT/Pages.php' );
 		}
         $pages = LEPTON_Pages::getInstance();
         $items = $pages->get_linked_by_language(PAGE_ID);
@@ -369,7 +369,7 @@ function language_menu()
     if( isset($items) && count($items) )
     {
         // initialize template search path
-        $parser->setPath(LEPTON_PATH.'/templates/'.TEMPLATE.'/templates');
+        $parser->setPath(CAT_PATH.'/templates/'.TEMPLATE.'/templates');
         $parser->setFallbackPath(THEME_PATH.'/templates');
         if($parser->hasTemplate('languages.lte'))
         {

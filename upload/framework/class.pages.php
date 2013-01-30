@@ -9,8 +9,8 @@
  *
  * @author          Website Baker Project, LEPTON Project
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, LEPTON v2.0 Black Cat Edition Development
- * @link            http://www.lepton2.org
+ * @copyright       2013, Black Cat Development
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -38,8 +38,8 @@ if (defined('LEPTON_PATH')) {
 // end include class.secure.php
 
 // Load the other required class files if they are not already loaded
-require_once(LEPTON_PATH."/framework/class.database.php");
-require_once(LEPTON_PATH.'/framework/class.wb.php');
+require_once(CAT_PATH."/framework/class.database.php");
+require_once(CAT_PATH.'/framework/class.wb.php');
 
 
 
@@ -569,8 +569,8 @@ class pages extends wb
 		if ( $this->preferences['MULTIPLE_MENUS'] != false )
 		{
 			$template_location = ( $template != '') ?
-				LEPTON_PATH . '/templates/' . $template . '/info.php' :
-				LEPTON_PATH . '/templates/' . DEFAULT_TEMPLATE . '/info.php';
+				CAT_PATH . '/templates/' . $template . '/info.php' :
+				CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/info.php';
 
 			if ( file_exists($template_location) )
 			{
@@ -621,8 +621,8 @@ class pages extends wb
 		if ( SECTION_BLOCKS != false )
 		{
 			$template_location = ( $template != '' ) ?
-				LEPTON_PATH . '/templates/' . $template . '/info.php' :
-				LEPTON_PATH . '/templates/' . DEFAULT_TEMPLATE . '/info.php';
+				CAT_PATH . '/templates/' . $template . '/info.php' :
+				CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/info.php';
 
 			if ( file_exists($template_location) )
 			{

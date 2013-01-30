@@ -16,8 +16,8 @@
  */
 
 // try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	if (defined('LEPTON_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
 	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
 } else {
@@ -33,11 +33,11 @@ if (defined('WB_PATH')) {
 }
 // end include LEPTON class.secure.php
 
-include(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/dwoo/dwooAutoload.php');
+include(CAT_PATH.'/modules/'.basename(dirname(__FILE__)).'/dwoo/dwooAutoload.php');
 
-$cache_path = WB_PATH.'/temp/cache';
+$cache_path = CAT_PATH.'/temp/cache';
 if (!file_exists($cache_path)) mkdir($cache_path, 0755, true);
-$compiled_path = WB_PATH.'/temp/compiled';
+$compiled_path = CAT_PATH.'/temp/compiled';
 if (!file_exists($compiled_path)) mkdir($compiled_path, 0755, true);
 
 global $parser,
@@ -48,7 +48,7 @@ global $parser,
 
 if (!is_object($parser))
 {
-  include WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/dwoo/LepDwoo.php';
+  include CAT_PATH.'/modules/'.basename(dirname(__FILE__)).'/dwoo/LepDwoo.php';
   $parser = new LepDwoo($compiled_path, $cache_path);
   foreach ( array( 'TEXT', 'HEADING', 'MESSAGE', 'MENU' ) as $global ) {
       if ( isset(${$global}) && is_array(${$global}) ) {
@@ -58,12 +58,14 @@ if (!is_object($parser))
   $parser->setGlobals(
       array(
               'ADMIN_URL' => ADMIN_URL,
-              'WB_URL' => LEPTON_URL,
-              'WB_PATH' => LEPTON_PATH,
-              'LEPTON_URL' => LEPTON_URL,
-        	  'LEPTON_PATH' => LEPTON_PATH,
+              'CAT_URL' => CAT_URL,
+              'CAT_PATH' => CAT_PATH,
+              'LEPTON_URL' => CAT_URL,
+        	  'LEPTON_PATH' => CAT_PATH,
+              'WB_PATH' => CAT_PATH,
+              'WB_URL' => CAT_URL,
         	  'THEME_URL' => THEME_URL,
-        	  'URL_HELP' => 'http://lepton2.webbird.de/'
+        	  'URL_HELP' => 'http://blackcat-cms.org/'
       )
   );
   // initialize template search path
