@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -41,16 +41,16 @@ if(function_exists('ini_set')) {
 }
 
 //Delete all form fields with no title
-$database->query("DELETE FROM ".TABLE_PREFIX."mod_form_fields  WHERE page_id = '$page_id' and section_id = '$section_id' and title=''");
+$database->query("DELETE FROM ".CAT_TABLE_PREFIX."mod_form_fields  WHERE page_id = '$page_id' and section_id = '$section_id' and title=''");
 
 ?>
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr>
 	<td align="left" width="33%">
-		<input type="button" value="<?php echo $TEXT['ADD'].' '.$TEXT['FIELD']; ?>" onclick="javascript: window.location = '<?php echo WB_URL; ?>/modules/form/add_field.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
+		<input type="button" value="<?php echo $TEXT['ADD'].' '.$TEXT['FIELD']; ?>" onclick="javascript: window.location = '<?php echo CAT_URL; ?>/modules/form/add_field.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
 	</td>
 	<td align="right" width="33%">
-		<input type="button" value="<?php echo $TEXT['SETTINGS']; ?>" onclick="javascript: window.location = '<?php echo WB_URL; ?>/modules/form/modify_settings.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
+		<input type="button" value="<?php echo $TEXT['SETTINGS']; ?>" onclick="javascript: window.location = '<?php echo CAT_URL; ?>/modules/form/modify_settings.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
 	</td>
 </tr>
 </table>
@@ -61,7 +61,7 @@ $database->query("DELETE FROM ".TABLE_PREFIX."mod_form_fields  WHERE page_id = '
 <?php
 
 // Loop through existing fields
-$query_fields = $database->query("SELECT * FROM `".TABLE_PREFIX."mod_form_fields` WHERE section_id = '$section_id' ORDER BY position ASC");
+$query_fields = $database->query("SELECT * FROM `".CAT_TABLE_PREFIX."mod_form_fields` WHERE section_id = '$section_id' ORDER BY position ASC");
 if($query_fields->numRows() > 0) {
 	$num_fields = $query_fields->numRows();
 	$row = 'a';
@@ -72,12 +72,12 @@ if($query_fields->numRows() > 0) {
 		?>
 		<tr class="row_<?php echo $row; ?>">
 			<td width="20" style="padding-left: 5px;">
-				<a href="<?php echo WB_URL; ?>/modules/form/modify_field.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&field_id=<?php echo $field['field_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/modify_16.png" border="0" alt="^" />
+				<a href="<?php echo CAT_URL; ?>/modules/form/modify_field.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&field_id=<?php echo $field['field_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/modify_16.png" border="0" alt="^" />
 				</a>
 			</td>		
 			<td>
-				<a href="<?php echo WB_URL; ?>/modules/form/modify_field.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&field_id=<?php echo $field['field_id']; ?>">
+				<a href="<?php echo CAT_URL; ?>/modules/form/modify_field.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&field_id=<?php echo $field['field_id']; ?>">
 					<?php echo $field['title']; ?>
 				</a>
 			</td>
@@ -118,21 +118,21 @@ if($query_fields->numRows() > 0) {
 			</td>
 			<td width="20">
 			<?php if($field['position'] != 1) { ?>
-				<a href="<?php echo WB_URL; ?>/modules/form/move_up.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&field_id=<?php echo $field['field_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/up_16.png" border="0" alt="^" />
+				<a href="<?php echo CAT_URL; ?>/modules/form/move_up.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&field_id=<?php echo $field['field_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/up_16.png" border="0" alt="^" />
 				</a>
 			<?php } ?>
 			</td>
 			<td width="20">
 			<?php if($field['position'] != $num_fields) { ?>
-				<a href="<?php echo WB_URL; ?>/modules/form/move_down.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&field_id=<?php echo $field['field_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/down_16.png" border="0" alt="v" />
+				<a href="<?php echo CAT_URL; ?>/modules/form/move_down.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&field_id=<?php echo $field['field_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/down_16.png" border="0" alt="v" />
 				</a>
 			<?php } ?>
 			</td>
 			<td width="20">
-				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo WB_URL; ?>/modules/form/delete_field.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&field_id=<?php echo $field['field_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
+				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo CAT_URL; ?>/modules/form/delete_field.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&field_id=<?php echo $field['field_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
 				</a>
 			</td>
 		</tr>
@@ -160,7 +160,7 @@ if($query_fields->numRows() > 0) {
 <?php
 
 // Query submissions table
-$query_submissions = $database->query("SELECT * FROM `".TABLE_PREFIX."mod_form_submissions` WHERE section_id = '$section_id' ORDER BY submitted_when ASC");
+$query_submissions = $database->query("SELECT * FROM `".CAT_TABLE_PREFIX."mod_form_submissions` WHERE section_id = '$section_id' ORDER BY submitted_when ASC");
 if($query_submissions->numRows() > 0) {
 	?>
 	<table cellpadding="2" cellspacing="0" border="0" width="100%">
@@ -171,15 +171,15 @@ if($query_submissions->numRows() > 0) {
 		?>
 		<tr class="row_<?php echo $row; ?>">
 			<td width="20" style="padding-left: 5px;">
-				<a href="<?php echo WB_URL; ?>/modules/form/view_submission.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&submission_id=<?php echo $submission['submission_id']; ?>" title="<?php echo $TEXT['OPEN']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/folder_16.png" alt="<?php echo $TEXT['OPEN']; ?>" border="0" />
+				<a href="<?php echo CAT_URL; ?>/modules/form/view_submission.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&submission_id=<?php echo $submission['submission_id']; ?>" title="<?php echo $TEXT['OPEN']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/folder_16.png" alt="<?php echo $TEXT['OPEN']; ?>" border="0" />
 				</a>
 			</td>
 			<td width="237"><?php echo $TEXT['SUBMISSION_ID'].': '.$submission['submission_id']; ?></td>
 			<td><?php echo $TEXT['SUBMITTED'].': '.date(TIME_FORMAT.', '.DATE_FORMAT, $submission['submitted_when']); ?></td>
 			<td width="20">
-				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo WB_URL; ?>/modules/form/delete_submission.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&submission_id=<?php echo $submission['submission_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
+				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo CAT_URL; ?>/modules/form/delete_submission.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&submission_id=<?php echo $submission['submission_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
 				</a>
 			</td>
 		</tr>

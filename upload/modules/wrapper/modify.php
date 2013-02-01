@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -19,9 +19,9 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if ( defined( 'WB_PATH' ) )
+if ( defined( 'CAT_PATH' ) )
 {
-	include( WB_PATH . '/framework/class.secure.php' );
+	include( CAT_PATH . '/framework/class.secure.php' );
 }
 elseif ( file_exists( $_SERVER[ 'DOCUMENT_ROOT' ] . '/framework/class.secure.php' ) )
 {
@@ -50,7 +50,7 @@ else
 // end include class.secure.php
 
 // Get page content
-$query        = "SELECT url,height,width,wtype FROM " . TABLE_PREFIX . "mod_wrapper WHERE section_id = '$section_id'";
+$query        = "SELECT url,height,width,wtype FROM " . CAT_TABLE_PREFIX . "mod_wrapper WHERE section_id = '$section_id'";
 $get_settings = $database->query( $query );
 $settings     = $get_settings->fetchRow( MYSQL_ASSOC );
 $url          = ( $settings[ 'url' ] );
@@ -59,12 +59,12 @@ $url          = ( $settings[ 'url' ] );
 $data = array(
 	'PAGE_ID' => $page_id,
 	'SECTION_ID' => $section_id,
-	'WB_URL' => WB_URL,
+	'CAT_URL' => CAT_URL,
 	'URL' => $url,
 	'settings' => $settings,
 );
 
-$parser->setPath( WB_PATH.'/modules/wrapper/htt' );
+$parser->setPath( CAT_PATH.'/modules/wrapper/htt' );
 $parser->output( 'modify.lte', $data );
 
 ?>

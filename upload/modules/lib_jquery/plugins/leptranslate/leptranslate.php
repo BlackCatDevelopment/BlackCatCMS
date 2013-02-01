@@ -13,12 +13,12 @@
 @include dirname(__FILE__).'/../../../../config.php';
 @include dirname(__FILE__).'/../../../../framework/LEPTON/Helper/I18n.php';
 @include dirname(__FILE__).'/../../../../framework/LEPTON/Helper/Directory.php';
-$lang = new LEPTON_Helper_I18n();
+$lang = new CAT_Helper_I18n();
 $attr = ( isset($_POST['attr']) ? $_POST['attr'] : NULL );
 
 if ( isset($_POST['mod']) ) {
     $mod  = $_POST['mod'];
-    $d    = new LEPTON_Helper_Directory();
+    $d    = new CAT_Helper_Directory();
     $path = $d->sanitizePath(dirname(__FILE__).'/../../../../modules/'.$mod);
     if( is_dir($path) ) {
         if( file_exists($path.'/languages/'.$lang->getLang().'.php') ) {

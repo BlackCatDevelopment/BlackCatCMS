@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -53,7 +53,7 @@ if(isset($_GET['p']) AND is_numeric($_GET['p']) AND $_GET['p'] >= 0)
 
 // Get user's username, display name, email, and id - needed for insertion into post info
 $users = array();
-$query_users = $database->query("SELECT user_id,username,display_name,email FROM ".TABLE_PREFIX."users");
+$query_users = $database->query("SELECT user_id,username,display_name,email FROM ".CAT_TABLE_PREFIX."users");
 if($query_users->numRows() > 0)
 {
 	while( false != ($user = $query_users->fetchRow()) )
@@ -75,7 +75,7 @@ $groups[0]['title'] = '';
 $groups[0]['active'] = true;
 $groups[0]['image'] = '';
 
-$query_users = $database->query("SELECT group_id,title,active FROM ".TABLE_PREFIX."mod_news_groups WHERE section_id = '$section_id' ORDER BY position ASC");
+$query_users = $database->query("SELECT group_id,title,active FROM ".CAT_TABLE_PREFIX."mod_news_groups WHERE section_id = '$section_id' ORDER BY position ASC");
 if($query_users->numRows() > 0)
 {
 	while( false != ($group = $query_users->fetchRow()) )
@@ -84,9 +84,9 @@ if($query_users->numRows() > 0)
 		$group_id = $group['group_id'];
 		$groups[$group_id]['title'] = ($group['title']);
 		$groups[$group_id]['active'] = $group['active'];
-		if(file_exists(WB_PATH.MEDIA_DIRECTORY.'/.news/image'.$group_id.'.jpg'))
+		if(file_exists(CAT_PATH.MEDIA_DIRECTORY.'/.news/image'.$group_id.'.jpg'))
         {
-			$groups[$group_id]['image'] = WB_URL.MEDIA_DIRECTORY.'/.news/image'.$group_id.'.jpg';
+			$groups[$group_id]['image'] = CAT_URL.MEDIA_DIRECTORY.'/.news/image'.$group_id.'.jpg';
 		} else {
 			$groups[$group_id]['image'] = '';
 		}
@@ -116,7 +116,7 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
 	}
 
 	// Get settings
-	$query_settings = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_news_settings WHERE section_id = '$section_id'");
+	$query_settings = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_settings WHERE section_id = '$section_id'");
 	if($query_settings->numRows() > 0)
     {
 		$fetch_settings = $query_settings->fetchRow();
@@ -133,7 +133,7 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
 
 	$t = time();
 	// Get total number of posts
-	$query_total_num = $database->query("SELECT post_id, section_id FROM ".TABLE_PREFIX."mod_news_posts
+	$query_total_num = $database->query("SELECT post_id, section_id FROM ".CAT_TABLE_PREFIX."mod_news_posts
 		WHERE section_id = '$section_id' AND active = '1' AND title != '' $query_extra
 		AND (published_when = '0' OR published_when <= $t) AND (published_until = 0 OR published_until >= $t)");
 	$total_num = $query_total_num->numRows();
@@ -147,7 +147,7 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
 	}
 
 	// Query posts (for this page)
-	$query_posts = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_news_posts
+	$query_posts = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_posts
 		WHERE section_id = '$section_id' AND active = '1' AND title != ''$query_extra
 		AND (published_when = '0' OR published_when <= $t) AND (published_until = 0 OR published_until >= $t)
 		ORDER BY position DESC".$limit_sql);
@@ -255,7 +255,7 @@ echo "</textarea>";
 				// Work-out the post link
 				$post_link = page_link($post['link']);
 
-                $post_link_path = str_replace(WB_URL, WB_PATH,$post_link);
+                $post_link_path = str_replace(CAT_URL, CAT_PATH,$post_link);
                 if(file_exists($post_link_path))
                 {
     				$create_date = date(DATE_FORMAT, filemtime ( $post_link_path ));
@@ -293,15 +293,15 @@ echo "</textarea>";
 				// Loop Post Image
 				$post_pic_url = '';
 				$post_picture = '';
-				if(file_exists(WB_PATH.MEDIA_DIRECTORY.'/newspics/image'.$post['post_id'].'.jpg')){
-					$post_pic_url = WB_URL.MEDIA_DIRECTORY.'/newspics/image'.$post['post_id'].'.jpg';
+				if(file_exists(CAT_PATH.MEDIA_DIRECTORY.'/newspics/image'.$post['post_id'].'.jpg')){
+					$post_pic_url = CAT_URL.MEDIA_DIRECTORY.'/newspics/image'.$post['post_id'].'.jpg';
 					$post_picture = '<img src="'.$post_pic_url.'" alt="'.$post['title'].'" class="news_loop_image" />';
 				}
 				
 			   // number of comments:
 			   $com_count = '';
 			   $pid = $post['post_id'];
-			   $qc = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_news_comments WHERE section_id = '$section_id' AND post_id = '$pid'");
+			   $qc = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_comments WHERE section_id = '$section_id' AND post_id = '$pid'");
 			   if ($qc->numRows() == 1) {
 				  $com_count = "1 Kommentar";
 			   } 
@@ -360,7 +360,7 @@ elseif(defined('POST_ID') AND is_numeric(POST_ID))
   //if(defined('POST_SECTION') AND POST_SECTION == $section_id)
   {
 	// Get settings
-	$query_settings = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_news_settings WHERE section_id = '$section_id'");
+	$query_settings = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_settings WHERE section_id = '$section_id'");
 	if($query_settings->numRows() > 0)
     {
 		$fetch_settings = $query_settings->fetchRow();
@@ -378,7 +378,7 @@ elseif(defined('POST_ID') AND is_numeric(POST_ID))
     }
     
 	// Get page info
-	$query_page = $database->query("SELECT link FROM ".TABLE_PREFIX."pages WHERE page_id = '".PAGE_ID."'");
+	$query_page = $database->query("SELECT link FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '".PAGE_ID."'");
 	if($query_page->numRows() > 0)
     {
 		$page = $query_page->fetchRow( MYSQL_ASSOC );
@@ -398,7 +398,7 @@ elseif(defined('POST_ID') AND is_numeric(POST_ID))
 
 	// Get post info
 	$t = time();
-	$query_post = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_news_posts
+	$query_post = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_posts
 		WHERE post_id = '".POST_ID."' AND active = '1'
 		AND (published_when = '0' OR published_when <= $t) AND (published_until = 0 OR published_until >= $t)");
 
@@ -428,7 +428,7 @@ elseif(defined('POST_ID') AND is_numeric(POST_ID))
 			// Work-out the post link
 			$post_link = page_link($post['link']);
 
-			$post_link_path = str_replace(WB_URL, WB_PATH,$post_link);
+			$post_link_path = str_replace(CAT_URL, CAT_PATH,$post_link);
             if(file_exists($post_link_path))
             {
     			$create_date = date(DATE_FORMAT, filemtime ( $post_link_path ));
@@ -450,8 +450,8 @@ elseif(defined('POST_ID') AND is_numeric(POST_ID))
 			// Post Image
 			$post_pic_url = '';
 			$post_picture = '';
-			if(file_exists(WB_PATH.MEDIA_DIRECTORY.'/newspics/image'.POST_ID.'.jpg')){
-				$post_pic_url = WB_URL.MEDIA_DIRECTORY.'/newspics/image'.POST_ID.'.jpg';
+			if(file_exists(CAT_PATH.MEDIA_DIRECTORY.'/newspics/image'.POST_ID.'.jpg')){
+				$post_pic_url = CAT_URL.MEDIA_DIRECTORY.'/newspics/image'.POST_ID.'.jpg';
 				$post_picture = '<img src="'.$post_pic_url.'" alt="'.$post['title'].'" class="news_post_image" />';
 			}
 		
@@ -512,13 +512,13 @@ elseif(defined('POST_ID') AND is_numeric(POST_ID))
 		 *
 		 */
 		$vars = array(
-			'[ADD_COMMENT_URL]' => WB_URL.'/modules/news/comment.php?post_id='.POST_ID.'&amp;section_id='.$section_id,
+			'[ADD_COMMENT_URL]' => CAT_URL.'/modules/news/comment.php?post_id='.POST_ID.'&amp;section_id='.$section_id,
 			'[TEXT_COMMENTS]'	=> $MOD_NEWS['TEXT_COMMENTS']
 		);
 		echo str_replace( array_keys($vars), array_values($vars), $setting_comments_header);
 
 		// Query for comments
-		$query_comments = $database->query("SELECT title,comment,commented_when,commented_by FROM ".TABLE_PREFIX."mod_news_comments WHERE post_id = '".POST_ID."' ORDER BY commented_when ASC");
+		$query_comments = $database->query("SELECT title,comment,commented_when,commented_by FROM ".CAT_TABLE_PREFIX."mod_news_comments WHERE post_id = '".POST_ID."' ORDER BY commented_when ASC");
 		if($query_comments->numRows() > 0)
         {
 			while( false != ($comment = $query_comments->fetchRow( MYSQL_ASSOC ) ) )
@@ -562,7 +562,7 @@ elseif(defined('POST_ID') AND is_numeric(POST_ID))
 		 *
 		 */
 		$vars = array(
-			'[ADD_COMMENT_URL]'	=> WB_URL.'/modules/news/comment.php?post_id='.POST_ID.'&amp;section_id='.$section_id,
+			'[ADD_COMMENT_URL]'	=> CAT_URL.'/modules/news/comment.php?post_id='.POST_ID.'&amp;section_id='.$section_id,
 			'[TEXT_ADD_COMMENT]' => $MOD_NEWS['TEXT_ADD_COMMENT']
 		);
 		echo str_replace( array_keys($vars), array_values($vars), $setting_comments_footer);

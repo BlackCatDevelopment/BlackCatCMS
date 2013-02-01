@@ -24,8 +24,8 @@
 
 [php]
 // exec initial_page 
-if(file_exists(WB_PATH .'/modules/initial_page/classes/c_init_page.php') && isset($_SESSION['USER_ID'])) { 
-	require_once (WB_PATH .'/modules/initial_page/classes/c_init_page.php'); 
+if(file_exists(CAT_PATH .'/modules/initial_page/classes/c_init_page.php') && isset($_SESSION['USER_ID'])) { 
+	require_once (CAT_PATH .'/modules/initial_page/classes/c_init_page.php'); 
 	$ins = new c_init_page($database, $_SESSION['USER_ID'], $_SERVER['PHP_SELF']);
 }
 [/php]

@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -69,9 +69,9 @@ if (defined('LEPTON_PATH')) {
 //				$output  = show_usermask($err, $admin, $database, $user_id);
 				if(isset( $_POST['user_id']))
 				{
-					$target = ADMIN_URL.'/users/index.php';
+					$target = CAT_ADMIN_URL.'/users/index.php';
 				}else {
-					$target = ADMIN_URL.'/preferences/index.php';
+					$target = CAT_ADMIN_URL.'/preferences/index.php';
 				}
 				$err[] = 'This function is not available yet!<br /><br/ >
 				<form name="FORM_BACK" id="FORM_BACK" action="'.$target.'" method="post">
@@ -91,7 +91,7 @@ if (defined('LEPTON_PATH')) {
 		}
 	}
 // start user maintenance
-	require_once(LEPTON_PATH.'/framework/class.admin'.PAGE_EXTENSION);
+	require_once(CAT_PATH.'/framework/class.admin'.PAGE_EXTENSION);
 	require_once('actions.inc'.PAGE_EXTENSION);
 	admin_profiles_index($database);
 	exit;

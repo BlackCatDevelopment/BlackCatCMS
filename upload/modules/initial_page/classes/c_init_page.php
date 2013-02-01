@@ -13,8 +13,8 @@
  */
  
  // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -61,7 +61,7 @@ class c_init_page
 			$MENU['USERS']			=> 'users/index.php'
 		);
 		
-		$this->table = TABLE_PREFIX.$this->table;
+		$this->table = CAT_TABLE_PREFIX.$this->table;
 		
 		if ( ($aUser_id != NULL) && ($aPath_ref != NULL) ) {
 			$this->__test_user($aUser_id, $aPath_ref);
@@ -87,7 +87,7 @@ class c_init_page
 		 *	first: add pages ...
 		 *
 		 */
-		$temp = $this->db->query( "SELECT `page_id`,`page_title`,`menu_title` from `".TABLE_PREFIX."pages` order by `page_title`");
+		$temp = $this->db->query( "SELECT `page_id`,`page_title`,`menu_title` from `".CAT_TABLE_PREFIX."pages` order by `page_title`");
 		if ($temp) {
 			while( false != ($data = $temp->fetchRow( MYSQL_ASSOC ) ) ) {
 				$values[ $MENU['PAGES'] ][ $data['page_title'] ] = "pages/modify.php?page_id=".$data['page_id'];
@@ -98,7 +98,7 @@ class c_init_page
 		 *	second: add tools
 		 *
 		 */
-		$temp = $this->db->query("SELECT `name`,`directory` from `".TABLE_PREFIX."addons` where `function`='tool' order by `name`");
+		$temp = $this->db->query("SELECT `name`,`directory` from `".CAT_TABLE_PREFIX."addons` where `function`='tool' order by `name`");
 		if ($temp) {
 			while( false != ($data = $temp->fetchRow( MYSQL_ASSOC ) ) ) {
 					$values[ $MENU['ADMINTOOLS'] ][ $data['name'] ] = "admintools/tool.php?tool=".$data['directory'];
@@ -165,7 +165,7 @@ class c_init_page
 	
 	private function __test_user( $aID, $path_ref ) {
 		$info = $this->get_user_info( $aID );
-		$path = ADMIN_URL."/".$info['init_page'];
+		$path = CAT_ADMIN_URL."/".$info['init_page'];
 		if (( $path <> $path_ref ) && ($info['init_page'] != "start/index.php" ) && ($info['init_page'] != "") ) {
 			if (strlen($info['page_param']) > 0) $path .= $info['page_param'];
 			$this->__test_leptoken( $path );
@@ -207,7 +207,7 @@ class c_init_page
 		 */
 		if (array_key_exists('tools', $options) && ($options['tools'] == true)) {
 
-			$temp = $this->db->query("SELECT `name`,`directory` from `".TABLE_PREFIX."addons` where `function`='tool' order by `name`");
+			$temp = $this->db->query("SELECT `name`,`directory` from `".CAT_TABLE_PREFIX."addons` where `function`='tool' order by `name`");
 			if ($temp) {
 				while( false != ($data = $temp->fetchRow( MYSQL_ASSOC ) ) ) {
 						$values[ $MENU['ADMINTOOLS'] ][ $data['name'] ] = "admintools/tool.php?tool=".$data['directory'];
@@ -222,7 +222,7 @@ class c_init_page
 		
 		if (array_key_exists('pages', $options) && ($options['pages'] == true)) {
 
-			$temp = $this->db->query( "SELECT `page_id`,`page_title`,`menu_title` from `".TABLE_PREFIX."pages` order by `page_title`");
+			$temp = $this->db->query( "SELECT `page_id`,`page_title`,`menu_title` from `".CAT_TABLE_PREFIX."pages` order by `page_title`");
 			if ($temp) {
 				while( false != ($data = $temp->fetchRow( MYSQL_ASSOC ) ) ) {
 					$values[ $MENU['PAGES'] ][ $data['page_title'] ] = "pages/modify.php?page_id=".$data['page_id'];
@@ -244,7 +244,7 @@ class c_init_page
 	 *
 	 */
 	protected function ___U () {
-		$q="SELECT `user_id` from `".TABLE_PREFIX."users` order by `user_id`";
+		$q="SELECT `user_id` from `".CAT_TABLE_PREFIX."users` order by `user_id`";
 		$r= $this->db->query( $q );
 		if ($r) {
 			$ids = array();
@@ -252,7 +252,7 @@ class c_init_page
 				$ids[] = $data['user_id'];
 			}
 			
-			$q = "DELETE from `".TABLE_PREFIX."mod_initial_page` where `user_id` not in (".implode (",",$ids).")";
+			$q = "DELETE from `".CAT_TABLE_PREFIX."mod_initial_page` where `user_id` not in (".implode (",",$ids).")";
 			$this->db->query( $q );
 		}
 	}

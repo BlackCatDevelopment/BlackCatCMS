@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -28,8 +28,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
 	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
 } else {
@@ -46,7 +46,7 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
  
 if (!class_exists('Template')) {
-	include_once(WB_PATH.'/modules/phplib/include.php');
+	include_once(CAT_PATH.'/modules/phplib/include.php');
 }
 
 class Template

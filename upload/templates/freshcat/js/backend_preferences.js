@@ -1,5 +1,5 @@
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -23,7 +23,7 @@ jQuery(document).ready(function()
 			$('<div class="popup" />').appendTo('body');
 		}
 		$('.popup').html('<div class="c_16">Confirm with current password</div>');
-		var button		= LEPTON_TEXT["BACK"];
+		var button		= CAT_TEXT["BACK"];
 		if ( !$('#fc_current_password').val() )
 		{
 			$('.popup').dialog(

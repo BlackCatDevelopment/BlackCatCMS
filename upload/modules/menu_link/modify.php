@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -17,8 +17,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -38,16 +38,16 @@ if (defined('WB_PATH')) {
 
 
 // check if module language file exists for the language set by the user (e.g. DE, EN)
-if(!file_exists(WB_PATH .'/modules/menu_link/languages/'.LANGUAGE .'.php')) {
+if(!file_exists(CAT_PATH .'/modules/menu_link/languages/'.LANGUAGE .'.php')) {
 	// no module language file exists for the language set by the user, include default module language file EN.php
-	require_once(WB_PATH .'/modules/menu_link/languages/EN.php');
+	require_once(CAT_PATH .'/modules/menu_link/languages/EN.php');
 } else {
 	// a module language file exists for the language defined by the user, load it
-	require_once(WB_PATH .'/modules/menu_link/languages/'.LANGUAGE .'.php');
+	require_once(CAT_PATH .'/modules/menu_link/languages/'.LANGUAGE .'.php');
 }
 
 // get target page_id
-$table = TABLE_PREFIX.'mod_menu_link';
+$table = CAT_TABLE_PREFIX.'mod_menu_link';
 $sql_result = $database->query("SELECT * FROM $table WHERE section_id = '$section_id'");
 $sql_row = $sql_result->fetchRow();
 $target_page_id = $sql_row['target_page_id'];
@@ -62,7 +62,7 @@ $sel = ' selected="selected"';
 if(!function_exists('menulink_make_tree')) {
 function menulink_make_tree($parent, $link_pid, $tree) {
 	global $database, $admin, $menulink_titles;
-	$table_p = TABLE_PREFIX."pages";
+	$table_p = CAT_TABLE_PREFIX."pages";
 	// get list of page-trails, recursive
 	if($query_page = $database->query("SELECT * FROM `$table_p` WHERE `parent`=$parent ORDER BY `position`")) {
 		while($page = $query_page->fetchRow()) {
@@ -83,7 +83,7 @@ function menulink_make_tree($parent, $link_pid, $tree) {
 // get list of all page_ids and page_titles
 global $menulink_titles;
 $menulink_titles = array();
-$table_p = TABLE_PREFIX."pages";
+$table_p = CAT_TABLE_PREFIX."pages";
 if($query_page = $database->query("SELECT `page_id`,`menu_title` FROM `$table_p`")) {
 	while($page = $query_page->fetchRow())
 		$menulink_titles[$page['page_id']] = $page['menu_title'];
@@ -94,8 +94,8 @@ $links = menulink_make_tree(0, $page_id, $links);
 
 // Get list of targets (id=... or <a name ...>) from pages in $links
 $targets = array();
-$table_mw = TABLE_PREFIX."mod_wysiwyg";
-$table_s = TABLE_PREFIX."sections";
+$table_mw = CAT_TABLE_PREFIX."mod_wysiwyg";
+$table_s = CAT_TABLE_PREFIX."sections";
 foreach($links as $pid=>$l) {
 	if($query_section = $database->query("SELECT section_id, module FROM $table_s WHERE page_id = '$pid' ORDER BY position")) {
 		while($section = $query_section->fetchRow()) {
@@ -119,7 +119,7 @@ foreach($links as $pid=>$l) {
 	}
 }
 // get target-window for actual page
-$table = TABLE_PREFIX."pages";
+$table = CAT_TABLE_PREFIX."pages";
 $query_page = $database->query("SELECT target FROM $table WHERE page_id = '$page_id'");
 $page = $query_page->fetchRow();
 $target = $page['target'];
@@ -173,7 +173,7 @@ $target = $page['target'];
 
 /*]]>*/
 </script>
-<form name="menulink" action="<?php echo WB_URL ?>/modules/menu_link/save.php" method="post" class="ajaxForm">
+<form name="menulink" action="<?php echo CAT_URL ?>/modules/menu_link/save.php" method="post" class="ajaxForm">
 <input type="hidden" name="page_id" value="<?php echo $page_id ?>" />
 <input type="hidden" name="section_id" value="<?php echo $section_id ?>" />
 <table>

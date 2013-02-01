@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *

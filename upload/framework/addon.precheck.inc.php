@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -288,7 +288,7 @@ function preCheckAddon($temp_addon_file, $temp_path = NULL, $delete_on_fail = tr
                         }
 
                         // check if addon is listed in WB database
-                        $table   = TABLE_PREFIX . 'addons';
+                        $table   = CAT_TABLE_PREFIX . 'addons';
                         $sql     = "SELECT * FROM `$table` WHERE `directory` = '" . addslashes($addon) . "'";
                         $results = $database->query($sql);
 

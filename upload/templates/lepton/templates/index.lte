@@ -11,7 +11,7 @@
 <body>
 <div id="site">
 	<div id="head">
-	<a href="{$WB_URL}/"><img class="head_img" src="{template_dir()}/images/1.jpg" width="900" height="180" alt="image" /></a>
+	<a href="{$CAT_URL}/"><img class="head_img" src="{template_dir()}/images/1.jpg" width="900" height="180" alt="image" /></a>
 	</div>
 	<div id="headtitle">
       {page_header()}
@@ -28,7 +28,7 @@
 <!-- OPTIONAL: display frontend search -->
 	<div id="search">
 	{if $SHOW_SEARCH}
-	<form action="<?php echo WB_URL; ?>/search/index.php" method="get">
+	<form action="<?php echo CAT_URL; ?>/search/index.php" method="get">
 		<p><input type="hidden" name="referrer" value="<?php
 			echo defined('REFERRER_ID') ? REFERRER_ID : PAGE_ID; ?>" /></p>
 		<fieldset>

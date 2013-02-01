@@ -1,26 +1,33 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://www.blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -338,7 +345,7 @@ $TEXT = array(
     'SEARCH_DROPLEP'        => 'Individual page: DropLEP for search result',
 	'SEARCH_FOR'			=> 'Search by',
     'SEARCH_KEYWORDS'       => 'Search for page keywords',
-    'SEARCH_LIBRARY'        => 'Active LEPTON Search library',
+    'SEARCH_LIBRARY'        => 'Active Search library',
     'SEARCH_LINK_NON_PUBLIC' => 'Redirect link (URL) for non-public content',
     'SEARCH_NON_PUBLIC_CONTENT' => 'Search in non-public content',
     'SEARCH_IMAGES'         => 'Search for images',
@@ -377,7 +384,7 @@ $TEXT = array(
 	'SUCCESS' 				=> 'Success',
 	'SYSTEM_DEFAULT' 		=> 'System Default',
 	'SYSTEM_PERMISSIONS' 	=> 'System Permissions',
-	'TABLE_PREFIX' 			=> 'Table Prefix',
+	'CAT_TABLE_PREFIX' 			=> 'Table Prefix',
 	'TARGET' 				=> 'Target',
 	'TARGET_FOLDER' 		=> 'Target folder',
 	'TEMPLATE' 				=> 'Template',
@@ -421,7 +428,7 @@ $TEXT = array(
 	'VISIBILITY' 			=> 'Visibility',
 	'WBMAILER_DEFAULT_SENDER_MAIL' => 'Default From Mail',
 	'WBMAILER_DEFAULT_SENDER_NAME' => 'Default Sender Name',
-	'WBMAILER_DEFAULT_SETTINGS_NOTICE' => 'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by LEPTON. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.',
+	'WBMAILER_DEFAULT_SETTINGS_NOTICE' => 'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by the CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.',
 	'WBMAILER_FUNCTION' 	=> 'Mail Routine',
 	'WBMAILER_NOTICE' 		=> '<strong>SMTP Mailer Settings:</strong><br />The settings below are only required if you want to send mails via <acronym title="Simple mail transfer protocol">SMTP</acronym>. If you do not know your SMTP host or you are not sure about the required settings, simply stay with the default mail routine: PHP MAIL.',
 	'WBMAILER_PHP' 			=> 'PHP MAIL',
@@ -537,7 +544,7 @@ $MESSAGE = array(
 	'GENERIC_INSTALLED' 	=> 'Installed successfully',
 	'GENERIC_INVALID' 		=> 'The file you uploaded is invalid',
 	'GENERIC_INVALID_MODULE' => 'Invalid module! No info.php or missing version number.',
-	'GENERIC_INVALID_LANGUAGE_FILE' => 'Invalid LEPTON language file. Please check the text file.',
+	'GENERIC_INVALID_LANGUAGE_FILE' => 'Invalid language file. Please check the text file.',
 	'GENERIC_MODULE_VERSION_ERROR' => 'The module is not installed properly!',
 	'GENERIC_NOT_COMPARE' 	=> ' not possibly',
 	'GENERIC_NOT_INSTALLED' => 'Not installed',
@@ -686,11 +693,11 @@ if you have received this message by an error, please delete it immediately!
 -------------------------------------
 This message was automatic generated!
 ',
-	'SIGNUP2_SUBJECT_LOGIN_INFO'			=> 'Your LEPTON login details...',
+	'SIGNUP2_SUBJECT_LOGIN_INFO'			=> 'Your login details...',
 	'SIGNUP_NO_EMAIL'						=> 'You must enter an email address',
 	'START_CURRENT_USER'					=> 'You are currently logged in as:',
 	'START_INSTALL_DIR_EXISTS'				=> 'Warning, Installation Directory Still Exists!',
-	'START_WELCOME_MESSAGE'					=> 'Welcome to LEPTON Administration',
+	'START_WELCOME_MESSAGE'					=> 'Welcome to Black Cat Administration',
 	'SYSTEM_FUNCTION_DEPRECATED'			=> 'The function <b>%s</b> is deprecated, use the function <b>%s</b> instead!',
 	'SYSTEM_FUNCTION_NO_LONGER_SUPPORTED'	=> 'The function <b>%s</b> is out of date and no longer supported!',
 	'SYSTEM_SETTING_NO_LONGER_SUPPORTED'	=> 'The setting <b>%s</b> is no longer supported and will be ignored!',
@@ -714,18 +721,18 @@ This message was automatic generated!
 ); // $MESSAGE
 
 $OVERVIEW = array(
-	'ADMINTOOLS' 			=> 'Access the LEPTON administration tools...',
+	'ADMINTOOLS' 			=> 'Access the Black Cat administration tools...',
 	'GROUPS' 				=> 'Manage user groups and their system permissions...',
 	'HELP' 					=> 'Got a questions? Find your answer...',
-	'LANGUAGES' 			=> 'Manage LEPTON languages...',
+	'LANGUAGES' 			=> 'Manage languages...',
 	'MEDIA' 				=> 'Manage files stored in the media folder...',
-	'MODULES' 				=> 'Manage LEPTON modules...',
+	'MODULES' 				=> 'Manage modules...',
 	'PAGES' 				=> 'Manage your websites pages...',
 	'PREFERENCES' 			=> 'Change preferences such as email address, password, etc... ',
-	'SETTINGS' 				=> 'Changes settings for LEPTON...',
+	'SETTINGS' 				=> 'Changes settings for Black Cat CMS...',
 	'START' 				=> 'Administration overview',
 	'TEMPLATES' 			=> 'Change the look and feel of your website with templates...',
-	'USERS' 				=> 'Manage users who can log-in to LEPTON...',
+	'USERS' 				=> 'Manage users who can log-in to Black Cat...',
 	'VIEW' 					=> 'Quickly view and browse your website in a new window...'
 );
 

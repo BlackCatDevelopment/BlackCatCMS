@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	if (defined('LEPTON_VERSION')) include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -36,12 +36,12 @@ global $database;
 /**
  * @internal erpe 2011-08-04 - this must be proved in upcoming release when install/upgrade/deinstall process is reworked
  */		
-//	$database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_form_fields`");
-//	$database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_form_submissions`");
-//	$database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_form_settings`");
+//	$database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_form_fields`");
+//	$database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_form_submissions`");
+//	$database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_form_settings`");
 
 // Create tables
-$mod_form = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_form_fields` ( `field_id` INT NOT NULL AUTO_INCREMENT,'
+$mod_form = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_form_fields` ( `field_id` INT NOT NULL AUTO_INCREMENT,'
 	. ' `section_id` INT NOT NULL DEFAULT \'0\' ,'
 	. ' `page_id` INT NOT NULL DEFAULT \'0\' ,'
 	. ' `position` INT NOT NULL DEFAULT \'0\' ,'
@@ -54,7 +54,7 @@ $mod_form = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_form_fields` ( `fie
 	. ' )';
 $database->query($mod_form);
 
-$mod_form = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_form_settings` ('
+$mod_form = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_form_settings` ('
 	. ' `section_id` INT NOT NULL DEFAULT \'0\' ,'
 	. ' `page_id` INT NOT NULL DEFAULT \'0\' ,'
 	. ' `header` TEXT NOT NULL ,'
@@ -77,7 +77,7 @@ $mod_form = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_form_settings` ('
 	. ' )';
 $database->query($mod_form);
 
-$mod_form = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_form_submissions` ( `submission_id` INT NOT NULL AUTO_INCREMENT,'
+$mod_form = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_form_submissions` ( `submission_id` INT NOT NULL AUTO_INCREMENT,'
 	. ' `section_id` INT NOT NULL DEFAULT \'0\' ,'
 	. ' `page_id` INT NOT NULL DEFAULT \'0\' ,'
 	. ' `submitted_when` INT NOT NULL DEFAULT \'0\' ,'
@@ -87,7 +87,7 @@ $mod_form = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_form_submissions` (
 	. ' )';
 $database->query($mod_form);
 
-$addons_helper = new LEPTON_Helper_Addons();
+$addons_helper = new CAT_Helper_Addons();
 
 // add files to class_secure
 foreach(

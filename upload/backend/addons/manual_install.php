@@ -16,8 +16,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -51,26 +51,26 @@ $file		= $admin->get_post('file');
 
 if ( !in_array( $action, array('install', 'upgrade') ) )
 {
-	die(header('Location: ' . ADMIN_URL));
+	die(header('Location: ' . CAT_ADMIN_URL));
 }
 if ( $file == '' || !( strpos($file, '..') === false ) )
 {
-	die(header('Location: ' . ADMIN_URL));
+	die(header('Location: ' . CAT_ADMIN_URL));
 }
 
 // include WB functions file
-require_once(LEPTON_PATH . '/framework/functions.php');
+require_once(CAT_PATH . '/framework/functions.php');
 
 // create Admin object with admin header
 $admin		= new admin('Addons', '', true, false);
-$js_back	= ADMIN_URL . '/addons/index.php';
+$js_back	= CAT_ADMIN_URL . '/addons/index.php';
 
 /**
  * Manually execute the specified module file (install.php, upgrade.php or uninstall.php)
  */
  
 // check if specified module folder exists
-$mod_path		= LEPTON_PATH . '/modules/' . basename(LEPTON_PATH . '/' . $file);
+$mod_path		= CAT_PATH . '/modules/' . basename(CAT_PATH . '/' . $file);
 
 // let the old variablename if module use it
 $module_dir		= $mod_path;
@@ -80,7 +80,7 @@ if ( !file_exists( $mod_path . '/' . $action . '.php') )
 }
 
 // Perform Add-on requirement checks before proceeding
-require ( LEPTON_PATH . '/framework/addon.precheck.inc.php' );
+require ( CAT_PATH . '/framework/addon.precheck.inc.php' );
 preCheckAddon( NULL, $mod_path, false );
 
 // include modules install.php script

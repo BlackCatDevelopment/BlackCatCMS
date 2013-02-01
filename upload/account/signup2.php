@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -39,7 +39,7 @@ if (defined('WB_PATH')) {
 
 function print_error( $err_id )
 {
-	header( "Location: " . WB_URL . "/account/signup.php?err=$err_id" );
+	header( "Location: " . CAT_URL . "/account/signup.php?err=$err_id" );
 	exit();
 }
 
@@ -109,14 +109,14 @@ while ( $i <= 7 )
 $md5_password = md5( $new_pass );
 
 // Check if username already exists
-$results = $database->query( "SELECT user_id FROM " . TABLE_PREFIX . "users WHERE username = '$username'" );
+$results = $database->query( "SELECT user_id FROM " . CAT_TABLE_PREFIX . "users WHERE username = '$username'" );
 if ( $results->numRows() > 0 )
 {
 	print_error( 6 );
 }
 
 // Check if the email already exists
-$results = $database->query( "SELECT user_id FROM " . TABLE_PREFIX . "users WHERE email = '" . $wb->add_slashes( $email ) . "'" );
+$results = $database->query( "SELECT user_id FROM " . CAT_TABLE_PREFIX . "users WHERE email = '" . $wb->add_slashes( $email ) . "'" );
 if ( $results->numRows() > 0 )
 {
 	if ( isset( $MESSAGE[ 'USERS_EMAIL_TAKEN' ] ) )
@@ -133,7 +133,7 @@ if ( $results->numRows() > 0 )
 $md5_password = md5( $new_pass );
 
 // Inser the user into the database
-$query = "INSERT INTO " . TABLE_PREFIX . "users (group_id,groups_id,active,username,password,display_name,email) VALUES ('$groups_id', '$groups_id', '$active', '$username','$md5_password','$display_name','$email')";
+$query = "INSERT INTO " . CAT_TABLE_PREFIX . "users (group_id,groups_id,active,username,password,display_name,email) VALUES ('$groups_id', '$groups_id', '$active', '$username','$md5_password','$display_name','$email')";
 $database->query( $query );
 
 if ( $database->is_error() )
@@ -166,11 +166,11 @@ else
 	if ( $wb->mail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message ) )
 	{
 		$display_form = false;
-		$wb->print_success( $MESSAGE[ 'FORGOT_PASS_PASSWORD_RESET' ], WB_URL . '/account/login.php' );
+		$wb->print_success( $MESSAGE[ 'FORGOT_PASS_PASSWORD_RESET' ], CAT_URL . '/account/login.php' );
 	}
 	else
 	{
-		$database->query( "DELETE FROM " . TABLE_PREFIX . "users WHERE username = '$username'" );
+		$database->query( "DELETE FROM " . CAT_TABLE_PREFIX . "users WHERE username = '$username'" );
 		print_error( 9 );
 	}
 }

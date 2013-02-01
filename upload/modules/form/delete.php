@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -35,5 +35,5 @@ global $page_id;
 global $section_id;
 
 // Delete page
-$database->query("DELETE FROM ".TABLE_PREFIX."mod_form_fields WHERE page_id = '$page_id' AND section_id='$section_id'");
-$database->query("DELETE FROM ".TABLE_PREFIX."mod_form_settings WHERE page_id = '$page_id' AND section_id='$section_id'");
+$database->query("DELETE FROM ".CAT_TABLE_PREFIX."mod_form_fields WHERE page_id = '$page_id' AND section_id='$section_id'");
+$database->query("DELETE FROM ".CAT_TABLE_PREFIX."mod_form_settings WHERE page_id = '$page_id' AND section_id='$section_id'");

@@ -17,8 +17,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -76,14 +76,14 @@ function byte_convert($bytes)
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
-include_once(LEPTON_PATH . '/framework/functions.php');
+include_once(CAT_PATH . '/framework/functions.php');
 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin = new admin('Media', 'media');
 
 if ( $admin->get_post('load_url') == '' || $admin->get_permission('media') != true )
 {
-	header('Location: ' . ADMIN_URL);
+	header('Location: ' . CAT_ADMIN_URL);
 	exit();
 }
 $open_folder		= $admin->get_post('open_folder');
@@ -102,7 +102,7 @@ $data_dwoo['open_folder']		= $open_folder;
 // ======================================== 
 // ! Get contents for the intitial folder   
 // ======================================== 
-$dir	= scan_current_dir(LEPTON_PATH . $data_dwoo['initial_folder']);
+$dir	= scan_current_dir(CAT_PATH . $data_dwoo['initial_folder']);
 
 // ============================= 
 // ! Add folders to $data_dwoo   
@@ -121,7 +121,7 @@ if ( isset($dir['filename']) && is_array($dir['filename']) )
 {
 	foreach ( $dir['filename'] as $counter => $file )
 	{
-		$file_path		= LEPTON_PATH . $data_dwoo['initial_folder'] . '/' . $file;
+		$file_path		= CAT_PATH . $data_dwoo['initial_folder'] . '/' . $file;
 
 		$data_dwoo['files'][$counter]['FILETYPE']			= strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
 		$data_dwoo['files'][$counter]['show_preview']		= in_array( strtolower($data_dwoo['files'][$counter]['FILETYPE']), $allowed_img_types ) ? true : false;

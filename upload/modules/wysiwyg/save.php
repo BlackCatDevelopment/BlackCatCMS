@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -18,8 +18,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -40,10 +40,10 @@ if (defined('WB_PATH')) {
 
 // Include WB admin wrapper script
 $update_when_modified = true; // Tells script to update when this page was last updated
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 // Include the WB functions file
-require_once(WB_PATH.'/framework/functions.php');
+require_once(CAT_PATH.'/framework/functions.php');
 
 /**
  *	Update the mod_wysiwygs table with the contents
@@ -61,12 +61,12 @@ if(isset($_POST['content'.$section_id])) {
 	 */
 	$text = umlauts_to_entities(strip_tags($content), strtoupper(DEFAULT_CHARSET), 0);
 
-	$query = "UPDATE `".TABLE_PREFIX."mod_wysiwyg` SET `content` = '".$content."', text ='".$text."' WHERE `section_id` = '".$section_id."'";
+	$query = "UPDATE `".CAT_TABLE_PREFIX."mod_wysiwyg` SET `content` = '".$content."', text ='".$text."' WHERE `section_id` = '".$section_id."'";
 	$database->query($query);
 	if ($database->is_error()) trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);	
 }
 
-$edit_page = ADMIN_URL.'/pages/modify.php?page_id='.$page_id.'#'.SEC_ANCHOR.$section_id;
+$edit_page = CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id.'#'.SEC_ANCHOR.$section_id;
 
 // Check if there is a database error, otherwise say successful
 if($database->is_error()) {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -17,8 +17,8 @@
  */ 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -68,11 +68,11 @@ function show_wysiwyg_editor($name, $id, $content, $width = '100%', $height = '3
 	$allow_resize = in_array($allow_resize, array('no', 'both', 'x', 'y')) ? $allow_resize : 'no';
 	
 	if (!isset($_SESSION['edit_area'])) {
-		$script = WB_URL.'/modules/edit_area/edit_area/edit_area_full.js';
+		$script = CAT_URL.'/modules/edit_area/edit_area/edit_area_full.js';
 		$register = "\n<script src=\"".$script."\" type=\"text/javascript\"></script>\n";
 
 		if (!isset($preview)) {
-			$last = $database->get_one("SELECT section_id from ".TABLE_PREFIX."sections where page_id='".$page_id."' order by position desc limit 1"); 
+			$last = $database->get_one("SELECT section_id from ".CAT_TABLE_PREFIX."sections where page_id='".$page_id."' order by position desc limit 1"); 
 			$_SESSION['edit_area'] = $last;
 		}
 

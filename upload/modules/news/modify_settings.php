@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -33,22 +33,22 @@ if (defined('WB_PATH')) {
 
 
 // Include WB admin wrapper script
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 // include core functions of WB 2.7 to edit the optional module CSS files (frontend.css, backend.css)
-@include_once(WB_PATH .'/framework/module.functions.php');
+@include_once(CAT_PATH .'/framework/module.functions.php');
 
 // check if module language file exists for the language set by the user (e.g. DE, EN)
-if(!file_exists(WB_PATH .'/modules/news/languages/'.LANGUAGE .'.php')) {
+if(!file_exists(CAT_PATH .'/modules/news/languages/'.LANGUAGE .'.php')) {
 	// no module language file exists for the language set by the user, include default module language file EN.php
-	require_once(WB_PATH .'/modules/news/languages/EN.php');
+	require_once(CAT_PATH .'/modules/news/languages/EN.php');
 } else {
 	// a module language file exists for the language defined by the user, load it
-	require_once(WB_PATH .'/modules/news/languages/'.LANGUAGE .'.php');
+	require_once(CAT_PATH .'/modules/news/languages/'.LANGUAGE .'.php');
 }
 
 // Get header and footer
-$query_content = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_news_settings WHERE section_id = '$section_id'");
+$query_content = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_settings WHERE section_id = '$section_id'");
 $fetch_content = $query_content->fetchRow();
 
 // Set raw html <'s and >'s to be replace by friendly html code
@@ -56,9 +56,9 @@ $raw = array('<', '>');
 $friendly = array('&lt;', '&gt;');
 
 // check if backend.css file needs to be included into the <body></body> of modify.php
-if(!method_exists($admin, 'register_backend_modfiles') && file_exists(WB_PATH ."/modules/form/backend.css")) {
+if(!method_exists($admin, 'register_backend_modfiles') && file_exists(CAT_PATH ."/modules/form/backend.css")) {
 	echo '<style type="text/css">';
-	include(WB_PATH .'/modules/form/backend.css');
+	include(CAT_PATH .'/modules/form/backend.css');
 	echo "\n</style>\n";
 }
 
@@ -74,7 +74,7 @@ if(function_exists('edit_module_css'))
 }
 ?>
 
-<form name="modify" action="<?php echo WB_URL; ?>/modules/news/save_settings.php" method="post" style="margin: 0;">
+<form name="modify" action="<?php echo CAT_URL; ?>/modules/news/save_settings.php" method="post" style="margin: 0;">
 
 	<input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
 	<input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
@@ -208,7 +208,7 @@ if ( strlen( $leptoken_add ) > 0 ) {
 				<input name="save" type="submit" value="<?php echo $TEXT['SAVE']; ?>" style="width: 100px; margin-top: 5px;" />
 			</td>
 			<td class="right">
-				<input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
+				<input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo CAT_ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
 			</td>
 		</tr>
 	</table>

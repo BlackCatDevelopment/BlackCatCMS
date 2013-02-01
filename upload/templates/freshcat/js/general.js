@@ -1,5 +1,5 @@
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -160,7 +160,7 @@ function set_activity( title )
 function set_popup_title()
 {
 	// Set a default value
-	var title		= LEPTON_TEXT['DEFAULT_MESSAGE_TITLE'];
+	var title		= CAT_TEXT['DEFAULT_MESSAGE_TITLE'];
 
 	// Check if the .fc_popup has a .fc_popup_header
 	if ( $('.fc_popup .fc_popup_header').size() > 0 )
@@ -258,7 +258,7 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 	// define button for confirm dialog negative
 	buttonsOpts.push(
 	{
-		'text':		LEPTON_TEXT['NO'], 'click':  function()
+		'text':		CAT_TEXT['NO'], 'click':  function()
 			{
 				$('.fc_popup').dialog('destroy');
 			},
@@ -497,7 +497,7 @@ jQuery(document).ready( function()
 	{
 		searchCallback:			searchUsers,
 		queryDelay:				250,
-		innerText:				LEPTON_TEXT['SEARCH'],
+		innerText:				CAT_TEXT['SEARCH'],
 		minimumSearchLength:	2
 	});
 

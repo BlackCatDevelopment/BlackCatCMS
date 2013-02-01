@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
  * @module          lib_lepton
  * @author          LEPTON Project
  * @copyright       2012, LEPTON Project
- * @link            http://www.lepton-cms.org
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
  *
@@ -17,8 +17,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -40,7 +40,7 @@ global $admin;
 
 $error = '';
 
-$SQL = "CREATE TABLE IF NOT EXISTS `".TABLE_PREFIX."pages_load` (".
+$SQL = "CREATE TABLE IF NOT EXISTS `".CAT_TABLE_PREFIX."pages_load` (".
     "`id` SERIAL, ".
     "`register_name` VARCHAR(255) NOT NULL DEFAULT '', ".
     "`register_type` VARCHAR(64) NOT NULL DEFAULT 'droplep', ".

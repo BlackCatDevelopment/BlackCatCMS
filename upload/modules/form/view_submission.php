@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -34,14 +34,14 @@ require_once('../../config.php');
 
 // Get id
 if(!isset($_GET['submission_id']) OR !is_numeric($_GET['submission_id'])) {
-	header("Location: ".ADMIN_URL."/pages/index.php");
+	header("Location: ".CAT_ADMIN_URL."/pages/index.php");
 	exit(0);
 } else {
 	$submission_id = $_GET['submission_id'];
 }
 
 // Include WB admin wrapper script
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 global $database;
 global $TEXT;
@@ -50,11 +50,11 @@ global $section_id;
 global $admin;
 
 // Get submission details
-$query_content = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_form_submissions WHERE submission_id = '$submission_id'");
+$query_content = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_form_submissions WHERE submission_id = '$submission_id'");
 $submission = $query_content->fetchRow();
 
 // Get the user details of whoever did this submission
-$query_user = "SELECT username,display_name FROM ".TABLE_PREFIX."users WHERE user_id = '".$submission['submitted_by']."'";
+$query_user = "SELECT username,display_name FROM ".CAT_TABLE_PREFIX."users WHERE user_id = '".$submission['submitted_by']."'";
 $get_user = $database->query($query_user);
 if($get_user->numRows() != 0) {
 	$user = $get_user->fetchRow();
@@ -90,8 +90,8 @@ if($get_user->numRows() != 0) {
 
 <br />
 
-<input type="button" value="<?php echo $TEXT['CLOSE']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 150px; margin-top: 5px;" />
-<input type="button" value="<?php echo $TEXT['DELETE']; ?>" onclick="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo WB_URL; ?>/modules/form/delete_submission.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&submission_id=<?php echo $submission_id; ?>');" style="width: 150px; margin-top: 5px;" />
+<input type="button" value="<?php echo $TEXT['CLOSE']; ?>" onclick="javascript: window.location = '<?php echo CAT_ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 150px; margin-top: 5px;" />
+<input type="button" value="<?php echo $TEXT['DELETE']; ?>" onclick="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo CAT_URL; ?>/modules/form/delete_submission.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&submission_id=<?php echo $submission_id; ?>');" style="width: 150px; margin-top: 5px;" />
 <?php
 
 // Print admin footer

@@ -17,8 +17,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -38,7 +38,7 @@ if (defined('LEPTON_PATH')) {
 // =================================================== 
 // ! Include the class.admin.php and WB functions file
 // =================================================== 
-require_once ( LEPTON_PATH . '/framework/class.admin.php' );
+require_once ( CAT_PATH . '/framework/class.admin.php' );
 $admin		= new admin('Pages', 'pages_settings', false);
 
 header('Content-type: application/json');
@@ -70,13 +70,13 @@ else
 	$page_id	= $admin->get_post('page_id');
 }
 
-require_once( LEPTON_PATH . '/framework/functions-utf8.php' );
+require_once( CAT_PATH . '/framework/functions-utf8.php' );
 
 
 // =============================================================== 
 // ! Get perms & Check if there is an error and get page details   
 // =============================================================== 
-$results		= $database->query('SELECT * FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id);
+$results		= $database->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id);
 $results_array	= $results->fetchRow( MYSQL_ASSOC );
 
 if ( $database->is_error() )
@@ -135,7 +135,7 @@ $permission['pages_delete']		= $admin->get_permission('pages_delete') ? true : f
 $permission['pages_settings']	= $admin->get_permission('pages_settings') ? true : false;
 $permission['pages_intro']		= ( $admin->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
-require_once(LEPTON_PATH . '/framework/class.pages.php');
+require_once(CAT_PATH . '/framework/class.pages.php');
 $dropdown	= new pages( $permission );
 // list of all parent pages for dropdown parent
 $dropdown->current_page['id']	= $page_id;
@@ -175,7 +175,7 @@ $ajax	= array(
 		'viewing_groups'			=> explode(',', str_replace('_', '', $results_array['viewing_groups']) ),
 
 		'parent_list'				=> $dropdown_list,
-		'PAGE_EXTENSION'			=> $database->get_one("SELECT value FROM " . TABLE_PREFIX . "settings WHERE name = 'page_extension'")
+		'PAGE_EXTENSION'			=> $database->get_one("SELECT value FROM " . CAT_TABLE_PREFIX . "settings WHERE name = 'page_extension'")
 );
 
 // ==================== 

@@ -18,8 +18,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -39,7 +39,7 @@ if (defined('LEPTON_PATH')) {
 // =================================================== 
 // ! Include the class.admin.php and WB functions file
 // =================================================== 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin = new admin('Pages', 'pages', false);
 
 // Set header for json
@@ -74,7 +74,7 @@ if ( ( !is_array( $admin->get_post('pageid') )		&& ( $admin->get_post('table') =
 // ======================= 
 // ! Reorder the section   
 // ======================= 
-require(LEPTON_PATH . '/framework/class.order.php');
+require(CAT_PATH . '/framework/class.order.php');
 
 $id_field	= ( $admin->get_post('table') == 'pages' ) ? 'page_id' : 'section_id';
 $new_array	= ( $admin->get_post('table') == 'pages' ) ? $admin->get_post('pageid') : $admin->get_post('sectionid');
@@ -85,7 +85,7 @@ foreach ( $new_array as $index => $element)
 }
 
 
-$order		= new order(TABLE_PREFIX.$admin->get_post('table'), 'position', $id_field);
+$order		= new order(CAT_TABLE_PREFIX.$admin->get_post('table'), 'position', $id_field);
 $reorder	= $order->reorder_by_array( $new_array );
 
 if ( $reorder === true )

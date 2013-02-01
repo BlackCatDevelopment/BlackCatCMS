@@ -17,8 +17,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -76,14 +76,14 @@ function byte_convert($bytes)
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin = new admin('Media', 'media', false);
 
-include_once(LEPTON_PATH . '/framework/functions.php');
+include_once(CAT_PATH . '/framework/functions.php');
 
 if ( $admin->get_post('load_url') == '' || $admin->get_permission('media') !== true )
 {
-	header('Location: ' . ADMIN_URL);
+	header('Location: ' . CAT_ADMIN_URL);
 	exit();
 }
 header('Content-type: application/json');
@@ -91,7 +91,7 @@ header('Content-type: application/json');
 //$open_folder	= $admin->get_post('open_folder');
 $load_file		= $admin->get_post('load_url');
 $load_url		= $admin->get_post('folder_path') . '/' . $load_file;
-$load_path		= LEPTON_PATH . $load_url;// should be sanitize_path( LEPTON_PATH . $load_url );
+$load_path		= CAT_PATH . $load_url;// should be sanitize_path( CAT_PATH . $load_url );
 
 // =========================================================================== 
 // ! Create the controller, it is reusable and can render multiple templates 	

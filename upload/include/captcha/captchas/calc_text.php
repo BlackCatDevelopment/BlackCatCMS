@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -37,14 +37,14 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 // Must include code to stop this file being accessed directly
-if(defined('WB_PATH') == false) { exit("Cannot access this file directly"); }
+if(defined('CAT_PATH') == false) { exit("Cannot access this file directly"); }
 
-if(!file_exists(WB_PATH.'/modules/captcha_control/languages/'.LANGUAGE .'.php')) {
+if(!file_exists(CAT_PATH.'/modules/captcha_control/languages/'.LANGUAGE .'.php')) {
 	// no module language file exists for the language set by the user, include default module language file EN.php
-	require_once(WB_PATH.'/modules/captcha_control/languages/EN.php');
+	require_once(CAT_PATH.'/modules/captcha_control/languages/EN.php');
 } else {
 	// a module language file exists for the language defined by the user, load it
-	require_once(WB_PATH.'/modules/captcha_control/languages/'.LANGUAGE .'.php');
+	require_once(CAT_PATH.'/modules/captcha_control/languages/'.LANGUAGE .'.php');
 }
 
 $_SESSION['captcha'.$sec_id] = '';

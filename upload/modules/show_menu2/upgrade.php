@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -17,8 +17,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -39,25 +39,25 @@ if (defined('WB_PATH')) {
  *	try to remove obsolete columns from pages_table
  *  first check if the columns exist
  */
-$checkDbTable = $database->query("SHOW COLUMNS FROM `".TABLE_PREFIX."pages` LIKE 'page_icon'");
+$checkDbTable = $database->query("SHOW COLUMNS FROM `".CAT_TABLE_PREFIX."pages` LIKE 'page_icon'");
 $column_exists = $checkDbTable->numRows() > 0 ? TRUE : FALSE;
 
 if (true === $column_exists ) {
- $database->query('ALTER TABLE `' . TABLE_PREFIX . 'pages` DROP COLUMN `page_icon`');
+ $database->query('ALTER TABLE `' . CAT_TABLE_PREFIX . 'pages` DROP COLUMN `page_icon`');
 }
 
-$checkDbTable = $database->query("SHOW COLUMNS FROM `".TABLE_PREFIX."pages` LIKE 'menu_icon_0'");
+$checkDbTable = $database->query("SHOW COLUMNS FROM `".CAT_TABLE_PREFIX."pages` LIKE 'menu_icon_0'");
 $column_exists = $checkDbTable->numRows() > 0 ? TRUE : FALSE;
 
 if (true === $column_exists ) {
- $database->query('ALTER TABLE `' . TABLE_PREFIX . 'pages` DROP COLUMN `menu_icon_0`');
+ $database->query('ALTER TABLE `' . CAT_TABLE_PREFIX . 'pages` DROP COLUMN `menu_icon_0`');
 }
 
-$checkDbTable = $database->query("SHOW COLUMNS FROM `".TABLE_PREFIX."pages` LIKE 'menu_icon_1'");
+$checkDbTable = $database->query("SHOW COLUMNS FROM `".CAT_TABLE_PREFIX."pages` LIKE 'menu_icon_1'");
 $column_exists = $checkDbTable->numRows() > 0 ? TRUE : FALSE;
 
 if (true === $column_exists ) {
- $database->query('ALTER TABLE `' . TABLE_PREFIX . 'pages` DROP COLUMN `menu_icon_1`');
+ $database->query('ALTER TABLE `' . CAT_TABLE_PREFIX . 'pages` DROP COLUMN `menu_icon_1`');
 } 
  
 ?>

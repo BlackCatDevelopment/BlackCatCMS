@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -12,14 +12,14 @@
  * @author        Ralf Hertsch <rh@lepton-cms.org>
  * @copyright     2004 - 2010 WebsiteBaker Project
  * @copyright     since 2011 LEPTON Project
- * @link          http://www.lepton-cms.org
+ * @link          http://blackcat-cms.org
  * @license       http://www.gnu.org/licenses/gpl.html
  * @version       $Id$
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -36,20 +36,20 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 // use LEPTON I18n
-require_once WB_PATH.'/framework/LEPTON/Helper/I18n.php';
+require_once CAT_PATH.'/framework/LEPTON/Helper/I18n.php';
 global $lang;
-$lang = new LEPTON_Helper_I18n();
+$lang = new CAT_Helper_I18n();
 
 // use the LEPTON parser
 global $parser;
-$parser->setPath(WB_PATH. '/modules/'. basename(dirname(__FILE__)).'/templates/custom');
-$parser->setFallbackPath(WB_PATH. '/modules/'. basename(dirname(__FILE__)).'/templates/default');
+$parser->setPath(CAT_PATH. '/modules/'. basename(dirname(__FILE__)).'/templates/custom');
+$parser->setFallbackPath(CAT_PATH. '/modules/'. basename(dirname(__FILE__)).'/templates/default');
 
 // Include the LEPTON functions file
-require_once WB_PATH. '/framework/functions.php';
+require_once CAT_PATH. '/framework/functions.php';
 
-require_once WB_PATH. '/modules/lib_search/search.constants.php';
-require_once WB_PATH. '/modules/lib_search/search.module.php';
+require_once CAT_PATH. '/modules/lib_search/search.constants.php';
+require_once CAT_PATH. '/modules/lib_search/search.module.php';
 
 class LEPTON_Search {
     
@@ -250,7 +250,7 @@ class LEPTON_Search {
             CFG_THUMBS_WIDTH => 100
         );
         
-        $SQL = sprintf("SELECT * FROM %ssearch", TABLE_PREFIX);
+        $SQL = sprintf("SELECT * FROM %ssearch", CAT_TABLE_PREFIX);
         if (false ===($query = $database->query($SQL))) {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error())); 
             return  false;
@@ -276,14 +276,14 @@ class LEPTON_Search {
         $this->search_functions['__after'] = array();
         
         // get all module directories
-        $query = $database->query("SELECT DISTINCT directory FROM " . TABLE_PREFIX . "addons WHERE type = 'module'");
+        $query = $database->query("SELECT DISTINCT directory FROM " . CAT_TABLE_PREFIX . "addons WHERE type = 'module'");
         if ($database->is_error()) { 
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error())); 
             return  false; 
         }
         if ($query->numRows() > 0) {
             while (false !== ($module = $query->fetchRow())) {
-                $file = WB_PATH . '/modules/' . $module['directory'] . '/search.php';
+                $file = CAT_PATH . '/modules/' . $module['directory'] . '/search.php';
                 if (file_exists($file)) {
                     include_once ($file);
                     // add standard search function
@@ -314,7 +314,7 @@ class LEPTON_Search {
         global $database;
         
         // get all users
-        $query = $database->query("SELECT user_id,username,display_name FROM " . TABLE_PREFIX . "users");
+        $query = $database->query("SELECT user_id,username,display_name FROM " . CAT_TABLE_PREFIX . "users");
         if ($database->is_error()) {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
             return  false;
@@ -495,10 +495,10 @@ class LEPTON_Search {
         
         // include the translation tables for special chars
         $search_language = $this->search_language;
-        include_once WB_PATH.'/modules/'. basename(dirname(__FILE__)).'/search.convert.php';
+        include_once CAT_PATH.'/modules/'. basename(dirname(__FILE__)).'/search.convert.php';
         global $search_table_umlauts_local;
         
-        include_once WB_PATH.'/modules/'. basename(dirname(__FILE__)).'/search.convert.umlaute.php';
+        include_once CAT_PATH.'/modules/'. basename(dirname(__FILE__)).'/search.convert.umlaute.php';
         global $search_table_ul_umlauts;
         
         foreach ($search_normal_array as $str) {
@@ -511,7 +511,7 @@ class LEPTON_Search {
     
     protected function getSearchForm() {
         $data = array(
-                'action' => WB_URL.'/search/index.php',
+                'action' => CAT_URL.'/search/index.php',
                 'search_path' => array(
                         'name' => REQUEST_SEARCH_PATH,
                         'value' => $this->search_path
@@ -557,7 +557,7 @@ class LEPTON_Search {
         }
         
         // Get the modules from module table
-        $get_modules = $database->query(sprintf("SELECT DISTINCT module FROM %ssections WHERE module != '' ", TABLE_PREFIX));
+        $get_modules = $database->query(sprintf("SELECT DISTINCT module FROM %ssections WHERE module != '' ", CAT_TABLE_PREFIX));
         if ($database->is_error()) {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
             return false;
@@ -570,7 +570,7 @@ class LEPTON_Search {
         }
         
         // get the modules for the DropLEP search
-        $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep'", TABLE_PREFIX);
+        $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep'", CAT_TABLE_PREFIX);
         if (false === ($get_dropleps = $database->query($SQL))) {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
             return false;
@@ -664,7 +664,7 @@ class LEPTON_Search {
                         if ($dl['module_directory'] == $module_name) $pids[] = $dl['page_id'];
                     }
                     foreach ($pids as $pid) {
-                        $SQL = sprintf("SELECT * FROM %spages WHERE page_id='%s'", TABLE_PREFIX, $pid);
+                        $SQL = sprintf("SELECT * FROM %spages WHERE page_id='%s'", CAT_TABLE_PREFIX, $pid);
                         if (false === ($pages_query = $database->query($SQL))) {
                             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
                             return false;
@@ -726,8 +726,8 @@ class LEPTON_Search {
                 }
                 else {           
                     // get each section for $module_name
-                    $table_s = TABLE_PREFIX."sections";
-                    $table_p = TABLE_PREFIX."pages";
+                    $table_s = CAT_TABLE_PREFIX."sections";
+                    $table_p = CAT_TABLE_PREFIX."pages";
                     $SQL = 
                         "SELECT s.section_id, s.page_id, s.module, s.publ_start, 
                         s.publ_end, p.page_title, p.menu_title, p.link, p.description, 
@@ -835,7 +835,7 @@ class LEPTON_Search {
         // Search page details only, such as description, keywords, etc, but only of unseen pages.
         $max_excerpt_num = 3; // we don't want excerpt here ???
         $divider = ".";
-        $table = TABLE_PREFIX."pages";
+        $table = CAT_TABLE_PREFIX."pages";
         $SQL = "SELECT page_id, page_title, menu_title, link, description, 
             keywords, modified_when, modified_by, visibility, viewing_groups, 
             viewing_users FROM $table WHERE visibility NOT IN ('none','deleted') 
@@ -899,7 +899,7 @@ class LEPTON_Search {
         }
         
         // ok - all done ...
-        $src = WB_PATH.'/modules/lib_search/images/content-locked.gif';
+        $src = CAT_PATH.'/modules/lib_search/images/content-locked.gif';
 	    list($width, $height) = getimagesize($src);
 	    
 	    $this->search_result = array(
@@ -910,7 +910,7 @@ class LEPTON_Search {
                 ),
             'images' => array(
                 'locked' => array(
-                    'src' => WB_URL.'/modules/lib_search/images/content-locked.gif',
+                    'src' => CAT_URL.'/modules/lib_search/images/content-locked.gif',
                     'width' => $width,
                     'height' => $height,
                 )
@@ -953,7 +953,7 @@ class LEPTON_Search {
         
         // use page languages?
         if (PAGE_LANGUAGES) {
-            $table = TABLE_PREFIX . "pages";
+            $table = CAT_TABLE_PREFIX . "pages";
             $this->search_language_SQL_table = "AND $table.`language` = '" . LANGUAGE . "'";
             $this->search_language_SQL = "AND `language` = '" . LANGUAGE . "'";
         }
@@ -965,7 +965,7 @@ class LEPTON_Search {
         $this->prepareSearch();
         
         // create temporary directory for the search
-        $tmp = WB_PATH.'/temp/search';
+        $tmp = CAT_PATH.'/temp/search';
         if (!file_exists($tmp)) {
             if (!mkdir($tmp, 0755, true)) {
                 $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__,

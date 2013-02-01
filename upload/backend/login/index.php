@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -37,7 +37,7 @@ if (defined('LEPTON_PATH')) {
 
 
 
-require_once(LEPTON_PATH . "/framework/class.login.php");
+require_once(CAT_PATH . "/framework/class.login.php");
 
 $salt = md5(microtime());
 // ================================================ 
@@ -49,22 +49,22 @@ $password_fieldname		= 'password_'.substr($salt, -7);
 $thisApp = new Login(
 	array(
 	'MAX_ATTEMPTS'			=> MAX_ATTEMPTS,
-	'WARNING_URL'			=> THEME_URL . '/templates/warning.html',
+	'WARNING_URL'			=> CAT_THEME_URL . '/templates/warning.html',
 	'USERNAME_FIELDNAME'	=> $username_fieldname,
 	'PASSWORD_FIELDNAME'	=> $password_fieldname,
 	'MIN_USERNAME_LEN'		=> AUTH_MIN_LOGIN_LENGTH,
 	'MAX_USERNAME_LEN'		=> AUTH_MAX_LOGIN_LENGTH,
 	'MIN_PASSWORD_LEN'		=> AUTH_MIN_PASS_LENGTH,
 	'MAX_PASSWORD_LEN'		=> AUTH_MAX_PASS_LENGTH,
-	'LOGIN_URL'				=> ADMIN_URL.'/login/index.php',
-	'DEFAULT_URL'			=> ADMIN_URL.'/start/index.php',
-	'TEMPLATE_DIR'			=> THEME_PATH.'/templates',
+	'LOGIN_URL'				=> CAT_ADMIN_URL.'/login/index.php',
+	'DEFAULT_URL'			=> CAT_ADMIN_URL.'/start/index.php',
+	'TEMPLATE_DIR'			=> CAT_THEME_PATH.'/templates',
 	'TEMPLATE_FILE'			=> 'login.lte',
 	'FRONTEND'				=> false,
-	'REDIRECT_URL'			=> ADMIN_URL . '/start/index.php',
-	'FORGOTTEN_DETAILS_APP'	=> ADMIN_URL . '/login/forgot/index.php',
-	'USERS_TABLE'			=> TABLE_PREFIX . 'users',
-	'GROUPS_TABLE'			=> TABLE_PREFIX . 'groups',
+	'REDIRECT_URL'			=> CAT_ADMIN_URL . '/start/index.php',
+	'FORGOTTEN_DETAILS_APP'	=> CAT_ADMIN_URL . '/login/forgot/index.php',
+	'USERS_TABLE'			=> CAT_TABLE_PREFIX . 'users',
+	'GROUPS_TABLE'			=> CAT_TABLE_PREFIX . 'groups',
 	'OUTPUT'				=> true,
 	'PAGE_ID'				=> '',
 	true,

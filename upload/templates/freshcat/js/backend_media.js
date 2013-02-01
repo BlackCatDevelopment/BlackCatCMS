@@ -1,5 +1,5 @@
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -70,7 +70,7 @@ function save_name( rename_input, extension )
 	{
 		type:		'POST',
 		context:	current_active,
-		url:		ADMIN_URL + '/media/ajax_rename.php',
+		url:		CAT_ADMIN_URL + '/media/ajax_rename.php',
 		dataType:	'json',
 		data:		dates,
 		cache:		false,
@@ -131,7 +131,7 @@ function reload_folder( current_ul, folder_path, load_url )
 	{
 		type:		'POST',
 		context:	current_ul,
-		url:		ADMIN_URL + '/media/ajax_get_contents.php',
+		url:		CAT_ADMIN_URL + '/media/ajax_get_contents.php',
 		dataType:	'json',
 		data:		dates,
 		cache:		false,
@@ -445,13 +445,13 @@ jQuery(document).ready(function()
 			if ( current_active.hasClass('fc_filetype_file') )
 			{
 				var name		= '<br/><strong>'+current_active.find('.fc_name_short').text()+'</strong>',
-					message		= LEPTON_TEXT['MEDIA_CONFIRM_DELETE_FILE'].replace( /\{name\}/g, name ),
+					message		= CAT_TEXT['MEDIA_CONFIRM_DELETE_FILE'].replace( /\{name\}/g, name ),
 					type		= 'file';
 			}
 			else
 			{
 				var name		= '<br/><strong>' + current_active.find('.fc_name_short').text() + '</strong>',
-					message		= LEPTON_TEXT['MEDIA_CONFIRM_DELETE_DIR'].replace( /\{name\}/g, name ),
+					message		= CAT_TEXT['MEDIA_CONFIRM_DELETE_DIR'].replace( /\{name\}/g, name ),
 					type		= 'folder';
 			}
 			// Create dates for ajax
@@ -499,7 +499,7 @@ jQuery(document).ready(function()
 					}
 				};
 			
-			dialog_confirm( 'You really want to delete this ' + type + '?', 'Delete' + type, ADMIN_URL + '/media/ajax_delete.php', dates, 'POST', 'JSON', beforeSend, afterSend, current_active );
+			dialog_confirm( 'You really want to delete this ' + type + '?', 'Delete' + type, CAT_ADMIN_URL + '/media/ajax_delete.php', dates, 'POST', 'JSON', beforeSend, afterSend, current_active );
 		}
 	});
 
@@ -569,7 +569,7 @@ jQuery(document).ready(function()
 		{
 			type:		'POST',
 			context:	current_ul,
-			url:		ADMIN_URL + '/media/ajax_create_folder.php',
+			url:		CAT_ADMIN_URL + '/media/ajax_create_folder.php',
 			dataType:	'json',
 			data:		dates,
 			cache:		false,

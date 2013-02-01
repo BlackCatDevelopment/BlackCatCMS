@@ -13,8 +13,8 @@
  */
  
  // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -33,7 +33,7 @@ if (defined('WB_PATH')) {
 
 
 
-$table = TABLE_PREFIX ."mod_initial_page";
+$table = CAT_TABLE_PREFIX ."mod_initial_page";
 
 $jobs = array("DROP TABLE IF EXISTS `".$table."`");
 
@@ -53,7 +53,7 @@ foreach($jobs as $query) {
 }
 
 // try to patch /backend/start/index.php
-require_once(WB_PATH.'/modules/initial_page/classes/c_patch.php');
+require_once(CAT_PATH.'/modules/initial_page/classes/c_patch.php');
 $patch = new patchStartPage();
 if (!$patch->isPatched()) {
 	if (!$patch->doPatch()) {

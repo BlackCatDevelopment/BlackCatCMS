@@ -19,7 +19,7 @@
 				<tr>
 					<td class="fc_page_list_menu">
 						{if $page.is_parent}<span class="fc_toggle_pages">+</span>{/if}
-						{if $page.editable}<a href="{$ADMIN_URL}/pages/modify.php?page_id={$page.page_id}" class="fc_pages_type">{$page.menu_title}</a>
+						{if $page.editable}<a href="{$CAT_ADMIN_URL}/pages/modify.php?page_id={$page.page_id}" class="fc_pages_type">{$page.menu_title}</a>
 						{else}
 						{$page.menu_title}
 						{/if}

@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include( LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include( CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -39,7 +39,7 @@ if (defined('LEPTON_PATH')) {
 // =========================== 
 // ! Create new admin object   
 // =========================== 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin			= new admin('Pages', 'pages_modify', false);
 
 header('Content-type: application/json');
@@ -73,7 +73,7 @@ if ( !is_numeric( $page_id ) || $page_id == '' )
 // ============= 
 // ! Get perms   
 // ============= 
-$results				= $database->query("SELECT `admin_groups`,`admin_users` FROM `" . TABLE_PREFIX . "pages` WHERE `page_id`= '" . $page_id . "'");
+$results				= $database->query("SELECT `admin_groups`,`admin_users` FROM `" . CAT_TABLE_PREFIX . "pages` WHERE `page_id`= '" . $page_id . "'");
 $results_array			= $results->fetchRow( MYSQL_ASSOC );
 
 $old_admin_groups		= explode(',', $results_array['admin_groups']);
@@ -99,7 +99,7 @@ if ( (!$in_old_group) && !is_numeric( array_search($admin->get_user_id(), $old_a
 // ==================== 
 // ! Get page details   
 // ==================== 
-$results = $database->query("SELECT count(*) FROM `" . TABLE_PREFIX . "pages` WHERE `page_id`=".$page_id);
+$results = $database->query("SELECT count(*) FROM `" . CAT_TABLE_PREFIX . "pages` WHERE `page_id`=".$page_id);
 if ( $database->is_error() )
 {
 	$ajax	= array(
@@ -140,7 +140,7 @@ if ( $add_module != '' )
 	 *	Is the module-name valid? Or in other words: does the module(-name) exists?
 	 *
 	 */
-	$temp_result = $database->query("SELECT `name` from `" . TABLE_PREFIX . "addons` where `directory`='" . $module . "'");
+	$temp_result = $database->query("SELECT `name` from `" . CAT_TABLE_PREFIX . "addons` where `directory`='" . $module . "'");
 	if ( !$temp_result )
 	{
 		$ajax	= array(
@@ -181,13 +181,13 @@ if ( $add_module != '' )
 	$add_to_block	= ( is_numeric($add_to_block) && $add_to_block > 0 ) ? $add_to_block : 1;
 
 	// Include the ordering class
-	require( LEPTON_PATH . '/framework/class.order.php');
+	require( CAT_PATH . '/framework/class.order.php');
 	// Get new order
-	$order		= new order(TABLE_PREFIX.'sections', 'position', 'section_id', 'page_id');
+	$order		= new order(CAT_TABLE_PREFIX.'sections', 'position', 'section_id', 'page_id');
 	$position	= $order->get_new($page_id);
 
 	// Insert module into DB
-	$sql	 = 'INSERT INTO `' . TABLE_PREFIX . 'sections` SET ';
+	$sql	 = 'INSERT INTO `' . CAT_TABLE_PREFIX . 'sections` SET ';
 	$sql	.= '`page_id` = ' . $page_id . ', ';
 	$sql	.= '`module` = "' . $module . '", ';
 	$sql	.= '`position` = ' . $position . ', ';
@@ -200,9 +200,9 @@ if ( $add_module != '' )
 		// Get the section id
 		$section_id = $database->get_one("SELECT LAST_INSERT_ID()");
 		// Include the selected modules add file if it exists
-		if ( file_exists( LEPTON_PATH . '/modules/' . $module . '/add.php') )
+		if ( file_exists( CAT_PATH . '/modules/' . $module . '/add.php') )
 		{
-			require( LEPTON_PATH . '/modules/' . $module . '/add.php');
+			require( CAT_PATH . '/modules/' . $module . '/add.php');
 		}
 	}
 }
@@ -214,7 +214,7 @@ else if ( is_numeric( $delete_section_id ) && $delete_section_id != '' )
 	// =========================================== 
 	// ! Get more information about this section   
 	// =========================================== 
-	$query_section	= $database->query('SELECT `module` FROM `' . TABLE_PREFIX . 'sections` WHERE `section_id` =' . $delete_section_id);
+	$query_section	= $database->query('SELECT `module` FROM `' . CAT_TABLE_PREFIX . 'sections` WHERE `section_id` =' . $delete_section_id);
 
 	if($query_section->numRows() == 0)
 	{
@@ -230,12 +230,12 @@ else if ( is_numeric( $delete_section_id ) && $delete_section_id != '' )
 	// ================================================ 
 	// ! Include the modules delete file if it exists   
 	// ================================================ 
-	if ( file_exists( LEPTON_PATH . '/modules/' . $section['module'] . '/delete.php') )
+	if ( file_exists( CAT_PATH . '/modules/' . $section['module'] . '/delete.php') )
 	{
-		require( LEPTON_PATH . '/modules/' . $section['module'] . '/delete.php');
+		require( CAT_PATH . '/modules/' . $section['module'] . '/delete.php');
 	}
 
-	$query_section	= $database->query('DELETE FROM `' . TABLE_PREFIX . 'sections` WHERE `section_id` =' . $delete_section_id . ' LIMIT 1');
+	$query_section	= $database->query('DELETE FROM `' . CAT_TABLE_PREFIX . 'sections` WHERE `section_id` =' . $delete_section_id . ' LIMIT 1');
 
 	if ( $database->is_error() )
 	{
@@ -251,9 +251,9 @@ else if ( is_numeric( $delete_section_id ) && $delete_section_id != '' )
 		// ======================= 
 		// ! Reorder the section   
 		// ======================= 
-		require( LEPTON_PATH . '/framework/class.order.php');
+		require( CAT_PATH . '/framework/class.order.php');
 
-		$order = new order(TABLE_PREFIX.'sections', 'position', 'section_id', 'page_id');
+		$order = new order(CAT_TABLE_PREFIX.'sections', 'position', 'section_id', 'page_id');
 		$order->clean( $page_id );
 
 		$ajax	= array(
@@ -287,7 +287,7 @@ else if ( is_numeric( $update_section_id ) && $update_section_id != '' )
 	// ============================= 
 	// ! Get section from database   
 	// ============================= 
-	$query_sections		= $database->query('SELECT `module` FROM `' . TABLE_PREFIX . 'sections` WHERE `page_id`= ' . $page_id . ' AND `section_id` = ' . $update_section_id);
+	$query_sections		= $database->query('SELECT `module` FROM `' . CAT_TABLE_PREFIX . 'sections` WHERE `page_id`= ' . $page_id . ' AND `section_id` = ' . $update_section_id);
 	if ( $query_sections->numRows() == 1 )
 	{
 		if ( $section = $query_sections->fetchRow( MYSQL_ASSOC ) )
@@ -314,7 +314,7 @@ else if ( is_numeric( $update_section_id ) && $update_section_id != '' )
 				$sql	.= '`publ_start` = ' . $date_from . ', ';
 				$sql	.= '`publ_end` = ' . $date_to;
 
-				$database->query('UPDATE ' . TABLE_PREFIX . 'sections SET ' . $sql . ' WHERE `page_id`= ' . $page_id . ' AND section_id = ' . $update_section_id . ' LIMIT 1');
+				$database->query('UPDATE ' . CAT_TABLE_PREFIX . 'sections SET ' . $sql . ' WHERE `page_id`= ' . $page_id . ' AND section_id = ' . $update_section_id . ' LIMIT 1');
 			}
 		}
 		else

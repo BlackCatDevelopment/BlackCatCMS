@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,10 +35,10 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(CAT_PATH.'/framework/class.admin.php');
 $admin = new admin('Access', 'users');
 
-require_once(LEPTON_PATH.'/framework/functions.php');
+require_once(CAT_PATH.'/framework/functions.php');
 
 // =========================================================================== 
 // ! Create the controller, it is reusable and can render multiple templates 	
@@ -53,7 +53,7 @@ if (!is_object($parser))
 // ============================================= 
 // ! Insert values into the modify/remove menu   
 // ============================================= 
-$results = $database->query("SELECT * FROM `".TABLE_PREFIX."users` WHERE `user_id` != '1' ORDER BY `display_name`,`username`");
+$results = $database->query("SELECT * FROM `".CAT_TABLE_PREFIX."users` WHERE `user_id` != '1' ORDER BY `display_name`,`username`");
 if ( $database->is_error())
 {
 	$admin->print_error($database->get_error(), 'index.php');
@@ -132,7 +132,7 @@ $data_dwoo['NEWUSERHINT']					= preg_split('/, /',sprintf($TEXT['NEW_USER_HINT']
 // ============================ 
 // ! Add groups to $data_dwoo   
 // ============================ 
-require_once(LEPTON_PATH . '/framework/class.pages.php');
+require_once(CAT_PATH . '/framework/class.pages.php');
 $pages = new pages();
 $data_dwoo['groups']						= $pages->get_groups();
 
@@ -142,10 +142,10 @@ $data_dwoo['groups']						= $pages->get_groups();
 $data_dwoo['is_admin']						= in_array(1, $admin->get_groups_id()) ? true : false;
 
 // Add media folders to home folder list
-foreach ( directory_list(LEPTON_PATH.MEDIA_DIRECTORY) as $index => $name )
+foreach ( directory_list(CAT_PATH.MEDIA_DIRECTORY) as $index => $name )
 {
-	$data_dwoo['home_folders'][$index]['NAME']		= str_replace(LEPTON_PATH, '', $name);
-	$data_dwoo['home_folders'][$index]['FOLDER']	= str_replace(LEPTON_PATH.MEDIA_DIRECTORY, '', $name);
+	$data_dwoo['home_folders'][$index]['NAME']		= str_replace(CAT_PATH, '', $name);
+	$data_dwoo['home_folders'][$index]['FOLDER']	= str_replace(CAT_PATH.MEDIA_DIRECTORY, '', $name);
 }
 
 // ==================== 

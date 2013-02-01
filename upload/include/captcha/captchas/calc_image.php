@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -36,7 +36,7 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-require_once(WB_PATH.'/include/captcha/captcha.php');
+require_once(CAT_PATH.'/include/captcha/captcha.php');
 
 if(!isset($_SESSION['captcha_time']))
 	exit;
@@ -70,7 +70,7 @@ switch ($n) {
 }
 
 // create reload-image
-$reload = ImageCreateFromPNG(WB_PATH.'/include/captcha/reload_120_30.png'); // reload-overlay
+$reload = ImageCreateFromPNG(CAT_PATH.'/include/captcha/reload_120_30.png'); // reload-overlay
 
 $image = imagecreate(120, 30);
 

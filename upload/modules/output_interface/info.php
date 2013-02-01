@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -41,7 +41,7 @@ $module_platform      = '1.0';
 $module_author        = 'Ralf Hertsch, Berlin (Germany)';
 $module_license       = 'GNU General Public License';
 $module_description   = 'Frontend output interface for LEPTON CMS';
-$module_home          = 'http://www.lepton-cms.org';
+$module_home          = 'http://blackcat-cms.org';
 $module_guid          = 'C833EA29-0678-4E4E-9C24-C37F3D65A5C3';
 
 ?>

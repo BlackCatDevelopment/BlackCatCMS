@@ -11,9 +11,9 @@
    */
   
   // include class.secure.php to protect this file and the whole CMS!
-  if (defined('WB_PATH'))
+  if (defined('CAT_PATH'))
   {
-      include(WB_PATH . '/framework/class.secure.php');
+      include(CAT_PATH . '/framework/class.secure.php');
   }
   elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . '/framework/class.secure.php'))
   {

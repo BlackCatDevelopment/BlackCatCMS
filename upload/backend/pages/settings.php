@@ -18,8 +18,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -39,7 +39,7 @@ if (defined('LEPTON_PATH')) {
 // =================================================== 
 // ! Include the class.admin.php and WB functions file
 // =================================================== 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(CAT_PATH.'/framework/class.admin.php');
 $admin = new admin('Pages', 'pages_settings');
 
 if (!$admin->get_permission('pages_settings')){
@@ -61,7 +61,7 @@ else
 	$page_id = $admin->get_get('page_id');
 }
 
-require_once(LEPTON_PATH.'/framework/functions-utf8.php');
+require_once(CAT_PATH.'/framework/functions-utf8.php');
 
 global $parser;
 $data_dwoo = array();
@@ -70,7 +70,7 @@ $data_dwoo = array();
 // =============================================================== 
 // ! Get perms & Check if there is an error and get page details   
 // =============================================================== 
-$results		= $database->query('SELECT * FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id);
+$results		= $database->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id);
 $results_array	= $results->fetchRow( MYSQL_ASSOC );
 
 if ( $database->is_error() )
@@ -131,13 +131,13 @@ $data_dwoo['DISPLAY_SEARCHING']			= SEARCH			!= false ? true : false;
 // ========================================================= 
 // ! Work-out if we should show the "manage sections" link   
 // ========================================================= 
-$query_sections	= $database->query('SELECT `section_id` FROM `'.TABLE_PREFIX.'sections` WHERE `page_id`='.$page_id.' AND `module`="menu_link"');
+$query_sections	= $database->query('SELECT `section_id` FROM `'.CAT_TABLE_PREFIX.'sections` WHERE `page_id`='.$page_id.' AND `module`="menu_link"');
 $data_dwoo['MANAGE_SECTIONS']			= ( ( $query_sections->numRows() == 0 ) && MANAGE_SECTIONS == 'enabled' ) ? $HEADING['MANAGE_SECTIONS'] : false;
 
 // ====================================== 
 // Get Page Extension (Filename Suffix)   
 // ====================================== 
-$settings						= $database->query( "SELECT value FROM ".TABLE_PREFIX."settings WHERE name = 'page_extension'" );
+$settings						= $database->query( "SELECT value FROM ".CAT_TABLE_PREFIX."settings WHERE name = 'page_extension'" );
 $settings_array					= $settings->fetchRow( MYSQL_ASSOC );
 $data_dwoo['PAGE_EXTENSION']	= $settings_array['value'];
 
@@ -147,7 +147,7 @@ $data_dwoo['PAGE_EXTENSION']	= $settings_array['value'];
 $admin_groups		= explode(',', str_replace('_', '', $results_array['admin_groups']));
 $viewing_groups		= explode(',', str_replace('_', '', $results_array['viewing_groups']));
 
-//$get_groups			= $database->query('SELECT * FROM `'.TABLE_PREFIX.'groups`');
+//$get_groups			= $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'groups`');
 // ================================= 
 // ! Add permissions to $data_dwoo   
 // ================================= 
@@ -162,7 +162,7 @@ $data_dwoo['permission']['pages_intro']		= ( $admin->get_permission('pages_intro
 // ================== 
 // ! Templates list   
 // ================== 
-require_once(LEPTON_PATH . '/framework/class.pages.php');
+require_once(CAT_PATH . '/framework/class.pages.php');
 $pages = new pages( $data_dwoo['permission'] );
 
 $pages->current_page['id']					= $page_id;
@@ -184,7 +184,7 @@ if ( PAGE_LANGUAGES != false )
 /* 
  ** Copied from old  - not sure, for what we need this code
  */
-$field_sql							= $database->query('DESCRIBE `'.TABLE_PREFIX.'pages` `page_code`');
+$field_sql							= $database->query('DESCRIBE `'.CAT_TABLE_PREFIX.'pages` `page_code`');
 $field_set							= $field_sql->numRows();
 
 $data_dwoo['page_list']				= $pages->pages_list(0 , 0);

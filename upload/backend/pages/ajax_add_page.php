@@ -16,8 +16,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,7 +34,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin	= new admin('Pages', 'pages_add', false );
 
 header('Content-type: application/json');
@@ -52,7 +52,7 @@ if ( !$admin->get_permission('pages_add') )
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
-require_once(LEPTON_PATH . '/framework/functions.php');
+require_once(CAT_PATH . '/framework/functions.php');
 
 // ============== 
 // ! Get values   
@@ -180,11 +180,11 @@ if ( $parent == '0' )
 	if( $link == '/index' || $link == '/intro' )
 	{
 		$link	.= '_0';
-		$filename	= LEPTON_PATH . PAGES_DIRECTORY .'/' . page_filename($menu_title) . '_0' . PAGE_EXTENSION;
+		$filename	= CAT_PATH . PAGES_DIRECTORY .'/' . page_filename($menu_title) . '_0' . PAGE_EXTENSION;
 	}
 	else
 	{
-		$filename	= LEPTON_PATH . PAGES_DIRECTORY . '/' . page_filename($menu_title) . PAGE_EXTENSION;
+		$filename	= CAT_PATH . PAGES_DIRECTORY . '/' . page_filename($menu_title) . PAGE_EXTENSION;
 	}
 }
 else
@@ -197,21 +197,21 @@ else
 	}
 	if($parent_section == '/') { $parent_section = ''; }
 	$link = '/' . $parent_section . page_filename($menu_title);
-	$filename = LEPTON_PATH . PAGES_DIRECTORY . '/' . $parent_section . page_filename($menu_title) . PAGE_EXTENSION;
-	make_dir(LEPTON_PATH . PAGES_DIRECTORY.'/'.$parent_section);
+	$filename = CAT_PATH . PAGES_DIRECTORY . '/' . $parent_section . page_filename($menu_title) . PAGE_EXTENSION;
+	make_dir(CAT_PATH . PAGES_DIRECTORY.'/'.$parent_section);
 	
 	/**
 	 *
 	 */
-	$source = ADMIN_PATH . "/pages/master_index.php";
-	copy( $source, LEPTON_PATH . PAGES_DIRECTORY . '/' . $parent_section . "/index.php" );
+	$source = CAT_ADMIN_PATH . "/pages/master_index.php";
+	copy( $source, CAT_PATH . PAGES_DIRECTORY . '/' . $parent_section . "/index.php" );
 }
 
 // ================================================== 
 // ! Check if a page with same page filename exists   
 // ================================================== 
-$get_same_page = $database->query("SELECT page_id FROM ".TABLE_PREFIX."pages WHERE link = '$link'");
-if ( $get_same_page->numRows() > 0 || file_exists(LEPTON_PATH . PAGES_DIRECTORY.$link.PAGE_EXTENSION) || file_exists(LEPTON_PATH . PAGES_DIRECTORY.$link.'/') )
+$get_same_page = $database->query("SELECT page_id FROM ".CAT_TABLE_PREFIX."pages WHERE link = '$link'");
+if ( $get_same_page->numRows() > 0 || file_exists(CAT_PATH . PAGES_DIRECTORY.$link.PAGE_EXTENSION) || file_exists(CAT_PATH . PAGES_DIRECTORY.$link.'/') )
 {
 	$ajax	= array(
 		'message'	=> $admin->lang->translate( 'A page with the same or similar title exists' ),
@@ -224,8 +224,8 @@ if ( $get_same_page->numRows() > 0 || file_exists(LEPTON_PATH . PAGES_DIRECTORY.
 // ============================== 
 // ! Include the ordering class   
 // ============================== 
-require(LEPTON_PATH . '/framework/class.order.php');
-$order = new order(TABLE_PREFIX.'pages', 'position', 'page_id', 'parent');
+require(CAT_PATH . '/framework/class.order.php');
+$order = new order(CAT_TABLE_PREFIX.'pages', 'position', 'page_id', 'parent');
 // First clean order
 $order->clean($parent);
 // Get new order
@@ -236,7 +236,7 @@ $position = $order->get_new($parent);
 // ================================================================================================ 
 if ( $language == '' || $template == '')
 {
-	$query_parent = $database->query("SELECT template, language FROM ".TABLE_PREFIX."pages WHERE page_id = '$parent'");
+	$query_parent = $database->query("SELECT template, language FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '$parent'");
 	if ( $query_parent->numRows() > 0 )
 	{
 		$fetch_parent		= $query_parent->fetchRow();
@@ -254,7 +254,7 @@ if ( $language == '' || $template == '')
 // ================================ 
 // ! Insert page into pages table   
 // ================================ 
-$sql	 = 'INSERT INTO `'.TABLE_PREFIX.'pages` SET ';
+$sql	 = 'INSERT INTO `'.CAT_TABLE_PREFIX.'pages` SET ';
 $sql	.= '`parent` = '.$parent.', ';
 $sql	.= '`target` = "'.$target.'", ';
 $sql	.= '`page_title` = "'.$page_title.'", ';
@@ -296,7 +296,7 @@ $page_trail		= get_page_trail($page_id);
 // ======================================= 
 // ! Update page with new level and link   
 // ======================================= 
-$sql	 = 'UPDATE `'.TABLE_PREFIX.'pages` SET ';
+$sql	 = 'UPDATE `'.CAT_TABLE_PREFIX.'pages` SET ';
 $sql	.= '`root_parent` = '.$root_parent.', ';
 $sql	.= '`level` = '.$level.', ';
 $sql	.= '`link` = "'.$link.'", ';
@@ -322,7 +322,7 @@ $position	= 1;
 // ========================================== 
 // ! Add new record into the sections table   
 // ========================================== 
-$database->query("INSERT INTO " . TABLE_PREFIX . "sections (page_id,position,module,block) VALUES ('$page_id','$position', '$module','1')");
+$database->query("INSERT INTO " . CAT_TABLE_PREFIX . "sections (page_id,position,module,block) VALUES ('$page_id','$position', '$module','1')");
 
 // ====================== 
 // ! Get the section id   
@@ -332,9 +332,9 @@ $section_id	= $database->get_one("SELECT LAST_INSERT_ID()");
 // ====================================================== 
 // ! Include the selected modules add file if it exists   
 // ====================================================== 
-if ( file_exists(LEPTON_PATH . '/modules/' . $module . '/add.php') )
+if ( file_exists(CAT_PATH . '/modules/' . $module . '/add.php') )
 {
-	require(LEPTON_PATH . '/modules/' . $module . '/add.php');
+	require(CAT_PATH . '/modules/' . $module . '/add.php');
 }
 
 // ========================================================== 
@@ -353,7 +353,7 @@ else
 {
 	$ajax	= array(
 		'message'	=> $admin->lang->translate( 'Page added successfully' ),
-		'url'		=> ADMIN_URL . '/pages/modify.php?page_id='. $page_id . '&leptoken=' . $admin->getToken(),
+		'url'		=> CAT_ADMIN_URL . '/pages/modify.php?page_id='. $page_id . '&leptoken=' . $admin->getToken(),
 		'success'	=> true
 	);
 	print json_encode( $ajax );

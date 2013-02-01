@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -31,10 +31,10 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 // Include WB admin wrapper script
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 // include core functions of WB 2.7 to edit the optional module CSS files (frontend.css, backend.css)
-@include_once(WB_PATH .'/framework/module.functions.php');
+@include_once(CAT_PATH .'/framework/module.functions.php');
 
 global $admin;
 global $database;
@@ -45,16 +45,16 @@ global $TEXT;
 global $HEADING;
 
 // check if module language file exists for the language set by the user (e.g. DE, EN)
-if(!file_exists(WB_PATH .'/modules/form/languages/'.LANGUAGE .'.php')) {
+if(!file_exists(CAT_PATH .'/modules/form/languages/'.LANGUAGE .'.php')) {
 	// no module language file exists for the language set by the user, include default module language file EN.php
-	require_once(WB_PATH .'/modules/form/languages/EN.php');
+	require_once(CAT_PATH .'/modules/form/languages/EN.php');
 } else {
 	// a module language file exists for the language defined by the user, load it
-	require_once(WB_PATH .'/modules/form/languages/'.LANGUAGE .'.php');
+	require_once(CAT_PATH .'/modules/form/languages/'.LANGUAGE .'.php');
 }
 
 // Get header and footer
-$query_content = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_form_settings WHERE section_id = '$section_id'");
+$query_content = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_form_settings WHERE section_id = '$section_id'");
 $setting = $query_content->fetchRow();
 
 // Set raw html <'s and >'s to be replace by friendly html code
@@ -62,9 +62,9 @@ $raw = array('<', '>');
 $friendly = array('&lt;', '&gt;');
 
 // check if backend.css file needs to be included into the <body></body> of modify.php
-if(!method_exists($admin, 'register_backend_modfiles') && file_exists(WB_PATH ."/modules/form/backend.css")) {
+if(!method_exists($admin, 'register_backend_modfiles') && file_exists(CAT_PATH ."/modules/form/backend.css")) {
 	echo '<style type="text/css">';
-	include(WB_PATH .'/modules/form/backend.css');
+	include(CAT_PATH .'/modules/form/backend.css');
 	echo "\n</style>\n";
 }
 
@@ -79,7 +79,7 @@ if(function_exists('edit_module_css')) {
 }
 ?>
 
-<form name="edit" action="<?php echo WB_URL; ?>/modules/form/save_settings.php" method="post" style="margin: 0;">
+<form name="edit" action="<?php echo CAT_URL; ?>/modules/form/save_settings.php" method="post" style="margin: 0;">
 
 <input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
 <input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
@@ -146,7 +146,7 @@ if(function_exists('edit_module_css')) {
 			<option value="" onclick="javascript: document.getElementById('email_from').style.display = 'block';"><?php echo $TEXT['CUSTOM']; ?>:</option>
 			<?php
 			$email_from_value = str_replace($raw, $friendly, ($setting['email_from']));
-			$query_email_fields = $database->query("SELECT field_id,title FROM ".TABLE_PREFIX."mod_form_fields WHERE section_id = '$section_id' AND ( type = 'textfield' OR  type = 'email' ) ORDER BY position ASC");
+			$query_email_fields = $database->query("SELECT field_id,title FROM ".CAT_TABLE_PREFIX."mod_form_fields WHERE section_id = '$section_id' AND ( type = 'textfield' OR  type = 'email' ) ORDER BY position ASC");
 			if($query_email_fields->numRows() > 0) {
 				while(false !== ($field = $query_email_fields->fetchRow())) {
 					?>
@@ -186,7 +186,7 @@ if(function_exists('edit_module_css')) {
 			<option value="" onclick="javascript: document.getElementById('success_email_to').style.display = 'block';"><?php echo $TEXT['NONE']; ?></option>
 			<?php
 			$success_email_to = str_replace($raw, $friendly, ($setting['success_email_to']));
-			$query_email_fields = $database->query("SELECT field_id,title FROM ".TABLE_PREFIX."mod_form_fields WHERE section_id = '$section_id' AND ( type = 'textfield' OR  type = 'email' ) ORDER BY position ASC");
+			$query_email_fields = $database->query("SELECT field_id,title FROM ".CAT_TABLE_PREFIX."mod_form_fields WHERE section_id = '$section_id' AND ( type = 'textfield' OR  type = 'email' ) ORDER BY position ASC");
 			if($query_email_fields->numRows() > 0) {
 				while(false !== ($field = $query_email_fields->fetchRow())) {
 					?>
@@ -231,7 +231,7 @@ if(function_exists('edit_module_css')) {
 			<option value="none"><?php echo $TEXT['NONE']; ?></option>
 			<?php 
 			// Get exisiting pages and show the pagenames
-			$query = $database->query("SELECT * FROM ".TABLE_PREFIX."pages WHERE visibility <> 'deleted'");
+			$query = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."pages WHERE visibility <> 'deleted'");
 			while(false !== ($mail_page = $query->fetchRow())) {
 				if(!$admin->page_is_visible($mail_page))
 					continue;
@@ -257,7 +257,7 @@ if(function_exists('edit_module_css')) {
 			<input name="save" type="submit" value="<?php echo $TEXT['SAVE']; ?>" style="width: 100px; margin-top: 5px;">
 		</td>
 		<td align="right">
-			<input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
+			<input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo CAT_ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
 		</td>
 	</tr>
 </table>

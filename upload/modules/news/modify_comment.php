@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,24 +34,24 @@ if (defined('WB_PATH')) {
 
 // Get id
 if(!isset($_GET['comment_id']) OR !is_numeric($_GET['comment_id'])) {
-	header("Location: ".ADMIN_URL."/pages/index.php");
+	header("Location: ".CAT_ADMIN_URL."/pages/index.php");
 	exit(0);
 } else {
 	$comment_id = $_GET['comment_id'];
 }
 
 // Include WB admin wrapper script
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 // Get header and footer
-$query_content = $database->query("SELECT post_id,title,comment FROM ".TABLE_PREFIX."mod_news_comments WHERE comment_id = '$comment_id'");
+$query_content = $database->query("SELECT post_id,title,comment FROM ".CAT_TABLE_PREFIX."mod_news_comments WHERE comment_id = '$comment_id'");
 $fetch_content = $query_content->fetchRow();
 
 ?>
 
 <h2><?php echo $TEXT['MODIFY'].' '.$TEXT['COMMENT']; ?></h2>
 
-<form name="modify" action="<?php echo WB_URL; ?>/modules/news/save_comment.php" method="post" style="margin: 0;">
+<form name="modify" action="<?php echo CAT_URL; ?>/modules/news/save_comment.php" method="post" style="margin: 0;">
 
 <input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
 <input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
@@ -79,7 +79,7 @@ $fetch_content = $query_content->fetchRow();
 		<input name="save" type="submit" value="<?php echo $TEXT['SAVE']; ?>" style="width: 100px; margin-top: 5px;" />
 	</td>
 	<td align="right">
-		<input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo WB_URL; ?>/modules/news/modify_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $fetch_content['post_id']; ?>';" style="width: 100px; margin-top: 5px;" />
+		<input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo CAT_URL; ?>/modules/news/modify_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $fetch_content['post_id']; ?>';" style="width: 100px; margin-top: 5px;" />
 	</td>
 </tr>
 </table>

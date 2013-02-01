@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -18,8 +18,8 @@
  */ 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -69,13 +69,13 @@ if(isset($_GET['section_id']) && is_numeric($_GET['section_id']))
 $js_back = 'javascript: history.go(-1);';
 
 // Create new admin object
-include(WB_PATH.'/framework/class.admin.php');
+include(CAT_PATH.'/framework/class.admin.php');
 // header will be set here, see database->is_error
 $admin = new admin('Pages', 'pages_modify');
 
 // Get perms
 // $database = new database();
-$sql  = 'SELECT `admin_groups`,`admin_users` FROM `'.TABLE_PREFIX.'pages` ';
+$sql  = 'SELECT `admin_groups`,`admin_users` FROM `'.CAT_TABLE_PREFIX.'pages` ';
 $sql .= 'WHERE `page_id` = '.intval($page_id);
 
 $res_pages = $database->query($sql);
@@ -100,7 +100,7 @@ if((!$in_group) && !is_numeric(array_search($admin->get_user_id(), $old_admin_us
 // some additional security checks:
 // Check whether the section_id belongs to the page_id at all
 if ($section_id != 0) {
-	$sql  = "SELECT `module` FROM `".TABLE_PREFIX."sections` WHERE `page_id` = '$page_id' AND `section_id` = '$section_id'";
+	$sql  = "SELECT `module` FROM `".CAT_TABLE_PREFIX."sections` WHERE `page_id` = '$page_id' AND `section_id` = '$section_id'";
 	$res_sec = $database->query($sql);
 	if ($database->is_error())
 	{
@@ -124,7 +124,7 @@ if(isset($print_info_banner) && $print_info_banner == true)
 {
 	// Get page details
 	// $database = new database(); not needed
-	$sql  = 'SELECT `page_id`,`page_title`,`modified_by`,`modified_when` FROM `'.TABLE_PREFIX.'pages` ';
+	$sql  = 'SELECT `page_id`,`page_title`,`modified_by`,`modified_when` FROM `'.CAT_TABLE_PREFIX.'pages` ';
 	$sql .= 'WHERE `page_id` = '.intval($page_id);
 	$res_pages = $database->query($sql);
 	if($database->is_error())
@@ -152,7 +152,7 @@ if(isset($print_info_banner) && $print_info_banner == true)
 	}
 
 	// Include page info script
-	$template = new Template(THEME_PATH.'/templates');
+	$template = new Template(CAT_THEME_PATH.'/templates');
 	$template->set_file('page', 'pages_modify.htt');
 	$template->set_block('page', 'main_block', 'main');
 	$template->set_var(array(
@@ -161,7 +161,7 @@ if(isset($print_info_banner) && $print_info_banner == true)
 				'MODIFIED_BY' => $user['display_name'],
 				'MODIFIED_BY_USERNAME' => $user['username'],
 				'MODIFIED_WHEN' => $modified_ts,
-				'ADMIN_URL' => ADMIN_URL
+				'CAT_ADMIN_URL' => CAT_ADMIN_URL
 				));
 
 	$template->set_block('main_block', 'show_modify_block', 'show_modify');
@@ -176,7 +176,7 @@ if(isset($print_info_banner) && $print_info_banner == true)
 
 	$template->set_block('main_block', 'show_section_block', 'show_section');
 	// Work-out if we should show the "manage sections" link
-    $sql  = 'SELECT `section_id` FROM `'.TABLE_PREFIX.'sections` ';
+    $sql  = 'SELECT `section_id` FROM `'.CAT_TABLE_PREFIX.'sections` ';
 	$sql .= 'WHERE `page_id` = '.intval($page_id).' AND `module` = "menu_link"';
 	if( ( $res_sections = $database->query($sql) ) && ($database->is_error() == false ) )
 	{
@@ -213,7 +213,7 @@ if(isset($print_info_banner) && $print_info_banner == true)
 // Work-out if the developer wants us to update the timestamp for when the page was last modified
 if(isset($update_when_modified) && $update_when_modified == true)
 {
-	$sql  = 'UPDATE `'.TABLE_PREFIX.'pages` ';
+	$sql  = 'UPDATE `'.CAT_TABLE_PREFIX.'pages` ';
 	$sql .= 'SET `modified_when` = '.time().', ';
 	$sql .=     '`modified_by`   = '.intval($admin->get_user_id()).' ';
 	$sql .=     'WHERE page_id   = '.intval($page_id);

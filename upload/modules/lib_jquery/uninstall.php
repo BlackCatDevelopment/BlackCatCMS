@@ -7,6 +7,6 @@
 *******************************************************************************/
 
 // direct access prevention
-defined('WB_PATH') OR die(header('Location: ../index.php'));
+defined('CAT_PATH') OR die(header('Location: ../index.php'));
 
 ?>

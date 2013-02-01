@@ -16,8 +16,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -34,17 +34,17 @@ if (defined('LEPTON_PATH')) {
 // end include class.secure.php
 
 // exec initial_page
-if(file_exists(LEPTON_PATH .'/modules/initial_page/classes/c_init_page.php') && isset($_SESSION['USER_ID'])) {
-	require_once (LEPTON_PATH .'/modules/initial_page/classes/c_init_page.php');
+if(file_exists(CAT_PATH .'/modules/initial_page/classes/c_init_page.php') && isset($_SESSION['USER_ID'])) {
+	require_once (CAT_PATH .'/modules/initial_page/classes/c_init_page.php');
 	$ins = new c_init_page($database, $_SESSION['USER_ID'], $_SERVER['SCRIPT_NAME']);
 }
-require_once(LEPTON_PATH.'/framework/class.admin.php');$admin = new admin('Start','start');
+require_once(CAT_PATH.'/framework/class.admin.php');$admin = new admin('Start','start');
 
 
 // ================================================ 
 // ! Check if installation directory still exists   
 // ================================================ 
-if( file_exists(LEPTON_PATH.'/install/') ) {
+if( file_exists(CAT_PATH.'/install/') ) {
 	// Check if user is part of Adminstrators group
 	if( in_array (1, $admin->get_groups_id() ) )
 	{
@@ -52,7 +52,7 @@ if( file_exists(LEPTON_PATH.'/install/') ) {
 		 *	Try to delete it - it's still not needed anymore.
 		 */
 		if (function_exists('rm_full_dir') ) {
-			rm_full_dir(LEPTON_PATH.'/install/');
+			rm_full_dir(CAT_PATH.'/install/');
 		}
 	}
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -18,8 +18,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -150,7 +150,7 @@ class c_pathfinder
 		global $id_list;
 		
 		if (!isset($id_list) OR !is_array($id_list)) {
-			$q  = "SELECT `section_id` from `".TABLE_PREFIX."sections` where `page_id`=".$this->__page_id;
+			$q  = "SELECT `section_id` from `".CAT_TABLE_PREFIX."sections` where `page_id`=".$this->__page_id;
 			$q .= " AND `module`='".$type."' order by position desc limit 1";
 		
 			$r = $this->__db->query($q);
@@ -170,16 +170,16 @@ class c_pathfinder
 	 */
 	function get_paths() {
 	
-		$query = "SELECT `template` from `".TABLE_PREFIX."pages` where `page_id`='".$this->__page_id."'";
+		$query = "SELECT `template` from `".CAT_TABLE_PREFIX."pages` where `page_id`='".$this->__page_id."'";
 		$result = $this->__db->query( $query );
 		$temp = $result->fetchRow( MYSQL_ASSOC );
 		$base_folder = ($temp['template'] == "") ? DEFAULT_TEMPLATE : $temp['template'];
 		
 		foreach($this->files as $key=>$p) {
 			foreach($p as $temp_path) {
-				$path = WB_PATH."/templates/".$base_folder.$temp_path;
+				$path = CAT_PATH."/templates/".$base_folder.$temp_path;
 				if (true == file_exists($path) ){
-					$this->paths[$key] = str_replace(WB_PATH, WB_URL, $path);
+					$this->paths[$key] = str_replace(CAT_PATH, CAT_URL, $path);
 					break;
 				}
 			}

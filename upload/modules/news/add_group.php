@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -33,25 +33,25 @@ if (defined('WB_PATH')) {
 
 
 // Include WB admin wrapper script
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 // Include the ordering class
-require(WB_PATH.'/framework/class.order.php');
+require(CAT_PATH.'/framework/class.order.php');
 // Get new order
-$order = new order(TABLE_PREFIX.'mod_news_groups', 'position', 'group_id', 'section_id');
+$order = new order(CAT_TABLE_PREFIX.'mod_news_groups', 'position', 'group_id', 'section_id');
 $position = $order->get_new($section_id);
 
 // Insert new row into database
-$database->query("INSERT INTO ".TABLE_PREFIX."mod_news_groups (section_id,page_id,position,active) VALUES ('$section_id','$page_id','$position','1')");
+$database->query("INSERT INTO ".CAT_TABLE_PREFIX."mod_news_groups (section_id,page_id,position,active) VALUES ('$section_id','$page_id','$position','1')");
 
 // Get the id
 $group_id = $database->get_one("SELECT LAST_INSERT_ID()");
 
 // Say that a new record has been added, then redirect to modify page
 if($database->is_error()) {
-	$admin->print_error($database->get_error(), WB_URL.'/modules/news/modify_group.php?page_id='.$page_id.'&section_id='.$section_id.'&group_id='.$group_id);
+	$admin->print_error($database->get_error(), CAT_URL.'/modules/news/modify_group.php?page_id='.$page_id.'&section_id='.$section_id.'&group_id='.$group_id);
 } else {
-	$admin->print_success($TEXT['SUCCESS'], WB_URL.'/modules/news/modify_group.php?page_id='.$page_id.'&section_id='.$section_id.'&group_id='.$group_id);
+	$admin->print_success($TEXT['SUCCESS'], CAT_URL.'/modules/news/modify_group.php?page_id='.$page_id.'&section_id='.$section_id.'&group_id='.$group_id);
 }
 
 // Print admin footer

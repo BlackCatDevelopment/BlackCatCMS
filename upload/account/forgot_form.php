@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -44,7 +44,7 @@ if ( isset( $_POST[ 'email' ] ) && $_POST[ 'email' ] != "" && preg_match( "/([0-
 	$email = strip_tags( $_POST[ 'email' ] );
 
 	// Check if the email exists in the database
-	$query   = "SELECT user_id,username,display_name,email,last_reset,password FROM " . TABLE_PREFIX . "users WHERE email = '" . $wb->add_slashes( $_POST[ 'email' ] ) . "'";
+	$query   = "SELECT user_id,username,display_name,email,last_reset,password FROM " . CAT_TABLE_PREFIX . "users WHERE email = '" . $wb->add_slashes( $_POST[ 'email' ] ) . "'";
 	$results = $database->query( $query );
 	if ( $results->numRows() > 0 )
 	{
@@ -81,7 +81,7 @@ if ( isset( $_POST[ 'email' ] ) && $_POST[ 'email' ] != "" && preg_match( "/([0-
 			shuffle( $r );
 			$new_pass = implode( "", array_slice( $r, 0,  AUTH_MIN_PASS_LENGTH ) );
 
-			$database->query( "UPDATE " . TABLE_PREFIX . "users SET password = '" . md5( $new_pass ) . "', last_reset = '" . time() . "' WHERE user_id = '" . $results_array[ 'user_id' ] . "'" );
+			$database->query( "UPDATE " . CAT_TABLE_PREFIX . "users SET password = '" . md5( $new_pass ) . "', last_reset = '" . time() . "' WHERE user_id = '" . $results_array[ 'user_id' ] . "'" );
 
 			if ( $database->is_error() )
 			{
@@ -117,7 +117,7 @@ if ( isset( $_POST[ 'email' ] ) && $_POST[ 'email' ] != "" && preg_match( "/([0-
 				}
 				else
 				{
-					$database->query( "UPDATE " . TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array[ 'user_id' ] . "'" );
+					$database->query( "UPDATE " . CAT_TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array[ 'user_id' ] . "'" );
 					$message = $MESSAGE[ 'FORGOT_PASS_CANNOT_EMAIL' ];
 				}
 			}
@@ -152,7 +152,7 @@ else
 echo $MENU[ 'FORGOT' ];
 ?></h1>
 
-<form name="forgot_pass" action="<?php echo WB_URL . '/account/forgot.php'; ?>" method="post">
+<form name="forgot_pass" action="<?php echo CAT_URL . '/account/forgot.php'; ?>" method="post">
 	<input type="hidden" name="url" value="{URL}" />
 		<table cellpadding="5" cellspacing="0" border="0" align="center" width="500">
 		<tr>

@@ -17,8 +17,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -36,18 +36,18 @@ if (defined('LEPTON_PATH')) {
 // end include class.secure.php
 
 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin = new admin('Preferences');
 
 global $parser;
 $data_dwoo	= array();
 
-include_once(LEPTON_PATH . '/framework/functions-utf8.php');
+include_once(CAT_PATH . '/framework/functions-utf8.php');
 
 // ========================= 
 // ! Initial page addition   
 // ========================= 
-require_once( LEPTON_PATH . '/modules/initial_page/classes/c_init_page.php' );
+require_once( CAT_PATH . '/modules/initial_page/classes/c_init_page.php' );
 $ref		= new c_init_page( $database );
 $info		= $ref->get_user_info( $_SESSION['USER_ID'] );
 
@@ -70,7 +70,7 @@ $data_dwoo['INIT_PAGE_LABEL']		= $ref->get_language();
 // ============================================================= 
 // ! read user-info from table users and assign it to template   
 // ============================================================= 
-$sql  = 'SELECT `display_name`, `username`, `email`, `statusflags` FROM `'.TABLE_PREFIX.'users` WHERE `user_id` = '.(int)$admin->get_user_id();
+$sql  = 'SELECT `display_name`, `username`, `email`, `statusflags` FROM `'.CAT_TABLE_PREFIX.'users` WHERE `user_id` = '.(int)$admin->get_user_id();
 
 $res_user	= $database->query($sql);
 if ($res_user->numRows() > 0)
@@ -97,7 +97,7 @@ $data_dwoo['USER_ID']	= $admin->get_user_id();
 // $tpl->set_block('main_block', 'show_cmd_profile_edit_block', 'show_cmd_profile_edit');
 if ( $admin->bit_isset($rec_user['statusflags'], USERS_PROFILE_ALLOWED) )
 {
-	$data_dwoo['PROFILE_ACTION_URL']			= ADMIN_URL.'/profiles/index.php';
+	$data_dwoo['PROFILE_ACTION_URL']			= CAT_ADMIN_URL.'/profiles/index.php';
 	$data_dwoo['show_cmd_profile_edit']			= true;
 	$data_dwoo['show_cmd_profile_edit_block']	= true;
 }
@@ -110,7 +110,7 @@ else
 // ============================================================================ 
 // ! read available languages from table addons and assign it to the template   
 // ============================================================================ 
-require_once(LEPTON_PATH . '/framework/class.pages.php');
+require_once(CAT_PATH . '/framework/class.pages.php');
 $pages = new pages();
 $data_dwoo['languages']				= $pages->get_addons( LANGUAGE , 'language', false, false, 'directory' );
 
@@ -128,7 +128,7 @@ foreach ($timezone_table as $title)
 // =========================== 
 // ! Insert date format list   
 // =========================== 
-include_once( ADMIN_PATH.'/interface/date_formats.php' );
+include_once( CAT_ADMIN_PATH.'/interface/date_formats.php' );
 $counter=0;
 foreach ( $DATE_FORMATS AS $format => $title )
 {
@@ -145,7 +145,7 @@ foreach ( $DATE_FORMATS AS $format => $title )
 // =========================== 
 // ! Insert time format list   
 // =========================== 
-include_once(ADMIN_PATH.'/interface/time_formats.php' );
+include_once(CAT_ADMIN_PATH.'/interface/time_formats.php' );
 $counter	= 0;
 foreach ( $TIME_FORMATS AS $format => $title )
 {

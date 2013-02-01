@@ -16,8 +16,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,7 +34,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin		= new admin('Addons', 'modules_uninstall');
 
 
@@ -50,18 +50,18 @@ if ( trim($file) == '' || trim($type) == '' )
 	exit(0);
 }
 
-$js_back	= ADMIN_URL . '/addons/index.php';
+$js_back	= CAT_ADMIN_URL . '/addons/index.php';
 
 // Include the WB functions file
-require_once( LEPTON_PATH . '/framework/functions.php');
+require_once( CAT_PATH . '/framework/functions.php');
 
 // Check if the module exists
-if ( !file_exists( LEPTON_PATH . '/' . $type  . '/' . $file) )
+if ( !file_exists( CAT_PATH . '/' . $type  . '/' . $file) )
 {
 	$admin->print_error( 'Not installed' , $js_back );
 }
 // Check if we have permissions on the directory
-if ( !is_writable( LEPTON_PATH . '/' . $type . '/' . $file) )
+if ( !is_writable( CAT_PATH . '/' . $type . '/' . $file) )
 {
 	$admin->print_error( 'Unable to write to the target directory' , $js_back );
 }
@@ -78,7 +78,7 @@ if ( $type == 'languages' && ( $language_name == DEFAULT_LANGUAGE || $language_n
 }
 elseif ( $type == 'languages' )
 {
-	$query_users	= $database->query("SELECT user_id FROM " . TABLE_PREFIX . "users WHERE language = '" . $language_name . "' LIMIT 1");
+	$query_users	= $database->query("SELECT user_id FROM " . CAT_TABLE_PREFIX . "users WHERE language = '" . $language_name . "' LIMIT 1");
 	if ( $query_users->numRows() > 0 )
 	{
 		$admin->print_error( 'Cannot Uninstall: the selected file is in use', $js_back );
@@ -87,7 +87,7 @@ elseif ( $type == 'languages' )
 elseif ( $type == 'modules' )
 {
 	// check if the module is still in use
-	$info	= $database->query("SELECT section_id, page_id FROM " . TABLE_PREFIX . "sections WHERE module = '" . $file . "'");
+	$info	= $database->query("SELECT section_id, page_id FROM " . CAT_TABLE_PREFIX . "sections WHERE module = '" . $file . "'");
 	
 	if ( $info->numRows() > 0 )
 	{
@@ -111,7 +111,7 @@ elseif ( $type == 'modules' )
 			{
 				continue;
 			}
-			$temp			= $database->query("SELECT page_title FROM " . TABLE_PREFIX . "pages WHERE page_id = " . $data['page_id']);
+			$temp			= $database->query("SELECT page_title FROM " . CAT_TABLE_PREFIX . "pages WHERE page_id = " . $data['page_id']);
 			$temp_title		= $temp->fetchRow( MYSQL_ASSOC );
 	
 			$values['allpages'][]	= array(
@@ -139,9 +139,9 @@ elseif ( $type == 'modules' )
 		$admin->print_error( $admin->lang->translate( 'Can\'t uninstall the {{name}} <b>{{name}}</b>, because it is the {{standard}}!', $values ), $js_back );
 	}
 	// Run the modules' uninstall script if there is one
-	if (file_exists( LEPTON_PATH . '/' . $type . '/' . $file . '/uninstall.php'))
+	if (file_exists( CAT_PATH . '/' . $type . '/' . $file . '/uninstall.php'))
 	{
-		require( LEPTON_PATH . '/' . $type . '/' . $file . '/uninstall.php');
+		require( CAT_PATH . '/' . $type . '/' . $file . '/uninstall.php');
 	}
 }
 elseif ( $type == 'templates' && ( $file == DEFAULT_THEME || $file == DEFAULT_TEMPLATE ) )
@@ -160,7 +160,7 @@ elseif ( $type == 'templates' )
 	/**
 	*	Check if the template is still in use by a page ...
 	*/
-	$info	= $database->query( "SELECT page_id, page_title FROM " . TABLE_PREFIX . "pages WHERE template='" . $file . "' order by page_title" );
+	$info	= $database->query( "SELECT page_id, page_title FROM " . CAT_TABLE_PREFIX . "pages WHERE template='" . $file . "' order by page_title" );
 	if ( $info->numRows() > 0 )
 	{
 		/**
@@ -206,15 +206,15 @@ else {
 
 
 // Try to delete the module dir
-if ( !rm_full_dir(LEPTON_PATH . '/' . $type . '/' . $file) )
+if ( !rm_full_dir(CAT_PATH . '/' . $type . '/' . $file) )
 {
 	$admin->print_error( 'Cannot uninstall', $js_back );
 }
 else
 {
 	// Remove entry from DB
-	if ( $type != 'languages' ) $database->query("DELETE FROM " . TABLE_PREFIX . "addons WHERE directory = '" . $file . "' AND type = '" . substr( $type, 0, -1 ) . "'");
-	else $database->query("DELETE FROM " . TABLE_PREFIX . "addons WHERE directory = '" . $language_name . "' AND type = '" . substr( $type, 0, -1 ) . "'");
+	if ( $type != 'languages' ) $database->query("DELETE FROM " . CAT_TABLE_PREFIX . "addons WHERE directory = '" . $file . "' AND type = '" . substr( $type, 0, -1 ) . "'");
+	else $database->query("DELETE FROM " . CAT_TABLE_PREFIX . "addons WHERE directory = '" . $language_name . "' AND type = '" . substr( $type, 0, -1 ) . "'");
 }
 
 // ============================= 
@@ -222,7 +222,7 @@ else
 // ============================= 
 if ( $type != 'languages' )
 {
-	$stmt = $database->query('SELECT * FROM ' . TABLE_PREFIX . 'groups WHERE group_id <> 1');
+	$stmt = $database->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'groups WHERE group_id <> 1');
 	if ($stmt->numRows() > 0)
 	{
 		while ( $row = $stmt->fetchRow(MYSQL_ASSOC) )
@@ -239,7 +239,7 @@ if ( $type != 'languages' )
 				asort($permissions);
 				// Update the database
 				$addon_permissions		= implode(',', $permissions);
-				$database->query("UPDATE " . TABLE_PREFIX . "groups SET " . substr( $type, 0, -1 ) . "_permissions = '$addon_permissions' WHERE group_id='$gid'");
+				$database->query("UPDATE " . CAT_TABLE_PREFIX . "groups SET " . substr( $type, 0, -1 ) . "_permissions = '$addon_permissions' WHERE group_id='$gid'");
 			}
 		}
 	}

@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -32,15 +32,15 @@ if (defined('WB_PATH')) {
 
 
 
-$database->query("DELETE FROM ".TABLE_PREFIX."search WHERE name = 'module' AND value = 'news'");
-$database->query("DELETE FROM ".TABLE_PREFIX."search WHERE extra = 'news'");
-$database->query("DROP TABLE ".TABLE_PREFIX."mod_news_posts");
-$database->query("DROP TABLE ".TABLE_PREFIX."mod_news_groups");
-$database->query("DROP TABLE ".TABLE_PREFIX."mod_news_comments");
-$database->query("DROP TABLE ".TABLE_PREFIX."mod_news_settings");
+$database->query("DELETE FROM ".CAT_TABLE_PREFIX."search WHERE name = 'module' AND value = 'news'");
+$database->query("DELETE FROM ".CAT_TABLE_PREFIX."search WHERE extra = 'news'");
+$database->query("DROP TABLE ".CAT_TABLE_PREFIX."mod_news_posts");
+$database->query("DROP TABLE ".CAT_TABLE_PREFIX."mod_news_groups");
+$database->query("DROP TABLE ".CAT_TABLE_PREFIX."mod_news_comments");
+$database->query("DROP TABLE ".CAT_TABLE_PREFIX."mod_news_settings");
 
-require_once(WB_PATH.'/framework/functions.php');
-rm_full_dir(WB_PATH.PAGES_DIRECTORY.'/posts');
-rm_full_dir(WB_PATH.MEDIA_DIRECTORY.'/.news');
+require_once(CAT_PATH.'/framework/functions.php');
+rm_full_dir(CAT_PATH.PAGES_DIRECTORY.'/posts');
+rm_full_dir(CAT_PATH.MEDIA_DIRECTORY.'/.news');
 
 ?>

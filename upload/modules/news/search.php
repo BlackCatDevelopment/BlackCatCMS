@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -44,8 +44,8 @@ function news_search($func_vars) {
 
 	// fetch all active news-posts (from active groups) in this section.
 	$t = time();
-	$table_posts = TABLE_PREFIX."mod_news_posts";
-	$table_groups = TABLE_PREFIX."mod_news_groups";
+	$table_posts = CAT_TABLE_PREFIX."mod_news_posts";
+	$table_groups = CAT_TABLE_PREFIX."mod_news_groups";
 	$query = $func_database->query("
 		SELECT p.post_id, p.title, p.content_short, p.content_long, p.link, p.posted_when, p.posted_by
 		FROM $table_posts AS p LEFT OUTER JOIN $table_groups AS g ON p.group_id = g.group_id
@@ -59,7 +59,7 @@ function news_search($func_vars) {
 			$text = $res['title'].$divider.$res['content_short'].$divider.$res['content_long'].$divider;
 			// fetch comments and add to $text
 			if($excerpt_from_comments) {
-				$table = TABLE_PREFIX."mod_news_comments";
+				$table = CAT_TABLE_PREFIX."mod_news_comments";
 				$commentquery = $func_database->query("
 					SELECT title, comment
 					FROM $table
@@ -89,8 +89,8 @@ function news_search($func_vars) {
 	}
 	
 	// now fetch group-titles - ignore those without (active) postings
-	$table_groups = TABLE_PREFIX."mod_news_groups";
-	$table_posts = TABLE_PREFIX."mod_news_posts";
+	$table_groups = CAT_TABLE_PREFIX."mod_news_groups";
+	$table_posts = CAT_TABLE_PREFIX."mod_news_posts";
 	$query = $func_database->query("
 		SELECT DISTINCT g.title, g.group_id
 		FROM $table_groups AS g INNER JOIN $table_posts AS p ON g.group_id = p.group_id

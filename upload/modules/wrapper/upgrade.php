@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -17,8 +17,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -36,11 +36,11 @@ if (defined('WB_PATH')) {
 
 
 if ( $module_version <= '2.7.1' ) {
-	$database->query('ALTER TABLE `'.TABLE_PREFIX.'mod_wrapper` ADD COLUMN `width` INT(11) NOT NULL DEFAULT \'630\'');
-	$database->query('ALTER TABLE `'.TABLE_PREFIX.'mod_wrapper` ADD COLUMN `type` VARCHAR(50) NOT NULL DEFAULT \'iframe\' AFTER `width`;');
+	$database->query('ALTER TABLE `'.CAT_TABLE_PREFIX.'mod_wrapper` ADD COLUMN `width` INT(11) NOT NULL DEFAULT \'630\'');
+	$database->query('ALTER TABLE `'.CAT_TABLE_PREFIX.'mod_wrapper` ADD COLUMN `type` VARCHAR(50) NOT NULL DEFAULT \'iframe\' AFTER `width`;');
 }
 if ( $module_version <= '2.7.2' ) {
-	$database->query('ALTER TABLE `'.TABLE_PREFIX.'mod_wrapper` CHANGE COLUMN `type` `wtype` VARCHAR(50) NOT NULL DEFAULT \'iframe\' AFTER `width`;');
+	$database->query('ALTER TABLE `'.CAT_TABLE_PREFIX.'mod_wrapper` CHANGE COLUMN `type` `wtype` VARCHAR(50) NOT NULL DEFAULT \'iframe\' AFTER `width`;');
 }
 
 ?>

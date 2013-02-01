@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -32,10 +32,10 @@ if (defined('WB_PATH')) {
 
   
 
-$table = TABLE_PREFIX ."mod_wysiwyg_admin";
+$table = CAT_TABLE_PREFIX ."mod_wysiwyg_admin";
 
 $jobs = array();
-$jobs[] = "DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_editor_admin`";
+$jobs[] = "DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_editor_admin`";
 $jobs[] = "DROP TABLE IF EXISTS `".$table."`";
 
 $jobs[] = "CREATE TABLE `".$table."` (
@@ -57,11 +57,11 @@ $jobs[] = "INSERT INTO `".$table."` (`skin`, `menu`, `width`, `height`, `editor`
  *	Additonal queries to avoid db-conflicts if the install.php is reloaded by the backend-adminstration.
  *
  */
-$jobs[] = "DELETE from `".TABLE_PREFIX."sections` where `page_id`='-120' and `section_id`='-1'";
-$jobs[] = "DELETE from `".TABLE_PREFIX."mod_wysiwyg` where `page_id`='-120' and `section_id`='-1'";
+$jobs[] = "DELETE from `".CAT_TABLE_PREFIX."sections` where `page_id`='-120' and `section_id`='-1'";
+$jobs[] = "DELETE from `".CAT_TABLE_PREFIX."mod_wysiwyg` where `page_id`='-120' and `section_id`='-1'";
 
-$jobs[] = "INSERT INTO `".TABLE_PREFIX."sections` (`page_id`,`section_id`,`position`,`module`) VALUES('-120','-1','1','wysiwyg')";
-$jobs[] = "INSERT INTO `".TABLE_PREFIX."mod_wysiwyg` (`page_id`,`section_id`,`content`,`text`) VALUES('-120','-1','<p><b>Berthold\'s</b> quick brown fox jumps over the lazy dog and feels as if he were in the seventh heaven of typography.</p>','Berthold\'s quick brown fox jumps over the lazy dog and feels as if he were in the seventh heaven of typography.')";
+$jobs[] = "INSERT INTO `".CAT_TABLE_PREFIX."sections` (`page_id`,`section_id`,`position`,`module`) VALUES('-120','-1','1','wysiwyg')";
+$jobs[] = "INSERT INTO `".CAT_TABLE_PREFIX."mod_wysiwyg` (`page_id`,`section_id`,`content`,`text`) VALUES('-120','-1','<p><b>Berthold\'s</b> quick brown fox jumps over the lazy dog and feels as if he were in the seventh heaven of typography.</p>','Berthold\'s quick brown fox jumps over the lazy dog and feels as if he were in the seventh heaven of typography.')";
 
 $errors = array();
 

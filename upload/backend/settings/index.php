@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -44,7 +44,7 @@ if(isset($_GET) && sizeof($_GET) > 1)
 // test if valid $admin-object already exists (bit complicated about PHP4 Compatibility)
 if ( !(isset($admin) && is_object($admin) && (get_class($admin) == 'admin')) )
 {
-	require_once( LEPTON_PATH.'/framework/class.admin.php' );
+	require_once( CAT_PATH.'/framework/class.admin.php' );
 }
 
 $admin = new admin('Settings', 'settings_advanced');
@@ -53,21 +53,21 @@ global $parser;
 $data_dwoo = array();
 
 // Include the WB functions file
-require_once(LEPTON_PATH.'/framework/functions.php');
-require_once(LEPTON_PATH.'/framework/functions-utf8.php');
+require_once(CAT_PATH.'/framework/functions.php');
+require_once(CAT_PATH.'/framework/functions-utf8.php');
 
 // check if theme language file exists for the language set by the user (e.g. DE, EN)
-$lang	= (file_exists(THEME_PATH .'/languages/'.LANGUAGE .'.php')) ? LANGUAGE : 'EN';
+$lang	= (file_exists(CAT_THEME_PATH .'/languages/'.LANGUAGE .'.php')) ? LANGUAGE : 'EN';
 // only a theme language file exists for the language, load it
-if ( file_exists(THEME_PATH .'/languages/'.$lang .'.php') )
+if ( file_exists(CAT_THEME_PATH .'/languages/'.$lang .'.php') )
 {
-	include_once(THEME_PATH .'/languages/'.$lang .'.php');
+	include_once(CAT_THEME_PATH .'/languages/'.$lang .'.php');
 }
 
 // =========================================================================== 
 // ! Query current settings in the db, then loop through them and print them   
 // =========================================================================== 
-if ( $res_settings = $database->query('SELECT `name`, `value` FROM `'.TABLE_PREFIX.'settings` ORDER BY `name`'))
+if ( $res_settings = $database->query('SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'settings` ORDER BY `name`'))
 {
 	while ( $row = $res_settings->fetchRow( ) )
 	{
@@ -78,7 +78,7 @@ if ( $res_settings = $database->query('SELECT `name`, `value` FROM `'.TABLE_PREF
 // =========================================================================== 
 // ! Query current settings in the db, then loop through them and print them   
 // =========================================================================== 
-if ( ($res_search = $database->query('SELECT * FROM `'.TABLE_PREFIX.'search` WHERE `extra` = \'\' ')) && ($res_search->numRows() > 0) )
+if ( ($res_search = $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'search` WHERE `extra` = \'\' ')) && ($res_search->numRows() > 0) )
 {
 	while ( $row = $res_search->fetchRow() )
 	{
@@ -100,7 +100,7 @@ $data_dwoo['values']['DATABASE_TYPE']				= '';
 $data_dwoo['values']['DATABASE_HOST']				= '';
 $data_dwoo['values']['DATABASE_USERNAME']			= '';
 $data_dwoo['values']['DATABASE_NAME']				= '';
-$data_dwoo['values']['TABLE_PREFIX']				= TABLE_PREFIX;
+$data_dwoo['values']['CAT_TABLE_PREFIX']				= CAT_TABLE_PREFIX;
 
 $data_dwoo['MULTIPLE_MENUS']						= (defined('MULTIPLE_MENUS') && MULTIPLE_MENUS == true) ? true : false;
 $data_dwoo['PAGE_LANGUAGES']						= (defined('PAGE_LANGUAGES') && PAGE_LANGUAGES == true) ? true : false;
@@ -127,7 +127,7 @@ $data_dwoo['values']['wb_default_sendername']		= WBMAILER_DEFAULT_SENDERNAME;
 // ========================== 
 // ! Insert language values   
 // ========================== 
-if(($result = $database->query('SELECT * FROM `'.TABLE_PREFIX.'addons` WHERE `type` = \'language\' ORDER BY `name`')) && $result->numRows() > 0 )
+if(($result = $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'addons` WHERE `type` = \'language\' ORDER BY `name`')) && $result->numRows() > 0 )
 {
 	while ( $addon = $result->fetchRow() )
 	{
@@ -155,7 +155,7 @@ if(($result = $database->query('SELECT * FROM `'.TABLE_PREFIX.'addons` WHERE `ty
 // ================================== 
 // ! Insert default timezone values   
 // ================================== 
-require(ADMIN_PATH.'/interface/timezones.php');
+require(CAT_ADMIN_PATH.'/interface/timezones.php');
 $counter=0;
 
 foreach( $timezone_table as $title )
@@ -170,7 +170,7 @@ foreach( $timezone_table as $title )
 // ================================= 
 // ! Insert default charset values   
 // ================================= 
-require(ADMIN_PATH.'/interface/charsets.php');
+require(CAT_ADMIN_PATH.'/interface/charsets.php');
 $counter=0;
 foreach ( $CHARSETS AS $code => $title )
 {
@@ -191,7 +191,7 @@ date_default_timezone_set(DEFAULT_TIMEZONE_STRING);
 // =========================== 
 // ! Insert date format list   
 // =========================== 
-require(ADMIN_PATH.'/interface/date_formats.php');
+require(CAT_ADMIN_PATH.'/interface/date_formats.php');
 $counter=0;
 foreach ( $DATE_FORMATS AS $format => $title )
 {
@@ -207,7 +207,7 @@ foreach ( $DATE_FORMATS AS $format => $title )
 // =========================== 
 // ! Insert time format list   
 // =========================== 
-require(ADMIN_PATH.'/interface/time_formats.php');
+require(CAT_ADMIN_PATH.'/interface/time_formats.php');
 $counter=0;
 foreach ( $TIME_FORMATS AS $format => $title )
 {
@@ -223,7 +223,7 @@ foreach ( $TIME_FORMATS AS $format => $title )
 // ========================================= 
 // ! Insert default error reporting values   
 // ========================================= 
-require(ADMIN_PATH.'/interface/er_levels.php');
+require(CAT_ADMIN_PATH.'/interface/er_levels.php');
 $counter = 0;
 foreach ( $ER_LEVELS AS $value => $title )
 {
@@ -240,7 +240,7 @@ foreach ( $ER_LEVELS AS $value => $title )
 // =============================== 
 date_default_timezone_set($old_tz);
 
-require_once(LEPTON_PATH . '/framework/class.pages.php');
+require_once(CAT_PATH . '/framework/class.pages.php');
 $pages = new pages();
 
 // ============================ 

@@ -1,5 +1,5 @@
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -116,7 +116,7 @@ jQuery(document).ready(function()
 									'table':				'sections',
 									'leptoken':				getToken()
 								};
-								dialog_ajax( 'Reorder pages', ADMIN_URL + '/pages/ajax_reorder.php', dates, 'POST', 'json', false, false, false );
+								dialog_ajax( 'Reorder pages', CAT_ADMIN_URL + '/pages/ajax_reorder.php', dates, 'POST', 'json', false, false, false );
 							}
 	});
 	
@@ -132,7 +132,7 @@ jQuery(document).ready(function()
 		}
 
 		// Add message to .popup to use function set_popup_title();
-		$('.popup').html('<p>'+LEPTON_TEXT["SECTION_CONFIRM_DELETE"]+'</p>');
+		$('.popup').html('<p>'+CAT_TEXT["SECTION_CONFIRM_DELETE"]+'</p>');
 
 		// Create dates for ajax
 		var current		= $(this);
@@ -148,13 +148,13 @@ jQuery(document).ready(function()
 		// define button for confirm dialog positive
 		buttonsOpts.push(
 		{
-			'text':		LEPTON_TEXT['YES'], 'click':  function()
+			'text':		CAT_TEXT['YES'], 'click':  function()
 				{
 					$.ajax(
 					{
 						type:		'GET',
 						context:	current.closest('.fc_module_block'),
-						url:		ADMIN_URL + '/pages/ajax_sections_save.php',
+						url:		CAT_ADMIN_URL + '/pages/ajax_sections_save.php',
 						dataType:	'json',
 						data:		dates,
 						cache:		false,
@@ -191,7 +191,7 @@ jQuery(document).ready(function()
 		// define button for confirm dialog negative
 		buttonsOpts.push(
 		{
-			'text':		LEPTON_TEXT['NO'], 'click':  function()
+			'text':		CAT_TEXT['NO'], 'click':  function()
 				{
 					$('.popup').dialog('destroy').remove();
 				},
@@ -204,7 +204,7 @@ jQuery(document).ready(function()
 			modal:			true,
 			show:			'fade',
 			closeOnEscape:	true,
-			title:			LEPTON_TEXT["SECTION_DELETE"],
+			title:			CAT_TEXT["SECTION_DELETE"],
 			buttons:		buttonsOpts
 		});
 
@@ -245,7 +245,7 @@ jQuery(document).ready(function()
 		{
 			type:		'GET',
 			context:	current,
-			url:		ADMIN_URL + '/pages/ajax_sections_save.php',
+			url:		CAT_ADMIN_URL + '/pages/ajax_sections_save.php',
 			dataType:	'json',
 			data:		dates,
 			cache:		false,

@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -51,7 +51,7 @@ $js_back = "javascript: history.go(-1);";
 // $advanced = ($_POST['advanced'] == 'yes') ? '?advanced=yes' : '';
 // $submit = isset ($_POST['submit']) && ($_POST['submit'] == $TEXT['SAVE']) ? 'save' : 'advanced';
 
-require_once (LEPTON_PATH.'/framework/class.admin.php');
+require_once (CAT_PATH.'/framework/class.admin.php');
 /**
  *	Getting the admin-instance and print the "admin header"
  *
@@ -100,7 +100,7 @@ function save_settings(&$admin, &$database)
 	 *	Query current settings in the db, then loop through them to get old values
 	 *
 	 */
-	$sql = 'SELECT `name`, `value` FROM `'.TABLE_PREFIX.'settings` ORDER BY `name`';
+	$sql = 'SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'settings` ORDER BY `name`';
 	if (false !== ($res_settings = $database->query($sql))) {
 		while( false !== ($row = $res_settings->fetchRow( MYSQL_ASSOC ) ) ) {
 			$old_settings[$row['name']] = $row['value'];
@@ -137,32 +137,32 @@ function save_settings(&$admin, &$database)
 	$default_date_format = $admin->get_post('default_date_format');
 	$date_format_key = str_replace(' ', '|', $default_date_format);
 	global $DATE_FORMATS;
-	include (ADMIN_PATH.'/interface/date_formats.php');
+	include (CAT_ADMIN_PATH.'/interface/date_formats.php');
 	$settings['default_date_format'] = (array_key_exists($date_format_key, $DATE_FORMATS) ? $default_date_format : $old_settings['default_date_format']);
 	unset ($DATE_FORMATS);
 	// time_format must be a key from /interface/time_formats
 	$time_format = $admin->get_post('default_time_format');
 	$time_format_key = str_replace(' ', '|', $time_format);
 	global $TIME_FORMATS;
-	include (ADMIN_PATH.'/interface/time_formats.php');
+	include (CAT_ADMIN_PATH.'/interface/time_formats.php');
 	$settings['default_time_format'] = (array_key_exists($time_format_key, $TIME_FORMATS) ? $time_format : $old_settings['default_time_format']);
 	unset ($TIME_FORMATS);
 	// charsets must be a key from /interface/charsets
 	$char_set = ($admin->get_post('default_charset'));
 	global $CHARSETS;
-	include (ADMIN_PATH.'/interface/charsets.php');
+	include (CAT_ADMIN_PATH.'/interface/charsets.php');
 	$settings['default_charset'] = (array_key_exists($char_set, $CHARSETS) ? $char_set : $old_settings['default_charset']);
 	unset ($CHARSETS);
 	//  error reporting values validation
 	global $ER_LEVELS;
-	require (ADMIN_PATH.'/interface/er_levels.php');
+	require (CAT_ADMIN_PATH.'/interface/er_levels.php');
 	$settings['er_level'] = isset ($settings['er_level']) && (array_key_exists($settings['er_level'], $ER_LEVELS)) ? intval($settings['er_level']) : $old_settings['er_level'];
 	unset ($ER_LEVELS);
 	//  count groups_id and <> 1, do it with sql statement if groups were added
 	$settings['frontend_login'] = $settings['frontend_login']=='' ? 'false' : 'true';
 	if (isset ($settings['frontend_signup']))
 	{
-		$sql = 'SELECT count(*) AS `tcount` FROM '.TABLE_PREFIX.'groups ';
+		$sql = 'SELECT count(*) AS `tcount` FROM '.CAT_TABLE_PREFIX.'groups ';
 		if (($result = $database->query($sql)) && ($result->numRows() > 0))
 		{
 			$row = $result->fetchRow();
@@ -229,12 +229,12 @@ function save_settings(&$admin, &$database)
 		$settings['string_dir_mode'] = '0755';
 	}
 
-	include LEPTON_PATH.'/framework/backend_switch.php';
+	include CAT_PATH.'/framework/backend_switch.php';
 
 	// check home folder settings
 	// remove home folders for all users if the option is changed to "false"
 	if ( !isset($settings['home_folders']) && $old_settings['home_folders'] == 'true' ) {
-		$sql = 'UPDATE `'.TABLE_PREFIX.'users` ';
+		$sql = 'UPDATE `'.CAT_TABLE_PREFIX.'users` ';
 		$sql .= 'SET `home_folder` = \'\';';
 		if (!$database->query($sql))
 		{
@@ -318,7 +318,7 @@ function save_settings(&$admin, &$database)
 	if (sizeof($err_msg) == 0)
 	{
 	// Query current settings in the db, then loop through them and update the db with the new value
-		$sql = 'SELECT `name` FROM `'.TABLE_PREFIX.'settings` ';
+		$sql = 'SELECT `name` FROM `'.CAT_TABLE_PREFIX.'settings` ';
 		$sql .= 'ORDER BY `name`';
 		$results = $database->query($sql);
 		while (false !== ($row = $results->fetchRow()))
@@ -337,7 +337,7 @@ function save_settings(&$admin, &$database)
 			if ((trim($value) <> '') || $passed == true )
 			{
 				$value = trim($admin->add_slashes($value));
-				$sql = 'UPDATE `'.TABLE_PREFIX.'settings` ';
+				$sql = 'UPDATE `'.CAT_TABLE_PREFIX.'settings` ';
 				$sql .= 'SET `value` = \''.$value.'\' ';
 				$sql .= 'WHERE `name` <> \'wb_version\' ';
 				$sql .= 'AND `name` = \''.$setting_name.'\' ';
@@ -353,7 +353,7 @@ function save_settings(&$admin, &$database)
 			}
 		}
 		// Query current search settings in the db, then loop through them and update the db with the new value
-		$sql = 'SELECT `name`, `value` FROM `'.TABLE_PREFIX.'search` ';
+		$sql = 'SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'search` ';
 		$sql .= 'WHERE `extra` = ""';
 		$res_search = $database->query($sql);
 		while (false !== ($row = $res_search->fetchRow()))
@@ -368,7 +368,7 @@ function save_settings(&$admin, &$database)
 				$value = (($value == '') && ($setting_name == 'template')) ? $settings['default_template'] : $admin->get_post($post_name);
 				$value = (($admin->get_post($post_name) == '') && ($setting_name != 'template')) ? $value : $admin->get_post($post_name);
 				$value = $admin->add_slashes($value);
-				$sql = 'UPDATE `'.TABLE_PREFIX.'search` ';
+				$sql = 'UPDATE `'.CAT_TABLE_PREFIX.'search` ';
 				$sql .= 'SET `value` = "'.$value.'" ';
 				$sql .= 'WHERE `name` = "'.$row['name'].'" ';
 				$sql .= 'AND `extra` = ""';

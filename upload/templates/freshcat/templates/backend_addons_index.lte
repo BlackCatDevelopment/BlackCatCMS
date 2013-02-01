@@ -95,7 +95,7 @@
 			<span class="fc_label_120">{translate('Version')}:</span>{$addon.version}<br/>
 			<span class="fc_label_120">{translate('Author')}:</span>{$addon.author}<br/>
 			{if $addon.function}<span class="fc_label_120">{translate('Function')}:</span>{$addon.function}<br/>{/if}
-			<span class="fc_label_120">{translate('Designed for')}:</span>LEPTON {$addon.platform}<br/>
+			<span class="fc_label_120">{translate('Designed for')}:</span>Black Cat CMS {$addon.platform}<br/>
 			<span class="fc_label_120">{translate('License')}:</span>{$addon.license}<br/>
 			</p>
 			{if $permissions.MODULES_UNINSTALL && !$addon.UNINSTALLED}

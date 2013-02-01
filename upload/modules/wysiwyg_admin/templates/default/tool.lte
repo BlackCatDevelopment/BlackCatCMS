@@ -66,6 +66,6 @@
 
     <div class="buttons">
         <input type="submit" value="{$TEXT.SAVE}" />
-        <input type="button" value="{$TEXT.CANCEL}" onclick="document.location='<?php echo ADMIN_URL; ?>/admintools/index.php<?php echo $leptoken; ?>';" />
+        <input type="button" value="{$TEXT.CANCEL}" onclick="document.location='<?php echo CAT_ADMIN_URL; ?>/admintools/index.php<?php echo $leptoken; ?>';" />
     </div>
 </form>

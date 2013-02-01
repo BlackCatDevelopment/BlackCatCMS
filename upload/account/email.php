@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -46,7 +46,7 @@ $js_back = "javascript: history.go(-1);";
 
 // Get existing password
 $database = new database();
-$query    = "SELECT user_id FROM " . TABLE_PREFIX . "users WHERE user_id = '" . $wb->get_user_id() . "' AND password = '" . md5( $current_password ) . "'";
+$query    = "SELECT user_id FROM " . CAT_TABLE_PREFIX . "users WHERE user_id = '" . $wb->get_user_id() . "' AND password = '" . md5( $current_password ) . "'";
 $results  = $database->query( $query );
 
 if ( $results->numRows() == 0 )
@@ -63,7 +63,7 @@ $email = $wb->add_slashes( $email );
 
 // Update the database
 $database = new database();
-$query    = "UPDATE " . TABLE_PREFIX . "users SET email = '$email' WHERE user_id = '" . $wb->get_user_id() . "' AND password = '" . md5( $current_password ) . "'";
+$query    = "UPDATE " . CAT_TABLE_PREFIX . "users SET email = '$email' WHERE user_id = '" . $wb->get_user_id() . "' AND password = '" . md5( $current_password ) . "'";
 $database->query( $query );
 if ( $database->is_error() )
 {
@@ -71,7 +71,7 @@ if ( $database->is_error() )
 }
 else
 {
-	$wb->print_success( $MESSAGE[ 'PREFERENCES_EMAIL_UPDATED' ], WB_URL . '/account/preferences.php' );
+	$wb->print_success( $MESSAGE[ 'PREFERENCES_EMAIL_UPDATED' ], CAT_URL . '/account/preferences.php' );
 	$_SESSION[ 'EMAIL' ] = $email;
 }
 

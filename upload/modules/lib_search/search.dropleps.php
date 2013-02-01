@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -12,14 +12,14 @@
  * @author        Ralf Hertsch <rh@lepton-cms.org>
  * @copyright     2004 - 2010 WebsiteBaker Project
  * @copyright     since 2011 LEPTON Project
- * @link          http://www.lepton-cms.org
+ * @link          http://blackcat-cms.org
  * @license       http://www.gnu.org/licenses/gpl.html
  * @version       $Id: search.constants.php 1526 2011-12-27 05:12:34Z phpmanufaktur $
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -49,7 +49,7 @@ if (defined('LEPTON_PATH')) {
 function register_droplep_for_search($droplep_name, $page_id, $module_directory) {
     global $database;
     
-    $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep' AND value='%s'", TABLE_PREFIX, $droplep_name);
+    $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep' AND value='%s'", CAT_TABLE_PREFIX, $droplep_name);
     if (false === ($query = $database->query($SQL))) {
         trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
     }
@@ -62,9 +62,9 @@ function register_droplep_for_search($droplep_name, $page_id, $module_directory)
     }
     // DropLEP is not registered
     $module_directory = str_replace(array('/','\\'), '', $module_directory);
-    if (!file_exists(LEPTON_PATH.'/modules/'.$module_directory.'/search.php')) return false;
+    if (!file_exists(CAT_PATH.'/modules/'.$module_directory.'/search.php')) return false;
     $SQL = sprintf("INSERT INTO %ssearch (name, value, extra) VALUES ('droplep', '%s', '%s')",
-        TABLE_PREFIX,
+        CAT_TABLE_PREFIX,
         $droplep_name,
         serialize(array('page_id' => $page_id, 'module_directory' => $module_directory)));
     if (!$database->query($SQL)) {
@@ -82,7 +82,7 @@ function register_droplep_for_search($droplep_name, $page_id, $module_directory)
  */
 function unregister_droplep_for_search($droplep_name, $page_id) {
     global $database;
-    $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep' AND value='%s'", TABLE_PREFIX, $droplep_name);
+    $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep' AND value='%s'", CAT_TABLE_PREFIX, $droplep_name);
     if (false === ($query = $database->query($SQL))) {
         trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
     }
@@ -90,7 +90,7 @@ function unregister_droplep_for_search($droplep_name, $page_id) {
         $value = unserialize($droplep['extra']);
         if (isset($value['page_id']) && ($value['page_id'] == $page_id)) {
             // the DropLEP is registered for this page_id
-            $SQL = sprintf("DELETE FROM %ssearch WHERE search_id='%s'", TABLE_PREFIX, $droplep['search_id']);
+            $SQL = sprintf("DELETE FROM %ssearch WHERE search_id='%s'", CAT_TABLE_PREFIX, $droplep['search_id']);
             if (!$database->query($SQL)) {
                 trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
             }
@@ -108,7 +108,7 @@ function unregister_droplep_for_search($droplep_name, $page_id) {
  */
 function is_droplep_registered_for_search($droplep_name) { 
    global $database;
-   $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep' AND value='%s'", TABLE_PREFIX, $droplep_name);
+   $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep' AND value='%s'", CAT_TABLE_PREFIX, $droplep_name);
    if (false === ($query = $database->query($SQL))) {
        trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
    }
@@ -124,7 +124,7 @@ function is_droplep_registered_for_search($droplep_name) {
  */
 function get_droplep_page_ids_for_search($droplep_name) {
     global $database;
-    $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep' AND value='%s'", TABLE_PREFIX, $droplep_name);
+    $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep' AND value='%s'", CAT_TABLE_PREFIX, $droplep_name);
     if (false === ($query = $database->query($SQL))) {
         trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
     }

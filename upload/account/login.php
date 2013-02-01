@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -42,12 +42,12 @@ if ( !FRONTEND_LOGIN )
 {
 	if ( INTRO_PAGE )
 	{
-		header( 'Location: ' . WB_URL . PAGES_DIRECTORY . '/index.php' );
+		header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' );
 		exit( 0 );
 	}
 	else
 	{
-		header( 'Location: ' . WB_URL . '/index.php' );
+		header( 'Location: ' . CAT_URL . '/index.php' );
 		exit( 0 );
 	}
 }
@@ -64,29 +64,29 @@ define( 'PAGE_TITLE', $TEXT[ 'PLEASE_LOGIN' ] );
 define( 'MENU_TITLE', $TEXT[ 'PLEASE_LOGIN' ] );
 define( 'VISIBILITY', 'public' );
 // Set the page content include file
-define( 'PAGE_CONTENT', WB_PATH . '/account/login_form.php' );
+define( 'PAGE_CONTENT', CAT_PATH . '/account/login_form.php' );
 
-require_once( WB_PATH . '/framework/class.login.php' );
+require_once( CAT_PATH . '/framework/class.login.php' );
 
 // Create new login app
 $redirect = strip_tags( ( isset( $_POST[ 'redirect' ] ) ) ? $_POST[ 'redirect' ] : '' );
 $thisApp  = new Login( array(
 	"MAX_ATTEMPTS" => MAX_ATTEMPTS,
-	"WARNING_URL" => THEME_URL . "/templates/warning.html",
+	"WARNING_URL" => CAT_THEME_URL . "/templates/warning.html",
 	"USERNAME_FIELDNAME" => 'username',
 	"PASSWORD_FIELDNAME" => 'password',
 	"MIN_USERNAME_LEN" => AUTH_MIN_LOGIN_LENGTH,
 	"MIN_PASSWORD_LEN" => AUTH_MIN_PASS_LENGTH,
 	"MAX_USERNAME_LEN" => AUTH_MAX_LOGIN_LENGTH,
 	"MAX_PASSWORD_LEN" => AUTH_MAX_PASS_LENGTH,
-	"LOGIN_URL" => WB_URL . "/account/login.php?redirect=" . $redirect,
-	"DEFAULT_URL" => WB_URL . PAGES_DIRECTORY . "/index.php",
-	"TEMPLATE_DIR" => THEME_PATH . "/templates",
+	"LOGIN_URL" => CAT_URL . "/account/login.php?redirect=" . $redirect,
+	"DEFAULT_URL" => CAT_URL . PAGES_DIRECTORY . "/index.php",
+	"TEMPLATE_DIR" => CAT_THEME_PATH . "/templates",
 	"TEMPLATE_FILE" => "login.htt",
 	"FRONTEND" => true,
-	"FORGOTTEN_DETAILS_APP" => WB_URL . "/account/forgot.php",
-	"USERS_TABLE" => TABLE_PREFIX . "users",
-	"GROUPS_TABLE" => TABLE_PREFIX . "groups",
+	"FORGOTTEN_DETAILS_APP" => CAT_URL . "/account/forgot.php",
+	"USERS_TABLE" => CAT_TABLE_PREFIX . "users",
+	"GROUPS_TABLE" => CAT_TABLE_PREFIX . "groups",
 	"REDIRECT_URL" => $redirect
 ));
 
@@ -94,6 +94,6 @@ $thisApp  = new Login( array(
 $globals[] = 'thisApp';
 
 // Include the index (wrapper) file
-require( WB_PATH . '/index.php' );
+require( CAT_PATH . '/index.php' );
 
 ?>

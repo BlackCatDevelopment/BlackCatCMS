@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	if (defined('LEPTON_VERSION')) include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,6 +32,6 @@ if (defined('WB_PATH')) {
 
 global $database;
 
-$database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_form_fields`");
-$database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_form_settings`");
-$database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_form_submissions`");
+$database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_form_fields`");
+$database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_form_settings`");
+$database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_form_submissions`");

@@ -1,5 +1,5 @@
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -87,7 +87,7 @@
 	{
 		var defaults	=
 		{
-			get_url:			ADMIN_URL + '/groups/ajax_get_group.php',
+			get_url:			CAT_ADMIN_URL + '/groups/ajax_get_group.php',
 			activity_message:	'Loading group',
 			addOnly:			$('.fc_addGroup'),
 			modifyOnly:			$('.fc_modifyGroup'),
@@ -251,7 +251,7 @@ jQuery(document).ready(function()
 	$('.fc_group_list').children('li').set_list_click();
 	$('.fc_user_list').children('li').set_list_click(
 	{
-		get_url:			ADMIN_URL + '/users/ajax_get_user.php',
+		get_url:			CAT_ADMIN_URL + '/users/ajax_get_user.php',
 		activity_message:	'Loading user',
 		addOnly:			$('.fc_addUser'),
 		modifyOnly:			$('.fc_modifyUser'),
@@ -314,7 +314,7 @@ jQuery(document).ready(function()
 		{
 			type:		'POST',
 			context:	current,
-			url:		ADMIN_URL + '/groups/ajax_save_group.php',
+			url:		CAT_ADMIN_URL + '/groups/ajax_save_group.php',
 			dataType:	'JSON',
 			data:		dates,
 			cache:		false,
@@ -368,7 +368,7 @@ jQuery(document).ready(function()
 		{
 			type:		'POST',
 			context:	current,
-			url:		ADMIN_URL + '/users/ajax_save_user.php',
+			url:		CAT_ADMIN_URL + '/users/ajax_save_user.php',
 			dataType:	'JSON',
 			data:		dates,
 			cache:		false,
@@ -392,7 +392,7 @@ jQuery(document).ready(function()
 					else {
 						$('<li class="fc_group_item icon-user fc_border fc_gradient1 fc_gradient_hover"><span class="fc_display_name">' + data.display_name + '</span><br/><span class="fc_list_name">' + data.username + '</span><input type="hidden" name="user_id" value="' + data.id + '" /></li>').appendTo('#fc_list_overview').set_list_click(
 							{
-								get_url:			ADMIN_URL + '/users/ajax_get_user.php',
+								get_url:			CAT_ADMIN_URL + '/users/ajax_get_user.php',
 								activity_message:	'Loading user',
 								addOnly:			$('.fc_addUser'),
 								modifyOnly:			$('.fc_modifyUser'),
@@ -438,7 +438,7 @@ jQuery(document).ready(function()
 			},
 			url		= kind == 'group' ? '/groups/ajax_delete_group.php' : '/users/ajax_delete_user.php';
 
-		dialog_confirm( 'You really want to delete this ' + kind + '?', 'Removing group', ADMIN_URL + url, dates, 'POST', 'JSON', false, afterSend, current_li );
+		dialog_confirm( 'You really want to delete this ' + kind + '?', 'Removing group', CAT_ADMIN_URL + url, dates, 'POST', 'JSON', false, afterSend, current_li );
 	});
 
 	$('ul.fc_groups_tabs').find('a').click( function(e)

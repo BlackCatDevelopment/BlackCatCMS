@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -38,14 +38,14 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 /* Include  phpLib-template parser */
-require_once( WB_PATH . '/include/phplib/template.inc' );
-require_once( WB_PATH . '/framework/timezones.php' );
+require_once( CAT_PATH . '/include/phplib/template.inc' );
+require_once( CAT_PATH . '/framework/timezones.php' );
 
 // see if there exists a template file in "account-htt" folder  inside the current template
 $paths = array(
-	WB_PATH . "/templates/" . TEMPLATE,
-	WB_PATH . "/templates/" . TEMPLATE . "/htt",
-	WB_PATH . "/templates/" . DEFAULT_THEME . "/templates",
+	CAT_PATH . "/templates/" . TEMPLATE,
+	CAT_PATH . "/templates/" . TEMPLATE . "/htt",
+	CAT_PATH . "/templates/" . DEFAULT_THEME . "/templates",
 	dirname( __FILE__ ) . '/htt'
 );
 
@@ -79,7 +79,7 @@ $tpl->set_file( 'preferences', 'preferences_form.htt' );
  */
 $tpl->set_block( 'preferences', 'languages_values_block', 'languages_values_output' );
 
-$query  = "SELECT `directory`,`name` from `" . TABLE_PREFIX . "addons` where `type`='language'";
+$query  = "SELECT `directory`,`name` from `" . CAT_TABLE_PREFIX . "addons` where `type`='language'";
 $result = $database->query( $query );
 if ( !$result )
 {
@@ -119,7 +119,7 @@ foreach ( $timezone_table as $title )
 $tpl->set_block( 'preferences', 'date_format_block', 'date_format_output' );
 
 $user_time = true;
-require_once( WB_PATH . '/framework/date_formats.php' );
+require_once( CAT_PATH . '/framework/date_formats.php' );
 foreach ( $DATE_FORMATS AS $format => $title )
 {
 	$format = str_replace( '|', ' ', $format ); // Add's white-spaces (not able to be stored in array key)
@@ -153,7 +153,7 @@ foreach ( $DATE_FORMATS AS $format => $title )
 $tpl->set_block( 'preferences', 'time_format_block', 'time_format_output' );
 
 //$user_time = true;
-require_once( WB_PATH . '/framework/time_formats.php' );
+require_once( CAT_PATH . '/framework/time_formats.php' );
 foreach ( $TIME_FORMATS AS $format => $title )
 {
 	$format = str_replace( '|', ' ', $format ); // Add's white-spaces (not able to be stored in array key)
@@ -188,7 +188,7 @@ $_SESSION[ 'wb_apf_hash' ] = $hash;
 
 $tpl->set_var( array(
 	'TEMPLATE_DIR' => TEMPLATE_DIR,
-	'WB_URL' => WB_URL,
+	'CAT_URL' => CAT_URL,
 	'PREFERENCES_URL' => PREFERENCES_URL,
 	'LOGOUT_URL' => LOGOUT_URL,
 	'HEADING_MY_SETTINGS' => $HEADING[ 'MY_SETTINGS' ],

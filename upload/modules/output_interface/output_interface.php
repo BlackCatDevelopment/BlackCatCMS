@@ -8,8 +8,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -38,11 +38,11 @@ if (!function_exists('output_interface')) {
 	 */
 	function output_interface($output) {
 		global $database;
-		$SQL = sprintf("SELECT * FROM %smod_output_interface", TABLE_PREFIX);
+		$SQL = sprintf("SELECT * FROM %smod_output_interface", CAT_TABLE_PREFIX);
 		if (false !== ($result = $database->query($SQL))) {
 			while(false !== ($data = $result->fetchRow(MYSQL_ASSOC))) {
-				if (file_exists(WB_PATH.'/modules/'.$data['module_directory'].'/output_interface.php')) {
-					include(WB_PATH.'/modules/'.$data['module_directory'].'/output_interface.php');
+				if (file_exists(CAT_PATH.'/modules/'.$data['module_directory'].'/output_interface.php')) {
+					include(CAT_PATH.'/modules/'.$data['module_directory'].'/output_interface.php');
 					$user_func = $data['module_directory'].'_output_filter';
 					if (function_exists($user_func)) {
 						$output = call_user_func($user_func, $output);
@@ -68,10 +68,10 @@ if (!function_exists('register_output_filter')) {
 	 */
 	function register_output_filter($module_directory, $module_name) {
 		global $database;
-		$SQL = sprintf("SELECT * FROM %smod_output_interface WHERE module_directory='%s'", TABLE_PREFIX, $module_directory);
+		$SQL = sprintf("SELECT * FROM %smod_output_interface WHERE module_directory='%s'", CAT_TABLE_PREFIX, $module_directory);
 		if (false !== ($data = $database->get_one($SQL, MYSQL_ASSOC))) {
 			if (empty($data)) {
-				$SQL = sprintf("INSERT INTO %smod_output_interface SET module_directory='%s', module_name='%s'", TABLE_PREFIX, $module_directory, $module_name);
+				$SQL = sprintf("INSERT INTO %smod_output_interface SET module_directory='%s', module_name='%s'", CAT_TABLE_PREFIX, $module_directory, $module_name);
 				if (!$database->query($SQL)) {
 					trigger_error(sprintf("[%s] %s", __FUNCTION__, $database->get_error()));
 					return false;
@@ -96,7 +96,7 @@ if (!function_exists('unregister_output_filter')) {
 	 */
 	function unregister_output_filter($module_directory) {
 		global $database;
-		$SQL = sprintf("DELETE FROM %smod_output_interface WHERE module_directory='%s'", TABLE_PREFIX, $module_directory);
+		$SQL = sprintf("DELETE FROM %smod_output_interface WHERE module_directory='%s'", CAT_TABLE_PREFIX, $module_directory);
 		if (!$database->query($SQL)) {
 			trigger_error(sprintf('[%s] %s', __FUNCTION__, $database->get_error()));
 			return false;

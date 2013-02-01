@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -41,20 +41,20 @@ if ( !FRONTEND_LOGIN )
 {
 	if ( INTRO_PAGE )
 	{
-		die( header( 'Location: ' . WB_URL . PAGES_DIRECTORY . '/index.php' ) );
+		die( header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' ) );
 	}
 	else
 	{
-		die( header( 'Location: ' . WB_URL . '/index.php' ) );
+		die( header( 'Location: ' . CAT_URL . '/index.php' ) );
 	}
 }
 
-include_once( WB_PATH . '/framework/timezones.php' );
-require_once( WB_PATH . '/framework/class.wb.php' );
+include_once( CAT_PATH . '/framework/timezones.php' );
+require_once( CAT_PATH . '/framework/class.wb.php' );
 $wb_inst = new wb();
 if ( $wb_inst->is_authenticated() == false )
 {
-	die( header( 'Location: ' . WB_URL . '/account/login.php' ) );
+	die( header( 'Location: ' . CAT_URL . '/account/login.php' ) );
 }
 
 $submit_ok = false;
@@ -69,7 +69,7 @@ if ( isset( $_POST[ 'save' ] ) && ( $_POST[ 'save' ] == 'account_settings' ) )
 			 *
 			 */
 			$user_id = $_SESSION[ 'USER_ID' ];
-			$query   = "SELECT `password` from `" . TABLE_PREFIX . "users` where `user_id`='" . $user_id . "' AND `password`='" . md5( $_POST[ 'current_password' ] ) . "'";
+			$query   = "SELECT `password` from `" . CAT_TABLE_PREFIX . "users` where `user_id`='" . $user_id . "' AND `password`='" . md5( $_POST[ 'current_password' ] ) . "'";
 			$result  = $database->query( $query );
 			if ( $result->numRows() == 1 )
 			{
@@ -110,7 +110,7 @@ if (true === $submit_ok) {
 	} else {
 	// check that email is unique in whoole system
 		$email = $wb_inst->add_slashes($email);
-		$sql  = 'SELECT COUNT(*) FROM `'.TABLE_PREFIX.'users` ';
+		$sql  = 'SELECT COUNT(*) FROM `'.CAT_TABLE_PREFIX.'users` ';
 		$sql .= 'WHERE `user_id` <> '.(int)$wb_inst->get_user_id().' AND `email` LIKE "'.$email.'"';
 		if( $database->get_one($sql) > 0 ){
 			$errors[] = $MESSAGE['USERS_EMAIL_TAKEN'];
@@ -133,7 +133,7 @@ if (true === $submit_ok) {
 	$date_format      = $wb_inst->get_post('date_format');
 	$date_format_key  = str_replace(' ', '|', $date_format);
 	$user_time = true;
-	include( ADMIN_PATH.'/interface/date_formats.php' );
+	include( CAT_ADMIN_PATH.'/interface/date_formats.php' );
 	$date_format = (array_key_exists($date_format_key, $DATE_FORMATS) ? $date_format : 'system_default');
 	$date_format = ($date_format == 'system_default' ? '' : $date_format);
 	unset($DATE_FORMATS);
@@ -142,7 +142,7 @@ if (true === $submit_ok) {
 	$time_format      = $wb_inst->get_post('time_format');
 	$time_format_key  = str_replace(' ', '|', $time_format);
 	$user_time = true;
-	include( ADMIN_PATH.'/interface/time_formats.php' );
+	include( CAT_ADMIN_PATH.'/interface/time_formats.php' );
 	$time_format = (array_key_exists($time_format_key, $TIME_FORMATS) ? $time_format : 'system_default');
 	$time_format = ($time_format == 'system_default' ? '' : $time_format);
 	unset($TIME_FORMATS);
@@ -161,7 +161,7 @@ if (true === $submit_ok) {
 	}
 	
 	if (count($errors) == 0) {
-		$q = "UPDATE `".TABLE_PREFIX."users` SET ";
+		$q = "UPDATE `".CAT_TABLE_PREFIX."users` SET ";
 		foreach($fields as $key=>$value) $q .= "`".$key."`='".mysql_real_escape_string($value)."', ";
 		$q = substr($q, 0, -2) . " WHERE `user_id`='".$_SESSION['USER_ID']."'";
 	
@@ -226,12 +226,12 @@ define( 'VISIBILITY', 'public' );
  *	Set the page content include file
  *
  */
-define( 'PAGE_CONTENT', WB_PATH . '/account/preferences_form.php' );
+define( 'PAGE_CONTENT', CAT_PATH . '/account/preferences_form.php' );
 
 /**
  *	Include the index (wrapper) file
  *
  */
-require( WB_PATH . '/index.php' );
+require( CAT_PATH . '/index.php' );
 
 ?>

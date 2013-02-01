@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -16,9 +16,9 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if ( defined( 'WB_PATH' ) )
+if ( defined( 'CAT_PATH' ) )
 {
-    include( WB_PATH . '/framework/class.secure.php' );
+    include( CAT_PATH . '/framework/class.secure.php' );
 }
 else
 {
@@ -42,12 +42,12 @@ else
 
 
 $parser->setGlobals( array(
-    'IMGURL' => WB_URL . '/modules/dropleps/css/images',
-    'DOCURL' => WB_URL . '/modules/dropleps/docs/readme.html',
-    'action' => ADMIN_URL . '/admintools/tool.php?tool=dropleps'
+    'IMGURL' => CAT_URL . '/modules/dropleps/css/images',
+    'DOCURL' => CAT_URL . '/modules/dropleps/docs/readme.html',
+    'action' => CAT_ADMIN_URL . '/admintools/tool.php?tool=dropleps'
 ) );
-$parser->setPath( WB_PATH . '/modules/dropleps/templates/custom' );
-$parser->setFallbackPath( WB_PATH . '/modules/dropleps/templates/default' );
+$parser->setPath( CAT_PATH . '/modules/dropleps/templates/custom' );
+$parser->setFallbackPath( CAT_PATH . '/modules/dropleps/templates/default' );
 
 $admin->lang->debug( true );
 
@@ -128,7 +128,7 @@ function list_dropleps( $info = NULL )
     $rows = array();
 
     $fields = 't1.id, name, code, description, active, comments, view_groups, edit_groups';
-    $query  = $database->query( "SELECT $fields FROM " . TABLE_PREFIX . "mod_droplets AS t1 LEFT OUTER JOIN " . TABLE_PREFIX . "mod_dropleps_permissions AS t2 ON t1.id=t2.id ORDER BY name ASC" );
+    $query  = $database->query( "SELECT $fields FROM " . CAT_TABLE_PREFIX . "mod_droplets AS t1 LEFT OUTER JOIN " . CAT_TABLE_PREFIX . "mod_dropleps_permissions AS t2 ON t1.id=t2.id ORDER BY name ASC" );
 
     if ( $query->numRows() )
     {
@@ -218,7 +218,7 @@ function manage_backups()
         {
             @include_once( dirname( __FILE__ ) . '/include.php' );
         }
-        $temp_unzip = $dirh->sanitizePath( WB_PATH . '/temp/unzip/' );
+        $temp_unzip = $dirh->sanitizePath( CAT_PATH . '/temp/unzip/' );
         $result     = dropleps_import( $dirh->sanitizePath( dirname( __FILE__ ) . '/export/' . $_REQUEST[ 'recover' ] ), $temp_unzip );
         $info       = $admin->lang->translate( 'Successfully imported [{{count}}] Droplep(s)', array(
              'count' => $result[ 'count' ]
@@ -278,7 +278,7 @@ function manage_backups()
                 'date' => strftime( '%c', $stat[ 'ctime' ] ),
                 'files' => count( $count ),
                 'listfiles' => implode( ", ", array_map( create_function( '$cnt', 'return $cnt["filename"];' ), $count ) ),
-                'download' => sanitize_url( WB_URL . '/modules/dropleps/export/' . basename( $file ) )
+                'download' => sanitize_url( CAT_URL . '/modules/dropleps/export/' . basename( $file ) )
             );
         }
     }
@@ -308,7 +308,7 @@ function manage_perms()
     }
 
     // get available groups
-    $query = $database->query( 'SELECT group_id, name FROM ' . TABLE_PREFIX . 'groups ORDER BY name' );
+    $query = $database->query( 'SELECT group_id, name FROM ' . CAT_TABLE_PREFIX . 'groups ORDER BY name' );
     if ( $query->numRows() )
     {
         while ( $row = $query->fetchRow( MYSQL_ASSOC ) )
@@ -323,7 +323,7 @@ function manage_perms()
         {
             if ( isset( $_REQUEST[ $key ] ) )
             {
-                $database->query( 'UPDATE ' . TABLE_PREFIX . "mod_dropleps_settings SET value='" . implode( '|', $_REQUEST[ $key ] ) . "' WHERE attribute='" . $key . "';" );
+                $database->query( 'UPDATE ' . CAT_TABLE_PREFIX . "mod_dropleps_settings SET value='" . implode( '|', $_REQUEST[ $key ] ) . "' WHERE attribute='" . $key . "';" );
             }
         }
         // reload settings
@@ -389,14 +389,14 @@ function export_dropleps()
         return $admin->lang->translate( 'Please mark some Dropleps to export' );
     }
 
-    $temp_dir = WB_PATH . '/temp/dropleps/';
+    $temp_dir = CAT_PATH . '/temp/dropleps/';
 
     // make the temporary working directory
     @mkdir( $temp_dir );
 
     foreach ( $marked as $id )
     {
-        $result = $database->query( "SELECT * FROM " . TABLE_PREFIX . "mod_droplets WHERE id='$id'" );
+        $result = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id='$id'" );
         if ( $result->numRows() > 0 )
         {
             $droplet = $result->fetchRow( MYSQL_ASSOC );
@@ -445,17 +445,17 @@ function export_dropleps()
     $filename .= '_' . date( 'Y-m-d' );
 
     // while there's an existing file, add a number to the filename
-    if ( file_exists( WB_PATH . '/modules/dropleps/export/' . $filename . '.zip' ) )
+    if ( file_exists( CAT_PATH . '/modules/dropleps/export/' . $filename . '.zip' ) )
     {
         $n = 1;
-        while ( file_exists( WB_PATH . '/modules/dropleps/export/' . $filename . '_' . $n . '.zip' ) )
+        while ( file_exists( CAT_PATH . '/modules/dropleps/export/' . $filename . '_' . $n . '.zip' ) )
         {
             $n++;
         }
         $filename .= '_' . $n;
     }
 
-    $temp_file = sanitize_path( WB_PATH . '/temp/' . $filename . '.zip' );
+    $temp_file = sanitize_path( CAT_PATH . '/temp/' . $filename . '.zip' );
 
     // create zip
     $archive   = $admin->get_helper( 'Zip', $temp_file )->config( 'removePath', $temp_dir );
@@ -466,7 +466,7 @@ function export_dropleps()
     }
     else
     {
-        $export_dir = sanitize_path( WB_PATH . '/modules/dropleps/export' );
+        $export_dir = sanitize_path( CAT_PATH . '/modules/dropleps/export' );
         // create the export folder if it doesn't exist
         if ( !file_exists( $export_dir ) )
         {
@@ -475,12 +475,12 @@ function export_dropleps()
         if ( !copy( $temp_file, $export_dir . '/' . $filename . '.zip' ) )
         {
             echo '<div class="drfail">Unable to move the exported ZIP-File!</div>';
-            $download = WB_URL . '/temp/' . $filename . '.zip';
+            $download = CAT_URL . '/temp/' . $filename . '.zip';
         }
         else
         {
             unlink( $temp_file );
-            $download = sanitize_url( WB_URL . '/modules/dropleps/export/' . $filename . '.zip' );
+            $download = sanitize_url( CAT_URL . '/modules/dropleps/export/' . $filename . '.zip' );
         }
     }
 
@@ -581,9 +581,9 @@ function delete_dropleps()
     foreach ( $marked as $id )
     {
         // get the name; needed to delete data file
-        $query = $database->query( "SELECT name FROM " . TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
+        $query = $database->query( "SELECT name FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
         $data  = $query->fetchRow( MYSQL_ASSOC );
-        $database->query( "DELETE FROM " . TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
+        $database->query( "DELETE FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
         if ( $database->is_error() )
         {
             $errors[] = $admin->lang->translate( 'Unable to delete droplep: {{id}}', array(
@@ -623,7 +623,7 @@ function copy_droplep( $id )
         $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
     }
 
-    $query    = $database->query( "SELECT * FROM " . TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
+    $query    = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
     $data     = $query->fetchRow( MYSQL_ASSOC );
     $tags     = array(
         '<?php',
@@ -635,16 +635,16 @@ function copy_droplep( $id )
     $i        = 1;
 
     // look for doubles
-    $found = $database->query( 'SELECT * FROM ' . TABLE_PREFIX . "mod_droplets WHERE name='$new_name'" );
+    $found = $database->query( 'SELECT * FROM ' . CAT_TABLE_PREFIX . "mod_droplets WHERE name='$new_name'" );
     while ( $found->numRows() > 0 )
     {
         $new_name = $data[ 'name' ] . "_copy" . $i;
-        $found    = $database->query( 'SELECT * FROM ' . TABLE_PREFIX . "mod_droplets WHERE name='$new_name'" );
+        $found    = $database->query( 'SELECT * FROM ' . CAT_TABLE_PREFIX . "mod_droplets WHERE name='$new_name'" );
         $i++;
     }
 
     // generate query
-    $query = "INSERT INTO " . TABLE_PREFIX . "mod_droplets VALUES "
+    $query = "INSERT INTO " . CAT_TABLE_PREFIX . "mod_droplets VALUES "
     //         ID      NAME         CODE              DESCRIPTION                            MOD_WHEN                     MOD_BY
 		   . "('', '$new_name', '$code', '" . $data[ 'description' ] . "', '" . time() . "', '" . $admin->get_user_id() . "', 1, 1, 1, 0, '" . $data[ 'comments' ] . "' )";
 
@@ -693,7 +693,7 @@ function edit_droplep( $id )
 
     if ( $id != 'new' )
     {
-        $query        = $database->query( "SELECT * FROM " . TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
+        $query        = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
         $data         = $query->fetchRow( MYSQL_ASSOC );
     }
     else
@@ -747,7 +747,7 @@ function edit_droplep( $id )
                 if ( $id == 'new' )
                 {
                     // check for doubles
-                    $query = $database->query( "SELECT * FROM " . TABLE_PREFIX . "mod_droplets WHERE name = '$title'" );
+                    $query = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE name = '$title'" );
                     if ( $query->numRows() > 0 )
                     {
                         $problem  = $admin->lang->translate( 'There is already a droplep with the same name!' );
@@ -759,7 +759,7 @@ function edit_droplep( $id )
                     {
 						$code  = $admin->add_slashes( $content );
 						// generate query
-						$query = "INSERT INTO " . TABLE_PREFIX . "mod_droplets VALUES "
+						$query = "INSERT INTO " . CAT_TABLE_PREFIX . "mod_droplets VALUES "
 							   . "(''," . "'$title', " . "'$code', " . "'$description', " . "'$modified_when', " . "'$modified_by', " . "'$active',1,1, '$show_wysiwyg', '$comments' )";
 					    $result = $database->query( $query );
 					    if ( $database->is_error() )
@@ -772,12 +772,12 @@ function edit_droplep( $id )
                 else
                 {
                     // Update row
-                    $database->query( "UPDATE " . TABLE_PREFIX . "mod_droplets SET name = '$title', active = '$active', show_wysiwyg = '$show_wysiwyg', description = '$description', code = '"
+                    $database->query( "UPDATE " . CAT_TABLE_PREFIX . "mod_droplets SET name = '$title', active = '$active', show_wysiwyg = '$show_wysiwyg', description = '$description', code = '"
                                     . $admin->add_slashes( $content )
                                     . "', comments = '$comments', modified_when = '$modified_when', modified_by = '$modified_by' WHERE id = '$id'"
                     );
                     // reload Droplep data
-                    $query = $database->query( "SELECT * FROM " . TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
+                    $query = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
                     $data  = $query->fetchRow( MYSQL_ASSOC );
                 }
                 if ( $continue )
@@ -838,7 +838,7 @@ function edit_droplep_perms( $id )
     $info = NULL;
 
     // get available groups
-    $query = $database->query( 'SELECT group_id, name FROM ' . TABLE_PREFIX . 'groups ORDER BY name' );
+    $query = $database->query( 'SELECT group_id, name FROM ' . CAT_TABLE_PREFIX . 'groups ORDER BY name' );
     if ( $query->numRows() )
     {
         while ( $row = $query->fetchRow( MYSQL_ASSOC ) )
@@ -860,7 +860,7 @@ function edit_droplep_perms( $id )
 					? ( is_array($_REQUEST['view_groups']) ? implode('|',$_REQUEST['view_groups']) : $_REQUEST['view_groups'] )
 					: NULL
 				);
-        $database->query( 'REPLACE INTO ' . TABLE_PREFIX . "mod_dropleps_permissions VALUES( '$id', '$edit', '$view' );" );
+        $database->query( 'REPLACE INTO ' . CAT_TABLE_PREFIX . "mod_dropleps_permissions VALUES( '$id', '$edit', '$view' );" );
         $info = $admin->lang->translate( 'The Droplep was saved' );
         if ( isset( $_REQUEST[ 'save_and_back' ] ) )
         {
@@ -869,7 +869,7 @@ function edit_droplep_perms( $id )
     }
 
     // get droplep data
-    $query = $database->query( "SELECT * FROM " . TABLE_PREFIX . "mod_droplets AS t1 LEFT OUTER JOIN ".TABLE_PREFIX."mod_dropleps_permissions AS t2 ON t1.id=t2.id WHERE t1.id = '$id'" );
+    $query = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets AS t1 LEFT OUTER JOIN ".CAT_TABLE_PREFIX."mod_dropleps_permissions AS t2 ON t1.id=t2.id WHERE t1.id = '$id'" );
     $data  = $query->fetchRow( MYSQL_ASSOC );
 
     foreach ( array(
@@ -916,7 +916,7 @@ function edit_datafile( $id )
         return list_dropleps();
     }
 
-    $query = $database->query( "SELECT name FROM " . TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
+    $query = $database->query( "SELECT name FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
     $data  = $query->fetchRow( MYSQL_ASSOC );
 
     // find the file
@@ -955,7 +955,7 @@ function edit_datafile( $id )
         else
         {
             $problem = $admin->lang->translate( 'Unable to write to file [{{file}}]', array(
-                 'file' => str_ireplace( $admin->get_helper( 'Directory' )->sanitizePath( WB_PATH ), 'WB_PATH', $file )
+                 'file' => str_ireplace( $admin->get_helper( 'Directory' )->sanitizePath( CAT_PATH ), 'CAT_PATH', $file )
             ) );
         }
     }
@@ -983,12 +983,12 @@ function toggle_active( $id )
         $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
     }
 
-    $query = $database->query( "SELECT * FROM " . TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
+    $query = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
     $data  = $query->fetchRow( MYSQL_ASSOC );
 
     $new = ( $data[ 'active' ] == 1 ) ? 0 : 1;
 
-    $database->query( 'UPDATE ' . TABLE_PREFIX . "mod_droplets SET active='$new' WHERE id = '$id'" );
+    $database->query( 'UPDATE ' . CAT_TABLE_PREFIX . "mod_droplets SET active='$new' WHERE id = '$id'" );
 
 } // end function toggle_active()
 
@@ -1077,7 +1077,7 @@ function get_settings()
 {
     global $admin, $database;
     $settings = array();
-    $query    = $database->query( 'SELECT * FROM ' . TABLE_PREFIX . 'mod_dropleps_settings' );
+    $query    = $database->query( 'SELECT * FROM ' . CAT_TABLE_PREFIX . 'mod_dropleps_settings' );
     if ( $query->numRows() )
     {
         while ( $row = $query->fetchRow( MYSQL_ASSOC ) )

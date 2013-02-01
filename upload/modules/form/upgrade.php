@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -31,7 +31,7 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 // remove form from the LEPTON search - no longer supported 
-$database->query("DELETE FROM ".TABLE_PREFIX."search WHERE name = 'module' AND value = 'form'");
-$database->query("DELETE FROM ".TABLE_PREFIX."search WHERE extra = 'form'");
+$database->query("DELETE FROM ".CAT_TABLE_PREFIX."search WHERE name = 'module' AND value = 'form'");
+$database->query("DELETE FROM ".CAT_TABLE_PREFIX."search WHERE extra = 'form'");
 
 ?>

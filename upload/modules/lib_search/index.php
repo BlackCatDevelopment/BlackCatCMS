@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -12,14 +12,14 @@
  * @author        Ralf Hertsch <rh@lepton-cms.org>
  * @copyright     2004 - 2010 WebsiteBaker Project
  * @copyright     since 2011 LEPTON Project
- * @link          http://www.lepton-cms.org
+ * @link          http://blackcat-cms.org
  * @license       http://www.gnu.org/licenses/gpl.html
  * @version       $Id$
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -35,7 +35,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/library.php';
+require_once CAT_PATH.'/modules/'.basename(dirname(__FILE__)).'/library.php';
 
 // init & execute the LEPTON Search
 $search = new LEPTON_Search();

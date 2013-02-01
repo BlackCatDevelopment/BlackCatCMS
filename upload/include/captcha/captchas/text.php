@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -38,14 +38,14 @@ if (defined('WB_PATH')) {
 
 global $database;
 $name = 'text';
-$file = WB_PATH."/temp/.captcha_$name.php";
+$file = CAT_PATH."/temp/.captcha_$name.php";
 
 srand((double)microtime()*100000);
 $_SESSION['captcha'.$sec_id] = rand(0,99999);
 
 // get questions and answers
 $text_qa='';
-$table = TABLE_PREFIX.'mod_captcha_control';
+$table = CAT_TABLE_PREFIX.'mod_captcha_control';
 if($query = $database->query("SELECT ct_text FROM $table")) {
 	$data = $query->fetchRow();
 	$text_qa = $data['ct_text'];

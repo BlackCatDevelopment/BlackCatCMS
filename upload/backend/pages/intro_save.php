@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -42,9 +42,9 @@ if ( !isset($_POST['content']) )
 	exit(0);
 }
 
-require_once( LEPTON_PATH . '/framework/class.admin.php' );
+require_once( CAT_PATH . '/framework/class.admin.php' );
 // Include the WB functions file
-require_once( LEPTON_PATH . '/framework/functions.php' );
+require_once( CAT_PATH . '/framework/functions.php' );
 
 $admin			= new admin('Pages', 'pages_intro');
 $content		= $admin->strip_slashes( $admin->get_post('content') );
@@ -56,7 +56,7 @@ if (strlen($content) == 0)
 else
 {
 	// Write new content
-	$filename	= LEPTON_PATH . PAGES_DIRECTORY . '/intro' . PAGE_EXTENSION;
+	$filename	= CAT_PATH . PAGES_DIRECTORY . '/intro' . PAGE_EXTENSION;
 	$handle		= fopen($filename, 'w');
 	if ( is_writable( $filename ) )
 	{

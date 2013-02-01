@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -33,31 +33,31 @@ if (defined('WB_PATH')) {
 
 
 /* check if frontend.css file needs to be included into the <body></body> of page  */
-if ( (!function_exists('register_frontend_modfiles') || !defined('MOD_FRONTEND_CSS_REGISTERED')) && file_exists(WB_PATH .'/modules/news/frontend.css')) {
+if ( (!function_exists('register_frontend_modfiles') || !defined('MOD_FRONTEND_CSS_REGISTERED')) && file_exists(CAT_PATH .'/modules/news/frontend.css')) {
 	echo '<style type="text/css">';
-	include(WB_PATH .'/modules/news/frontend.css');
+	include(CAT_PATH .'/modules/news/frontend.css');
 	echo "\n</style>\n";
 }
 
 // check if module language file exists for the language set by the user (e.g. DE, EN)
-if(!file_exists(WB_PATH .'/modules/news/languages/'.LANGUAGE .'.php'))
+if(!file_exists(CAT_PATH .'/modules/news/languages/'.LANGUAGE .'.php'))
 {
 	// no module language file exists for the language set by the user, include default module language file EN.php
-	require_once(WB_PATH .'/modules/news/languages/EN.php');
+	require_once(CAT_PATH .'/modules/news/languages/EN.php');
 }
 else
 {
 	// a module language file exists for the language defined by the user, load it
-	require_once(WB_PATH .'/modules/news/languages/'.LANGUAGE .'.php');
+	require_once(CAT_PATH .'/modules/news/languages/'.LANGUAGE .'.php');
 }
 
-require_once(WB_PATH.'/include/captcha/captcha.php');
+require_once(CAT_PATH.'/include/captcha/captcha.php');
 
 // Get comments page template details from db
-$query_settings = $database->query("SELECT comments_page,use_captcha,commenting FROM ".TABLE_PREFIX."mod_news_settings WHERE section_id = '".SECTION_ID."'");
+$query_settings = $database->query("SELECT comments_page,use_captcha,commenting FROM ".CAT_TABLE_PREFIX."mod_news_settings WHERE section_id = '".SECTION_ID."'");
 if($query_settings->numRows() == 0)
 {
-	header("Location: ".WB_URL.PAGES_DIRECTORY."");
+	header("Location: ".CAT_URL.PAGES_DIRECTORY."");
 	exit( 0 );
 }
 else
@@ -69,7 +69,7 @@ else
 	$values = array(POST_TITLE, $MOD_NEWS['TEXT_COMMENT']);
 	echo str_replace($vars, $values, ($settings['comments_page']));
 	?>
-	<form name="comment" action="<?php echo WB_URL.'/modules/news/submit_comment.php?page_id='.PAGE_ID.'&amp;section_id='.SECTION_ID.'&amp;post_id='.POST_ID; ?>" method="post">
+	<form name="comment" action="<?php echo CAT_URL.'/modules/news/submit_comment.php?page_id='.PAGE_ID.'&amp;section_id='.SECTION_ID.'&amp;post_id='.POST_ID; ?>" method="post">
 	<?php if(ENABLED_ASP) { // add some honeypot-fields
 	?>
 	<input type="hidden" name="submitted_when" value="<?php $t=time(); echo $t; $_SESSION['submitted_when']=$t; ?>" />

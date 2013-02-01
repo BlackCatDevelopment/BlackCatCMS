@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -18,8 +18,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -55,7 +55,7 @@ function wysiwyg_search($func_vars) {
 	
 	// we have to get 'content' instead of 'text', because strip_tags() dosen't remove scripting well.
 	// scripting will be removed later on automatically
-	$table = TABLE_PREFIX."mod_wysiwyg";
+	$table = CAT_TABLE_PREFIX."mod_wysiwyg";
 	$query = $func_database->query("
 		SELECT content
 		FROM $table

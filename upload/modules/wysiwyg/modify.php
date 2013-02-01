@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -18,8 +18,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -42,7 +42,7 @@ if (defined('WB_PATH')) {
  *	Get page content
  *
  */
-$query = "SELECT `content` FROM `".TABLE_PREFIX."mod_wysiwyg` WHERE `section_id`= '".$section_id."'";
+$query = "SELECT `content` FROM `".CAT_TABLE_PREFIX."mod_wysiwyg` WHERE `section_id`= '".$section_id."'";
 $get_content = $database->query($query);
 $data = $get_content->fetchRow( MYSQL_ASSOC );
 $content = htmlspecialchars($data['content']);
@@ -50,7 +50,7 @@ $content = htmlspecialchars($data['content']);
 if(!isset($wysiwyg_editor_loaded)) {
 	$wysiwyg_editor_loaded=true;
 
-	if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(WB_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php')) {
+	if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php')) {
 		
 		function show_wysiwyg_editor( $name,$id,$content,$width,$height) {
 			echo '<textarea name="'.$name.'" id="'.$id.'" style="width: '.$width.'; height: '.$height.';">'.$content.'</textarea>';
@@ -60,7 +60,7 @@ if(!isset($wysiwyg_editor_loaded)) {
 	
 		$id_list= array();
 		
-		$query_wysiwyg = $database->query("SELECT `section_id` FROM `".TABLE_PREFIX."sections` WHERE `page_id`= '".$page_id."' AND `module`= 'wysiwyg' order by position");
+		$query_wysiwyg = $database->query("SELECT `section_id` FROM `".CAT_TABLE_PREFIX."sections` WHERE `page_id`= '".$page_id."' AND `module`= 'wysiwyg' order by position");
 		
 		if ( $query_wysiwyg->numRows() > 0) {
 			while( !false == ($wysiwyg_section = $query_wysiwyg->fetchRow( MYSQL_ASSOC ) ) ) {
@@ -68,10 +68,10 @@ if(!isset($wysiwyg_editor_loaded)) {
 				$id_list[] = 'content'.$temp_id;
 			}
 
-			require_once( WB_PATH."/modules/wysiwyg/classes/pathfinder.php");
+			require_once( CAT_PATH."/modules/wysiwyg/classes/pathfinder.php");
 			$wb_path_info = new c_pathfinder($database);
 			
-			require_once(WB_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
+			require_once(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
 			
 		}
 	}
@@ -81,7 +81,7 @@ if (isset($preview) && $preview == true) return false;
 
 ?>
 
-<form name="wysiwyg<?php echo $section_id; ?>" action="<?php echo WB_URL; ?>/modules/wysiwyg/save.php" method="post">
+<form name="wysiwyg<?php echo $section_id; ?>" action="<?php echo CAT_URL; ?>/modules/wysiwyg/save.php" method="post">
 
 <input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
 <input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />

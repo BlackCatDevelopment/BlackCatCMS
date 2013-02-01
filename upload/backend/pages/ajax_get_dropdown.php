@@ -17,8 +17,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -38,7 +38,7 @@ if (defined('LEPTON_PATH')) {
 // =================================================== 
 // ! Include the class.admin.php and WB functions file
 // =================================================== 
-require_once ( LEPTON_PATH . '/framework/class.admin.php' );
+require_once ( CAT_PATH . '/framework/class.admin.php' );
 $admin		= new admin('Pages', 'pages_add', false);
 
 header('Content-type: application/json');
@@ -64,7 +64,7 @@ $permission['pages_delete']		= $admin->get_permission('pages_delete') ? true : f
 $permission['pages_settings']	= $admin->get_permission('pages_settings') ? true : false;
 $permission['pages_intro']		= ( $admin->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
-require_once(LEPTON_PATH . '/framework/class.pages.php');
+require_once(CAT_PATH . '/framework/class.pages.php');
 $dropdown	= new pages( $permission );
 // list of all parent pages for dropdown parent
 $dropdown_list		= $dropdown->pages_list( 0 , 0 );

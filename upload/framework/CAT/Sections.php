@@ -54,7 +54,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 	        {
 	            $this->lep_active_sections = array();
 	            // First get all sections for this page
-	            $sql = "SELECT section_id,module,block,publ_start,publ_end FROM " . TABLE_PREFIX . "sections WHERE page_id = '" . $page_id . "' ORDER BY block, position";
+	            $sql = "SELECT section_id,module,block,publ_start,publ_end FROM " . CAT_TABLE_PREFIX . "sections WHERE page_id = '" . $page_id . "' ORDER BY block, position";
 	            $query_sections = $database->query($sql);
 	            if ($query_sections->numRows() == 0)
 	            {

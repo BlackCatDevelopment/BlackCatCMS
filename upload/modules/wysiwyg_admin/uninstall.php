@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -32,12 +32,12 @@ if (defined('WB_PATH')) {
 
   
 // end include class.secure.php  
-$database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_editor_admin`");
+$database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_editor_admin`");
 
-$table = TABLE_PREFIX ."mod_wysiwyg_admin";
+$table = CAT_TABLE_PREFIX ."mod_wysiwyg_admin";
 
 $database->query("DROP TABLE IF EXISTS `".$table."`");
-$database->query("DELETE from `".TABLE_PREFIX."sections` where `section_id`='-1' AND `page_id`='-120'");
-$database->query("DELETE from `".TABLE_PREFIX."mod_wysiwyg` where `section_id`='-1' AND `page_id`='-120'");
+$database->query("DELETE from `".CAT_TABLE_PREFIX."sections` where `section_id`='-1' AND `page_id`='-120'");
+$database->query("DELETE from `".CAT_TABLE_PREFIX."mod_wysiwyg` where `section_id`='-1' AND `page_id`='-120'");
 
 ?>

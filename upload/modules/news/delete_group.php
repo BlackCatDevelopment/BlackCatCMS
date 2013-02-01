@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,7 +34,7 @@ if (defined('WB_PATH')) {
 
 // Get id
 if(!isset($_GET['group_id']) OR !is_numeric($_GET['group_id'])) {
-	header("Location: ".ADMIN_URL."/pages/index.php");
+	header("Location: ".CAT_ADMIN_URL."/pages/index.php");
 	exit(0);
 } else {
 	$group_id = $_GET['group_id'];
@@ -42,16 +42,16 @@ if(!isset($_GET['group_id']) OR !is_numeric($_GET['group_id'])) {
 
 // Include WB admin wrapper script
 $update_when_modified = true; // Tells script to update when this page was last updated
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
-$database->query("UPDATE ".TABLE_PREFIX."mod_news_posts SET group_id = '0' where group_id='$group_id'");
+$database->query("UPDATE ".CAT_TABLE_PREFIX."mod_news_posts SET group_id = '0' where group_id='$group_id'");
 // Update row
-$database->query("DELETE FROM ".TABLE_PREFIX."mod_news_groups WHERE group_id = '$group_id'");
+$database->query("DELETE FROM ".CAT_TABLE_PREFIX."mod_news_groups WHERE group_id = '$group_id'");
 // Check if there is a db error, otherwise say successful
 if($database->is_error()) {
-	$admin->print_error($database->get_error(), ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
+	$admin->print_error($database->get_error(), CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
 } else {
-	$admin->print_success($TEXT['SUCCESS'], ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
+	$admin->print_success($TEXT['SUCCESS'], CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
 }
 
 // Print admin footer

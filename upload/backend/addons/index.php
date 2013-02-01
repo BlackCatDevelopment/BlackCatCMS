@@ -16,8 +16,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,7 +34,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin = new admin('Addons', 'addons');
 
 
@@ -42,9 +42,9 @@ global $parser;
 $data_dwoo	= array();
 
 $data_dwoo['URL'] = array(
-	'addons'		=> ADMIN_URL . '/modules/index.php',
-	'TEMPLATES'		=> $admin->get_permission('templates') ? ADMIN_URL . '/templates/index.php' : false,
-	'LANGUAGES'		=> $admin->get_permission('languages') ? ADMIN_URL . '/languages/index.php' : false,
+	'addons'		=> CAT_ADMIN_URL . '/modules/index.php',
+	'TEMPLATES'		=> $admin->get_permission('templates') ? CAT_ADMIN_URL . '/templates/index.php' : false,
+	'LANGUAGES'		=> $admin->get_permission('languages') ? CAT_ADMIN_URL . '/languages/index.php' : false,
 );
 
 // Insert permissions values
@@ -55,7 +55,7 @@ $data_dwoo['permissions']['MODULES_UNINSTALL']	= $admin->get_permission('modules
 
 
 $counter	= 0;
-$result		= $database->query("SELECT * FROM " . TABLE_PREFIX . "addons ORDER BY name");
+$result		= $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "addons ORDER BY name");
 if ($result->numRows() > 0)
 {
 	while ( $addon = $result->fetchRow() )
@@ -78,16 +78,16 @@ if ($result->numRows() > 0)
 				$language_license	= '';
 
 				// Insert values
-				if ( file_exists(LEPTON_PATH.'/languages/'.$addon['directory'].'.php'))
+				if ( file_exists(CAT_PATH.'/languages/'.$addon['directory'].'.php'))
 				{
-					require( LEPTON_PATH . '/languages/' . $addon['directory'] . '.php');
+					require( CAT_PATH . '/languages/' . $addon['directory'] . '.php');
 					$addon['name']			= $language_name;
 					$addon['author']		= $addon['author'] != '' ? $addon['author'] : $language_author;
 					$addon['version']		= $language_version;
 					$addon['platform']		= $language_platform;
 					$addon['license']		= $language_license;
 				}
-				require( LEPTON_PATH . '/languages/' . LANGUAGE . '.php');
+				require( CAT_PATH . '/languages/' . LANGUAGE . '.php');
 				break;
 			case 'template':
 				$type	= 'templates';
@@ -95,16 +95,16 @@ if ($result->numRows() > 0)
 			default:
 				$type	= 'modules';
 		}
-		if ( $type != 'languages' && ( function_exists('file_get_contents') && file_exists(LEPTON_PATH . '/' . $type . '/' . $addon['directory'] . '/languages/' . LANGUAGE . '.php' ) ) )
+		if ( $type != 'languages' && ( function_exists('file_get_contents') && file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/languages/' . LANGUAGE . '.php' ) ) )
 		{
 			// read contents of the module language file into string
-			$description			= @file_get_contents(LEPTON_PATH . '/' . $type . '/' . $file . '/languages/' . LANGUAGE . '.php');
+			$description			= @file_get_contents(CAT_PATH . '/' . $type . '/' . $file . '/languages/' . LANGUAGE . '.php');
 			// use regular expressions to fetch the content of the variable from the string
 			$tool_description		= get_variable_content('module_description', $description, false, false);
-			// replace optional placeholder {WB_URL} with value stored in config.php
+			// replace optional placeholder {CAT_URL} with value stored in config.php
 			if ($tool_description !== false && strlen(trim($tool_description)) != 0)
 			{
-				$tool_description	= str_replace('{WB_URL}', WB_URL, $tool_description);
+				$tool_description	= str_replace('{CAT_URL}', CAT_URL, $tool_description);
 			}
 			else
 			{
@@ -133,11 +133,11 @@ if ($result->numRows() > 0)
 		// ================================================== 
 		// ! Check whether icon is available for the module   
 		// ================================================== 
-		if(file_exists(LEPTON_PATH . '/' . $type . '/' . $addon['directory'] . '/icon.png')){
-			list($width, $height, $type_of, $attr) = getimagesize( LEPTON_PATH . '/' . $type . '/' . $addon['directory'] . '/icon.png');
+		if(file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/icon.png')){
+			list($width, $height, $type_of, $attr) = getimagesize( CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/icon.png');
 			// Check whether file is 32*32 pixel and is an PNG-Image
 			$data_dwoo['addons'][$counter]['icon'] = ($width == 32 && $height == 32 && $type_of == 3) ?
-				WB_URL . '/' . $type . '/' . $addon['directory'] . '/icon.png' :
+				CAT_URL . '/' . $type . '/' . $addon['directory'] . '/icon.png' :
 				false;
 		}
 
@@ -174,20 +174,20 @@ if ($result->numRows() > 0)
 		$data_dwoo['addons'][$counter]['function'] = $type_name;
 
 		// Check if the module is installable or upgradeable
-		$data_dwoo['addons'][$counter]['INSTALL']		= file_exists(LEPTON_PATH . '/' . $type . '/' . $addon['directory'] . '/install.php') ? true : false;
-		$data_dwoo['addons'][$counter]['UPGRADE']		= file_exists(LEPTON_PATH . '/' . $type . '/' . $addon['directory'] . '/upgrade.php') ? true : false;
+		$data_dwoo['addons'][$counter]['INSTALL']		= file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/install.php') ? true : false;
+		$data_dwoo['addons'][$counter]['UPGRADE']		= file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/upgrade.php') ? true : false;
 
 		$counter++;
 	}
 }
 
-require_once(LEPTON_PATH . '/framework/class.pages.php');
+require_once(CAT_PATH . '/framework/class.pages.php');
 $pages = new pages();
 
 $data_dwoo['groups']				= $pages->get_groups('' , '', false);
 
 // Insert modules which includes a install.php file to install list
-$module_files = glob(LEPTON_PATH . '/' . $type . '/*');
+$module_files = glob(CAT_PATH . '/' . $type . '/*');
 
 foreach ($module_files as $index => $path)
 {

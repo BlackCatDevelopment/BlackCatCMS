@@ -2,7 +2,7 @@
 	{translate('Settings')}
 </div>
 <div id="fc_main_content">
-	<form name="settings" action="{$ADMIN_URL}/settings/save.php" method="post" class="ajaxForm">
+	<form name="settings" action="{$CAT_ADMIN_URL}/settings/save.php" method="post" class="ajaxForm">
 	<div id="fc_lists_overview">
 		<div id="fc_list_search" class="fc_gradient1">
 			<div class="fc_input_fake">
@@ -492,7 +492,7 @@
 
 
 		<div id="fc_list_MAIL" class="fc_gradient1 fc_list_forms ui-corner-top">
-			<p>{translate('Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by LEPTON. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.')}
+			<p>{translate('Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.')}
 			</p>
 			<div class="clear"></div>
 			<hr/>
@@ -554,7 +554,7 @@
 
 			<div class="clear"></div>
 			<hr/>
-			<button class="icon-mail right" dir="ltr" type="submit" id="fc_checkmail" name="checkmail" onclick="send_testmail('{$ADMIN_URL}/settings/ajax_testmail.php');return false;"> {translate('Send test mail')}</button>
+			<button class="icon-mail right" dir="ltr" type="submit" id="fc_checkmail" name="checkmail" onclick="send_testmail('{$CAT_ADMIN_URL}/settings/ajax_testmail.php');return false;"> {translate('Send test mail')}</button>
 			<div class="clear_sp"></div>
 			<p class="submit_settings fc_gradient1">
 				<input type="submit" name="submit" value="{translate('Save')}" />
@@ -563,5 +563,5 @@
 		</div>
 	</div>
 </form>
-{*<script src="{$ADMIN_URL}/settings/setting.js" type="text/javascript"></script>*}
+{*<script src="{$CAT_ADMIN_URL}/settings/setting.js" type="text/javascript"></script>*}
 </div>

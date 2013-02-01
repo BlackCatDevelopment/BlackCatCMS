@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -37,12 +37,12 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 ?>
-<script type="text/javascript" src="<?php echo WB_URL ?>/include/jscalendar/calendar.js"></script>
+<script type="text/javascript" src="<?php echo CAT_URL ?>/include/jscalendar/calendar.js"></script>
 <?php // some stuff for jscalendar
 	// language
 	$jscal_lang = defined('LANGUAGE')?strtolower(LANGUAGE):'en';
 	$jscal_lang = $jscal_lang!=''?$jscal_lang:'en';
-	if(!file_exists(WB_PATH."/include/jscalendar/lang/calendar-$jscal_lang.js")) {
+	if(!file_exists(CAT_PATH."/include/jscalendar/lang/calendar-$jscal_lang.js")) {
 		$jscal_lang = 'en';
 	}
 	
@@ -93,5 +93,5 @@ if (defined('WB_PATH')) {
 	}
 	// load scripts for jscalendar
 ?>
-<script type="text/javascript" src="<?php echo WB_URL ?>/include/jscalendar/lang/calendar-<?php echo $jscal_lang ?>.js"></script>
-<script type="text/javascript" src="<?php echo WB_URL ?>/include/jscalendar/calendar-setup.js"></script>
+<script type="text/javascript" src="<?php echo CAT_URL ?>/include/jscalendar/lang/calendar-<?php echo $jscal_lang ?>.js"></script>
+<script type="text/javascript" src="<?php echo CAT_URL ?>/include/jscalendar/calendar-setup.js"></script>

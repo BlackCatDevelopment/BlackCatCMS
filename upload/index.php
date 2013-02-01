@@ -1,6 +1,6 @@
 <?php
  /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -57,7 +57,7 @@ if(file_exists($config_file))
 	die();	// make sure that the code below will not be executed
 }
 
-require_once(WB_PATH.'/framework/class.frontend.php');
+require_once(CAT_PATH.'/framework/class.frontend.php');
 // Create new frontend object
 $wb = new frontend();
 
@@ -74,20 +74,20 @@ $wb->get_website_settings();
 
 // Load functions available to templates, modules and code sections
 // also, set some aliases for backward compatibility
-require(WB_PATH.'/framework/frontend.functions.php');
+require(CAT_PATH.'/framework/frontend.functions.php');
 
 global $database;
 
 // redirect menu-link
 $this_page_id = PAGE_ID;
 
-$sql  = 'SELECT `module`, `block` FROM `'.TABLE_PREFIX.'sections` ';
+$sql  = 'SELECT `module`, `block` FROM `'.CAT_TABLE_PREFIX.'sections` ';
 $sql .= 'WHERE `page_id` = '.(int)$this_page_id.' AND `module` = "menu_link"';
 $query_this_module = $database->query($sql);
 if($query_this_module->numRows() == 1)  // This is a menu_link. Get link of target-page and redirect
 {
 	// get target_page_id
-	$sql  = 'SELECT * FROM `'.TABLE_PREFIX.'mod_menu_link` WHERE `page_id` = '.(int)$this_page_id;
+	$sql  = 'SELECT * FROM `'.CAT_TABLE_PREFIX.'mod_menu_link` WHERE `page_id` = '.(int)$this_page_id;
 	$query_tpid = $database->query($sql);
 	if($query_tpid->numRows() == 1)
 	{
@@ -112,11 +112,11 @@ if($query_this_module->numRows() == 1)  // This is a menu_link. Get link of targ
 		else
 		{
 			// get link of target-page
-			$sql  = 'SELECT `link` FROM `'.TABLE_PREFIX.'pages` WHERE `page_id` = '.$target_page_id;
+			$sql  = 'SELECT `link` FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `page_id` = '.$target_page_id;
 			$target_page_link = $database->get_one($sql);
 			if($target_page_link != null)
 			{
-				$target_url = WB_URL.PAGES_DIRECTORY.$target_page_link.PAGE_EXTENSION.$anchor;
+				$target_url = CAT_URL.PAGES_DIRECTORY.$target_page_link.PAGE_EXTENSION.$anchor;
 				header('Location: '.$target_url);
 				exit;
 			}
@@ -125,24 +125,24 @@ if($query_this_module->numRows() == 1)  // This is a menu_link. Get link of targ
 }
 //Get pagecontent in buffer for Droplets and/or Filter operations
 ob_start();
-require(WB_PATH.'/templates/'.TEMPLATE.'/index.php');
+require(CAT_PATH.'/templates/'.TEMPLATE.'/index.php');
 $output = ob_get_contents();
 if(ob_get_length() > 0) { ob_end_clean(); }
 
 // wb->preprocess() -- replace all [wblink123] with real, internal links
 $wb->preprocess($output);
 // Load Droplet engine and process
-if(file_exists(WB_PATH .'/modules/dropleps/droplets.php'))
+if(file_exists(CAT_PATH .'/modules/dropleps/droplets.php'))
 {
-    include_once(WB_PATH .'/modules/dropleps/droplets.php');
+    include_once(CAT_PATH .'/modules/dropleps/droplets.php');
     if(function_exists('evalDroplets'))
     {
 		$output = evalDroplets($output);
     }
 }
 // Output interface for Addons
-if(file_exists(WB_PATH .'/modules/output_interface/output_interface.php')) {
-	include_once(WB_PATH .'/modules/output_interface/output_interface.php');
+if(file_exists(CAT_PATH .'/modules/output_interface/output_interface.php')) {
+	include_once(CAT_PATH .'/modules/output_interface/output_interface.php');
 	if(function_exists('output_interface')) {
 		$output = output_interface($output);
 	}
@@ -150,8 +150,8 @@ if(file_exists(WB_PATH .'/modules/output_interface/output_interface.php')) {
 
 // CSRF protection - add tokens to internal links
 if ($wb->is_authenticated()) {
-	if (file_exists(WB_PATH .'/framework/tokens.php')) {
-		include_once(WB_PATH .'/framework/tokens.php');
+	if (file_exists(CAT_PATH .'/framework/tokens.php')) {
+		include_once(CAT_PATH .'/framework/tokens.php');
 		if (function_exists('addTokens')) addTokens($output, $wb);
 	}
 }

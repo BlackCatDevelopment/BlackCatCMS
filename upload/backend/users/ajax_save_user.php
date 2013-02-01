@@ -16,9 +16,9 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH'))
+if (defined('CAT_PATH'))
 {
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -34,7 +34,7 @@ if (defined('LEPTON_PATH'))
 }
 // end include class.secure.php
 
-require_once( LEPTON_PATH . '/framework/class.admin.php' );
+require_once( CAT_PATH . '/framework/class.admin.php' );
 
 if ( isset( $_POST['addUser'] ) ) $admin	= new admin('Access', 'users_add', false);
 else $admin	= new admin('Access', 'users_modify', false);
@@ -55,7 +55,7 @@ if(	(!$admin->get_permission('users_add') && $addUser != '' ) ||
 	print json_encode( $ajax );
 	exit();
 }
-include_once( LEPTON_PATH . '/framework/functions.php' );
+include_once( CAT_PATH . '/framework/functions.php' );
 
 // Gather details entered
 $username_fieldname	= str_replace(array("[[", "]]"), '', htmlspecialchars($admin->get_post('username_fieldname'), ENT_QUOTES));
@@ -163,7 +163,7 @@ if( $email != '' )
 		exit();
 }
 
-$sql	 = "SELECT * FROM " . TABLE_PREFIX . "users WHERE username = '$username'";
+$sql	 = "SELECT * FROM " . CAT_TABLE_PREFIX . "users WHERE username = '$username'";
 $sql	.= $saveUser != '' ? "AND user_id != '$user_id'" : "";
 
 $results	= $database->query($sql);
@@ -179,7 +179,7 @@ if(	( $results->numRows() > 0 && $addUser != '' ) ||
 	exit();
 }
 
-$sql	 = "SELECT * FROM " . TABLE_PREFIX . "users WHERE email = '$username'";
+$sql	 = "SELECT * FROM " . CAT_TABLE_PREFIX . "users WHERE email = '$username'";
 $sql	.= $saveUser != '' ? "AND user_id != '$user_id'" : "";
 
 $results	= $database->query($sql);
@@ -221,8 +221,8 @@ $fields = array(
 $fields		= array_map( 'mysql_real_escape_string', $fields );
 
 $sql		= $addUser != '' ?
-				'INSERT INTO ' . TABLE_PREFIX . 'users ' :
-				'UPDATE ' .TABLE_PREFIX . 'users SET ';
+				'INSERT INTO ' . CAT_TABLE_PREFIX . 'users ' :
+				'UPDATE ' .CAT_TABLE_PREFIX . 'users SET ';
 
 $sql1		= '';
 $sql2		= '';

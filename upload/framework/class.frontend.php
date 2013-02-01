@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -133,7 +133,7 @@ class frontend extends wb {
     		if(preg_match_all( $preg, $content, $ids ) ) {
 			$new_ids = array_unique($ids[1]);
 			foreach($new_ids as $key => &$page_id) {
-				$link = $database->get_one( 'SELECT `link` FROM `'.TABLE_PREFIX.'pages` WHERE `page_id` = '.$page_id );
+				$link = $database->get_one( 'SELECT `link` FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `page_id` = '.$page_id );
 				if( !is_null($link) ) {
 					$content = str_replace(
 						$ids[0][ $key ],
@@ -205,7 +205,7 @@ class frontend extends wb {
 			$menu_number = '1';
 		}
 		// Query pages
-		$query_menu = $database->query("SELECT page_id,menu_title,page_title,link,target,level,visibility,viewing_groups,viewing_users FROM ".TABLE_PREFIX."pages WHERE parent = '$this->menu_parent' AND $menu_number AND $this->extra_where_sql ORDER BY position ASC");
+		$query_menu = $database->query("SELECT page_id,menu_title,page_title,link,target,level,visibility,viewing_groups,viewing_users FROM ".CAT_TABLE_PREFIX."pages WHERE parent = '$this->menu_parent' AND $menu_number AND $this->extra_where_sql ORDER BY position ASC");
 		// Check if there are any pages to show
 		if($query_menu->numRows() > 0) {
 			// Print menu header
@@ -289,7 +289,7 @@ class frontend extends wb {
 				'{TITLE}' => $MESSAGE['GENERIC_WEBSITE_UNDER_CONSTRUCTION'],
 				'{UNDER_CONSTRUCTION}' => $MESSAGE['GENERIC_WEBSITE_UNDER_CONSTRUCTION'],
 				'{PLEASE_CHECK_BACK_SOON}' => $MESSAGE['GENERIC_PLEASE_CHECK_BACK_SOON'],
-				'{THEME_URL}' => LEPTON_URL."/templates/" . DEFAULT_THEME . "/"
+				'{CAT_THEME_URL}' => LEPTON_URL."/templates/" . DEFAULT_THEME . "/"
 			);
 			$html = str_replace(array_keys($values),array_values($values), $html);
 		}

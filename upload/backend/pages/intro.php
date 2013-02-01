@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,11 +35,11 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once( LEPTON_PATH . '/framework/class.admin.php' );
+require_once( CAT_PATH . '/framework/class.admin.php' );
 $admin		= new admin('Pages', 'pages_intro');
 
 // Get page content
-$filename		= LEPTON_PATH . PAGES_DIRECTORY . '/intro' . PAGE_EXTENSION;
+$filename		= CAT_PATH . PAGES_DIRECTORY . '/intro' . PAGE_EXTENSION;
 
 if ( file_exists( $filename ) )
 {
@@ -54,7 +54,7 @@ else
 
 if ( $admin->get_get('wysiwyg') != 'no' )
 {
-	if ( !defined( 'WYSIWYG_EDITOR' ) || WYSIWYG_EDITOR == 'none' || !file_exists( LEPTON_PATH . '/modules/' . WYSIWYG_EDITOR . '/include.php' ) )
+	if ( !defined( 'WYSIWYG_EDITOR' ) || WYSIWYG_EDITOR == 'none' || !file_exists( CAT_PATH . '/modules/' . WYSIWYG_EDITOR . '/include.php' ) )
 	{
 		function show_wysiwyg_editor( $name, $id, $content, $width, $height )
 		{
@@ -64,7 +64,7 @@ if ( $admin->get_get('wysiwyg') != 'no' )
 	else
 	{
 		$id_list		= array('content');
-		require( LEPTON_PATH . '/modules/' . WYSIWYG_EDITOR . '/include.php' );
+		require( CAT_PATH . '/modules/' . WYSIWYG_EDITOR . '/include.php' );
 	}
 }
 // =========================================================================== 

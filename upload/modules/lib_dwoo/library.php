@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
  * @module          Dwoo Template Engine
  * @author          LEPTON Project
  * @copyright       2010-2011, LEPTON Project
- * @link            http://www.lepton-cms.org
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
  *
@@ -57,20 +57,20 @@ if (!is_object($parser))
   }
   $parser->setGlobals(
       array(
-              'ADMIN_URL' => ADMIN_URL,
+              'CAT_ADMIN_URL' => CAT_ADMIN_URL,
               'CAT_URL' => CAT_URL,
               'CAT_PATH' => CAT_PATH,
               'LEPTON_URL' => CAT_URL,
-        	  'LEPTON_PATH' => CAT_PATH,
-              'WB_PATH' => CAT_PATH,
-              'WB_URL' => CAT_URL,
-        	  'THEME_URL' => THEME_URL,
+        	  'CAT_PATH' => CAT_PATH,
+              'CAT_PATH' => CAT_PATH,
+              'CAT_URL' => CAT_URL,
+        	  'CAT_THEME_URL' => CAT_THEME_URL,
         	  'URL_HELP' => 'http://blackcat-cms.org/'
       )
   );
   // initialize template search path
-  $parser->setPath(THEME_PATH . '/templates');
-  $parser->setFallbackPath(THEME_PATH . '/templates');
+  $parser->setPath(CAT_THEME_PATH . '/templates');
+  $parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 }
 
 ?>

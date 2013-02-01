@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -16,8 +16,8 @@
  */ 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -76,7 +76,7 @@ if (!function_exists('registerEditArea'))
 		$return_value = "";
 		if (!defined('EDIT_AREA_LOADED')) {
 			define('EDIT_AREA_LOADED', true);
-			$script_url = WB_URL.'/modules/edit_area/edit_area/edit_area_full.js';
+			$script_url = CAT_URL.'/modules/edit_area/edit_area/edit_area_full.js';
 			$return_value .= "\n<script src='".$script_url."' type='text/javascript'></script>\n";
 		}
 		

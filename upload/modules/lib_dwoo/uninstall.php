@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
  * @module          Dwoo Template Engine
  * @author          LEPTON Project
  * @copyright       2010-2011, LEPTON Project
- * @link            http://www.lepton-cms.org
+ * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
  *
@@ -16,8 +16,8 @@
  */
 
 // try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {	
+	if (defined('LEPTON_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
 	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
 } else {
@@ -34,6 +34,6 @@ if (defined('WB_PATH')) {
 // end include LEPTON class.secure.php
 
 // Delete the lib directory
-rm_full_dir(WB_PATH.'/modules/lib_dwoo/dwoo');
+rm_full_dir(CAT_PATH.'/modules/lib_dwoo/dwoo');
 
 ?>

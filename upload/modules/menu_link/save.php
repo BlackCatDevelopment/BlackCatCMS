@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -17,8 +17,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -41,7 +41,7 @@ require_once('../../config.php');
 
 // Include WB admin wrapper script
 $update_when_modified = true; // Tells script to update when this page was last updated
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 // Update id, anchor and target
 if(isset($_POST['menu_link'])) {
@@ -54,8 +54,8 @@ if(isset($_POST['menu_link'])) {
 	else
 		$extern='';
 
-	$table_pages = TABLE_PREFIX.'pages';
-	$table_mod = TABLE_PREFIX.'mod_menu_link';
+	$table_pages = CAT_TABLE_PREFIX.'pages';
+	$table_mod = CAT_TABLE_PREFIX.'mod_menu_link';
 	$database->query("UPDATE `$table_pages` SET `target` = '$url_target' WHERE `page_id` = '$page_id'");
 	$database->query("UPDATE `$table_mod` SET `target_page_id` = '$foreign_page_id', `anchor` = '$page_target', `extern` = '$extern', `redirect_type` = '$r_type' WHERE `page_id` = '$page_id'");
 }
@@ -64,7 +64,7 @@ if(isset($_POST['menu_link'])) {
 if($database->is_error()) {
 	$admin->print_error($database->get_error(), $js_back);
 } else {
-	$admin->print_success($MESSAGE['PAGES']['SAVED'], ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
+	$admin->print_success($MESSAGE['PAGES']['SAVED'], CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
 }
 
 // Print admin footer

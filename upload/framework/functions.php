@@ -312,7 +312,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         //if(HOME_FOLDERS AND ($_SESSION['GROUP_ID']!='1'))
         if (HOME_FOLDERS && (!$admin->ami_group_member('1')))
         {
-            $sql = 'SELECT `home_folder` FROM `' . TABLE_PREFIX . 'users` WHERE `home_folder` != \'' . $admin->get_home_folder() . '\'';
+            $sql = 'SELECT `home_folder` FROM `' . CAT_TABLE_PREFIX . 'users` WHERE `home_folder` != \'' . $admin->get_home_folder() . '\'';
             $query_home_folders = $database->query($sql);
             if ($query_home_folders->numRows() > 0)
             {
@@ -418,7 +418,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
             // search for all users where the current user is admin from
             foreach ($curr_groups as $group)
             {
-                $sql = 'SELECT `home_folder` FROM `' . TABLE_PREFIX . 'users` ';
+                $sql = 'SELECT `home_folder` FROM `' . CAT_TABLE_PREFIX . 'users` ';
                 $sql .= 'WHERE (FIND_IN_SET(\'' . $group . '\', `groups_id`) > 0) AND `home_folder` <> \'\' AND `user_id` <> ' . $wb->get_user_id();
                 if (($res_hf = $database->query($sql)) != null)
                 {
@@ -487,7 +487,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
             // search for all users where the current user is admin from
             foreach ($curr_groups as $group)
             {
-                $sql = 'SELECT `home_folder` FROM `' . TABLE_PREFIX . 'users` ';
+                $sql = 'SELECT `home_folder` FROM `' . CAT_TABLE_PREFIX . 'users` ';
                 $sql .= 'WHERE (FIND_IN_SET(\'' . $group . '\', `groups_id`) > 0) AND `home_folder` <> \'\' AND `user_id` <> ' . $wb->get_user_id();
                 if (($res_hf = $database->query($sql)) != null)
                 {
@@ -595,7 +595,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     {
         global $database;
         // Get parent
-        $sql = 'SELECT `parent` FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
+        $sql = 'SELECT `parent` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
         $parent = $database->get_one($sql);
         // If parent isnt 0 return its ID
         if (is_null($parent))
@@ -620,12 +620,12 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     {
         global $database;
         // Get page parent
-        $sql = 'SELECT `parent` FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
+        $sql = 'SELECT `parent` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
         $parent = $database->get_one($sql);
         if ($parent > 0)
         {
             // Get the level of the parent
-            $sql = 'SELECT `level` FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $parent;
+            $sql = 'SELECT `level` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $parent;
             $level = $database->get_one($sql);
             return $level + 1;
         }
@@ -647,7 +647,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     {
         global $database;
         // Get page details
-        $sql = 'SELECT `parent`, `level` FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
+        $sql = 'SELECT `parent`, `level` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
         $query_page = $database->query($sql);
         $fetch_page = $query_page->fetchRow();
         $parent = $fetch_page['parent'];
@@ -742,7 +742,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     {
         global $database;
         // Get title
-        $sql = 'SELECT `page_title` FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $id;
+        $sql = 'SELECT `page_title` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $id;
         $page_title = $database->get_one($sql);
         return $page_title;
     }
@@ -751,7 +751,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     {
         global $database;
         // Get title
-        $sql = 'SELECT `menu_title` FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $id;
+        $sql = 'SELECT `menu_title` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $id;
         $menu_title = $database->get_one($sql);
         return $menu_title;
     }
@@ -789,7 +789,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         // Connect to the database
         global $database;
         // Get id's
-        $sql = 'SELECT `page_id` FROM `' . TABLE_PREFIX . 'pages` WHERE `parent` = ' . $parent;
+        $sql = 'SELECT `page_id` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `parent` = ' . $parent;
         $query = $database->query($sql);
         if ($query->numRows() > 0)
         {
@@ -1022,7 +1022,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 				$temp_index_path = dirname($filename)."/index.php";
 				if (!file_exists($temp_index_path))
 				{
-					$origin = ADMIN_PATH."/pages/master_index.php";
+					$origin = CAT_ADMIN_PATH."/pages/master_index.php";
 					if (file_exists($origin)) copy( $origin, $temp_index_path);
 				}
 
@@ -1167,7 +1167,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         // Find out more about the page
         // $database = new database();
         $sql = 'SELECT `page_id`, `menu_title`, `page_title`, `level`, `link`, `parent`, `modified_by`, `modified_when` ';
-        $sql .= 'FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
+        $sql .= 'FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
         $results = $database->query($sql);
         if ($database->is_error())
         {
@@ -1184,7 +1184,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         $page_title = $results_array['page_title'];
         $menu_title = $results_array['menu_title'];
         // Get the sections that belong to the page
-        $sql = 'SELECT `section_id`, `module` FROM `' . TABLE_PREFIX . 'sections` WHERE `page_id` = ' . $page_id;
+        $sql = 'SELECT `section_id`, `module` FROM `' . CAT_TABLE_PREFIX . 'sections` WHERE `page_id` = ' . $page_id;
         $query_sections = $database->query($sql);
         if ($query_sections->numRows() > 0)
         {
@@ -1200,14 +1200,14 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
             }
         }
         // Update the pages table
-        $sql = 'DELETE FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
+        $sql = 'DELETE FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
         $database->query($sql);
         if ($database->is_error())
         {
             $admin->print_error($database->get_error());
         }
         // Update the sections table
-        $sql = 'DELETE FROM `' . TABLE_PREFIX . 'sections` WHERE `page_id` = ' . $page_id;
+        $sql = 'DELETE FROM `' . CAT_TABLE_PREFIX . 'sections` WHERE `page_id` = ' . $page_id;
         $database->query($sql);
         if ($database->is_error())
         {
@@ -1215,7 +1215,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         }
         // Include the ordering class or clean-up ordering
         include_once(CAT_PATH . '/framework/class.order.php');
-        $order = new order(TABLE_PREFIX . 'pages', 'position', 'page_id', 'parent');
+        $order = new order(CAT_TABLE_PREFIX . 'pages', 'position', 'page_id', 'parent');
         $order->clean($parent);
         // Unlink the page access file and directory
         $directory = CAT_PATH . PAGES_DIRECTORY . $link;
@@ -1346,7 +1346,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         $version = null;
         if ($source != true)
         {
-            $sql = "SELECT `version` FROM `" . TABLE_PREFIX . "addons` WHERE `directory`='" . $modulname . "'";
+            $sql = "SELECT `version` FROM `" . CAT_TABLE_PREFIX . "addons` WHERE `directory`='" . $modulname . "'";
             $version = $database->get_one($sql);
         }
         else

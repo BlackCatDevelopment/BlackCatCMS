@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -38,17 +38,17 @@ global $admin;
 
 // Get id
 if(!isset($_GET['field_id']) OR !is_numeric($_GET['field_id'])) {
-	header("Location: ".ADMIN_URL."/pages/index.php");
+	header("Location: ".CAT_ADMIN_URL."/pages/index.php");
 	exit(0);
 } else {
 	$field_id = $_GET['field_id'];
 }
 
 // Include WB admin wrapper script
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 // Get header and footer
-$query_content = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_form_fields WHERE field_id = '$field_id'");
+$query_content = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_form_fields WHERE field_id = '$field_id'");
 $form = $query_content->fetchRow();
 $type = $form['type'];
 if($type == '') {
@@ -60,7 +60,7 @@ $raw = array('<', '>');
 $friendly = array('&lt;', '&gt;');
 ?>
 
-<form name="modify" action="<?php echo WB_URL; ?>/modules/form/save_field.php" method="post" style="margin: 0;">
+<form name="modify" action="<?php echo CAT_URL; ?>/modules/form/save_field.php" method="post" style="margin: 0;">
 
 <input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
 <input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
@@ -216,13 +216,13 @@ $friendly = array('&lt;', '&gt;');
 		if ($type<>'none') {
 		?>
 		<td align="center">
-			<input type="button" value="<?php echo $TEXT['ADD'].' '.$TEXT['FIELD']; ?>" onclick="javascript: window.location = '<?php echo WB_URL; ?>/modules/form/add_field.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>';" style="width: 200px; margin-top: 5px;" />
+			<input type="button" value="<?php echo $TEXT['ADD'].' '.$TEXT['FIELD']; ?>" onclick="javascript: window.location = '<?php echo CAT_URL; ?>/modules/form/add_field.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>';" style="width: 200px; margin-top: 5px;" />
 		</td>
 		<?php } 
 		// end addition
 		?>
 		<td align="right">
-			<input type="button" value="<?php echo $TEXT['CLOSE']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
+			<input type="button" value="<?php echo $TEXT['CLOSE']; ?>" onclick="javascript: window.location = '<?php echo CAT_ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
 		</td>
 	</tr>
 </table>

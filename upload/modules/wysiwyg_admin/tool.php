@@ -24,8 +24,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -41,7 +41,7 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-if ( !defined('WB_PATH')) die(header('Location: ../../index.php'));
+if ( !defined('CAT_PATH')) die(header('Location: ../../index.php'));
 
 $debug = false;
 if (true === $debug) {
@@ -52,7 +52,7 @@ if (true === $debug) {
 if (!isset($admin) || !is_object($admin)) die();
 
 // check for config driver
-$cfg_file = sanitize_path(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
+$cfg_file = sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
 if(file_exists($cfg_file))
 {
     require $cfg_file;
@@ -66,9 +66,9 @@ else {
 }
 
 // check for language file
-if (file_exists(sanitize_path(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages/'.LANGUAGE.'.php')))
+if (file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages/'.LANGUAGE.'.php')))
 {
-    $admin->lang->addFile(LANGUAGE.'.php',sanitize_path(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages'));
+    $admin->lang->addFile(LANGUAGE.'.php',sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages'));
 }
 
 $config       = wysiwyg_admin_config();
@@ -95,7 +95,7 @@ $current_skin = $c->getSkin($config);
 $settings     = $c->getAdditionalSettings();
 $preview      = NULL;
 
-if(file_exists(sanitize_path(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')))
+if(file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')))
 {
     $preview = '<img src="'
              . sanitize_url(LEPTON_URL.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')
@@ -157,9 +157,9 @@ if (isset($_POST['job']) && $_POST['job']=="save") {
     // only save changes if there were no errors
     if ( ! count($errors) )
     {
-        $database->query( 'REPLACE INTO '.TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'width\', \''.$width.$width_unit.'\' )' );
-        $database->query( 'REPLACE INTO '.TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'height\', \''.$height.$height_unit.'\' )' );
-        $database->query( 'REPLACE INTO '.TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'skin\', \''.$_POST['skin'].'\' )' );
+        $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'width\', \''.$width.$width_unit.'\' )' );
+        $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'height\', \''.$height.$height_unit.'\' )' );
+        $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'skin\', \''.$_POST['skin'].'\' )' );
         // save additionals
         if(count($settings))
         {
@@ -177,7 +177,7 @@ if (isset($_POST['job']) && $_POST['job']=="save") {
                 {
                     $value = $_POST[$item['name']];
                 }
-                $database->query( 'REPLACE INTO '.TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \''.$item['name'].'\', \''.$value.'\' )' );
+                $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \''.$item['name'].'\', \''.$value.'\' )' );
             }
         }
         // reload settings
@@ -196,7 +196,7 @@ echo $parser->get(
         'height_unit_em'   => '',
         'height_unit_px'   => '',
         'height_unit_proz' => '',
-        'action'           => ADMIN_URL.'/admintools/tool.php?tool=wysiwyg_admin',
+        'action'           => CAT_ADMIN_URL.'/admintools/tool.php?tool=wysiwyg_admin',
         'id'               => WYSIWYG_EDITOR,
         'skins'            => $skins,
         'toolbars'         => $c->getToolbars(),
@@ -214,7 +214,7 @@ echo $parser->get(
 // get current settings
 function wysiwyg_admin_config() {
     global $database;
-    $query  = "SELECT * from `".TABLE_PREFIX."mod_wysiwyg_admin_v2` where `editor`='".WYSIWYG_EDITOR."'";
+    $query  = "SELECT * from `".CAT_TABLE_PREFIX."mod_wysiwyg_admin_v2` where `editor`='".WYSIWYG_EDITOR."'";
     $result = $database->query ($query );
     $config = array();
     if($result->numRows())

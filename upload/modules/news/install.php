@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -32,11 +32,11 @@ if (defined('WB_PATH')) {
 
 
 
-if(defined('WB_URL'))
+if(defined('CAT_URL'))
 {
 	
-	// $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_news_posts`");
-	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_news_posts` ( '
+	// $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_news_posts`");
+	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_news_posts` ( '
 					 . '`post_id` INT NOT NULL AUTO_INCREMENT,'
 					 . '`section_id` INT NOT NULL DEFAULT \'0\','
 					 . '`page_id` INT NOT NULL DEFAULT \'0\','
@@ -56,8 +56,8 @@ if(defined('WB_URL'))
 					 . ' )';
 	$database->query($mod_news);
 	
-	// $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_news_groups`");
-	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_news_groups` ( '
+	// $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_news_groups`");
+	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_news_groups` ( '
 					 . '`group_id` INT NOT NULL AUTO_INCREMENT,'
 					 . '`section_id` INT NOT NULL DEFAULT \'0\','
 					 . '`page_id` INT NOT NULL DEFAULT \'0\','
@@ -68,8 +68,8 @@ if(defined('WB_URL'))
                 . ' )';
 	$database->query($mod_news);
 	
-	// $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_news_comments`");
-	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_news_comments` ( '
+	// $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_news_comments`");
+	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_news_comments` ( '
 					 . '`comment_id` INT NOT NULL AUTO_INCREMENT,'
 					 . '`section_id` INT NOT NULL DEFAULT \'0\','
 					 . '`page_id` INT NOT NULL DEFAULT \'0\','
@@ -83,8 +83,8 @@ if(defined('WB_URL'))
 
 	$database->query($mod_news);
 	
-	// $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_news_settings`");
-	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_news_settings` ( '
+	// $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_news_settings`");
+	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_news_settings` ( '
 					 . '`section_id` INT NOT NULL DEFAULT \'0\','
 					 . '`page_id` INT NOT NULL DEFAULT \'0\','
 					 . '`header` TEXT NOT NULL ,'
@@ -105,7 +105,7 @@ if(defined('WB_URL'))
 
 	$database->query($mod_news);
 		
-    $mod_search = "SELECT * FROM ".TABLE_PREFIX."search WHERE value = 'news'";
+    $mod_search = "SELECT * FROM ".CAT_TABLE_PREFIX."search WHERE value = 'news'";
     $insert_search = $database->query($mod_search);
     if( $insert_search->numRows() == 0 )
     {
@@ -119,10 +119,10 @@ if(defined('WB_URL'))
     	$field_info['modified_when'] = 'modified_when';
     	$field_info['modified_by'] = 'modified_by';
     	$field_info = serialize($field_info);
-    	$database->query("INSERT INTO ".TABLE_PREFIX."search (name,value,extra) VALUES ('module', 'news', '$field_info')");
+    	$database->query("INSERT INTO ".CAT_TABLE_PREFIX."search (name,value,extra) VALUES ('module', 'news', '$field_info')");
     	// Query start
     	$query_start_code = "SELECT [TP]pages.page_id, [TP]pages.page_title,	[TP]pages.link, [TP]pages.description, [TP]pages.modified_when, [TP]pages.modified_by	FROM [TP]mod_news_posts, [TP]mod_news_groups, [TP]mod_news_comments, [TP]mod_news_settings, [TP]pages WHERE ";
-    	$database->query("INSERT INTO ".TABLE_PREFIX."search (name,value,extra) VALUES ('query_start', '$query_start_code', 'news')");
+    	$database->query("INSERT INTO ".CAT_TABLE_PREFIX."search (name,value,extra) VALUES ('query_start', '$query_start_code', 'news')");
     	// Query body
     	$query_body_code = "
     	[TP]pages.page_id = [TP]mod_news_posts.page_id AND [TP]mod_news_posts.title LIKE \'%[STRING]%\'
@@ -136,19 +136,19 @@ if(defined('WB_URL'))
     	OR [TP]pages.page_id = [TP]mod_news_settings.page_id AND [TP]mod_news_settings.post_footer LIKE \'%[STRING]%\'
     	OR [TP]pages.page_id = [TP]mod_news_settings.page_id AND [TP]mod_news_settings.comments_header LIKE \'%[STRING]%\'
     	OR [TP]pages.page_id = [TP]mod_news_settings.page_id AND [TP]mod_news_settings.comments_footer LIKE \'%[STRING]%\'";
-    	$database->query("INSERT INTO ".TABLE_PREFIX."search (name,value,extra) VALUES ('query_body', '$query_body_code', 'news')");
+    	$database->query("INSERT INTO ".CAT_TABLE_PREFIX."search (name,value,extra) VALUES ('query_body', '$query_body_code', 'news')");
     	// Query end
     	$query_end_code = "";
-    	$database->query("INSERT INTO ".TABLE_PREFIX."search (name,value,extra) VALUES ('query_end', '$query_end_code', 'news')");
+    	$database->query("INSERT INTO ".CAT_TABLE_PREFIX."search (name,value,extra) VALUES ('query_end', '$query_end_code', 'news')");
 
     	// Insert blank row (there needs to be at least on row for the search to work)
-    	$database->query("INSERT INTO ".TABLE_PREFIX."mod_news_posts (section_id,page_id, `link`, `content_short`, `content_long`) VALUES ('0', '0', '', '', '')");
-    	$database->query("INSERT INTO ".TABLE_PREFIX."mod_news_groups (section_id,page_id) VALUES ('0', '0')");
-    	$database->query("INSERT INTO ".TABLE_PREFIX."mod_news_comments (section_id,page_id, `comment`) VALUES ('0', '0', '')");
-    	$database->query("INSERT INTO ".TABLE_PREFIX."mod_news_settings (section_id,page_id, `header`, `post_loop`, `footer`, `post_header`, `post_footer`, `comments_header`, `comments_loop`, `comments_footer`, `comments_page`) VALUES ('0', '0', '', '', '', '', '', '', '', '', '')");
+    	$database->query("INSERT INTO ".CAT_TABLE_PREFIX."mod_news_posts (section_id,page_id, `link`, `content_short`, `content_long`) VALUES ('0', '0', '', '', '')");
+    	$database->query("INSERT INTO ".CAT_TABLE_PREFIX."mod_news_groups (section_id,page_id) VALUES ('0', '0')");
+    	$database->query("INSERT INTO ".CAT_TABLE_PREFIX."mod_news_comments (section_id,page_id, `comment`) VALUES ('0', '0', '')");
+    	$database->query("INSERT INTO ".CAT_TABLE_PREFIX."mod_news_settings (section_id,page_id, `header`, `post_loop`, `footer`, `post_header`, `post_footer`, `comments_header`, `comments_loop`, `comments_footer`, `comments_page`) VALUES ('0', '0', '', '', '', '', '', '', '', '', '')");
     }
 
-    $addons_helper = new LEPTON_Helper_Addons();
+    $addons_helper = new CAT_Helper_Addons();
 
     // add files to class_secure
     foreach(
@@ -164,10 +164,10 @@ if(defined('WB_URL'))
     }
 
 	// Make news post access files dir
-	require_once(WB_PATH.'/framework/functions.php');
-	make_dir(WB_PATH.MEDIA_DIRECTORY.'/newspics'); // create directory for images
+	require_once(CAT_PATH.'/framework/functions.php');
+	make_dir(CAT_PATH.MEDIA_DIRECTORY.'/newspics'); // create directory for images
 	
-	if(make_dir(WB_PATH.PAGES_DIRECTORY.'/posts')) {
+	if(make_dir(CAT_PATH.PAGES_DIRECTORY.'/posts')) {
 		// Add a index.php file to prevent directory spoofing
 		$content = ''.
 "<?php
@@ -185,10 +185,10 @@ if(defined('WB_URL'))
 
 header('Location: ../');
 ?>";
-		$handle = fopen(WB_PATH.PAGES_DIRECTORY.'/posts/index.php', 'w');
+		$handle = fopen(CAT_PATH.PAGES_DIRECTORY.'/posts/index.php', 'w');
 		fwrite($handle, $content);
 		fclose($handle);
-		change_mode(WB_PATH.PAGES_DIRECTORY.'/posts/index.php', 'file');
+		change_mode(CAT_PATH.PAGES_DIRECTORY.'/posts/index.php', 'file');
 		
 		/**
 		 *	Try to copy the index.php also in the newspicts folder inside
@@ -196,8 +196,8 @@ header('Location: ../');
 		 *
 		 */
 		copy(
-			WB_PATH.PAGES_DIRECTORY.'/posts/index.php',
-			WB_PATH.MEDIA_DIRECTORY.'/newspics/index.php'
+			CAT_PATH.PAGES_DIRECTORY.'/posts/index.php',
+			CAT_PATH.MEDIA_DIRECTORY.'/newspics/index.php'
 		);
 	}
 };

@@ -18,8 +18,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -39,7 +39,7 @@ if (defined('LEPTON_PATH')) {
 // ===================================================
 // ! Include the class.admin.php and WB functions file
 // =================================================== 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(CAT_PATH.'/framework/class.admin.php');
 $admin = new admin('Pages', 'pages_settings');
 
 if (!$admin->get_permission('pages_settings')){
@@ -62,7 +62,7 @@ else
 
 
 // Include the WB functions file
-require_once( LEPTON_PATH . '/framework/functions.php' );
+require_once( CAT_PATH . '/framework/functions.php' );
 
 
 // get form data
@@ -78,7 +78,7 @@ if ( !is_numeric( $page ) )
 // =====================================
 // ! check if linked page has given lang
 // =====================================
-$results		= $database->query('SELECT * FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page);
+$results		= $database->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page);
 $results_array	= $results->fetchRow( MYSQL_ASSOC );
 
 if ( $results_array['language'] !== $language )
@@ -90,7 +90,7 @@ if ( $results_array['language'] !== $language )
 // ===============================================
 // ! check if there's already a page for this lang
 // ===============================================
-$results		= $database->query('SELECT * FROM `' . TABLE_PREFIX . 'page_langs` WHERE page_id = "' . $page_id . '" AND lang = "'.$language.'"');
+$results		= $database->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'page_langs` WHERE page_id = "' . $page_id . '" AND lang = "'.$language.'"');
 
 if ( $database->is_error() )
 {
@@ -106,24 +106,24 @@ if ( $results->numRows() )
 // ! Update page settings in the pages table
 // =========================================
 
-$sql	= 'REPLACE INTO `' . TABLE_PREFIX . 'page_langs` VALUES ( ';
+$sql	= 'REPLACE INTO `' . CAT_TABLE_PREFIX . 'page_langs` VALUES ( ';
 $sql	.= '"'.$page_id.'", "'.$language.'", "'.$page.'" ) ';
 
 $database->query($sql);
 
 if ( $database->is_error() )
 {
-	$admin->print_error($database->get_error(), ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
+	$admin->print_error($database->get_error(), CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
 }
 
 // Check if there is a db error, otherwise say successful
 if ( $database->is_error() )
 {
-	$admin->print_error($database->get_error(), ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
+	$admin->print_error($database->get_error(), CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
 }
 else
 {
-	$admin->print_success('Page settings saved successfully', ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
+	$admin->print_success('Page settings saved successfully', CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
 }
 
 // ====================== 

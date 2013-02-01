@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -48,7 +48,7 @@ else
 	$page_id	= $_GET['page_id'];
 }
 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(CAT_PATH.'/framework/class.admin.php');
 
 $admin = new admin('Pages', 'pages_modify');
 
@@ -100,18 +100,18 @@ $data_dwoo['PAGE_HEADER']               = $admin->lang->translate('Modify page')
 // ========================================================= 
 // ! Work-out if we should show the "manage sections" link   
 // ========================================================= 
-$query_sections = $database->query('SELECT `section_id` FROM `'.TABLE_PREFIX.'sections` WHERE `page_id` = '.(int)$page_id.' AND `module` = "menu_link"');
+$query_sections = $database->query('SELECT `section_id` FROM `'.CAT_TABLE_PREFIX.'sections` WHERE `page_id` = '.(int)$page_id.' AND `module` = "menu_link"');
 
 $data_dwoo['MANAGE_SECTIONS']			= ( $query_sections->numRows() > 0 || MANAGE_SECTIONS != 'enabled' ) ? false : true;
 
 // =========================================================================== 
 // ! get template used for the displayed page (for displaying block details)   
 // =========================================================================== 
-$get_template		= $database->query("SELECT `template` from `" . TABLE_PREFIX . "pages` WHERE `page_id` = '$page_id' ");
+$get_template		= $database->query("SELECT `template` from `" . CAT_TABLE_PREFIX . "pages` WHERE `page_id` = '$page_id' ");
 $template_row		= $get_template->fetchRow( MYSQL_ASSOC );
 $current_template	= ( $template_row['template'] != '' ) ? $template_row['template'] : DEFAULT_TEMPLATE;
 
-require_once(LEPTON_PATH . '/framework/class.pages.php');
+require_once(CAT_PATH . '/framework/class.pages.php');
 $pages = new pages();
 
 // ============================== 
@@ -129,7 +129,7 @@ foreach ( $data_dwoo['modules'] as $index => $module )
 	}
 }
 
-$query_sections = $database->query('SELECT * FROM `'.TABLE_PREFIX.'sections` WHERE `page_id` = '.intval($page_id).' ORDER BY position ASC');
+$query_sections = $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'sections` WHERE `page_id` = '.intval($page_id).' ORDER BY position ASC');
 
 if ( $query_sections->numRows() > 0 )
 {
@@ -145,7 +145,7 @@ if ( $query_sections->numRows() > 0 )
 			// =================================================== 
 			// ! Include the modules editing script if it exists   
 			// =================================================== 
-			if ( file_exists(LEPTON_PATH.'/modules/'.$module.'/modify.php') )
+			if ( file_exists(CAT_PATH.'/modules/'.$module.'/modify.php') )
 			{
 				// =========================================== 
 				// ! output block name if blocks are enabled   
@@ -173,7 +173,7 @@ if ( $query_sections->numRows() > 0 )
 					// ! Include the module and add it to the output buffer   
 					// ====================================================== 
 					ob_start();
-						require(LEPTON_PATH.'/modules/'.$module.'/modify.php');
+						require(CAT_PATH.'/modules/'.$module.'/modify.php');
 						$data_dwoo['blocks'][$data_dwoo['blocks_counter']]['content']			= ob_get_contents();
 					ob_end_clean();
 

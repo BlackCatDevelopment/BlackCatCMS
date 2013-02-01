@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -40,26 +40,26 @@ if(!isset($_GET['post_id']) OR !is_numeric($_GET['post_id'])) {
 	} else {
 		$id = $_GET['group_id'];
 		$id_field = 'group_id';
-		$table = TABLE_PREFIX.'mod_news_groups';
+		$table = CAT_TABLE_PREFIX.'mod_news_groups';
 	}
 } else {
 	$id = $_GET['post_id'];
 	$id_field = 'post_id';
-	$table = TABLE_PREFIX.'mod_news_posts';
+	$table = CAT_TABLE_PREFIX.'mod_news_posts';
 }
 
 // Include WB admin wrapper script
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 // Include the ordering class
-require(WB_PATH.'/framework/class.order.php');
+require(CAT_PATH.'/framework/class.order.php');
 
 // Create new order object an reorder
 $order = new order($table, 'position', $id_field, 'section_id');
 if($order->move_down($id)) {
-	$admin->print_success($TEXT['SUCCESS'], ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
+	$admin->print_success($TEXT['SUCCESS'], CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
 } else {
-	$admin->print_error($TEXT['ERROR'], ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
+	$admin->print_error($TEXT['ERROR'], CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
 }
 
 // Print admin footer

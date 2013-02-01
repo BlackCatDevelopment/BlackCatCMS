@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,7 +35,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once( LEPTON_PATH . '/framework/class.admin.php' );
+require_once( CAT_PATH . '/framework/class.admin.php' );
 
 $admin	= new admin('Access', 'users_delete', false);
 header('Content-type: application/json');
@@ -65,7 +65,7 @@ if( !is_numeric( $user_id ) || $user_id == '' )
 else
 {
 	// Delete the group
-	$database->query( "DELETE FROM `" . TABLE_PREFIX . "users` WHERE `user_id` = '" . $user_id . "' LIMIT 1" );
+	$database->query( "DELETE FROM `" . CAT_TABLE_PREFIX . "users` WHERE `user_id` = '" . $user_id . "' LIMIT 1" );
 	if ( $database->is_error() )
 	{
 		$ajax	= array(
@@ -78,7 +78,7 @@ else
 	else
 	{
 		// Delete users in the group
-		$database->query( "DELETE FROM " . TABLE_PREFIX . "users WHERE `user_id` = '" . $user_id . "'" );
+		$database->query( "DELETE FROM " . CAT_TABLE_PREFIX . "users WHERE `user_id` = '" . $user_id . "'" );
 		if ( $database->is_error() )
 		{
 			$ajax	= array(

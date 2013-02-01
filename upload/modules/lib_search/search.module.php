@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -12,14 +12,14 @@
  * @author        Ralf Hertsch <rh@lepton-cms.org>
  * @copyright     2004 - 2010 WebsiteBaker Project
  * @copyright     since 2011 LEPTON Project
- * @link          http://www.lepton-cms.org
+ * @link          http://blackcat-cms.org
  * @license       http://www.gnu.org/licenses/gpl.html
  * @version       $Id$
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-    include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+    include(CAT_PATH.'/framework/class.secure.php');
 } else {
     $root = "../";
     $level = 1;
@@ -36,9 +36,9 @@ if (defined('LEPTON_PATH')) {
 // end include class.secure.php
 
 // use LEPTON I18n
-require_once LEPTON_PATH.'/framework/LEPTON/Helper/I18n.php';
+require_once CAT_PATH.'/framework/LEPTON/Helper/I18n.php';
 global $lang;
-$lang = new LEPTON_Helper_I18n();
+$lang = new CAT_Helper_I18n();
 
 /**
  * create the URL parameters for highlighting the search results within the
@@ -356,7 +356,7 @@ function print_excerpt2($search_result, $search_parameter) {
 	// strip_tags() is called below
 	if($search_result['ext_charset'] != '') { 
 	    // data from external database may have a different charset
-		require_once(LEPTON_PATH.'/framework/functions-utf8.php');
+		require_once(CAT_PATH.'/framework/functions-utf8.php');
 		switch($search_result['ext_charset']) {
 		case 'latin1':
 		case 'cp1252':
@@ -502,8 +502,8 @@ function print_excerpt2($search_result, $search_parameter) {
 	            $image_excerpt = prepare_excerpts($excerpt_array, $search_parameter['search_words'], $search_result['max_excerpt_num']);
 	            // accept only images with complete URL
 	            if (false === strpos($image['src'], LEPTON_URL)) continue;
-	            $src = str_ireplace(LEPTON_URL, LEPTON_PATH, urldecode($image['src']));
-	            $target = LEPTON_PATH.'/temp/search/'.urldecode(basename($image['src']));
+	            $src = str_ireplace(LEPTON_URL, CAT_PATH, urldecode($image['src']));
+	            $target = CAT_PATH.'/temp/search/'.urldecode(basename($image['src']));
 	            makeThumbnail($src, $target, $search_parameter['settings'][CFG_THUMBS_WIDTH]);
 	            $image_array[] = array(        
 	                'excerpt' => $image_excerpt,
@@ -528,13 +528,13 @@ function print_excerpt2($search_result, $search_parameter) {
 	if (!$image_match && (($search_parameter['settings'][CFG_CONTENT_IMAGE] != CONTENT_IMAGE_NONE) || !empty($search_result['image_link']))) {
 	    if (!empty($search_result['image_link'])) { 
 	        if (strpos($search_result['image_link'], LEPTON_URL) === false) {
-	            $src = LEPTON_PATH.MEDIA_DIRECTORY.DIRECTORY_SEPARATOR.$search_result['image_link'];
+	            $src = CAT_PATH.MEDIA_DIRECTORY.DIRECTORY_SEPARATOR.$search_result['image_link'];
 	        }
 	        else {
-	            $src = str_ireplace(LEPTON_URL, LEPTON_PATH, $search_result['image_link']);
+	            $src = str_ireplace(LEPTON_URL, CAT_PATH, $search_result['image_link']);
 	        }
 	        // the path to the temporary thumbnail
-	        $target = LEPTON_PATH.'/temp/search/'.basename($search_result['image_link']);
+	        $target = CAT_PATH.'/temp/search/'.basename($search_result['image_link']);
 	        // create a thumbnail and place it in the temporary directory
 	        if (makeThumbnail($src, $target, $search_parameter['settings'][CFG_THUMBS_WIDTH])) {
                 $thumb_array = array(        
@@ -564,9 +564,9 @@ function print_excerpt2($search_result, $search_parameter) {
 	            $i = 0;
 	        endswitch;
 	        if (isset($images[$i]['src']) && (false !== strpos($images[$i]['src'], LEPTON_URL))) {
-	            $src = str_ireplace(LEPTON_URL, LEPTON_PATH, urldecode($images[$i]['src']));
+	            $src = str_ireplace(LEPTON_URL, CAT_PATH, urldecode($images[$i]['src']));
 	            // the path to the temporary thumbnail
-	            $target = LEPTON_PATH.'/temp/search/'.urldecode(basename($images[$i]['src']));
+	            $target = CAT_PATH.'/temp/search/'.urldecode(basename($images[$i]['src']));
 	            // create a thumbnail and place it in the temporary directory
 	            if (makeThumbnail($src, $target, $search_parameter['settings'][CFG_THUMBS_WIDTH])) {
     	            $thumb_array = array(        

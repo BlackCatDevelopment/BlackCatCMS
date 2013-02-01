@@ -10,8 +10,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -33,7 +33,7 @@ if (defined('WB_PATH')) {
 global $database;
 global $admin;
 
-$table = TABLE_PREFIX .'mod_output_interface';
+$table = CAT_TABLE_PREFIX .'mod_output_interface';
 $database->query("DROP TABLE IF EXISTS `$table`");
 if ($database->is_error()) $admin->print_error($database->get_error());
 

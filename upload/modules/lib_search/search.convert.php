@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -11,7 +11,7 @@
  * @author        LEPTON Project
  * @copyright     2004 - 2010 WebsiteBaker Project
  * @copyright     since 2011 LEPTON Project
- * @link          http://www.lepton-cms.org
+ * @link          http://blackcat-cms.org
  * @license       http://www.gnu.org/licenses/gpl.html
  * @version       $Id$
  */
@@ -73,8 +73,8 @@ if ($search_language == 'TR') { // add special i/I-handling for Turkish
 }
 
 // include user-supplied file
-if (file_exists(LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/search.convert.custom.php'))
-	include_once(LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/search.convert.custom.php');
+if (file_exists(CAT_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/search.convert.custom.php'))
+	include_once(CAT_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/search.convert.custom.php');
 
 // create arrays
 global $search_table_umlauts_local;

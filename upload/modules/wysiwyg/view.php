@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -18,8 +18,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -39,7 +39,7 @@ if (defined('WB_PATH')) {
  
 
 // Get content
-$get_content = $database->query("SELECT `content` FROM `".TABLE_PREFIX."mod_wysiwyg` WHERE `section_id` = '".$section_id."'");
+$get_content = $database->query("SELECT `content` FROM `".CAT_TABLE_PREFIX."mod_wysiwyg` WHERE `section_id` = '".$section_id."'");
 $fetch_content = $get_content->fetchRow( MYSQL_ASSOC );
 $content = $fetch_content['content'];
 

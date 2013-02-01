@@ -1,7 +1,7 @@
 {include file="header.lte"}
   <h2>{translate('Manage backups')}</h2>
   
-  <a href="{$ADMIN_URL}/admintools/tool.php?tool=dropleps">&laquo; {translate('Back to overview')} &laquo;</a><br /><br />
+  <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=dropleps">&laquo; {translate('Back to overview')} &laquo;</a><br /><br />
   
   {if $info}<div class="info ui-corner-all">{$info}</div><br />{/if}
   <form method="post" action="{$action}">
@@ -26,8 +26,8 @@
       <tr>
         <td>
           <input type="checkbox" name="markeddroplet[]" id="markeddroplet_{$item.name}" value="{$item.name}" />
-          <a href="{$ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;backups=1&amp;delbackup={$item.name}"><img src="{$IMGURL}/delete.png" /></a>
-          <a href="{$ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;backups=1&amp;recover={$item.name}"><img src="{$IMGURL}/import.png" style="width:16px;" title="{translate('Import')}" /></a>
+          <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;backups=1&amp;delbackup={$item.name}"><img src="{$IMGURL}/delete.png" /></a>
+          <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;backups=1&amp;recover={$item.name}"><img src="{$IMGURL}/import.png" style="width:16px;" title="{translate('Import')}" /></a>
           <a href="#" class="tooltip"><img src="{$IMGURL}/info.png" alt="{translate('List contained files')}" /><span class="comment">{translate('Contained files')}:<br />{$item.listfiles}</span></a>
 		</td>
         <td>

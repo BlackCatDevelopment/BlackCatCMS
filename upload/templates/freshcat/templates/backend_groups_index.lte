@@ -4,8 +4,8 @@
 	{translate('Modify groups')}
 
 	<div class="fc_header_buttons">
-		{if $permissions.USERS}<a href="{$ADMIN_URL}/users/index.php" class="fc_br_left fc_gradient1 fc_gradient_hover">{translate('Manage users')}</a>{/if}
-		<a href="{$ADMIN_URL}/groups/index.php" class="{if !$permissions.USERS}fc_br_all {else}fc_br_right {/if}fc_gradient1 fc_gradient_hover fc_active">{translate('Manage groups')}</a>
+		{if $permissions.USERS}<a href="{$CAT_ADMIN_URL}/users/index.php" class="fc_br_left fc_gradient1 fc_gradient_hover">{translate('Manage users')}</a>{/if}
+		<a href="{$CAT_ADMIN_URL}/groups/index.php" class="{if !$permissions.USERS}fc_br_all {else}fc_br_right {/if}fc_gradient1 fc_gradient_hover fc_active">{translate('Manage groups')}</a>
 	</div>
 
 	<div class="clear"></div>
@@ -36,7 +36,7 @@
 	</div>
 	{if $permissions.GROUPS_MODIFY}
 	<div class="fc_all_forms">
-		<form action="{$ADMIN_URL}/groups/ajax_save_group.php" method="post" id="fc_Group_form" class="fc_list_forms">
+		<form action="{$CAT_ADMIN_URL}/groups/ajax_save_group.php" method="post" id="fc_Group_form" class="fc_list_forms">
 			<p class="submit_settings fc_gradient1">
 				<strong class="fc_addGroup">{translate('Add group')}</strong>
 				<strong class="fc_modifyGroup">{translate('Modify group')}</strong>

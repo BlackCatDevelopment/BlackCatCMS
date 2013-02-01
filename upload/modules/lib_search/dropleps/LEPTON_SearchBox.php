@@ -11,11 +11,11 @@ if (SHOW_SEARCH) {
     $wb->get_helper('DropLEP')->register_js(PAGE_ID, 'LEPTON_SearchBox', '', 'search.box.js', '/modules/lib_search/templates/default/');
     
     // add the actual needed language file (needed by the template parser)
-    $wb->get_helper('I18n')->addFile(LANGUAGE.'.php', LEPTON_PATH.'/modules/lib_search/languages/');
+    $wb->get_helper('I18n')->addFile(LANGUAGE.'.php', CAT_PATH.'/modules/lib_search/languages/');
     
     // set the template path and enable custom templates
-    $parser->setPath(LEPTON_PATH.'/modules/lib_search/templates/custom');
-    $parser->setFallbackPath(LEPTON_PATH.'/modules/lib_search/templates/default');
+    $parser->setPath(CAT_PATH.'/modules/lib_search/templates/custom');
+    $parser->setFallbackPath(CAT_PATH.'/modules/lib_search/templates/default');
     
     // parse the search.box template
     return $parser->get('search.box.lte', array('action' => LEPTON_URL.'/search/index.php'));

@@ -3,7 +3,7 @@
 <head>
 	<title>{$META.WEBSITE_TITLE} &raquo; {translate('Administration')} - {$HEAD.SECTION_NAME}</title>
 
-	<link rel="shortcut icon" href="{$THEME_URL}/images/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="{$CAT_THEME_URL}/images/favicon.ico" type="image/x-icon" />
 
 	<meta charset="{$META.CHARSET}">
 
@@ -12,26 +12,29 @@
 	<meta name="author" content="Matthias Glienke, creativecat" />
 
 	<script type="text/javascript">
-		var WB_URL									= '{$LEPTON_URL}', {* Marked as deprecated *}
-			LEPTON_URL								= '{$LEPTON_URL}',
-			THEME_URL								= '{$THEME_URL}',
-			ADMIN_URL								= '{$ADMIN_URL}',
-			DATE_FORMAT								= '{$DATE_FORMAT}',
-			TIME_FORMAT								= '{$TIME_FORMAT}';
-		var LEPTON_TEXT								= new Array();
-		LEPTON_TEXT["SEARCH"]						= '{translate('Search')}';
-		LEPTON_TEXT["BACK"]							= '{translate('Back')}';
-		LEPTON_TEXT["YES"]							= '{translate('Yes')}';
-		LEPTON_TEXT["NO"]							= '{translate('No')}';
-		LEPTON_TEXT["DEFAULT_MESSAGE_TITLE"]		= '{translate('Notification')}';
-		LEPTON_TEXT["GROUPS_CONFIRM_DELETE"]		= '{translate('Are you sure you want to delete the selected group (and any users that belong to it)?')}';
-		LEPTON_TEXT["USERS_CONFIRM_DELETE"]			= '{translate('Are you sure you want to delete the selected user?')}';
-		LEPTON_TEXT["MANAGE_GROUPS"]				= '{translate('Manage groups')}';
-		LEPTON_TEXT["MANAGE_USERS"]					= '{translate('Manage users')}';
-		LEPTON_TEXT["MEDIA_CONFIRM_DELETE_FILE"]	= '{translate('Are you sure you want to delete file {name}')}';
-		LEPTON_TEXT["MEDIA_CONFIRM_DELETE_DIR"]		= '{translate('Are you sure you want to delete the directory {name}')}';
-		LEPTON_TEXT["SECTION_CONFIRM_DELETE"]		= '{translate('Are you sure you want to delete this section?')}';
-		LEPTON_TEXT["SECTION_DELETE"]				= '{translate('Delete section')}';
+		var WB_URL							  = '{$CAT_URL}',        {* Marked as deprecated *}
+			LEPTON_URL						  = '{$CAT_URL}',        {* Marked as deprecated *}
+            CAT_URL                           = '{$CAT_URL}',
+            THEME_URL						  = '{$CAT_THEME_URL}',  {* Marked as deprecated *}
+			CAT_THEME_URL					  = '{$CAT_THEME_URL}',
+            ADMIN_URL						  = '{$CAT_ADMIN_URL}',  {* Marked as deprecated *}
+			CAT_ADMIN_URL					  = '{$CAT_ADMIN_URL}',
+			DATE_FORMAT						  = '{$DATE_FORMAT}',
+			TIME_FORMAT						  = '{$TIME_FORMAT}';
+		var CAT_TEXT						  = new Array();
+		CAT_TEXT["SEARCH"]					  = '{translate('Search')}';
+		CAT_TEXT["BACK"]					  = '{translate('Back')}';
+		CAT_TEXT["YES"]						  = '{translate('Yes')}';
+		CAT_TEXT["NO"]						  = '{translate('No')}';
+		CAT_TEXT["DEFAULT_MESSAGE_TITLE"]	  = '{translate('Notification')}';
+		CAT_TEXT["GROUPS_CONFIRM_DELETE"]	  = '{translate('Are you sure you want to delete the selected group (and any users that belong to it)?')}';
+		CAT_TEXT["USERS_CONFIRM_DELETE"]	  = '{translate('Are you sure you want to delete the selected user?')}';
+		CAT_TEXT["MANAGE_GROUPS"]			  = '{translate('Manage groups')}';
+		CAT_TEXT["MANAGE_USERS"]			  = '{translate('Manage users')}';
+		CAT_TEXT["MEDIA_CONFIRM_DELETE_FILE"] = '{translate('Are you sure you want to delete file {name}')}';
+		CAT_TEXT["MEDIA_CONFIRM_DELETE_DIR"]  = '{translate('Are you sure you want to delete the directory {name}')}';
+		CAT_TEXT["SECTION_CONFIRM_DELETE"]	  = '{translate('Are you sure you want to delete this section?')}';
+		CAT_TEXT["SECTION_DELETE"]			  = '{translate('Delete section')}';
 	</script>
 
 	{get_page_headers( "backend" , true , "$section_name")}
@@ -41,7 +44,7 @@
 
 	<header id="fc_admin_header" class="fc_gradient1 fc_border">
 		{*Here the selection of different sides will be added*}
-		<span id="fc_side_choose">Lepton 2</span>
+		<span id="fc_side_choose">Black Cat CMS</span>
 		{*main navigation*}
 		<nav>
 			<ul id="fc_menu">
@@ -64,7 +67,7 @@
 				</strong>
 			</a>
 			{*logout*}
-			<a href="{$ADMIN_URL}/logout/" id="fc_logout" title=" {translate('Logout')}" class="icon-switch fc_gradient1 fc_gradient_hover"></a>
+			<a href="{$CAT_ADMIN_URL}/logout/" id="fc_logout" title=" {translate('Logout')}" class="icon-switch fc_gradient1 fc_gradient_hover"></a>
 		</div>
 
 	</header>

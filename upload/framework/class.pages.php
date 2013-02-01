@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -109,7 +109,7 @@ class pages extends wb
 			$sql_sections		 = '';
 		}
 
-		$sql		 = 'SELECT * FROM `'.TABLE_PREFIX.'pages` ';
+		$sql		 = 'SELECT * FROM `'.CAT_TABLE_PREFIX.'pages` ';
 		$sql		.= ( $parent != 0 )					? 'WHERE `parent` = '.$parent.' ' : '';
 		$sql		.= ( PAGE_TRASH != 'inline' )		?
 													( $parent != 0 ) ?
@@ -160,7 +160,7 @@ class pages extends wb
 
 			if ( $add_sections && $sql_sections != '' )
 			{
-				$sql_sections	= 'SELECT page_id, section_id, name FROM `'.TABLE_PREFIX.'sections` WHERE ' . substr( $sql_sections, 4 ) . ' ORDER BY position';
+				$sql_sections	= 'SELECT page_id, section_id, name FROM `'.CAT_TABLE_PREFIX.'sections` WHERE ' . substr( $sql_sections, 4 ) . ' ORDER BY position';
 				$sections		= $this->db_handle->query($sql_sections);
 				if ( $sections->numRows() > 0 )
 				{
@@ -265,7 +265,7 @@ class pages extends wb
 			}
 			else $get_field = '*';
 
-			$get_child_pages = $this->db_handle->query('SELECT '.$get_field.' FROM `'.TABLE_PREFIX.'pages` WHERE `parent` = '.$page_id.' ORDER BY `position` ASC');
+			$get_child_pages = $this->db_handle->query('SELECT '.$get_field.' FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `parent` = '.$page_id.' ORDER BY `position` ASC');
 
 			if ( $get_child_pages->numRows() > 0)
 			{
@@ -289,7 +289,7 @@ class pages extends wb
 					// =================================
 					// ! Check if page has child pages
 					// =================================
-					$check_for_childs = $this->db_handle->query('SELECT `page_id` FROM `'.TABLE_PREFIX.'pages` WHERE `parent` = '.$child_page['page_id']);
+					$check_for_childs = $this->db_handle->query('SELECT `page_id` FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `parent` = '.$child_page['page_id']);
 					$this->child_pages[$counter]['is_parent']		= ( $check_for_childs->numRows() > 0 ) ? true : false;
 
 					$counter++;
@@ -351,7 +351,7 @@ class pages extends wb
 	 */
 	public function parent_list( $parent = 0 )
 	{
-		$get_pages = $this->db_handle->query("SELECT * FROM " . TABLE_PREFIX . "pages WHERE parent = '$parent' AND visibility!='deleted' ORDER BY position ASC");
+		$get_pages = $this->db_handle->query("SELECT * FROM " . CAT_TABLE_PREFIX . "pages WHERE parent = '$parent' AND visibility!='deleted' ORDER BY position ASC");
 
 		while ( $page = $get_pages->fetchRow( MYSQL_ASSOC ) )
 		{
@@ -446,7 +446,7 @@ class pages extends wb
 		// ==================
 		$addons_array = array();
 
-		$addons = $this->db_handle->query("SELECT * FROM " . TABLE_PREFIX . "addons WHERE ".$get_type.$get_function." ORDER BY ".htmlspecialchars( $order ) );
+		$addons = $this->db_handle->query("SELECT * FROM " . CAT_TABLE_PREFIX . "addons WHERE ".$get_type.$get_function." ORDER BY ".htmlspecialchars( $order ) );
 		if ( $addons->numRows() > 0 )
 		{
 			$counter = 1;
@@ -485,7 +485,7 @@ class pages extends wb
 		// ================
 		// ! Getting Groups
 		// ================
-		$get_groups = $this->db_handle->query("SELECT * FROM " . TABLE_PREFIX . "groups");
+		$get_groups = $this->db_handle->query("SELECT * FROM " . CAT_TABLE_PREFIX . "groups");
 
 		// ==============================================
 		// ! Insert admin group and current group first

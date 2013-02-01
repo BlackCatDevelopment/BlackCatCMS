@@ -17,8 +17,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,7 +35,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once( LEPTON_PATH . '/framework/class.admin.php' );
+require_once( CAT_PATH . '/framework/class.admin.php' );
 $admin = new admin('Pages', 'pages_settings');
 
 // Get page id
@@ -54,7 +54,7 @@ if ( !$admin->get_permission('pages_settings') )
 }
 
 // Include the WB functions file
-require_once( LEPTON_PATH . '/framework/functions.php' );
+require_once( CAT_PATH . '/framework/functions.php' );
 
 // Get values
 $page_title			= htmlspecialchars($admin->get_post_escaped('page_title'));
@@ -87,7 +87,7 @@ if ( $menu_title == '' || substr($menu_title,0,1)=='.' )
 
 
 // Get existing perms
-$results			= $database->query('SELECT `parent`, `link`, `position`, `admin_groups`, `admin_users` FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id`=' . $page_id);
+$results			= $database->query('SELECT `parent`, `link`, `position`, `admin_groups`, `admin_users` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id`=' . $page_id);
 $results_array		= $results->fetchRow();
 
 $old_parent			= $results_array['parent'];
@@ -121,9 +121,9 @@ $viewing_groups		= implode(',', $viewing_groups);
 if ( $parent != $old_parent )
 {
 	// Include ordering class
-	require( LEPTON_PATH . '/framework/class.order.php' );
+	require( CAT_PATH . '/framework/class.order.php' );
 
-	$order			= new order(TABLE_PREFIX.'pages', 'position', 'page_id', 'parent');
+	$order			= new order(CAT_TABLE_PREFIX.'pages', 'position', 'page_id', 'parent');
 	// Get new order
 	$position		= $order->get_new( $parent );
 
@@ -169,11 +169,11 @@ else
 	$link			= '/' . $parent_section . page_filename( $page_link );
 }
 
-$filename			= LEPTON_PATH . PAGES_DIRECTORY . $link . PAGE_EXTENSION;
+$filename			= CAT_PATH . PAGES_DIRECTORY . $link . PAGE_EXTENSION;
 
 
 // Check if a page with same page filename exists
-$get_same_page		= $database->query( 'SELECT `page_id`,`page_title` FROM `' . TABLE_PREFIX . 'pages` WHERE `link` = "' . $link . '" AND `page_id` != ' . $page_id);
+$get_same_page		= $database->query( 'SELECT `page_id`,`page_title` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `link` = "' . $link . '" AND `page_id` != ' . $page_id);
 
 if ( $get_same_page->numRows() > 0 )
 {
@@ -182,13 +182,13 @@ if ( $get_same_page->numRows() > 0 )
 
 
 // Update page with new order
-$database->query('UPDATE `' . TABLE_PREFIX . 'pages` SET `parent`=' . $parent . ', `position`=' . $position . ' WHERE `page_id`=' . $page_id);
+$database->query('UPDATE `' . CAT_TABLE_PREFIX . 'pages` SET `parent`=' . $parent . ', `position`=' . $position . ' WHERE `page_id`=' . $page_id);
 
 // Get page trail
 $page_trail		= get_page_trail( $page_id );
 
 // Update page settings in the pages table
-$sql	= 'UPDATE `' . TABLE_PREFIX . 'pages` SET ';
+$sql	= 'UPDATE `' . CAT_TABLE_PREFIX . 'pages` SET ';
 $sql	.= '`page_title` = "'.$page_title.'", ';
 $sql	.= '`menu_title` = "'.$menu_title.'", ';
 $sql	.= '`link` = "'.$link.'" ';
@@ -220,7 +220,7 @@ $database->query($sql);
 
 if ( $database->is_error() )
 {
-	$admin->print_error($database->get_error(), ADMIN_URL . '/pages/settings.php?page_id=' . $page_id );
+	$admin->print_error($database->get_error(), CAT_ADMIN_URL . '/pages/settings.php?page_id=' . $page_id );
 }
 // Clean old order if needed
 if ( $parent != $old_parent )
@@ -231,19 +231,19 @@ if ( $parent != $old_parent )
 /* BEGIN page "access file" code */
 
 // Create a new file in the /pages dir if title changed
-if ( !is_writable( LEPTON_PATH . PAGES_DIRECTORY . '/') )
+if ( !is_writable( CAT_PATH . PAGES_DIRECTORY . '/') )
 {
 	$admin->print_error('Error creating access file in the pages directory(page), (insufficient privileges)');
 }
 else
 {
-	$old_filename	= LEPTON_PATH.PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
+	$old_filename	= CAT_PATH.PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
 
 	// First check if we need to create a new file
 	if ( ( $old_link != $link ) || (!file_exists($old_filename) ) )
 	{
 		// Delete old file
-		$old_filename		= LEPTON_PATH.PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
+		$old_filename		= CAT_PATH.PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
 		if ( file_exists( $old_filename ) )
 		{
 			unlink( $old_filename );
@@ -253,16 +253,16 @@ else
 		create_access_file( $filename, $page_id, $level );
 
 		// Move a directory for this page
-		if ( file_exists( LEPTON_PATH . PAGES_DIRECTORY . $old_link . '/') && is_dir( LEPTON_PATH . PAGES_DIRECTORY . $old_link . '/' ) )
+		if ( file_exists( CAT_PATH . PAGES_DIRECTORY . $old_link . '/') && is_dir( CAT_PATH . PAGES_DIRECTORY . $old_link . '/' ) )
 		{
-			rename( LEPTON_PATH . PAGES_DIRECTORY . $old_link . '/', LEPTON_PATH . PAGES_DIRECTORY . $link . '/' );
+			rename( CAT_PATH . PAGES_DIRECTORY . $old_link . '/', CAT_PATH . PAGES_DIRECTORY . $link . '/' );
 		}
 
 		// Update any pages that had the old link with the new one
 		$old_link_len	= strlen($old_link);
 		$sql			= '';
 
-		$query_subs		= $database->query("SELECT page_id,link,level FROM " . TABLE_PREFIX . "pages WHERE link LIKE '%$old_link/%' ORDER BY LEVEL ASC");
+		$query_subs		= $database->query("SELECT page_id,link,level FROM " . CAT_TABLE_PREFIX . "pages WHERE link LIKE '%$old_link/%' ORDER BY LEVEL ASC");
 
 		if ( $query_subs->numRows() > 0 )
 		{
@@ -280,16 +280,16 @@ else
 					$new_sub_level		= level_count( $sub['page_id'] );
 
 					// Update level and link
-					$database->query("UPDATE " . TABLE_PREFIX . "pages SET link = '$new_sub_link', level = '$new_sub_level' WHERE page_id = '" . $sub['page_id'] . "' LIMIT 1");
+					$database->query("UPDATE " . CAT_TABLE_PREFIX . "pages SET link = '$new_sub_link', level = '$new_sub_level' WHERE page_id = '" . $sub['page_id'] . "' LIMIT 1");
 
 					// Re-write the access file for this page
-					$old_subpage_file	= LEPTON_PATH . PAGES_DIRECTORY . $new_sub_link . PAGE_EXTENSION;
+					$old_subpage_file	= CAT_PATH . PAGES_DIRECTORY . $new_sub_link . PAGE_EXTENSION;
 
 					if ( file_exists( $old_subpage_file ) )
 					{
 						unlink( $old_subpage_file );
 					}
-					create_access_file( LEPTON_PATH . PAGES_DIRECTORY . $new_sub_link . PAGE_EXTENSION, $sub['page_id'], $new_sub_level);
+					create_access_file( CAT_PATH . PAGES_DIRECTORY . $new_sub_link . PAGE_EXTENSION, $sub['page_id'], $new_sub_level);
 				}
 			}
 		}
@@ -303,7 +303,7 @@ function fix_page_trail($parent,$root_parent)
 	global $admin, $database;
 
 	// Get page list from database
-	$get_pages	= $database->query("SELECT page_id FROM " . TABLE_PREFIX . "pages WHERE parent = '$parent'");
+	$get_pages	= $database->query("SELECT page_id FROM " . CAT_TABLE_PREFIX . "pages WHERE parent = '$parent'");
 
 	// Insert values into main page list
 	if ( $get_pages->numRows() > 0 )
@@ -311,7 +311,7 @@ function fix_page_trail($parent,$root_parent)
 		while ( $page = $get_pages->fetchRow() )
 		{
 			// Fix page trail
-			$database->query("UPDATE " . TABLE_PREFIX . "pages SET " . 
+			$database->query("UPDATE " . CAT_TABLE_PREFIX . "pages SET " . 
 				($root_parent != 0 ? "root_parent = '$root_parent', " : "")
 				. " page_trail = '" . get_page_trail( $page['page_id'] ) . "' WHERE page_id = '" . $page['page_id'] . "'");
 			// Run this query on subs
@@ -328,11 +328,11 @@ fix_page_trail( $page_id, $root_parent );
 // Check if there is a db error, otherwise say successful
 if ( $database->is_error() )
 {
-	$admin->print_error($database->get_error(), ADMIN_URL . '/pages/settings.php?page_id=' . $page_id );
+	$admin->print_error($database->get_error(), CAT_ADMIN_URL . '/pages/settings.php?page_id=' . $page_id );
 }
 else
 {
-	$admin->print_success('Page settings saved successfully', ADMIN_URL . '/pages/settings.php?page_id=' . $page_id );
+	$admin->print_success('Page settings saved successfully', CAT_ADMIN_URL . '/pages/settings.php?page_id=' . $page_id );
 }
 
 // ====================== 

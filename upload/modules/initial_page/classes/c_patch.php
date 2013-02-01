@@ -13,8 +13,8 @@
  */
  
  // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -40,9 +40,9 @@ class patchStartPage {
 	private $original_file;
 	
 	public function __construct() {
-		$this->temp_file = ADMIN_PATH .'/start/index.php.tmp';
-		$this->original_file= ADMIN_PATH .'/start/index.php';
-		$this->backup_file = ADMIN_PATH .'/start/index.php.bak';	
+		$this->temp_file = CAT_ADMIN_PATH .'/start/index.php.tmp';
+		$this->original_file= CAT_ADMIN_PATH .'/start/index.php';
+		$this->backup_file = CAT_ADMIN_PATH .'/start/index.php.bak';
 	}
 	
 	/**
@@ -95,8 +95,8 @@ class patchStartPage {
 	function doPatch() {
 		$returnvalue = false;		
 		$addline = "\n\n// exec initial_page ";
-		$addline .= "\n".'if(file_exists(WB_PATH .\'/modules/initial_page/classes/c_init_page.php\') && isset($_SESSION[\'USER_ID\'])) { ';
-		$addline .= "\n\trequire_once (WB_PATH .'/modules/initial_page/classes/c_init_page.php'); ";
+		$addline .= "\n".'if(file_exists(CAT_PATH .\'/modules/initial_page/classes/c_init_page.php\') && isset($_SESSION[\'USER_ID\'])) { ';
+		$addline .= "\n\trequire_once (CAT_PATH .'/modules/initial_page/classes/c_init_page.php'); ";
 		$addline .= "\n\t".'$ins = new c_init_page($database, $_SESSION[\'USER_ID\'], $_SERVER[\'SCRIPT_NAME\']);';
 		$addline .= "\n}\n\n";
 		if(file_exists($this->original_file)) {	

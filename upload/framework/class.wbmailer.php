@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -59,7 +59,7 @@ class wbmailer extends PHPMailer
 
 		// get mailer settings from database
 		$database = new database();
-		$query = "SELECT * FROM " .TABLE_PREFIX. "settings";
+		$query = "SELECT * FROM " .CAT_TABLE_PREFIX. "settings";
 		$results = $database->query($query);
 		while($setting = $results->fetchRow()) {
 			if ($setting['name'] == "wbmailer_routine") { $db_wbmailer_routine = $setting['value']; }

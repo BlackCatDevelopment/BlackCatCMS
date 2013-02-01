@@ -34,7 +34,7 @@
                 <tbody>
                 {foreach $PAGE_LINKS as link}
                     <tr>
-                        <td><a href="{$ADMIN_URL}/pages/lang_settings.php?page_id={$PAGE_ID}&amp;del={$link.lang}_{$link.page_id}"><img src="{$THEME_URL}/images/delete_16.png" border="0" alt="X" /></a></td>
+                        <td><a href="{$CAT_ADMIN_URL}/pages/lang_settings.php?page_id={$PAGE_ID}&amp;del={$link.lang}_{$link.page_id}"><img src="{$CAT_THEME_URL}/images/delete_16.png" border="0" alt="X" /></a></td>
                         <td>{$link.lang}</td>
                         <td>{$link.menu_title}</td>
                     </tr>
@@ -50,7 +50,7 @@
         <h2 style="margin:0" class="fc_modified_header">{translate('Create link')}</h2>
         {if count($AVAILABLE_PAGES)}
         {if count($AVAILABLE_LANGS)}
-    	<form name="lang_settings" action="{$ADMIN_URL}/pages/lang_settings_save.php" method="post" class="fc_gradient1">
+    	<form name="lang_settings" action="{$CAT_ADMIN_URL}/pages/lang_settings_save.php" method="post" class="fc_gradient1">
     		<input type="hidden" name="page_id" value="{$PAGE_ID}" />
 
             <label for="fc_map_language" class="fc_label_120">{translate('Map to language')}</label>

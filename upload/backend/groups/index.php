@@ -16,8 +16,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,7 +34,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(CAT_PATH.'/framework/class.admin.php');
 $admin = new admin('Access', 'groups');
 
 // =========================== 
@@ -51,7 +51,7 @@ $data_dwoo['permissions']['USERS']			= $admin->get_permission('users')			? true 
 // =========================================================================== 
 global $parser;
 
-require_once( LEPTON_PATH . '/framework/class.pages.php');
+require_once( CAT_PATH . '/framework/class.pages.php');
 $pages = new pages();
 // $items	= $admin->get_controller('Pages')->get_linked_by_language($page_id);
 

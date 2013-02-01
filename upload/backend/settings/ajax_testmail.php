@@ -19,8 +19,8 @@
 ob_start();
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -55,7 +55,7 @@ if ( ! $curr_user_is_admin ) {
 }
 
 $settings = array();
-$sql      = 'SELECT `name`, `value` FROM `'.TABLE_PREFIX.'settings`';
+$sql      = 'SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'settings`';
 if ( $res_settings = $database->query( $sql ) ) {
     while ($row = $res_settings->fetchRow( )) {
         $settings[ strtoupper($row['name']) ] = ( $row['name'] != 'wbmailer_smtp_password' ) ? htmlspecialchars($row['value']) : $row['value'];

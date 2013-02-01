@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -32,7 +32,7 @@ if (defined('WB_PATH')) {
 
 
 
-require_once(WB_PATH.'/framework/class.wb.php');
+require_once(CAT_PATH.'/framework/class.wb.php');
 $wb = new wb;
 
 // Check if we should show the form or add a comment
@@ -58,10 +58,10 @@ if(isset($_GET['page_id']) AND is_numeric($_GET['page_id'])
 	$post_id = $_GET['post_id'];
 
 	// Check captcha
-	$query_settings = $database->query("SELECT use_captcha FROM ".TABLE_PREFIX."mod_news_settings WHERE section_id = '$section_id'");
+	$query_settings = $database->query("SELECT use_captcha FROM ".CAT_TABLE_PREFIX."mod_news_settings WHERE section_id = '$section_id'");
 	if( !$query_settings->numRows())
     {
-		header("Location: ".WB_URL.PAGES_DIRECTORY."");
+		header("Location: ".CAT_URL.PAGES_DIRECTORY."");
 	    exit( 0 );
 	}
     else
@@ -79,7 +79,7 @@ if(isset($_GET['page_id']) AND is_numeric($_GET['page_id'])
             OR ($_SESSION['submitted_when'] < $t-43200) // form older than 12h
             OR ($_POST['email'] OR $_POST['url'] OR $_POST['homepage'] OR $_POST['comment']) /* honeypot-fields */ ) )
         {
-            header("Location: ".WB_URL.PAGES_DIRECTORY."");
+            header("Location: ".CAT_URL.PAGES_DIRECTORY."");
 	        exit( 0 );
 		}
 
@@ -101,7 +101,7 @@ if(isset($_GET['page_id']) AND is_numeric($_GET['page_id'])
 					$_SESSION['captcha_error'] = $MESSAGE['MOD_FORM']['INCORRECT_CAPTCHA'];
 					$_SESSION['comment_title'] = $title;
 					$_SESSION['comment_body'] = $comment;
-					header("Location: ".WB_URL."/modules/news/comment.php?post_id=".$post_id."&section_id=".$section_id."" );
+					header("Location: ".CAT_URL."/modules/news/comment.php?post_id=".$post_id."&section_id=".$section_id."" );
 	                exit( 0 );
 				}
 			}
@@ -110,7 +110,7 @@ if(isset($_GET['page_id']) AND is_numeric($_GET['page_id'])
 				$_SESSION['captcha_error'] = $MESSAGE['MOD_FORM']['INCORRECT_CAPTCHA'];
 				$_SESSION['comment_title'] = $title;
 				$_SESSION['comment_body'] = $comment;
-				header("Location: ".WB_URL."/modules/news/comment.php?post_id=".$post_id."&section_id=".$section_id."" );
+				header("Location: ".CAT_URL."/modules/news/comment.php?post_id=".$post_id."&section_id=".$section_id."" );
 	            exit( 0 );
 			}
 		}
@@ -136,9 +136,9 @@ if(isset($_GET['page_id']) AND is_numeric($_GET['page_id'])
 		$commented_by = '';
 	}
 
-	$query = $database->query("INSERT INTO ".TABLE_PREFIX."mod_news_comments (section_id,page_id,post_id,title,comment,commented_when,commented_by) VALUES ('$section_id','$page_id','$post_id','$title','$comment','$commented_when','$commented_by')");
+	$query = $database->query("INSERT INTO ".CAT_TABLE_PREFIX."mod_news_comments (section_id,page_id,post_id,title,comment,commented_when,commented_by) VALUES ('$section_id','$page_id','$post_id','$title','$comment','$commented_when','$commented_by')");
 	// Get page link
-	$query_page = $database->query("SELECT link FROM ".TABLE_PREFIX."mod_news_posts WHERE post_id = '$post_id'");
+	$query_page = $database->query("SELECT link FROM ".CAT_TABLE_PREFIX."mod_news_posts WHERE post_id = '$post_id'");
 	$page = $query_page->fetchRow();
 	header('Location: '.$wb->page_link($page['link']).'?post_id='.$post_id.'' );
 	exit( 0 );
@@ -148,12 +148,12 @@ else
 	if( isset($_GET['post_id']) AND is_numeric($_GET['post_id'])
         AND isset($_GET['section_id']) AND is_numeric($_GET['section_id']) )
     {
- 		header("Location: ".WB_URL."/modules/news/comment.php?post_id=".($_GET['post_id'])."&section_id=".($_GET['section_id'])."" ) ;
+ 		header("Location: ".CAT_URL."/modules/news/comment.php?post_id=".($_GET['post_id'])."&section_id=".($_GET['section_id'])."" ) ;
 	    exit( 0 );
     }
 	else
     {
-		header("Location: ".WB_URL.PAGES_DIRECTORY."");
+		header("Location: ".CAT_URL.PAGES_DIRECTORY."");
 	    exit( 0 );
     }
 }

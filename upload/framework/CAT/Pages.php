@@ -127,8 +127,8 @@ if (!class_exists('CAT_Pages', false))
         {
             global $database, $wb;
             // Check for a page id
-            $table_p       = TABLE_PREFIX . 'pages';
-            $table_s       = TABLE_PREFIX . 'sections';
+            $table_p       = CAT_TABLE_PREFIX . 'pages';
+            $table_s       = CAT_TABLE_PREFIX . 'sections';
             $now           = time();
             $query_default = "
     			SELECT `p`.`page_id`, `link`, `language`
@@ -187,7 +187,7 @@ if (!class_exists('CAT_Pages', false))
             if ($this->page_id != 0)
             {
                 // Query page details
-                $query_page = "SELECT * FROM " . TABLE_PREFIX . "pages WHERE page_id = '{$this->page_id}'";
+                $query_page = "SELECT * FROM " . CAT_TABLE_PREFIX . "pages WHERE page_id = '{$this->page_id}'";
                 $get_page   = $database->query($query_page);
                 // Make sure page was found in database
                 if ($get_page->numRows() == 0)
@@ -866,7 +866,7 @@ if (!class_exists('CAT_Pages', false))
             global $database, $wb, $admin;
             if (!is_object($wb))
                 $wb =& $admin;
-            $results = $database->query('SELECT * FROM `' . TABLE_PREFIX . 'page_langs` AS t1' . ' RIGHT OUTER JOIN `' . TABLE_PREFIX . 'pages` AS t2' . ' ON t1.link_page_id=t2.page_id' . ' WHERE t1.page_id = ' . $page_id);
+            $results = $database->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'page_langs` AS t1' . ' RIGHT OUTER JOIN `' . CAT_TABLE_PREFIX . 'pages` AS t2' . ' ON t1.link_page_id=t2.page_id' . ' WHERE t1.page_id = ' . $page_id);
             if ($results->numRows())
             {
                 $items = array();
@@ -884,7 +884,7 @@ if (!class_exists('CAT_Pages', false))
         {
             global $database;
             $now = time();
-            $sql = 'SELECT COUNT(*) FROM `' . TABLE_PREFIX . 'sections` ';
+            $sql = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'sections` ';
             $sql .= 'WHERE (' . $now . ' BETWEEN `publ_start` AND `publ_end`) OR ';
             $sql .= '(' . $now . ' > `publ_start` AND `publ_end`=0) ';
             $sql .= 'AND `page_id`=' . (int) $page['page_id'];
@@ -1321,7 +1321,7 @@ if (!class_exists('CAT_Pages', false))
             if (!is_array(self::$properties) || !count(self::$properties))
             {
                 // get global settings
-                $sql = sprintf('SELECT `name`,`value` FROM `%ssettings` ORDER BY `name`', TABLE_PREFIX);
+                $sql = sprintf('SELECT `name`,`value` FROM `%ssettings` ORDER BY `name`', CAT_TABLE_PREFIX);
                 if (($result = $database->query($sql)) && ($result->numRows() > 0))
                 {
                     while (false != ($row = $result->fetchRow(MYSQL_ASSOC)))
@@ -1342,7 +1342,7 @@ if (!class_exists('CAT_Pages', false))
                 }
 
                 // get properties for current page; overwrites globals if not empty
-                $sql = sprintf('SELECT page_title, description, keywords FROM %spages WHERE page_id = "%d"', TABLE_PREFIX, PAGE_ID);
+                $sql = sprintf('SELECT page_title, description, keywords FROM %spages WHERE page_id = "%d"', CAT_TABLE_PREFIX, PAGE_ID);
                 if (($result = $database->query($sql)) && ($result->numRows() > 0))
                 {
                     while (false != ($row = $result->fetchRow(MYSQL_ASSOC)))

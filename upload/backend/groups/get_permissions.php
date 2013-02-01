@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -210,7 +210,7 @@ $system_permissions							= $imploded_system_permissions;
 // ========================== 
 $modules			= array();
 $module_permissions	= '';
-$dirs				= scan_current_dir( LEPTON_PATH . '/modules' );
+$dirs				= scan_current_dir( CAT_PATH . '/modules' );
 if ( is_array( $admin->get_post('module_permissions') ) )
 {
 	foreach($admin->get_post('module_permissions') AS $selected_name)
@@ -230,7 +230,7 @@ $module_permissions							= implode(',', $modules);
 // ============================ 
 $templates				= array();
 $template_permissions	= '';
-$dirs					= scan_current_dir(LEPTON_PATH.'/templates');
+$dirs					= scan_current_dir(CAT_PATH.'/templates');
 if ( is_array( $admin->get_post('template_permissions') ) )
 {
 	foreach($admin->get_post('template_permissions') AS $selected_name)

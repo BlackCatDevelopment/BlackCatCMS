@@ -17,8 +17,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,10 +34,10 @@ if (defined('LEPTON_PATH')) {
 	}
 }
 
-require_once( LEPTON_PATH . '/framework/class.admin.php' );
+require_once( CAT_PATH . '/framework/class.admin.php' );
 $admin = new admin('Start', 'start');
 
-header( 'Location: ' . ADMIN_URL . '/start/index.php?leptoken=' . $admin->getToken() );
+header( 'Location: ' . CAT_ADMIN_URL . '/start/index.php?leptoken=' . $admin->getToken() );
 exit(0);
 
 ?>

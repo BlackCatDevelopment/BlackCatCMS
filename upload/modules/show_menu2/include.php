@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -17,8 +17,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -492,7 +492,7 @@ function show_menu2(
     $CURR_PAGE_ID = defined('REFERRER_ID') ? REFERRER_ID : PAGE_ID;
     if (count($wb->page) == 0 && defined('REFERRER_ID') && REFERRER_ID > 0) {
         global $database;
-        $sql = 'SELECT * FROM `'.TABLE_PREFIX.'pages` WHERE `page_id` = '.REFERRER_ID.'';
+        $sql = 'SELECT * FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `page_id` = '.REFERRER_ID.'';
         $result = $database->query($sql);
         if ($result->numRows() == 1) {
             $wb->page = $result->fetchRow();
@@ -567,7 +567,7 @@ function show_menu2(
         // are about to create it is cheaper for us to get everything we need
         // from the database once and create the menu from memory then make 
         // multiple calls to the database. 
-        $sql  = 'SELECT '.$fields.' FROM `'.TABLE_PREFIX.'pages` ';
+        $sql  = 'SELECT '.$fields.' FROM `'.CAT_TABLE_PREFIX.'pages` ';
 		$sql .= 'WHERE '.$wb->extra_where_sql.' '.$menuLimitSql.' ';
 		$sql .= 'ORDER BY `level` ASC, `position` ASC';
         $sql = str_replace('hidden', 'IGNOREME', $sql); // we want the hidden pages
@@ -822,7 +822,7 @@ function sm2_recurse(
         if ($pageLevel >= $aStartLevel) {
             // M.f.i. Aldus - it's not clear why the intro-page got another url at this point.
             if(!INTRO_PAGE && $page['link'] == $wb->default_link) {
-                $url = WB_URL;
+                $url = CAT_URL;
             }
             else {
                 $url = $wb->page_link($page['link']);

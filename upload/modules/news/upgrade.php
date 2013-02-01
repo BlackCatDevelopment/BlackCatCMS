@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -30,26 +30,26 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-if(defined('WB_URL'))
+if(defined('CAT_URL'))
 {
 
   // first copy content of original news_tables to xsik_tables	
-  $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."xsik_news_posts`");
-  $database->query("RENAME TABLE `".TABLE_PREFIX."mod_news_posts` TO `".TABLE_PREFIX."xsik_news_posts`"); 
+  $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."xsik_news_posts`");
+  $database->query("RENAME TABLE `".CAT_TABLE_PREFIX."mod_news_posts` TO `".CAT_TABLE_PREFIX."xsik_news_posts`"); 
 
-  $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."xsik_news_groups`");  
-  $database->query("RENAME TABLE `".TABLE_PREFIX."mod_news_groups` TO `".TABLE_PREFIX."xsik_news_groups`");    
+  $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."xsik_news_groups`");  
+  $database->query("RENAME TABLE `".CAT_TABLE_PREFIX."mod_news_groups` TO `".CAT_TABLE_PREFIX."xsik_news_groups`");    
   
-  $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."xsik_news_comments`");  
-  $database->query("RENAME TABLE `".TABLE_PREFIX."mod_news_comments` TO `".TABLE_PREFIX."xsik_news_comments`");    
+  $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."xsik_news_comments`");  
+  $database->query("RENAME TABLE `".CAT_TABLE_PREFIX."mod_news_comments` TO `".CAT_TABLE_PREFIX."xsik_news_comments`");    
   
-  $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."xsik_news_settings`");
-  $database->query("RENAME TABLE `".TABLE_PREFIX."mod_news_settings` TO `".TABLE_PREFIX."xsik_news_settings`");     
+  $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."xsik_news_settings`");
+  $database->query("RENAME TABLE `".CAT_TABLE_PREFIX."mod_news_settings` TO `".CAT_TABLE_PREFIX."xsik_news_settings`");     
  
  
  // then delete and create original tables
-  $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_news_posts`");
-	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_news_posts` ( '
+  $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_news_posts`");
+	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_news_posts` ( '
 					 . '`post_id` INT NOT NULL AUTO_INCREMENT,'
 					 . '`section_id` INT NOT NULL DEFAULT \'0\','
 					 . '`page_id` INT NOT NULL DEFAULT \'0\','
@@ -70,8 +70,8 @@ if(defined('WB_URL'))
 	$database->query($mod_news);
 
 	
-  $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_news_groups`");
-	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_news_groups` ( '
+  $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_news_groups`");
+	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_news_groups` ( '
 					 . '`group_id` INT NOT NULL AUTO_INCREMENT,'
 					 . '`section_id` INT NOT NULL DEFAULT \'0\','
 					 . '`page_id` INT NOT NULL DEFAULT \'0\','
@@ -83,8 +83,8 @@ if(defined('WB_URL'))
 	$database->query($mod_news);
 	
 
-  $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_news_comments`");  
-	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_news_comments` ( '
+  $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_news_comments`");  
+	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_news_comments` ( '
 					 . '`comment_id` INT NOT NULL AUTO_INCREMENT,'
 					 . '`section_id` INT NOT NULL DEFAULT \'0\','
 					 . '`page_id` INT NOT NULL DEFAULT \'0\','
@@ -99,8 +99,8 @@ if(defined('WB_URL'))
 	$database->query($mod_news);
 	
 
-  $database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_news_settings`");  
-	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.TABLE_PREFIX.'mod_news_settings` ( '
+  $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_news_settings`");  
+	$mod_news = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_news_settings` ( '
 					 . '`section_id` INT NOT NULL DEFAULT \'0\','
 					 . '`page_id` INT NOT NULL DEFAULT \'0\','
 					 . '`header` TEXT NOT NULL ,'
@@ -122,21 +122,21 @@ if(defined('WB_URL'))
 	$database->query($mod_news);
 
   // insert content from sik_tables to original tables
- $database->query("INSERT INTO `".TABLE_PREFIX."mod_news_posts` SELECT * FROM `".TABLE_PREFIX."xsik_news_posts`");   
- $database->query("INSERT INTO `".TABLE_PREFIX."mod_news_groups` SELECT * FROM `".TABLE_PREFIX."xsik_news_groups`");   
- $database->query("INSERT INTO `".TABLE_PREFIX."mod_news_comments` SELECT * FROM `".TABLE_PREFIX."xsik_news_comments`");   
- $database->query("INSERT INTO `".TABLE_PREFIX."mod_news_settings` SELECT * FROM `".TABLE_PREFIX."xsik_news_settings`");      
+ $database->query("INSERT INTO `".CAT_TABLE_PREFIX."mod_news_posts` SELECT * FROM `".CAT_TABLE_PREFIX."xsik_news_posts`");   
+ $database->query("INSERT INTO `".CAT_TABLE_PREFIX."mod_news_groups` SELECT * FROM `".CAT_TABLE_PREFIX."xsik_news_groups`");   
+ $database->query("INSERT INTO `".CAT_TABLE_PREFIX."mod_news_comments` SELECT * FROM `".CAT_TABLE_PREFIX."xsik_news_comments`");   
+ $database->query("INSERT INTO `".CAT_TABLE_PREFIX."mod_news_settings` SELECT * FROM `".CAT_TABLE_PREFIX."xsik_news_settings`");      
 
 		
 };
 
 	// Make news post access files dir
-	require_once(WB_PATH.'/framework/functions.php');
-	make_dir(WB_PATH.MEDIA_DIRECTORY.'/newspics'); // create directory for images
+	require_once(CAT_PATH.'/framework/functions.php');
+	make_dir(CAT_PATH.MEDIA_DIRECTORY.'/newspics'); // create directory for images
   
 		copy(
-			WB_PATH.PAGES_DIRECTORY.'/posts/index.php',
-			WB_PATH.MEDIA_DIRECTORY.'/newspics/index.php'
+			CAT_PATH.PAGES_DIRECTORY.'/posts/index.php',
+			CAT_PATH.MEDIA_DIRECTORY.'/newspics/index.php'
 		);  
 
 ?>

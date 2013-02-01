@@ -16,8 +16,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,7 +34,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin = new admin('Pages', 'pages_delete', false);
 
 header('Content-type: application/json');
@@ -51,7 +51,7 @@ if ( !$admin->get_permission('pages_delete') )
 }
 
 // Include the LEPTON functions file
-require_once(LEPTON_PATH . '/framework/functions.php');
+require_once(CAT_PATH . '/framework/functions.php');
 
 $page_id		= $admin->get_post('page_id');
 
@@ -77,7 +77,7 @@ if ( !$admin->get_page_permission( $page_id, 'admin' ) )
 }
 
 // Find out more about the page
-$results	= $database->query("SELECT * FROM " . TABLE_PREFIX . "pages WHERE page_id = '$page_id'");
+$results	= $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "pages WHERE page_id = '$page_id'");
 if ( $database->is_error() )
 {
 	$ajax	= array(
@@ -110,7 +110,7 @@ if ( PAGE_TRASH != 'disabled' && $visibility != 'deleted' )
 	{
 		global $database;
 		// Query pages
-		$query_menu	= $database->query("SELECT page_id FROM " . TABLE_PREFIX . "pages WHERE parent = '$parent' ORDER BY position ASC");
+		$query_menu	= $database->query("SELECT page_id FROM " . CAT_TABLE_PREFIX . "pages WHERE parent = '$parent' ORDER BY position ASC");
 		// Check if there are any pages to show
 		if($query_menu->numRows() > 0)
 		{
@@ -118,7 +118,7 @@ if ( PAGE_TRASH != 'disabled' && $visibility != 'deleted' )
 			while($page = $query_menu->fetchRow())
 			{
 				// Update the page visibility to 'deleted'
-				$database->query("UPDATE " . TABLE_PREFIX . "pages SET visibility = 'deleted' WHERE page_id = '".$page['page_id']."' LIMIT 1");
+				$database->query("UPDATE " . CAT_TABLE_PREFIX . "pages SET visibility = 'deleted' WHERE page_id = '".$page['page_id']."' LIMIT 1");
 				// Run this function again for all sub-pages
 				trash_subs( $page['page_id'] );
 			}
@@ -126,7 +126,7 @@ if ( PAGE_TRASH != 'disabled' && $visibility != 'deleted' )
 	}
 	
 	// Update the page visibility to 'deleted'
-	$database->query("UPDATE " . TABLE_PREFIX . "pages SET visibility = 'deleted' WHERE page_id = '$page_id.' LIMIT 1");
+	$database->query("UPDATE " . CAT_TABLE_PREFIX . "pages SET visibility = 'deleted' WHERE page_id = '$page_id.' LIMIT 1");
 	
 	// Run trash subs for this page
 	trash_subs( $page_id );

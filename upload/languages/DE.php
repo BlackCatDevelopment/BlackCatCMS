@@ -1,26 +1,33 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://www.blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -53,7 +60,11 @@ $language_guid = 'f49419c8-eb27-4a69-bffb-af61fce6b0c9';
 
 $LANG = array(
     // ----- BACKEND -----
-    'Welcome to LEPTON Administration' => 'Willkommen im LEPTON Administrationsbereich',
+    'Welcome to Black Cat CMS Administration' => 'Willkommen im Black Cat CMS Administrationsbereich',
+    'To use <span class="icon-logo">Black Cat CMS</span>, please enable JavaScript in your browser and try again.'
+        => 'Um <span class="icon-logo">Black Cat CMS</span> zu verwenden, bitte JavaScript im Browser aktivieren und nochmal versuchen.',
+    'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.'
+        => 'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.',
     // ----- common -----
     'Notification' => 'Hinweis',
     'Options' => 'Optionen',
@@ -532,7 +543,7 @@ $TEXT = array(
 	'SUCCESS' 				=> 'Erfolgreich',
 	'SYSTEM_DEFAULT' 		=> 'Standardeinstellung',
 	'SYSTEM_PERMISSIONS' 	=> 'Zugangsberechtigungen',
-	'TABLE_PREFIX' 			=> 'TabellenPr&auml;fix',
+	'CAT_TABLE_PREFIX' 			=> 'TabellenPr&auml;fix',
 	'TARGET' 				=> 'Ziel',
 	'TARGET_FOLDER' 		=> 'Zielordner',
 	'TEMPLATE' 				=> 'Template',
@@ -576,7 +587,7 @@ $TEXT = array(
 	'VISIBILITY' 			=> 'Sichtbarkeit',
 	'WBMAILER_DEFAULT_SENDER_MAIL' => 'Standard "VON" Adresse',
 	'WBMAILER_DEFAULT_SENDER_NAME' => 'Standard Absender Name',
-	'WBMAILER_DEFAULT_SETTINGS_NOTICE' => 'Bitte geben Sie eine Standard "VON" Adresse und einen Sendernamen an. Als Absender Adresse empfiehlt sich ein Format wie: <strong>admin@IhreWebseite.de</strong>. Manche E-Mail Provider (z.B. <em>mail.de</em>) stellen keine E-Mails zu, die nicht &uuml;ber den Provider selbst verschickt wurden, in der Absender Adresse aber den Namen des E-Mail Providers <em>name@mail.de</em> enthalten. Die Standard Werte werden nur verwendet, wenn keine anderen Werte von LEPTON gesetzt wurden. Wenn Ihr Service Provider <acronym title="Simple Mail Transfer Protocol">SMTP</acronym> anbietet, sollten Sie diese Option f&uuml;r ausgehende E-Mails verwenden.',
+	'WBMAILER_DEFAULT_SETTINGS_NOTICE' => 'Bitte geben Sie eine Standard "VON" Adresse und einen Sendernamen an. Als Absender Adresse empfiehlt sich ein Format wie: <strong>admin@IhreWebseite.de</strong>. Manche E-Mail Provider (z.B. <em>mail.de</em>) stellen keine E-Mails zu, die nicht &uuml;ber den Provider selbst verschickt wurden, in der Absender Adresse aber den Namen des E-Mail Providers <em>name@mail.de</em> enthalten. Die Standard Werte werden nur verwendet, wenn keine anderen Werte von Black Cat CMS gesetzt wurden. Wenn Ihr Service Provider <acronym title="Simple Mail Transfer Protocol">SMTP</acronym> anbietet, sollten Sie diese Option f&uuml;r ausgehende E-Mails verwenden.',
 	'WBMAILER_FUNCTION' 	=> 'E-Mail Routine',
 	'WBMAILER_NOTICE' 		=> '<strong>SMTP Maileinstellungen:</strong><br />Die nachfolgenden Einstellungen m&uuml;ssen nur angepasst werden, wenn Sie E-Mail &uuml;ber <acronym title="Simple Mail Transfer Protocol">SMTP</acronym> verschicken wollen. Wenn Sie Ihren SMTP Server nicht kennen, oder Sie sich unsicher bei den Einstellungen sind, verwenden Sie einfach die Standard E-Mail Routine: PHP MAIL.',
 	'WBMAILER_PHP' 			=> 'PHP MAIL',
@@ -693,7 +704,7 @@ $MESSAGE = array(
 	'GENERIC_INSTALLED' 		=> 'Erfolgreich installiert.',
 	'GENERIC_INVALID' 			=> 'Die &uuml;bertragene Datei ist ung&uuml;ltig.',
 	'GENERIC_INVALID_MODULE' => 'Ung&uuml;ltiges Modul! Keine info.php vorhanden, oder Versionsnummer fehlt.',
-	'GENERIC_INVALID_LANGUAGE_FILE' => 'Ung&uuml;ltige LEPTON Sprachdatei. Bitte Textdatei pr&uuml;fen.',
+	'GENERIC_INVALID_LANGUAGE_FILE' => 'Ung&uuml;ltige Sprachdatei. Bitte Textdatei pr&uuml;fen.',
 	'GENERIC_MODULE_OK' => 'Das Modul wurde erfolgreich &uuml;berpr&uuml;ft',
 	'GENERIC_MODULE_VERSION_ERROR' => 'Das Modul ist nicht ordnungsgem&auml;ss installiert!',
 	'GENERIC_NOT_COMPARE' 		=> ' nicht m&ouml;glich',
@@ -844,11 +855,11 @@ Wenn Sie dieses E-Mail versehentlich erhalten haben, l&ouml;schen Sie bitte dies
 Diese E-Mail wurde automatisch erstellt!
 ',
 	
-	'SIGNUP2_SUBJECT_LOGIN_INFO'			=> 'Deine LEPTON Logindaten ...',
+	'SIGNUP2_SUBJECT_LOGIN_INFO'			=> 'Deine Logindaten ...',
 	'SIGNUP_NO_EMAIL'						=> 'Bitte geben Sie Ihre E-Mail Adresse an',
 	'START_CURRENT_USER'					=> 'Sie sind momentan angemeldet als:',
 	'START_INSTALL_DIR_EXISTS'				=> 'Das Installations-Verzeichnis "/install" existiert noch! Dies stellt ein Sicherheitsrisiko dar. Bitte l&ouml;schen.',
-	'START_WELCOME_MESSAGE'					=> 'Willkommen in der LEPTON Verwaltung',
+	'START_WELCOME_MESSAGE'					=> 'Willkommen in der Black Cat CMS Verwaltung',
 	'SYSTEM_FUNCTION_DEPRECATED'			=> 'Die Funktion <b>%s</b> ist veraltet, verwenden Sie die aktuelle Funktion <b>%s</b>!',
 	'SYSTEM_FUNCTION_NO_LONGER_SUPPORTED'	=> 'Die Funktion <b>%s</b> ist veraltet und wird nicht mehr unterst&uuml;tzt!',
 	'SYSTEM_SETTING_NO_LONGER_SUPPORTED'	=> 'Die Einstellung <b>%s</b> wird nicht mehr unterst&uuml;tzt und deshalb ignoriert!',
@@ -871,18 +882,18 @@ Diese E-Mail wurde automatisch erstellt!
 ); // $MESSAGE
 
 $OVERVIEW = array(
-	'ADMINTOOLS' 				=> 'Zugriff auf die LEPTON Verwaltungsprogramme...',
+	'ADMINTOOLS' 				=> 'Zugriff auf die Verwaltungsprogramme...',
 	'GROUPS' 					=> 'Verwaltung von Gruppen und Ihrer Zugangsberechtigungen...',
 	'HELP' 						=> 'Noch Fragen? Hier finden Sie Antworten',
 	'LANGUAGES' 				=> 'Sprachen verwalten...',
 	'MEDIA' 					=> 'Verwaltung der im Medienordner gespeicherten Dateien...',
-	'MODULES' 					=> 'Verwaltung der LEPTON Module...',
+	'MODULES' 					=> 'Verwaltung der Module...',
 	'PAGES' 					=> 'Verwaltung Ihrer Webseiten...',
 	'PREFERENCES' 				=> '&Auml;ndern pers&ouml;nlicher Einstellungen wie E-Mail Adresse, Passwort, usw.... ',
-	'SETTINGS' 					=> '&Auml;ndern der Optionen f&uuml;r LEPTON...',
+	'SETTINGS' 					=> '&Auml;ndern der Optionen f&uuml;r Black Cat CMS...',
 	'START' 					=> '&Uuml;berblick &uuml;ber die Verwaltung',
 	'TEMPLATES' 				=> '&Auml;ndern des Designs Ihrer Webseite mit Vorlagen...',
-	'USERS' 					=> 'Verwaltung von Benutzern, die sich in LEPTON einloggen d&uuml;rfen...',
+	'USERS' 					=> 'Verwaltung von Benutzern, die sich in Black Cat CMS einloggen d&uuml;rfen...',
 	'VIEW' 						=> 'Ansicht Ihrer Webseite in einem neuen Fenster...'
 ); // OVERVIEW
 

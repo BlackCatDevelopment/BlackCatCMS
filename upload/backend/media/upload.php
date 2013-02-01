@@ -15,8 +15,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -36,9 +36,9 @@ if (defined('LEPTON_PATH')) {
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
-include_once( sanitize_path ( LEPTON_PATH . '/framework/functions.php' ) );
+include_once( sanitize_path ( CAT_PATH . '/framework/functions.php' ) );
 
-require_once( sanitize_path( LEPTON_PATH . '/framework/class.admin.php' ) );
+require_once( sanitize_path( CAT_PATH . '/framework/class.admin.php' ) );
 $admin	= new admin('Media', 'media');
 
 // ================================================ 
@@ -46,13 +46,13 @@ $admin	= new admin('Media', 'media');
 // ================================================ 
 if ( $admin->get_permission('media_upload') != true )
 {
-	header('Location: ' . ADMIN_URL);
+	header('Location: ' . CAT_ADMIN_URL);
 }
 else if ( is_array($admin->get_post('upload_counter')) )
 {
 	if ( $admin->get_post('folder_path') != '' )
 	{
-		$file_path	 = sanitize_path( LEPTON_PATH . $admin->get_post('folder_path') );
+		$file_path	 = sanitize_path( CAT_PATH . $admin->get_post('folder_path') );
 	}
 	else
 	{
@@ -113,7 +113,7 @@ else if ( is_array($admin->get_post('upload_counter')) )
 							// ======================================= 
 							// ! Try to include the Zip-Helper.php   
 							// ======================================= 
-							$helper_link		= sanitize_path( LEPTON_PATH . '/framework/LEPTON/Helper/Zip.php' );
+							$helper_link		= sanitize_path( CAT_PATH . '/framework/LEPTON/Helper/Zip.php' );
 							if ( file_exists( $helper_link ) )
 							{
 								require_once( $helper_link );
@@ -125,7 +125,7 @@ else if ( is_array($admin->get_post('upload_counter')) )
 							// =============================== 
 							// ! Create the class for PclZip   
 							// =============================== 
-							$archive	= new LEPTON_Helper_Zip( $files->file_dst_pathname );
+							$archive	= new CAT_Helper_Zip( $files->file_dst_pathname );
 							$archive->config( 'Path', sanitize_path( $file_path ) );
 							$archive->extract();
 							if ( $archive->errorInfo() != 0 )

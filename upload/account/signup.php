@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -40,10 +40,10 @@ if (defined('WB_PATH')) {
 if(!( intval(FRONTEND_SIGNUP) && (  0 == (isset($_SESSION['USER_ID']) ? intval($_SESSION['USER_ID']) : 0) )))
 {
 	if(INTRO_PAGE) {
-		header('Location: '.WB_URL.PAGES_DIRECTORY.'/index.php');
+		header('Location: '.CAT_URL.PAGES_DIRECTORY.'/index.php');
 		exit(0);
 	} else {
-		header('Location: '.WB_URL.'/index.php');
+		header('Location: '.CAT_URL.'/index.php');
 		exit(0);
 	}
 }
@@ -77,17 +77,17 @@ if (
 		 )
 	)
 ) {
-	exit( header( "Location: " . WB_URL . PAGES_DIRECTORY . "" ) );
+	exit( header( "Location: " . CAT_URL . PAGES_DIRECTORY . "" ) );
 }
 
 // Load the language file
-if ( !file_exists( WB_PATH . '/languages/' . DEFAULT_LANGUAGE . '.php' ) )
+if ( !file_exists( CAT_PATH . '/languages/' . DEFAULT_LANGUAGE . '.php' ) )
 {
 	exit( 'Error loading language file ' . DEFAULT_LANGUAGE . ', please check configuration' );
 }
 else
 {
-	require_once( WB_PATH . '/languages/' . DEFAULT_LANGUAGE . '.php' );
+	require_once( CAT_PATH . '/languages/' . DEFAULT_LANGUAGE . '.php' );
 	$load_language = false;
 }
 
@@ -108,17 +108,17 @@ define( 'VISIBILITY', 'public' );
 // Set the page content include file
 if ( isset( $_POST[ 'username' ] ) )
 {
-	define( 'PAGE_CONTENT', WB_PATH . '/account/signup2.php' );
+	define( 'PAGE_CONTENT', CAT_PATH . '/account/signup2.php' );
 }
 else
 {
-	define( 'PAGE_CONTENT', WB_PATH . '/account/signup_form.php' );
+	define( 'PAGE_CONTENT', CAT_PATH . '/account/signup_form.php' );
 }
 
 // Set auto authentication to false
 $auto_auth = false;
 
 // Include the index (wrapper) file
-require( WB_PATH . '/index.php' );
+require( CAT_PATH . '/index.php' );
 
 ?>

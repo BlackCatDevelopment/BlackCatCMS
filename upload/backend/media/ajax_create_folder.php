@@ -16,8 +16,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -37,9 +37,9 @@ if (defined('LEPTON_PATH')) {
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
-include_once(LEPTON_PATH . '/framework/functions.php');
+include_once(CAT_PATH . '/framework/functions.php');
 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin			= new admin('Media', 'media', false);
 
 header('Content-type: application/json');
@@ -52,7 +52,7 @@ if ( $ajax['folder_path'] == '' || $admin->get_permission('media_create') !== tr
 		'message'	=> 'You don\'t have the permission to create a folder. Check your system settings.',
 		'deleted'	=> false
 	);
-	//header( 'Location: ' . ADMIN_URL );
+	//header( 'Location: ' . CAT_ADMIN_URL );
 	print json_encode( $ajax );
 	exit();
 }
@@ -61,13 +61,13 @@ else {
 	// ================================ 
 	// ! Check if folder is writeable   
 	// ================================ 
-	if ( is_writable(LEPTON_PATH . $ajax['folder_path']) )
+	if ( is_writable(CAT_PATH . $ajax['folder_path']) )
 	{
-		$create_folder		= LEPTON_PATH . $ajax['folder_path'].'/' . $admin->lang->translate('New folder');
+		$create_folder		= CAT_PATH . $ajax['folder_path'].'/' . $admin->lang->translate('New folder');
 		$counter			= 1;
 		while ( is_dir($create_folder) )
 		{
-			$create_folder	= LEPTON_PATH . $ajax['folder_path'] . '/' . $admin->lang->translate('New folder') . ' ' . $counter;
+			$create_folder	= CAT_PATH . $ajax['folder_path'] . '/' . $admin->lang->translate('New folder') . ' ' . $counter;
 			$counter++;
 		}
 		// ============================ 
@@ -83,7 +83,7 @@ else {
 				// =================================== 
 				// ! Create default "index.php" file   
 				// =================================== 
-				$rel_pages_dir = str_replace( LEPTON_PATH . MEDIA_DIRECTORY, '', dirname( $create_folder ) );
+				$rel_pages_dir = str_replace( CAT_PATH . MEDIA_DIRECTORY, '', dirname( $create_folder ) );
 				$step_back = str_repeat( '../', substr_count($rel_pages_dir, '/') + 1 );
 
 				$content  = '<?php'."\n";

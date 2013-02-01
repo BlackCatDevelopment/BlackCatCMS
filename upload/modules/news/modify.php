@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
 	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
 } else {
@@ -49,13 +49,13 @@ $js_delete_msg = (array_key_exists( 'CONFIRM_DELETE', $MOD_NEWS))
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr>
 	<td align="left" width="33%">
-		<input type="button" value="<?php echo $TEXT['ADD'].' '.$TEXT['POST']; ?>" onclick="javascript: window.location = '<?php echo WB_URL; ?>/modules/news/add_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
+		<input type="button" value="<?php echo $TEXT['ADD'].' '.$TEXT['POST']; ?>" onclick="javascript: window.location = '<?php echo CAT_URL; ?>/modules/news/add_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
 	</td>
 	<td align="left" width="33%">
-		<input type="button" value="<?php echo $TEXT['ADD'].' '.$TEXT['GROUP']; ?>" onclick="javascript: window.location = '<?php echo WB_URL; ?>/modules/news/add_group.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
+		<input type="button" value="<?php echo $TEXT['ADD'].' '.$TEXT['GROUP']; ?>" onclick="javascript: window.location = '<?php echo CAT_URL; ?>/modules/news/add_group.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
 	</td>
 	<td align="right" width="33%">
-		<input type="button" value="<?php echo $TEXT['SETTINGS']; ?>" onclick="javascript: window.location = '<?php echo WB_URL; ?>/modules/news/modify_settings.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
+		<input type="button" value="<?php echo $TEXT['SETTINGS']; ?>" onclick="javascript: window.location = '<?php echo CAT_URL; ?>/modules/news/modify_settings.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
 	</td>
 </tr>
 </table>
@@ -74,7 +74,7 @@ if(isset($_GET['p']) AND is_numeric($_GET['p']) AND $_GET['p'] >= 0) {
 }
 
 // Get settings
-$query_settings = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_news_settings WHERE section_id = '$section_id'");
+$query_settings = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_settings WHERE section_id = '$section_id'");
 if($query_settings->numRows() > 0) {
 	$fetch_settings = $query_settings->fetchRow( MYSQL_ASSOC );
 	$setting_header =	$fetch_settings['header'];
@@ -90,7 +90,7 @@ if($query_settings->numRows() > 0) {
 
 $t = time();
 // Get total number of posts
-$query_total_num = $database->query("SELECT post_id FROM ".TABLE_PREFIX."mod_news_posts WHERE section_id = '$section_id' ");
+$query_total_num = $database->query("SELECT post_id FROM ".CAT_TABLE_PREFIX."mod_news_posts WHERE section_id = '$section_id' ");
 $total_num = $query_total_num->numRows();
 
 // Work-out if we need to add limit code to sql
@@ -101,7 +101,7 @@ if($setting_posts_per_page != 0) {
 }
 	
 // Query posts (for this page)
-$query_posts = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_news_posts
+$query_posts = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_posts
 	WHERE section_id = '$section_id'
 	ORDER BY position DESC".$limit_sql);
 $num_posts = $query_posts->numRows();
@@ -161,19 +161,19 @@ if($query_posts->numRows() > 0) {
 		?>
 		<tr class="row_<?php echo $row; ?>">
 			<td width="20" style="padding-left: 5px;">
-				<a href="<?php echo WB_URL; ?>/modules/news/modify_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/modify_16.png" border="0" alt="Modify - " />
+				<a href="<?php echo CAT_URL; ?>/modules/news/modify_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/modify_16.png" border="0" alt="Modify - " />
 				</a>
 			</td>
 			<td>
-				<a href="<?php echo WB_URL; ?>/modules/news/modify_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>">
+				<a href="<?php echo CAT_URL; ?>/modules/news/modify_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>">
 					<?php echo ($post['title']); ?>
 				</a>
 			</td>
 			<td width="180">
 				<?php echo $TEXT['GROUP'].': ';
 				// Get group title
-				$query_title = $database->query("SELECT `title` FROM `".TABLE_PREFIX."mod_news_groups` WHERE `group_id` = '".$post['group_id']."'");
+				$query_title = $database->query("SELECT `title` FROM `".CAT_TABLE_PREFIX."mod_news_groups` WHERE `group_id` = '".$post['group_id']."'");
 				if($query_title->numRows() > 0) {
 					$fetch_title = $query_title->fetchRow( MYSQL_ASSOC );
 					echo $fetch_title['title'];
@@ -185,7 +185,7 @@ if($query_posts->numRows() > 0) {
 			<td width="120">
 				<?php echo $TEXT['COMMENTS'].': ';
 				// Get number of comments
-				$query_title = $database->query("SELECT `title` FROM `".TABLE_PREFIX."mod_news_comments` WHERE `post_id` = '".$post['post_id']."'");
+				$query_title = $database->query("SELECT `title` FROM `".CAT_TABLE_PREFIX."mod_news_comments` WHERE `post_id` = '".$post['post_id']."'");
 				echo $query_title->numRows();
 				?>
 			</td>
@@ -198,33 +198,33 @@ if($query_posts->numRows() > 0) {
 			$end = $post['published_until'];
 			$icon = '';
 			if($start<=$t && $end==0)
-				$icon=THEME_URL.'/images/noclock_16.png';
+				$icon=CAT_THEME_URL.'/images/noclock_16.png';
 			elseif(($start<=$t || $start==0) && $end>=$t)
-				$icon=THEME_URL.'/images/clock_16.png';
+				$icon=CAT_THEME_URL.'/images/clock_16.png';
 			else
-				$icon=THEME_URL.'/images/clock_red_16.png';
+				$icon=CAT_THEME_URL.'/images/clock_red_16.png';
 			?>
-			<a href="<?php echo WB_URL; ?>/modules/news/modify_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+			<a href="<?php echo CAT_URL; ?>/modules/news/modify_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
 				<img src="<?php echo $icon; ?>" border="0" alt="" />
 			</a>
 			</td>
 			<td width="20">
 			<?php if($counter > 1) { ?>
-				<a href="<?php echo WB_URL; ?>/modules/news/move_down.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/up_16.png" border="0" alt="^" />
+				<a href="<?php echo CAT_URL; ?>/modules/news/move_down.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/up_16.png" border="0" alt="^" />
 				</a>
 			<?php } ?>
 			</td>
 			<td width="20">
 			<?php if($counter < $num_posts ) { ?>
-				<a href="<?php echo WB_URL; ?>/modules/news/move_up.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/down_16.png" border="0" alt="v" />
+				<a href="<?php echo CAT_URL; ?>/modules/news/move_up.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/down_16.png" border="0" alt="v" />
 				</a>
 			<?php } ?>
 			</td>
 			<td width="20">
-				<a href="javascript: confirm_link('<?php printf( $js_delete_msg, $post['title'] ); ?>', '<?php echo WB_URL; ?>/modules/news/delete_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
+				<a href="javascript: confirm_link('<?php printf( $js_delete_msg, $post['title'] ); ?>', '<?php echo CAT_URL; ?>/modules/news/delete_post.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post['post_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
 				</a>
 			</td>
 		</tr>
@@ -274,7 +274,7 @@ echo str_replace( array_keys( $values), array_values( $values ) , $setting_foote
 <?php
 
 // Loop through existing groups
-$query_groups = $database->query("SELECT * FROM `".TABLE_PREFIX."mod_news_groups` WHERE section_id = '$section_id' ORDER BY position ASC");
+$query_groups = $database->query("SELECT * FROM `".CAT_TABLE_PREFIX."mod_news_groups` WHERE section_id = '$section_id' ORDER BY position ASC");
 if($query_groups->numRows() > 0) {
 	$num_groups = $query_groups->numRows();
 	$row = 'a';
@@ -285,12 +285,12 @@ if($query_groups->numRows() > 0) {
 		?>
 		<tr class="row_<?php echo $row; ?>">
 			<td width="20" style="padding-left: 5px;">
-				<a href="<?php echo WB_URL; ?>/modules/news/modify_group.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;group_id=<?php echo $group['group_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/modify_16.png" border="0" alt="Modify - " />
+				<a href="<?php echo CAT_URL; ?>/modules/news/modify_group.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;group_id=<?php echo $group['group_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/modify_16.png" border="0" alt="Modify - " />
 				</a>
 			</td>		
 			<td>
-				<a href="<?php echo WB_URL; ?>/modules/news/modify_group.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;group_id=<?php echo $group['group_id']; ?>">
+				<a href="<?php echo CAT_URL; ?>/modules/news/modify_group.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;group_id=<?php echo $group['group_id']; ?>">
           <?php echo $group['title'].' ('.$group['group_id'].')'; ?>
 				</a>
 			</td>
@@ -299,21 +299,21 @@ if($query_groups->numRows() > 0) {
 			</td>
 			<td width="20">
 			<?php if($group['position'] != 1) { ?>
-				<a href="<?php echo WB_URL; ?>/modules/news/move_up.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;group_id=<?php echo $group['group_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/up_16.png" border="0" alt="^" />
+				<a href="<?php echo CAT_URL; ?>/modules/news/move_up.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;group_id=<?php echo $group['group_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/up_16.png" border="0" alt="^" />
 				</a>
 			<?php } ?>
 			</td>
 			<td width="20">
 			<?php if($group['position'] != $num_groups) { ?>
-				<a href="<?php echo WB_URL; ?>/modules/news/move_down.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;group_id=<?php echo $group['group_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/down_16.png" border="0" alt="v" />
+				<a href="<?php echo CAT_URL; ?>/modules/news/move_down.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;group_id=<?php echo $group['group_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/down_16.png" border="0" alt="v" />
 				</a>
 			<?php } ?>
 			</td>
 			<td width="20">
-				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo WB_URL; ?>/modules/news/delete_group.php?page_id=<?php echo $page_id; ?>&amp;group_id=<?php echo $group['group_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
+				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo CAT_URL; ?>/modules/news/delete_group.php?page_id=<?php echo $page_id; ?>&amp;group_id=<?php echo $group['group_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
 				</a>
 			</td>
 		</tr>

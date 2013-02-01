@@ -27,15 +27,21 @@ $debug = false;
 
 define('CAT_PATH',dirname(__file__).'/..');
 
+// -----------------------------------------------------------------------------
+// NO UPDATE AT THE MOMENT!
+// -----------------------------------------------------------------------------
 // check wether to call update.php or start installation
-if (file_exists('../config.php')) {
-    include '/update/update.php';
-    die();
-}
+//if (file_exists('../config.php')) {
+//    include '/update/update.php';
+//    die();
+//}
+// -----------------------------------------------------------------------------
+// NO UPDATE AT THE MOMENT!
+// -----------------------------------------------------------------------------
 
 define('CAT_INSTALL',true);
 define('LOGFILE',dirname(__FILE__).'/../temp/inst.log');
-define('WB_PATH',dirname(__file__).'/..');
+define('CAT_PATH',dirname(__file__).'/..');
 
 // Start a session
 if ( !defined( 'SESSION_STARTED' ) ) {
@@ -60,7 +66,7 @@ $pre_inst_err   = array();
 // check root folder; needed for config.php
 if ( ! is_writable(dirname(__FILE__).'/..') )
 {
-    $pre_inst_err[] = 'The LEPTON base directory must be writable during installation!<br />Das LEPTON Basisverzeichnis muss während der Installation schreibbar sein!';
+    $pre_inst_err[] = 'The CMS base directory must be writable during installation!<br />Das CMS Basisverzeichnis muss während der Installation schreibbar sein!';
 }
 foreach( $dirs as $i => $dir )
 {
@@ -270,7 +276,7 @@ $parser->output(
 );
 
 /**
- * check the basic prerequisites for the LEPTON installation; uses
+ * check the basic prerequisites for the CMS installation; uses
  * precheck.php to do this. Returns the result of preCheckAddon() method
  **/
 function show_step_precheck() {
@@ -310,7 +316,7 @@ function show_step_precheck() {
 	    $path           = dirname(__FILE__).'/../'.$dir['name'];
         $dirs[$i]['ok'] = is_writable($path);
 	    if ( $dir['name'] == '' ) {
-	        $dirs[$i]['name'] = $lang->translate('LEPTON root directory');
+	        $dirs[$i]['name'] = $lang->translate('CMS root directory');
 	    }
 		else {
 		    $dirs[$i]['name'] = '/'.$dirs[$i]['name'].'/';
@@ -325,7 +331,7 @@ function show_step_precheck() {
 	if ( ! $inst_is_writable ) {
 	    $ok = false;
 	};
-	$dirs[] = array( 'name' => $lang->translate('LEPTON installation directory') . ' (' . $install_dir . ')', 'ok' => $inst_is_writable );
+	$dirs[] = array( 'name' => $lang->translate('CMS installation directory') . ' (' . $install_dir . ')', 'ok' => $inst_is_writable );
 
 	$output = $parser->get(
 		'fperms.lte',
@@ -484,7 +490,7 @@ function show_step_site( $step ) {
 	$output = $parser->get(
         'site.lte',
         array(
-            'installer_website_title'    => ( isset($config['website_title'])    ? $config['website_title']    : 'LEPTON v2.0 Black Cat Edition' ),
+            'installer_website_title'    => ( isset($config['website_title'])    ? $config['website_title']    : 'Black Cat CMS' ),
             'installer_admin_username'   => ( isset($config['admin_username'])   ? $config['admin_username']   : ''    		  ),
             'installer_admin_password'   => ( isset($config['admin_password'])   ? $config['admin_password']   : ''    		  ),
             'installer_admin_repassword' => ( isset($config['admin_repassword']) ? $config['admin_repassword'] : ''    		  ),
@@ -685,20 +691,20 @@ function fill_tables($database) {
 		$file_mode = default_file_mode();
 		$dir_mode = default_dir_mode('../temp');
 	}
-	
-	$settings_rows =	"INSERT INTO `".TABLE_PREFIX."settings` "
+
+	$settings_rows = "INSERT INTO `".CAT_TABLE_PREFIX."settings` "
 		." (name, value) VALUES "
 		." ('cat_version', '".VERSION."'),"
 		." ('website_title', '".$config['website_title']."'),"
 		." ('website_description', ''),"
 		." ('website_keywords', ''),"
-		." ('website_header', 'LEPTON CMS \"Black Cat Edition\"'),"
+		." ('website_header', 'Black Cat CMS'),"
 		." ('website_footer', 'settings/website footer'),"
 		." ('rename_files_on_upload', 'jpg,jpeg,gif,gz,png,pdf,tif,zip'),"
 		." ('er_level', ''),"
 		." ('prompt_mysql_errors', 'true'),"
 		." ('default_language', '".$config['default_language']."'),"
-		." ('app_name', 'lep$session_rand'),"
+		." ('app_name', 'cat$session_rand'),"
 		." ('sec_anchor', 'cat_'),"
 		." ('default_timezone_string', '".$config['default_timezone_string']."'),"
 		." ('default_date_format', 'M d Y'),"
@@ -731,7 +737,7 @@ function fill_tables($database) {
 		." ('string_dir_mode', '$dir_mode'),"
 		." ('wbmailer_routine', 'phpmail'),"
 		." ('server_email', 'admin@yourdomain.tld'),"		// avoid that mail provider (e.g. mail.com) reject mails like yourname@mail.com
-		." ('wbmailer_default_sendername', 'LEPTON Mailer'),"
+		." ('wbmailer_default_sendername', 'Black Cat CMS Mailer'),"
 		." ('wbmailer_smtp_host', ''),"
 		." ('wbmailer_smtp_auth', ''),"
 		." ('wbmailer_smtp_username', ''),"
@@ -753,7 +759,7 @@ function fill_tables($database) {
 	
 	// Admin group
 	$full_system_permissions = 'pages,pages_view,pages_add,pages_add_l0,pages_settings,pages_modify,pages_intro,pages_delete,media,media_view,media_upload,media_rename,media_delete,media_create,addons,modules,modules_view,modules_install,modules_uninstall,templates,templates_view,templates_install,templates_uninstall,languages,languages_view,languages_install,languages_uninstall,settings,settings_basic,settings_advanced,access,users,users_view,users_add,users_modify,users_delete,groups,groups_view,groups_add,groups_modify,groups_delete,admintools,service';
-	$insert_admin_group = "INSERT INTO `".TABLE_PREFIX."groups` VALUES ('1', 'Administrators', '$full_system_permissions', '', '')";
+	$insert_admin_group = "INSERT INTO `".CAT_TABLE_PREFIX."groups` VALUES ('1', 'Administrators', '$full_system_permissions', '', '')";
 	$database->query($insert_admin_group);
 	if ( $database->is_error() ) {
 		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
@@ -764,7 +770,7 @@ function fill_tables($database) {
 	}
 
 	// Admin user
-	$insert_admin_user = "INSERT INTO `".TABLE_PREFIX."users` (user_id,group_id,groups_id,active,username,password,email,display_name) VALUES ('1','1','1','1','".$config['admin_username']."','".md5($config['admin_password'])."','".$config['admin_email']."','Administrator')";
+	$insert_admin_user = "INSERT INTO `".CAT_TABLE_PREFIX."users` (user_id,group_id,groups_id,active,username,password,email,display_name) VALUES ('1','1','1','1','".$config['admin_username']."','".md5($config['admin_password'])."','".$config['admin_email']."','Administrator')";
 	$database->query($insert_admin_user);
 	if ( $database->is_error() ) {
 		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
@@ -775,7 +781,7 @@ function fill_tables($database) {
 	}
 
     // files that are allowed to include config.php
-    $secrows = "INSERT INTO `".TABLE_PREFIX."class_secure` "
+    $secrows = "INSERT INTO `".CAT_TABLE_PREFIX."class_secure` "
         . "( `module`, `filepath`) VALUES "
         . "( 0, '/account/forgot.php' ),"
         . "( 0, '/account/login.php' ),"
@@ -877,7 +883,7 @@ function install_modules ($cat_path) {
 	
 	$errors = array();
 
-	require_once($cat_path.'/framework/initialize.php');
+	require $cat_path.'/framework/initialize.php';
 
 	// Load addons into DB
 	$dirs = array(
@@ -890,7 +896,7 @@ function install_modules ($cat_path) {
 		'index.php',
 		'edit_module_files.php'
 	);
-	
+
 	$logh = fopen( LOGFILE, 'a' );
 
 	foreach($dirs AS $type => $dir) {
@@ -1003,8 +1009,8 @@ function check_tables($database) {
 	 */
 	$vars = array(
 		'DEFAULT_THEME'	=> "freshcat",
-		'THEME_URL'		=> CAT_URL."/templates/freshcat",
-		'THEME_PATH'	=> CAT_PATH."/templates/freshcat",
+		'CAT_THEME_URL'		=> CAT_URL."/templates/freshcat",
+		'CAT_THEME_PATH'	=> CAT_PATH."/templates/freshcat",
 		'LANGUAGE'		=> $_POST['default_language'],
 		'SERVER_EMAIL'	=> "admin@yourdomain.tld",
 		'PAGES_DIRECTORY' => '/page',
@@ -1062,11 +1068,11 @@ function create_default_page($database) {
 ?>
 ";
 
-    $fh = fopen(CAT_PATH.'/pages/welcome.php','w');
+    $fh = fopen(CAT_PATH.'/page/welcome.php','w');
     fwrite($fh,str_replace('%%id%%',1,$pg_content));
     fclose($fh);
 
-    $fh = fopen(CAT_PATH.'/pages/willkommen.php','w');
+    $fh = fopen(CAT_PATH.'/page/willkommen.php','w');
     fwrite($fh,str_replace('%%id%%',2,$pg_content));
     fclose($fh);
 
@@ -1080,7 +1086,7 @@ function pre_installation_error( $msg ) {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
   <head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-    <title>LEPTON Installation Prerequistes Error</title>
+    <title>Black Cat CMS Installation Prerequistes Error</title>
  	<link rel="stylesheet" href="'.$installer_uri.'/templates/default/index.css" type="text/css" />
    </head>
   <body>
@@ -1089,8 +1095,8 @@ function pre_installation_error( $msg ) {
 	  <img src="templates/default/images/fail.png" alt="Fail" title="Fail" />
     </div>
     <div style="float:left">
-  	  <h1>LEPTON Installation Prerequistes Error</h1>
-  	  <h2>Sorry, the LEPTON Installation prerequisites check failed.</h2>
+  	  <h1>Black Cat CMS Installation Prerequistes Error</h1>
+  	  <h2>Sorry, the Black Cat CMS Installation prerequisites check failed.</h2>
   	  <span style="color:#fff;">'.$msg.'</span><br /><br />
   	  <h2>You will need to fix the errors quoted above to start the installation.</h2>
     </div>
@@ -1102,10 +1108,10 @@ function pre_installation_error( $msg ) {
     <div style="float:left;margin:0;padding:0;padding-left:50px;"><h3>feel free to keep it strictly simple...</h3></div>
     <div>
       <!-- Please note: the below reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
-      <a href="http://blackcat-cms.org" title="LEPTON v2.0 Black Cat Edition" target="_blank">LEPTON v2.0 Black Cat Edition Core</a> is released under the
-      <a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON v2.0 Black Cat Edition Core is GPL" target="_blank">GNU General Public License</a>.<br />
+      <a href="http://blackcat-cms.org" title="Black Cat CMS" target="_blank">Black Cat CMS Core</a> is released under the
+      <a href="http://www.gnu.org/licenses/gpl.html" title="Black Cat CMS Core is GPL" target="_blank">GNU General Public License</a>.<br />
       <!-- Please note: the above reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
-      <a href="http://blackcat-cms.org" title="LEPTON Package" target="_blank">LEPTON v2.0 Black Cat Edition Package</a> is released under several different licenses.
+      <a href="http://blackcat-cms.org" title="Black Cat CMS Bundle" target="_blank">Black Cat CMS Bundle</a> is released under several different licenses.
     </div>
   </div>
   </body>
@@ -1125,7 +1131,7 @@ function __cat_installer_import_sql($file,$database) {
     $import = preg_replace( "%/\*(.*)\*/%Us", ''          , $import );
     $import = preg_replace( "%^--(.*)\n%mU" , ''          , $import );
     $import = preg_replace( "%^$\n%mU"      , ''          , $import );
-    $import = preg_replace( "%cat_%"        , TABLE_PREFIX, $import );
+    $import = preg_replace( "%lep_%"        , CAT_TABLE_PREFIX, $import );
     $import = preg_replace( "%\r?\n%"       , ''          , $import );
 
     $import = explode (";", $import);
@@ -1172,13 +1178,13 @@ function __do_install() {
 "    die('By security reasons it is not permitted to load \'config.php\' twice!! ".
 "Forbidden call from \''.\$_SERVER['SCRIPT_NAME'].'\'!');\n}\n\n".
 "// *****************************************************************************\n".
-"// please set the path names for the Lepton backend subfolders here; that is,\n".
+"// please set the path names for the backend subfolders here; that is,\n".
 "// if you rename 'backend' to 'myadmin', for example, set 'CAT_BACKEND_FOLDER'\n".
 "// to 'myadmin'.\n".
 "// *****************************************************************************\n".
 "// path to backend subfolder; default name is 'backend'\n".
 "define('CAT_BACKEND_FOLDER', 'backend');\n".
-"// *****************************************************************************\n\n".
+"// *****************************************************************************\n".
 "define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );\n".
 "define('CAT_DB_TYPE', 'mysql');\n".
 "define('CAT_DB_HOST', '".$config['database_host']."');\n".
@@ -1241,6 +1247,7 @@ function __do_install() {
 			define( str_replace( 'DATABASE_', 'DB_', strtoupper($key) ),$value);
 		}
 	}
+    if ( ! defined('CAT_TABLE_PREFIX') )   { define('CAT_TABLE_PREFIX',TABLE_PREFIX);              }
 
 	// WB compatibility
 	if ( ! defined('WB_URL') 	  ) { define('WB_URL',$config['cat_url']); 	   }
@@ -1267,6 +1274,7 @@ function __do_install() {
 			}
 			// only try to install modules if fill tables succeeded
 			else {
+echo "installing modules<br />";
 				// ----- install addons -----
 				list ( $result, $insterrors ) = install_modules($cat_path);
 				if ( ! $result || count($insterrors) ) {

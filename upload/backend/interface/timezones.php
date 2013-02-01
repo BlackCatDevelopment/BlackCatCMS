@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -36,7 +36,7 @@ if (defined('LEPTON_PATH')) {
 
 if (!function_exists('w_debug')) {
 function w_debug($s) {
-	$fp = fopen(LEPTON_PATH.'/_debug_.txt', 'a');
+	$fp = fopen(CAT_PATH.'/_debug_.txt', 'a');
 	fwrite($fp, "$s\r\n");
 	fclose($fp);
 }

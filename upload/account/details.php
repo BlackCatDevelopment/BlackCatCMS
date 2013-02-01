@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -38,7 +38,7 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 global $wb;
-include_once( WB_PATH . '/framework/timezones.php' );
+include_once( CAT_PATH . '/framework/timezones.php' );
 
 // Get entered values
 $display_name = $wb->add_slashes( strip_tags( $wb->get_post( 'display_name' ) ) );
@@ -58,7 +58,7 @@ $js_back = "javascript: history.go(-1);";
 
 // Update the database
 $database = new database();
-$query    = "UPDATE " . TABLE_PREFIX . "users
+$query    = "UPDATE " . CAT_TABLE_PREFIX . "users
 			SET display_name = '$display_name', language = '$language', timezone_string = '$timezone_string', date_format = '$date_format', time_format = '$time_format'
 			WHERE user_id = '" . $wb->get_user_id() . "'";
 $database->query( $query );
@@ -68,7 +68,7 @@ if ( $database->is_error() )
 }
 else
 {
-	$wb->print_success( $MESSAGE[ 'PREFERENCES_DETAILS_SAVED' ], WB_URL . '/account/preferences.php' );
+	$wb->print_success( $MESSAGE[ 'PREFERENCES_DETAILS_SAVED' ], CAT_URL . '/account/preferences.php' );
 	$_SESSION[ 'DISPLAY_NAME' ] = $display_name;
 	$_SESSION[ 'LANGUAGE' ]     = $language;
 	// Update date format

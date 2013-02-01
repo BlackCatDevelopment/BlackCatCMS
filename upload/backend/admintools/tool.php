@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,8 +35,8 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
-require_once(LEPTON_PATH.'/framework/functions.php');
+require_once(CAT_PATH.'/framework/class.admin.php');
+require_once(CAT_PATH.'/framework/functions.php');
 
 $admin		= new admin('admintools', 'admintools');
 $get_tool	= $admin->add_slashes( $admin->get_get('tool') );
@@ -55,7 +55,7 @@ global $parser;
 // ============================== 
 // ! Check if tool is installed   
 // ============================== 
-$result = $database->query("SELECT * FROM ".TABLE_PREFIX."addons WHERE type = 'module' AND function = 'tool' AND directory = '".$get_tool."'");
+$result = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."addons WHERE type = 'module' AND function = 'tool' AND directory = '".$get_tool."'");
 if ( $result->numRows() == 0 )
 {
 	header("Location: index.php");
@@ -67,16 +67,16 @@ $tool	= $result->fetchRow();
 $data_dwoo['TOOL_NAME']		= $tool['name'];
 
 // Check if folder of tool exists
-if ( file_exists(LEPTON_PATH.'/modules/'.$tool['directory'].'/tool.php') )
+if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php') )
 {
 	if (
-		  file_exists( LEPTON_PATH.'/modules/'.$tool['directory'].'/languages/'.$admin->lang->getLang().'.php' )
+		  file_exists( CAT_PATH.'/modules/'.$tool['directory'].'/languages/'.$admin->lang->getLang().'.php' )
 	) {
-		$admin->lang->addFile( $admin->lang->getLang().'.php', LEPTON_PATH.'/modules/'.$tool['directory'].'/languages' );
+		$admin->lang->addFile( $admin->lang->getLang().'.php', CAT_PATH.'/modules/'.$tool['directory'].'/languages' );
 	}
 	// Cache the tool and add it to dwoo
 	ob_start();
-	require(LEPTON_PATH.'/modules/'.$tool['directory'].'/tool.php');
+	require(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php');
 	$data_dwoo['TOOL']	= ob_get_contents();
 	ob_end_clean();
 }

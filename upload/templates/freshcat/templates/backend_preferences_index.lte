@@ -12,7 +12,7 @@
 	<div class="fc_modified_header fc_gradient1">
 		{translate('Username')}: <strong>{$USERNAME}</strong>
 	</div>
-	<form name="preferences_form" id="fc_preferences_form" action="{$ADMIN_URL}/preferences/save.php" method="post" class="ajaxForm">
+	<form name="preferences_form" id="fc_preferences_form" action="{$CAT_ADMIN_URL}/preferences/save.php" method="post" class="ajaxForm">
 		<p class="submit_settings fc_gradient1 fc_border">
 			<input type="submit" name="submit" value="{translate('Save')}" />
 			<input type="reset" name="reset" value="{translate('Reset')}" />

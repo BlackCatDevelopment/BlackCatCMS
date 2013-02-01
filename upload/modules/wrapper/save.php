@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -19,9 +19,9 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if ( defined( 'WB_PATH' ) )
+if ( defined( 'CAT_PATH' ) )
 {
-	include( WB_PATH . '/framework/class.secure.php' );
+	include( CAT_PATH . '/framework/class.secure.php' );
 }
 elseif ( file_exists( $_SERVER[ 'DOCUMENT_ROOT' ] . '/framework/class.secure.php' ) )
 {
@@ -51,7 +51,7 @@ else
 
 // Include WB admin wrapper script
 $update_when_modified = true; // Tells script to update when this page was last updated
-require( WB_PATH . '/modules/admin.php' );
+require( CAT_PATH . '/modules/admin.php' );
 
 // Update the mod_wrapper table with the contents
 if ( isset( $_POST[ 'url' ] ) )
@@ -68,7 +68,7 @@ if ( isset( $_POST[ 'url' ] ) )
 	{
 		$width = 400;
 	}
-	$query = "UPDATE " . TABLE_PREFIX . "mod_wrapper SET url = '$url', height = '$height', width = '$width', wtype = '$type' WHERE section_id = '$section_id'";
+	$query = "UPDATE " . CAT_TABLE_PREFIX . "mod_wrapper SET url = '$url', height = '$height', width = '$width', wtype = '$type' WHERE section_id = '$section_id'";
 	$database->query( $query );
 }
 
@@ -79,7 +79,7 @@ if ( $database->is_error() )
 }
 else
 {
-	$admin->print_success( $MESSAGE[ 'PAGES' ][ 'SAVED' ], ADMIN_URL . '/pages/modify.php?page_id=' . $page_id );
+	$admin->print_success( $MESSAGE[ 'PAGES' ][ 'SAVED' ], CAT_ADMIN_URL . '/pages/modify.php?page_id=' . $page_id );
 }
 
 // Print admin footer

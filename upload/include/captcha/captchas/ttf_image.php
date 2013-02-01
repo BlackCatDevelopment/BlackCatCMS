@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
 
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -36,16 +36,16 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-require_once(WB_PATH.'/include/captcha/captcha.php');
+require_once(CAT_PATH.'/include/captcha/captcha.php');
 
 if(!isset($_SESSION['captcha_time']))
 	exit;
 //unset($_SESSION['captcha_time']);
 
 // get lists of fonts and backgrounds
-require_once(WB_PATH.'/framework/functions.php');
-$t_fonts = file_list(WB_PATH.'/include/captcha/fonts');
-$t_bgs = file_list(WB_PATH.'/include/captcha/backgrounds');
+require_once(CAT_PATH.'/framework/functions.php');
+$t_fonts = file_list(CAT_PATH.'/include/captcha/fonts');
+$t_bgs = file_list(CAT_PATH.'/include/captcha/backgrounds');
 $fonts = array();
 $bgs = array();
 foreach($t_fonts as $file) if(eregi('\.ttf$',$file)) $fonts[]=$file;
@@ -78,7 +78,7 @@ $bg = $bgs[array_rand($bgs)];
 list($width, $height, $type, $attr) = getimagesize($bg);
 
 // create reload-image
-$reload = ImageCreateFromPNG(WB_PATH.'/include/captcha/reload_140_40.png'); // reload-overlay
+$reload = ImageCreateFromPNG(CAT_PATH.'/include/captcha/reload_140_40.png'); // reload-overlay
 
 if(mt_rand(0,2)==0) { // 1 out of 3
 

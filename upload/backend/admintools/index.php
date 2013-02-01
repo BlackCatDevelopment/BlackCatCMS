@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,11 +35,11 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(CAT_PATH.'/framework/class.admin.php');
 $admin = new admin('admintools', 'admintools');
 
 // Include the WB functions file
-require_once(LEPTON_PATH.'/framework/functions.php');
+require_once(CAT_PATH.'/framework/functions.php');
 
 // =========================================================================== 
 // ! Create the controller, it is reusable and can render multiple templates 	
@@ -47,7 +47,7 @@ require_once(LEPTON_PATH.'/framework/functions.php');
 global $parser;
 
 // Insert tools into tool list
-$results = $database->query("SELECT `directory`,`name`,`description` FROM ".TABLE_PREFIX."addons WHERE type = 'module' AND function = 'tool' AND `directory` not in ('".(implode("','",$_SESSION['MODULE_PERMISSIONS']))."') order by name");
+$results = $database->query("SELECT `directory`,`name`,`description` FROM ".CAT_TABLE_PREFIX."addons WHERE type = 'module' AND function = 'tool' AND `directory` not in ('".(implode("','",$_SESSION['MODULE_PERMISSIONS']))."') order by name");
 if ( $results->numRows() > 0 )
 {
 	$data_dwoo['TOOL_LIST']		= true;
@@ -60,7 +60,7 @@ if ( $results->numRows() > 0 )
 		);
 		// check if a module description exists for the displayed backend language
 		$module_description		= false;
-		$language_file			= LEPTON_PATH.'/modules/'.$tool['directory'].'/languages/' . $admin->lang->getLang() . '.php';
+		$language_file			= CAT_PATH.'/modules/'.$tool['directory'].'/languages/' . $admin->lang->getLang() . '.php';
 		if ( true === file_exists($language_file) )
 		{
 			require( $language_file );
@@ -72,13 +72,13 @@ if ( $results->numRows() > 0 )
 		// ===================================================== 
 		// ! Check whether icon is available for the admintool   
 		// ===================================================== 
-		if ( file_exists(LEPTON_PATH.'/modules/'.$tool['directory'].'/icon.png') )
+		if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png') )
 		{
-			list($width, $height, $type, $attr) = getimagesize(LEPTON_PATH.'/modules/'.$tool['directory'].'/icon.png');
+			list($width, $height, $type, $attr) = getimagesize(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png');
 
 			// Check whether file is 32*32 pixel and is an PNG-Image
 			$data_dwoo['tools'][$counter]['ICON']	= ($width == 32 && $height == 32 && $type == 3) ?
-				WB_URL.'/modules/'.$tool['directory'].'/icon.png' :
+				CAT_URL.'/modules/'.$tool['directory'].'/icon.png' :
 				false;
 		}
 		$counter++;

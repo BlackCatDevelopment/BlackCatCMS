@@ -1,5 +1,5 @@
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -44,7 +44,7 @@
 						$.ajax(
 						{
 							type:		'POST',
-							url:		ADMIN_URL + '/pages/ajax_reorder.php',
+							url:		CAT_ADMIN_URL + '/pages/ajax_reorder.php',
 							dataType:	'json',
 							data:		dates,
 							cache:		false,
@@ -85,7 +85,7 @@
 										'page_id' : page_id,
 										'leptoken' : getToken()
 									},
-					link			= ADMIN_URL + '/pages/ajax_page_settings.php';
+					link			= CAT_ADMIN_URL + '/pages/ajax_page_settings.php';
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
 				current_button.closest('li').addClass('page_tree_open_options');
 				$('#fc_addPage_keywords_ul').remove();
@@ -469,7 +469,7 @@ jQuery(document).ready(function()
 		{
 			context:	form,
 			type:		'POST',
-			url:		ADMIN_URL + '/pages/ajax_get_dropdown.php',
+			url:		CAT_ADMIN_URL + '/pages/ajax_get_dropdown.php',
 			dataType:	'json',
 			data:		dates,
 			cache:		false,
@@ -573,7 +573,7 @@ jQuery(document).ready(function()
 		{
 			context:	current_pT,
 			type:		'POST',
-			url:		ADMIN_URL + '/pages/ajax_add_page.php',
+			url:		CAT_ADMIN_URL + '/pages/ajax_add_page.php',
 			dataType:	'json',
 			data:		dates,
 			cache:		false,
@@ -642,7 +642,7 @@ jQuery(document).ready(function()
 		{
 			context:	current_pT,
 			type:		'POST',
-			url:		ADMIN_URL + '/pages/ajax_settings_save.php',
+			url:		CAT_ADMIN_URL + '/pages/ajax_settings_save.php',
 			dataType:	'json',
 			data:		dates,
 			cache:		false,
@@ -742,7 +742,7 @@ jQuery(document).ready(function()
 				}
 			};
 
-		dialog_confirm( 'You really want to delete?!?', 'Removing page', ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
+		dialog_confirm( 'You really want to delete?!?', 'Removing page', CAT_ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
 
 	$('#fc_restorePageSubmit').click( function (e)
@@ -767,7 +767,7 @@ jQuery(document).ready(function()
 					return_error( jqXHR.process , data.message);
 				}
 			};
-		dialog_ajax( 'Restoring page', ADMIN_URL + '/pages/ajax_restore_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
+		dialog_ajax( 'Restoring page', CAT_ADMIN_URL + '/pages/ajax_restore_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
 	
 	$('#fc_addPageChildSubmit').click( function(e)

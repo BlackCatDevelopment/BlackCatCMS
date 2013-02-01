@@ -16,8 +16,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,7 +35,7 @@ if (defined('LEPTON_PATH')) {
 // end include class.secure.php
 
 // Include the database class file and initiate an object
-require( LEPTON_PATH . '/framework/class.admin.php' );
+require( CAT_PATH . '/framework/class.admin.php' );
 $admin		= new admin('Start', 'start', false, false);
 $database	= new database();
 
@@ -49,7 +49,7 @@ if ( $admin->get_post('email') != '' )
 	$email			= htmlspecialchars( $admin->get_post('email'), ENT_QUOTES );
 
 	// Check if the email exists in the database
-	$results		= $database->query( "SELECT user_id,username,display_name,email,last_reset,password FROM " . TABLE_PREFIX . "users WHERE email = '" . $admin->add_slashes( $admin->get_post('email') ) . "'" );
+	$results		= $database->query( "SELECT user_id,username,display_name,email,last_reset,password FROM " . CAT_TABLE_PREFIX . "users WHERE email = '" . $admin->add_slashes( $admin->get_post('email') ) . "'" );
 	if ( $results->numRows() > 0 )
 	{
 		// Get the id, username, email, and last_reset from the above db query
@@ -85,11 +85,11 @@ if ( $admin->get_post('email') != '' )
 				$new_pass	.= $tmp;
 			}
 
-			$database->query("UPDATE " . TABLE_PREFIX . "users SET password = '".md5($new_pass)."', last_reset = '".time()."' WHERE user_id = '" . $results_array['user_id'] . "'");
+			$database->query("UPDATE " . CAT_TABLE_PREFIX . "users SET password = '".md5($new_pass)."', last_reset = '".time()."' WHERE user_id = '" . $results_array['user_id'] . "'");
 			if ( $database->is_error() )
 			{
 				// Error updating database
-				$database->query("UPDATE " . TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array['user_id'] . "'");
+				$database->query("UPDATE " . CAT_TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array['user_id'] . "'");
 				$ajax	= array(
 					'message'	=> $database->get_error(),
 					'success'	=> false
@@ -134,7 +134,7 @@ This message was automatic generated
 				// Try sending the email
 				if ( $admin->mail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message ) )
 				{
-					$database->query("UPDATE " . TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array['user_id'] . "'");
+					$database->query("UPDATE " . CAT_TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array['user_id'] . "'");
 					$ajax	= array(
 						'message'	=> $admin->lang->translate('Your username and password have been sent to your email address'),
 						'success'	=> true
@@ -144,7 +144,7 @@ This message was automatic generated
 				}
 				else
 				{
-					$database->query("UPDATE " . TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array['user_id'] . "'");
+					$database->query("UPDATE " . CAT_TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array['user_id'] . "'");
 					$ajax	= array(
 						'message'	=> $admin->lang->translate('Unable to email password, please contact system administrator'),
 						'success'	=> false

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -41,7 +41,7 @@ if ( !defined( 'CAT_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
 		}
 		
 	require_once( $config_path . '/config.php' );
-    $admin_dir             = str_replace( CAT_PATH, '', ADMIN_PATH );
+    $admin_dir             = str_replace( CAT_PATH, '', CAT_ADMIN_PATH );
 		
     //require_once( $config_path . '/framework/class.database.php' );
 
@@ -49,7 +49,7 @@ if ( !defined( 'CAT_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
     $direct_access_allowed = array();
 
 	// some core files must be allowed to load the config.php by themself!
-    $q = $db->query('SELECT * FROM '.TABLE_PREFIX.'class_secure');
+    $q = $db->query('SELECT * FROM '.CAT_TABLE_PREFIX.'class_secure');
     if( $q->numRows()>0 )
     {
         while( false !== ( $row = $q->fetchRow(MYSQL_ASSOC) ) )
@@ -77,7 +77,7 @@ if ( !defined( 'CAT_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
 		elseif ( ( strpos( $_SERVER[ 'SCRIPT_NAME' ], $admin_dir . '/index.php' ) !== false ) || ( strpos( $_SERVER[ 'SCRIPT_NAME' ], $admin_dir . '/interface/index.php' ) !== false ) )
 			{
 				// special: call start page of admins directory
-			header( "Location: " . ADMIN_URL . '/start/index.php' );
+			header( "Location: " . CAT_ADMIN_URL . '/start/index.php' );
 				exit();
 			}
 		elseif ( strpos( $_SERVER[ 'SCRIPT_NAME' ], '/index.php' ) !== false )

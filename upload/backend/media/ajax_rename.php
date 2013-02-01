@@ -16,8 +16,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -37,9 +37,9 @@ if (defined('LEPTON_PATH')) {
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
-include_once(LEPTON_PATH . '/framework/functions.php');
+include_once(CAT_PATH . '/framework/functions.php');
 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin	= new admin('Media', 'media', false);
 
 // Set header for json
@@ -70,9 +70,9 @@ else {
 	// ================================ 
 	// ! Check if folder is writeable   
 	// ================================ 
-	if ( is_writable(LEPTON_PATH . $file_path) )
+	if ( is_writable(CAT_PATH . $file_path) )
 	{
-		$file = sanitize_path( LEPTON_PATH . $file_path . '/' . $rename_file );
+		$file = sanitize_path( CAT_PATH . $file_path . '/' . $rename_file );
 		
 		// Check if a new extension were sent
 		if ( $new_extension == '' && !is_dir( $file ) )
@@ -88,7 +88,7 @@ else {
 		// ========================================== 
 		// ! Combine path, filenames and extensions   
 		// ========================================== 
-		$new_rename	= sanitize_path( LEPTON_PATH . $file_path . '/' . $new_name . $new_extension );
+		$new_rename	= sanitize_path( CAT_PATH . $file_path . '/' . $new_name . $new_extension );
 
 		// ================================= 
 		// ! Try to rename the file/folder   

@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {	
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -54,6 +54,6 @@ if (isset($_COOKIE[session_name()])) {
 session_destroy();
 
 // redirect to admin login
-die(header('Location: ' . ADMIN_URL . '/login/index.php'));
+die(header('Location: ' . CAT_ADMIN_URL . '/login/index.php'));
 
 ?>

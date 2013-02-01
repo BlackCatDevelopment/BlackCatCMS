@@ -4,7 +4,7 @@
 </div>
 <div id="fc_main_content">
 	<div class="fc_module_block fc_active">
-		<form action="{$ADMIN_URL}/pages/intro2.php" method="post">
+		<form action="{$CAT_ADMIN_URL}/pages/intro2.php" method="post">
 			<div class="fc_module_content ui-shadow ui-corner-all">
 				<div class="fc_blocks_header ui-corner-top">
 				<span class="fc_section_header_block">{translate('Intro Page')}</span>

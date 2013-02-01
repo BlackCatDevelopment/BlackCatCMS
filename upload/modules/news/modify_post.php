@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,32 +34,32 @@ if (defined('WB_PATH')) {
 
 // Get id
 if(!isset($_GET['post_id']) OR !is_numeric($_GET['post_id'])) {
-	header("Location: ".ADMIN_URL."/pages/index.php");
+	header("Location: ".CAT_ADMIN_URL."/pages/index.php");
 	exit(0);
 } else {
 	$post_id = $_GET['post_id'];
 }
 
 // Include WB admin wrapper script
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 // Get header and footer
-$query_content = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_news_posts WHERE post_id = '$post_id'");
+$query_content = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_posts WHERE post_id = '$post_id'");
 $fetch_content = $query_content->fetchRow( MYSQL_ASSOC );
 
-if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(WB_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php')) {
+if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php')) {
 	function show_wysiwyg_editor($name,$id,$content,$width,$height) {
 		echo '<textarea name="'.$name.'" id="'.$id.'" rows="10" cols="1" style="width: '.$width.'; height: '.$height.';">'.$content.'</textarea>';
 	}
 } else {
 	$id_list=array("short","long");
-	require(WB_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
+	require(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
 }
 
 /**
  * Use images?
  */
-$query_settings = $database->query("SELECT `post_loop`, `post_header` FROM `".TABLE_PREFIX."mod_news_settings` WHERE `section_id` = '$section_id'");
+$query_settings = $database->query("SELECT `post_loop`, `post_header` FROM `".CAT_TABLE_PREFIX."mod_news_settings` WHERE `section_id` = '$section_id'");
 if($query_settings->numRows() > 0) {
 	$settings = $query_settings->fetchRow();
 	$string = $settings['post_loop'].$settings['post_header'];
@@ -70,13 +70,13 @@ if($query_settings->numRows() > 0) {
 
 // include jscalendar-setup
 $jscal_use_time = true; // whether to use a clock, too
-require_once(WB_PATH."/include/jscalendar/wb-setup.php");
+require_once(CAT_PATH."/include/jscalendar/wb-setup.php");
 
 ?>
 <h2><?php echo $TEXT['ADD'].'/'.$TEXT['MODIFY'].' '.$TEXT['POST']; ?></h2>
-<link href="<?php echo WB_URL; ?>/include/jscalendar/calendar-system.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo CAT_URL; ?>/include/jscalendar/calendar-system.css" rel="stylesheet" type="text/css" />
 <div class="jsadmin jcalendar hide"></div> 
-<form name="modify" action="<?php echo WB_URL; ?>/modules/news/save_post.php" method="post"  enctype="multipart/form-data" style="margin: 0;">
+<form name="modify" action="<?php echo CAT_URL; ?>/modules/news/save_post.php" method="post"  enctype="multipart/form-data" style="margin: 0;">
 <input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
 <input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
 <input type="hidden" name="post_id" value="<?php echo $post_id; ?>" />
@@ -91,7 +91,7 @@ require_once(WB_PATH."/include/jscalendar/wb-setup.php");
 </tr>
 
 <?php
-	$query = $database->query("SELECT group_id,title FROM ".TABLE_PREFIX."mod_news_groups WHERE section_id = '$section_id' ORDER BY position ASC");
+	$query = $database->query("SELECT group_id,title FROM ".CAT_TABLE_PREFIX."mod_news_groups WHERE section_id = '$section_id' ORDER BY position ASC");
 	if($query->numRows() > 0) {
 ?>
 
@@ -101,7 +101,7 @@ require_once(WB_PATH."/include/jscalendar/wb-setup.php");
 		<select name="group" style="width: 100%;">
 			<option value="0"><?php echo $TEXT['NONE']; ?></option>
 			<?php
-			$query = $database->query("SELECT group_id,title FROM ".TABLE_PREFIX."mod_news_groups WHERE section_id = '$section_id' ORDER BY position ASC");
+			$query = $database->query("SELECT group_id,title FROM ".CAT_TABLE_PREFIX."mod_news_groups WHERE section_id = '$section_id' ORDER BY position ASC");
 			if($query->numRows() > 0) {
 				// Loop through groups
 				while(false != ($group = $query->fetchRow( MYSQL_ASSOC ) ) ) {
@@ -140,25 +140,25 @@ require_once(WB_PATH."/include/jscalendar/wb-setup.php");
 	<td><?php echo $TEXT['PUBL_START_DATE']; ?>:</td>
 	<td>
 	<input type="text" id="publishdate" name="publishdate" value="<?php if($fetch_content['published_when']!=0) print date($jscal_format, $fetch_content['published_when']);?>" style="width: 120px;" />
-	<img src="<?php echo THEME_URL ?>/images/clock_16.png" id="publishdate_trigger" style="cursor: pointer;" title="<?php echo $TEXT['CALENDAR']; ?>" alt="<?php echo $TEXT['CALENDAR']; ?>" onmouseover="this.style.background='lightgrey';" onmouseout="this.style.background=''" />
-	<img src="<?php echo THEME_URL ?>/images/clock_del_16.png" style="cursor: pointer;" title="<?php echo $TEXT['DELETE_DATE']; ?>" alt="<?php echo $TEXT['DELETE_DATE']; ?>" onmouseover="this.style.background='lightgrey';" onmouseout="this.style.background=''" onclick="document.modify.publishdate.value=''" />
+	<img src="<?php echo CAT_THEME_URL ?>/images/clock_16.png" id="publishdate_trigger" style="cursor: pointer;" title="<?php echo $TEXT['CALENDAR']; ?>" alt="<?php echo $TEXT['CALENDAR']; ?>" onmouseover="this.style.background='lightgrey';" onmouseout="this.style.background=''" />
+	<img src="<?php echo CAT_THEME_URL ?>/images/clock_del_16.png" style="cursor: pointer;" title="<?php echo $TEXT['DELETE_DATE']; ?>" alt="<?php echo $TEXT['DELETE_DATE']; ?>" onmouseover="this.style.background='lightgrey';" onmouseout="this.style.background=''" onclick="document.modify.publishdate.value=''" />
 	</td>
 </tr>
 <tr>
 	<td><?php echo $TEXT['PUBL_END_DATE']; ?>:</td>
 	<td>
 	<input type="text" id="enddate" name="enddate" value="<?php if($fetch_content['published_until']==0) print ""; else print date($jscal_format, $fetch_content['published_until'])?>" style="width: 120px;" />
-	<img src="<?php echo THEME_URL ?>/images/clock_16.png" id="enddate_trigger" style="cursor: pointer;" title="<?php echo $TEXT['CALENDAR']; ?>" alt="<?php echo $TEXT['CALENDAR']; ?>" onmouseover="this.style.background='lightgrey';" onmouseout="this.style.background=''" />
-	<img src="<?php echo THEME_URL ?>/images/clock_del_16.png" style="cursor: pointer;" title="<?php echo $TEXT['DELETE_DATE']; ?>" alt="<?php echo $TEXT['DELETE_DATE']; ?>" onmouseover="this.style.background='lightgrey';" onmouseout="this.style.background=''" onclick="document.modify.enddate.value=''" />
+	<img src="<?php echo CAT_THEME_URL ?>/images/clock_16.png" id="enddate_trigger" style="cursor: pointer;" title="<?php echo $TEXT['CALENDAR']; ?>" alt="<?php echo $TEXT['CALENDAR']; ?>" onmouseover="this.style.background='lightgrey';" onmouseout="this.style.background=''" />
+	<img src="<?php echo CAT_THEME_URL ?>/images/clock_del_16.png" style="cursor: pointer;" title="<?php echo $TEXT['DELETE_DATE']; ?>" alt="<?php echo $TEXT['DELETE_DATE']; ?>" onmouseover="this.style.background='lightgrey';" onmouseout="this.style.background=''" onclick="document.modify.enddate.value=''" />
 	</td>
 </tr>
 <?php if(isset($use_images) && $use_images == TRUE){ ?>
 <tr>
 	<td><?php echo $TEXT['IMAGE']; ?>:</td>
-	<?php if(file_exists(WB_PATH.MEDIA_DIRECTORY.'/newspics/image'.$post_id.'.jpg')) { ?>
+	<?php if(file_exists(CAT_PATH.MEDIA_DIRECTORY.'/newspics/image'.$post_id.'.jpg')) { ?>
 	<td>
-		<a href="<?php echo WB_URL.MEDIA_DIRECTORY; ?>/newspics/image<?php echo $post_id; ?>.jpg" title="<?php echo $TEXT['VIEW']; ?>" target="_blank" border="0">
-		<img class="image_preview" src="<?php echo WB_URL.MEDIA_DIRECTORY; ?>/newspics/image<?php echo $post_id; ?>.jpg" alt="<?php echo $TEXT['VIEW']; ?>" />		
+		<a href="<?php echo CAT_URL.MEDIA_DIRECTORY; ?>/newspics/image<?php echo $post_id; ?>.jpg" title="<?php echo $TEXT['VIEW']; ?>" target="_blank" border="0">
+		<img class="image_preview" src="<?php echo CAT_URL.MEDIA_DIRECTORY; ?>/newspics/image<?php echo $post_id; ?>.jpg" alt="<?php echo $TEXT['VIEW']; ?>" />		
 		</a>
 		&nbsp;
 		<input type="checkbox" name="delete_image" id="delete_image" value="true" />
@@ -202,7 +202,7 @@ require_once(WB_PATH."/include/jscalendar/wb-setup.php");
 		<input name="save" type="submit" value="<?php echo $TEXT['SAVE']; ?>" style="width: 100px; margin-top: 5px;" />
 	</td>
 	<td align="right">
-		<input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
+		<input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo CAT_ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
 	</td>
 </tr>
 </table>
@@ -252,7 +252,7 @@ require_once(WB_PATH."/include/jscalendar/wb-setup.php");
 <?php
 
 // Loop through existing posts
-$query_comments = $database->query("SELECT * FROM `".TABLE_PREFIX."mod_news_comments` WHERE section_id = '$section_id' AND post_id = '$post_id' ORDER BY commented_when DESC");
+$query_comments = $database->query("SELECT * FROM `".CAT_TABLE_PREFIX."mod_news_comments` WHERE section_id = '$section_id' AND post_id = '$post_id' ORDER BY commented_when DESC");
 if($query_comments->numRows() > 0) {
 	$row = 'a';
 	?>
@@ -262,18 +262,18 @@ if($query_comments->numRows() > 0) {
 		?>
 		<tr class="row_<?php echo $row; ?>" >
 			<td width="20" style="padding-left: 5px;">
-				<a href="<?php echo WB_URL; ?>/modules/news/modify_comment.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;comment_id=<?php echo $comment['comment_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/modify_16.png" border="0" alt="^" />
+				<a href="<?php echo CAT_URL; ?>/modules/news/modify_comment.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;comment_id=<?php echo $comment['comment_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/modify_16.png" border="0" alt="^" />
 				</a>
 			</td>	
 			<td>
-				<a href="<?php echo WB_URL; ?>/modules/news/modify_comment.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;comment_id=<?php echo $comment['comment_id']; ?>">
+				<a href="<?php echo CAT_URL; ?>/modules/news/modify_comment.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;comment_id=<?php echo $comment['comment_id']; ?>">
 					<?php echo $comment['title']; ?>
 				</a>
 			</td>
 			<td width="20">
-				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo WB_URL; ?>/modules/news/delete_comment.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post_id; ?>&amp;comment_id=<?php echo $comment['comment_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
-					<img src="<?php echo THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
+				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo CAT_URL; ?>/modules/news/delete_comment.php?page_id=<?php echo $page_id; ?>&amp;section_id=<?php echo $section_id; ?>&amp;post_id=<?php echo $post_id; ?>&amp;comment_id=<?php echo $comment['comment_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
+					<img src="<?php echo CAT_THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
 				</a>
 			</td>
 		</tr>

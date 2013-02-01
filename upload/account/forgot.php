@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -53,23 +53,23 @@ if ( !FRONTEND_LOGIN )
 {
 	if ( INTRO_PAGE )
 	{
-		header( 'Location: ' . WB_URL . PAGES_DIRECTORY . '/index.php' );
+		header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' );
 		exit( 0 );
 	}
 	else
 	{
-		header( 'Location: ' . WB_URL . '/index.php' );
+		header( 'Location: ' . CAT_URL . '/index.php' );
 		exit( 0 );
 	}
 }
 
 // Set the page content include file
-define( 'PAGE_CONTENT', WB_PATH . '/account/forgot_form.php' );
+define( 'PAGE_CONTENT', CAT_PATH . '/account/forgot_form.php' );
 
 // Set auto authentication to false
 $auto_auth = false;
 
 // Include the index (wrapper) file
-require( WB_PATH . '/index.php' );
+require( CAT_PATH . '/index.php' );
 
 ?>

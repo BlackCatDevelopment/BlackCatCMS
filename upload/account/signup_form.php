@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -37,7 +37,7 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-require_once( WB_PATH . '/include/captcha/captcha.php' );
+require_once( CAT_PATH . '/include/captcha/captcha.php' );
 
 ?>
 
@@ -84,7 +84,7 @@ if ( isset( $_GET[ 'err' ] ) && (int) ( $_GET[ 'err' ] ) == ( $_GET[ 'err' ] ) )
 }
 ?>
 
-<form name="user" action="<?php echo WB_URL . '/account/signup.php'; ?>" method="post">
+<form name="user" action="<?php echo CAT_URL . '/account/signup.php'; ?>" method="post">
 
 <?php
 if ( ENABLED_ASP ) // add some honeypot-fields

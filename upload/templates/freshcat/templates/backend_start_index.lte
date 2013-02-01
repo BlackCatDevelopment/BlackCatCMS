@@ -1,8 +1,8 @@
 <div id="fc_content_header">
-	{translate('Welcome to LEPTON Administration')}
+	{translate('Welcome to Black Cat CMS Administration')}
 </div>
 <div id="fc_main_content">
-	{translate('We are still working on Lepton2!')}
+	{translate('We are still working on Black Cat CMS!')}
 	{*<ul id="fc_widget_list_1" class="fc_widgets">
 	{foreach $sections as section}
 	{if $section.permission}
@@ -18,7 +18,7 @@
 						{if $subpage.permission}
 						<p>
 							<span class="fc_description">{$subpage.description}</span>
-							<a href="{$ADMIN_URL}/{$subpage.name}/index.php" class="button"><span class="fc_title">{$TEXT.MODIFY}</span></a>
+							<a href="{$CAT_ADMIN_URL}/{$subpage.name}/index.php" class="button"><span class="fc_title">{$TEXT.MODIFY}</span></a>
 						</p>
 						<hr/>
 						{/if}
@@ -26,7 +26,7 @@
 					{else}
 					<p>
 						<span class="fc_description">{$section.description}</span>
-						<a href="{$ADMIN_URL}/{$section.name}/index.php" class="button"><span class="fc_title">{$TEXT.MODIFY}</span></a>
+						<a href="{$CAT_ADMIN_URL}/{$section.name}/index.php" class="button"><span class="fc_title">{$TEXT.MODIFY}</span></a>
 					</p>
 					<div class="clear"></div>
 					{/if}

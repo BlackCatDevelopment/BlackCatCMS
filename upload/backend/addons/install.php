@@ -182,7 +182,7 @@ if ( $action == 'install' )
 		$check_permission	= $addon_info['addon_function'] . '_permissions';
 
 		// get groups
-		$stmt = $database->query('SELECT * FROM ' . TABLE_PREFIX . 'groups WHERE group_id <> 1');
+		$stmt = $database->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'groups WHERE group_id <> 1');
 		if ( $stmt->numRows() > 0 )
 		{
 			$group_ids	= $admin->get_post('group_id');
@@ -216,7 +216,7 @@ if ( $action == 'install' )
 					asort( $addons );
 					// Update the database
 					$addon_permissions = implode(',', $addons);
-					$database->query('UPDATE '.TABLE_PREFIX.'groups SET `' . $check_permission . '` = "' . $addon_permissions . '" WHERE `group_id` = '.$gid);
+					$database->query('UPDATE '.CAT_TABLE_PREFIX.'groups SET `' . $check_permission . '` = "' . $addon_permissions . '" WHERE `group_id` = '.$gid);
 					if ( $database->is_error() )
 					{
 						$admin->print_error($database->get_error());

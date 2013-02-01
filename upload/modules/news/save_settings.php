@@ -12,8 +12,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,7 +35,7 @@ global $admin;
 
 // Include WB admin wrapper script
 $update_when_modified = true; // Tells script to update when this page was last updated
-require(WB_PATH.'/modules/admin.php');
+require(CAT_PATH.'/modules/admin.php');
 
 // This code removes any <?php tags and adds slashes
 $friendly = array('&lt;', '&gt;', '?php');
@@ -59,7 +59,7 @@ if(extension_loaded('gd') AND function_exists('imageCreateFromJpeg')) {
 }
 
 // Update settings
-$database->query("UPDATE ".TABLE_PREFIX."mod_news_settings SET header = '$header', post_loop = '$post_loop', footer = '$footer',
+$database->query("UPDATE ".CAT_TABLE_PREFIX."mod_news_settings SET header = '$header', post_loop = '$post_loop', footer = '$footer',
            posts_per_page = '$posts_per_page', post_header = '$post_header', post_footer = '$post_footer', 
            comments_header = '$comments_header', comments_loop = '$comments_loop', comments_footer = '$comments_footer', 
            comments_page = '$comments_page', commenting = '$commenting', resize = '$resize', use_captcha = '$use_captcha' 
@@ -67,9 +67,9 @@ $database->query("UPDATE ".TABLE_PREFIX."mod_news_settings SET header = '$header
 
 // Check if there is a db error, otherwise say successful
 if($database->is_error()) {
-	$admin->print_error($database->get_error(), ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
+	$admin->print_error($database->get_error(), CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
 } else {
-	$admin->print_success($TEXT['SUCCESS'], ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
+	$admin->print_success($TEXT['SUCCESS'], CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
 }
 
 // Print admin footer

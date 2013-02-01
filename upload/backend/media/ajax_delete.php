@@ -17,8 +17,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -38,9 +38,9 @@ if (defined('LEPTON_PATH')) {
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
-include_once(LEPTON_PATH . '/framework/functions.php');
+include_once(CAT_PATH . '/framework/functions.php');
 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin			= new admin('Media', 'media', false);
 
 header('Content-type: application/json');
@@ -55,7 +55,7 @@ if (  $ajax['file'] == '' ||  $ajax['file_path'] == '' || $admin->get_permission
 		'message'	=> 'You don\'t have the permission to delete this file. Check your system settings.',
 		'success'	=> false
 	);
-	//header( 'Location: ' . ADMIN_URL );
+	//header( 'Location: ' . CAT_ADMIN_URL );
 	print json_encode( $ajax );
 	exit();
 }
@@ -64,7 +64,7 @@ else {
 	// ============================ 
 	// ! Try to delete file/folder
 	// ============================ 
-	$link	= LEPTON_PATH .  $ajax['file_path'] . '/' .  $ajax['file'];
+	$link	= CAT_PATH .  $ajax['file_path'] . '/' .  $ajax['file'];
 	if ( file_exists($link) )
 	{
 		$kind	= is_dir($link) ? 'dir' : 'file';

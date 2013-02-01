@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -45,7 +45,7 @@ $password_fieldname = 'password';
 <br />
 <br />
 
-<form action="<?php echo WB_URL . '/account/login.php'; ?>" method="post">
+<form action="<?php echo CAT_URL . '/account/login.php'; ?>" method="post">
 <p style="display:none;"><input type="hidden" name="username_fieldname" value="<?php echo $username_fieldname; ?>" /></p>
 <p style="display:none;"><input type="hidden" name="password_fieldname" value="<?php echo $password_fieldname; ?>" /></p>
 <p style="display:none;"><input type="hidden" name="redirect" value="<?php echo $thisApp->redirect_url; ?>" /></p>
@@ -81,4 +81,4 @@ $password_fieldname = 'password';
 
 <br />
 
-<a href="<?php echo WB_URL; ?>/account/forgot.php"><?php echo $TEXT[ 'FORGOTTEN_DETAILS' ]; ?></a>
+<a href="<?php echo CAT_URL; ?>/account/forgot.php"><?php echo $TEXT[ 'FORGOTTEN_DETAILS' ]; ?></a>

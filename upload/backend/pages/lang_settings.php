@@ -18,8 +18,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -39,7 +39,7 @@ if (defined('LEPTON_PATH')) {
 // =================================================== 
 // ! Include the class.admin.php and WB functions file
 // =================================================== 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(CAT_PATH.'/framework/class.admin.php');
 $admin = new admin('Pages', 'pages_settings');
 
 if (!$admin->get_permission('pages_settings')){
@@ -61,7 +61,7 @@ else
 	$page_id = $admin->get_get('page_id');
 }
 
-require_once(LEPTON_PATH.'/framework/functions-utf8.php');
+require_once(CAT_PATH.'/framework/functions-utf8.php');
 
 global $parser;
 $data_dwoo = array();
@@ -70,7 +70,7 @@ $data_dwoo = array();
 // =============================================================== 
 // ! Get perms & Check if there is an error and get page details   
 // =============================================================== 
-$results		= $database->query('SELECT * FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id);
+$results		= $database->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id);
 $results_array	= $results->fetchRow( MYSQL_ASSOC );
 
 if ( $database->is_error() )
@@ -103,7 +103,7 @@ if ( !$in_old_group && !is_numeric(array_search($admin->get_user_id(), $old_admi
 if ( $admin->get_get('del') )
 {
     list( $lang, $page ) = explode( '_', $admin->get_get('del') );
-    $database->query( 'DELETE FROM '.TABLE_PREFIX.'page_langs WHERE link_page_id = "'.$page.'" AND lang = "'.$lang.'"' );
+    $database->query( 'DELETE FROM '.CAT_TABLE_PREFIX.'page_langs WHERE link_page_id = "'.$page.'" AND lang = "'.$lang.'"' );
 }
 
 $arrh = $admin->get_helper('Array');
@@ -111,7 +111,7 @@ $arrh = $admin->get_helper('Array');
 // =========================
 // ! get available languages
 // =========================
-require_once(LEPTON_PATH . '/framework/class.pages.php');
+require_once(CAT_PATH . '/framework/class.pages.php');
 $pages = new pages( ( $admin->get_permission('pages_settings') ? true : false ) );
 
 $pages->current_page['id']					= $page_id;

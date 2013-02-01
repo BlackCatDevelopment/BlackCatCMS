@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -42,8 +42,8 @@ require_once(CAT_PATH.'/framework/class.wb.php');
 // Include PHPLIB template class
 require_once(CAT_PATH."/include/phplib/template.inc");
 
-// Get LEPTON version
-require_once(ADMIN_PATH.'/interface/version.php');
+// Get CMS version
+require_once(CAT_ADMIN_PATH.'/interface/version.php');
 
 // Include EditArea wrapper functions
 require_once(CAT_PATH . '/include/editarea/wb_wrapper_edit_area.php');
@@ -98,14 +98,14 @@ class admin extends wb
 		if($auto_auth == true) {
 			// First check if the user is logged-in
 			if($this->is_authenticated() == false) {
-				header('Location: '.ADMIN_URL.'/login/index.php');
+				header('Location: '.CAT_ADMIN_URL.'/login/index.php');
 				exit(0);
 			}
 			
 			// Now check whether he has a valid token
 			if (!$this->checkToken()) {
 				unset($_SESSION['USER_ID']);
-				header('Location: '.ADMIN_URL.'/login/index.php');
+				header('Location: '.CAT_ADMIN_URL.'/login/index.php');
 				exit(0);
 			}
 						
@@ -117,13 +117,13 @@ class admin extends wb
 		
 		// Check if the backend language is also the selected language. If not, send headers again.
 
-		$get_user_language = $this->db_handle->query("SELECT language FROM ".TABLE_PREFIX.
+		$get_user_language = $this->db_handle->query("SELECT language FROM ".CAT_TABLE_PREFIX.
 			"users WHERE user_id = '" .(int) $this->get_user_id() ."'");
 		$user_language = ($get_user_language) ? $get_user_language->fetchRow() : '';
 		// prevent infinite loop if language file is not XX.php (e.g. DE_du.php)
 		$user_language = substr($user_language[0],0,2);
 		// obtain the admin folder (e.g. /admin)
-		$admin_folder = str_replace(CAT_PATH, '', ADMIN_PATH);
+		$admin_folder = str_replace(CAT_PATH, '', CAT_ADMIN_PATH);
 		if((LANGUAGE != $user_language) && file_exists(CAT_PATH .'/languages/' .$user_language .'.php')
 			&& strpos($_SERVER['SCRIPT_NAME'],$admin_folder.'/') !== false) {
 			// check if page_id is set
@@ -138,8 +138,8 @@ class admin extends wb
 		}
 		
 		// initialize template search path
-		$parser->setPath(THEME_PATH . '/templates');
-		$parser->setFallbackPath(THEME_PATH . '/templates');
+		$parser->setPath(CAT_THEME_PATH . '/templates');
+		$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
 		// Auto header code
 		if($auto_header == true) {
@@ -178,14 +178,14 @@ class admin extends wb
 		global $TEXT;
 
 		// Connect to database and get website title
-		$title = $this->db_handle->get_one("SELECT `value` FROM `".TABLE_PREFIX."settings` WHERE `name`='website_title'");
+		$title = $this->db_handle->get_one("SELECT `value` FROM `".CAT_TABLE_PREFIX."settings` WHERE `name`='website_title'");
 
 		// ======================================================================================= 
 		// ! Try to include the info.php  of the template to seperate old and new TemplateEngine   
 		// ======================================================================================= 
-		if ( file_exists(THEME_PATH.'/info.php') )
+		if ( file_exists(CAT_THEME_PATH.'/info.php') )
 		{
-			include( THEME_PATH . '/info.php' );
+			include( CAT_THEME_PATH . '/info.php' );
 			// ================================================================= 
 			// ! Current controller to check, if it is a new template for Dwoo   
 			// ================================================================= 
@@ -205,8 +205,8 @@ class admin extends wb
 					// ==================== 
 					$data_dwoo['LEPTON_URL']	= LEPTON_URL;
 					$data_dwoo['CAT_PATH']	= CAT_PATH;
-					$data_dwoo['ADMIN_URL']		= ADMIN_URL;
-					$data_dwoo['THEME_URL']		= THEME_URL;
+					$data_dwoo['CAT_ADMIN_URL']		= CAT_ADMIN_URL;
+					$data_dwoo['CAT_THEME_URL']		= CAT_THEME_URL;
 					$data_dwoo['URL_HELP']		= 'http://blackcat-cms.org/';
 					// ============================= 
 					// ! Add languages to Dwoo 	
@@ -220,8 +220,8 @@ class admin extends wb
 				// =================================== 
 				// ! initialize template search path   
 				// =================================== 
-				$parser->setPath(THEME_PATH . '/templates');
-				$parser->setFallbackPath(THEME_PATH . '/templates');
+				$parser->setPath(CAT_THEME_PATH . '/templates');
+				$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
 				// ================================= 
 				// ! Add permissions to $data_dwoo   
@@ -308,35 +308,35 @@ class admin extends wb
 				$data_dwoo['MAIN_MENU']		= array();
 
 				$data_dwoo['MAIN_MENU'][0]	= array(
-					'link'					=> ADMIN_URL . '/start/index.php',
+					'link'					=> CAT_ADMIN_URL . '/start/index.php',
 					'title'					=> $MENU['START'],
 					'permission_title'		=> 'start',
 					'permission'			=> ( $this->get_link_permission('start') ) ? true : false,
 					'current'				=> ( 'start' == strtolower($this->section_name) ) ? true : false
 					);
 				$data_dwoo['MAIN_MENU'][1]	= array(
-					'link'					=> ADMIN_URL . '/media/index.php',
+					'link'					=> CAT_ADMIN_URL . '/media/index.php',
 					'title'					=> $MENU['MEDIA'],
 					'permission_title'		=> 'media',
 					'permission'			=> ( $this->get_link_permission('media') ) ? true : false,
 					'current'				=> ( 'media' == strtolower($this->section_name) ) ? true : false
 					);
 				$data_dwoo['MAIN_MENU'][2]	= array(
-					'link'					=> ADMIN_URL . '/settings/index.php',
+					'link'					=> CAT_ADMIN_URL . '/settings/index.php',
 					'title'					=> $MENU['SETTINGS'],
 					'permission_title'		=> 'settings',
 					'permission'			=> ( $this->get_link_permission('settings') ) ? true : false,
 					'current'				=> ( 'settings' == strtolower($this->section_name) ) ? true : false
 					);
 				$data_dwoo['MAIN_MENU'][3]	= array(
-					'link'					=> ADMIN_URL . '/addons/index.php',
+					'link'					=> CAT_ADMIN_URL . '/addons/index.php',
 					'title'					=> $MENU['ADDONS'],
 					'permission_title'		=> 'addons',
 					'permission'			=> ( $this->get_link_permission('addons') ) ? true : false,
 					'current'				=> ( 'addons' == strtolower($this->section_name) ) ? true : false
 					);
 				$data_dwoo['MAIN_MENU'][4]	= array(
-					'link'					=> ADMIN_URL . '/admintools/index.php',
+					'link'					=> CAT_ADMIN_URL . '/admintools/index.php',
 					'title'					=> $MENU['ADMINTOOLS'],
 					'permission_title'		=> 'admintools',
 					'permission'			=> ( $this->get_link_permission('admintools') ) ? true : false,
@@ -354,15 +354,15 @@ class admin extends wb
 				// ======================================= 
 				if ( $this->get_permission('users') )
 				{
-					$data_dwoo['MAIN_MENU'][5]['link']	= ADMIN_URL . '/users/index.php';
+					$data_dwoo['MAIN_MENU'][5]['link']	= CAT_ADMIN_URL . '/users/index.php';
 				}
 				elseif ( $this->get_permission('groups') )
 				{
-					$data_dwoo['MAIN_MENU'][5]['link']	= ADMIN_URL . '/groups/index.php';
+					$data_dwoo['MAIN_MENU'][5]['link']	= CAT_ADMIN_URL . '/groups/index.php';
 				}
 
 				$data_dwoo['PREFERENCES']	= array(
-					'link'					=> ADMIN_URL . '/preferences/index.php',
+					'link'					=> CAT_ADMIN_URL . '/preferences/index.php',
 					'title'					=> $MENU['PREFERENCES'],
 					'permission_title'		=> 'preferences',
 					'permission'			=> ( $this->get_link_permission( 'preferences' ) ) ? true : false,
@@ -375,7 +375,7 @@ class admin extends wb
 				if ( (true === defined("LEPTON_SERVICE_ACTIVE")) && ( 1 == LEPTON_SERVICE_ACTIVE ) )
 				{
 					$data_dwoo['MAIN_MENU'][6]	= array(
-						'link'					=> ADMIN_URL . '/service/index.php',
+						'link'					=> CAT_ADMIN_URL . '/service/index.php',
 						'title'					=> $MENU['SERVICE'],
 						'permission_title'		=> 'service',
 						'permission'			=> ( $this->get_link_permission( 'service' ) ) ? true : false,
@@ -400,7 +400,7 @@ class admin extends wb
 			*/
 			else
 			{
-				$header_template	= new Template(THEME_PATH.'/templates');
+				$header_template	= new Template(CAT_THEME_PATH.'/templates');
 		
 				$header_template->set_file('page', 'header.htt');
 				$header_template->set_block('page', 'header_block', 'header');
@@ -413,7 +413,7 @@ class admin extends wb
 				if ( isset($_GET['page_id']) )
 				{
 					// extract page link from the database
-					$result		= $this->db_handle->query("SELECT `link` FROM `" .TABLE_PREFIX ."pages` WHERE `page_id`= '" .(int) addslashes($_GET['page_id']) ."'");
+					$result		= $this->db_handle->query("SELECT `link` FROM `" .CAT_TABLE_PREFIX ."pages` WHERE `page_id`= '" .(int) addslashes($_GET['page_id']) ."'");
 					$row		= $result->fetchRow( MYSQL_ASSOC );
 					if ($row) $view_url .= PAGES_DIRECTORY .$row['link']. PAGE_EXTENSION;
 				}
@@ -424,7 +424,7 @@ class admin extends wb
 				 */
 				$backend_theme_version = "";
 				if (defined('DEFAULT_THEME')) {
-					$backend_theme_version = $this->db_handle->get_one("SELECT `version` from `".TABLE_PREFIX."addons` where `directory`='".DEFAULT_THEME."'");	
+					$backend_theme_version = $this->db_handle->get_one("SELECT `version` from `".CAT_TABLE_PREFIX."addons` where `directory`='".DEFAULT_THEME."'");	
 				}
 				
 				$header_template->set_var(	array(
@@ -439,9 +439,9 @@ class admin extends wb
 						'VERSION' => VERSION,
 						'CORE' => CORE,
 						'LEPTON_URL' => LEPTON_URL,
-						'WB_URL' => LEPTON_URL,
-						'ADMIN_URL' => ADMIN_URL,
-						'THEME_URL' => THEME_URL,
+						'CAT_URL' => LEPTON_URL,
+						'CAT_ADMIN_URL' => CAT_ADMIN_URL,
+						'CAT_THEME_URL' => CAT_THEME_URL,
 						'TITLE_START' => $MENU['START'],
 						'TITLE_VIEW' => $MENU['VIEW'],
 						'TITLE_HELP' => $MENU['HELP'],
@@ -456,16 +456,16 @@ class admin extends wb
 		
 				// Create the menu
 				$menu = array(
-					array(ADMIN_URL.'/pages/index.php', '', $MENU['PAGES'], 'pages', 1),
-					array(ADMIN_URL.'/media/index.php', '', $MENU['MEDIA'], 'media', 1),
-					array(ADMIN_URL.'/addons/index.php', '', $MENU['ADDONS'], 'addons', 1),
-					array(ADMIN_URL.'/preferences/index.php', '', $MENU['PREFERENCES'], 'preferences', 0),
-					array(ADMIN_URL.'/settings/index.php', '', $MENU['SETTINGS'], 'settings', 1),
-					array(ADMIN_URL.'/admintools/index.php', '', $MENU['ADMINTOOLS'], 'admintools', 1),
-					array(ADMIN_URL.'/access/index.php', '', $MENU['ACCESS'], 'access', 1)
+					array(CAT_ADMIN_URL.'/pages/index.php', '', $MENU['PAGES'], 'pages', 1),
+					array(CAT_ADMIN_URL.'/media/index.php', '', $MENU['MEDIA'], 'media', 1),
+					array(CAT_ADMIN_URL.'/addons/index.php', '', $MENU['ADDONS'], 'addons', 1),
+					array(CAT_ADMIN_URL.'/preferences/index.php', '', $MENU['PREFERENCES'], 'preferences', 0),
+					array(CAT_ADMIN_URL.'/settings/index.php', '', $MENU['SETTINGS'], 'settings', 1),
+					array(CAT_ADMIN_URL.'/admintools/index.php', '', $MENU['ADMINTOOLS'], 'admintools', 1),
+					array(CAT_ADMIN_URL.'/access/index.php', '', $MENU['ACCESS'], 'access', 1)
 				);
 				if ( (true === defined("LEPTON_SERVICE_ACTIVE")) && ( 1 == LEPTON_SERVICE_ACTIVE )) {
-						$menu[] = array(ADMIN_URL.'/service/index.php', '', $MENU['SERVICE'], 'service', 1);
+						$menu[] = array(CAT_ADMIN_URL.'/service/index.php', '', $MENU['SERVICE'], 'service', 1);
 				}
 				$header_template->set_block('header_block', 'linkBlock', 'link');
 				foreach($menu AS $menu_item) {
@@ -474,7 +474,7 @@ class admin extends wb
 					$title = $menu_item[2];
 					$permission_title = $menu_item[3];
 					$required = $menu_item[4];
-					$replace_old = array(ADMIN_URL, LEPTON_URL, '/', 'index.php');
+					$replace_old = array(CAT_ADMIN_URL, LEPTON_URL, '/', 'index.php');
 					if($required == false OR $this->get_link_permission($permission_title)) {
 						$header_template->set_var('LINK', $link);
 						$header_template->set_var('TARGET', $target);
@@ -506,9 +506,9 @@ class admin extends wb
 		// ======================================================================================= 
 		// ! Try to include the info.php  of the template to seperate old and new TemplateEngine   
 		// ======================================================================================= 
-		if ( file_exists(THEME_PATH.'/info.php') )
+		if ( file_exists(CAT_THEME_PATH.'/info.php') )
 		{
-			include( THEME_PATH . '/info.php' );
+			include( CAT_THEME_PATH . '/info.php' );
 			// ================================================================= 
 			// ! Current controller to check, if it is a new template for Dwoo   
 			// ================================================================= 
@@ -528,8 +528,8 @@ class admin extends wb
 					// ==================== 
 					$data['LEPTON_URL']			= LEPTON_URL;
 					$data['CAT_PATH']		= CAT_PATH;
-					$data['ADMIN_URL']		= ADMIN_URL;
-					$data['THEME_URL']		= THEME_URL;
+					$data['CAT_ADMIN_URL']		= CAT_ADMIN_URL;
+					$data['CAT_THEME_URL']		= CAT_THEME_URL;
 					$data['URL_HELP']		= 'http://blackcat-cms.org/';
 					// ============================= 
 					// ! Add languages to Dwoo 	
@@ -541,8 +541,8 @@ class admin extends wb
 				}
 
 				// initialize template search path
-				$parser->setPath(THEME_PATH . '/templates');
-				$parser->setFallbackPath(THEME_PATH . '/templates');
+				$parser->setPath(CAT_THEME_PATH . '/templates');
+				$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
 				$data['VERSION']					= VERSION;
 				$data['CORE']						= CORE;
@@ -554,7 +554,7 @@ class admin extends wb
 				$backend_theme_version = '-';
 				if (defined('DEFAULT_THEME'))
 				{
-					$backend_theme_version	= $this->db_handle->get_one( "SELECT `version` from `" . TABLE_PREFIX . "addons` where `directory`= '" . DEFAULT_THEME . "'");
+					$backend_theme_version	= $this->db_handle->get_one( "SELECT `version` from `" . CAT_TABLE_PREFIX . "addons` where `directory`= '" . DEFAULT_THEME . "'");
 				}
 				$data['THEME_VERSION']		= $backend_theme_version;
 				$data['THEME_NAME']			= DEFAULT_THEME;
@@ -589,14 +589,14 @@ class admin extends wb
 			*/
 			else
 			{
-				$footer_template = new Template(THEME_PATH.'/templates');
+				$footer_template = new Template(CAT_THEME_PATH.'/templates');
 				$footer_template->set_file('page', 'footer.htt');
 				$footer_template->set_block('page', 'footer_block', 'header');
 				$footer_template->set_var(array(
 								'LEPTON_URL' => LEPTON_URL,
 								'CAT_PATH' => CAT_PATH,
-								'ADMIN_URL' => ADMIN_URL,
-								'THEME_URL' => THEME_URL
+								'CAT_ADMIN_URL' => CAT_ADMIN_URL,
+								'CAT_THEME_URL' => CAT_THEME_URL
 					 			));
 				$footer_template->parse('header', 'footer_block', false);
 				$footer_template->pparse('output', 'page');
@@ -664,7 +664,7 @@ class admin extends wb
 	}
 		
 	public function get_user_details($user_id) {
-		$query_user = "SELECT username,display_name FROM ".TABLE_PREFIX."users WHERE user_id = '$user_id'";
+		$query_user = "SELECT username,display_name FROM ".CAT_TABLE_PREFIX."users WHERE user_id = '$user_id'";
 		$get_user = $this->db_handle->query($query_user);
 		if($get_user->numRows() != 0) {
 			$user = $get_user->fetchRow(MYSQL_ASSOC);
@@ -677,7 +677,7 @@ class admin extends wb
 	
 	public function get_page_details($page_id)
 	{
-		$query = "SELECT page_id,link,page_title,menu_title,modified_by,modified_when FROM ".TABLE_PREFIX."pages WHERE page_id = '$page_id'";
+		$query = "SELECT page_id,link,page_title,menu_title,modified_by,modified_when FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '$page_id'";
 		$results = $this->db_handle->query($query);
 		if ( $this->db_handle->is_error() )
 		{
@@ -707,7 +707,7 @@ class admin extends wb
 				$groups=$page[$action_groups];
 				$users=$page[$action_users];
 		} else {				
-			$results = $this->db_handle->query("SELECT $action_groups,$action_users FROM ".TABLE_PREFIX."pages WHERE page_id = '$page'");
+			$results = $this->db_handle->query("SELECT $action_groups,$action_users FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '$page'");
 			$result = $results->fetchRow( MYSQL_ASSOC );
 			$groups = explode(',', str_replace('_', '', $result[$action_groups]));
 			$users = explode(',', str_replace('_', '', $result[$action_users]));
@@ -787,7 +787,7 @@ class admin extends wb
 			return $html;
 		}
 		
-		$query = "SELECT `".$look_up_field."` from `".TABLE_PREFIX.$look_up_table."` where ".$look_up_where;
+		$query = "SELECT `".$look_up_field."` from `".CAT_TABLE_PREFIX.$look_up_table."` where ".$look_up_where;
 		
 		$result = $this->db_handle->query( $query );
 		

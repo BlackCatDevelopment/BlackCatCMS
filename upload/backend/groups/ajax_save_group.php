@@ -16,9 +16,9 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH'))
+if (defined('CAT_PATH'))
 {
-	include(LEPTON_PATH.'/framework/class.secure.php'); 
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -34,7 +34,7 @@ if (defined('LEPTON_PATH'))
 }
 // end include class.secure.php
 
-require_once( LEPTON_PATH . '/framework/class.admin.php' );
+require_once( CAT_PATH . '/framework/class.admin.php' );
 
 if ( isset( $_POST['addGroup'] ) ) $admin	= new admin('Access', 'groups_add', false);
 else $admin	= new admin('Access', 'groups_modify', false);
@@ -54,7 +54,7 @@ if(	(!$admin->get_permission('groups_add') && $addGroup != '' ) ||
 	print json_encode( $ajax );
 	exit();
 }
-include_once( LEPTON_PATH . '/framework/functions.php' );
+include_once( CAT_PATH . '/framework/functions.php' );
 
 // Gather details entered
 $group_name		= trim( $admin->get_post_escaped('name') );
@@ -86,7 +86,7 @@ if( $group_name == '' )
 	exit();
 }
 
-$sql	 = "SELECT * FROM " . TABLE_PREFIX . "groups WHERE name = '$group_name'";
+$sql	 = "SELECT * FROM " . CAT_TABLE_PREFIX . "groups WHERE name = '$group_name'";
 $sql	.= $saveGroup != '' ? "AND group_id != '$group_id'" : "";
 
 $results	= $database->query($sql);
@@ -103,11 +103,11 @@ if(	( $results->numRows() > 0 && $addGroup != '' ) ||
 }
 
 // Get system and module permissions
-require( ADMIN_PATH . '/groups/get_permissions.php' );
+require( CAT_ADMIN_PATH . '/groups/get_permissions.php' );
 
 $sql	= $addGroup != '' ? 
-			"INSERT INTO " . TABLE_PREFIX . "groups (name,system_permissions,module_permissions,template_permissions) VALUES ('$group_name','$system_permissions','$module_permissions','$template_permissions')" :
-			"UPDATE " . TABLE_PREFIX . "groups SET name = '$group_name', system_permissions = '$system_permissions', module_permissions = '$module_permissions', template_permissions = '$template_permissions' WHERE group_id = '$group_id'";
+			"INSERT INTO " . CAT_TABLE_PREFIX . "groups (name,system_permissions,module_permissions,template_permissions) VALUES ('$group_name','$system_permissions','$module_permissions','$template_permissions')" :
+			"UPDATE " . CAT_TABLE_PREFIX . "groups SET name = '$group_name', system_permissions = '$system_permissions', module_permissions = '$module_permissions', template_permissions = '$template_permissions' WHERE group_id = '$group_id'";
 
 // Update the database
 $database->query($sql);

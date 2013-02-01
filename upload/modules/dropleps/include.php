@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -16,8 +16,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -41,13 +41,13 @@ function dropleps_upload( $input ) {
     global $database, $admin;
     
 	if ( ! function_exists('sanitize_path') ) {
-	    @require WB_PATH.'/framework/functions.php';
+	    @require CAT_PATH.'/framework/functions.php';
 	}
 
     // Set temp vars
-    $temp_dir   = sanitize_path( WB_PATH.'/temp/' );
+    $temp_dir   = sanitize_path( CAT_PATH.'/temp/' );
     $temp_file  = sanitize_path( $temp_dir . $_FILES[$input]['name'] );
-    $temp_unzip = sanitize_path( WB_PATH.'/temp/unzip/' );
+    $temp_unzip = sanitize_path( CAT_PATH.'/temp/unzip/' );
     $errors     = array();
 
     // Try to upload the file to the temp dir
@@ -92,7 +92,7 @@ function dropleps_import( $temp_file, $temp_unzip ) {
 	else {
 	    if ( ! class_exists( 'PclZip' ) ) {
 	        // Include the PclZip class file
-    		require_once(LEPTON_PATH.'/modules/lib_pclzip/pclzip.lib.php');
+    		require_once(CAT_PATH.'/modules/lib_pclzip/pclzip.lib.php');
 		}
 		$archive = new PclZip($temp_file);
     	$list    = $archive->extract(PCLZIP_OPT_PATH, $temp_unzip);
@@ -134,13 +134,13 @@ function dropleps_import( $temp_file, $temp_unzip ) {
                     // Already in the DB?
                     $stmt  = 'INSERT';
                     $id    = NULL;
-                    $found = $database->get_one("SELECT * FROM ".TABLE_PREFIX."mod_droplets WHERE name='$name'");
+                    $found = $database->get_one("SELECT * FROM ".CAT_TABLE_PREFIX."mod_droplets WHERE name='$name'");
                     if ( $found && $found > 0 ) {
                         $stmt = 'REPLACE';
                         $id   = $found;
                     }
                     // execute
-                    $result = $database->query("$stmt INTO ".TABLE_PREFIX."mod_droplets VALUES('$id','$name','$code','$description','".time()."','".$admin->get_user_id()."',1,1,0,1,'$usage')");
+                    $result = $database->query("$stmt INTO ".CAT_TABLE_PREFIX."mod_droplets VALUES('$id','$name','$code','$description','".time()."','".$admin->get_user_id()."',1,1,0,1,'$usage')");
                     if( ! $database->is_error() ) {
                         $count++;
                         $imports[$name] = 1;

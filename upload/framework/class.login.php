@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -42,8 +42,8 @@ define('LOGIN_CLASS_LOADED', true);
 // Load the other required class files if they are not already loaded
 require_once(CAT_PATH."/framework/class.admin.php");
 
-// Get LEPTON version
-require_once(ADMIN_PATH.'/interface/version.php');
+// Get CMS version
+require_once(CAT_ADMIN_PATH.'/interface/version.php');
 
 class login extends admin {
 	function __construct( $config_array, $redirect = true )
@@ -310,9 +310,9 @@ class login extends admin {
 			// ======================================================================================= 
 			// ! Try to include the info.php  of the template to seperate old and new TemplateEngine   
 			// ======================================================================================= 
-			if ( file_exists(THEME_PATH.'/info.php') )
+			if ( file_exists(CAT_THEME_PATH.'/info.php') )
 			{
-				include_once( THEME_PATH . '/info.php' );
+				include_once( CAT_THEME_PATH . '/info.php' );
 
 				// ================================================================= 
 				// ! Current controller to check, if it is a new template for Dwoo   
@@ -333,10 +333,10 @@ class login extends admin {
 						// ==================== 
 						// ! Add URLs to Dwoo 	
 						// ==================== 
-						$data_dwoo['LEPTON_URL']		= LEPTON_URL;
+						$data_dwoo['CAT_URL']	    = CAT_URL;
 						$data_dwoo['CAT_PATH']		= CAT_PATH;
-						$data_dwoo['ADMIN_URL']		= ADMIN_URL;
-						$data_dwoo['THEME_URL']		= THEME_URL;
+						$data_dwoo['CAT_ADMIN_URL']	= CAT_ADMIN_URL;
+						$data_dwoo['CAT_THEME_URL']	= CAT_THEME_URL;
 						$data_dwoo['URL_HELP']		= 'http://blackcat-cms.org/';
 
 						// ============================= 
@@ -348,10 +348,10 @@ class login extends admin {
 						$data_dwoo['MENU']			= $MENU;
 					}
 
-					$parser->setPath(THEME_PATH . '/templates');
-					$parser->setFallbackPath(THEME_PATH . '/templates');
+					$parser->setPath(CAT_THEME_PATH . '/templates');
+					$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
-					$data_dwoo['INTERFACE_DIR_URL']		= ADMIN_URL.'/interface'; // FOR WHAT IS THIS FOR???? - creativecat
+					$data_dwoo['INTERFACE_DIR_URL']		= CAT_ADMIN_URL.'/interface'; // FOR WHAT IS THIS FOR???? - creativecat
 					$data_dwoo['ACTION_URL']			= $this->login_url;
 					$data_dwoo['REDIRECT']				= $this->redirect_url;
 

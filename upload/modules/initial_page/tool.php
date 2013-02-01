@@ -13,8 +13,8 @@
  */
  
  // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -58,7 +58,7 @@ if (isset($_POST['job'])) {
 	}
 }
 
-$query = "SELECT * from `".TABLE_PREFIX."users";
+$query = "SELECT * from `".CAT_TABLE_PREFIX."users";
 $result = $database->query( $query );
 if ($database->is_error()) {
 	echo $database->get_error();
@@ -72,7 +72,7 @@ if ($database->is_error()) {
  	$temp = sha1( MICROTIME().$_SERVER['HTTP_USER_AGENT'] );
 	$_SESSION['init_page_h'] = $temp;
 	
-	$form  = "\n<form method='post' action='".ADMIN_URL."/admintools/tool.php?tool=initial_page'>\n";
+	$form  = "\n<form method='post' action='".CAT_ADMIN_URL."/admintools/tool.php?tool=initial_page'>\n";
 	$form .=  "\n<input type='hidden' name='job' value='save' />\n";
 	$form .= "\n<input type='hidden' name='sh' value='".$temp."' />\n";
 	$form .= "<table class='initial_page'>\n";

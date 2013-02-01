@@ -26,20 +26,20 @@
       <tr>
         <td>
           {if $can_export || $can_delete}<input type="checkbox" name="markeddroplet[]" id="markeddroplet_{$item.id}" value="{$item.id}" />{/if}
-          {if $can_modify || $item.user_can_modify_this}<a href="{$ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;edit={$item.id}" title="{translate('Modify')}">
+          {if $can_modify || $item.user_can_modify_this}<a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;edit={$item.id}" title="{translate('Modify')}">
 			<img src="{$IMGURL}/modify.png" alt="{translate('Modify')}" />
    		  </a>
-          <a href="{$ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;copy={$item.id}">
+          <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;copy={$item.id}">
             <img src="{$IMGURL}/copy.png" title="{translate('Duplicate')}" />
           </a>
           {/if}
           {if $can_delete}
-		  <a class="del" href="javascript: confirm_link('{translate( 'Are you sure?' )}','{$ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;del={$item.id}')">
+		  <a class="del" href="javascript: confirm_link('{translate( 'Are you sure?' )}','{$CAT_ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;del={$item.id}')">
 		    <img src="{$IMGURL}/delete.png" title="{translate('Delete')}" />
 		  </a>
 		  {/if}
           {if $can_perms}
-          <a href="{$ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;droplep_perms={$item.id}">
+          <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;droplep_perms={$item.id}">
             <img src="{$IMGURL}/key.png" title="{translate('Droplep permissions')}" />
           </a>
 		  {/if}
@@ -48,7 +48,7 @@
 			<span class="comment">{$item.comments}</span>
           </a>
           {if $item.datafile}
-          <a href="{$ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;datafile={$item.id}">
+          <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;datafile={$item.id}">
             <img src="{$IMGURL}/edit.png" title="{translate('Edit datafile')}" />
           </a>
           {/if}
@@ -60,7 +60,7 @@
         <td>{$item.description}</td>
         <td>
 		  {if $can_modify || $item.user_can_modify_this}
-		  <a href="{$ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;toggle={$item.id}">{if $item.active}<img src="{$IMGURL}/ok.png" title="{translate('Yes')}" />{else}<img src="{$IMGURL}/no.png" title="{translate('No')}" />{/if}</a>
+		  <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=dropleps&amp;toggle={$item.id}">{if $item.active}<img src="{$IMGURL}/ok.png" title="{translate('Yes')}" />{else}<img src="{$IMGURL}/no.png" title="{translate('No')}" />{/if}</a>
 		  {/if}
 		</td>
 		<td>

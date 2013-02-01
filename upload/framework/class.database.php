@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -257,7 +257,7 @@ class database {
 	private function getLeptonGUID() {
 		if (defined("LEPTON_INSTALL")) return "E610A7F2-5E4A-4571-9391-C947152FDFB0";
 		$this->override_session_check = true;
-		$SQL = sprintf("SELECT value FROM %ssettings WHERE name='lepton_guid'", TABLE_PREFIX);
+		$SQL = sprintf("SELECT value FROM %ssettings WHERE name='lepton_guid'", CAT_TABLE_PREFIX);
 		$result = $this->get_one($SQL);
 		$this->override_session_check = false;
 		return $result;

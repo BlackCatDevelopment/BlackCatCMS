@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  * 
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -18,8 +18,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -50,10 +50,10 @@ define('PAGE_TITLE', $TEXT['SEARCH']);
 define('MENU_TITLE', $TEXT['SEARCH']);
 define('MODULE', '');
 define('VISIBILITY', 'public');
-define('PAGE_CONTENT', WB_PATH.'/modules/'.SEARCH_LIBRARY.'/index.php');
+define('PAGE_CONTENT', CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/index.php');
 
 // Find out what the search template is
-$query_template = $database->query("SELECT value FROM " . TABLE_PREFIX . "search WHERE name = 'template' LIMIT 1");
+$query_template = $database->query("SELECT value FROM " . CAT_TABLE_PREFIX . "search WHERE name = 'template' LIMIT 1");
 $fetch_template = $query_template->fetchRow();
 $template = $fetch_template['value'];
 if ($template != '') {
@@ -69,6 +69,6 @@ if (isset($_REQUEST['referrer']) && is_numeric($_REQUEST['referrer']) && intval(
 }
 
 // Include index (wrapper) file
-require (WB_PATH . '/index.php');
+require (CAT_PATH . '/index.php');
 
 ?>

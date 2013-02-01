@@ -17,8 +17,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -35,11 +35,11 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(CAT_PATH.'/framework/class.admin.php');
 $admin		= new admin('Preferences');
 
 $js_back	= 'javascript: history.go(-1);'; // Create a javascript back link
-include_once( ADMIN_PATH . '/interface/timezones.php' );
+include_once( CAT_ADMIN_PATH . '/interface/timezones.php' );
 
 $err_msg = array();
 
@@ -53,7 +53,7 @@ $display_name		= $display_name == ''	? $admin->get_display_name() : $display_nam
 // ================================================================================== 
 // ! check that display_name is unique in whoole system (prevents from User-faking)   
 // ================================================================================== 
-$sql	 = 'SELECT COUNT(*) FROM `' . TABLE_PREFIX . 'users` ';
+$sql	 = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'users` ';
 $sql	.= 'WHERE `user_id` <> ' . (int)$admin->get_user_id() . ' AND `display_name` LIKE "' . $display_name . '"';
 if( $database->get_one( $sql ) > 0 )
 {
@@ -80,7 +80,7 @@ if ( in_array($admin->get_post('timezone_string'), $timezone_table) )
 $date_format		= $admin->get_post('date_format');
 $date_format_key	= str_replace(' ', '|', $date_format);
 
-include( ADMIN_PATH . '/interface/date_formats.php' );
+include( CAT_ADMIN_PATH . '/interface/date_formats.php' );
 $date_format		= array_key_exists( $date_format_key, $DATE_FORMATS )	? $date_format : 'system_default';
 $date_format		= $date_format == 'system_default'						? '' : $date_format;
 unset($DATE_FORMATS);
@@ -91,7 +91,7 @@ unset($DATE_FORMATS);
 $time_format		= $admin->get_post('time_format');
 $time_format_key	= str_replace(' ', '|', $time_format);
 
-include( ADMIN_PATH . '/interface/time_formats.php' );
+include( CAT_ADMIN_PATH . '/interface/time_formats.php' );
 $time_format		= array_key_exists($time_format_key, $TIME_FORMATS)		? $time_format : 'system_default';
 $time_format		= $time_format == 'system_default'						? '' : $time_format;
 unset($TIME_FORMATS);
@@ -109,7 +109,7 @@ else
 {
 	// check that email is unique in whoole system
 	$email		= $admin->add_slashes($email);
-	$sql		 = 'SELECT COUNT(*) FROM `'.TABLE_PREFIX.'users` ';
+	$sql		 = 'SELECT COUNT(*) FROM `'.CAT_TABLE_PREFIX.'users` ';
 	$sql		.= 'WHERE `user_id` <> ' . (int)$admin->get_user_id() . ' AND `email` LIKE "' . $email . '"';
 	if( $database->get_one($sql) > 0 )
 	{
@@ -165,7 +165,7 @@ $new_password_2			= md5($new_password_2);
 // ======================================================================================= 
 if ( sizeof($err_msg) == 0 )
 {
-	$sql	 = 'UPDATE `'.TABLE_PREFIX.'users` ';
+	$sql	 = 'UPDATE `'.CAT_TABLE_PREFIX.'users` ';
 	$sql	.= 'SET `display_name` = "' . $display_name . '", ';
 	$sql	.=		'`password` = "' . $new_password_1 . '", ';
 	$sql	.=		'`email` = "' . $email . '", ';
@@ -234,7 +234,7 @@ if ( sizeof($err_msg) == 0 )
 			// ==================== 
 			// ! Set initial page   
 			// ==================== 
-			require_once( LEPTON_PATH . '/modules/initial_page/classes/c_init_page.php' );
+			require_once( CAT_PATH . '/modules/initial_page/classes/c_init_page.php' );
 			$ref	= new c_init_page( $database );
 			$ref->update_user( $_SESSION['USER_ID'], $admin->get_post('init_page_select') );
 			unset($ref);

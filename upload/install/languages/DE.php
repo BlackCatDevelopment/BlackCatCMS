@@ -25,7 +25,7 @@
 
 $LANG = array(
     'Installation Wizard' => 'Installation Wizard',
-    'LEPTON Step by Step Installation Wizard' => 'LEPTON Schritt-für-Schritt Installation',
+    'Black Cat CMS Step by Step Installation Wizard' => 'Black Cat CMS Schritt-für-Schritt Installation',
     'Step' => 'Schritt',
 // ----- Nav ----
 	'Welcome' => 'Willkommen',
@@ -33,9 +33,9 @@ $LANG = array(
 	'OS settings' => 'OS Einstellungen',
 	'Database settings' => 'Datenbank Einstellungen',
 // ----- Welcome page -----
-    'Welcome to your LEPTON Installation' => 'Willkommen zu Ihrer LEPTON Installation',
-    'This wizard will help you to install and configure LEPTON CMS on your server. But first, please read the license agreement below.'
-		=> 'Dieser Wizard hilft Ihnen bei der Installation und Konfiguration von LEPTON CMS auf Ihrem Server. Bitte lesen Sie zunächst untenstehende Lizenzinformationen.',
+    'Welcome to your Black Cat CMS Installation' => 'Willkommen zu Ihrer Black Cat CMS Installation',
+    'This wizard will help you to install and configure Black Cat CMS on your server. But first, please read the license agreement below.'
+		=> 'Dieser Wizard hilft Ihnen bei der Installation und Konfiguration von Black Cat CMS auf Ihrem Server. Bitte lesen Sie zunächst untenstehende Lizenzinformationen.',
     'License Agreement' => 'Lizenzvereinbarung',
 // ----- Precheck page -----
     'Pre installation checks' => 'Prüfungen vor Installation',
@@ -130,7 +130,7 @@ $LANG = array(
 	'Next' => 'Weiter',
 // ----- field names to strings -----
     'operating_system' => 'Betriebssystem',
-	'lepton_url' => 'LEPTON URL',
+	'lepton_url' => 'Black Cat CMS URL',
 	'default_timezone_string' => 'Standard Zeitzone',
 	'default_language' => 'Standardsprache',
 	'database_host' => 'Datenbank Servername',

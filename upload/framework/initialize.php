@@ -1,22 +1,29 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, Black Cat Development
- * @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://www.blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
-
 
 // include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
@@ -47,7 +54,7 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
     
     // Get website settings (title, keywords, description, header, and footer)
 
-    $sql = 'SELECT `name`,`value` FROM `'.TABLE_PREFIX.'settings` ORDER BY `name`';
+    $sql = 'SELECT `name`,`value` FROM `'.CAT_TABLE_PREFIX.'settings` ORDER BY `name`';
     if (($result = $database->query( $sql )) && ($result->numRows( ) > 0)) {
         while (false != ($row = $result->fetchRow( MYSQL_ASSOC ) ) ) {
             if (preg_match( '/^[0-7]{1,4}$/', $row['value'] ) == true) {
@@ -81,10 +88,10 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
     define( 'OCTAL_FILE_MODE', (int) octdec( $string_file_mode ));
     $string_dir_mode = STRING_DIR_MODE;
     define( 'OCTAL_DIR_MODE', (int) octdec( $string_dir_mode ));
-    if (!defined( 'LEPTON_INSTALL_PROCESS' )) {
+    if (!defined( 'CAT_INSTALL_PROCESS' )) {
         // get CAPTCHA and ASP settings
 
-        $sql = 'SELECT * FROM `'.TABLE_PREFIX.'mod_captcha_control` LIMIT 1';
+        $sql = 'SELECT * FROM `'.CAT_TABLE_PREFIX.'mod_captcha_control` LIMIT 1';
         if (false !== ($get_settings = $database->query( $sql ))) {
             if ($get_settings->numRows( ) == 0) {
                 die( "CAPTCHA-Settings not found" );
@@ -158,7 +165,7 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
 	}
 	
 	// Setting the correct default timezone to avoid "date" conflicts and warnings
-	require_once( ADMIN_PATH.'/interface/timezones.php' );
+	require_once( CAT_ADMIN_PATH.'/interface/timezones.php' );
 	$timezone_string = (isset ($_SESSION['TIMEZONE_STRING']) ? $_SESSION['TIMEZONE_STRING'] : DEFAULT_TIMEZONESTRING );
 	date_default_timezone_set($timezone_string);
 	   
@@ -169,14 +176,14 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
     define( 'TIME_FORMAT', (isset ($_SESSION['TIME_FORMAT']) ? $_SESSION['TIME_FORMAT'] : DEFAULT_TIME_FORMAT ) );
     
     // Set Theme dir
-    define( 'THEME_URL', LEPTON_URL.'/templates/'.DEFAULT_THEME );
-    define( 'THEME_PATH', CAT_PATH.'/templates/'.DEFAULT_THEME );
+    define( 'CAT_THEME_URL', CAT_URL.'/templates/'.DEFAULT_THEME );
+    define( 'CAT_THEME_PATH', CAT_PATH.'/templates/'.DEFAULT_THEME );
     
     $database->prompt_on_error( PROMPT_MYSQL_ERRORS );
     
     // set the search library
-    if (!defined( 'LEPTON_INSTALL_PROCESS' )) {
-        if (false !== ($query = $database->query("SELECT value FROM ".TABLE_PREFIX."search WHERE name = 'cfg_search_library' LIMIT 1"))) {
+    if (!defined( 'CAT_INSTALL_PROCESS' )) {
+        if (false !== ($query = $database->query("SELECT value FROM ".CAT_TABLE_PREFIX."search WHERE name = 'cfg_search_library' LIMIT 1"))) {
             ($query->numRows() > 0) ? $res = $query->fetchRow() : $res['value'] = 'lib_search';
             define('SEARCH_LIBRARY', $res['value']);
         }

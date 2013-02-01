@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {   
-   include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {   
+   include(CAT_PATH.'/framework/class.secure.php');
 } else {
    $oneback = "../";
    $root = $oneback;
@@ -48,7 +48,7 @@ define('GROUP_ID', $group_id);
 
 // Include WB files
 // require_once('../../config.php'); /* can be removed as long as class.secure is included
-require_once(WB_PATH.'/framework/class.frontend.php');
+require_once(CAT_PATH.'/framework/class.frontend.php');
 $database = new database();
 $wb = new frontend();
 $wb->page_id = $page_id;
@@ -77,7 +77,7 @@ echo '<?xml version="1.0" encoding="'.$charset.'"?>';
 		<link>http://<?php echo $_SERVER['SERVER_NAME']; ?></link>
 		<description> <?php echo PAGE_DESCRIPTION; ?></description>
 <?php
-	echo "<atom:link href='" . WB_URL . "/modules/news/rss.php?page_id=$page_id' rel='self' type='application/rss+xml' />";
+	echo "<atom:link href='" . CAT_URL . "/modules/news/rss.php?page_id=$page_id' rel='self' type='application/rss+xml' />";
 ?>
 		<language><?php echo strtolower(DEFAULT_LANGUAGE); ?></language>
 		<copyright><?php $thedate = date('Y'); $websitetitle = WEBSITE_TITLE; echo "Copyright {$thedate}, {$websitetitle}"; ?></copyright>
@@ -92,9 +92,9 @@ $time_check_str= "(published_when = '0' OR published_when <= ".$t.") AND (publis
 
 //	Query
 if ( $group_id > -1 ) {
-	$query = "SELECT * FROM ".TABLE_PREFIX."mod_news_posts WHERE group_id=".$group_id." AND page_id = ".$page_id." AND active=1 AND ".$time_check_str." ORDER BY posted_when DESC";
+	$query = "SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_posts WHERE group_id=".$group_id." AND page_id = ".$page_id." AND active=1 AND ".$time_check_str." ORDER BY posted_when DESC";
 } else {
-	$query = "SELECT * FROM ".TABLE_PREFIX."mod_news_posts WHERE page_id=".$page_id." AND active=1 AND ".$time_check_str." ORDER BY posted_when DESC";	
+	$query = "SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_posts WHERE page_id=".$page_id." AND active=1 AND ".$time_check_str." ORDER BY posted_when DESC";	
 }
 $result = $database->query($query);
 
@@ -103,8 +103,8 @@ while($item = $result->fetchRow( MYSQL_ASSOC )){ ?>
 		<item>
 			<title><![CDATA[<?php echo stripslashes($item["title"]); ?>]]></title>
 			<description><![CDATA[<?php echo stripslashes($item["content_short"]); ?>]]></description>
-			<guid><?php echo WB_URL.PAGES_DIRECTORY.$item["link"].PAGE_EXTENSION; ?></guid>
-			<link><?php echo WB_URL.PAGES_DIRECTORY.$item["link"].PAGE_EXTENSION; ?></link>
+			<guid><?php echo CAT_URL.PAGES_DIRECTORY.$item["link"].PAGE_EXTENSION; ?></guid>
+			<link><?php echo CAT_URL.PAGES_DIRECTORY.$item["link"].PAGE_EXTENSION; ?></link>
 			<pubDate><?php echo date('D, d M Y H:i:s O',$item["published_when"]); ?></pubDate>
 		</item>
 <?php } ?>
@@ -118,9 +118,9 @@ if(ob_get_length() > 0) { ob_end_clean(); }
 // wb->preprocess() -- replace all [wblink123] with real, internal links
 $wb->preprocess($output);
 // Load Droplet engine and process
-if(file_exists(WB_PATH .'/modules/droplets/droplets.php'))
+if(file_exists(CAT_PATH .'/modules/droplets/droplets.php'))
 {
-    include_once(WB_PATH .'/modules/droplets/droplets.php');
+    include_once(CAT_PATH .'/modules/droplets/droplets.php');
     if(function_exists('evalDroplets'))
     {
 		$output = evalDroplets($output);

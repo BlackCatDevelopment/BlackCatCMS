@@ -45,7 +45,7 @@ if (defined('CAT_PATH')) {
 require_once CAT_PATH.'/framework/functions.php';
 
 function Dwoo_Plugin_cat_url(Dwoo $dwoo) {
-	return WB_URL;
+	return CAT_URL;
 }
 
 ?>

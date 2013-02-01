@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -82,7 +82,7 @@ function processDroplets( &$wb_page_data )
 						$droplet_name = $droplet;
 					}
                 // request the droplet code from database
-                $sql      = 'SELECT `code` FROM `' . TABLE_PREFIX . 'mod_droplets` WHERE `name` LIKE "' . $droplet_name . '" AND `active` = 1';
+                $sql      = 'SELECT `code` FROM `' . CAT_TABLE_PREFIX . 'mod_droplets` WHERE `name` LIKE "' . $droplet_name . '" AND `active` = 1';
                 $codedata = $GLOBALS[ 'database' ]->get_one( $sql );
                 if ( !is_null( $codedata ) )
                 {

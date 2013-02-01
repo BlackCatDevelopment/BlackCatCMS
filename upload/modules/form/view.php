@@ -13,8 +13,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -30,7 +30,7 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-require_once(WB_PATH.'/include/captcha/captcha.php');
+require_once(CAT_PATH.'/include/captcha/captcha.php');
 
 global $database;
 global $section_id;
@@ -108,12 +108,12 @@ if($_POST == array()) {
 $_SESSION['form_submission_id'] = new_submission_id();
 
 // Get settings
-$query_settings = $database->query("SELECT header,field_loop,footer,use_captcha FROM ".TABLE_PREFIX."mod_form_settings WHERE section_id = '$section_id'");
+$query_settings = $database->query("SELECT header,field_loop,footer,use_captcha FROM ".CAT_TABLE_PREFIX."mod_form_settings WHERE section_id = '$section_id'");
 if($query_settings->numRows() > 0) {
 	$fetch_settings = $query_settings->fetchRow();
-	$header = str_replace('{WB_URL}',WB_URL,$fetch_settings['header']);
+	$header = str_replace('{CAT_URL}',CAT_URL,$fetch_settings['header']);
 	$field_loop = $fetch_settings['field_loop'];
-	$footer = str_replace('{WB_URL}',WB_URL,$fetch_settings['footer']);
+	$footer = str_replace('{CAT_URL}',CAT_URL,$fetch_settings['footer']);
 	$use_captcha = $fetch_settings['use_captcha'];
 	$form_name = 'form';
 	$use_xhtml_strict = false;
@@ -157,7 +157,7 @@ Comment:
 echo $header;
 
 // Get list of fields
-$query_fields = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_form_fields WHERE section_id = '$section_id' ORDER BY position ASC");
+$query_fields = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_form_fields WHERE section_id = '$section_id' ORDER BY position ASC");
 
 if($query_fields->numRows() > 0) {
 	while(false !== ($field = $query_fields->fetchRow())) {
@@ -252,12 +252,12 @@ echo $footer;
 			(!isset($_POST['comment']) OR $_POST['comment']) OR
 			(!isset($_POST['url']) OR $_POST['url'])
 		)) {
-			exit(header("Location: ".WB_URL.PAGES_DIRECTORY.""));
+			exit(header("Location: ".CAT_URL.PAGES_DIRECTORY.""));
 		}
 
 		// Submit form data
 		// First start message settings
-		$query_settings = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_form_settings WHERE section_id = '$section_id'");
+		$query_settings = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_form_settings WHERE section_id = '$section_id'");
 		if($query_settings->numRows() > 0) {
 			$fetch_settings = $query_settings->fetchRow();
 			$email_to = $fetch_settings['email_to'];
@@ -304,7 +304,7 @@ echo $footer;
 
 		// Loop through fields and add to message body
 		// Get list of fields
-		$query_fields = $database->query("SELECT * FROM `".TABLE_PREFIX."mod_form_fields` WHERE section_id = '$section_id' ORDER BY position ASC");
+		$query_fields = $database->query("SELECT * FROM `".CAT_TABLE_PREFIX."mod_form_fields` WHERE section_id = '$section_id' ORDER BY position ASC");
 		if($query_fields->numRows() > 0) {
 			while(false !== ($field = $query_fields->fetchRow())) {
 				// Add to message body
@@ -367,7 +367,7 @@ echo $footer;
 			} else {
 				// Check how many times form has been submitted in last hour
 				$last_hour = time()-3600;
-				$query_submissions = $database->query("SELECT submission_id FROM ".TABLE_PREFIX."mod_form_submissions WHERE submitted_when >= '$last_hour'");
+				$query_submissions = $database->query("SELECT submission_id FROM ".CAT_TABLE_PREFIX."mod_form_submissions WHERE submitted_when >= '$last_hour'");
 				if($query_submissions->numRows() > $max_submissions) {
 					// Too many submissions so far this hour
 					echo $MESSAGE['MOD_FORM_EXCESS_SUBMISSIONS'];
@@ -408,9 +408,9 @@ echo $footer;
 						$submitted_by = 0;
 					}
 					$email_body = $wb->add_slashes($email_body);
-					$database->query("INSERT INTO ".TABLE_PREFIX."mod_form_submissions (page_id,section_id,submitted_when,submitted_by,body) VALUES ('".PAGE_ID."','$section_id','".time()."','$submitted_by','$email_body')");
+					$database->query("INSERT INTO ".CAT_TABLE_PREFIX."mod_form_submissions (page_id,section_id,submitted_when,submitted_by,body) VALUES ('".PAGE_ID."','$section_id','".time()."','$submitted_by','$email_body')");
 					// Make sure submissions table isn't too full
-					$query_submissions = $database->query("SELECT submission_id FROM ".TABLE_PREFIX."mod_form_submissions ORDER BY submitted_when");
+					$query_submissions = $database->query("SELECT submission_id FROM ".CAT_TABLE_PREFIX."mod_form_submissions ORDER BY submitted_when");
 					$num_submissions = $query_submissions->numRows();
 					if($num_submissions > $stored_submissions) {
 						// Remove excess submission
@@ -418,7 +418,7 @@ echo $footer;
 						while(false !== ($submission = $query_submissions->fetchRow())) {
 							if($num_to_remove > 0) {
 								$submission_id = $submission['submission_id'];
-								$database->query("DELETE FROM ".TABLE_PREFIX."mod_form_submissions WHERE submission_id = '$submission_id'");
+								$database->query("DELETE FROM ".CAT_TABLE_PREFIX."mod_form_submissions WHERE submission_id = '$submission_id'");
 								$num_to_remove = $num_to_remove-1;
 							}
 						}
@@ -436,15 +436,15 @@ echo $footer;
 	   if ($success_page=='none') {
 			echo str_replace("\n","<br />",$success_email_text);
   		} else {
-			$query_menu = $database->query("SELECT link,target FROM ".TABLE_PREFIX."pages WHERE `page_id` = '$success_page'");
+			$query_menu = $database->query("SELECT link,target FROM ".CAT_TABLE_PREFIX."pages WHERE `page_id` = '$success_page'");
 			if($query_menu->numRows() > 0) {
   	        	$fetch_settings = $query_menu->fetchRow();
-			   $link = WB_URL.PAGES_DIRECTORY.$fetch_settings['link'].PAGE_EXTENSION;
+			   $link = CAT_URL.PAGES_DIRECTORY.$fetch_settings['link'].PAGE_EXTENSION;
 			   echo "<script type='text/javascript'>location.href='".$link."';</script>";
 			}    
 		}
 		// clearing session on success
-		$query_fields = $database->query("SELECT field_id FROM ".TABLE_PREFIX."mod_form_fields WHERE section_id = '$section_id'");
+		$query_fields = $database->query("SELECT field_id FROM ".CAT_TABLE_PREFIX."mod_form_fields WHERE section_id = '$section_id'");
 		while(false !== ($field = $query_fields->fetchRow())) {
 			$field_id = $field[0];
 			if(isset($_SESSION['field'.$field_id])) unset($_SESSION['field'.$field_id]);

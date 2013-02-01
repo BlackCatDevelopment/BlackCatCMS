@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -18,8 +18,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
 	$root = "../";
 	$level = 1;
@@ -36,8 +36,8 @@ if (defined('WB_PATH')) {
 // end include class.secure.php
 
 // delete table
-$database->query("DROP TABLE IF EXISTS `".TABLE_PREFIX."mod_wrapper`");
+$database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_wrapper`");
 
 // Delete the editor directory
-rm_full_dir(WB_PATH.'/modules/wrapper');
+rm_full_dir(CAT_PATH.'/modules/wrapper');
 ?>

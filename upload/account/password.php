@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -19,8 +19,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -47,7 +47,7 @@ $js_back  = "javascript: history.go(-1);";
 
 // Get existing password
 $database = new database();
-$query    = "SELECT user_id FROM " . TABLE_PREFIX . "users WHERE user_id = '" . $wb->get_user_id() . "' AND password = '" . md5( $current_password ) . "'";
+$query    = "SELECT user_id FROM " . CAT_TABLE_PREFIX . "users WHERE user_id = '" . $wb->get_user_id() . "' AND password = '" . md5( $current_password ) . "'";
 $results  = $database->query( $query );
 
 // Validate values
@@ -69,7 +69,7 @@ $md5_password = md5( $new_password );
 
 // Update the database
 $database = new database();
-$query    = "UPDATE " . TABLE_PREFIX . "users SET password = '$md5_password' WHERE user_id = '" . $wb->get_user_id() . "'";
+$query    = "UPDATE " . CAT_TABLE_PREFIX . "users SET password = '$md5_password' WHERE user_id = '" . $wb->get_user_id() . "'";
 $database->query( $query );
 if ( $database->is_error() )
 {
@@ -77,7 +77,7 @@ if ( $database->is_error() )
 }
 else
 {
-	$wb->print_success( $MESSAGE[ 'PREFERENCES_PASSWORD_CHANGED' ], WB_URL . '/account/preferences.php' );
+	$wb->print_success( $MESSAGE[ 'PREFERENCES_PASSWORD_CHANGED' ], CAT_URL . '/account/preferences.php' );
 }
 
 

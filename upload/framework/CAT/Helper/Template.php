@@ -81,12 +81,12 @@ if (!class_exists('CAT_Helper_Template'))
                 self::$_drivers[$driver] = new CAT_Helper_Template_DriverDecorator( new $driver() );
                 self::$_drivers[$driver]->setGlobals(
                       array(
-                              'ADMIN_URL' => ADMIN_URL,
-                              'WB_URL' => LEPTON_URL,
-                              'WB_PATH' => LEPTON_PATH,
-                              'LEPTON_URL' => LEPTON_URL,
-                        	  'LEPTON_PATH' => LEPTON_PATH,
-                        	  'THEME_URL' => THEME_URL,
+                              'CAT_ADMIN_URL' => CAT_ADMIN_URL,
+                              'CAT_URL' => CAT_URL,
+                              'CAT_PATH' => CAT_PATH,
+                              'LEPTON_URL' => CAT_URL,
+                        	  'CAT_PATH' => CAT_PATH,
+                        	  'CAT_THEME_URL' => CAT_THEME_URL,
                         	  'URL_HELP' => URL_HELP,
                       )
                   );

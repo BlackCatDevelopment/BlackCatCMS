@@ -24,8 +24,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -41,7 +41,7 @@ if (defined('WB_PATH')) {
 }
 // end include class.secure.php
 
-if ( !defined('LEPTON_PATH')) die(header('Location: ../../index.php'));
+if ( !defined('CAT_PATH')) die(header('Location: ../../index.php'));
 
 $module_description = 'WYSIWYG Admin ermöglicht die Verwaltung diverser Editor-Einstellung; standardmäßig sind das Skin, Toolbar, Breite und Höhe. '
                     . 'Der Editor kann weitere Optionen definieren, die dann ebenfalls verwaltet werden können.';

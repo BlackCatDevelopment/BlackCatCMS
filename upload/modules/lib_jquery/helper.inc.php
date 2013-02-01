@@ -6,7 +6,7 @@
     http://www.webbird.de/
 *******************************************************************************/
 
-if ( ! defined( 'WB_URL' ) ) {
+if ( ! defined( 'CAT_URL' ) ) {
     require_once dirname(__FILE__).'/../../config.php';
 }
 
@@ -26,14 +26,14 @@ function _loadFile( $file )
         $f_content = str_ireplace(
             array(
                 '{URL}',
-                '{WB_URL}',
-                '{WB_PATH}',
+                '{CAT_URL}',
+                '{CAT_PATH}',
                 '{{ insert_files }}',
             ),
             array(
-                 WB_URL,
-                 WB_URL,
-                 WB_PATH,
+                 CAT_URL,
+                 CAT_URL,
+                 CAT_PATH,
                  '',
             ),
             $f_content

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -73,7 +73,7 @@ $include_head_link_css = '';
 $include_body_links    = '';
 $include_head_links    = '';
 // workout to included frontend.css, fronten.js and frontend_body.js in snippets
-$query                 = "SELECT directory FROM " . TABLE_PREFIX . "addons WHERE type = 'module' AND function = 'snippet'";
+$query                 = "SELECT directory FROM " . CAT_TABLE_PREFIX . "addons WHERE type = 'module' AND function = 'snippet'";
 $query_result          = $database->query( $query );
 if ( $query_result->numRows() > 0 )
 {
@@ -123,7 +123,7 @@ if ( !function_exists( 'get_page_link' ) )
     {
         global $database;
         // Get link
-        $sql  = 'SELECT `link` FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $id;
+        $sql  = 'SELECT `link` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $id;
         $link = $database->get_one( $sql );
         return $link;
     }
@@ -370,7 +370,7 @@ function language_menu()
     {
         // initialize template search path
         $parser->setPath(CAT_PATH.'/templates/'.TEMPLATE.'/templates');
-        $parser->setFallbackPath(THEME_PATH.'/templates');
+        $parser->setFallbackPath(CAT_THEME_PATH.'/templates');
         if($parser->hasTemplate('languages.lte'))
         {
             $parser->output('languages.lte', array('items'=>$items));

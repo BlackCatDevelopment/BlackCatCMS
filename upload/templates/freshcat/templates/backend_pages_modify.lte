@@ -12,7 +12,7 @@
 		<div class="clear"></div>
 	</div>
 	<div class="fc_modified_header fc_br_bottom fc_gradient1 fc_border">
-		<form action="{$ADMIN_URL}/pages/sections_save.php" id="fc_add_module_form" name="add_section" method="post">
+		<form action="{$CAT_ADMIN_URL}/pages/sections_save.php" id="fc_add_module_form" name="add_section" method="post">
 			<div id="fc_add_module">
 				<select name="add_module">
 					{foreach $modules as module}
@@ -57,7 +57,7 @@
 										<span class="fc_section_button fc_open_section_modify icon-calendar" title="{translate('Modify section')}"></span>
 										<div class="fc_section_modify_div fc_gradient1 fc_border_all_light fc_shadow_small fc_br_all">
 											<div class="fc_arrow_up"></div>
-											<form action="{$ADMIN_URL}/pages/sections_save.php" name="modify_section" class="fc_modify_section">
+											<form action="{$CAT_ADMIN_URL}/pages/sections_save.php" name="modify_section" class="fc_modify_section">
 												<div>
 													<input type="hidden" name="section_id" value="{$block.section_id}" />
 													<span class="fc_section_modify_label">{translate('Name')} :</span>

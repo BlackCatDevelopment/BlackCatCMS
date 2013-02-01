@@ -17,8 +17,8 @@
  
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH . '/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH . '/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -38,9 +38,9 @@ if (defined('LEPTON_PATH')) {
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
-include_once(LEPTON_PATH . '/framework/functions.php');
+include_once(CAT_PATH . '/framework/functions.php');
 
-require_once(LEPTON_PATH . '/framework/class.admin.php');
+require_once(CAT_PATH . '/framework/class.admin.php');
 $admin	= new admin('Media', 'media');
 
 // ================== 
@@ -56,16 +56,16 @@ $new_extension	= trim($admin->strip_slashes($admin->get_post('new_extension')));
 // =============================================================================== 
 if ( $new_name=='' || $rename_file=='' || $file_path=='' || $admin->get_permission('media_rename')!=true )
 {
-	header('Location: ' . ADMIN_URL);
+	header('Location: ' . CAT_ADMIN_URL);
 }
 
 else {
 	// ================================ 
 	// ! Check if folder is writeable   
 	// ================================ 
-	if (is_writable(LEPTON_PATH . $file_path))
+	if (is_writable(CAT_PATH . $file_path))
 	{
-		$file = LEPTON_PATH . $file_path.'/'.$rename_file;
+		$file = CAT_PATH . $file_path.'/'.$rename_file;
 		
 		// Check if a new extension were sent
 		if ( $new_extension == '')
@@ -77,8 +77,8 @@ else {
 		// ========================================== 
 		// ! Combine path, filenames and extensions   
 		// ========================================== 
-		$old_name	= LEPTON_PATH . $file_path.'/'.$rename_file;
-		$new_name	= LEPTON_PATH . $file_path.'/'.$new_name.$new_extension;
+		$old_name	= CAT_PATH . $file_path.'/'.$rename_file;
+		$new_name	= CAT_PATH . $file_path.'/'.$new_name.$new_extension;
 
 	//////////////////////////////////////////////////////////////////////
 		/*

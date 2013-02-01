@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -16,8 +16,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -43,7 +43,7 @@ $module_author = 'LEPTON Project';
 $module_license = 'GNU General Public License';
 $module_description = 'This tool allows you to manage your local Dropleps.';
 
-$module_home = 'http://www.lepton-cms.org/';
+$module_home = 'http://blackcat-cms.org/';
 $module_guid = '8b5b5074-993e-421a-9aff-2e32ae1601d5';
 
 /**

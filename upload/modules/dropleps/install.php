@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with LEPTON Core.
+ * This file is part of an ADDON for use with Black Cat CMS Core.
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
@@ -16,9 +16,9 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if ( defined( 'WB_PATH' ) )
+if ( defined( 'CAT_PATH' ) )
 {
-    include( WB_PATH . '/framework/class.secure.php' );
+    include( CAT_PATH . '/framework/class.secure.php' );
 }
 else
 {
@@ -43,12 +43,12 @@ else
 $is_upgrade = false;
 
 // check if we already have a droplets table; leave it if yes
-$result = $database->query("SHOW TABLES LIKE '".TABLE_PREFIX ."mod_droplets';");
+$result = $database->query("SHOW TABLES LIKE '".CAT_TABLE_PREFIX ."mod_droplets';");
 if ( $result->numRows() == 0 ) {
 	if ( file_exists( dirname(__FILE__).'/../droplets/info.php' ) ) {
     	$is_upgrade = true;
 	}
-	$table = TABLE_PREFIX .'mod_droplets';
+	$table = CAT_TABLE_PREFIX .'mod_droplets';
 	$database->query("CREATE TABLE `$table` (
 		`id` INT NOT NULL auto_increment,
 		`name` VARCHAR(32) NOT NULL,
@@ -71,7 +71,7 @@ if ( $result->numRows() == 0 ) {
 }
 
 // create the new permissions table
-$table = TABLE_PREFIX .'mod_dropleps_permissions';
+$table = CAT_TABLE_PREFIX .'mod_dropleps_permissions';
 $database->query("DROP TABLE IF EXISTS `$table`");
 $database->query("CREATE TABLE `$table` (
 	`id` INT(10) UNSIGNED NOT NULL,
@@ -87,7 +87,7 @@ if( $database->is_error() ) {
 }
 
 // create the settings table
-$table = TABLE_PREFIX .'mod_dropleps_settings';
+$table = CAT_TABLE_PREFIX .'mod_dropleps_settings';
 $database->query("DROP TABLE IF EXISTS `$table`");
 $database->query("CREATE TABLE `$table` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -103,7 +103,7 @@ if( $database->is_error() ) {
 }
 
 // insert settings
-$database->query("INSERT INTO `".TABLE_PREFIX ."mod_dropleps_settings` (`id`, `attribute`, `value`) VALUES
+$database->query("INSERT INTO `".CAT_TABLE_PREFIX ."mod_dropleps_settings` (`id`, `attribute`, `value`) VALUES
 (1, 'manage_backups', '1'),
 (2, 'import_dropleps', '1'),
 (3, 'delete_dropleps', '1'),
@@ -114,15 +114,15 @@ $database->query("INSERT INTO `".TABLE_PREFIX ."mod_dropleps_settings` (`id`, `a
 ");
 
 // import default dropleps
-if ( ! class_exists( 'LEPTON_Helper_Directory' ) ) {
-	@include WB_PATH.'/framework/LEPTON/Helper/Directory.php';
+if ( ! class_exists( 'CAT_Helper_Directory' ) ) {
+	@include CAT_PATH.'/framework/LEPTON/Helper/Directory.php';
 }
 if ( ! function_exists( 'dropleps_import' ) ) {
 	@include dirname(__FILE__).'/include.php';
 }
 $inst_dir   = sanitize_path( dirname(__FILE__).'/install' );
-$temp_unzip = sanitize_path( WB_PATH.'/temp/unzip/' );
-$dirh       = new LEPTON_Helper_Directory();
+$temp_unzip = sanitize_path( CAT_PATH.'/temp/unzip/' );
+$dirh       = new CAT_Helper_Directory();
 $files      = $dirh->getFiles( $inst_dir, $inst_dir.'/' );
 
 if ( is_array($files) && count($files) ) {
@@ -140,13 +140,13 @@ if ( is_array($files) && count($files) ) {
 // if it's an upgrade from the old droplets module...
 if ( $is_upgrade ) {
 
-	require sanitize_path( LEPTON_PATH . '/framework/LEPTON/Helper/Zip.php' );
+	require sanitize_path( CAT_PATH . '/framework/LEPTON/Helper/Zip.php' );
 
 	// create backup copy
-	$temp_file = sanitize_path( LEPTON_PATH . '/temp/droplets_module_backup.zip' );
-	$temp_dir  = sanitize_path( LEPTON_PATH . '/modules/droplets'                );
+	$temp_file = sanitize_path( CAT_PATH . '/temp/droplets_module_backup.zip' );
+	$temp_dir  = sanitize_path( CAT_PATH . '/modules/droplets'                );
 	
-    $zip1 = new LEPTON_Helper_Zip($temp_file);
+    $zip1 = new CAT_Helper_Zip($temp_file);
 	$zip1->config( 'removePath', $temp_dir );
 
     $file_list = $zip1->create( $temp_dir );
@@ -156,15 +156,15 @@ if ( $is_upgrade ) {
     }
 
 	// remove the folder
-	rm_full_dir( LEPTON_PATH.'/modules/droplets' );
+	rm_full_dir( CAT_PATH.'/modules/droplets' );
 	
 	// re-create the folder
-	@mkdir( LEPTON_PATH.'/modules/droplets', 0755 );
+	@mkdir( CAT_PATH.'/modules/droplets', 0755 );
 	
 	// unpack the compatibility files
-	$temp_file = sanitize_path( LEPTON_PATH . '/modules/dropleps/install/droplets.zip' );
-	$zip2 = new LEPTON_Helper_Zip($temp_file);
-	$zip2->config( 'Path', sanitize_path( LEPTON_PATH.'/modules/droplets' ) );
+	$temp_file = sanitize_path( CAT_PATH . '/modules/dropleps/install/droplets.zip' );
+	$zip2 = new CAT_Helper_Zip($temp_file);
+	$zip2->config( 'Path', sanitize_path( CAT_PATH.'/modules/droplets' ) );
 	$zip2->extract( $temp_file );
 	
 }

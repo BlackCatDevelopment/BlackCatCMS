@@ -16,8 +16,8 @@
  */
  
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('LEPTON_PATH')) {
-	include(LEPTON_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -34,7 +34,7 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-require_once(LEPTON_PATH.'/framework/class.admin.php');
+require_once(CAT_PATH.'/framework/class.admin.php');
 $admin = new admin('Access', 'groups', false);
 
 header('Content-type: application/json');
@@ -60,7 +60,7 @@ if ( !is_numeric($group_id ) )
 	print json_encode( $ajax );
 	exit();
 }
-$get_group		= $database->query("SELECT * FROM " . TABLE_PREFIX . "groups WHERE group_id = '$group_id'");
+$get_group		= $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "groups WHERE group_id = '$group_id'");
 
 // ==============================================
 // ! Insert admin group and current group first

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -136,7 +136,7 @@ class wb extends SecureCMS
     {
         global $database;
         $now = time();
-        $sql = 'SELECT COUNT(*) FROM `' . TABLE_PREFIX . 'sections` ';
+        $sql = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'sections` ';
         $sql .= 'WHERE (' . $now . ' BETWEEN `publ_start` AND `publ_end`) OR ';
         $sql .= '(' . $now . ' > `publ_start` AND `publ_end`=0) ';
         $sql .= 'AND `section_id`=' . $section_id;
@@ -149,7 +149,7 @@ class wb extends SecureCMS
         if (!is_array($page))
         {
             $sql = 'SELECT `page_id`, `visibility`, `viewing_groups`, `viewing_users` ';
-            $sql .= 'FROM `' . TABLE_PREFIX . 'pages` WHERE `page_id`=' . (int)$page;
+            $sql .= 'FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id`=' . (int)$page;
             if (($res_pages = $database->query($sql)) != null)
             {
                 if (!($page = $res_pages->fetchRow()))
@@ -445,9 +445,9 @@ class wb extends SecureCMS
 		// ======================================================================================= 
 		// ! Try to include the info.php  of the template to seperate old and new TemplateEngine   
 		// ======================================================================================= 
-		if ( file_exists(THEME_PATH.'/info.php') )
+		if ( file_exists(CAT_THEME_PATH.'/info.php') )
 		{
-			include( THEME_PATH . '/info.php' );
+			include( CAT_THEME_PATH . '/info.php' );
 			// ================================================================= 
 			// ! Current controller to check, if it is a new template for Dwoo   
 			// ================================================================= 
@@ -458,8 +458,8 @@ class wb extends SecureCMS
 				// =================================== 
 				// ! initialize template search path   
 				// =================================== 
-				$parser->setPath(THEME_PATH . '/templates');
-				$parser->setFallbackPath(THEME_PATH . '/templates');
+				$parser->setPath(CAT_THEME_PATH . '/templates');
+				$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
 				$data_dwoo['MESSAGE']			= $this->lang->translate($message);
 				$data_dwoo['REDIRECT']			= $redirect;
@@ -477,13 +477,13 @@ class wb extends SecureCMS
 			else
 			{
 				// add template variables
-				$tpl = new Template(THEME_PATH . '/templates');
+				$tpl = new Template(CAT_THEME_PATH . '/templates');
 				$tpl->set_file('page', 'success.htt');
 				$tpl->set_block('page', 'main_block', 'main');
 				$tpl->set_var('NEXT', $TEXT['NEXT']);
 				$tpl->set_var('BACK', $TEXT['BACK']);
 				$tpl->set_var('MESSAGE', $this->lang->translate($message) );
-				$tpl->set_var('THEME_URL', THEME_URL);
+				$tpl->set_var('CAT_THEME_URL', CAT_THEME_URL);
 
 				$tpl->set_block('main_block', 'show_redirect_block', 'show_redirect');
 				$tpl->set_var('REDIRECT', $redirect);
@@ -536,9 +536,9 @@ class wb extends SecureCMS
 		// ======================================================================================= 
 		// ! Try to include the info.php  of the template to seperate old and new TemplateEngine   
 		// ======================================================================================= 
-		if ( file_exists(THEME_PATH.'/info.php') )
+		if ( file_exists(CAT_THEME_PATH.'/info.php') )
 		{
-			include( THEME_PATH . '/info.php' );
+			include( CAT_THEME_PATH . '/info.php' );
 			// ================================================================= 
 			// ! Current controller to check, if it is a new template for Dwoo   
 			// ================================================================= 
@@ -549,8 +549,8 @@ class wb extends SecureCMS
 				// =================================== 
 				// ! initialize template search path   
 				// =================================== 
-				$parser->setPath(THEME_PATH . '/templates');
-				$parser->setFallbackPath(THEME_PATH . '/templates');
+				$parser->setPath(CAT_THEME_PATH . '/templates');
+				$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
 				$data_dwoo['MESSAGE']		= $this->lang->translate($message);
 				$data_dwoo['LINK']			= $link;
@@ -567,13 +567,13 @@ class wb extends SecureCMS
 			else
 			{
 
-				$success_template = new Template(THEME_PATH . '/templates');
+				$success_template = new Template(CAT_THEME_PATH . '/templates');
 				$success_template->set_file('page', 'error.htt');
 				$success_template->set_block('page', 'main_block', 'main');
 				$success_template->set_var('MESSAGE', $this->lang->translate($message) );
 				$success_template->set_var('LINK', $link);
 				$success_template->set_var('BACK', $TEXT['BACK']);
-				$success_template->set_var('THEME_URL', THEME_URL);
+				$success_template->set_var('CAT_THEME_URL', CAT_THEME_URL);
 				$success_template->parse('main', 'main_block', false);
 				$success_template->pparse('output', 'page');
 			}

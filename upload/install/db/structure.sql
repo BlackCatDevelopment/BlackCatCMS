@@ -36,6 +36,8 @@ DROP TABLE IF EXISTS `lep_search`;
 DROP TABLE IF EXISTS `lep_sections`;
 DROP TABLE IF EXISTS `lep_settings`;
 DROP TABLE IF EXISTS `lep_users`;
+DROP TABLE IF EXISTS `lep_class_secure`;
+DROP TABLE IF EXISTS `lep_mod_wysiwyg_admin_v2`;
 
 CREATE TABLE IF NOT EXISTS `lep_addons` (
   `addon_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -354,13 +356,13 @@ CREATE TABLE IF NOT EXISTS `lep_class_secure` (
 )
 COLLATE='utf8_general_ci' ENGINE=InnoDB;
 
-CREATE TABLE `lep_mod_wysiwyg_admin_v2` (
+CREATE TABLE IF NOT EXISTS `lep_mod_wysiwyg_admin_v2` (
 	`editor` VARCHAR(50) NOT NULL,
 	`set_name` VARCHAR(50) NOT NULL,
 	`set_value` VARCHAR(50) NOT NULL,
 	UNIQUE INDEX `editor_set_name` (`editor`, `set_name`)
 )
-COMMENT='WYSIWYG Admin for LEPTON v2.0 Black Cat Edition'
+COMMENT='WYSIWYG Admin for Black Cat CMS'
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB;
 

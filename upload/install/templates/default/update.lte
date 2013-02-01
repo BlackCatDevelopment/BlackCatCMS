@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
   <head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-    <title>{translate('LEPTON Update')}</title>
+    <title>{translate('Black Cat CMS Update')}</title>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src="{$installer_uri}/../modules/lib_jquery/jquery-ui/external/jquery.cookie.js" type="text/javascript"></script>
 	<script type="text/javascript" src="{$installer_uri}/../modules/lib_jquery/plugins/FancyBox/jquery.fancybox-1.3.4.js"></script>
@@ -21,7 +21,7 @@
 	</div>
     <div id="container">
       <div style="width:900px;margin:30px auto 0 auto;border:0;height:100px;background-color:#0e1115;height:60px;padding:0;text-align:center;">
-	    <h1>{translate('Welcome to your LEPTON Upgrade!')}</h1>
+	    <h1>{translate('Welcome to your Black Cat CMS Upgrade!')}</h1>
 	  </div><br />
 
 	  <div id="content" style="margin-top:-16px;min-height:300px;">
@@ -30,7 +30,7 @@
 	  {else}
 		{if ! $progress}
 		<div style="text-align:center;">
-		{translate('This wizard will help you to upgrade your current LEPTON Version')}<br />
+		{translate('This wizard will help you to upgrade your current Black Cat CMS Version')}<br />
 		<span style="font-weight:bold;color:#f00;">v{$lepton_version}</span><br />
 		{translate('to Version')}<br />
 		<span style="font-weight:bold;color:#f00;">v{$new_lepton_version}</span>
@@ -57,17 +57,17 @@
   </div> <!-- end of container -->
 
   <div id="header">
-   <div>{translate('LEPTON Update')}</div>
+   <div>{translate('Black Cat CMS Update')}</div>
   </div>
 
   <div id="footer">
     <div style="float:left;margin:0;padding:0;padding-left:50px;"><h3>feel free to keep it strictly simple...</h3></div>
     <div>
       <!-- Please note: the below reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
-      <a href="http://blackcat-cms.org" title="LEPTON CMS" target="_blank">LEPTON Core</a> is released under the
-      <a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON Core is GPL" target="_blank">GNU General Public License</a>.<br />
+      <a href="http://blackcat-cms.org" title="Black Cat CMS" target="_blank">Black Cat CMS Core</a> is released under the
+      <a href="http://www.gnu.org/licenses/gpl.html" title="Black Cat CMS Core is GPL" target="_blank">GNU General Public License</a>.<br />
       <!-- Please note: the above reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
-      <a href="http://blackcat-cms.org" title="LEPTON Package" target="_blank">LEPTON CMS Package</a> is released under several different licenses.
+      <a href="http://blackcat-cms.org" title="Black Cat CMS Bundle" target="_blank">Black Cat CMS Bundle</a> is released under several different licenses.
     </div>
   </div>
 

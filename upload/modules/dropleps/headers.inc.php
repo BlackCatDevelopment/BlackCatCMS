@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of LEPTON Core, released under the GNU GPL
+ * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
  * NOTICE:LEPTON CMS Package has several different licenses.
@@ -17,8 +17,8 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {
-	include(WB_PATH.'/framework/class.secure.php');
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -37,7 +37,7 @@ if (defined('WB_PATH')) {
 
 $mod_headers = array();
 
-if ( file_exists( WB_PATH.'/modules/libraryadmin/plugins/lytebox' ) ) {
+if ( file_exists( CAT_PATH.'/modules/libraryadmin/plugins/lytebox' ) ) {
     $mod_headers = array(
 		'backend' => array(
 		    'css' => array(
@@ -52,7 +52,7 @@ if ( file_exists( WB_PATH.'/modules/libraryadmin/plugins/lytebox' ) ) {
 		),
 	);
 }
-elseif ( file_exists( WB_PATH.'/modules/lib_jquery/plugins/SlimBox2' ) ) {
+elseif ( file_exists( CAT_PATH.'/modules/lib_jquery/plugins/SlimBox2' ) ) {
     $mod_headers = array(
 		'backend' => array(
 		    'css' => array(

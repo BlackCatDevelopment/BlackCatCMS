@@ -3,7 +3,7 @@
 <head>
 <title>{translate('Login')}</title>
 
-<link rel="shortcut icon" href="{$THEME_URL}/images/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="{$CAT_THEME_URL}/images/favicon.ico" type="image/x-icon" />
 
 <meta http-equiv="content-type" content="text/html; charset={$meta.CHARSET}" />
 <meta http-equiv="content-language" content="{$meta.LANGUAGE}" />
@@ -14,38 +14,38 @@
 <meta http-equiv="Content-Encoding" content="gzip" />
 <meta http-equiv="Accept-Encoding" content="gzip, deflate" />
 
-<meta name="author" content="LEPTON CMS" />
+<meta name="author" content="Black Cat CMS" />
 
-<link href="{$THEME_URL}/css/login.css" rel="stylesheet" type="text/css" />
+<link href="{$CAT_THEME_URL}/css/login.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript">
-	var WB_URL								= '{$WB_URL}';
-	var THEME_URL							= '{$THEME_URL}';
-	var ADMIN_URL							= '{$ADMIN_URL}';
+	var CAT_URL								= '{$CAT_URL}';
+	var CAT_THEME_URL						= '{$CAT_THEME_URL}';
+	var CAT_ADMIN_URL						= '{$CAT_ADMIN_URL}';
 </script>
 
-<script src="{$WB_URL}/modules/lib_jquery/jquery-core/jquery-core.min.js" type="text/javascript"></script>
-<script src="{$WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery-ui.min.js" type="text/javascript"></script>
-<script src="{$WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery.effects.fade.min.js" type="text/javascript"></script>
-<script src="{$WB_URL}/modules/lib_jquery/jquery-ui/ui/jquery.effects.shake.min.js" type="text/javascript"></script>
+<script src="{$CAT_URL}/modules/lib_jquery/jquery-core/jquery-core.min.js" type="text/javascript"></script>
+<script src="{$CAT_URL}/modules/lib_jquery/jquery-ui/ui/jquery-ui.min.js" type="text/javascript"></script>
+<script src="{$CAT_URL}/modules/lib_jquery/jquery-ui/ui/jquery.effects.fade.min.js" type="text/javascript"></script>
+<script src="{$CAT_URL}/modules/lib_jquery/jquery-ui/ui/jquery.effects.shake.min.js" type="text/javascript"></script>
 
-<script src="{$THEME_URL}/js/login.js" type="text/javascript"></script>
+<script src="{$CAT_THEME_URL}/js/login.js" type="text/javascript"></script>
 
 </head>
 <body class="fc_gradient3">
-	<img src="{$THEME_URL}/css/images/login/radial.png" alt="radial" class="fc_login_radial" />
+	<img src="{$CAT_THEME_URL}/css/images/login/radial.png" alt="radial" class="fc_login_radial" />
 	<div class="fc_img_no_save fc_start_black"></div>
 	<noscript>
-		<img src="{$THEME_URL}/css/images/login/js_required.png" alt="JavaScript is required" />
+		<img src="{$CAT_THEME_URL}/css/images/login/js_required.png" alt="JavaScript is required" />
 		<div id="fc_JS_needed" class="fc_br_all fc_shadow_big fc_gradient1 fc_border_all_light">
 			<h1>{translate('JavaScript is required')}</h1>
-			<p>{translate('To use <span class="icon-logo"> Lepton2</span>, please enable JavaScript in your browser and try again.')}</p>
+			<p>{translate('To use <span class="icon-logo">Black Cat CMS</span>, please enable JavaScript in your browser and try again.')}</p>
 		</div>
 	</noscript>
 	<div id="fc_forms" class="fc_br_all fc_shadow_big">
 		<div id="fc_login_header" class="fc_br_top fc_gradient4">
-			<img src="{$THEME_URL}/css/images/login/beta_state.png" alt="This is a beta version" id="fc_beta" />
-			<a href="{$WB_URL}" class="icon-home fc_border_all fc_border_all_light fc_gradient1 fc_gradient_hover" id="fc_home_site" title="{translate('Home')}"></a>
+			<img src="{$CAT_THEME_URL}/css/images/login/beta_state.png" alt="This is a beta version" id="fc_beta" />
+			<a href="{$CAT_URL}" class="icon-home fc_border_all fc_border_all_light fc_gradient1 fc_gradient_hover" id="fc_home_site" title="{translate('Home')}"></a>
 		</div>
 		<form name="login" action="{$ACTION_URL}" method="post" id="fc_login_form" class="fc_gradient1 fc_br_bottom fc_border">
 			<p>
@@ -66,7 +66,7 @@
 			<p class="fc_loader"></p>
 			<p id="fc_message_login"></p>
 		</form>
-		<form name="forgot_pass" action="{$ADMIN_URL}/login/forgot/index.php" method="post" id="fc_login_forgot_form" class="fc_gradient1 fc_br_bottom fc_border">
+		<form name="forgot_pass" action="{$CAT_ADMIN_URL}/login/forgot/index.php" method="post" id="fc_login_forgot_form" class="fc_gradient1 fc_br_bottom fc_border">
 			<p>
 				<label for="fc_forgot">{translate('Email')}</label>
 				<input type="text" maxlength="255" name="email" value="{if $EMAIL}{$EMAIL}{/if}" id="fc_forgot" />
@@ -79,9 +79,9 @@
 	</div>
 	
 	<div class="fc_gradient4 fc_license">
-		<p class="right"><a href="http://www.lepton-cms.org" title="LEPTON CMS" target="_blank">LEPTON Core</a> is released under the
-			<a href="http://www.gnu.org/licenses/gpl.html" title="LEPTON Core is GPL" target="_blank">GNU General Public License</a>.<br/>
-			<a href="http://www.lepton-cms.org" title="LEPTON Package" target="_blank">LEPTON CMS Package</a> is released under several different licenses.
+		<p class="right"><a href="http://blackcat-cms.org" title="LEPTON CMS" target="_blank">Black Cat CMS Core</a> is released under the
+			<a href="http://www.gnu.org/licenses/gpl.html" title="Black Cat CMS Core is GPL" target="_blank">GNU General Public License</a>.<br/>
+			<a href="http://blackcat-cms.org" title="Black Cat CMS Bundle" target="_blank">Black Cat CMS Bundle</a> is released under several different licenses.
 		</p>
 		<p class="left">
 			<a href="{$FORGOTTEN_DETAILS_APP}" class="icon-help" id="fc_login_forgot" title="{translate('Forgotten your details?')}">
