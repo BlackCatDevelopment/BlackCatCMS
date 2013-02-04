@@ -233,13 +233,7 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
             { // Make sure parent group is active
 				$uid = $post['posted_by']; // User who last modified the post
 				// Workout date and time of last modified post
-echo "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
-print_r( $post );
-echo "</textarea>";
 				if ($post['published_when'] === '0') $post['published_when'] = time();
-echo "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
-print_r( $post );
-echo "</textarea>";
 				if ($post['published_when'] > $post['posted_when'])
                 {
 					$post_date = date(DATE_FORMAT, $post['published_when']);

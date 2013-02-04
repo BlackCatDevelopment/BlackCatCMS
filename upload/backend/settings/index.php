@@ -240,17 +240,17 @@ foreach ( $ER_LEVELS AS $value => $title )
 // =============================== 
 date_default_timezone_set($old_tz);
 
-require_once(CAT_PATH . '/framework/class.pages.php');
-$pages = new pages();
+require CAT_PATH.'/framework/CAT/Helper/Addons.php';
+$addons = new CAT_Helper_Addons();
 
 // ============================ 
 // ! Insert groups and addons   
 // ============================ 
-$data_dwoo['groups']				= $pages->get_groups(FRONTEND_SIGNUP , '', false);
-$data_dwoo['templates']				= $pages->get_addons( DEFAULT_TEMPLATE , 'template', 'template' );
-$data_dwoo['backends']				= $pages->get_addons( DEFAULT_THEME , 'template', 'theme' );
-$data_dwoo['wysiwyg']				= $pages->get_addons( WYSIWYG_EDITOR , 'module', 'wysiwyg' );
-$data_dwoo['search_templates']		= $pages->get_addons( $data_dwoo['search']['template'] , 'template', 'template' );
+$data_dwoo['groups']				= $admin->users->get_groups(FRONTEND_SIGNUP , '', false);
+$data_dwoo['templates']				= $addons->get_addons( DEFAULT_TEMPLATE , 'template', 'template' );
+$data_dwoo['backends']				= $addons->get_addons( DEFAULT_THEME , 'template', 'theme' );
+$data_dwoo['wysiwyg']				= $addons->get_addons( WYSIWYG_EDITOR , 'module', 'wysiwyg' );
+$data_dwoo['search_templates']		= $addons->get_addons( $data_dwoo['search']['template'] , 'template', 'template' );
 
 array_unshift (
 	$data_dwoo['wysiwyg'],

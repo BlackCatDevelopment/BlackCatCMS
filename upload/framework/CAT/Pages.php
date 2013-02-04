@@ -38,9 +38,22 @@ if (!class_exists('CAT_Pages', false))
     {
         protected $debugLevel           = 8; // 8 = OFF
 
-        // space before header items
-        private $space                  = '    ';
+        private $space                  = '    ';  // space before header items
+        public  $current_block          = array(); // data for current block
+
+        private $preferences		    = array();
         public $page_id                 = NULL;
+        public  $current_page		= array(
+    			'id'		=> -1,
+    			'parent'	=> -1
+    	);
+	    public	$pages_editable;
+
+	    private $permissions		= array();
+	    private $menu				= array();
+	    private $pages				= array();
+	    private $template_menu		= array();
+	    private $template_block		= array();
 
         private static $properties      = array();
 
@@ -64,14 +77,37 @@ if (!class_exists('CAT_Pages', false))
         // singleton
         private static $instance        = NULL;
 
-        public static function getInstance()
+        public static function getInstance( $permissions = false )
         {
             if (!self::$instance)
             {
                 self::$instance = new self();
+                self::$instance->preferences = array(
+    				'PAGE_LEVEL_LIMIT'		=> PAGE_LEVEL_LIMIT,
+    				'MANAGE_SECTIONS'		=> MANAGE_SECTIONS,
+    				'PAGE_TRASH'			=> PAGE_TRASH,
+    				'MULTIPLE_MENUS'		=> MULTIPLE_MENUS == false ? false : true
+    		    );
+                self::$instance->setPerms($permissions);
             }
             return self::$instance;
         }
+
+        public function setPerms($permissions)
+        {
+            if ( is_array($permissions) && count($permissions) )
+    		{
+    			$this->permissions = array(
+					'PAGES'			 => $permissions['pages'],
+					'DISPLAY_ADD_L0' => $permissions['pages_add_l0'],
+					'DISPLAY_ADD'	 => $permissions['pages_add'],
+					'PAGES_MODIFY'	 => $permissions['pages_modify'],
+					'PAGES_DELETE'	 => $permissions['pages_delete'],
+					'PAGES_SETTINGS' => $permissions['pages_settings'],
+					'DISPLAY_INTRO'	 => $permissions['pages_intro']
+    			);
+    		}
+        }   // end function setPerms()
 
         /**
          * identify the page to show
@@ -192,8 +228,7 @@ if (!class_exists('CAT_Pages', false))
                 // Make sure page was found in database
                 if ($get_page->numRows() == 0)
                 {
-                    // Print page not found message
-                    exit("Page not found");
+                    $this->printFatalError("Page not found");
                 }
                 // Fetch page details
                 $this->page = $get_page->fetchRow(MYSQL_ASSOC);
@@ -256,7 +291,7 @@ if (!class_exists('CAT_Pages', false))
                 // Page keywords
                 $this->page_keywords = $this->page['keywords'];
                 // Page link
-                $this->link          = $wb->page_link($this->page['link']);
+                $this->link          = $this->getLink($this->page['link']);
             }
             else
             {
@@ -286,7 +321,7 @@ if (!class_exists('CAT_Pages', false))
             define('TEMPLATE_DIR', CAT_URL . '/templates/' . TEMPLATE);
 
             // Check if user is allowed to view this page
-            if ($this->page && $wb->page_is_visible($this->page) == false)
+            if ($this->page && $this->isVisible($this->page) == false)
             {
                 if (VISIBILITY == 'deleted' OR VISIBILITY == 'none')
                 {
@@ -296,7 +331,7 @@ if (!class_exists('CAT_Pages', false))
                 elseif (VISIBILITY == 'private' OR VISIBILITY == 'registered')
                 {
                     // Check if the user is authenticated
-                    if ($this->is_authenticated() == false)
+                    if (CAT_Users::getInstance()->is_authenticated() == false)
                     {
                         // User needs to login first
                         header("Location: " . CAT_URL . "/account/login.php?redirect=" . $this->link);
@@ -311,7 +346,7 @@ if (!class_exists('CAT_Pages', false))
                 }
             }
             // check if there is at least one active section
-            if ($this->page && $wb->page_is_active($this->page) == false)
+            if ($this->page && $this->isActive($this->page) == false)
             {
                 $this->page_no_active_sections = true;
             }
@@ -335,13 +370,13 @@ if (!class_exists('CAT_Pages', false))
             if ($wb->page_access_denied == true)
             {
                 $logger->logDebug('Access denied');
-                echo $wb->lang->translate('Sorry, you do not have permissions to view this page');
+                echo $this->lang()->translate('Sorry, you do not have permissions to view this page');
                 return;
             }
             if ($sec_h->has_active_sections($this->page_id) === false)
             {
                 $logger->logDebug('no active sections found');
-                echo $wb->lang->translate('Sorry, no active content to display');
+                echo $this->lang()->translate('Sorry, no active content to display');
                 return;
             }
 
@@ -417,7 +452,7 @@ if (!class_exists('CAT_Pages', false))
                     if (file_exists(CAT_PATH . '/modules/' . $module . '/view.php'))
                     {
                         // load language file (if any)
-                        $wb->lang->addFile(LANGUAGE . '.php', sanitize_path(CAT_PATH . '/modules/' . $module . '/languages'));
+                        $this->lang()->addFile(LANGUAGE . '.php', sanitize_path(CAT_PATH . '/modules/' . $module . '/languages'));
                         // set template path
                         if (file_exists(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates')))
                             $parser->setPath(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates'));
@@ -880,6 +915,205 @@ if (!class_exists('CAT_Pages', false))
             return false;
         } // end function get_linked_by_language()
 
+    	/**
+    	 * get_template_blocks function.
+    	 *
+    	 * Function to get all menus of an template
+    	 *
+    	 * @access public
+    	 * @param  mixed  $template (default: DEFAULT_TEMPLATE)
+    	 * @param  int    $selected (default: 1)
+    	 * @return void
+    	 */
+    	public function get_template_blocks( $template = DEFAULT_TEMPLATE , $selected = 1)
+    	{
+    		// =============================================
+    		// ! Include template info file (if it exists)
+    		// =============================================
+    		if ( SECTION_BLOCKS != false )
+    		{
+    			$template_location = ( $template != '' ) ?
+    				CAT_PATH . '/templates/' . $template . '/info.php' :
+    				CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/info.php';
+
+    			if ( file_exists($template_location) )
+    			{
+    				require($template_location);
+    			}
+
+    			// =========================
+    			// ! Check if $menu is set
+    			// =========================
+    			if ( !isset($block[1]) || $block[1] == '' )
+    			{
+    				$block[1]	= $this->lang()->translate('Main');
+    			}
+
+    			// ================================
+    			// ! Add menu options to the list
+    			// ================================
+    			foreach ( $block AS $number => $name )
+    			{
+    				$this->template_block[$number] = array(
+    					'NAME'			=> $name,
+    					'VALUE'			=> $number,
+    					'SELECTED'		=> ( $selected == $number || $selected == $name ) ? true : false
+    				);
+    				if ( $selected == $number || $selected == $name )
+    				{
+    					$this->current_block	= array(
+    						'name'		=> $name,
+    						'id'		=> $number
+    					);
+    				}
+    			}
+    			return $this->template_block;
+    		}
+    		else return false;
+    	}   // end function get_template_blocks()
+
+    	/**
+    	 * get_template_menus function.
+    	 *
+    	 * Function to get all menus of an template
+    	 *
+    	 * @access public
+    	 * @param mixed $template (default: DEFAULT_TEMPLATE)
+    	 * @param int $selected (default: 1)
+    	 * @return void
+    	 */
+    	public function get_template_menus( $template = DEFAULT_TEMPLATE , $selected = 1)
+    	{
+    		// =============================================
+    		// ! Include template info file (if it exists)
+    		// =============================================
+    		if ( $this->preferences['MULTIPLE_MENUS'] != false )
+    		{
+    			$template_location = ( $template != '') ?
+    				CAT_PATH . '/templates/' . $template . '/info.php' :
+    				CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/info.php';
+
+    			if ( file_exists($template_location) )
+    			{
+    				require($template_location);
+    			}
+    			// =========================
+    			// ! Check if $menu is set
+    			// =========================
+    			if ( !isset($menu[1]) || $menu[1] == '' )
+    			{
+    				$menu[1]	= $this->lang()->translate('Main');
+    			}
+
+    			// ================================
+    			// ! Add menu options to the list
+    			// ================================
+    			foreach ( $menu AS $number => $name )
+    			{
+    				$this->template_menu[$number] = array(
+    					'NAME'			=> $name,
+    					'VALUE'			=> $number,
+    					'SELECTED'		=> ( $selected == $number || $selected == $name ) ? true : false
+    				);
+    			}
+    			return $this->template_menu;
+    		}
+    		else return false;
+    	}   // end function get_template_menus()
+
+        /**
+    	 * pages_list function.
+    	 *
+    	 * Function to workout to which pages a new page can be added (for Dropdown)
+    	 *
+    	 * @access public
+    	 * @param  int    $parent (default: 0)
+    	 * @param  int    $level  (default: 1)
+    	 * @return void
+    	 */
+    	public function pages_list($parent = 0, $level = 1)
+        {
+    		// ==================================================================================
+    		// ! If user can add a page to level = 0, add this option to the array parent first
+    		// ==================================================================================
+    		if ( isset($this->permissions['DISPLAY_ADD_L0']) && $this->permissions['DISPLAY_ADD_L0'] == true || $level == 0)
+    		{
+    			$this->parent_page[0]['disabled']			= false;
+    			$this->parent_page[0]['level']				= 0;
+    			$this->parent_page[0]['id']					= 0;
+    			$this->parent_page[0]['menu_title']			= $this->lang()->translate('None');
+    			$this->parent_page[0]['page_title']			= $this->lang()->translate('None');
+    			$this->parent_page[0]['current_is_parent']	= false;
+    			$this->parent_page[0]['is_parent']			= ( $this->current_page['parent']	== 0 ) ? true : false;
+    			$this->parent_page[0]['is_current']			= ( $this->current_page['id']		== 0 ) ? true : false;
+    		}
+    		else $this->parent_page = array();
+
+    		$this->parent_list(0);
+
+    		return $this->parent_page;
+    	}   // end function pages_list()
+
+    	/**
+    	 * parent_list function.
+    	 *
+    	 * Function to get all pages for a dropdown menu
+    	 *
+    	 * @access public
+    	 * @param int $parent (default: 0)
+    	 * @return void
+    	 */
+    	public function parent_list( $parent = 0 )
+    	{
+            global $database;
+
+    		$get_pages = $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "pages WHERE parent = '$parent' AND visibility!='deleted' ORDER BY position ASC");
+
+    		while ( $page = $get_pages->fetchRow( MYSQL_ASSOC ) )
+    		{
+    			if ( $this->isVisible($page) == false ) continue;
+    			// ===================================================================================
+    			// ! Stop users from adding pages with a level of more than the set page level limit
+    			// ===================================================================================
+    			if ( $page['level']+1 < PAGE_LEVEL_LIMIT)
+    			{
+    				// ==================
+    				// ! Get user perms
+    				// ==================
+    				$admin_groups		= explode(',', str_replace('_', '', $page['admin_groups']));
+    				$admin_users		= explode(',', str_replace('_', '', $page['admin_users']));
+    				$page_trail			= explode(',',$page['page_trail']);
+
+    				$in_group = false;
+    				foreach ( CAT_Users::getInstance()->get_groups_id() as $cur_gid )
+    				{
+    					if ( in_array($cur_gid, $admin_groups) )
+    					{
+    						$in_group = true;
+    					}
+    				}
+    				$this->parent_page[$page['page_id']]['disabled']			= ( ($in_group) || is_numeric( array_search($this->get_user_id(), $admin_users) ) ) ? false : true;
+    				$this->parent_page[$page['page_id']]['level']				= $page['level'];
+    				$this->parent_page[$page['page_id']]['id']					= $page['page_id'];
+    				$this->parent_page[$page['page_id']]['menu_title']			= $page['menu_title'];
+    				$this->parent_page[$page['page_id']]['page_title']			= $page['page_title'];
+    				$this->parent_page[$page['page_id']]['current_is_parent']	= in_array( $this->current_page['id'], $page_trail ) ? true : false;
+    				$this->parent_page[$page['page_id']]['is_direct_parent']	= ( $this->current_page['parent']	== $page['page_id'] ) ? true : false;
+    				$this->parent_page[$page['page_id']]['is_current']			= ( $this->current_page['id']		== $page['page_id'] ) ? true : false;
+    			}
+    			$this->parent_page		= $this->parent_list( $page['page_id'] );
+    		}
+    		return $this->parent_page;
+    	}
+
+        /**
+         * checks if page is active (=has active sections and is between
+         * publ_start and publ_end)
+         *
+         * @access public
+         * @param  array  $page
+         * @return boolean
+         **/
         public function isActive($page)
         {
             global $database;
@@ -901,7 +1135,8 @@ if (!class_exists('CAT_Pages', false))
 
         public function isVisible($page)
         {
-            global $wb;
+            global $wb, $admin;
+            //if(!is_object($wb)) $wb =& $admin;
             // First check if visibility is 'none', 'deleted'
             $show_it = false;
             switch ($page['visibility'])
@@ -916,13 +1151,259 @@ if (!class_exists('CAT_Pages', false))
                     break;
                 case 'private':
                 case 'registered':
-                    if ($wb->is_authenticated() == true)
-                    {
-                        $show_it = ($wb->is_group_match($wb->get_groups_id(), $page['viewing_groups']) || $wb->is_group_match($wb->get_user_id(), $page['viewing_users']));
-                    }
+                    #if ($admin->is_authenticated() == true)
+                    #{
+                    #    $show_it = ($admin->is_group_match($admin->get_groups_id(), $page['viewing_groups']) || $admin->is_group_match($admin->get_user_id(), $page['viewing_users']));
+                    #}
+                    $show_id = true;
+                    break;
             }
             return ($show_it);
         } // end function isVisible()
+
+        /**
+         *
+         **/
+        public function show_page($page)
+        {
+            global $database;
+            if (!is_array($page))
+            {
+                $sql = 'SELECT `page_id`, `visibility`, `viewing_groups`, `viewing_users` ';
+                $sql .= 'FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id`=' . (int)$page;
+                if (($res_pages = $database->query($sql)) != null)
+                {
+                    if (!($page = $res_pages->fetchRow()))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return($this->isVisible($page) && $this->isActive($page));
+        }   // end function show_page()
+
+// -----------------------------------------------------------------------------
+// ----- from class.pages.php --------------------------------------------------
+// -----------------------------------------------------------------------------
+
+    	/**
+    	 * make_list function.
+    	 *
+    	 * Completely rewritten function to get pages
+    	 *
+    	 * @access public
+    	 * @param int $parent (default: 0)
+    	 * @param bool $add_sections (default: false)
+    	 * @return void
+    	 */
+    	public function make_list( $parent = 0 , $add_sections = false )
+    	{
+            global $database;
+
+    		// ===================================================
+    		// ! Get objects and vars from outside this function
+    		// ===================================================
+
+    		if ( $add_sections )
+    		{
+    			$sql_sections		 = '';
+    		}
+
+    		$sql		 = 'SELECT * FROM `'.CAT_TABLE_PREFIX.'pages` ';
+    		$sql		.= ( $parent != 0 )					? 'WHERE `parent` = '.$parent.' ' : '';
+    		$sql		.= ( PAGE_TRASH != 'inline' )		?
+    													( $parent != 0 ) ?
+    														'AND `visibility` != \'deleted\' ' :
+    														'WHERE `visibility` != \'deleted\' ' :
+    														'';
+    		$sql		.= 'ORDER BY `level` ASC, `position` DESC';
+
+    		// ===============================
+    		// ! Get page list from database
+    		// ===============================
+    		$get_pages		= $database->query($sql);
+    		if ( $get_pages->numRows() > 0 )
+    		{
+    			$this->pages_editable = true;
+    			$temp_values		 = array();
+    			while ( $values = $get_pages->fetchRow( MYSQL_ASSOC ) )
+    			{
+    				$temp_values[$values['page_id']]				= $values;
+
+    				if ( $add_sections )
+    				{
+    					$sql_sections	.= ' OR page_id = ' . $values['page_id'];
+    				}
+
+    				if ( isset($temp_values[$values['parent']]) && is_array($temp_values[$values['parent']]) )
+    				{
+    					$temp_values[$values['parent']]		= array_merge( $temp_values[$values['parent']], array( 'is_parent' => ( $values['parent'] != $parent ? true : false ) ) );
+    				}
+    				else
+    				{
+    					$temp_values[$values['parent']]['is_parent']		= $values['parent'] != 0 ? true : false;
+    				}
+    				if ( !(isset($pages) && is_array($pages)) )
+    				{
+    					$pages			= array( $values['page_id'] );
+    					$pages_parent	= $values['parent'];
+    				}
+    				else if ( $values['parent'] == $parent )
+    				{
+    					array_splice( $pages, 0, 0, $values['page_id'] );
+    				}
+    				else {
+    					$key		= array_search( $values['parent'], $pages )+1; // "+1" to add the value BEHIND the parent page in the array
+    					array_splice( $pages, $key, count($pages), array_merge( array( $values['page_id'] ), array_slice( $pages, $key ) ) );
+    				}
+    			}
+
+    			if ( $add_sections && $sql_sections != '' )
+    			{
+    				$sql_sections	= 'SELECT page_id, section_id, name FROM `'.CAT_TABLE_PREFIX.'sections` WHERE ' . substr( $sql_sections, 4 ) . ' ORDER BY position';
+    				$sections		= $database->query($sql_sections);
+    				if ( $sections->numRows() > 0 )
+    				{
+    					$sections_array	= array();
+    					while ( $section = $sections->fetchRow( MYSQL_ASSOC ) )
+    					{
+    						if ( !( isset( $sections_array[$section['page_id']] ) && is_array( $sections_array[$section['page_id']] ) ) )
+    						{
+    							$sections_array[$section['page_id']]						= array();
+    						}
+    						$sections_array[$section['page_id']][$section['section_id']]	= array(
+    							'section_id'	=> $section['section_id'],
+    							'name'			=> $section['name']
+    						);
+    					}
+    				}
+    			}
+
+    			$pages_array	= array();
+    			$level			= 0;
+                $users          = CAT_Users::getInstance();
+
+    			foreach ( $pages as $key => $page )
+    			{
+    				$this->pages[$key]						= $temp_values[$page];
+    				$this->pages[$key]['page_link']			= substr($temp_values[$page]['link'],strripos($temp_values[$page]['link'],'/')+1);
+    				$this->pages[$key]['sections']			= isset($sections_array[$page])							? $sections_array[$page] : false;
+    				$this->pages[$key]['cookie']			= isset( $_COOKIE['pageid_'.$this->pages[$key]['page_id']] )	?  true : false;
+
+    				// ==================
+    				// ! Get user perms
+    				// ==================
+    				$admin_groups		= explode(',', str_replace('_', '', $this->pages[$key]['admin_groups']));
+    				$admin_users		= explode(',', str_replace('_', '', $this->pages[$key]['admin_users']));
+    				$in_group = FALSE;
+    				foreach ( $users->get_groups_id() as $cur_gid)
+    				{
+    					if (in_array($cur_gid, $admin_groups))
+    					{
+    						$in_group = TRUE;
+    					}
+    				}
+
+    				// =================================================
+    				// ! Check user perms and count for editable sites
+    				// =================================================
+    				if ( ($in_group) || is_numeric(array_search($this->get_user_id(), $admin_users) ) )
+    				{
+    					if ( $this->pages[$key]['visibility'] == 'deleted' )
+    					{
+    						$this->pages[$key]['editable']		= false; // $this->preferences['PAGE_TRASH'] == 'inline' ? true : false;
+    					}
+    					else if ( $this->pages[$key]['visibility'] != 'deleted' )
+    					{
+    						$this->pages[$key]['editable']		= true;
+    					}
+    				}
+    				else
+    				{
+    					if ( $this->pages[$key]['visibility'] == 'private')
+    					{
+    						continue;
+    					}
+    					else
+    					{
+    						$this->pages[$key]['editable']		= false;
+    					}
+    				}
+
+    				$this->pages[$key]['close_parent']		= $temp_values[$page]['level'] < $level ?
+    																( $level - $temp_values[$page]['level'] ) : 0;
+    				$level									= $temp_values[$page]['level'];
+    			}
+    		}
+    		return $this->pages;
+    	}
+
+    	/**
+    	 * get_child_pages function.
+    	 *
+    	 * Is not needed any more, as make_list can also get only one page layer - marked as deprecated
+    	 *
+    	 * @access public
+    	 * @param int $page_id (default: 0)
+    	 * @param string $field (default: '*')
+    	 * @return void
+    	 */
+    	public function get_child_pages( $page_id = 0, $field = '*' )
+    	{
+            global $database;
+    		if ( $this->permissions['PAGES'] == true)
+    		{
+
+    			if ( !isset($this->child_pages['editable']) )
+    				$this->child_pages['editable']	= 0;
+
+    			if ( is_array( $field ) )
+    			{
+    				$get_field = implode(',', $field);
+    			}
+    			// only for security remove all
+    			else if ( $field != '*' )
+    			{
+    				$get_field = htmlentities($field);
+    			}
+    			else $get_field = '*';
+
+    			$get_child_pages = $database->query('SELECT '.$get_field.' FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `parent` = '.$page_id.' ORDER BY `position` ASC');
+
+    			if ( $get_child_pages->numRows() > 0)
+    			{
+    				$counter = 0;
+    				while ( $child_page = $get_child_pages->fetchRow( MYSQL_ASSOC ))
+    				{
+    					$this->child_pages[$counter]['page_id']			= $child_page['page_id'];
+    					$this->child_pages[$counter]['menu_title']		= $child_page['menu_title'];
+    					$this->child_pages[$counter]['page_title']		= $child_page['page_title'];
+    					$this->child_pages[$counter]['visibility']		= $child_page['visibility'];
+    					$this->child_pages[$counter]['cookie']			= isset( $_COOKIE['p'.$child_page['page_id']] ) ?  true : false;
+    					//$this->child_pages[$counter]['active']			= $this->page_is_active($page) ? true : false;
+    					$this->child_pages[$counter]['view_url']		= PAGES_DIRECTORY .$child_page['link']. PAGE_EXTENSION;
+
+    					if ( $child_page['visibility'] != 'deleted' )
+    					{
+    						$this->child_pages[$counter]['editable']	= true;
+    						$this->child_pages['editable']				= $this->child_pages['editable']+1;
+    					}
+
+    					// =================================
+    					// ! Check if page has child pages
+    					// =================================
+    					$check_for_childs = $database->query('SELECT `page_id` FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `parent` = '.$child_page['page_id']);
+    					$this->child_pages[$counter]['is_parent']		= ( $check_for_childs->numRows() > 0 ) ? true : false;
+
+    					$counter++;
+    				}
+
+    				return $this->child_pages;
+    			}
+    			else return false;
+    		}
+    		else return false;
+    	}
 
         /**
          *

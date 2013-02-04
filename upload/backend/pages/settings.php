@@ -161,21 +161,23 @@ $data_dwoo['permission']['pages_intro']		= ( $admin->get_permission('pages_intro
 
 // ================== 
 // ! Templates list   
-// ================== 
-require_once(CAT_PATH . '/framework/class.pages.php');
-$pages = new pages( $data_dwoo['permission'] );
+// ==================
 
-$pages->current_page['id']					= $page_id;
-$pages->current_page['parent']				= $results_array['parent'];
+require CAT_PATH . '/framework/CAT/Pages.php';
+$pg = CAT_Pages::getInstance();
 
+$pg->current_page['id']					= $page_id;
+$pg->current_page['parent']				= $results_array['parent'];
 
+require CAT_PATH.'/framework/CAT/Helper/Addons.php';
+$addons = CAT_Helper_Addons::getInstance();
 
 // ========================== 
 // ! Insert language values   
 // ========================== 
 if ( PAGE_LANGUAGES != false )
 {
-	$data_dwoo['LANGUAGES']			= $pages->get_addons( $results_array['language'] , 'language' );
+	$data_dwoo['LANGUAGES']			= $addons->get_addons( $results_array['language'] , 'language' );
 }
 
 // ====================================================== 
@@ -187,10 +189,10 @@ if ( PAGE_LANGUAGES != false )
 $field_sql							= $database->query('DESCRIBE `'.CAT_TABLE_PREFIX.'pages` `page_code`');
 $field_set							= $field_sql->numRows();
 
-$data_dwoo['page_list']				= $pages->pages_list(0 , 0);
-$data_dwoo['groups']				= $pages->get_groups( $viewing_groups, $admin_groups );
-$data_dwoo['templates']				= $pages->get_addons( $results_array['template'] , 'template', 'template' );
-$data_dwoo['TEMPLATE_MENU']			= $pages->get_template_menus( $results_array['template'], $results_array['menu'] );
+$data_dwoo['page_list']				= $pg->pages_list(0 , 0);
+$data_dwoo['groups']				= $admin->users->get_groups( $viewing_groups, $admin_groups );
+$data_dwoo['templates']				= $addons->get_addons( $results_array['template'] , 'template', 'template' );
+$data_dwoo['TEMPLATE_MENU']			= $pg->get_template_menus( $results_array['template'], $results_array['menu'] );
 
 // ==================== 
 // ! Parse the header 	

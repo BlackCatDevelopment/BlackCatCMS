@@ -83,6 +83,7 @@ $LANG = array(
     'Save & Close' => 'Speichern & Schließen',
     'General Settings' => 'Allgemeine Optionen',
     // ----- page -----
+    'Main' => 'Hauptblock',
     'Add Page' => 'Seite hinzuf&uuml;gen',
     'Add child page' => 'Unterseite hinzuf&uuml;gen',
     'Quick changes' => 'Expresseinstellungen',
@@ -212,6 +213,9 @@ $LANG = array(
     'Invalid info.php - var module_function or var template_function not set'
         => 'Ungültige info.php - Variable module_function oder Variable template_function nicht gesetzt',
     'Invalid language file - missing PHP delimiter' => 'Ungültige Sprachdatei - PHP Delimiter fehlt',
+    'Installed successfully' => 'Erfolgreich installiert',
+    'Uninstalled successfully' => 'Erfolgreich deinstalliert',
+    'Upgraded successfully' => 'Erfolgreich aktualisiert',
 );
 
 
@@ -392,7 +396,6 @@ $TEXT = array(
 	'LONG' 					=> 'Lang',
 	'LONG_TEXT' 			=> 'Langtext',
 	'LOOP' 					=> 'Schleife',
-	'MAIN' 					=> 'Hauptblock',
 	'MANAGE' 				=> 'Verwalten Sie',
 	'MANAGE_GROUPS' 		=> 'Gruppen verwalten',
 	'MANAGE_USERS' 			=> 'Benutzer verwalten',
@@ -428,7 +431,6 @@ $TEXT = array(
 	'NO' 					=> 'Nein',
 	'NO_LEPTON_ADDON'		=> 'Dieses Addon ist nicht f&uuml;r LEPTON geeignet',
 	'NO_PREVIEW'			=> 'Keine Vorschau verfügbar',
-	'NONE' 					=> 'Keine',
 	'NONE_FOUND' 			=> 'Keine gefunden',
 	'NOT_FOUND' 			=> 'Nicht gefunden',
 	'NOT_INSTALLED' 		=> 'nicht installiert',
@@ -709,7 +711,6 @@ $MESSAGE = array(
 	'GENERIC_MODULE_VERSION_ERROR' => 'Das Modul ist nicht ordnungsgem&auml;ss installiert!',
 	'GENERIC_NOT_COMPARE' 		=> ' nicht m&ouml;glich',
 	'GENERIC_NOT_INSTALLED' 	=> 'Nicht installiert.',
-	'GENERIC_NOT_UPGRADED' 		=> 'Aktualisierung nicht m&ouml;glich.',
 	'GENERIC_PLEASE_BE_PATIENT' => 'Die Datenbanksicherung kann je nach Gr&ouml;&szlig;e der Datenbank einige Zeit dauern.',
 	'GENERIC_PLEASE_CHECK_BACK_SOON' => 'Bitte versuchen Sie es sp&auml;ter noch einmal ...',
 	'GENERIC_PLEASE_CHOOSE' => 'Bitte etwas ausw&auml;hlen...',

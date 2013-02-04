@@ -61,7 +61,7 @@ if(isset($_POST['content'.$section_id])) {
 	 */
 	$text = umlauts_to_entities(strip_tags($content), strtoupper(DEFAULT_CHARSET), 0);
 
-	$query = "UPDATE `".CAT_TABLE_PREFIX."mod_wysiwyg` SET `content` = '".$content."', text ='".$text."' WHERE `section_id` = '".$section_id."'";
+	$query = "REPLACE INTO `".CAT_TABLE_PREFIX."mod_wysiwyg` VALUES ( '$section_id', $page_id, '$content', '$text' );";
 	$database->query($query);
 	if ($database->is_error()) trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);	
 }

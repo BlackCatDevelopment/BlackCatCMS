@@ -37,6 +37,9 @@ if (defined('CAT_PATH')) {
 require_once(CAT_PATH.'/framework/class.admin.php');
 $admin = new admin('Access', 'groups');
 
+require CAT_PATH.'/framework/CAT/Helper/Addons.php';
+$addons = new CAT_Helper_Addons();
+
 // =========================== 
 // ! Add permissions to Dwoo   
 // =========================== 
@@ -55,11 +58,11 @@ require_once( CAT_PATH . '/framework/class.pages.php');
 $pages = new pages();
 // $items	= $admin->get_controller('Pages')->get_linked_by_language($page_id);
 
-$data_dwoo['templates']			= $pages->get_addons( DEFAULT_TEMPLATE , 'template' );
-$data_dwoo['languages']			= $pages->get_addons( DEFAULT_LANGUAGE , 'language' );
-$data_dwoo['modules']			= $pages->get_addons( -1 , 'module', 'page' );
-$data_dwoo['admintools']		= $pages->get_addons( -1 , 'module', 'tool' );
-$data_dwoo['groups']			= $pages->get_groups('','',false);
+$data_dwoo['templates']			= $addons->get_addons( DEFAULT_TEMPLATE , 'template' );
+$data_dwoo['languages']			= $addons->get_addons( DEFAULT_LANGUAGE , 'language' );
+$data_dwoo['modules']			= $addons->get_addons( -1 , 'module', 'page' );
+$data_dwoo['admintools']		= $addons->get_addons( -1 , 'module', 'tool' );
+$data_dwoo['groups']			= $admin->users->get_groups('','',false);
 
 // ==================== 
 // ! Parse the site   

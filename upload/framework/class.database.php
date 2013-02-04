@@ -37,10 +37,9 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-
-
 require_once(CAT_PATH.'/framework/functions.php');
-	
+
+
 global $database;
 	
 class database {
@@ -134,14 +133,14 @@ class database {
 	 * @return boolean
 	 */
 	final function connect() {
-		// use DB_PORT only if it differ from the standard port 3306
-		$host = (DB_PORT !== '3306') ? DB_HOST.':'.DB_PORT : DB_HOST;
-		if (false !== ($db_handle = mysql_connect($host, DB_USERNAME, DB_PASSWORD))) {
+		// use CAT_DB_PORT only if it differ from the standard port 3306
+		$host = (CAT_DB_PORT !== '3306') ? CAT_DB_HOST.':'.CAT_DB_PORT : CAT_DB_HOST;
+		if (false !== ($db_handle = mysql_connect($host, CAT_DB_USERNAME, CAT_DB_PASSWORD))) {
 			// database connection is established
 			$this->set_db_handle($db_handle);
-			if (!mysql_select_db(DB_NAME, $this->get_db_handle())) {
+			if (!mysql_select_db(CAT_DB_NAME, $this->get_db_handle())) {
 				// error, can't select the Lepton DB
-				$this->set_error(sprintf("[MySQL Error] Retrieved a valid handle (<b>%s</b>) but can't select the Lepton database (<b>%s</b>)!", $this->get_db_handle(), DB_NAME));
+				$this->set_error(sprintf("[MySQL Error] Retrieved a valid handle (<b>%s</b>) but can't select the Lepton database (<b>%s</b>)!", $this->get_db_handle(), CAT_DB_NAME));
 				trigger_error($this->get_error(), E_USER_ERROR);
 			}
 			else {
@@ -151,8 +150,8 @@ class database {
 		else {
 			// error, got no handle - beware, password may be empty!
 			$this->set_db_handle(false);
-			$pass = DB_PASSWORD;
-			$pass = (empty($pass)) ? '- not set -' : DB_PASSWORD;
+			$pass = CAT_DB_PASSWORD;
+			$pass = (empty($pass)) ? '- not set -' : CAT_DB_PASSWORD;
 			$this->set_error('[MySQL Error] Got no handle for database connection! Please check your database settings!');
 			trigger_error($this->get_error(), E_USER_ERROR);
 		}

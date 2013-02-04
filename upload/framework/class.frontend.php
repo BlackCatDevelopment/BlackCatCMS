@@ -38,17 +38,8 @@ if (defined('CAT_PATH')) {
 
 require_once(CAT_PATH.'/framework/class.wb.php');
 
-/**
- *	@version	2.8.3
- *	@date		2010-10-07
- *	@last		Dietrich Roland Pehlke (Aldus)
- *
- *	@notice		Please keep in mind, that class "frontend" extends class "wb" and also "secure_form"
- *
- */
 class frontend extends wb {
 
-    public static $pg;
 
 	// defaults
 	var $default_link,$default_page_id;
@@ -370,15 +361,16 @@ class frontend extends wb {
 
     /***************************************************************************
      * DEPRECATED
-     * moved to LEPTON_Pages
+     * moved to CAT_Pages
      **************************************************************************/
   	public function page_select() {
-        global $no_intro, $page_id;
-        return parent::$pg->getPage($no_intro,$page_id);
+        global $no_intro, $page_id, $wb;
+        return $wb->pg->getPage($no_intro,$page_id);
 	}
 
 	public function get_page_details() {
-        return parent::$pg->getPageDetails();
+        global $wb;
+        return $wb->pg->getPageDetails();
 	}
 
 }

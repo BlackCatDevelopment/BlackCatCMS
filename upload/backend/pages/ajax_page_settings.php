@@ -135,12 +135,10 @@ $permission['pages_delete']		= $admin->get_permission('pages_delete') ? true : f
 $permission['pages_settings']	= $admin->get_permission('pages_settings') ? true : false;
 $permission['pages_intro']		= ( $admin->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
-require_once(CAT_PATH . '/framework/class.pages.php');
-$dropdown	= new pages( $permission );
 // list of all parent pages for dropdown parent
-$dropdown->current_page['id']	= $page_id;
-$dropdown_list		= $dropdown->pages_list( 0 , 0 );
-
+$pg = CAT_Pages::getInstance($permission);
+$pg->current_page['id']	= $page_id;
+$dropdown_list = $pg->pages_list( 0 , 0 );
 
 // ============================================= 
 // ! Add result_array to the template variable   

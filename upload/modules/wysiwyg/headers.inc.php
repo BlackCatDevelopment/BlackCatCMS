@@ -16,29 +16,31 @@
  *
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
- *   @link            http://blackcat-cms.org
+ *   @link            http://www.blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
 
-define('WB_SERVER_ADDR', CAT_SERVER_ADDR );
-define('WB_PATH', CAT_PATH);
-define('WB_URL', CAT_URL);
-define('ADMIN_PATH', CAT_ADMIN_PATH);
-define('ADMIN_URL', CAT_ADMIN_URL);
-define('THEME_URL', CAT_THEME_URL);
-define('LEPTON_SERVER_ADDR', CAT_SERVER_ADDR );
-define('LEPTON_PATH', CAT_PATH);
-define('LEPTON_URL', CAT_URL);
-define('TABLE_PREFIX', CAT_TABLE_PREFIX );
-define('DB_TYPE', CAT_DB_TYPE);
-define('DB_HOST', CAT_DB_HOST);
-define('DB_PORT', CAT_DB_PORT);
-define('DB_USERNAME', CAT_DB_USERNAME);
-define('DB_PASSWORD', CAT_DB_PASSWORD);
-define('DB_NAME', CAT_DB_NAME);
-define('WB_PREPROCESS_PREG', '/\[wblink([0-9]+)\]/isU' );
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
+} else {
+	$oneback = "../";
+	$root = $oneback;
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= $oneback;
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
+}
+// end include class.secure.php
 
-?>
+$file = sanitize_path(dirname(__FILE__).'/../'.WYSIWYG_EDITOR.'/headers.inc.php');
+if ( file_exists($file) ) @require $file;

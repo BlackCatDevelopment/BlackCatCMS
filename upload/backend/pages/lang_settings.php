@@ -126,7 +126,9 @@ $items          = $admin->get_controller('Pages')->get_linked_by_language($page_
 // =========================
 // ! get installed languages
 // =========================
-$avail = $pages->get_addons( $results_array['language'] , 'language' );
+require CAT_PATH.'/framework/CAT/Helper/Addons.php';
+$addons = new CAT_Helper_Addons();
+$avail  = $addons->get_addons( $results_array['language'] , 'language' );
 // skip current lang
 foreach( $avail as $i => &$l )
 {

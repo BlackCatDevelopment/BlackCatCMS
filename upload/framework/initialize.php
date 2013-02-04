@@ -226,4 +226,8 @@ if (file_exists(CAT_PATH.'/modules/lib_dwoo/library.php')) {
     }
 }
 
+// wb2 backward compatibility
+include_once CAT_PATH.'/framework/wb2compat.php';
+
+
 ?>

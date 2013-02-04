@@ -1,18 +1,27 @@
 <?php
+
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Project
- * @copyright       2013, Black Cat Development
- * @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://www.blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
@@ -51,12 +60,12 @@ $admin =& $wb;
 
 $default_link =& $wb->default_link;
 
-if ( ! class_exists( 'LEPTON_Sections' ) )
+if ( ! class_exists( 'CAT_Sections' ) )
 {
     @require_once dirname(__FILE__).'/LEPTON/Sections.php';
 }
 global $sec_h;
-$sec_h = new LEPTON_Sections();
+$sec_h = new CAT_Sections();
 
 $logger = $wb->get_helper('KLogger', CAT_PATH.'/temp', $debug_level );
 
@@ -87,20 +96,20 @@ if ( $query_result->numRows() > 0 )
              */
             if ( file_exists( CAT_PATH . '/modules/' . $module_dir . '/frontend.css' ) )
             {
-                $include_head_link_css .= '<link href="' . LEPTON_URL . '/modules/' . $module_dir . '/frontend.css"';
+                $include_head_link_css .= '<link href="' . CAT_URL . '/modules/' . $module_dir . '/frontend.css"';
                 $include_head_link_css .= ' rel="stylesheet" type="text/css" media="screen" />' . "\n";
                 $include_head_file = 'frontend.css';
             }
             // check if frontend.js file needs to be included into the <body></body> of index.php
             if ( file_exists( CAT_PATH . '/modules/' . $module_dir . '/frontend.js' ) )
             {
-                $include_head_links .= '<script src="' . LEPTON_URL . '/modules/' . $module_dir . '/frontend.js" type="text/javascript"></script>' . "\n";
+                $include_head_links .= '<script src="' . CAT_URL . '/modules/' . $module_dir . '/frontend.js" type="text/javascript"></script>' . "\n";
                 $include_head_file = 'frontend.js';
             }
             // check if frontend_body.js file needs to be included into the <body></body> of index.php
             if ( file_exists( CAT_PATH . '/modules/' . $module_dir . '/frontend_body.js' ) )
             {
-                $include_body_links .= '<script src="' . LEPTON_URL . '/modules/' . $module_dir . '/frontend_body.js" type="text/javascript"></script>' . "\n";
+                $include_body_links .= '<script src="' . CAT_URL . '/modules/' . $module_dir . '/frontend_body.js" type="text/javascript"></script>' . "\n";
                 $include_body_file = 'frontend_body.js';
             }
         }
@@ -359,11 +368,11 @@ function language_menu()
     global $wb, $parser;
     if (defined('PAGE_LANGUAGES') && PAGE_LANGUAGES)
     {
-        if ( ! class_exists( 'LEPTON_Pages', false ) )
+        if ( ! class_exists( 'CAT_Pages', false ) )
         {
 	        include sanitize_path( dirname(__FILE__).'/CAT/Pages.php' );
 		}
-        $pages = LEPTON_Pages::getInstance();
+        $pages = CAT_Pages::getInstance();
         $items = $pages->get_linked_by_language(PAGE_ID);
     }
     if( isset($items) && count($items) )
@@ -378,7 +387,7 @@ function language_menu()
     }
 }
 
-function page_content( $block = 1 ) { return wb::$pg->getPageContent($block); }
+function page_content( $block = 1 ) { global $wb; return $wb->pg->getPageContent($block); }
 
 
 ?>

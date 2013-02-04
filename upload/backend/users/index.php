@@ -134,7 +134,8 @@ $data_dwoo['NEWUSERHINT']					= preg_split('/, /',sprintf($TEXT['NEW_USER_HINT']
 // ============================ 
 require_once(CAT_PATH . '/framework/class.pages.php');
 $pages = new pages();
-$data_dwoo['groups']						= $pages->get_groups();
+
+$data_dwoo['groups']						= $admin->users->get_groups();
 
 // ====================================================================================== 
 // ! Only allow the user to add a user to the Administrators group if he belongs to it   

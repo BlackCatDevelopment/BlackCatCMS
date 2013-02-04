@@ -51,13 +51,18 @@ include CAT_PATH.'/framework/CAT/Helper/I18n.php';
 // new pages class
 include CAT_PATH.'/framework/CAT/Pages.php';
 
+// new users class
+include CAT_PATH.'/framework/CAT/Users.php';
+
 class wb extends SecureCMS
 {
     public  $password_chars      = 'a-zA-Z0-9\_\-\!\#\*\+';
     private $lep_active_sections = NULL;
     private $_handles            = NULL;
     public  $lang                = NULL;
-    public  static $pg           = NULL;
+    public  $users               = NULL;
+    public  $pg                  = NULL;
+    
     private static $depre_func   = array(
         'bind_jquery' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers()</a>',
         'register_backend_modfiles' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers("backend", true, "$section_name")</a>',
@@ -76,14 +81,15 @@ class wb extends SecureCMS
     {
         global $MENU,$TEXT,$HEADING,$MESSAGE,$OVERVIEW;
 		// create accessor/to language helper
-  		$this->lang = $this->get_helper('I18n');
+  		$this->lang  = CAT_Helper_I18n::getInstance();
   		// load globals from old language files
 		foreach( array( 'MENU', 'TEXT', 'HEADING', 'MESSAGE', 'OVERVIEW' ) as $var )
 		{
 		    $this->lang->addFile( LANGUAGE.'.php', NULL, $var );
 		}
-        self::$pg = CAT_Pages::getInstance();
-        set_error_handler( array('wb','lepton_error_handler') );
+        $this->pg    = CAT_Pages::getInstance();
+        $this->users = CAT_Users::getInstance();
+        set_error_handler( array('wb','cat_error_handler') );
     }   // end constructor
 
     public function __call($name, $arguments)
@@ -98,81 +104,74 @@ class wb extends SecureCMS
         }
     }   // end function __call()
 
-    public static function lepton_error_handler($errno,$errstr,$errfile=NULL,$errline=NULL,array $errcontext)
+    /**
+     * custom error handler
+     **/
+    public static function cat_error_handler($errno,$errstr,$errfile=NULL,$errline=NULL,array $errcontext)
     {
         if (!(error_reporting() & $errno))
         {
             return;
         }
+        global $parser;
         // replace path in $errfile and $errstr to protect the data
-        $errfile = str_ireplace( CAT_PATH, '/abs/path/to', $errfile );
-        $errstr  = str_ireplace( CAT_PATH, '/abs/path/to', $errstr  );
+        $errfile = str_ireplace( array(CAT_PATH,'\\'), array('/abs/path/to','/'), $errfile );
+        $errstr  = str_ireplace( array(CAT_PATH,'\\'), array('/abs/path/to','/'), $errstr  );
+        $output  = NULL;
+        $fatal   = false;
         switch ($errno)
         {
             case E_USER_ERROR:
-                echo "<b>CAT ERROR</b> [$errno] $errstr<br />\n";
-                echo "  Fatal error on line $errline in file $errfile<br />";
-                echo "  PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
-                echo "Aborting...<br />\n";
-                exit(1);
+                $output = "<b>Black Cat CMS ERROR</b><br />\n"
+                        . "&nbsp;&nbsp;[ERRNO:$errno] $errstr<br />\n"
+                        . "&nbsp;&nbsp;Fatal error on line $errline in file $errfile<br />"
+                        . "&nbsp;&nbsp;PHP Version " . PHP_VERSION . " (" . PHP_OS . ")<br />\n"
+                        . "Aborting...<br />\n";
+                $fatal  = true;
                 break;
 
             case E_USER_WARNING:
-                echo "<b>CAT WARNING</b> [$errno] $errstr<br />\n";
+                $output = "<b>Black Cat CMS WARNING</b><br />\n&nbsp;&nbsp;[$errno] $errstr<br />\n";
                 break;
 
             case E_USER_NOTICE:
-                echo "<b>CAT NOTICE</b> [$errno] $errstr<br />\n";
+                $output = "<b>Black Cat CMS NOTICE</b><br />\n&nbsp;&nbsp;[$errno] $errstr<br />\n";
                 break;
 
             default:
-                echo "Unknown error type: [$errno] $errstr<br />\n";
+                $output = "<b>Black Cat CMS NOTICE</b><br />\n&nbsp;&nbsp;Unknown error type:<br />\n&nbsp;&nbsp;[$errno] $errstr<br />\n";
+$output .= "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">".
+print_r( debug_backtrace(),1 )."</textarea>";
                 break;
     }
-        return true;
-    }   // end error handler
-
-    public function section_is_active($section_id)
+        if ( $fatal )
     {
-        global $database;
-        $now = time();
-        $sql = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'sections` ';
-        $sql .= 'WHERE (' . $now . ' BETWEEN `publ_start` AND `publ_end`) OR ';
-        $sql .= '(' . $now . ' > `publ_start` AND `publ_end`=0) ';
-        $sql .= 'AND `section_id`=' . $section_id;
-        return($database->get_one($sql) != false);
+            if ( !headers_sent() ) {
+                echo header('content-type:text/html');
     }
-
-    // Check whether we should show a page or not (for front-end)
-    public function show_page($page)
+            if ( is_object($parser) )
     {
-        if (!is_array($page))
-        {
-            $sql = 'SELECT `page_id`, `visibility`, `viewing_groups`, `viewing_users` ';
-            $sql .= 'FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id`=' . (int)$page;
-            if (($res_pages = $database->query($sql)) != null)
-            {
-                if (!($page = $res_pages->fetchRow()))
-                {
-                    return false;
+    			$parser->setPath(CAT_THEME_PATH . '/templates');
+    			$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
+    			$parser->output('error_page.lte', array( 'MESSAGE' => $output, 'LINK' => '' ));
                 }
+            else {
+                echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+  <title>Black Cat CMS Error Message</title>
+  </head>
+  <body>', $output, '</body></html>';
             }
-        }
-        return($this->page_is_visible($page) && $this->page_is_active($page));
-    }
-
-    // Check if the user is already authenticated or not
-    public function is_authenticated()
-    {
-        if (isset($_SESSION['USER_ID']) && $_SESSION['USER_ID'] != "" && is_numeric($_SESSION['USER_ID']))
-        {
-            return true;
+            exit;
         }
         else
         {
-            return false;
-        }
+            echo $output;
     }
+        return true;
+    }   // end error handler
 
     // Modified addslashes public function which takes into account magic_quotes
     public function add_slashes($input)
@@ -234,60 +233,6 @@ class wb extends SecureCMS
     public function get_server($field)
     {
         return isset($_SERVER[$field]) ? $_SERVER[$field] : null;
-    }
-
-    // Get the current users id
-    public function get_user_id()
-    {
-        return $this->get_session('USER_ID');
-    }
-
-    // Get the current users group id (deprecated)
-    public function get_group_id()
-    {
-        return $_SESSION['GROUP_ID'];
-    }
-
-    // Get the current users group ids
-    public function get_groups_id()
-    {
-        return explode(",", isset($_SESSION['GROUPS_ID']) ? $_SESSION['GROUPS_ID'] : '');
-    }
-
-    // Get the current users group name
-    public function get_group_name()
-    {
-        return implode(",", $_SESSION['GROUP_NAME']);
-    }
-
-    // Get the current users group name
-    public function get_groups_name()
-    {
-        return $_SESSION['GROUP_NAME'];
-    }
-
-    // Get the current users username
-    public function get_username()
-    {
-        return $_SESSION['USERNAME'];
-    }
-
-    // Get the current users display name
-    public function get_display_name()
-    {
-        return $_SESSION['DISPLAY_NAME'];
-    }
-
-    // Get the current users email address
-    public function get_email()
-    {
-        return $_SESSION['EMAIL'];
-    }
-
-    // Get the current users home folder
-    public function get_home_folder()
-    {
-        return $_SESSION['HOME_FOLDER'];
     }
 
     // Get the current users timezone
@@ -470,36 +415,6 @@ class wb extends SecureCMS
 				// ==================== 
 				$parser->output('success.lte', $data_dwoo);
 			}
-			/**
-			 * Marked as deprecated
-			 * This is only for the old TE and will be removed in future versions
-			*/
-			else
-			{
-				// add template variables
-				$tpl = new Template(CAT_THEME_PATH . '/templates');
-				$tpl->set_file('page', 'success.htt');
-				$tpl->set_block('page', 'main_block', 'main');
-				$tpl->set_var('NEXT', $TEXT['NEXT']);
-				$tpl->set_var('BACK', $TEXT['BACK']);
-				$tpl->set_var('MESSAGE', $this->lang->translate($message) );
-				$tpl->set_var('CAT_THEME_URL', CAT_THEME_URL);
-
-				$tpl->set_block('main_block', 'show_redirect_block', 'show_redirect');
-				$tpl->set_var('REDIRECT', $redirect);
-
-				if (REDIRECT_TIMER == -1)
-				{
-					$tpl->set_block('show_redirect', '');
-				}
-				else
-				{
-					$tpl->set_var('REDIRECT_TIMER', REDIRECT_TIMER);
-					$tpl->parse('show_redirect', 'show_redirect_block', true);
-				}
-				$tpl->parse('main', 'main_block', false);
-				$tpl->pparse('output', 'page');
-			}
 		}
 		// If the script couldn't include the info.php, print an error message
 		else
@@ -559,23 +474,6 @@ class wb extends SecureCMS
 				// ! Parse the header 	
 				// ==================== 
 				$parser->output('error.lte', $data_dwoo);
-			}
-			/**
-			 * Marked as deprecated
-			 * This is only for the old TE and will be removed in future versions
-			*/
-			else
-			{
-
-				$success_template = new Template(CAT_THEME_PATH . '/templates');
-				$success_template->set_file('page', 'error.htt');
-				$success_template->set_block('page', 'main_block', 'main');
-				$success_template->set_var('MESSAGE', $this->lang->translate($message) );
-				$success_template->set_var('LINK', $link);
-				$success_template->set_var('BACK', $TEXT['BACK']);
-				$success_template->set_var('CAT_THEME_URL', CAT_THEME_URL);
-				$success_template->parse('main', 'main_block', false);
-				$success_template->pparse('output', 'page');
 			}
 		}
 		// If the script couldn't include the info.php, print an error message
@@ -748,15 +646,25 @@ class wb extends SecureCMS
      * DEPRECATED FUNCTIONS
      * These functions are moved to CAT_Pages class
      **************************************************************************/
-    public function page_is_visible($page) { return self::$pg->isVisible($page); }
-    public function page_is_active($page)  { return self::$pg->isActive($page);  }
-    public function page_link($link)       {
-        if(!is_object(self::$pg))
-        {
-            self::$pg = CAT_Pages::getInstance();
-        }
-        return self::$pg->getLink($link);
-    }
+    public function page_is_visible($page) { return CAT_Pages::getInstance()->isVisible($page); }
+    public function page_is_active($page)  { return CAT_Pages::getInstance()->isActive($page);  }
+    public function page_link($link)       { return CAT_Pages::getInstance()->getLink($link);   }
+    public function show_page($page)       { return CAT_Pages::getInstance()->show_page($page); }
+
+    /* moved to CAT_Sections */
+    public function section_is_active($section_id) { return CAT_Sections::getInstance()->section_is_active($section_id); }
+
+    /* moved to CAT_Users */
+    public function get_user_id()          { return CAT_Users::getInstance()->get_user_id();      }
+    public function get_group_id()         { return CAT_Users::getInstance()->get_group_id();     }
+    public function get_groups_id()        { return CAT_Users::getInstance()->get_groups_id();    }
+    public function get_group_name()       { return CAT_Users::getInstance()->get_group_name();   }
+    public function get_groups_name()      { return CAT_Users::getInstance()->get_groups_name();  }
+    public function get_username()         { return CAT_Users::getInstance()->get_username();     }
+    public function get_display_name()     { return CAT_Users::getInstance()->get_display_name(); }
+    public function get_email()            { return CAT_Users::getInstance()->get_email();        }
+    public function get_home_folder()      { return CAT_Users::getInstance()->get_home_folder();  }
+    public function is_authenticated()     { return CAT_Users::getInstance()->is_authenticated(); }
 
 }
 ?>

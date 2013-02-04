@@ -50,9 +50,9 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 			    // Create database class
 			    $database = new database();
 	        }
-	        if (!isset($this->lep_active_sections) || !is_array($this->lep_active_sections))
+	        if (!isset($this->active_sections) || !is_array($this->active_sections))
 	        {
-	            $this->lep_active_sections = array();
+	            $this->active_sections = array();
 	            // First get all sections for this page
 	            $sql = "SELECT section_id,module,block,publ_start,publ_end FROM " . CAT_TABLE_PREFIX . "sections WHERE page_id = '" . $page_id . "' ORDER BY block, position";
 	            $query_sections = $database->query($sql);
@@ -68,7 +68,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 	                {
 	                    continue;
 	                }
-	                $this->lep_active_sections[$section['block']][] = $section;
+	                $this->active_sections[$section['block']][] = $section;
 	            }
 	        }
 
@@ -76,13 +76,13 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 
 	        if ( $block )
 	        {
-				return ( isset( $this->lep_active_sections[$block] ) )
-					? $this->lep_active_sections[$block]
+				return ( isset( $this->active_sections[$block] ) )
+					? $this->active_sections[$block]
 					: NULL;
 			}
 
 			$all = array();
-			foreach( $this->lep_active_sections as $block => $values )
+			foreach( $this->active_sections as $block => $values )
 			{
 				foreach( $values as $value )
 				{
@@ -106,7 +106,25 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 	        {
 	            $this->get_active_sections($page_id);
 	        }
-	        return ( count($this->lep_active_sections) ? true : false );
+	        return ( count($this->active_sections) ? true : false );
+	    }   // end function has_active_sections()
+
+        /**
+         * checks if given section is active
+         *
+         * @access public
+         * @param  int    $section_id
+         * @return boolean
+         **/
+        public function section_is_active($section_id)
+        {
+            global $database;
+            $now = time();
+            $sql = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'sections` ';
+            $sql .= 'WHERE (' . $now . ' BETWEEN `publ_start` AND `publ_end`) OR ';
+            $sql .= '(' . $now . ' > `publ_start` AND `publ_end`=0) ';
+            $sql .= 'AND `section_id`=' . $section_id;
+            return($database->get_one($sql) != false);
 	    }
 
 	}

@@ -177,6 +177,9 @@ class admin extends wb
 		global $MESSAGE;
 		global $TEXT;
 
+        require CAT_PATH.'/framework/CAT/Helper/Addons.php';
+        $addons = CAT_Helper_Addons::getInstance();
+
 		// Connect to database and get website title
 		$title = $this->db_handle->get_one("SELECT `value` FROM `".CAT_TABLE_PREFIX."settings` WHERE `name`='website_title'");
 
@@ -237,9 +240,7 @@ class admin extends wb
 
 				if ( $data_dwoo['permission']['pages'] == true )
 				{
-					// Will be reviewed and optimized!
-					require_once(CAT_PATH . '/framework/class.pages.php');
-					$pages = new pages( $data_dwoo['permission'] );
+					$this->pg->setPerms($data_dwoo['permission']);
 
 					$data_dwoo['DISPLAY_MENU_LIST']				= MULTIPLE_MENUS	!= false ? true : false;
 					$data_dwoo['DISPLAY_LANGUAGE_LIST']			= PAGE_LANGUAGES	!= false ? true : false;
@@ -249,23 +250,23 @@ class admin extends wb
 					// ! Get info for pagesTree   
 					// ========================== 
 					// list of first level of pages
-					$data_dwoo['pages']				= $pages->make_list( 0, true );
+					$data_dwoo['pages']				= $this->pg->make_list( 0, true );
 					//$data_dwoo['pages']				= $pages->get_sections();
-					$data_dwoo['pages_editable']	= $pages->pages_editable;
+					$data_dwoo['pages_editable']	= $this->pg->pages_editable;
 					//print_r($data_dwoo['pages']);
 
 					// ========================================== 
 					// ! Get info for the form to add new pages   
 					// ========================================== 
-					$data_dwoo['templates']			= $pages->get_addons( DEFAULT_TEMPLATE , 'template', 'template' );
-					$data_dwoo['languages']			= $pages->get_addons( DEFAULT_LANGUAGE , 'language' );
-					$data_dwoo['modules']			= $pages->get_addons( 'wysiwyg' , 'module', 'page',  $_SESSION['MODULE_PERMISSIONS'] );
-					$data_dwoo['groups']			= $pages->get_groups();
+					$data_dwoo['templates']			= $addons->get_addons( DEFAULT_TEMPLATE , 'template', 'template' );
+					$data_dwoo['languages']			= $addons->get_addons( DEFAULT_LANGUAGE , 'language' );
+					$data_dwoo['modules']			= $addons->get_addons( 'wysiwyg' , 'module', 'page',  $_SESSION['MODULE_PERMISSIONS'] );
+					$data_dwoo['groups']			= $this->users->get_groups();
 
 					// list of all parent pages for dropdown parent
-					$data_dwoo['parents_list']		= $pages->pages_list(0 , 0);
+					$data_dwoo['parents_list']		= $this->pg->pages_list(0 , 0);
 					// List of available Menus of default template
-					$data_dwoo['TEMPLATE_MENU']		= $pages->get_template_menus();
+					$data_dwoo['TEMPLATE_MENU']		= $this->pg->get_template_menus();
 
 					// =========================================== 
 					// ! Check and set permissions for templates 	

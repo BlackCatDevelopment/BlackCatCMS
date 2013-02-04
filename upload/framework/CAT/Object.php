@@ -41,7 +41,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 	    // array to store config options
         protected $_config         = array( 'loglevel' => 8 );
         // Language helper object handle
-        private static $lang;
+        protected $lang;
         // KLogger object handle
         private   $logObj;
         
@@ -78,15 +78,16 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 		
 		public function lang()
 		{
-		    if ( ! is_object( self::$lang ) )
+            if ( ! is_object($this->lang) )
+            {
+                if ( ! class_exists( 'CAT_Helper_I18n', false ) )
 		    {
-		    	if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 					@include dirname(__FILE__).'/Helper/I18n.php';
 				}
-				self::$lang = new CAT_Helper_I18n();
-			}
-			return self::$lang;
+                $this->lang = CAT_Helper_I18n::getInstance();
 		}
+            return $this->lang;
+        }   // end function lang()
 		
 		/**
          * set config values

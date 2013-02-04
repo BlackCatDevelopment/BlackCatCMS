@@ -1,18 +1,30 @@
 <?php
- /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+
+/**
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Org. e.V.
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- */ 
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://www.blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
+ *
+ */
+
 
 $starttime = array_sum(explode(" ",microtime()));
 
@@ -27,10 +39,10 @@ set_include_path (
     )
 );
 // register autoloader
-function lepton_autoload($class) {
+function catcms_autoload($class) {
 	@include str_replace( '_', '/', $class ) . '.php';
 }
-spl_autoload_register('lepton_autoload',false,true);
+spl_autoload_register('catcms_autoload',false,true);
 
 define('DEBUG', false);
 
@@ -78,6 +90,7 @@ require(CAT_PATH.'/framework/frontend.functions.php');
 
 global $database;
 
+
 // redirect menu-link
 $this_page_id = PAGE_ID;
 
@@ -123,6 +136,7 @@ if($query_this_module->numRows() == 1)  // This is a menu_link. Get link of targ
 		}
 	}
 }
+
 //Get pagecontent in buffer for Droplets and/or Filter operations
 ob_start();
 require(CAT_PATH.'/templates/'.TEMPLATE.'/index.php');

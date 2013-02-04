@@ -53,9 +53,10 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	    
 	    public  static $_translated         = array();
 	    public  static $_store_translations = false;
+        private static $instance            = NULL;
 
 	    /**
-	     * constructor
+	     * private constructor; use getInstance() to load this class
 	     **/
 	    public function __construct( $options = array() )
 	    {
@@ -77,6 +78,18 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 			}
 	        $this->init();
 	    } // end function __construct()
+
+        /**
+         * singleton pattern
+         **/
+        public static function getInstance()
+        {
+            if (!self::$instance)
+            {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }   // end function getInstance()
 
 	    /**
 	     *

@@ -111,15 +111,23 @@ $get_template		= $database->query("SELECT `template` from `" . CAT_TABLE_PREFIX 
 $template_row		= $get_template->fetchRow( MYSQL_ASSOC );
 $current_template	= ( $template_row['template'] != '' ) ? $template_row['template'] : DEFAULT_TEMPLATE;
 
+// ----- TO BE REPLACED -----
 require_once(CAT_PATH . '/framework/class.pages.php');
 $pages = new pages();
+// ----- TO BE REPLACED -----
+
+require CAT_PATH . '/framework/CAT/Pages.php';
+$pg = new CAT_Pages();
+
 
 // ============================== 
 // ! Get sections for this page   
 // ============================== 
 $module_permissions							= $_SESSION['MODULE_PERMISSIONS'];
 
-$data_dwoo['modules']				= $pages->get_addons( 1, 'module', 'page', $module_permissions );
+require CAT_PATH.'/framework/CAT/Helper/Addons.php';
+$addons = new CAT_Helper_Addons();
+$data_dwoo['modules']				= $addons->get_addons( 1, 'module', 'page', $module_permissions );
 // Remove menu_link from list
 foreach ( $data_dwoo['modules'] as $index => $module )
 {
@@ -153,9 +161,9 @@ if ( $query_sections->numRows() > 0 )
 				if ( SECTION_BLOCKS )
 				{
 					$section_id		= $section['section_id'];
-					$data_dwoo['blocks'][$data_dwoo['blocks_counter']]['template_blocks']		= $pages->get_template_blocks( $current_template, $section['block'] );
-					$data_dwoo['blocks'][$data_dwoo['blocks_counter']]['current_block_id']		= $pages->current_block['id'];
-					$data_dwoo['blocks'][$data_dwoo['blocks_counter']]['current_block_name']	= $pages->current_block['name'];
+					$data_dwoo['blocks'][$data_dwoo['blocks_counter']]['template_blocks']		= $pg->get_template_blocks( $current_template, $section['block'] );
+					$data_dwoo['blocks'][$data_dwoo['blocks_counter']]['current_block_id']		= $pg->current_block['id'];
+					$data_dwoo['blocks'][$data_dwoo['blocks_counter']]['current_block_name']	= $pg->current_block['name'];
 					$data_dwoo['blocks'][$data_dwoo['blocks_counter']]['section_id']			= $section['section_id'];
 					$data_dwoo['blocks'][$data_dwoo['blocks_counter']]['module']				= $section['module'];
 					$data_dwoo['blocks'][$data_dwoo['blocks_counter']]['name']					= $section['name'];

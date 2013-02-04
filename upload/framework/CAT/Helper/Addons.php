@@ -36,6 +36,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
         private static $dirh;
         private        $error = NULL;
+        private static $instance = NULL;
 
         public function __construct()
         {
@@ -43,6 +44,91 @@ if (!class_exists('CAT_Helper_Addons'))
             // the installer, which does not have a get_helper() method
             self::$dirh = new CAT_Helper_Directory();
         }
+
+        public static function getInstance()
+        {
+            if (!self::$instance)
+            {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }
+
+    	/**
+    	 * get_addons function.
+    	 *
+    	 * Function to get all addons
+    	 *
+    	 * @access public
+    	 * @param int    $selected    (default: 1)      - name or directory of the the addon to be selected in a dropdown
+    	 * @param string $type        (default: '')     - type of addon - can be an array
+    	 * @param string $function    (default: '')     - function of addon- can be an array
+    	 * @param string $permissions (default: '')     - array(!) of directories to check permissions
+    	 * @param string $order       (default: 'name') - value to handle "ORDER BY" for database request of addons
+    	 * @return void
+    	 */
+    	public function get_addons( $selected = 1 , $type = '', $function = '' , $permissions = '' , $order = 'name' )
+    	{
+            global $database;
+
+    		$and				= '';
+    		$get_type			= '';
+    		$get_function		= '';
+
+    		if ( is_array($type) )
+    		{
+    			$get_type		 = '( ';
+    			$and			= ' AND ';
+    			foreach ( $type as $item)
+    			{
+    				$get_type	.= 'type = \''.htmlspecialchars( $item).'\''.$and;
+    			}
+    			$get_type		= substr($get_type, 0, -5).' )';
+    		}
+    		else if ( $type != '')
+    		{
+    			$and			= ' AND ';
+    			$get_type		= 'type = \''.htmlspecialchars( $type ).'\'';
+    		}
+
+    		if ( is_array($function) )
+    		{
+    			$get_function		 = $and.'( ';
+    			foreach ( $function as $item)
+    			{
+    				$get_function	.= 'function = \''.htmlspecialchars( $item).'\' AND ';
+    			}
+    			$get_function		= substr($get_function, 0, -5).' )';
+    		}
+    		else if ( $function != '')
+    		{
+    			$get_function		= $and.'function = \''.htmlspecialchars( $function ).'\'';
+    		}
+
+    		// ==================
+    		// ! Get all addons
+    		// ==================
+    		$addons_array = array();
+
+    		$addons = $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "addons WHERE ".$get_type.$get_function." ORDER BY ".htmlspecialchars( $order ) );
+    		if ( $addons->numRows() > 0 )
+    		{
+    			$counter = 1;
+    			while ( $addon = $addons->fetchRow( MYSQL_ASSOC ) )
+    			{
+    				if ( ( is_array( $permissions ) && !is_numeric( array_search($addon['directory'], $permissions) ) ) || !is_array( $permissions ) )
+    				{
+    					$addons_array[$counter]	= array(
+    						'VALUE'			=> $addon['directory'],
+    						'NAME'			=> $addon['name'],
+    						'SELECTED'		=> ( $selected == $counter || $selected == $addon['name'] || $selected == $addon['directory'] ) ? true : false
+    					);
+    					$counter++;
+    				}
+    			}
+    		}
+    		return $addons_array;
+    	}
 
         /**
          * Register the Addon $module_name in  $module_directory for $page_id

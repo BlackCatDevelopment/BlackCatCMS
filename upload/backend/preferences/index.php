@@ -110,9 +110,9 @@ else
 // ============================================================================ 
 // ! read available languages from table addons and assign it to the template   
 // ============================================================================ 
-require_once(CAT_PATH . '/framework/class.pages.php');
-$pages = new pages();
-$data_dwoo['languages']				= $pages->get_addons( LANGUAGE , 'language', false, false, 'directory' );
+require CAT_PATH.'/framework/CAT/Helper/Addons.php';
+$addons = new CAT_Helper_Addons();
+$data_dwoo['languages']				= $addons->get_addons( LANGUAGE , 'language', false, false, 'directory' );
 
 // ================================== 
 // ! Insert default timezone values   
