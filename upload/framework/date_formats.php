@@ -1,19 +1,27 @@
 <?php
 
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Website Baker Project, LEPTON Project
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
  * @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
  * @copyright       2013, Black Cat Development
- * @link            http://blackcat-cms.org
+ *   @link            http://www.blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
@@ -35,43 +43,5 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-// Define that this file is loaded
-if(!defined('DATE_FORMATS_LOADED')) {
-	define('DATE_FORMATS_LOADED', true);
-}
-
-// Create array
-$DATE_FORMATS = array();
-
-// Get the current time (in the users timezone if required)
-$actual_time = time();
-
-// Add values to list
-$DATE_FORMATS['l,|jS|F,|Y'] = date('l, jS F, Y', $actual_time);
-$DATE_FORMATS['jS|F,|Y'] = date('jS F, Y', $actual_time);
-$DATE_FORMATS['d|M|Y'] = date('d M Y', $actual_time);
-$DATE_FORMATS['M|d|Y'] = date('M d Y', $actual_time);
-$DATE_FORMATS['D|M|d,|Y'] = date('D M d, Y', $actual_time);
-$DATE_FORMATS['d-m-Y'] = date('d-m-Y', $actual_time).' (D-M-Y)';
-$DATE_FORMATS['m-d-Y'] = date('m-d-Y', $actual_time).' (M-D-Y)';
-$DATE_FORMATS['d.m.Y'] = date('d.m.Y', $actual_time).' (D.M.Y)';
-$DATE_FORMATS['m.d.Y'] = date('m.d.Y', $actual_time).' (M.D.Y)';
-$DATE_FORMATS['d/m/Y'] = date('d/m/Y', $actual_time).' (D/M/Y)';
-$DATE_FORMATS['m/d/Y'] = date('m/d/Y', $actual_time).' (M/D/Y)';
-$DATE_FORMATS['j.n.Y'] = date('j.n.Y', $actual_time).' (j.n.Y)';
-
-// Add "System Default" to list (if we need to)
-if(isset($user_time) && $user_time == true)
-{
-	if(isset($TEXT['SYSTEM_DEFAULT']))
-	{
-		$DATE_FORMATS['system_default'] = date(DEFAULT_DATE_FORMAT, $actual_time).' ('.$TEXT['SYSTEM_DEFAULT'].')';
-	} else {
-		$DATE_FORMATS['system_default'] = date(DEFAULT_DATE_FORMAT, $actual_time).' (System Default)';
-	}
-}
-
-// Reverse array so "System Default" is at the top
-$DATE_FORMATS = array_reverse($DATE_FORMATS, true);
-
-?>
+//  just to be backward compatible
+require CAT_ADMIN_PATH.'/interface/date_formats.php';

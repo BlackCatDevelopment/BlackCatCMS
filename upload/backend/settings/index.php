@@ -255,7 +255,7 @@ $data_dwoo['search_templates']		= $addons->get_addons( $data_dwoo['search']['tem
 array_unshift (
 	$data_dwoo['wysiwyg'],
 	array(
-		'NAME'			=> $TEXT['NONE'],
+		'NAME'			=> $admin->lang->translate('None'),
 		'VALUE'			=> false,
 		'SELECTED'		=> ( !defined('WYSIWYG_EDITOR') || WYSIWYG_EDITOR == 'none' ) ? true : false
 	)

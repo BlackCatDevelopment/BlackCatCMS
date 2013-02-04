@@ -138,9 +138,25 @@ $LANG = array(
     'No pages available' => 'Keine Seiten vorhanden',
     'No more languages available' => 'Keine weiteren Sprachen verfügbar',
     'There is already a page for this language!' => 'Für diese Sprache ist bereits eine Seite vorhanden!',
-    'Sorry, no active content to display' => 'Kein aktiver Inhalt auf dieser Seite vorhanden',#
+    'Sorry, no active content to display' => 'Kein aktiver Inhalt auf dieser Seite vorhanden',
     'Sorry, you do not have permissions to view this page' => 'Sie sind nicht berechtigt, diese Seite zu sehen',
-
+    // ----- settings -----
+    'Website title' => 'Webseitentitel',
+    'Website description' => 'Webseitenbeschreibung',
+    'Website keywords' => 'Schl&uuml;sselw&ouml;rter',
+    'Frontend settings' => 'Frontend Einstellungen',
+    'Backend settings' => 'Backend Einstellungen',
+    'SEO settings' => 'SEO Einstellungen',
+    'System settings' => 'Systemeinstellungen',
+    'User settings' => 'Benutzereinstellungen',
+    'Language & time' => 'Sprache und Zeit',
+    'Search settings' => 'Sucheinstellungen',
+    'Server settings' => 'Servereinstellungen',
+    'Mailer settings' => 'Maileinstellungen',
+    // ----- preferences -----
+    'Timezone' => 'Zeitzone',
+    'Date format' => 'Datumsformat',
+    'Time format' => 'Zeitformat',
     // ----- media -----
     'Media' => 'Medien',
     'New folder' => 'Neues Verzeichnis',
@@ -304,7 +320,6 @@ $TEXT = array(
 	'CUSTOM' 				=> 'Benutzerdefiniert',
 	'DATABASE' 				=> 'Datenbank',
 	'DATE' 					=> 'Datum',
-	'DATE_FORMAT' 			=> 'Datumsformat',
 	'DEFAULT' 				=> 'Standard',
 	'DEFAULT_CHARSET' 		=> 'Standard Zeichensatz',
 	'DEFAULT_TEXT' 			=> 'Standardtext',
@@ -555,8 +570,6 @@ $TEXT = array(
 	'TEXTFIELD' 			=> 'Kurztext',
 	'THEME' 				=> 'Backend-Theme',
 	'TIME' 					=> 'Zeit',
-	'TIMEZONE' 				=> 'Zeitzone',
-	'TIME_FORMAT' 			=> 'Zeitformat',
 	'TIME_LIMIT' 			=> 'Zeitlimit zur Erstellung der Zitate pro Modul',
 	'TITLE' 				=> 'Titel',
 	'TO' 					=> 'an',
@@ -604,11 +617,8 @@ $TEXT = array(
 	'WBMAILER_TESTMAIL_SUCCESS' => 'Die Testmail wurde erfolgreich verschickt.',
   'WBMAILER_TESTMAIL_TEXT' => 'Dies ist die angeforderte Testmail: Die Maileinstellungen funktionieren',
 	'WEBSITE' 				=> 'Webseite',
-	'WEBSITE_DESCRIPTION' 	=> 'Webseitenbeschreibung',
 	'WEBSITE_FOOTER' 		=> 'Fu&szlig;zeile',
 	'WEBSITE_HEADER' 		=> 'Kopfzeile',
-	'WEBSITE_KEYWORDS' 		=> 'Schl&uuml;sselw&ouml;rter',
-	'WEBSITE_TITLE' 		=> 'Webseitentitel',
 	'WELCOME_BACK' 			=> 'Willkommen zur&uuml;ck',
 	'WIDTH' 				=> 'Breite',
 	'WINDOW' 				=> 'Fenster',
@@ -629,13 +639,11 @@ $TEXT = array(
 );
 
 $HEADING = array(
-	'FRONTEND_SETTINGS' 	=> 'Frontend Einstellungen',
 	'INSTALL_LANGUAGE' 		=> 'Sprache hinzuf&uuml;gen',
 	'INSTALL_MODULE' 		=> 'Modul installieren',
 	'INSTALL_TEMPLATE' 		=> 'Designvorlage installieren',
 	'INVOKE_MODULE_FILES' 	=> 'Moduldateien manuell aufrufen',
 	'LANGUAGE_DETAILS' 		=> 'Details zur Sprache',
-	'LANGUAGE_TIME_SETTINGS' => 'Sprache und Datum/Zeit',
 	'MANAGE_SECTIONS' 		=> 'Abschnitte verwalten',
 	'MODIFY_ADVANCED_PAGE_SETTINGS' => 'Erweiterte Seitenoptionen &auml;ndern',
 	'MODIFY_DELETE_GROUP' 	=> '&Auml;ndern/L&ouml;schen von Gruppen',
@@ -651,11 +659,8 @@ $HEADING = array(
 	'MY_EMAIL' 				=> 'E-Mail Adresse',
 	'MY_PASSWORD' 			=> 'Passwort',
 	'MY_SETTINGS' 			=> 'Einstellungen',
-	'SEARCH_SETTINGS' 		=> 'Suchoptionen',
 	'SECURITY_SETTINGS'		=> 'Sicherheitseinstellungen',
-	'SEO_SETTINGS'			=> 'SEO Einstellungen',
-	'SERVER_SETTINGS' 		=> 'Servereinstellungen',
-	'SYSTEM_SETTINGS'		=> 'Systemeinstellungen',
+
 	'TEMPLATE_DETAILS' 		=> 'Details zur Designvorlage',
 	'UNINSTALL_LANGUAGE' 	=> 'Sprache l&ouml;schen',
 	'UNINSTALL_MODULE' 		=> 'Modul deinstallieren',
@@ -665,7 +670,6 @@ $HEADING = array(
 	'UPLOAD_FILES' 			=> 'Datei(en) &uuml;bertragen',
 	'USER_SETTINGS' 		=> 'Benutzereinstellungen',
 	'VISIBILITY' 			=> 'Sichtbarkeit',
-	'WBMAILER_SETTINGS' 	=> 'Maileinstellungen'
 ); // $HEADING
 
 $MESSAGE = array(

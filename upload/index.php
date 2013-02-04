@@ -51,9 +51,9 @@ $config_file = dirname(__FILE__).'/config.php';
 if(file_exists($config_file))
 {
 	require_once($config_file);
-
-} else {
-	
+}
+else
+{
 	/**
 	 *	File isn't there, so we try to run the installer
 	 *

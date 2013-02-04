@@ -684,6 +684,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      **/
 	function get_page_headers( $for = 'frontend', $print_output = true, $individual = false )
 	{
+        if ( defined('CAT_HEADERS_SENT') ) return false;
 	    if ( ! class_exists( 'CAT_Pages', false ) )
 							{
 	        include sanitize_path( dirname(__FILE__).'/CAT/Pages.php' );
@@ -693,7 +694,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 		if ( $print_output )
 		{
 			echo $output;
-			define('LEP_HEADERS_SENT', true);
+			define('CAT_HEADERS_SENT', true);
 		}
 		else
 		{

@@ -550,7 +550,7 @@ if (!class_exists('CAT_Pages', false))
         public function getHeaders($for = NULL, $section = false)
         {
             // don't do this twice
-            if (defined('LEP_HEADERS_SENT'))
+            if (defined('CAT_HEADERS_SENT'))
             {
                 $this->log()->logDebug('headers already sent, returning');
                 return;

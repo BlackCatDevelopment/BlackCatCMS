@@ -58,6 +58,8 @@ $DATE_FORMATS['m.d.Y'] = date('m.d.Y', $actual_time).' (M.D.Y)';
 $DATE_FORMATS['d/m/Y'] = date('d/m/Y', $actual_time).' (D/M/Y)';
 $DATE_FORMATS['m/d/Y'] = date('m/d/Y', $actual_time).' (M/D/Y)';
 $DATE_FORMATS['j.n.Y'] = date('j.n.Y', $actual_time).' (j.n.Y)';
+$DATE_FORMATS['r']          = date('r'    , $actual_time).' (r)';
+$DATE_FORMATS['l,|d.|F|Y']  = date('l, d. F Y', $actual_time);        // German date
 
 // Add "System Default" to list (if we need to)
 if(isset($user_time) && $user_time == true)

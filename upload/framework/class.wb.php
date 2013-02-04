@@ -81,7 +81,7 @@ class wb extends SecureCMS
     {
         global $MENU,$TEXT,$HEADING,$MESSAGE,$OVERVIEW;
 		// create accessor/to language helper
-  		$this->lang  = CAT_Helper_I18n::getInstance();
+  		$this->lang  = CAT_Helper_I18n::getInstance(LANGUAGE);
   		// load globals from old language files
 		foreach( array( 'MENU', 'TEXT', 'HEADING', 'MESSAGE', 'OVERVIEW' ) as $var )
 		{

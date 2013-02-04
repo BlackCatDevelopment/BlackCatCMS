@@ -100,7 +100,12 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	    public function init( $var = NULL )
 	    {
 	        $this->log()->logDebug( 'lang var: '.$var );
-	        $caller = debug_backtrace();
+	        $stack = debug_backtrace();
+            $caller = array_shift($stack);
+            while ( ! isset($caller['file']) || ( isset($caller['class']) && $caller['class'] == 'CAT_Helper_I18n' ) )
+            {
+                $caller = array_shift($stack);
+            }
 	        if ( self::$_current_lang == '' )
 	        {
 	            $lang_files = $this->getBrowserLangs();
@@ -111,15 +116,14 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	                 self::$_current_lang
 	            );
 	        }
-	        if ( file_exists( dirname( $caller[ 1 ][ 'file' ] ) . '/languages' ) )
+	        if ( file_exists( dirname( $caller[ 'file' ] ) . '/languages' ) )
 	        {
-	            //$this->_langPath = dirname($caller[1]['file']).'/languages';
-	            $this->_config[ 'langPath' ] = dirname( $caller[ 1 ][ 'file' ] ) . '/languages';
+	            $this->_config[ 'langPath' ] = dirname( $caller[ 'file' ] ) . '/languages';
 	        }
-	        elseif ( file_exists( dirname( $caller[ 1 ][ 'file' ] ) . '/../languages' ) )
+	        elseif ( file_exists( dirname( $caller[ 'file' ] ) . '/../languages' ) )
 	        {
 	            //$this->_langPath = dirname($caller[1]['file']).'/../languages';
-	            $this->_config[ 'langPath' ] = dirname( $caller[ 1 ][ 'file' ] ) . '/../languages';
+	            $this->_config[ 'langPath' ] = dirname( $caller[ 'file' ] ) . '/../languages';
 	        }
 	        // add default lang
 	        $lang_files[] = 'EN';

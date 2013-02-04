@@ -119,7 +119,7 @@ foreach ( $timezone_table as $title )
 $tpl->set_block( 'preferences', 'date_format_block', 'date_format_output' );
 
 $user_time = true;
-require_once( CAT_PATH . '/framework/date_formats.php' );
+require_once( CAT_ADMIN_PATH . '/interface/date_formats.php' );
 foreach ( $DATE_FORMATS AS $format => $title )
 {
 	$format = str_replace( '|', ' ', $format ); // Add's white-spaces (not able to be stored in array key)
