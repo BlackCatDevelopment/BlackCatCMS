@@ -1,17 +1,27 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with Black Cat CMS Core.
- * This ADDON is released under the GNU GPL.
- * Additional license terms can be seen in the info.php of this module.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Thomas Hornik (thorn),LEPTON Project
- * @copyright       2008-2011, Thomas Hornik (thorn),LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Thomas Hornik (thorn), LEPTON Project, Black Cat Development
+ *   @copyright       2008-2011, Thomas Hornik (thorn)
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://www.blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see info.php of this module
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
@@ -34,21 +44,17 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-global $MOD_CAPTCHA_CONTROL;
-
-// check if module language file exists for the language set by the user (e.g. DE, EN)
-if(!file_exists(CAT_PATH .'/modules/captcha_control/languages/'.LANGUAGE .'.php')) {
-	// no module language file exists for the language set by the user, include default module language file EN.php
-	require_once(CAT_PATH .'/modules/captcha_control/languages/EN.php');
-} else {
-	// a module language file exists for the language defined by the user, load it
-	require_once(CAT_PATH .'/modules/captcha_control/languages/'.LANGUAGE .'.php');
-}
-
 $table = CAT_TABLE_PREFIX.'mod_captcha_control';
 
+// check user permissions
+if ( ! $admin->get_permission('admintools') )
+{
+    $admin->print_error( 'Sorry, you do not have permissions to view this page' );
+}
+
 // check if data was submitted
-if(isset($_POST['save_settings'])) {
+if(isset($_POST['save_settings']))
+{
 	// get configuration settings
 	$enabled_captcha = ($_POST['enabled_captcha'] == '1') ? '1' : '0';
 	$enabled_asp = ($_POST['enabled_asp'] == '1') ? '1' : '0';
@@ -88,46 +94,7 @@ if(isset($_POST['save_settings'])) {
 		$text_qa = $data['ct_text'];
 	}
 	if($text_qa == '')
-		$text_qa = $MOD_CAPTCHA_CONTROL['CAPTCHA_TEXT_DESC'];
-
-// script to load image
-?>
-<script type="text/javascript">
-	var pics = new Array();
-
-	pics["ttf_image"] = new Image();
-	pics["ttf_image"].src = "<?php echo CAT_URL.'/include/captcha/captchas/ttf_image.png'?>";
-
-	pics["calc_image"] = new Image();
-	pics["calc_image"].src = "<?php echo CAT_URL.'/include/captcha/captchas/calc_image.png'?>";
-
-	pics["calc_ttf_image"] = new Image();
-	pics["calc_ttf_image"].src = "<?php echo CAT_URL.'/include/captcha/captchas/calc_ttf_image.png'?>";
-
-	pics["old_image"] = new Image();
-	pics["old_image"].src = "<?php echo CAT_URL.'/include/captcha/captchas/old_image.png'?>";
-	
-	pics["calc_text"] = new Image();
-	pics["calc_text"].src = "<?php echo CAT_URL.'/include/captcha/captchas/calc_text.png'?>";
-	
-	pics["text"] = new Image();
-	pics["text"].src = "<?php echo CAT_URL.'/include/captcha/captchas/text.png'?>";
-
-	function load_captcha_image() {
-		document.captcha_example.src = pics[document.store_settings.captcha_type.value].src;
-		toggle_text_qa();
-	}
-	
-	function toggle_text_qa() {
-		if(document.store_settings.captcha_type.value == 'text' ) {
-			document.getElementById('text_qa').style.display = '';
-		} else {
-			document.getElementById('text_qa').style.display = 'none';
-		}
-	}
-
-</script>
-<?php
+		$text_qa = $admin->lang->translate('Delete this all to add your own entries'."\n".'or your changes won\'t be saved!'."\n".'### example ###'."\n".'Here you can enter Questions and Answers.'."\n".'Use:'."\n".'?What\'s Claudia Schiffer\'s first name?'."\n".'!Claudia'."\n".'?Question 2'."\n".'!Answer 2'."\n".''."\n".'if language doesn\'t matter.'."\n".' ... '."\n".'Or, if language do matter, use:'."\n".'?EN:What\'s Claudia Schiffer\'s first name?'."\n".'!Claudia'."\n".'?EN:Question 2'."\n".'!Answer 2'."\n".'?DE:Wie ist der Vorname von Claudia Schiffer?'."\n".'!Claudia'."\n".' ... '."\n".'### example ###'."\n".'');
 
 	// connect to database and read out captcha settings
 	if($query = $database->query("SELECT * FROM $table")) {
@@ -142,65 +109,27 @@ if(isset($_POST['save_settings'])) {
 		$captcha_type = 'calc_text';
 	}
 		
-	// write out heading
-	echo '<h2>' .$MOD_CAPTCHA_CONTROL['HEADING'] .'</h2>';
-
-	// output the form with values from the database
-	echo '<p>' .$MOD_CAPTCHA_CONTROL['HOWTO'] .'</p>';
-?>
-<form name="store_settings" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
-	<table width="98%" cellspacing="0" border="0" cellpadding="5px" class="row_a">
-	<tr><td colspan="2"><strong><?php echo $MOD_CAPTCHA_CONTROL['CAPTCHA_CONF'];?>:</strong></td></tr>
-	<tr>
-		<td width="30%"><?php echo $MOD_CAPTCHA_CONTROL['CAPTCHA_TYPE'];?>:</td>
-		<td>
-		<select name="captcha_type" id="captcha_type" onchange="load_captcha_image()" style="width: 98%;">
-			<?php foreach($useable_captchas AS $key=>$text) {
-			echo "<option value=\"$key\" ".($captcha_type==$key ? ' selected="selected"' : '').">$text</option>";
-			} ?>
-		</select>
-		</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td align="left" width="150px">
-            <img alt="captcha_example" id="captcha_example" src="<?php echo CAT_URL.'/include/captcha/captchas/'.$captcha_type.'.png'?>" />
-        </td>
-	</tr>
-	<tr id="text_qa" style="display:<?php if($captcha_type=='text') echo ''; else echo 'none'; ;?>;">
-		<td valign="top" class="setting_name"><?php echo $MOD_CAPTCHA_CONTROL['CAPTCHA_ENTER_TEXT'];?>:</td>
-		<td class="setting_value" colspan="2">
-			<textarea name="text_qa" cols="60" rows="10"><?php echo $text_qa; ?></textarea>
-		</td>
-	</tr>
-	<tr>
-		<td><?php echo $MOD_CAPTCHA_CONTROL['USE_SIGNUP_CAPTCHA'];?>:</td>
-		<td>
-			<input type="radio" <?php echo ($enabled_captcha=='1') ?'checked="checked"' :'';?>
-				name="enabled_captcha" value="1" /><?php echo $MOD_CAPTCHA_CONTROL['ENABLED'];?>
-			<input type="radio" <?php echo ($enabled_captcha=='0') ?'checked="checked"' :'';?>
-				name="enabled_captcha" value="0" /><?php echo $MOD_CAPTCHA_CONTROL['DISABLED'];?>
-		</td>
-	</tr>
-	<tr><td>&nbsp;</td><td style="font-size:smaller;"><?php echo $MOD_CAPTCHA_CONTROL['CAPTCHA_EXP'];?></td></tr>
-	<tr><td colspan="2"><br /><strong><?php echo $MOD_CAPTCHA_CONTROL['ASP_CONF'];?>:</strong></td></tr>
-	<tr>
-		<td><?php echo $MOD_CAPTCHA_CONTROL['ASP_TEXT'];?>:</td>
-		<td>
-			<input type="radio" <?php echo ($enabled_asp=='1') ?'checked="checked"' :'';?>
-				name="enabled_asp" value="1" /><?php echo $MOD_CAPTCHA_CONTROL['ENABLED'];?>
-			<input type="radio" <?php echo ($enabled_asp=='0') ?'checked="checked"' :'';?>
-				name="enabled_asp" value="0" /><?php echo $MOD_CAPTCHA_CONTROL['DISABLED'];?>
-		</td>
-	</tr>
-	<tr>
-        <td>&nbsp;</td>
-        <td style="font-size:smaller;"><?php echo $MOD_CAPTCHA_CONTROL['ASP_EXP'];?></td>
-    </tr>
-	</table>
-	<input type="submit" name="save_settings" style="margin-top:10px; width:140px;" value="<?php echo $TEXT['SAVE']; ?>" />
-</form>
-<?php
 }
+
+global $parser;
+$parser->setPath( CAT_PATH.'/modules/captcha_control/templates/default' );
+
+$parser->output(
+    'tool.lte',
+    array(
+        'ttf_image' => CAT_URL.'/include/captcha/captchas/ttf_image.png',
+        'calc_image' => CAT_URL.'/include/captcha/captchas/calc_image.png',
+        'calc_ttf_image' => CAT_URL.'/include/captcha/captchas/calc_ttf_image.png',
+        'old_image' => CAT_URL.'/include/captcha/captchas/old_image.png',
+        'calc_text' => CAT_URL.'/include/captcha/captchas/calc_text.png',
+        'text' => CAT_URL.'/include/captcha/captchas/text.png',
+        'action' => $_SERVER['REQUEST_URI'],
+        'useable_captchas' => $useable_captchas,
+        'captcha_type' => $captcha_type,
+        'text_qa' => $text_qa,
+        'enabled_captcha' => $enabled_captcha,
+        'enabled_asp' => $enabled_asp,
+    )
+);
 
 ?>

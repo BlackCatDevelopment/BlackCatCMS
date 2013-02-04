@@ -67,16 +67,6 @@ if(isset($_GET['display_captcha_X986E21'])) {
 }
 
 
-// check if module language file exists for the language set by the user (e.g. DE, EN)
-global $MOD_CAPTCHA;
-if(!file_exists(CAT_PATH.'/modules/captcha_control/languages/'.LANGUAGE .'.php')) {
-	// no module language file exists for the language set by the user, include default module language file EN.php
-	require_once(CAT_PATH.'/modules/captcha_control/languages/EN.php');
-} else {
-	// a module language file exists for the language defined by the user, load it
-	require_once(CAT_PATH.'/modules/captcha_control/languages/'.LANGUAGE .'.php');
-}
-
 // output-handler for image-captchas to determine size of image
 if(!function_exists('captcha_header')) {
 	function captcha_header() {
@@ -89,28 +79,34 @@ if(!function_exists('captcha_header')) {
 	}
 }
 
+global $wb, $admin;
+if ( ! is_object($wb) )
+{
+    if ( ! is_object($admin) )
+    {
+        $wb = new frontend();
+    }
+    else
+    {
+        $wb =& $admin;
+    }
+}
+
 // get list of available CAPTCHAS for the dropdown-listbox in admin-tools
-if(extension_loaded('gd') && function_exists('imagepng') && function_exists('imagettftext')) {
-	$useable_captchas = array(
-		'calc_text'=>$MOD_CAPTCHA_CONTROL['CALC_TEXT'],
-		'calc_image'=>$MOD_CAPTCHA_CONTROL['CALC_IMAGE'],
-		'calc_ttf_image'=>$MOD_CAPTCHA_CONTROL['CALC_TTF_IMAGE'],
-		'ttf_image'=>$MOD_CAPTCHA_CONTROL['TTF_IMAGE'],
-		'old_image'=>$MOD_CAPTCHA_CONTROL['OLD_IMAGE'],
-		'text'=>$MOD_CAPTCHA_CONTROL['TEXT']
-	);
-} elseif(extension_loaded('gd') && function_exists('imagepng')) {
-	$useable_captchas = array(
-		'calc_text'=>$MOD_CAPTCHA_CONTROL['CALC_TEXT'],
-		'calc_image'=>$MOD_CAPTCHA_CONTROL['CALC_IMAGE'],
-		'old_image'=>$MOD_CAPTCHA_CONTROL['OLD_IMAGE'],
-		'text'=>$MOD_CAPTCHA_CONTROL['TEXT']
-	);
-} else {
-	$useable_captchas = array(
-		'calc_text'=>$MOD_CAPTCHA_CONTROL['CALC_TEXT'],
-		'text'=>$MOD_CAPTCHA_CONTROL['TEXT']
-	);
+$useable_captchas = array(
+    'calc_text' => $wb->lang->translate('Calculation as text'),
+    'text'      => $wb->lang->translate('Text-CAPTCHA'),
+);
+
+if(extension_loaded('gd') && function_exists('imagepng') )
+{
+    $useable_captchas['calc_image'] = $wb->lang->translate('Calculation as image');
+    $useable_captchas['old_image']  = $wb->lang->translate('Old style (not recommended)');
+    if (function_exists('imagettftext'))
+    {
+	    $useable_captchas['calc_ttf_image'] = $wb->lang->translate('Calculation as image with varying fonts and backgrounds');
+		$useable_captchas['ttf_image']      = $wb->lang->translate('Image with varying fonts and backgrounds');
+	}
 }
 
 if(!function_exists('call_captcha')) {
