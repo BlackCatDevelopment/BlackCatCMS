@@ -49,6 +49,7 @@ $module_description = 'WYSIWYG Admin ermöglicht die Verwaltung diverser Editor-
 $LANG = array(
     'Common options' => 'Allgemeine Einstellungen',
     'Additional options' => 'Weitere Einstellungen',
+    'Additional plugins' => 'Optionale Plugins',
     'Skin preview' => 'Skin Vorschau',
 	'Editor width' => 'Editor Breite',
 	'Editor height' => 'Editor H&ouml;he',

@@ -41,10 +41,11 @@
             {if $errors.height}<span class="error">{$errors.height}</span><br />{/if}
     </fieldset>
 
-    {if is_array($settings)}
+    {if is_array($settings) && count($settings)}
     <fieldset>
         <legend>{translate('Additional options')}</legend>
         {foreach $settings as set}{assign "$set.name" val}
+        {if ! isset($set.requires} || isset($plugins_checked[$set.requires])}
         <label for="{$set.name}">{$set.name}</label>
             <span class="settings">
             {if $set.type == 'boolean'}
@@ -60,12 +61,22 @@
             {/if}{/if}
             </span>
             <span class="infotext">{translate($set.name)}</span><br />
+        {/if}
+        {/foreach}
+    </fieldset>
+    {/if}
+
+    {if is_array($plugins) && count($plugins)}
+    <fieldset>
+        <legend>{translate('Additional plugins')}</legend>
+        {foreach $plugins as plugin}
+        <input type="checkbox" name="plugins[]" id="plugins" value="{$plugin}" {if isset($plugins_checked[$plugin])}checked="checked"{/if}/> {$plugin}<br />
         {/foreach}
     </fieldset>
           {/if}
 
     <div class="buttons">
         <input type="submit" value="{$TEXT.SAVE}" />
-        <input type="button" value="{$TEXT.CANCEL}" onclick="document.location='<?php echo CAT_ADMIN_URL; ?>/admintools/index.php<?php echo $leptoken; ?>';" />
+        <input type="button" value="{$TEXT.CANCEL}" onclick="document.location='{$CAT_ADMIN_URL}/admintools/index.php?leptoken={$leptoken}';" />
     </div>
 </form>

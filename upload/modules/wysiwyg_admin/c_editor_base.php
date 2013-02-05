@@ -57,8 +57,10 @@ abstract class c_editor_base
     private $default_width  = '100%';
 
     abstract public function getSkinPath();
+    abstract public function getPluginsPath();
     abstract public function getToolbars();
     abstract public function getAdditionalSettings();
+    abstract public function getAdditionalPlugins();
 
     private function get($name,&$config)
     {

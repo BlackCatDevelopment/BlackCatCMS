@@ -93,7 +93,9 @@ if(preg_match('~(\d+)(.*)~',$height,$match))
 $skins        = $c->getSkins($c->getSkinPath());
 $current_skin = $c->getSkin($config);
 $settings     = $c->getAdditionalSettings();
+$plugins         = $c->getAdditionalPlugins();
 $preview      = NULL;
+$plugins_checked = array();
 
 if(file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')))
 {
@@ -104,8 +106,8 @@ if(file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$cur
 
 // something to save?
 if (isset($_POST['job']) && $_POST['job']=="save") {
-    $_POST = array_map("mysql_real_escape_string",$_POST);
-    $new_width = $new_height = $new_skin = NULL;
+    $_POST = array_map("wysiwyg_admin_escape",$_POST);
+    $new_width = $new_height = $new_skin = $new_plugins = NULL;
     // validate width and height
     foreach( array('width','height') as $key )
     {
@@ -153,6 +155,20 @@ if (isset($_POST['job']) && $_POST['job']=="save") {
             
         }
     }
+    // check plugins
+    if(isset($_POST['plugins']) && count($_POST['plugins']))
+    {
+        // check against $plugins array
+        $unknown = array_diff($_POST['plugins'],$plugins);
+        if(count($unknown))
+        {
+            $errors['plugins'] = $admin->lang->translate('Invalid plugin(s) encountered!');
+        }
+        else
+        {
+            $new_plugins = implode(',',$_POST['plugins']);
+        }
+    }
 
     // only save changes if there were no errors
     if ( ! count($errors) )
@@ -180,11 +196,24 @@ if (isset($_POST['job']) && $_POST['job']=="save") {
                 $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \''.$item['name'].'\', \''.$value.'\' )' );
             }
         }
+        // save plugins
+        if($new_plugins)
+        {
+            $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'plugins\', \''.$new_plugins.'\' )' );
+        }
         // reload settings
         $config       = wysiwyg_admin_config();
     }
 }
 
+if ( ( isset($config['plugins']) && $config['plugins'] != '' ) )
+{
+    $seen = explode(',',$config['plugins']);
+    foreach($seen as $item)
+    {
+        $plugins_checked[$item] = 1;
+    }
+}
 
 $parser->setPath(dirname(__FILE__)."/templates/default");
 echo $parser->get(
@@ -207,10 +236,21 @@ echo $parser->get(
         'settings'         => $settings,
         'config'           => $config,
         'errors'           => $errors,
+        'plugins'          => $plugins,
+        'plugins_checked'  => $plugins_checked,
+        'leptoken'         => $admin->getToken(),
         'width_unit_'.($width_unit=='%'?'proz':$width_unit) => 'checked="checked"',
         'height_unit_'.($height_unit=='%'?'proz':$height_unit) => 'checked="checked"',
     )
 );
+
+function wysiwyg_admin_escape($item) {
+    return is_scalar( $item )
+         ? mysql_real_escape_string($item)
+         : array_map("wysiwyg_admin_escape",$item)
+         ;
+}
+
 // get current settings
 function wysiwyg_admin_config() {
     global $database;
