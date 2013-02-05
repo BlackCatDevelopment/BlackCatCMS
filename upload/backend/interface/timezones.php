@@ -1,22 +1,28 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://www.blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
 	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
@@ -34,47 +40,9 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-if (!function_exists('w_debug')) {
-function w_debug($s) {
-	$fp = fopen(CAT_PATH.'/_debug_.txt', 'a');
-	fwrite($fp, "$s\r\n");
-	fclose($fp);
-}
-}
-
-//echo " TZ called ";
-$timezone_table = array(
-	"Pacific/Kwajalein",
-	"Pacific/Samoa",
-	"Pacific/Honolulu",
-	"America/Anchorage",
-	"America/Los_Angeles",
-	"America/Phoenix",
-	"America/Mexico_City",
-	"America/Lima",
-	"America/Caracas",
-	"America/Halifax",
-	"America/Buenos_Aires",
-	"Atlantic/Reykjavik",
-	"Atlantic/Azores",
-	"Europe/London",
-	"Europe/Berlin",
-	"Europe/Kaliningrad",
-	"Europe/Moscow",
-	"Asia/Tehran",
-	"Asia/Baku",
-	"Asia/Kabul",
-	"Asia/Tashkent",
-	"Asia/Calcutta",
-	"Asia/Colombo",
-	"Asia/Bangkok",
-	"Asia/Hong_Kong",
-	"Asia/Tokyo",
-	"Australia/Adelaide",
-	"Pacific/Guam",
-	"Etc/GMT+10",
-	"Pacific/Fiji"
-);
+require CAT_PATH.'/framework/CAT/Helper/DateTime.php';
+$dt = CAT_Helper_DateTime::getInstance();
+$timezone_table = $dt->getTimezones();
 
 if (!defined("DEFAULT_TIMEZONESTRING")) define("DEFAULT_TIMEZONESTRING", "Europe/Berlin");
 

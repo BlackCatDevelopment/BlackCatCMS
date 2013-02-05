@@ -1,22 +1,28 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://www.blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
 	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
@@ -34,33 +40,6 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-// Define that this file is loaded
-if(!defined('TIME_FORMATS_LOADED')) {
-	define('TIME_FORMATS_LOADED', true);
-}
-
-// Create array
-$TIME_FORMATS = array();
-
-// Get the current time (in the users timezone if required)
-$actual_time = time();
-
-// Add values to list
-$TIME_FORMATS['g:i|A'] = date('g:i A', $actual_time);
-$TIME_FORMATS['g:i|a'] = date('g:i a', $actual_time);
-$TIME_FORMATS['H:i:s'] = date('H:i:s', $actual_time);
-$TIME_FORMATS['H:i'] = date('H:i', $actual_time);
-
-// Add "System Default" to list (if we need to)
-if(isset($user_time) AND $user_time == true) {
-	if(isset($TEXT['SYSTEM_DEFAULT'])) {
-		$TIME_FORMATS['system_default'] = date(DEFAULT_TIME_FORMAT, $actual_time).' ('.$TEXT['SYSTEM_DEFAULT'].')';
-	} else {
-		$TIME_FORMATS['system_default'] = date(DEFAULT_TIME_FORMAT, $actual_time).' (System Default)';
-	}
-}
-
-// Reverse array so "System Default" is at the top
-$TIME_FORMATS = array_reverse($TIME_FORMATS, true);
-
-?>
+require CAT_PATH.'/framework/CAT/Helper/DateTime.php';
+$dt = CAT_Helper_DateTime::getInstance();
+$TIME_FORMATS = $dt->getTimeFormats();
