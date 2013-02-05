@@ -57,6 +57,8 @@ $language_platform = '1.0.x';
 $language_author = 'Ryan Djurovich, Christian Sommer';
 $language_license = 'GNU General Public License';
 $language_guid = '1412c11c-378f-44ea-9a0e-a9223a2027ef';
+$language_date_long  = 'jS|F|Y';
+$language_date_short = 'Y-m-d';
 
 $MENU = array(
 	'ACCESS' 				=> 'Access',

@@ -220,6 +220,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			{
 			    $this->prefix = NULL;
 			}
+            return $this;
 		}   // end function setPrefix()
 
         /**
@@ -231,6 +232,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		    {
 		        $this->recurse = $bool;
 			}
+            return $this;
 		}   // end function setRecursion()
 
         /**
@@ -252,6 +254,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			{
 			    $this->skip_files = $files;
 			}
+            return $this;
         }   // end function setSkipFiles()
 		
 		/**
@@ -273,6 +276,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			{
 			    $this->skip_dirs = $dirs;
 			}
+            return $this;
 		}   // end function setSkipDirs()
 		
 		/**
@@ -294,6 +298,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			{
 			    $this->suffix_filter = $suffixes;
 			}
+            return $this;
 		}   // end function setSuffixFilter()
 		
 		/**
@@ -326,6 +331,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	        {
 	            return true;
 	        }
+            return $this;
 	    }   // function setReadOnly()
 	    
         /**
@@ -364,7 +370,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             else {
                 return false;
             }
-
+            return $this;
         }   // end function recursiveCreateIndex()
 
 

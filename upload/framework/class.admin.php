@@ -283,8 +283,8 @@ class admin extends wb
 				$data_dwoo['META']['CHARSET']				= true === defined('DEFAULT_CHARSET') ? DEFAULT_CHARSET : 'utf-8';
 				$data_dwoo['META']['LANGUAGE']				= strtolower(LANGUAGE);
 				$data_dwoo['META']['WEBSITE_TITLE']			= $title;
-				$data_dwoo['VERSION']						= VERSION;
-				$data_dwoo['CORE']							= CORE;
+				$data_dwoo['CAT_VERSION']					= CAT_VERSION;
+				$data_dwoo['CAT_CORE']						= CAT_CORE;
 				$data_dwoo['PAGE_EXTENSION']				= PAGE_EXTENSION;
 
 				$date_search	= array('Y','j','n','jS','l','F');
@@ -437,10 +437,9 @@ class admin extends wb
 						'DISPLAY_NAME' => $this->get_display_name(),
 						'CHARSET' => $charset,
 						'LANGUAGE' => strtolower(LANGUAGE),
-						'VERSION' => VERSION,
-						'CORE' => CORE,
-						'LEPTON_URL' => LEPTON_URL,
-						'CAT_URL' => LEPTON_URL,
+						'CAT_VERSION' => CAT_VERSION,
+						'CAT_CORE' => CAT_CORE,
+						'CAT_URL' => CAT_URL,
 						'CAT_ADMIN_URL' => CAT_ADMIN_URL,
 						'CAT_THEME_URL' => CAT_THEME_URL,
 						'TITLE_START' => $MENU['START'],
@@ -545,8 +544,8 @@ class admin extends wb
 				$parser->setPath(CAT_THEME_PATH . '/templates');
 				$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
-				$data['VERSION']					= VERSION;
-				$data['CORE']						= CORE;
+				$data['CAT_VERSION']				= CAT_VERSION;
+				$data['CAT_CORE']					= CAT_CORE;
 				$data['permissions']['pages']		= ($this->get_permission('pages')) ? true : false;
 
 				// ======================================================================== 

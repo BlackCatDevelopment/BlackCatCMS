@@ -226,6 +226,18 @@ if (file_exists(CAT_PATH.'/modules/lib_dwoo/library.php')) {
     }
 }
 
+spl_autoload_register(function ($class) {
+    if(defined('CAT_PATH'))
+    {
+        $file = str_replace('_','/',$class);
+        if(file_exists(CAT_PATH.'/framework/'.$file.'.php'))
+        {
+            @require CAT_PATH.'/framework/'.$file.'.php';
+        }
+    }
+    # next in stack
+});
+
 // wb2 backward compatibility
 include_once CAT_PATH.'/framework/wb2compat.php';
 

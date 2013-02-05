@@ -1155,7 +1155,7 @@ if (!class_exists('CAT_Pages', false))
                     #{
                     #    $show_it = ($admin->is_group_match($admin->get_groups_id(), $page['viewing_groups']) || $admin->is_group_match($admin->get_user_id(), $page['viewing_users']));
                     #}
-                    $show_id = true;
+                    $show_it = true;
                     break;
             }
             return ($show_it);

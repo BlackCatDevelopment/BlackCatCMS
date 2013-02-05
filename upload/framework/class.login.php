@@ -368,7 +368,7 @@ class login extends admin {
 
 					$data_dwoo['meta']['LANGUAGE']		= strtolower(LANGUAGE);
 					$data_dwoo['meta']['CHARSET']		= (defined('DEFAULT_CHARSET')) ? DEFAULT_CHARSET : "utf-8";
-					$data_dwoo['VERSION']				= VERSION;
+					$data_dwoo['CAT_VERSION']			= CAT_VERSION;
 
 					$data_dwoo['FORGOTTEN_DETAILS_APP']	= $this->forgotten_details_app;
 					$data_dwoo['PAGES_DIRECTORY']		= PAGES_DIRECTORY;

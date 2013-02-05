@@ -54,6 +54,23 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return self::$instance;
         }
 
+        /* ****************
+         * check if current user is member of at least one of given groups
+         * ADMIN (uid=1) always is treated like a member of any groups
+         *
+         * @access public
+         * @param  mixed  $groups_list: an array or a comma seperated list of group-ids
+         * @return bool   true if current user is member of one of this groups, otherwise false
+         */
+        public function ami_group_member($groups_list = '')
+        {
+            if ($this->get_user_id() == 1)
+            {
+                return true;
+            }
+            return $this->is_group_match($groups_list, $this->get_groups_id());
+        }
+
         // Get the current users id
         public function get_user_id()
         {

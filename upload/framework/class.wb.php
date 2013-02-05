@@ -140,10 +140,13 @@ class wb extends SecureCMS
 
             default:
                 $output = "<b>Black Cat CMS NOTICE</b><br />\n&nbsp;&nbsp;Unknown error type:<br />\n&nbsp;&nbsp;[$errno] $errstr<br />\n";
-$output .= "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">".
-print_r( debug_backtrace(),1 )."</textarea>";
                 break;
     }
+        if ( defined('CAT_DEBUG') && true === CAT_DEBUG )
+        {
+                $output .= "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">"
+                        .  print_r( debug_backtrace(),1 )."</textarea>";
+        }
         if ( $fatal )
     {
             if ( !headers_sent() ) {
@@ -250,7 +253,7 @@ print_r( debug_backtrace(),1 )."</textarea>";
     public function get_controller($name)
     {
 		// name must not contain CAT_...
-	    $name      = preg_replace( '~^lepton_~i', '', $name );
+	    $name      = preg_replace( '~^cat_~i', '', $name );
         $args      = func_get_args();
         // remove first element (it's the name)
         array_shift($args);
@@ -297,23 +300,6 @@ print_r( debug_backtrace(),1 )."</textarea>";
         }
 
         return(sizeof(array_intersect($groups_list1, $groups_list2)) != 0);
-    }
-
-    /* ****************
-     * check if current user is member of at least one of given groups
-     * ADMIN (uid=1) always is treated like a member of any groups
-     *
-     * @access public
-     * @param mixed $groups_list: an array or a coma seperated list of group-ids
-     * @return bool: true if current user is member of one of this groups, otherwise false
-     */
-    public function ami_group_member($groups_list = '')
-    {
-        if ($this->get_user_id() == 1)
-        {
-            return true;
-        }
-        return $this->is_group_match($groups_list, $this->get_groups_id());
     }
 
     /* ****************
@@ -665,6 +651,11 @@ print_r( debug_backtrace(),1 )."</textarea>";
     public function get_email()            { return CAT_Users::getInstance()->get_email();        }
     public function get_home_folder()      { return CAT_Users::getInstance()->get_home_folder();  }
     public function is_authenticated()     { return CAT_Users::getInstance()->is_authenticated(); }
+
+    public function get_groups($viewing_groups = array() , $admin_groups = array(), $insert_admin = true)
+    {
+         return CAT_Users::getInstance()->get_groups();
+    }
 
 }
 ?>

@@ -57,6 +57,9 @@ $language_platform = '1.0.x';
 $language_author = 'Stefan Braunewell, Matthias Gallas';
 $language_license = 'GNU General Public License';
 $language_guid = 'f49419c8-eb27-4a69-bffb-af61fce6b0c9';
+$language_date_long  = 'l,|d.|F|Y';
+$language_date_short = 'd.m.Y';
+$language_time       = 'H:i:s';
 
 $LANG = array(
     // ----- BACKEND -----
