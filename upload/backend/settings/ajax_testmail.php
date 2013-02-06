@@ -1,18 +1,25 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
@@ -36,18 +43,14 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-global $TEXT;
-
 header( "Cache-Control: no-cache, must-revalidate" );
 header( "Pragma: no-cache" );
 header( "Content-Type: text/html; charset:utf-8;" );
 
-// not needed, config is loaded with class.secure
-// include realpath(dirname(__FILE__)).'/../../config.php';
 include realpath(dirname(__FILE__)).'/../../framework/class.admin.php';
 $admin = new admin('Settings', 'settings_basic');
 
-$curr_user_is_admin = ( in_array(1, $admin->get_groups_id()) );
+$curr_user_is_admin = ( in_array(1, CAT_Users::getInstance()->get_groups_id()) );
 
 if ( ! $curr_user_is_admin ) {
     echo "<div style='border: 2px solid #CC0000; padding: 5px; text-align: center; background-color: #ffbaba;'>You're not allowed to use this function!</div>";
@@ -58,18 +61,22 @@ $settings = array();
 $sql      = 'SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'settings`';
 if ( $res_settings = $database->query( $sql ) ) {
     while ($row = $res_settings->fetchRow( )) {
-        $settings[ strtoupper($row['name']) ] = ( $row['name'] != 'wbmailer_smtp_password' ) ? htmlspecialchars($row['value']) : $row['value'];
+        $settings[ strtoupper($row['name']) ] = ( $row['name'] != 'catmailer_smtp_password' ) ? htmlspecialchars($row['value']) : $row['value'];
 	}
 }
 ob_clean();
 
 // send mail
-if( $admin->mail( $settings['SERVER_EMAIL'], $settings['SERVER_EMAIL'], 'LEPTON PHP MAILER', $TEXT['WBMAILER_TESTMAIL_TEXT'] ) ) {
-    echo "<div style='border: 2px solid #006600; padding: 5px; text-align: center; background-color: #dff2bf;'>", $TEXT['WBMAILER_TESTMAIL_SUCCESS'], "</div>";
+if( $admin->mail( $settings['SERVER_EMAIL'], $settings['SERVER_EMAIL'], $settings['CATMAILER_DEFAULT_SENDERNAME'], $admin->lang->translate('This is the required test mail: CAT mailer is working') ) ) {
+    echo "<div style='border: 2px solid #006600; padding: 5px; text-align: center; background-color: #dff2bf;'>",
+         $admin->lang->translate('The test eMail was sent successfully. Please check your inbox.'),
+         "</div>";
 }
 else {
     $message = ob_get_clean();
-    echo "<div style='border: 2px solid #CC0000; padding: 5px; text-align: center; background-color: #ffbaba;'>", $TEXT['WBMAILER_TESTMAIL_FAILED'], "<br />$message<br /></div>";
+    echo "<div style='border: 2px solid #CC0000; padding: 5px; text-align: center; background-color: #ffbaba;'>",
+         $admin->lang->translate('The test eMail could not be sent! Please check your settings!'),
+         "<br />$message<br /></div>";
 }
 
 ?>

@@ -495,65 +495,66 @@
 			<p>{translate('Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.')}
 			</p>
 			<div class="clear"></div>
-			<hr/>
+			<hr />
 			<div class="clear_sp"></div>
 			<label class="fc_label_200" for="fc_list_SERVER_email">{translate('Default from mail')}:</label>
 			<input type="text" name="server_email" id="fc_list_SERVER_email" value="{$values.server_email}" />
 			<div class="clear"></div>
 
-			<label class="fc_label_200" for="fc_wbmailer_default_sendername">{translate('Default sender name')}:</label>
-			<input type="text" name="wbmailer_default_sendername" id="fc_wbmailer_default_sendername" value="{$values.wb_default_sendername}" />
+			<label class="fc_label_200" for="fc_catmailer_default_sendername">{translate('Default sender name')}:</label>
+			<input type="text" name="catmailer_default_sendername" id="fc_catmailer_default_sendername" value="{$values.wb_default_sendername}" />
 			<div class="clear_sp"></div>
 
+            <div id="testmail_result" style="display:none;">&nbsp;</div>
 			{if $DISPLAY_ADVANCED}
-			<label class="fc_label_200" for="fc_wbmailer_routine">{translate('Mail routine')}:</label>
-			<div class="settings_label fc_settings_max" id="fc_wbmailer_routine">
-				<input type="radio" class="fc_radio_jq fc_toggle_element hide___fc_smtp" name="wbmailer_routine" id="fc_wbmailer_routine_phpmail" value="phpmail" {if $WBMAILER_ROUTINE == 'phpmail'} checked="checked"{/if}/>
-				<label for="fc_wbmailer_routine_phpmail">{translate('PHP mail')}</label>
-				<input type="radio" class="fc_radio_jq fc_toggle_element show___fc_smtp" name="wbmailer_routine" id="fc_wbmailer_routine_smtp" value="smtp" {if $WBMAILER_ROUTINE == 'smtp'} checked="checked"{/if}/>
-				<label for="fc_wbmailer_routine_smtp">{translate('SMTP')}</label>
+			<label class="fc_label_200" for="fc_catmailer_routine">{translate('Mail routine')}:</label>
+			<div class="settings_label fc_settings_max" id="fc_catmailer_routine">
+				<input type="radio" class="fc_radio_jq fc_toggle_element hide___fc_smtp" name="catmailer_routine" id="fc_catmailer_routine_phpmail" value="phpmail" {if $CATMAILER_ROUTINE == 'phpmail'} checked="checked"{/if}/>
+				<label for="fc_catmailer_routine_phpmail">{translate('PHP mail')}</label>
+				<input type="radio" class="fc_radio_jq fc_toggle_element show___fc_smtp" name="catmailer_routine" id="fc_catmailer_routine_smtp" value="smtp" {if $CATMAILER_ROUTINE == 'smtp'} checked="checked"{/if}/>
+				<label for="fc_catmailer_routine_smtp">{translate('SMTP')}</label>
 			</div>
 			<div class="clear"></div>
 
 			<div id="fc_smtp">
-				<hr/>
+				<hr />
 				<p>
 					{translate('<strong>SMTP Mailer Settings:</strong><br />The settings below are only required if you want to send mails via <acronym title="Simple mail transfer protocol">SMTP</acronym>. If you do not know your SMTP host or you are not sure about the required settings, simply stay with the default mail routine: PHP MAIL.')}
 				</p>
 				<div class="clear"></div>
-				<hr/>
-				<label class="fc_label_200" for="fc_wbmailer_smtp_host">{translate('SMTP host')}:</label>
-				<input type="text" name="wbmailer_smtp_host" id="fc_wbmailer_smtp_host" value="{$values.wbmailer_smtp_host}"{if $WBMAILER_SMTP_AUTH} checked="checked"{/if}/>
+				<hr />
+				<label class="fc_label_200" for="fc_catmailer_smtp_host">{translate('SMTP host')}:</label>
+				<input type="text" name="catmailer_smtp_host" id="fc_catmailer_smtp_host" value="{$values.catmailer_smtp_host}"{if $CATMAILER_SMTP_AUTH} checked="checked"{/if}/>
 				<div class="clear_sp"></div>
 	
 				<div class="fc_settings_max">
-					<input type="checkbox" class="fc_checkbox_jq fc_toggle_element show___fc_smtp_aut" name="wbmailer_smtp_auth" id="fc_wbmailer_smtp_auth" value="true" {if $WBMAILER_SMTP_AUTH && $WBMAILER_ROUTINE=='smtp'} checked="checked"{/if}/>
-					<label for="fc_wbmailer_smtp_auth">{translate('SMTP authentification')}</label>
+					<input type="checkbox" class="fc_checkbox_jq fc_toggle_element show___fc_smtp_aut" name="catmailer_smtp_auth" id="fc_catmailer_smtp_auth" value="true" {if $CATMAILER_SMTP_AUTH && $CATMAILER_ROUTINE=='smtp'} checked="checked"{/if}/>
+					<label for="fc_catmailer_smtp_auth">{translate('SMTP authentification')}</label>
 				</div>
 				<div class="clear"></div>
 				<p class="fc_important">({translate('only activate if your SMTP host requires authentification')})</p>
 
-				<div id="fc_smtp_aut"{if $WBMAILER_ROUTINE == 'phpmail'} class="fc_inactive_element"{/if}>
-				<hr/>
+				<div id="fc_smtp_aut"{if $CATMAILER_ROUTINE == 'phpmail'} class="fc_inactive_element"{/if}>
+				<hr />
 					<div class="fc_settings_max">
-						<label class="fc_label_120" for="fc_wbmailer_smtp_username">{translate('SMTP username')}:</label>
-						<input type="text" name="wbmailer_smtp_username" id="fc_wbmailer_smtp_username" value="{$values.wbmailer_smtp_username}" />
+						<label class="fc_label_120" for="fc_catmailer_smtp_username">{translate('SMTP username')}:</label>
+						<input type="text" name="catmailer_smtp_username" id="fc_catmailer_smtp_username" value="{$values.catmailer_smtp_username}" />
 						<div class="clear"></div>
-						<label class="fc_label_120" for="fc_wbmailer_smtp_password">{translate('SMTP password')}:</label>
-						<input type="password" name="wbmailer_smtp_password" id="fc_wbmailer_smtp_username" value="{$values.wbmailer_smtp_password}" />
+						<label class="fc_label_120" for="fc_catmailer_smtp_password">{translate('SMTP password')}:</label>
+						<input type="password" name="catmailer_smtp_password" id="fc_catmailer_smtp_username" value="{$values.catmailer_smtp_password}" />
 					</div>
 				</div>
 			</div>
 			{else}
-			<input type="hidden" name="wbmailer_routine" value="{$WBMAILER_ROUTINE}" />
-			<input type="hidden" name="wbmailer_smtp_host" value="{$values.wbmailer_smtp_host}" />
-			<input type="hidden" name="wbmailer_smtp_auth" value="{$WBMAILER_SMTP_AUTH}" />
-			<input type="hidden" name="wbmailer_smtp_username" value="{$values.wbmailer_smtp_username}" />
-			<input type="hidden" name="wbmailer_smtp_password" value="{$values.wbmailer_smtp_password}" />
+			<input type="hidden" name="catmailer_routine" value="{$CATMAILER_ROUTINE}" />
+			<input type="hidden" name="catmailer_smtp_host" value="{$values.catmailer_smtp_host}" />
+			<input type="hidden" name="catmailer_smtp_auth" value="{$CATMAILER_SMTP_AUTH}" />
+			<input type="hidden" name="catmailer_smtp_username" value="{$values.catmailer_smtp_username}" />
+			<input type="hidden" name="catmailer_smtp_password" value="{$values.catmailer_smtp_password}" />
 			{/if}
 
 			<div class="clear"></div>
-			<hr/>
+			<hr />
 			<button class="icon-mail right" dir="ltr" type="submit" id="fc_checkmail" name="checkmail" onclick="send_testmail('{$CAT_ADMIN_URL}/settings/ajax_testmail.php');return false;"> {translate('Send test mail')}</button>
 			<div class="clear_sp"></div>
 			<p class="submit_settings fc_gradient1">

@@ -478,60 +478,6 @@ class wb extends SecureCMS
 		exit();
 	}
 
-    // Validate send email
-    public function mail($fromaddress, $toaddress, $subject, $message, $fromname = '')
-    {
-        /*
-         INTEGRATED OPEN SOURCE PHPMAILER CLASS FOR SMTP SUPPORT AND MORE
-         SOME SERVICE PROVIDERS DO NOT SUPPORT SENDING MAIL VIA PHP AS IT DOES NOT PROVIDE SMTP AUTHENTICATION
-         NEW WBMAILER CLASS IS ABLE TO SEND OUT MESSAGES USING SMTP WHICH RESOLVE THESE ISSUE (C. Sommer)
-
-         NOTE:
-         To use SMTP for sending out mails, you have to specify the SMTP host of your domain
-         via the Settings panel in the backend of Website Baker
-         */
-
-        $fromaddress = preg_replace('/[\r\n]/', '', $fromaddress);
-        $toaddress = preg_replace('/[\r\n]/', '', $toaddress);
-        $subject = preg_replace('/[\r\n]/', '', $subject);
-        $message = preg_replace('/\r\n?|\n/', '<br \>', $message);
-
-        // create PHPMailer object and define default settings
-        $myMail = new wbmailer();
-
-        // set user defined from address
-        if ($fromaddress != '')
-        {
-            // FROM-NAME
-            if ($fromname != '')
-                $myMail->FromName = $fromname;
-            // FROM:
-            $myMail->From = $fromaddress;
-            // REPLY TO:
-            $myMail->AddReplyTo($fromaddress);
-        }
-
-        // define recepient and information to send out
-        // TO:
-        $myMail->AddAddress($toaddress);
-        // SUBJECT
-        $myMail->Subject = $subject;
-        // CONTENT (HTML)
-        $myMail->Body = $message;
-        // CONTENT (TEXT)
-        $myMail->AltBody = strip_tags($message);
-
-        // check if there are any send mail errors, otherwise say successful
-        if (!$myMail->Send())
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
     /**
      * internal method to get a handle
      *
@@ -632,6 +578,11 @@ class wb extends SecureCMS
      * DEPRECATED FUNCTIONS
      * These functions are moved to CAT_Pages class
      **************************************************************************/
+    /* moved to CAT_Helper_Mail */
+    public function mail($fromaddress, $toaddress, $subject, $message, $fromname = '')
+    {
+        return CAT_Helper_Mail::getInstance('Swift')->sendMail($fromaddress, $toaddress, $subject, $message, $fromname);
+    }
     public function page_is_visible($page) { return CAT_Pages::getInstance()->isVisible($page); }
     public function page_is_active($page)  { return CAT_Pages::getInstance()->isActive($page);  }
     public function page_link($link)       { return CAT_Pages::getInstance()->getLink($link);   }

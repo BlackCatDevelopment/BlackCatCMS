@@ -71,7 +71,7 @@ if ( $res_settings = $database->query('SELECT `name`, `value` FROM `'.CAT_TABLE_
 {
 	while ( $row = $res_settings->fetchRow( ) )
 	{
-		$data_dwoo['values'][$row['name']]		= ($row['name'] != 'wbmailer_smtp_password') ? htmlspecialchars($row['value']) : $row['value'];
+		$data_dwoo['values'][$row['name']]		= ($row['name'] != 'catmailer_smtp_password') ? htmlspecialchars($row['value']) : $row['value'];
 	}
 }
 
@@ -111,8 +111,8 @@ $data_dwoo['HOMEPAGE_REDIRECTION']					= (defined('HOMEPAGE_REDIRECTION') && HOM
 $data_dwoo['MANAGE_SECTIONS']						= (MANAGE_SECTIONS) ? true : false;
 $data_dwoo['OPERATING_SYSTEM']						= OPERATING_SYSTEM;
 $data_dwoo['WORLD_WRITEABLE_SELECTED']				= (STRING_FILE_MODE == '0666' && STRING_DIR_MODE == '0777') ? true : false;
-$data_dwoo['WBMAILER_ROUTINE']						= WBMAILER_ROUTINE;
-$data_dwoo['WBMAILER_SMTP_AUTH']					= WBMAILER_SMTP_AUTH;
+$data_dwoo['CATMAILER_ROUTINE']						= CATMAILER_ROUTINE;
+$data_dwoo['CATMAILER_SMTP_AUTH']					= CATMAILER_SMTP_AUTH;
 $data_dwoo['INTRO_PAGE']							= INTRO_PAGE ? true : false;
 $data_dwoo['FRONTEND_LOGIN']						= FRONTEND_LOGIN ? true : false;
 $data_dwoo['HOME_FOLDERS']							= HOME_FOLDERS;
@@ -122,7 +122,7 @@ $data_dwoo['PAGE_TRASH']							= PAGE_TRASH;
 $data_dwoo['ER_LEVEL']								= ER_LEVEL;
 $data_dwoo['DEFAULT_CHARSET']						= DEFAULT_CHARSET;
 $data_dwoo['values']['server_email']				= SERVER_EMAIL;
-$data_dwoo['values']['wb_default_sendername']		= WBMAILER_DEFAULT_SENDERNAME;
+$data_dwoo['values']['wb_default_sendername']		= CATMAILER_DEFAULT_SENDERNAME;
 
 // ========================== 
 // ! Insert language values   

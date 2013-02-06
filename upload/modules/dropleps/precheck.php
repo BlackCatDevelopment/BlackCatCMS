@@ -33,5 +33,5 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-$PRECHECK['LEPTON_VERSION'] = array('VERSION' => '2.0', 'OPERATOR' => '>=');
+$PRECHECK['CAT_VERSION'] = array('VERSION' => '1.0', 'OPERATOR' => '>=');
 $PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');

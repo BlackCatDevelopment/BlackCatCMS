@@ -247,60 +247,60 @@ function save_settings(&$admin, &$database)
 	// Work-out which wbmailer routine should be checked
 	if ((isset ($settings['server_email'])) && (!$admin->validate_email($settings['server_email'])))
 	{
-		$err_msg[] = $TEXT['WBMAILER_DEFAULT_SENDER_MAIL'];
+		$err_msg[] = $admin->lang->translate('Default Sender Name');
 	}
-	$wbmailer_default_sendername = (isset ($settings['wbmailer_default_sendername'])) ? $settings['wbmailer_default_sendername'] : $old_settings['wbmailer_default_sendername'];
-	if (($wbmailer_default_sendername <> ''))
+	$catmailer_default_sendername = (isset ($settings['catmailer_default_sendername'])) ? $settings['catmailer_default_sendername'] : $old_settings['catmailer_default_sendername'];
+	if (($catmailer_default_sendername <> ''))
 	{
-		$settings['wbmailer_default_sendername'] = $wbmailer_default_sendername;
+		$settings['catmailer_default_sendername'] = $catmailer_default_sendername;
 	}
 	else
 	{
-		$err_msg[] = $MESSAGE['MOD_FORM_REQUIRED_FIELDS'].': '.$TEXT['WBMAILER_DEFAULT_SENDER_NAME'];
+		$err_msg[] = $MESSAGE['MOD_FORM_REQUIRED_FIELDS'].': '.$admin->lang->translate('Default Sender Name');
 	}
-	$wbmailer_routine = isset ($settings['wbmailer_routine']) ? $settings['wbmailer_routine'] : $old_settings['wbmailer_routine'];
-	if (($wbmailer_routine == 'smtp'))
+	$catmailer_routine = isset ($settings['catmailer_routine']) ? $settings['catmailer_routine'] : $old_settings['catmailer_routine'];
+	if (($catmailer_routine == 'smtp'))
 	{
 	// Work-out return the 1th mail domain from a poassible textblock
 		$pattern = '#https?://([A-Z0-9][^:][A-Z.0-9_-]+[a-z]{2,6})#ix';
-		$wbmailer_smtp_host = (isset ($settings['wbmailer_smtp_host'])) ? $settings['wbmailer_smtp_host'] : $old_settings['wbmailer_smtp_host'];
-		if (preg_match($pattern, $wbmailer_smtp_host, $array))
+		$catmailer_smtp_host = (isset ($settings['catmailer_smtp_host'])) ? $settings['catmailer_smtp_host'] : $old_settings['catmailer_smtp_host'];
+		if (preg_match($pattern, $catmailer_smtp_host, $array))
 		{
-			$wbmailer_smtp_host = $array [0];
+			$catmailer_smtp_host = $array [0];
 		}
-		if ((isset ($wbmailer_smtp_host)))
+		if ((isset ($catmailer_smtp_host)))
 		{
-			if ((isset ($wbmailer_smtp_host)) && ($wbmailer_smtp_host != ''))
+			if ((isset ($catmailer_smtp_host)) && ($catmailer_smtp_host != ''))
 			{
-				$settings['wbmailer_smtp_host'] = $wbmailer_smtp_host;
+				$settings['catmailer_smtp_host'] = $catmailer_smtp_host;
 			}
 			else
 			{
-				$err_msg[] = $MESSAGE['MOD_FORM_REQUIRED_FIELDS'].': '.$TEXT['WBMAILER_SMTP_HOST'];
+				$err_msg[] = $MESSAGE['MOD_FORM_REQUIRED_FIELDS'].': '.$admin->lang->translate('SMTP Host');
 			}
 		}
 		// Work-out if SMTP authentification should be checked
-		$settings['wbmailer_smtp_auth'] = $settings['wbmailer_smtp_auth']=='' ? 'false' : 'true';
-		if ($settings['wbmailer_smtp_auth'] == 'true')
+		$settings['catmailer_smtp_auth'] = $settings['catmailer_smtp_auth']=='' ? 'false' : 'true';
+		if ($settings['catmailer_smtp_auth'] == 'true')
 		{
 		// later change min and max lenght with variables
 			$pattern = '/^[a-zA-Z0-9_]{4,30}$/';
-			$wbmailer_smtp_username = (isset ($settings['wbmailer_smtp_username'])) ? $settings['wbmailer_smtp_username'] : $old_settings['wbmailer_smtp_username'];
-			if (($wbmailer_smtp_username == '') && !preg_match($pattern, $wbmailer_smtp_username))
+			$catmailer_smtp_username = (isset ($settings['catmailer_smtp_username'])) ? $settings['catmailer_smtp_username'] : $old_settings['catmailer_smtp_username'];
+			if (($catmailer_smtp_username == '') && !preg_match($pattern, $catmailer_smtp_username))
 			{
-				$err_msg[] = $TEXT['WBMAILER_SMTP'].': '.$MESSAGE['LOGIN_AUTHENTICATION_FAILED'];
+				$err_msg[] = $admin->lang->translate('SMTP').': '.$MESSAGE['LOGIN_AUTHENTICATION_FAILED'];
 			}
 			else
 			{
-				$settings['wbmailer_smtp_username'] = $wbmailer_smtp_username;
+				$settings['catmailer_smtp_username'] = $catmailer_smtp_username;
 			}
 			// receive password vars and calculate needed action
 			$pattern = '/[^'.$admin->password_chars.']/';
-			$current_password = $admin->get_post('wbmailer_smtp_password');
+			$current_password = $admin->get_post('catmailer_smtp_password');
 			$current_password = ($current_password == null ? '' : $current_password);
 			if (($current_password == ''))
 			{
-				$err_msg[] = $TEXT['WBMAILER_SMTP'].': '.$MESSAGE['LOGIN_AUTHENTICATION_FAILED'];
+				$err_msg[] = $admin->lang->translate('SMTP').': '.$MESSAGE['LOGIN_AUTHENTICATION_FAILED'];
 			}
 			elseif (preg_match($pattern, $current_password))
 			{
@@ -309,8 +309,8 @@ function save_settings(&$admin, &$database)
 		}
 		// If SMTP-Authentification is disabled delete USER and PASSWORD for securityreasons
 		else {
-			$settings['wbmailer_smtp_username'] = '-';
-			$settings['wbmailer_smtp_password'] = '-';
+			$settings['catmailer_smtp_username'] = '-';
+			$settings['catmailer_smtp_password'] = '-';
 		}
 	}
 
