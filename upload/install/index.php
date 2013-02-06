@@ -23,8 +23,7 @@
  *
  */
 
-$debug = false;
-
+define('CAT_DEBUG',false);
 define('CAT_PATH',dirname(__file__).'/..');
 
 // -----------------------------------------------------------------------------
@@ -40,8 +39,7 @@ define('CAT_PATH',dirname(__file__).'/..');
 // -----------------------------------------------------------------------------
 
 define('CAT_INSTALL',true);
-define('LOGFILE',dirname(__FILE__).'/../temp/inst.log');
-define('CAT_PATH',dirname(__file__).'/..');
+define('CAT_LOGFILE',dirname(__FILE__).'/../temp/inst.log');
 
 // Start a session
 if ( !defined( 'SESSION_STARTED' ) ) {
@@ -85,7 +83,7 @@ if ( count($pre_inst_err) )
 
 // language helper
 include dirname(__FILE__).'/../framework/CAT/Helper/I18n.php';
-$lang = new CAT_Helper_I18n();
+$lang = CAT_Helper_I18n::getInstance();
 
 // the admin dummy defines some methods needed for module installation and error handling
 include dirname(__FILE__).'/admin_dummy.inc.php';
@@ -264,7 +262,7 @@ if ( ! $output ) {
 $parser->output(
 	'index.lte',
 	array(
-	    'debug'             => $debug,
+	    'debug'             => CAT_DEBUG,
 	    'steps'             => $steps,
 	    'nextstep'          => $nextstep['id'],
 	    'prevstep'          => $prevstep['id'],
@@ -331,7 +329,7 @@ function show_step_precheck() {
 	if ( ! $inst_is_writable ) {
 	    $ok = false;
 	};
-	$dirs[] = array( 'name' => $lang->translate('CMS installation directory') . ' (' . $install_dir . ')', 'ok' => $inst_is_writable );
+	$dirs[] = array( 'name' => $lang->translate('CMS installation directory') . ' (<tt>' . $install_dir . '</tt>)', 'ok' => $inst_is_writable );
 
 	$output = $parser->get(
 		'fperms.lte',
@@ -746,7 +744,7 @@ function fill_tables($database) {
 		." ('enable_old_language_definitions','true'"
 		. ")";
 		
-    $logh = fopen( LOGFILE, 'a' );
+    $logh = fopen( CAT_LOGFILE, 'a' );
 		
 	$database->query($settings_rows);
 	if ( $database->is_error() ) {
@@ -897,7 +895,7 @@ function install_modules ($cat_path) {
 		'edit_module_files.php'
 	);
 
-	$logh = fopen( LOGFILE, 'a' );
+	$logh = fopen( CAT_LOGFILE, 'a' );
 
 	foreach($dirs AS $type => $dir) {
 		if(false !== ($handle = opendir($dir))) {
@@ -1244,7 +1242,7 @@ function __do_install() {
 	foreach( $config as $key => $value ) {
 		if ( ! defined( strtoupper($key) ) )
 		{
-			define( str_replace( 'DATABASE_', 'DB_', strtoupper($key) ),$value);
+			define( str_replace( 'DATABASE_', 'CAT_DB_', strtoupper($key) ),$value);
 		}
 	}
     if ( ! defined('CAT_TABLE_PREFIX') )   { define('CAT_TABLE_PREFIX',TABLE_PREFIX);              }
@@ -1260,7 +1258,7 @@ function __do_install() {
 	$database = new database();
 
 	// remove old inst.log
-	@unlink( LOGFILE );
+	@unlink( CAT_LOGFILE );
 
 	// ---- install tables -----
 	if ( $install_tables ) {

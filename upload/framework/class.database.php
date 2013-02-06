@@ -140,7 +140,7 @@ class database {
 			$this->set_db_handle($db_handle);
 			if (!mysql_select_db(CAT_DB_NAME, $this->get_db_handle())) {
 				// error, can't select the Lepton DB
-				$this->set_error(sprintf("[MySQL Error] Retrieved a valid handle (<b>%s</b>) but can't select the Lepton database (<b>%s</b>)!", $this->get_db_handle(), CAT_DB_NAME));
+				$this->set_error(sprintf("[MySQL Error] Retrieved a valid handle (<b>%s</b>) but can't select the database (<b>%s</b>)!", $this->get_db_handle(), CAT_DB_NAME));
 				trigger_error($this->get_error(), E_USER_ERROR);
 			}
 			else {
@@ -247,38 +247,6 @@ class database {
 		}	
 		return null;
 	} // get_one()
-	
-	/**
-	 * Read GUID from database
-	 * Don't use the LEPTON_GUID because GUID may change while runtime!
-	 * @return STR GUID
-	 */
-	private function getLeptonGUID() {
-		if (defined("LEPTON_INSTALL")) return "E610A7F2-5E4A-4571-9391-C947152FDFB0";
-		$this->override_session_check = true;
-		$SQL = sprintf("SELECT value FROM %ssettings WHERE name='lepton_guid'", CAT_TABLE_PREFIX);
-		$result = $this->get_one($SQL);
-		$this->override_session_check = false;
-		return $result;
-	} // getLeptonGUID()
-	
-	/**
-	 * Check the Lepton GUID
-	 * 
-	 * The Lepton GUID is splitted in two parts: the primary GUID which identify _this_
-	 * installation and is unique in all Lepton installations worldwide and the second
-	 * part of the GUID string (the last 12 digits) which contains informations about the
-	 * installation, i.e. if the installation is registered. 
-	 * @return BOOL
-	 */
-	private function __checkGUID() {
-		$lepton_guid = $this->getLeptonGUID();
-		if ((strlen($lepton_guid) < 37) || (substr_count($lepton_guid, '-') !== 4)) {
-			// invalid GUID - create a new one!
-			return false;
-		}
-		return true;
-	} // __checkGUID()
 	
 	private function __initSession() {
 		if (defined('SESSION_STARTED') && !isset($_SESSION['LEPTON_SESSION'])) {

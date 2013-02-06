@@ -38,6 +38,8 @@ $LANG = array(
 		=> 'Dieser Wizard hilft Ihnen bei der Installation und Konfiguration von Black Cat CMS auf Ihrem Server. Bitte lesen Sie zunächst untenstehende Lizenzinformationen.',
     'License Agreement' => 'Lizenzvereinbarung',
 // ----- Precheck page -----
+    'CMS root directory' => 'CMS Basisverzeichnis',
+    'CMS installation directory' => 'CMS Installationsverzeichnis',
     'Pre installation checks' => 'Prüfungen vor Installation',
     'Requirement' => 'Anforderung',
     'Required' => 'Erwartet',
@@ -130,7 +132,7 @@ $LANG = array(
 	'Next' => 'Weiter',
 // ----- field names to strings -----
     'operating_system' => 'Betriebssystem',
-	'lepton_url' => 'Black Cat CMS URL',
+	'cat_url' => 'Black Cat CMS URL',
 	'default_timezone_string' => 'Standard Zeitzone',
 	'default_language' => 'Standardsprache',
 	'database_host' => 'Datenbank Servername',
