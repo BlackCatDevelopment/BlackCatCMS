@@ -68,6 +68,10 @@ $LANG = array(
         => 'Um <span class="icon-logo">Black Cat CMS</span> zu verwenden, bitte JavaScript im Browser aktivieren und nochmal versuchen.',
     'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.'
         => 'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.',
+    // ----- backend preferences -----
+    'New password' => 'Neues Kennwort',
+    'Re-Type new password' => 'Neues Kennwort wiederholen',
+    'Confirm with current password' => 'Mit aktuellem Kennwort bestätigen',
     // ----- common -----
     'Notification' => 'Hinweis',
     'Options' => 'Optionen',
@@ -437,11 +441,9 @@ $TEXT = array(
 	'MULTIPLE_MENUS' 		=> 'Mehrere Men&uuml;s',
 	'MULTISELECT' 			=> 'Mehrfachauswahl',
 	'NAME' 					=> 'Name',
-	'NEED_CURRENT_PASSWORD' => 'mit aktuellem Passwort best&auml;tigen',
 	'NEED_PASSWORD_TO_CONFIRM' => 'Bitte die &Auml;nderungen mit aktuellem Passwort best&auml;tigen',
 	'NEED_TO_LOGIN' 		=> 'M&uuml;ssen Sie sich einloggen?',
 	'NEW_FOLDER' 			=> 'Neuer Ordner',
-	'NEW_PASSWORD' 			=> 'Neues Passwort',
 	'NEW_USER_HINT'			=> 'Mindestl&auml;nge Benutzername: %d Buchstaben, Mindestl&auml;nge Passwort: %d Buchstaben!',
 	'NEW_WINDOW' 			=> 'Neues Fenster',
 	'NEXT' 					=> 'n&auml;chste',
@@ -514,7 +516,6 @@ $TEXT = array(
 	'RESULTS_FOR' 			=> 'Ergebnisse f&uuml;r',
 	'RESULTS_HEADER' 		=> 'Ergebnisse &Uuml;berschrift',
 	'RESULTS_LOOP' 			=> 'Ergebnisse Schleife',
-	'RETYPE_NEW_PASSWORD' 	=> 'Neues Passwort wiederholen',
 	'RETYPE_PASSWORD' 		=> 'Geben Sie bitte Ihr Passwort nochmal ein',
 	'SAME_WINDOW' 			=> 'Gleiches Fenster',
 	'SAVE' 					=> 'Speichern',

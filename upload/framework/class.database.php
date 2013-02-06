@@ -251,7 +251,6 @@ class database {
 	private function __initSession() {
 		if (defined('SESSION_STARTED') && !isset($_SESSION['LEPTON_SESSION'])) {
 			// $_SESSION for class.database.php
-			$this->__checkGUID();
 			$_SESSION['LEPTON_SESSION'] = true;
 		}
 	} // __initSession()
