@@ -1,34 +1,94 @@
-LEPTON CMS Installation Instructions
-============================================
+Black Cat CMS Installation
+==========================
 
-First of all, you must have a webserver/webspace with following requirements:
+# Technical requirements
 
-    * Minimum of 20 MB webspace (extended installations need more)
-    * PHP 5.2. or higher
-    * MySQL 5.0 or higher
-    * PHP Safe Mode = off
-    * Activated PHP Session Support
+* Minimum of 20 MB webspace (extended installations need more)
+* PHP 5.3.x or higher
+* MySQL 5.0 or higher
+* Working PHP sessions
+* Safe mode turned OFF
+* For the Backend: A session, cookies and Javascript enabled admin browser
 
-PHP and MySQL installed correctly. 
-Once you have got that, place the "upload" folder somewhere on 
-your server, probably under the document root:
-e.g. /documentroot/upload
+Black Cat CMS should work on any operating system and is tested with Apache 2.x
+webserver only. It may work on other webserver types, too, but we do not support
+this.
 
-This should be accessed by an address something like this:
-e.g. http://your_domain.tld/upload/
+Storage space required is very dependent upon the modules, files (including
+images and template graphics), and data you add to your site.
 
-If you want no "upload" directory please upload all files and folders directly to your root.
 
-Now create a blank MySQL database, commonly called "lepton".
-Please use collation "utf8_unicode_ci" if possible.
+# Upload files
 
-Once that is all done simple run the
-install script from your browser:
-e.g. http://your_domain.tld/upload/install 
-or 
-http://your_domain.tld/install 
-if you don't want "upload" directory.
+First, make sure that you have downloaded the latest stable release from
+http://blackcat-cms.org
 
-Fill in the form, submit and if all details are correct, you should be taken to LEPTON Login Page.
+Unzip/untar the ZIP file with an Unzip software of your choice (for example,
+7Zip for Windows users) to a directory somewhere on your computer and remember
+where you saved it. You will get the following directory structure:
 
-Have fun!
+    /upload  (folder)
+    /INSTALL (this file)
+    /LICENSE
+    /COPYING
+
+Black Cat CMS may be installed directly into the www-root of your webspace, or
+create a subdirectory called whatever you choose. For the purposes of this
+tutorial, create a new sub-directory, for example, 'blackcatcms'.
+
+With your FTP program, upload all files located in the `upload` folder into the
+directory you chose to use in the previous step. You may upload the folder
+itself, too, but that is not necessary and may result in an URL like
+http://www.yourdomain.com/upload
+
+
+# Create database
+
+If possible, create an empty database. Depending on your host you may use a
+program like PHPMyAdmin, or your hosts control panel.
+
+You may use an existing database if you're not able (or don't wish to) create
+a new, empty one. Black Cat CMS uses a custom table name prefix ('cat_' by
+default) to separate it's tables from existing ones. Just make sure that you
+don't have any existing tables with the same prefix. You can change the default
+prefix in the installation process.
+
+You need to have your database credentials ready for the next step.
+
+
+# Installation Wizard
+
+After the upload finished and the database is in place, go to your website
+(type your domain name into your web browser). You should now see the Black
+Cat CMS Installation Wizard page, which will guide you through the installation
+process.
+
+## Step 0 - Welcome page
+
+## Step 1 - Pre installation checks
+
+The Installation Wizard will now check if all prerequisites are met. If you see
+any red crosses, you will have to fix this first before you can proceed.
+
+## Step 2 - Global settings
+
+Allows to set default language and timezone. In most cases, you will just
+accept the defaults the installer suggests.
+
+## Step 3 - Database settings
+
+In this screen, you will have to put the database connection details, like
+database host name, user name, and password.
+
+## Step 4 - Site settings
+
+Set your site name, admin name and password. You can change these settings later
+if you wish.
+
+## Step 5 - Postcheck
+
+Before the actual installation starts, review the settings you made in the
+previous steps. You can go back to every single step to make corrections if you
+need to.
+
+## Step 6 - Finished!
