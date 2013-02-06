@@ -111,11 +111,6 @@ $get_template		= $database->query("SELECT `template` from `" . CAT_TABLE_PREFIX 
 $template_row		= $get_template->fetchRow( MYSQL_ASSOC );
 $current_template	= ( $template_row['template'] != '' ) ? $template_row['template'] : DEFAULT_TEMPLATE;
 
-// ----- TO BE REPLACED -----
-require_once(CAT_PATH . '/framework/class.pages.php');
-$pages = new pages();
-// ----- TO BE REPLACED -----
-
 require CAT_PATH . '/framework/CAT/Pages.php';
 $pg = new CAT_Pages();
 
