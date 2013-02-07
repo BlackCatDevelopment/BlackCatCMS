@@ -32,10 +32,33 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	{
 	
 	    protected $recurse = true;
+        protected $max_recursion_depth = 100;
 	    protected $prefix  = NULL;
 	    protected $suffix_filter = array();
 	    protected $skip_dirs     = array();
         protected $skip_files    = array();
+        protected $current_depth       = 0;
+	    
+        /**
+         *
+         *
+         *
+         *
+         **/
+        public function findFile( $file, $dir )
+        {
+            $list = $this->scanDirectory( $dir, true, true );
+            // sort list
+            sort($list);
+            foreach($list as $entry)
+            {
+                if( preg_match( "~^$file$~i", pathinfo($entry,PATHINFO_BASENAME) ) )
+                {
+                    return $entry;
+                }
+            }
+            return false;
+        }
 	    
 	    /**
 	     * shortcut method for scanDirectory( $dir, $remove_prefix, true, true )
@@ -171,6 +194,8 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			    $remove_prefix = $this->prefix;
 			}
 
+            if ( $this->current_depth > $this->max_recursion_depth ) { return array(); }
+
 			if (false !== ($dh = opendir( $dir ))) {
                 while( false !== ($file = readdir($dh))) {
                     if ( ! preg_match( '#^\.#', $file ) ) {
@@ -189,8 +214,10 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                             if ( $this->recurse )
                             {
                             	// recurse
+                                $this->current_depth++;
                             	$subdirs = $this->scanDirectory( $dir.'/'.$file, $with_files, $files_only, $remove_prefix, $suffixes, $skip_dirs );
                             	$dirs    = array_merge( $dirs, $subdirs );
+                                $this->current_depth--;
 							}
                         }
                         elseif ( $with_files ) {
@@ -231,6 +258,18 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		    if ( is_bool($bool) )
 		    {
 		        $this->recurse = $bool;
+			}
+            return $this;
+		}   // end function setRecursion()
+
+        /**
+         *
+         **/
+		public function maxRecursionDepth( $number )
+		{
+		    if ( is_numeric($number) )
+		    {
+		        $this->max_recursion_depth = $number;
 			}
             return $this;
 		}   // end function setRecursion()

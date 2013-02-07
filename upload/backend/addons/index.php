@@ -181,9 +181,6 @@ if ($result->numRows() > 0)
 	}
 }
 
-require_once(CAT_PATH . '/framework/class.pages.php');
-$pages = new pages();
-
 $data_dwoo['groups']				= $admin->users->get_groups('' , '', false);
 
 // Insert modules which includes a install.php file to install list

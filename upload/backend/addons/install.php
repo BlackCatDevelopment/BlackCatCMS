@@ -1,17 +1,27 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
@@ -55,9 +65,8 @@ if ( !(is_writable( CAT_PATH .  '/modules/') && is_writable( CAT_PATH . '/templa
 
 // Set temp vars
 $temp_dir		= CAT_PATH . '/temp/';
-$temp_file		= $temp_dir . $_FILES['userfile']['name'];
-$temp_unzip		= CAT_PATH . '/temp/unzip ' . basename($_FILES['userfile']['tmp_name']) . '/';
-
+$temp_unzip	  = CAT_PATH . '/temp/unzip_' . basename($_FILES['userfile']['tmp_name']) . '/';
+$temp_file	  = $temp_unzip . $_FILES['userfile']['name'];
 $addon_helper		= $admin->get_helper('Addons');
 
 // make sure the temp directory exists, is writable and is empty
@@ -83,17 +92,32 @@ else if ( $extension == 'zip' ) {
 	$admin->get_helper('Directory')->createDirectory( $temp_subdir );
 
 	// Setup the PclZip object and unzip the files to the temp unzip folder
-	$list	= $admin->get_helper( 'Zip', $temp_file )->config( 'Path', sanitize_path( $temp_subdir ) )->extract( PCLZIP_OPT_PATH, $temp_file );
-
-	if ( !( $list && file_exists( $temp_subdir . 'index.php' ) ) )
+	$list	= $admin->get_helper( 'Zip', $temp_file )->config( 'Path', sanitize_path( $temp_subdir ) )->extract();
+    // check if anything was extracted
+    if ( ! $list )
+    {
+		CLEANUP();
+		$admin->print_error( 'Unable to extract the file. Please check the ZIP format.' );
+    }
+    // check for info.php
+	if ( ! file_exists( $temp_subdir . '/info.php' ) )
+	{
+        // check subfolders for info.php
+        $info = $admin->get_helper('Directory')->maxRecursionDepth(2)->findFile('info.php',$temp_subdir);
+        if ( ! $info )
 	{
 		CLEANUP();
-		$admin->print_error( 'Invalid installation file. Please check the *.zip format.' );
+	        $admin->print_error( 'Invalid installation file. No info.php found. Please check the ZIP format.' );
+        }
+        else
+        {
+            $temp_subdir = pathinfo($info,PATHINFO_DIRNAME);
+        }
 	}
 }
 else {
 	CLEANUP();
-	$admin->print_error( 'Invalid installation file. Please check the *.zip format.' );
+	$admin->print_error( 'Invalid installation file. Wrong extension. Please check the ZIP format.' );
 }
 
 // Check the info.php file / language file
@@ -103,7 +127,7 @@ if ( $addon_info = $addon_helper->checkInfo( $temp_subdir ) )
 }
 else {
 	CLEANUP();
-	$admin->print_error( 'Invalid installation file. Please check the *.zip format.' );
+	$admin->print_error( 'Invalid installation file. ' . $addon_helper->getError() );
 }
 
 // So, now we have done all preinstall checks, lets see what to do next

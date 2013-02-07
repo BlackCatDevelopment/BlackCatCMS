@@ -14,6 +14,18 @@
  *
  */
  
+function send_testmail(URL) {
+    if ( typeof jQuery != 'undefined' ) {
+        jQuery.ajax({
+            type: 'POST',
+            url:  URL,
+            success:	function( data, textStatus, jqXHR  ) {
+                jQuery('#testmail_result').html(data).show();
+            }
+        });
+    }
+}
+ 
 function change_wbmailer(type) {
 	if(type == 'smtp') {
 		document.getElementById('row_catmailer_smtp_settings').style.display = '';
@@ -46,47 +58,4 @@ function toggle_catmailer_auth() {
 		document.getElementById('row_catmailer_smtp_username').style.display = 'none';
 		document.getElementById('row_catmailer_smtp_password').style.display = 'none';
 	}
-}
-
-function send_testmail(URL) {
-    var xmlHttp = null;
-    try {
-        // Firefox, Internet Explorer 7. Opera 8.0+, Safari
-        xmlHttp = new XMLHttpRequest();
-    } catch (e) {
-        // Internet Explorer 6.
-        try {
-            xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
-        } catch (e) {
-            try {
-                xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch (e) {
-                alert("Your browser does not support AJAX!");
-                return false;
-            }
-        }
-    }
-
-    xmlHttp.open("POST", URL, true);
-    xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xmlHttp.setRequestHeader("Content-length", 0);
-    xmlHttp.setRequestHeader("Connection", "close");
-
-    xmlHttp.onreadystatechange=function() {
-        if(xmlHttp.readyState==4) {
-            try {
-                // Get the data from the server's response
-                if ( xmlHttp.responseText != "" ) {
-                    document.getElementById("ajax_response").innerHTML=xmlHttp.responseText;
-                    document.getElementById("ajax_response").style.display='block';
-                }
-            }
-            catch (e) {
-                alert("JavaScript error! Maybe your browser does not support AJAX!");
-                return false;
-            }
-            xmlHttp=null;
-        }
-    }
-    xmlHttp.send();
 }

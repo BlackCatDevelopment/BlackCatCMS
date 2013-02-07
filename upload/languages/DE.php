@@ -160,6 +160,24 @@ $LANG = array(
     'Search settings' => 'Sucheinstellungen',
     'Server settings' => 'Servereinstellungen',
     'Mailer settings' => 'Maileinstellungen',
+    // ----- mailer -----
+    'Default From Mail' => 'Standard "VON" Adresse',
+	'Default Sender Name' => 'Standard Absender Name',
+    'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by the CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.'
+        => 'Bitte geben Sie eine Standard "VON" Adresse und einen Sendernamen an. Als Absender Adresse empfiehlt sich ein Format wie: <strong>admin@IhreWebseite.de</strong>. Manche E-Mail Provider (z.B. <em>mail.de</em>) stellen keine E-Mails zu, die nicht &uuml;ber den Provider selbst verschickt wurden, in der Absender Adresse aber den Namen des E-Mail Providers <em>name@mail.de</em> enthalten. Die Standard Werte werden nur verwendet, wenn keine anderen Werte von Black Cat CMS gesetzt wurden. Wenn Ihr Service Provider <acronym title="Simple Mail Transfer Protocol">SMTP</acronym> anbietet, sollten Sie diese Option f&uuml;r ausgehende E-Mails verwenden.',
+    'Mail Routine' => 'E-Mail Routine',
+    '<strong>SMTP Mailer Settings:</strong><br />The settings below are only required if you want to send mails via <acronym title="Simple mail transfer protocol">SMTP</acronym>. If you do not know your SMTP host or you are not sure about the required settings, simply stay with the default mail routine: PHP MAIL.'
+        => '<strong>SMTP Maileinstellungen:</strong><br />Die nachfolgenden Einstellungen m&uuml;ssen nur angepasst werden, wenn Sie E-Mail &uuml;ber <acronym title="Simple Mail Transfer Protocol">SMTP</acronym> verschicken wollen. Wenn Sie Ihren SMTP Server nicht kennen, oder Sie sich unsicher bei den Einstellungen sind, verwenden Sie einfach die Standard E-Mail Routine: PHP MAIL.',
+    'PHP MAIL' => 'PHP MAIL',
+    'Send test eMail' => 'Testmail verschicken',
+    'SMTP Authentification' => 'SMTP Authentifikation',
+    'only activate if your SMTP host requires authentification' => 'nur aktivieren, wenn SMTP Authentifikation ben&ouml;tigt wird',
+	'SMTP Password' => 'SMTP Passwort',
+	'SMTP Username' => 'SMTP Benutzername',
+    'The test eMail could not be sent! Please check your settings!' => 'Das Versenden der Testmail ist fehlgeschlagen! Bitte die Einstellungen pr&uuml;fen!',
+	'The test eMail was sent successfully. Please check your inbox.' => 'Die Testmail wurde erfolgreich verschickt.',
+    'This is the required test mail: CAT mailer is working' => 'Dies ist die angeforderte Testmail: Die Maileinstellungen funktionieren',
+
     // ----- preferences -----
     'Timezone' => 'Zeitzone',
     'Date format' => 'Datumsformat',
@@ -226,9 +244,26 @@ $LANG = array(
     'Allowed wrong login attempts' => 'Maximale fehlerhafte Anmeldeversuche',
     'When reaching this number, more login attempts are not possible for this session.'
         => 'Nach Erreichen dieser Anzahl sind keine weiteren Anmeldeversuche mehr möglich.',
-    // ----- addons -----
-    'Already installed' => 'Bereits installiert',
+    // ----- addons - install.php -----
+    'Unable to extract the file. Please check the ZIP format.'
+        => 'Kann die Datei nicht entpacken. Bitte das ZIP Format prüfen.',
+    'Invalid installation file. No info.php found. Please check the ZIP format.'
+        => 'Ungültige Installationsdatei. Keine info.php gefunden. Bitte das ZIP Format prüfen.',
+    'Invalid installation file. Wrong extension. Please check the ZIP format.'
+        => 'Ungültige Installationsdatei. Falsche Dateiendung. Bitte das ZIP Format prüfen.',
     'Unable to install - error copying files' => 'Installation nicht möglich - Fehler beim Kopieren der Dateien',
+    'Upgraded successfully' => 'Erfolgreich aktualisiert',
+    'Installed successfully' => 'Erfolgreich installiert',
+    'Install/Upgrade of add-on failed' => 'Installation/Update fehlgeschlagen',
+    // ----- addons - CAT_Helper_Addons -----
+    'Invalid info.php - neither $module_function nor $template_function set'
+        => 'Ungültige info.php - weder $module_function noch $template_function gefunden',
+    'Invalid language file - missing PHP delimiter'
+        => 'Ungültige Sprachdatei - PHP Dings fehlt',
+    'invalid directory/language file or info.php is missing, check of language file failed'
+        => 'Ungültiges Verzeichnis, ungültige Sprachdatei, oder info.php fehlt.',
+
+    'Already installed' => 'Bereits installiert',
     'Add-On requirements not met' => 'Add-On Voraussetzungen nicht erf&uuml;llt',
     'Invalid installation file. Please check the *.zip format.' => 'Ung&uuml;ltige Installationsdatei. Bitte *.zip Format pr&uuml;fen.',
     'Install addon' => 'Erweiterung installieren',
@@ -236,9 +271,7 @@ $LANG = array(
     'Invalid info.php - var module_function or var template_function not set'
         => 'Ungültige info.php - Variable module_function oder Variable template_function nicht gesetzt',
     'Invalid language file - missing PHP delimiter' => 'Ungültige Sprachdatei - PHP Delimiter fehlt',
-    'Installed successfully' => 'Erfolgreich installiert',
     'Uninstalled successfully' => 'Erfolgreich deinstalliert',
-    'Upgraded successfully' => 'Erfolgreich aktualisiert',
 );
 
 
@@ -604,22 +637,6 @@ $TEXT = array(
 	'VIEW_DELETED_PAGES' 	=> 'gel&ouml;schte Seiten anschauen',
 	'VIEW_DETAILS' 			=> 'Details',
 	'VISIBILITY' 			=> 'Sichtbarkeit',
-	'WBMAILER_DEFAULT_SENDER_MAIL' => 'Standard "VON" Adresse',
-	'WBMAILER_DEFAULT_SENDER_NAME' => 'Standard Absender Name',
-	'WBMAILER_DEFAULT_SETTINGS_NOTICE' => 'Bitte geben Sie eine Standard "VON" Adresse und einen Sendernamen an. Als Absender Adresse empfiehlt sich ein Format wie: <strong>admin@IhreWebseite.de</strong>. Manche E-Mail Provider (z.B. <em>mail.de</em>) stellen keine E-Mails zu, die nicht &uuml;ber den Provider selbst verschickt wurden, in der Absender Adresse aber den Namen des E-Mail Providers <em>name@mail.de</em> enthalten. Die Standard Werte werden nur verwendet, wenn keine anderen Werte von Black Cat CMS gesetzt wurden. Wenn Ihr Service Provider <acronym title="Simple Mail Transfer Protocol">SMTP</acronym> anbietet, sollten Sie diese Option f&uuml;r ausgehende E-Mails verwenden.',
-	'WBMAILER_FUNCTION' 	=> 'E-Mail Routine',
-	'WBMAILER_NOTICE' 		=> '<strong>SMTP Maileinstellungen:</strong><br />Die nachfolgenden Einstellungen m&uuml;ssen nur angepasst werden, wenn Sie E-Mail &uuml;ber <acronym title="Simple Mail Transfer Protocol">SMTP</acronym> verschicken wollen. Wenn Sie Ihren SMTP Server nicht kennen, oder Sie sich unsicher bei den Einstellungen sind, verwenden Sie einfach die Standard E-Mail Routine: PHP MAIL.',
-	'WBMAILER_PHP' 			=> 'PHP MAIL',
-  'WBMAILER_SEND_TESTMAIL' => 'Testmail verschicken',
-	'WBMAILER_SMTP' 		=> 'SMTP',
-	'WBMAILER_SMTP_AUTH' 	=> 'SMTP Authentifikation',
-	'WBMAILER_SMTP_AUTH_NOTICE' => 'nur aktivieren, wenn SMTP Authentifikation ben&ouml;tigt wird',
-	'WBMAILER_SMTP_HOST' 	=> 'SMTP Host',
-	'WBMAILER_SMTP_PASSWORD' => 'SMTP Passwort',
-	'WBMAILER_SMTP_USERNAME' => 'SMTP Benutzername',
-  'WBMAILER_TESTMAIL_FAILED' => 'Das Versenden der Testmail ist fehlgeschlagen! Bitte die Einstellungen pr&uuml;fen!',
-	'WBMAILER_TESTMAIL_SUCCESS' => 'Die Testmail wurde erfolgreich verschickt.',
-  'WBMAILER_TESTMAIL_TEXT' => 'Dies ist die angeforderte Testmail: Die Maileinstellungen funktionieren',
 	'WEBSITE' 				=> 'Webseite',
 	'WEBSITE_FOOTER' 		=> 'Fu&szlig;zeile',
 	'WEBSITE_HEADER' 		=> 'Kopfzeile',

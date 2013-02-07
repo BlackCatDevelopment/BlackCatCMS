@@ -37,6 +37,74 @@ if (!class_exists('CAT_Helper_Addons'))
         private static $dirh;
         private        $error = NULL;
         private static $instance = NULL;
+        private static $info_vars_full = array(
+            'module' => array(
+                'module_license',
+                'module_author',
+                'module_name',
+                'module_directory',
+                'module_version',
+                'module_function',
+                'module_description',
+                'module_platform',
+                'module_guid'
+            ),
+            'template' => array(
+                'template_license',
+                'template_author',
+                'template_name',
+                'template_directory',
+                'template_version',
+                'template_function',
+                'template_description',
+                'template_platform',
+                'template_guid'
+                //'theme_directory'
+            ),
+            'language' => array(
+                'language_license',
+                'language_code',
+                'language_name',
+                'language_version',
+                'language_platform',
+                'language_author',
+                'language_guid'
+            )
+        );
+        private static $info_vars_mandatory = array(
+            'module' => array(
+                'module_author',
+                'module_name',
+                'module_directory',
+                'module_version',
+                'module_function',
+            ),
+            'template' => array(
+                'template_author',
+                'template_name',
+                'template_directory',
+                'template_version',
+                'template_function',
+            ),
+            'language' => array(
+                'language_code',
+                'language_name',
+                'language_version',
+                'language_author',
+            )
+        );
+        private static $module_functions   = array(
+            'page',
+            'library',
+            'tool',
+            'snippet',
+            'wysiwyg',
+            'widget'
+        );
+        private static $template_functions = array(
+            'template',   // frontend
+            'theme'       // backend
+        );
 
         public function __construct()
         {
@@ -1016,64 +1084,18 @@ if (!class_exists('CAT_Helper_Addons'))
          **/
         public function checkInfo($directory)
         {
-            $varnames = array(
-                'module' => array(
-                    'module_license',
-                    'module_author',
-                    'module_name',
-                    'module_directory',
-                    'module_version',
-                    'module_function',
-                    'module_description',
-                    'module_platform',
-                    'module_guid'
-                ),
-                'template' => array(
-                    'template_license',
-                    'template_author',
-                    'template_name',
-                    'template_directory',
-                    'template_version',
-                    'template_function',
-                    'template_description',
-                    'template_platform',
-                    'template_guid'
-                    //'theme_directory'
-                ),
-                'language' => array(
-                    'language_license',
-                    'language_code',
-                    'language_name',
-                    'language_version',
-                    'language_platform',
-                    'language_author',
-                    'language_guid'
-                )
-            );
             if (is_dir($directory) && file_exists($directory . '/info.php'))
             {
-                $module_functions   = array(
-                    'page',
-                    'library',
-                    'tool',
-                    'snippet',
-                    'wysiwyg',
-                    'widget'
-                );
-                $template_functions = array(
-                    'template',   // frontend
-                    'theme'       // backend
-                );
 
                 require($directory . '/info.php');
 
-                if (isset($module_function) && in_array(strtolower($module_function), $module_functions))
+                if (isset($module_function) && in_array(strtolower($module_function), self::$module_functions))
                 {
                     $return_values = array(
                         'addon_function' => 'module'
                     );
                 }
-                else if (isset($template_function) && in_array(strtolower($template_function), $template_functions))
+                else if (isset($template_function) && in_array(strtolower($template_function), self::$template_functions))
                 {
                     $return_values = array(
                         'addon_function' => 'template'
@@ -1081,16 +1103,16 @@ if (!class_exists('CAT_Helper_Addons'))
                 }
                 else
                 {
-                    $this->error = 'Invalid info.php - var module_function or var template_function not set';
+                    $this->error = 'Invalid info.php - neither $module_function nor $template_function set';
                     $this->log()->logDebug($this->error);
                     return false;
                 }
                 // Check if the file is valid
-                foreach ($varnames[$return_values['addon_function']] as $varname)
+                foreach (self::$info_vars_mandatory[$return_values['addon_function']] as $varname)
                 {
                     if (!isset(${$varname}))
                     {
-                        $this->error = 'Invalid info.php - var ' . $varname . ' not set';
+                        $this->error = 'Invalid info.php - mandatory var ' . $varname . ' not set';
                         $this->log()->logDebug($this->error);
                         return false;
                     }
@@ -1117,7 +1139,7 @@ if (!class_exists('CAT_Helper_Addons'))
                 );
                 require($directory);
 
-                foreach ($varnames['language'] as $varname)
+                foreach (self::$info_vars_mandatory['language'] as $varname)
                 {
                     if (!isset(${$varname}))
                     {
@@ -1142,7 +1164,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
         public function getError()
         {
-            return $this->lang->translate($this->error);
+            return $this->lang()->translate($this->error);
         }
 
     } // class CAT_Helper_Addons

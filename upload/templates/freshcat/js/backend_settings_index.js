@@ -21,7 +21,6 @@
   *
  */
 
-
 function send_testmail(URL) {
     if ( typeof jQuery != 'undefined' ) {
         jQuery.ajax({

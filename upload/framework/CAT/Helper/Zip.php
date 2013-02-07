@@ -36,188 +36,67 @@ if ( ! class_exists( 'CAT_Helper_Zip', false ) )
 	class CAT_Helper_Zip extends CAT_Object
 	{
 	
-	    // holds the PclZip object
-	    private   $zip;
-	    // holds the Directory helper object
-	    private   $dirh;
-	    //
-	    protected $_config = array(
-	        // ----- PclZip create options: -----
-	        // PCLZIP_OPT_ADD_PATH, "/abs/path/to"
-			// ability to insert a path
-			// do not use by default
-			'addPath' => false,
-	        // PCLZIP_OPT_REMOVE_PATH, "/usr/local/user"
-	        // removes path parts from files
-	        // by default, we remove CAT_PATH
-	        'removePath' => CAT_PATH,
-	        // PCLZIP_OPT_REMOVE_ALL_PATH
-	        // removes complete path info from all files
-	        // do not use by default
-	        'removeAllPath' => false,
-	        // PCLZIP_OPT_COMMENT, "Comment"
-	        // set a comment in the PKZIP archive
-	        // not used by default
-	        'setComment' => false,
-	        // ----- PclZip extract options: -----
-	        // PCLZIP_OPT_PATH, "extract/folder/"
-	        // we set this to our temp dir by default
-	        //'Path' => CAT_PATH.'/temp',
-	        // other:
-  			//   PCLZIP_OPT_ADD_PATH
-  			//   PCLZIP_OPT_REMOVE_PATH
-  			//   PCLZIP_OPT_REMOVE_ALL_PATH
-  			// see above
-	    );
+        private static $_drivers = array();
+        private static $instance;
+        private static $zip;
 	    
 	    /**
-	     * constructor; creates an internal PclZip object
+	     * constructor
 	     **/
 		public function __construct( $zipfile = NULL ) {
-		    $this->dirh = new CAT_Helper_Directory();
-			if ( ! class_exists( 'PclZip', false ) ) {
-			    define( 'PCLZIP_TEMPORARY_DIR', $this->dirh->sanitizePath( CAT_PATH.'/temp' ) );
-				@include $this->dirh->sanitizePath( CAT_PATH.'/modules/lib_pclzip/pclzip.lib.php' );
-			}
-			$this->config( 'Path', $this->dirh->sanitizePath( CAT_PATH.'/temp' ) );
-		    $this->zip = new PclZip($zipfile);
-		    return $this->zip;
+            // get driver
+            self::$zip = self::getDriver('PclZip',$zipfile);
+            return self::$zip;
 		}   // end function __construct()
 
-        public function add($p_filelist)
-        {
-            // generate function call
-			$ret     = NULL;
-
-			if ( is_scalar($p_filelist) )
-			{
-			    $p_filelist = $this->dirh->sanitizePath($p_filelist);
-			}
-
-			$code = '$ret = $this->zip->add( $p_filelist'
-			   . $this->compile_options()
-			   . ' );';
-
-			eval ( $code );
-			return $ret;
-        }
-		
 		/**
-		 * accessor to create() method; only argument is the file list (or a
-		 * directory to archive)
-		 * All PclZip options have to be set using $zip_helper->config()!
 		 *
-		 * @access public
-		 * @param  mixed  $p_filelist
-		 *                An array of filenames or dirnames,
-		 *					or
-		 *				  A string containing the a filename or a dirname,
-		 *					or
-		 *				  A string containing a list of filename or dirname
-		 *				  separated by a comma.
+         *
+         *
 		 *
 		 **/
-		public function create($p_filelist)
+        public static function getInstance( $zipfile )
 		{
-		    // generate function call
-			$ret     = NULL;
-
-			if ( is_scalar($p_filelist) )
+            if ( ! is_object(self::$instance) )
 			{
-			    $p_filelist = $this->dirh->sanitizePath($p_filelist);
+                self::$instance = new self($zipfile);
 			}
-			
-			$code = '$ret = $this->zip->create( $p_filelist'
-			   . $this->compile_options()
-			   . ' );';
-
-			eval ( $code );
-			return $ret;
-			
-		}   // end function create()
+            return self::$instance;
+        }   // end function getInstance()
 		
 		/**
-		 * accessor to extract() method
-		 * All PclZip options have to be set using $zip_helper->config()!
-		 *
-		 * @access public
+         * try to load the driver
 		 * 
+         * @access private
+         * @param  string  $driver  - driver name
+         * @param  string  $zipfile - optional zip file name
+         * @return object
 		 **/
-		public function extract()
+        private static function getDriver($driver,$zipfile=NULL)
 		{
-		
-		    // generate function call
-			$options = array( 'PCLZIP_OPT_PATH, "'.$this->dirh->sanitizePath($this->_config['Path']).'"' );
-			$ret     = NULL;
+            if ( ! preg_match('/driver$/i',$driver) )
+			{
+                $driver .= 'Driver';
+			}
+            if ( ! isset(self::$_drivers[$driver]) || ! is_object(self::$_drivers[$driver]) )
+			{
+                if ( ! file_exists( dirname(__FILE__).'/Zip/'.$driver.'.php' ) )
+			{
+                    CAT_Object::getInstance()->printFatalError( 'No such Zip driver: ['.$driver.']' );
+			}
+                require dirname(__FILE__).'/Zip/'.$driver.'.php';
+                $driver = 'CAT_Helper_Zip_'.$driver;
+                self::$_drivers[$driver] = $driver::getInstance($zipfile);
+            }
+            return self::$_drivers[$driver];
+        }   // end function getDriver()
 
-			if ( isset($this->_config['addPath']) && $this->_config['addPath'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_ADD_PATH, "'.$this->dirh->sanitizePath($this->_config['addPath']).'"';
-			}
-			if ( isset($this->_config['removePath']) && $this->_config['removePath'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_REMOVE_PATH, "'.$this->dirh->sanitizePath($this->_config['removePath']).'"';
-			}
-			if ( isset($this->_config['removeAllPath']) && $this->_config['removeAllPath'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_REMOVE_ALL_PATH';
-			}
+        public function config($option,$value) { return self::$zip->config($option,$value); }
+        public function add($p_filelist)    { return self::$zip->add($p_filelist);    }
+        public function create($p_filelist) { return self::$zip->create($p_filelist); }
+        public function extract()           { return self::$zip->extract();           }
+        public function errorInfo()         { return self::$zip->errorInfo();         }
 			
-			$code = '$ret = $this->zip->extract( '
-			   . (
-			   		( is_array($options) && count($options) )
-				  ? implode( ', ', $options )
-				  : ''
-				 )
-			   . ' );';
+    }   // end class Cat_Helper_Zip
 
-			eval ( $code );
-			return $ret;
-			
-		}   // end function extract()
-		
-		/**
-		 * accessor to PclZip->listContent()
-		 **/
-		public function listContent()
-  		{
-  		    return $this->zip->listContent();
-  		}   // end function listContent()
-  		
-  		/**
-		 * accessor to PclZip->errorInfo()
-		 **/
-  		public function errorInfo()
-  		{
-  		    return $this->zip->errorInfo();
-  		}
-
-        private function compile_options()
-        {
-            $options = array();
-            if ( isset($this->_config['addPath']) && $this->_config['addPath'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_ADD_PATH, "'.$this->dirh->sanitizePath($this->_config['addPath']).'"';
-			}
-			if ( isset($this->_config['removePath']) && $this->_config['removePath'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_REMOVE_PATH, "'.$this->dirh->sanitizePath($this->_config['removePath']).'"';
-			}
-			if ( isset($this->_config['setComment']) && $this->_config['setComment'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_COMMENT, "'.$this->_config['setComment'] . '"';
-			}
-			if ( isset($this->_config['removeAllPath']) && $this->_config['removeAllPath'] != '' )
-			{
-			    $options[] = 'PCLZIP_OPT_REMOVE_ALL_PATH';
-			}
-            return (
-			      ( is_array($options) && count($options) )
-			    ? ', ' . implode( ', ', $options )
-				: ''
-			 );
-        }
-
-	}   // end class
-
-}   // class_exists()
+}   // end class_exists()
