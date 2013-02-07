@@ -1591,19 +1591,8 @@ if (!class_exists('CAT_Pages', false))
             {
                 foreach ($arr['all'] as $item)
                 {
-                    if (!file_exists(sanitize_path(CAT_PATH . '/modules/lib_jquery/plugins/' . $item)))
-                    {
-                        if (!file_exists(sanitize_path(CAT_PATH . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js')))
-                        {
-                            // error! file not found!
-                            continue;
-                        }
-                        else
-                        {
-                            $item = $item . '/' . $item . '.js';
-                        }
-                    }
-                    $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js') . '"></script>' . "\n";
+                    $resolved = $this->_find_item($item);
+                    $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $resolved ) . '"></script>' . "\n";
                 }
             }
 
@@ -1614,24 +1603,40 @@ if (!class_exists('CAT_Pages', false))
                 {
                     if ($section_name == strtolower($section))
                     {
-                        if (!file_exists(sanitize_path(CAT_PATH . '/modules/lib_jquery/plugins/' . $item)))
-                        {
-                            if (!file_exists(sanitize_path(CAT_PATH . '/modules/lib_jquery/plugins/' . $item . '/' . $item . '.js')))
-                            {
-                                // error! file not found!
-                                continue;
-                            }
-                            else
-                            {
-                                $item = $item . '/' . $item . '.js';
-                            }
-                        }
+                        $resolved = $this->_find_item($item);
                         $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $item) . '"></script>' . "\n";
                     }
                 }
             }
 
         } // end function _analyze_jquery_components()
+        /**
+         * evaluate correct item path
+         **/
+        private function _find_item($item)
+                        {
+            // check suffix
+            if ( pathinfo($item,PATHINFO_EXTENSION) != 'js' )
+                            {
+                $item .= '.js';
+                            }
+            // just there?
+            if (!file_exists(sanitize_path(CAT_PATH.'/modules/lib_jquery/plugins/'.$item)))
+            {
+                $dir = pathinfo($item,PATHINFO_FILENAME);
+                if (file_exists(sanitize_path(CAT_PATH.'/modules/lib_jquery/plugins/'.$dir.'/'.$item)))
+                            {
+                    $item = $dir.'/'.$item;
+                    return $item;
+                            }
+                        }
+            else
+            {
+                return $item;
+                }
+            return NULL;
+            }
+
 
         /**
          *
