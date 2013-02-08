@@ -149,7 +149,7 @@ if(is_array($items) && count($items)) {
 // ===========
 // ! get pages
 // ===========
-$pages_list = $pages->make_list();
+$pages_list = $admin->pg->make_list();
 // skip current page
 $arrh->ArrayRemove( $page_id, $pages_list, 'page_id' );
 // skip already linked pages
