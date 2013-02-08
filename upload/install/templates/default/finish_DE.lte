@@ -5,11 +5,11 @@
 
 <p>Bitte beachten: Durch Klick auf [Login] wird dieser Installer gelöscht!</p>
 
-<form method="get" action="{$lepton_url}/{$backend_path}/start/index.php">
+<form method="get" action="{$cat_url}/{$backend_path}/start/index.php">
   <input type="submit" value="{translate('Login')}" />
 </form>
 
-<p><a href="{$lepton_url}/temp/inst.log" class="fancybox iframe">Möchten Sie ein Installationslog ansehen?</a></p>
+<p><a href="{$cat_url}/temp/inst.log" class="fancybox iframe">Möchten Sie ein Installationslog ansehen?</a></p>
 
 <h2>Wie weiter?</h2>
 

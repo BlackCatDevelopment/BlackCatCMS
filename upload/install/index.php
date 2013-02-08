@@ -608,6 +608,7 @@ function show_step_finish() {
 		$tpl,
 		array(
 			'backend_path'  => 'backend',
+			'cat_url'       => CAT_URL,
 			'installer_uri' => $installer_uri,
 		)
 	);
@@ -979,7 +980,7 @@ function check_tables($database) {
 
 	$table_prefix = $config['table_prefix'];
 
-	$requested_tables = array("class_secure","pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_dropleps_settings","mod_dropleps_permissions","mod_wysiwyg","mod_wysiwyg_admin");
+	$requested_tables = array("class_secure","pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_dropleps_settings","mod_dropleps_permissions","mod_wysiwyg","mod_wysiwyg_admin_v2");
 	for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
 
 	$result = mysql_query("SHOW TABLES FROM ".DB_NAME);
@@ -1198,6 +1199,7 @@ function __do_install() {
 "define('CAT_ADMIN_PATH', CAT_PATH.'/'.CAT_BACKEND_PATH);\n".
 "define('CAT_ADMIN_URL', CAT_URL.'/'.CAT_BACKEND_PATH);\n".
 "\n".
+( (isset($config['no_validate_admin_password']) && $config['no_validate_admin_password'] == "true") ? "define('ALLOW_SHORT_PASSWORDS',true);\n\n" : '' )
 "// WB2/Lepton backward compatibility\n".
 "include_once CAT_PATH.'/framework/wb2compat.php';\n".
 "\n".
