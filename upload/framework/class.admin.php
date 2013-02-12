@@ -410,7 +410,7 @@ class admin extends wb
 				
 				// work out the URL for the 'View menu' link in the WB backend
 				// if the page_id is set, show this page otherwise show the root directory of WB
-				$view_url = LEPTON_URL;
+				$view_url = CAT_URL;
 				if ( isset($_GET['page_id']) )
 				{
 					// extract page link from the database
@@ -474,7 +474,7 @@ class admin extends wb
 					$title = $menu_item[2];
 					$permission_title = $menu_item[3];
 					$required = $menu_item[4];
-					$replace_old = array(CAT_ADMIN_URL, LEPTON_URL, '/', 'index.php');
+					$replace_old = array(CAT_ADMIN_URL, CAT_URL, '/', 'index.php');
 					if($required == false OR $this->get_link_permission($permission_title)) {
 						$header_template->set_var('LINK', $link);
 						$header_template->set_var('TARGET', $target);
@@ -526,7 +526,7 @@ class admin extends wb
 					// ==================== 
 					// ! Add URLs to Dwoo 	
 					// ==================== 
-					$data['LEPTON_URL']			= LEPTON_URL;
+					$data['CAT_URL']			= CAT_URL;
 					$data['CAT_PATH']		= CAT_PATH;
 					$data['CAT_ADMIN_URL']		= CAT_ADMIN_URL;
 					$data['CAT_THEME_URL']		= CAT_THEME_URL;
@@ -593,7 +593,7 @@ class admin extends wb
 				$footer_template->set_file('page', 'footer.htt');
 				$footer_template->set_block('page', 'footer_block', 'header');
 				$footer_template->set_var(array(
-								'LEPTON_URL' => LEPTON_URL,
+								'CAT_URL' => CAT_URL,
 								'CAT_PATH' => CAT_PATH,
 								'CAT_ADMIN_URL' => CAT_ADMIN_URL,
 								'CAT_THEME_URL' => CAT_THEME_URL
@@ -780,7 +780,7 @@ class admin extends wb
 		$html_results = array( "css" => array(), "js" => array() );
 		
 		if (strpos( $_SERVER['REQUEST_URI'],'admins/pages/sections.php') > 0) {
-			$s = LEPTON_URL."/modules/jsadmin/backend.css";
+			$s = CAT_URL."/modules/jsadmin/backend.css";
 			$html .=  "<link href=\"".$s."\" rel=\"stylesheet\" type=\"text/css\" media=\"screen\" />\n";
 			$html .= "<!-- end addons backend files -->\n";
 			return $html;
@@ -796,7 +796,7 @@ class admin extends wb
 			$look_up_where = "`type`='module' AND `function`='tool' AND directory='".$_REQUEST['tool']."'";
 		} else {
 			if (strpos( $_SERVER['REQUEST_URI'],'admins/pages/index.php') > 0) {
-				$s = LEPTON_URL."/modules/jsadmin/backend.css";
+				$s = CAT_URL."/modules/jsadmin/backend.css";
 				$html .=  "<link href=\"".$s."\" rel=\"stylesheet\" type=\"text/css\" media=\"screen\" />\n";
 				$html .= "<!-- end addons backend files -->\n";
 			}
@@ -839,7 +839,7 @@ class admin extends wb
 	
 	private function __admin_build_link( $aPath, $aType="css") {
 		
-		$s = LEPTON_URL.$aPath;
+		$s = CAT_URL.$aPath;
 		
 		switch(strtolower($aType) ) {
 			

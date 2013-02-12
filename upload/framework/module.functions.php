@@ -85,7 +85,7 @@ if (!function_exists('edit_module_css')) {
 		// output the edit CSS submtin button if required
 		if($frontend_css || $backend_css) {
 			?>
-			<form name="edit_module_file" action="<?php echo LEPTON_URL .'/modules/edit_module_files.php?page_id='.$page_id;?>" 
+			<form name="edit_module_file" action="<?php echo CAT_URL .'/modules/edit_module_files.php?page_id='.$page_id;?>" 
 				method="post" style="margin: 0; align:right;">
 				<input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
 				<input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
@@ -116,7 +116,7 @@ if (!function_exists('toggle_css_file')) {
 		$toggle_file = ($base_css_file == 'frontend.css') ? 'backend.css' : 'frontend.css';
 		if(mod_file_exists($mod_dir, $toggle_file)) {
 			?>
-			<form name="toggle_module_file" action="<?php echo LEPTON_URL .'/modules/edit_module_files.php?page_id='.$page_id;?>" method="post" style="margin: 0; align:right;">
+			<form name="toggle_module_file" action="<?php echo CAT_URL .'/modules/edit_module_files.php?page_id='.$page_id;?>" method="post" style="margin: 0; align:right;">
 				<input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
 				<input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
 				<input type="hidden" name="mod_dir" value="<?php echo $mod_dir; ?>" />

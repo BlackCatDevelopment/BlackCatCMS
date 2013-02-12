@@ -99,11 +99,11 @@ class frontend extends wb {
 		// Work-out if login menu constants should be set
 		if(FRONTEND_LOGIN) {
 			// Set login menu constants
-			define('LOGIN_URL', LEPTON_URL.'/account/login.php');
-			define('LOGOUT_URL', LEPTON_URL.'/account/logout.php');
-			define('FORGOT_URL', LEPTON_URL.'/account/forgot.php');
-			define('PREFERENCES_URL', LEPTON_URL.'/account/preferences.php');
-			define('SIGNUP_URL', LEPTON_URL.'/account/signup.php');
+			define('LOGIN_URL', CAT_URL.'/account/login.php');
+			define('LOGOUT_URL', CAT_URL.'/account/logout.php');
+			define('FORGOT_URL', CAT_URL.'/account/forgot.php');
+			define('PREFERENCES_URL', CAT_URL.'/account/preferences.php');
+			define('SIGNUP_URL', CAT_URL.'/account/signup.php');
 		}
 	}
 
@@ -221,7 +221,7 @@ class frontend extends wb {
 				}
 				// Check if link is same as first page link, and if so change to WB URL
 				if($page['link'] == $this->default_link AND !INTRO_PAGE) {
-					$link = LEPTON_URL;
+					$link = CAT_URL;
 				} else {
 					$link = $this->page_link($page['link']);
 				}
@@ -280,7 +280,7 @@ class frontend extends wb {
 				'{TITLE}' => $MESSAGE['GENERIC_WEBSITE_UNDER_CONSTRUCTION'],
 				'{UNDER_CONSTRUCTION}' => $MESSAGE['GENERIC_WEBSITE_UNDER_CONSTRUCTION'],
 				'{PLEASE_CHECK_BACK_SOON}' => $MESSAGE['GENERIC_PLEASE_CHECK_BACK_SOON'],
-				'{CAT_THEME_URL}' => LEPTON_URL."/templates/" . DEFAULT_THEME . "/"
+				'{CAT_THEME_URL}' => CAT_URL."/templates/" . DEFAULT_THEME . "/"
 			);
 			$html = str_replace(array_keys($values),array_values($values), $html);
 		}
@@ -298,7 +298,7 @@ class frontend extends wb {
 	 */
 	private function __wb_build_link( $aPath, $aType="css") {
 		
-		$s = LEPTON_URL.$aPath;
+		$s = CAT_URL.$aPath;
 		
 		switch(strtolower($aType) ) {
 			

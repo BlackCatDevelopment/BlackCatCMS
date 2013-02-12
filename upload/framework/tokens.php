@@ -33,11 +33,11 @@ function addTokens( &$html, &$sf) {
 	$hiddentoken = 'type="hidden" name="ctoken" value="'.$token.'"';	// for GET forms, add a hidden field too
 
 	// finds absolute Links with Parameter:
-	$qs = '^((href|action|window\.location)\s?=\s?[\'"]' . LEPTON_URL . '[\w\-\./]+\.php\?[\w\-\.=&%;/]+)([#[\w]*]?[\'"])^';  
+	$qs = '^((href|action|window\.location)\s?=\s?[\'"]' . CAT_URL . '[\w\-\./]+\.php\?[\w\-\.=&%;/]+)([#[\w]*]?[\'"])^';  
 	$html = preg_replace($qs, $token3, $html, -1); 
 	
 	// finds absolute Links without Parameter:
-	$qs = '^((href|action|ajaxfilemanagerurl|window\.location)\s?=\s?[\'"]' . LEPTON_URL . '[\w\-\./]+\.php)([#[\w]*]?[\'"])^';  
+	$qs = '^((href|action|ajaxfilemanagerurl|window\.location)\s?=\s?[\'"]' . CAT_URL . '[\w\-\./]+\.php)([#[\w]*]?[\'"])^';  
 	$html = preg_replace($qs, $token1, $html, -1);
 	
 	// finds relative Links with Parameter:
@@ -49,7 +49,7 @@ function addTokens( &$html, &$sf) {
 	$html = preg_replace($qs, $token1, $html, -1);
 
 	// finds Start page without Parameter:
-	$qs = '^(href\s?=\s?[\'"]' . LEPTON_URL . ')([\'"])^';  
+	$qs = '^(href\s?=\s?[\'"]' . CAT_URL . ')([\'"])^';  
 	$html = preg_replace($qs, $token4, $html, -1);
 
 	// finds Testmail in Options:
