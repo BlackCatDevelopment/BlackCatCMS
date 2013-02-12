@@ -353,7 +353,7 @@ else
 {
 	$ajax	= array(
 		'message'	=> $admin->lang->translate( 'Page added successfully' ),
-		'url'		=> CAT_ADMIN_URL . '/pages/modify.php?page_id='. $page_id . '&leptoken=' . $admin->getToken(),
+		'url'		=> CAT_ADMIN_URL . '/pages/modify.php?page_id='. $page_id . '&ctoken=' . $admin->getToken(),
 		'success'	=> true
 	);
 	print json_encode( $ajax );

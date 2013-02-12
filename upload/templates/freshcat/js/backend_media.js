@@ -64,7 +64,7 @@ function save_name( rename_input, extension )
 			'rename_file':		current_active.children('input[name=load_url]').val(),
 			'new_name':			rename_input.val(),
 			'extension':		extension,
-			'leptoken':			getToken()
+			'ctoken':			getToken()
 		};
 	$.ajax(
 	{
@@ -124,7 +124,7 @@ function reload_folder( current_ul, folder_path, load_url )
 	var dates	= {
 		'load_url':		typeof load_url !== 'undefined' ? load_url : '/',
 		'folder_path':	typeof folder_path !== 'undefined' ? folder_path : current_ul.children('input[name=folder_path]').val(),
-		'leptoken':		getToken()
+		'ctoken':		getToken()
 	};
 
 	$.ajax(
@@ -460,7 +460,7 @@ jQuery(document).ready(function()
 									'file_path':	current_active.closest('ul.fc_media_folder').find('input[name=folder_path]').val(),
 									'file':			current_active.find('input[name=load_url]').val(),
 									'type':			type,
-									'leptoken':		getToken()
+									'ctoken':		getToken()
 								},
 				beforeSend		= function( data )
 				{
@@ -562,7 +562,7 @@ jQuery(document).ready(function()
 			dates			= {
 								'folder_path':	current_ul.children('input[name=folder_path]').val(),
 								'test':			'test',
-								'leptoken':		getToken()
+								'ctoken':		getToken()
 							};
 
 		$.ajax(

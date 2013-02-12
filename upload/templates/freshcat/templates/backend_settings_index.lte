@@ -129,8 +129,8 @@
 			<input type="text" name="redirect_timer" id="fc_redirect_timer"  value="{$values.redirect_timer}" />ms
 			<div class="clear_sp"></div>
 
-			<label class="fc_label_200" for="fc_leptoken_lifetime">{translate('Leptoken lifetime')}:</label>
-			<input type="text" name="leptoken_lifetime" id="fc_leptoken_lifetime"  value="{$values.leptoken_lifetime}" /> s
+			<label class="fc_label_200" for="fc_token_lifetime">{translate('Token lifetime')}:</label>
+			<input type="text" name="token_lifetime" id="fc_token_lifetime"  value="{$values.token_lifetime}" /> s
 			<p>
 				{translate('0 means no CSRF protection!')}
 			</p>
@@ -145,7 +145,7 @@
 			{else}
 			<input type="hidden" name="er_level" value="{$ER_LEVEL}" />
 			<input type="hidden" name="redirect_timer" value="{$values.redirect_timer}" />
-			<input type="hidden" name="leptoken_lifetime" value="{$values.leptoken_lifetime}" />
+			<input type="hidden" name="token_lifetime" value="{$values.token_lifetime}" />
 			<input type="hidden" name="max_attempts" value="{$values.max_attempts}" />
 			{/if}
 			<div class="clear_sp"></div>

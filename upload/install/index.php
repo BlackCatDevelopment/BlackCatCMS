@@ -700,7 +700,7 @@ function fill_tables($database) {
 
 	$settings_rows = "INSERT INTO `".CAT_TABLE_PREFIX."settings` "
 		." (name, value) VALUES "
-        ." ('GUID', '" . ( ( isset($config['create_guid']) && $config['create_guid'] == 'true' ) ? $admin->createGUID($config['guid_prefix']) : '' ) . "'),"
+        ." ('guid', '" . ( ( isset($config['create_guid']) && $config['create_guid'] == 'true' ) ? $admin->createGUID($config['guid_prefix']) : '' ) . "'),"
 		." ('app_name', 'cat$session_rand'),"
 		." ('cat_version', '".VERSION."'),"
 		." ('catmailer_default_sendername', 'Black Cat CMS Mailer'),"

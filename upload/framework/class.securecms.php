@@ -67,18 +67,18 @@ class SecureCMS {
  */
 	function checkToken()
 	{
-		if (!LEPTOKEN_LIFETIME) return true;
+		if (!TOKEN_LIFETIME) return true;
 		
-		$timelimit = (string) (time() - LEPTOKEN_LIFETIME);  
+		$timelimit = (string) (time() - TOKEN_LIFETIME);  
 		$retval = false;
-		if (isset($_GET['leptoken'])) {
-			$tok = $_GET['leptoken'];
-		} elseif (isset($_GET['amp;leptoken'])) {
-			$tok = $_GET['amp;leptoken'];
-		} elseif (isset($_POST['leptoken'])) {
-			$tok = $_POST['leptoken'];
-		} elseif (isset($_POST['amp;leptoken'])) {
-			$tok = $_POST['amp;leptoken'];
+		if (isset($_GET['ctoken'])) {
+			$tok = $_GET['ctoken'];
+		} elseif (isset($_GET['amp;ctoken'])) {
+			$tok = $_GET['amp;ctoken'];
+		} elseif (isset($_POST['ctoken'])) {
+			$tok = $_POST['ctoken'];
+		} elseif (isset($_POST['amp;ctoken'])) {
+			$tok = $_POST['amp;ctoken'];
 		} else {
 			return $retval;
 		}

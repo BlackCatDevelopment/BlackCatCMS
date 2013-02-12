@@ -238,7 +238,7 @@ echo $parser->get(
         'errors'           => $errors,
         'plugins'          => $plugins,
         'plugins_checked'  => $plugins_checked,
-        'leptoken'         => $admin->getToken(),
+        'ctoken'         => $admin->getToken(),
         'width_unit_'.($width_unit=='%'?'proz':$width_unit) => 'checked="checked"',
         'height_unit_'.($height_unit=='%'?'proz':$height_unit) => 'checked="checked"',
     )

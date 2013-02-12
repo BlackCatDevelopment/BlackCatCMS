@@ -94,7 +94,7 @@ class login extends admin {
 		if(strlen($this->url) < 2)
 		{
 			$this->url			= $config_array['DEFAULT_URL'];
-			$token				= (!LEPTOKEN_LIFETIME) ? '' : '?leptoken=' . $this->getToken();
+			$token				= (!TOKEN_LIFETIME) ? '' : '?ctoken=' . $this->getToken();
 			$this->url			= $config_array['DEFAULT_URL'] . $token;
 		}
 
@@ -130,7 +130,7 @@ class login extends admin {
 			if($this->authenticate()) {
                 if($redirect) {
 				// Authentication successful
-				$token		= (!LEPTOKEN_LIFETIME) ? '' : '?leptoken=' . $this->getToken();
+				$token		= (!TOKEN_LIFETIME) ? '' : '?ctoken=' . $this->getToken();
 				header("Location: ".$this->url . $token);
 				exit(0);
                 }

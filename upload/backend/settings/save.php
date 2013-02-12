@@ -184,9 +184,9 @@ function save_settings(&$admin, &$database)
 	//  do the same
 	$redirect_timer = isset ($settings['redirect_timer']) ? intval($settings['redirect_timer']) : $old_settings['redirect_timer'];
 	$settings['redirect_timer'] = (($redirect_timer >= -1) && ($redirect_timer <= 10000)) ? $redirect_timer : $old_settings['redirect_timer'];
-	// validate Leptoken lifetime
-	$leptoken_lifetime = isset ($settings['leptoken_lifetime']) ? $settings['leptoken_lifetime'] : $old_settings['leptoken_lifetime'];
-	$settings['leptoken_lifetime'] = ($leptoken_lifetime > -1) ? $leptoken_lifetime : $old_settings['leptoken_lifetime'];
+	// validate token lifetime
+	$token_lifetime = isset ($settings['token_lifetime']) ? $settings['token_lifetime'] : $old_settings['token_lifetime'];
+	$settings['token_lifetime'] = ($token_lifetime > -1) ? $token_lifetime : $old_settings['token_lifetime'];
 	// validate maximum logon attempts
 	$max_attempts = isset ($settings['max_attempts']) ? intval($settings['max_attempts']) : $old_settings['max_attempts'];
 	$settings['max_attempts'] = ($max_attempts > 0) ? $max_attempts : $old_settings['max_attempts'];

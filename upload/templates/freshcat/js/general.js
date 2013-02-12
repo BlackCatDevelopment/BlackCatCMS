@@ -30,10 +30,10 @@ function isValidEmailAddress(emailAddress) {
 // ! BACKEND FUNCTIONS   
 // ===================== 
 
-// Function for Ajax to get the lepToken
+// Function for Ajax to get the Token
 function getToken()
 {
-	return $('#fc_hidden_inputs input[name=leptoken]').val();
+	return $('#fc_hidden_inputs input[name=ctoken]').val();
 }
 
 function getThemeName()
@@ -197,9 +197,9 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 	// Set the array for confirm-buttons
 	buttonsOpts = new Array();
 
-	if ( typeof ajaxData.leptoken == 'undefined' || ajaxData.leptoken == false )
+	if ( typeof ajaxData.ctoken == 'undefined' || ajaxData.ctoken == false )
 	{
-		ajaxData.leptoken	= getToken();
+		ajaxData.ctoken	= getToken();
 	}
 
 	// define button for confirm dialog positive
@@ -285,9 +285,9 @@ function dialog_ajax( title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSe
 		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext == false		? $('document.body') : ajaxjQcontext,
 		title			= typeof title == 'undefined' || title == false						? set_popup_title() : title;
 
-	if ( typeof ajaxData.leptoken == 'undefined' || ajaxData.leptoken == false )
+	if ( typeof ajaxData.ctoken == 'undefined' || ajaxData.ctoken == false )
 	{
-		ajaxData.leptoken	= getToken();
+		ajaxData.ctoken	= getToken();
 	}
 
 	$.ajax({

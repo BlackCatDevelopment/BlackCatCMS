@@ -79,9 +79,9 @@ if(function_exists('edit_module_css'))
 	<input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
 	<input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
 <?php
-$leptoken_add = (isset($_GET['leptoken']) ? $_GET['leptoken'] : "");
-if ( strlen( $leptoken_add ) > 0 ) {
-	echo "\n\t<input type='hidden' name='leptoken' value='".$leptoken_add."' />\n";
+$ctoken_add = (isset($_GET['ctoken']) ? $_GET['ctoken'] : "");
+if ( strlen( $ctoken_add ) > 0 ) {
+	echo "\n\t<input type='hidden' name='ctoken' value='".$ctoken_add."' />\n";
 } ?>
 	<table class="row_a" cellpadding="2" cellspacing="0" width="100%">
 		<tr>

@@ -104,7 +104,7 @@
 				var current		= $(this),
 					dates		= {
 						'id':			current.children('input[name=' + options.get_id + ']').val(),
-						'leptoken':		getToken()
+						'ctoken':		getToken()
 					};
 				$.ajax(
 				{
@@ -287,7 +287,7 @@ jQuery(document).ready(function()
 		var current					= $(this),
 			currentForm				= current.closest('form'),
 			dates					= {
-				'leptoken':	getToken()
+				'ctoken':	getToken()
 			};
 			templates				= new Array();
 			modules					= new Array();
@@ -352,7 +352,7 @@ jQuery(document).ready(function()
 		var current					= $(this),
 			currentForm				= current.closest('form'),
 			dates					= {
-				'leptoken':		getToken(),
+				'ctoken':		getToken(),
 				'home_folder':	$('#fc_User_home_folder option:selected').val()
 			},
 			groups					= new Array();
@@ -418,7 +418,7 @@ jQuery(document).ready(function()
 			kind		= current.attr('id') == 'fc_removeUser' ? 'user' : 'group',
 			dates		= {
 				'id':			kind == 'group' ? $('#fc_Group_group_id').val() : $('#fc_User_user_id').val(),
-				'leptoken':		getToken()
+				'ctoken':		getToken()
 			},
 			current_li	= $('#fc_list_overview').children('.fc_active'),
 			afterSend	= function( data, textStatus, jqXHR )

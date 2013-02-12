@@ -114,7 +114,7 @@ jQuery(document).ready(function()
 								var dates			= {
 									'sectionid':			$(this).sortable('toArray'),
 									'table':				'sections',
-									'leptoken':				getToken()
+									'ctoken':				getToken()
 								};
 								dialog_ajax( 'Reorder pages', CAT_ADMIN_URL + '/pages/ajax_reorder.php', dates, 'POST', 'json', false, false, false );
 							}
@@ -139,7 +139,7 @@ jQuery(document).ready(function()
 			dates			= {
 				'delete_section_id':	current.find('input[name=section_id]').val(),
 				'page_id':				$('input[name=page_id]').val(),
-				'leptoken':				getToken()
+				'ctoken':				getToken()
 			};
 
 		// Set the array for confirm-buttons
@@ -239,7 +239,7 @@ jQuery(document).ready(function()
 				'year_to':				current.find('input[name=year_to]').val(),
 				'hour_to':				current.find('input[name=hour_to]').val(),
 				'minute_to':			current.find('input[name=minute_to]').val(),
-				'leptoken':				getToken()
+				'ctoken':				getToken()
 			};
 		$.ajax(
 		{

@@ -110,7 +110,7 @@ jQuery(document).ready(function(){
 					$(this).fadeIn(0);
 					if ( data.success === true )
 					{
-						window.location		= data.url + '?leptoken=' + data.lepToken;
+						window.location		= data.url + '?ctoken=' + data.ctoken;
 					}
 					else {
 						$('#fc_forms').effect( 'shake', { times: 2 }, 400);

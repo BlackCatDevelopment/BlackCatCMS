@@ -35,7 +35,7 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-// test $_GET querystring can only be 1 (leptoken)
+// test $_GET querystring can only be 1 (ctoken)
 if(isset($_GET) && sizeof($_GET) > 1)
 {
 	die('Acess denied');

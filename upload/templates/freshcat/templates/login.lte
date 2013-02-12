@@ -90,7 +90,7 @@
 		</p>
 		<div class="fc_error_box hidden">
 			<p>Session expired. Please login again after reloading the page!<br />
-			This happens if there was no valid leptoken or your session expired by time.</p>
+			This happens if there was no valid ctoken or your session expired by time.</p>
 		</div>
 	</div>
 </body>

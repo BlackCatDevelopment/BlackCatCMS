@@ -109,16 +109,16 @@ $num_posts = $query_posts->numRows();
 // Create previous and next links
 if($setting_posts_per_page != 0) {
 	/**
-	 *	Patch, as the JS-redirect makes it nessesary to look for botth "leptoken" AND "amp;leptoken"
+	 *	Patch, as the JS-redirect makes it nessesary to look for botth "ctoken" AND "amp;ctoken"
 	 *
 	 */
-	if (array_key_exists('amp;leptoken', $_GET) ) $_GET['leptoken'] = $_GET['amp;leptoken'];
-	$leptoken_add = (isset($_GET['leptoken']) ? "&amp;leptoken=".$_GET['leptoken'] : "");
-	if (strlen( $leptoken_add) == 0) {
-		if (isset($_POST['leptoken']) ) $leptoken_add =  "&amp;leptoken=".$_POST['leptoken'];
+	if (array_key_exists('amp;ctoken', $_GET) ) $_GET['ctoken'] = $_GET['amp;ctoken'];
+	$ctoken_add = (isset($_GET['ctoken']) ? "&amp;ctoken=".$_GET['ctoken'] : "");
+	if (strlen( $ctoken_add) == 0) {
+		if (isset($_POST['ctoken']) ) $ctoken_add =  "&amp;ctoken=".$_POST['ctoken'];
 	}
 	if($position > 0) {
-		$pl_prepend = '<a href="?p='.($position-$setting_posts_per_page).'&amp;page_id='.$page_id.$leptoken_add.'">&lt;&lt; ';
+		$pl_prepend = '<a href="?p='.($position-$setting_posts_per_page).'&amp;page_id='.$page_id.$ctoken_add.'">&lt;&lt; ';
 		$pl_append = '</a>';
 		$previous_link = $pl_prepend.$TEXT['PREVIOUS'].$pl_append;
 		$previous_page_link = $pl_prepend.$TEXT['PREVIOUS_PAGE'].$pl_append;
@@ -130,7 +130,7 @@ if($setting_posts_per_page != 0) {
 		$next_link = '';
 		$next_page_link = '';
 	} else {
-		$nl_prepend = '<a href="?p='.($position+$setting_posts_per_page).'&amp;page_id='.$page_id.$leptoken_add.'"> ';
+		$nl_prepend = '<a href="?p='.($position+$setting_posts_per_page).'&amp;page_id='.$page_id.$ctoken_add.'"> ';
 		$nl_append = ' &gt;&gt;</a>';
 		$next_link = $nl_prepend.$TEXT['NEXT'].$nl_append;
 		$next_page_link = $nl_prepend.$TEXT['NEXT_PAGE'].$nl_append;

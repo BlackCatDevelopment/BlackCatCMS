@@ -55,7 +55,7 @@ $thisApp = new Login(
 
 header('Content-type: application/json');
 $ajax	= array(
-	'lepToken'		=> $thisApp->is_authenticated() ? $thisApp->getToken() : false,
+	'ctoken'		=> $thisApp->is_authenticated() ? $thisApp->getToken() : false,
 	'url'			=> $thisApp->url,
 	'success'		=> $thisApp->is_authenticated(),
 	'message'		=> isset($thisApp->message) ? $thisApp->message : false

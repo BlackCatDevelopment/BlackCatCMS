@@ -39,7 +39,7 @@
 						var dates			= {
 							'pageid':			$(this).sortable('toArray'),
 							'table':			'pages',
-							'leptoken':			getToken()
+							'ctoken':			getToken()
 						};
 						$.ajax(
 						{
@@ -83,7 +83,7 @@
 					page_id			= current_button.closest('li').children('input').val(),
 					dates			= {
 										'page_id' : page_id,
-										'leptoken' : getToken()
+										'ctoken' : getToken()
 									},
 					link			= CAT_ADMIN_URL + '/pages/ajax_page_settings.php';
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
@@ -463,7 +463,7 @@ jQuery(document).ready(function()
 			}
 		});
 		var dates	= {
-			'leptoken':			getToken()
+			'ctoken':			getToken()
 		};
 		$.ajax(
 		{
@@ -566,7 +566,7 @@ jQuery(document).ready(function()
 			'visibility':		$('#fc_addPage_visibility option:selected').val(),
 			'admin_groups':		admin_groups,
 			'viewing_groups':	viewing_groups,
-			'leptoken':			getToken()
+			'ctoken':			getToken()
 		};
 
 		$.ajax(
@@ -636,7 +636,7 @@ jQuery(document).ready(function()
 			'visibility':		$('#fc_addPage_visibility option:selected').val(),
 			'admin_groups':		admin_groups,
 			'viewing_groups':	viewing_groups,
-			'leptoken':			getToken()
+			'ctoken':			getToken()
 		};
 		$.ajax(
 		{
@@ -727,7 +727,7 @@ jQuery(document).ready(function()
 			current_pT		= $('.page_tree_open_options'),
 			dates	= {
 				'page_id':			current_pT.children('input[name=pageid]').val(),
-				'leptoken':			getToken()
+				'ctoken':			getToken()
 			},
 			afterSend		= function( data, textStatus, jqXHR )
 			{
@@ -753,7 +753,7 @@ jQuery(document).ready(function()
 			current_pT		= $('.page_tree_open_options'),
 			dates	= {
 				'page_id':			current_pT.children('input[name=pageid]').val(),
-				'leptoken':			getToken()
+				'ctoken':			getToken()
 			},
 			afterSend		= function( data, textStatus, jqXHR )
 			{

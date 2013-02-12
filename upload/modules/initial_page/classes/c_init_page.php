@@ -168,18 +168,18 @@ class c_init_page
 		$path = CAT_ADMIN_URL."/".$info['init_page'];
 		if (( $path <> $path_ref ) && ($info['init_page'] != "start/index.php" ) && ($info['init_page'] != "") ) {
 			if (strlen($info['page_param']) > 0) $path .= $info['page_param'];
-			$this->__test_leptoken( $path );
+			$this->__test_ctoken( $path );
 			header('Location: '.$path );
 			die();
 		}
 	}
 	
-	private function __test_leptoken( &$aURL ) {
-		if (isset($_GET['leptoken'])) {
+	private function __test_ctoken( &$aURL ) {
+		if (isset($_GET['ctoken'])) {
 			$temp_test = explode("?", $aURL );
 			$aURL .= (count($temp_test) == 1) ? "?" : "&amp;";
 			
-			$aURL .= "leptoken=".$_GET['leptoken'];
+			$aURL .= "ctoken=".$_GET['ctoken'];
 		}
 	}
 	
