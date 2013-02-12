@@ -395,6 +395,12 @@ function show_step_globals( $step ) {
 	if ( !isset( $config['default_language' ] ) ) {
 	    $config['default_language' ] = $lang->getLang();
 	}
+
+    // generate a GUID prefix
+    if ( !isset( $config['installer_guid_prefix' ] ) ) {
+        // VERY simple algorithm, no need for something more creative
+	    $config['installer_guid_prefix'] = implode('',array_rand(array_flip(array_merge(range('a','z'),range('A','Z'),range('0','9'))),4));
+    }
 	
 	// operating system
 	// --> FrankH: Detect OS
@@ -415,6 +421,7 @@ function show_step_globals( $step ) {
         'globals.lte',
         array(
 			'installer_cat_url' 				=> dirname( $installer_uri ).'/',
+            'installer_guid_prefix'             => $config['installer_guid_prefix'],
 			'timezones'  						=> $timezone_table,
 			'installer_default_timezone_string' => $config['default_timezone_string'],
 			'languages' 						=> $langs,
@@ -670,7 +677,7 @@ function install_tables ($database) {
  **/
 function fill_tables($database) {
 
-	global $config;
+	global $config, $admin;
 	
 	$errors = array();
 	
@@ -709,7 +716,7 @@ function fill_tables($database) {
 		." ('default_date_format', 'M d Y'),"
 		." ('default_time_format', 'g:i A'),"
 		." ('redirect_timer', '1500'),"
-		." ('leptoken_lifetime', '1800'),"
+		." ('token_lifetime', '1800'),"
 		." ('max_attempts', '9'),"
 		." ('home_folders', 'true'),"
 		." ('default_template', 'lepton'),"
@@ -742,6 +749,7 @@ function fill_tables($database) {
 		." ('catmailer_smtp_username', ''),"
 		." ('catmailer_smtp_password', ''),"
 		." ('mediasettings', ''),"
+        ." ('GUID', '" . ( ( isset($config['create_guid']) && $config['create_guid'] == 'true' ) ? $admin->createGUID($config['guid_prefix']) : '' ) . "'),"
 		." ('enable_old_language_definitions','true'"
 		. ")";
 		
@@ -1199,7 +1207,7 @@ function __do_install() {
 "define('CAT_ADMIN_PATH', CAT_PATH.'/'.CAT_BACKEND_PATH);\n".
 "define('CAT_ADMIN_URL', CAT_URL.'/'.CAT_BACKEND_PATH);\n".
 "\n".
-( (isset($config['no_validate_admin_password']) && $config['no_validate_admin_password'] == "true") ? "define('ALLOW_SHORT_PASSWORDS',true);\n\n" : '' )
+( (isset($config['no_validate_admin_password']) && $config['no_validate_admin_password'] == "true") ? "define('ALLOW_SHORT_PASSWORDS',true);\n\n" : '' ).
 "// WB2/Lepton backward compatibility\n".
 "include_once CAT_PATH.'/framework/wb2compat.php';\n".
 "\n".

@@ -55,5 +55,19 @@
         </select>
 	  </td>
 	</tr>
+   	<tr>
+      <td><label for="installer_create_guid">{translate('Create GUID')}</label></td>
+      <td>
+        <input type="checkbox" checked="checked" name="installer_create_guid" id="installer_create_guid" value="true" />
+        <span style="font-size: 10px; color: #666666;">{translate("The GUID allows to identify an installation while being completely anonymous as it contains no information about you, the CMS contents or anything else. You may use it to distinguish different installations, for example. If you don't wish to create one now, you may make it up later from the backend.")}</span>
+	  </td>
+	</tr>
+    <tr>
+      <td><label for="installer_guid_prefix">{translate('GUID Prefix')}</label></td>
+      <td>
+        <input type="text" tabindex="4" name="installer_guid_prefix" id="installer_guid_prefix" style="width: 97%;" value="{$installer_guid_prefix}" />
+      </td>
+	</tr>
+	<tr>
   </tbody>
 </table>

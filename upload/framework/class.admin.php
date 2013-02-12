@@ -746,6 +746,22 @@ class admin extends wb
 		}
 	}
 
+    /**
+     * create a guid
+     **/
+    public function createGUID($prefix)
+    {
+        if(!$prefix||$prefix='') $prefix=rand();
+        $s = strtoupper(md5(uniqid($prefix,true)));
+        $guidText =
+            substr($s,0,8) . '-' .
+            substr($s,8,4) . '-' .
+            substr($s,12,4). '-' .
+            substr($s,16,4). '-' .
+            substr($s,20);
+        return $guidText;
+    }   // end function createGUID()
+
 		private function __admin_register_backend_modfiles() {
 
 		$files = array(

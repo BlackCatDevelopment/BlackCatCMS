@@ -52,4 +52,4 @@ $module_author		= 'Black Cat Development';
 $module_license		= '<a href="http://www.gnu.org/licenses/" target="_blank">GNU GPL</a>';
 $module_license_terms = '-';
 $module_description	= 'WYSIWYG Admin allows to manage some editor options, which are skin, toolbar, height and width by default. There may be additional options defined by the editor itself.';
-$module_guid		= '';
+$module_guid		= 'D15D8D69-1B67-4994-85A3-1F9E067DBCC1';
