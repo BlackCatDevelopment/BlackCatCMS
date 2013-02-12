@@ -33,10 +33,28 @@ function send_testmail(URL) {
     }
 }
 
+function create_guid(URL) {
+    if ( typeof jQuery != 'undefined' ) {
+        jQuery.ajax({
+            type: 'POST',
+            url:  URL,
+            success:	function( data, textStatus, jqXHR  ) {
+                jQuery('#guid').html(data);
+                $('#fc_createguid').hide();
+            },
+            error: function() { alert('Mist!'); }
+        });
+    }
+}
+
 jQuery(document).ready(function(){
 	$('#fc_list_overview li').fc_set_tab_list();
 	$('select[name=default_theme]').change( function()
 	{
 		$(this).closest('form').removeClass('ajaxForm').unbind();
 	});
+    $('#fc_createguid').click(function()
+    {
+        create_guid(CAT_ADMIN_URL+'/settings/ajax_guid.php');
+    });
 });

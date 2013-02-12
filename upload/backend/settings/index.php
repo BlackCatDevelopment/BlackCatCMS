@@ -124,6 +124,22 @@ $data_dwoo['DEFAULT_CHARSET']						= DEFAULT_CHARSET;
 $data_dwoo['values']['server_email']				= SERVER_EMAIL;
 $data_dwoo['values']['wb_default_sendername']		= CATMAILER_DEFAULT_SENDERNAME;
 
+// ==========================
+// ! Specials
+// ==========================
+$data_dwoo['values']['installation_time']           = date($admin->get_helper('DateTime')->getDefaultDateFormatShort(),INSTALLATION_TIME)
+                                                    . ' '
+                                                    . date($admin->get_helper('DateTime')->getDefaultTimeFormat(),INSTALLATION_TIME);
+
+if(($result = $database->query('SELECT visibility, count(*) AS count FROM '.CAT_TABLE_PREFIX.'pages GROUP BY visibility')) && $result->numRows() > 0 )
+{
+    while ( $row = $result->fetchRow(MYSQL_ASSOC) )
+	{
+        $data_dwoo['values']['pages_count'][] = $row;
+    }
+}
+
+
 // ========================== 
 // ! Insert language values   
 // ========================== 

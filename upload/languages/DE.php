@@ -244,6 +244,9 @@ $LANG = array(
     'Allowed wrong login attempts' => 'Maximale fehlerhafte Anmeldeversuche',
     'When reaching this number, more login attempts are not possible for this session.'
         => 'Nach Erreichen dieser Anzahl sind keine weiteren Anmeldeversuche mehr möglich.',
+    'Create GUID' => 'GUID erzeugen',
+    'Install date and time' => 'Installationsdatum und Uhrzeit',
+    'Page statistics' => 'Seitenstatistik',
     // ----- addons - install.php -----
     'Unable to extract the file. Please check the ZIP format.'
         => 'Kann die Datei nicht entpacken. Bitte das ZIP Format prüfen.',

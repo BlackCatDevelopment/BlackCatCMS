@@ -47,6 +47,10 @@
 				<span class="fc_groups_name">{translate('Mailer settings')}</span>
 				<input type="hidden" name="rel" value="MAIL" />
 			</li>
+            <li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-shield">
+				<span class="fc_groups_name">{translate('System information')}</span>
+				<input type="hidden" name="rel" value="SYSINFO" />
+			</li>
 		</ul>
 	</div>
 	<p class="submit_settings fc_gradient1">
@@ -57,7 +61,7 @@
 		<div id="fc_list_SEO" class="fc_gradient1 fc_list_forms ui-corner-top">
 			<label class="fc_label_120" for="fc_website_title">{translate('Website title')}:</label>
 			<input type="text" name="website_title" id="fc_website_title"  value="{$values.website_title}" />
-			<hr/>
+			<hr />
 
 			<label class="fc_label_120" for="fc_website_description">{translate('Website description')}:</label><br/>
 			<textarea name="website_description" id="fc_website_description" cols="80" rows="6" >{$values.website_description}</textarea>
@@ -78,7 +82,7 @@
 				<option value="{$template.VALUE}"{if $template.SELECTED} selected="selected"{/if}>{$template.NAME}</option>
 				{/foreach}
 			</select>
-			<hr/>
+			<hr />
 
 			<label class="fc_label_120" for="fc_website_header">{translate('Website header')}:</label><br/>
 			<textarea name="website_header" id="fc_website_header" cols="80" rows="6" >{$values.website_header}</textarea>
@@ -101,7 +105,7 @@
 				<option value="{$backend.VALUE}"{if $backend.SELECTED} selected="selected"{/if}>{$backend.NAME}</option>
 				{/foreach}
 			</select>
-			<hr/>
+			<hr />
 
 			<label class="fc_label_200" for="fc_wysiwyg_editor">{translate('WYSIWYG Editor')}:</label>
 			<select name="wysiwyg_editor" id="fc_wysiwyg_editor">
@@ -111,7 +115,7 @@
 			</select>
 
 			{if $DISPLAY_ADVANCED}
-			<hr/>
+			<hr />
 			<label class="fc_label_200" for="fc_er_level">{translate('PHP Error Reporting Level')}:</label>
 			<select name="er_level" id="fc_er_level">
 				<option value="">{translate('Please select')}...</option>
@@ -160,7 +164,7 @@
 				<option value="{$count}"{if $count == $PAGE_LEVEL_LIMIT} selected="selected"{/if}>{$count}</option>
 				{/for}
 			</select>
-			<hr/>
+			<hr />
 
 			<div class="fc_settings_max">
 				<strong>{translate('Page trash')}:</strong>
@@ -175,7 +179,7 @@
 					{/if}
 				</div>
 			</div>
-				<hr/>
+				<hr />
 			<div class="fc_settings_max">
 				<input type="checkbox" class="fc_checkbox_jq" name="manage_sections" id="fc_manage_sections" value="true" {if $MANAGE_SECTIONS} checked="checked"{/if}/>
 				<label for="fc_manage_sections">{translate('Manage sections')}</label>
@@ -231,7 +235,7 @@
 				{/foreach}
 			</select>
 			{/if}
-			<hr/>
+			<hr />
 			<div class="fc_settings_max">
 				<input type="checkbox" class="fc_checkbox_jq" name="frontend_login" id="fc_list_FRONTEND_login" value="true" {if $FRONTEND_LOGIN} checked="checked"{/if}/>
 				<label for="fc_list_FRONTEND_login">{translate('Login')}</label>
@@ -243,7 +247,7 @@
 				<input type="hidden" name="smart_login" value="{if $SMART_LOGIN}true{else}false{/if}" />
 				{/if}
 			</div>
-			<hr/>
+			<hr />
 			<div class="fc_settings_max">
 				<input type="checkbox" class="fc_checkbox_jq" name="home_folders" id="fc_home_folders" value="true" {if $HOME_FOLDERS} checked="checked"{/if}/>
 				<label for="fc_home_folders">{translate('Personal folders')}</label>
@@ -276,7 +280,7 @@
 			{else}
 				<input type="hidden" name="default_charset" value="{$DEFAULT_CHARSET}" />
 			{/if}
-			<hr/>
+			<hr />
 			<label class="fc_label_120" for="fc_default_timezone_string">{translate('Timezone')}:</label>
 			<select name="default_timezone_string" id="fc_default_timezone_string">
 				<option value="0">{translate('Please select')}...</option>
@@ -451,7 +455,7 @@
 			</div>
 			{if $DISPLAY_ADVANCED}
 			<div class="clear"></div>
-			<hr/>
+			<hr />
 			<label class="fc_label_120" for="fc_pages_directory">{translate('Pages directory')}:</label>
 			<input type="text" name="pages_directory" id="fc_pages_directory" value="{$values.pages_directory}" />
 			<div class="clear"></div>
@@ -464,11 +468,11 @@
 			<label class="fc_label_120" for="fc_page_spacer">{translate('Page spacer')}:</label>
 			<input type="text" name="page_spacer" id="fc_page_spacer" value="{$values.page_spacer}" />
 			<div class="clear"></div>
-			<hr/>
+			<hr />
 			<label class="fc_label_120" for="fc_rename_files_on_upload">{translate('Allowed filetypes on upload')}:</label>
 			<input type="text" name="rename_files_on_upload" id="fc_rename_files_on_upload" value="{$values.rename_files_on_upload}" />
 			<div class="clear"></div>
-			<hr/>
+			<hr />
 			<label class="fc_label_120" for="fc_app_name">{translate('Session identifier')}:</label>
 			<input type="text" name="app_name" id="fc_app_name" value="{$values.app_name}" />
 			<div class="clear"></div>
@@ -562,6 +566,29 @@
 				<input type="reset" name="reset" value="{translate('Reset')}" />
 			</p>
 		</div>
+
+        <div id="fc_list_SYSINFO" class="fc_gradient1 fc_list_forms ui-corner-top">
+            <label class="fc_label_200" for="fc_default_template">{translate('GUID')}:</label>
+			<span id="guid">{$values.guid}</span>
+            {if ! isset($values.guid) || $values.guid == ''}
+            <button class="icon-shield" dir="ltr" type="submit" id="fc_createguid" name="create_guid" onclick="return false;">{translate('Create GUID')}</button>
+            {/if}
+   
+			<hr />
+
+			<span class="fc_label_200">{translate('Install date and time')}:</span>
+			{$values.installation_time}
+			<div class="clear_sp"></div>
+
+            {if isset($values.pages_count) && is_array($values.pages_count)}
+            <span class="fc_label_200">{translate('Page statistics')}:</span><br />
+            {foreach $values.pages_count line}
+            <span class="fc_label_120">{translate($line.visibility)}:</span>{$line.count}<br />
+            {/foreach}
+            {/if}
+            <div class="clear_sp"></div>
+
+        </div>
 	</div>
 </form>
 {*<script src="{$CAT_ADMIN_URL}/settings/setting.js" type="text/javascript"></script>*}

@@ -525,3 +525,9 @@ input[type=submit].fc_gradient_red:hover,
     text-align: left;
     font-weight: bold;
 }
+
+div#testmail_result{
+    float: right;
+    width: 350px;
+    padding: 15px;
+}

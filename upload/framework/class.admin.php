@@ -52,7 +52,7 @@ class admin extends wb
 {
 	private $db_handle = NULL;
 
-	public $header_storrage = array(
+	public $header_storage = array(
 		'css'	=> array(),
 		'js'	=> array(),
 		'html'	=> array(),
@@ -811,9 +811,9 @@ class admin extends wb
 
 			while( false !== ($data = $result->fetchRow( MYSQL_ASSOC ) ) ) {
 				
-				if (in_array($data[$look_up_field], $this->header_storrage['modules'] ) ) continue;
+				if (in_array($data[$look_up_field], $this->header_storage['modules'] ) ) continue;
 				
-				$this->header_storrage['modules'][] = $data[$look_up_field];
+				$this->header_storage['modules'][] = $data[$look_up_field];
 				
 				$basepath = "/modules/".$data[$look_up_field]."/";
 				
