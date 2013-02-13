@@ -28,24 +28,6 @@
 
 $starttime = array_sum(explode(" ",microtime()));
 
-// add framework subdir to include path
-set_include_path (
-    implode(
-        PATH_SEPARATOR,
-        array(
-            realpath(dirname(__FILE__).'/framework'),
-            get_include_path(),
-        )
-    )
-);
-// register autoloader
-function catcms_autoload($class) {
-	@include str_replace( '_', '/', $class ) . '.php';
-}
-spl_autoload_register('catcms_autoload',false,true);
-
-define('DEBUG', false);
-
 // Include config file
 $config_file = dirname(__FILE__).'/config.php';
 if(file_exists($config_file))

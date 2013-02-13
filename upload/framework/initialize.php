@@ -25,7 +25,6 @@
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
 	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
@@ -41,19 +40,39 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
-//set_include_path(get_include_path() . PATH_SEPARATOR . CAT_PATH);
+//**************************************************************************
+// add framework subdir to include path
+//**************************************************************************
+set_include_path (
+    implode(
+        PATH_SEPARATOR,
+        array(
+            realpath(dirname(__FILE__).'/framework'),
+            get_include_path(),
+        )
+    )
+);
+//**************************************************************************
+// register autoloader
+//**************************************************************************
+function catcms_autoload($class) {
+#echo "autoloading class -$class-<br />";
+	@include str_replace( '_', '/', $class ) . '.php';
+}
+spl_autoload_register('catcms_autoload',false,false);
+
 if (file_exists(dirname(__FILE__).'/class.database.php')) {
 
 	require_once(dirname(__FILE__).'/sys.constants.php');
 	require_once(dirname(__FILE__).'/class.database.php');
 
     // Create database class
-    $database = new database( );
+    $database = new database();
     
+    //**************************************************************************
     // Get website settings (title, keywords, description, header, and footer)
-
+    //**************************************************************************
     $sql = 'SELECT `name`,`value` FROM `'.CAT_TABLE_PREFIX.'settings` ORDER BY `name`';
     if (($result = $database->query( $sql )) && ($result->numRows( ) > 0)) {
         while (false != ($row = $result->fetchRow( MYSQL_ASSOC ) ) ) {
@@ -76,53 +95,50 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
             if (!defined($temp_name)) define( $temp_name , $value );
         }
 		unset( $row );
-    
     } else {
-        die( "Settings not found" );
+        die( "No settings found in the database, please check your installation!" );
     }
     
-    // define WB_VERSION for backward compatibillity and for checks within addon.precheck.inc.php
-    if (!defined('WB_VERSION')) define('WB_VERSION', '2.8.1');
-    
+    //**************************************************************************
+    //**************************************************************************
     $string_file_mode = STRING_FILE_MODE;
     define( 'OCTAL_FILE_MODE', (int) octdec( $string_file_mode ));
     $string_dir_mode = STRING_DIR_MODE;
     define( 'OCTAL_DIR_MODE', (int) octdec( $string_dir_mode ));
-    if (!defined( 'CAT_INSTALL_PROCESS' )) {
-        // get CAPTCHA and ASP settings
 
+    //**************************************************************************
+    // get CAPTCHA and ASP settings
+    //**************************************************************************
+    if (!defined( 'CAT_INSTALL_PROCESS' )) {
         $sql = 'SELECT * FROM `'.CAT_TABLE_PREFIX.'mod_captcha_control` LIMIT 1';
         if (false !== ($get_settings = $database->query( $sql ))) {
             if ($get_settings->numRows( ) == 0) {
                 die( "CAPTCHA-Settings not found" );
             }
             $setting = $get_settings->fetchRow( MYSQL_ASSOC );
-            
-			define( 'ENABLED_CAPTCHA', (($setting['enabled_captcha'] == '1') ? true : false) );
-            
-			define( 'ENABLED_ASP', (($setting['enabled_asp'] == '1') ? true : false) );
-            
-            define( 'CAPTCHA_TYPE', $setting['captcha_type'] );
+			define( 'ENABLED_CAPTCHA'    , (($setting['enabled_captcha'] == '1') ? true : false) );
+			define( 'ENABLED_ASP'        , (($setting['enabled_asp']     == '1') ? true : false) );
+            define( 'CAPTCHA_TYPE'       , $setting['captcha_type']                              );
             define( 'ASP_SESSION_MIN_AGE', (int) $setting['asp_session_min_age'] );
-            define( 'ASP_VIEW_MIN_AGE', (int) $setting['asp_view_min_age'] );
-            define( 'ASP_INPUT_MIN_AGE', (int) $setting['asp_input_min_age'] );
-        	
+            define( 'ASP_VIEW_MIN_AGE'   , (int) $setting['asp_view_min_age']                    );
+            define( 'ASP_INPUT_MIN_AGE'  , (int) $setting['asp_input_min_age']                   );
 			unset( $setting );
         }
     }
 
-    /** 
-     *	set error-reporting
-     */
+    //**************************************************************************
+    // set error-reporting
+    //**************************************************************************
     if (is_numeric( ER_LEVEL )) {
     	error_reporting( ER_LEVEL );
     	if( ER_LEVEL > 0 ) ini_set('display_errors', 1);
     }
     
+    //**************************************************************************
     // Start a session
+    //**************************************************************************
     if (!defined( 'SESSION_STARTED' )) {
         session_name( APP_NAME.'sessionid' );
-        
 		$cookie_settings = session_get_cookie_params();
 		session_set_cookie_params(
 			3*3600,        // three hours
@@ -139,9 +155,17 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
     if (defined( 'ENABLED_ASP' ) && ENABLED_ASP && !isset ($_SESSION['session_started']))
         $_SESSION['session_started'] = time( );
     
+    //**************************************************************************
     // Get users language
+    //**************************************************************************
     if (isset ($_GET['lang']) && $_GET['lang'] != '' && !is_numeric( $_GET['lang'] ) && strlen( $_GET['lang'] ) == 2) {
+        if (!file_exists( CAT_PATH.'/languages/'.LANGUAGE.'.php' )) {
+            // language not available, use DEFAULT_LANGUAGE as default
+            define( 'LANGUAGE', DEFAULT_LANGUAGE );
+        }
+        else {
         define( 'LANGUAGE', strtoupper( $_GET['lang'] ));
+        }
         $_SESSION['LANGUAGE'] = LANGUAGE;
     } else {
         if (isset ($_SESSION['LANGUAGE']) && $_SESSION['LANGUAGE'] != '') {
@@ -159,29 +183,33 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
         }
     }
     
+    //**************************************************************************
+    // set timezone and date/time formats
+    //**************************************************************************
+    $timezone_string = (isset ($_SESSION['TIMEZONE_STRING']) ? $_SESSION['TIMEZONE_STRING'] : DEFAULT_TIMEZONE_STRING );
+	date_default_timezone_set($timezone_string);
+    $dth = CAT_Helper_DateTime::getInstance();
+    define( 'TIME_FORMAT', $dth->getDefaultTimeFormat()      );
+    define( 'DATE_FORMAT', $dth->getDefaultDateFormatShort() );
+    
+    //**************************************************************************
+    // Disable magic_quotes_runtime
+    //**************************************************************************
     if (version_compare( PHP_VERSION, '5.3.0', '<' )) {
-        // Disable magic_quotes_runtime
-        set_magic_quotes_runtime( 0 );
+        set_magic_quotes_runtime(0);
 	}
 	
-	// Setting the correct default timezone to avoid "date" conflicts and warnings
-	require_once( CAT_ADMIN_PATH.'/interface/timezones.php' );
-	$timezone_string = (isset ($_SESSION['TIMEZONE_STRING']) ? $_SESSION['TIMEZONE_STRING'] : DEFAULT_TIMEZONESTRING );
-	date_default_timezone_set($timezone_string);
-	   
-    // Get users date format
-	define( 'DATE_FORMAT', (isset ($_SESSION['DATE_FORMAT']) ? $_SESSION['DATE_FORMAT'] : DEFAULT_DATE_FORMAT ) );
-    
-    // Get users time format
-    define( 'TIME_FORMAT', (isset ($_SESSION['TIME_FORMAT']) ? $_SESSION['TIME_FORMAT'] : DEFAULT_TIME_FORMAT ) );
-    
-    // Set Theme dir
-    define( 'CAT_THEME_URL', CAT_URL.'/templates/'.DEFAULT_THEME );
+    //**************************************************************************
+    // Set theme
+    //**************************************************************************
+    define( 'CAT_THEME_URL' , CAT_URL.'/templates/'.DEFAULT_THEME );
     define( 'CAT_THEME_PATH', CAT_PATH.'/templates/'.DEFAULT_THEME );
     
     $database->prompt_on_error( PROMPT_MYSQL_ERRORS );
     
+    //**************************************************************************
     // set the search library
+    //**************************************************************************
     if (!defined( 'CAT_INSTALL_PROCESS' )) {
         if (false !== ($query = $database->query("SELECT value FROM ".CAT_TABLE_PREFIX."search WHERE name = 'cfg_search_library' LIMIT 1"))) {
             ($query->numRows() > 0) ? $res = $query->fetchRow() : $res['value'] = 'lib_search';
@@ -196,35 +224,11 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
     }        
 }
 
-if (file_exists(CAT_PATH.'/modules/lib_dwoo/library.php')) {
-    global $parser;
-	// load Dwoo Template Engine
-	require_once CAT_PATH.'/modules/lib_dwoo/library.php';
-    // set some constants as globals so we don't need to set them later
-    $defs = get_defined_constants(true);
-    foreach($defs['user'] as $const => $value ) {
-        if(preg_match('~^DEFAULT_~',$const)) { // DEFAULT_CHARSET etc.
-            $parser->setGlobals($const,$value);
-            continue;
-        }
-        if(preg_match('~^WEBSITE_~',$const)) { // WEBSITE_HEADER etc.
-            $parser->setGlobals($const,$value);
-            continue;
-        }
-        if(preg_match('~^SHOW_~',$const)) { // SHOW_SEARCH etc.
-            $parser->setGlobals($const,$value);
-            continue;
-        }
-        if(preg_match('~^FRONTEND_~',$const)) { // FRONTEND_LOGIN etc.
-            $parser->setGlobals($const,$value);
-            continue;
-        }
-        if(preg_match('~_FORMAT$~',$const)) { // DATE_FORMAT etc.
-            $parser->setGlobals($const,$value);
-            continue;
-        }
-    }
-}
+//**************************************************************************
+// get template engine
+//**************************************************************************
+global $parser;
+$parser = CAT_Helper_Template::getInstance('Dwoo');
 
 spl_autoload_register(function ($class) {
     if(defined('CAT_PATH'))
