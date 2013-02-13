@@ -171,7 +171,7 @@ if(($result = $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'addons` WHERE
 // ================================== 
 // ! Insert default timezone values   
 // ================================== 
-require(CAT_ADMIN_PATH.'/interface/timezones.php');
+$timezone_table = $admin->get_helper('DateTime')->getTimezones();
 $counter=0;
 
 foreach( $timezone_table as $title )
@@ -207,7 +207,7 @@ date_default_timezone_set(DEFAULT_TIMEZONE_STRING);
 // =========================== 
 // ! Insert date format list   
 // =========================== 
-require(CAT_ADMIN_PATH.'/interface/date_formats.php');
+$DATE_FORMATS = $admin->get_helper('DateTime')->getDateFormats();
 $counter=0;
 foreach ( $DATE_FORMATS AS $format => $title )
 {
@@ -223,7 +223,7 @@ foreach ( $DATE_FORMATS AS $format => $title )
 // =========================== 
 // ! Insert time format list   
 // =========================== 
-require(CAT_ADMIN_PATH.'/interface/time_formats.php');
+$TIME_FORMATS = $admin->get_helper('DateTime')->getTimeFormats();
 $counter=0;
 foreach ( $TIME_FORMATS AS $format => $title )
 {

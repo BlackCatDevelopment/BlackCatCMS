@@ -48,6 +48,10 @@
 				<input type="hidden" name="rel" value="MAIL" />
 			</li>
             <li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-shield">
+				<span class="fc_groups_name">{translate('Security settings')}</span>
+				<input type="hidden" name="rel" value="SEC" />
+			</li>
+            <li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-info">
 				<span class="fc_groups_name">{translate('System information')}</span>
 				<input type="hidden" name="rel" value="SYSINFO" />
 			</li>
@@ -239,13 +243,6 @@
 			<div class="fc_settings_max">
 				<input type="checkbox" class="fc_checkbox_jq" name="frontend_login" id="fc_list_FRONTEND_login" value="true" {if $FRONTEND_LOGIN} checked="checked"{/if}/>
 				<label for="fc_list_FRONTEND_login">{translate('Login')}</label>
-
-				{if $DISPLAY_ADVANCED}
-				<input type="checkbox" class="fc_checkbox_jq" name="smart_login" id="fc_smart_login" value="true" {if $SMART_LOGIN} checked="checked"{/if}/>
-				<label for="fc_smart_login">{translate('Smart login')}</label>
-				{else}
-				<input type="hidden" name="smart_login" value="{if $SMART_LOGIN}true{else}false{/if}" />
-				{/if}
 			</div>
 			<hr />
 			<div class="fc_settings_max">
@@ -566,6 +563,23 @@
 				<input type="reset" name="reset" value="{translate('Reset')}" />
 			</p>
 		</div>
+
+        <div id="fc_list_SEC" class="fc_gradient1 fc_list_forms ui-corner-top">
+            <label class="fc_label_200" for="fc_default_template">{translate('Security settings')}:</label>
+
+            <div class="fc_settings_max">
+    			<input type="checkbox" class="fc_checkbox_jq" name="enable_htmlpurifier" id="fc_enable_htmlpurifier" value="true" {if $ENABLE_HTMLPURIFIER} checked="checked"{/if}/>
+    			<label for="fc_enable_htmlpurifier">{translate('Use HTMLPurifier to clean output')}</label>
+                <span class="fc_label_200">{translate("Please note: This filters the output of every module, so it may break the layout if the module output isn't valid!")}</span>
+            </div>
+            <div class="clear_sp"></div>
+
+			<p class="submit_settings fc_gradient1">
+				<input type="submit" name="submit" value="{translate('Save')}" />
+				<input type="reset" name="reset" value="{translate('Reset')}" />
+			</p>
+
+        </div>
 
         <div id="fc_list_SYSINFO" class="fc_gradient1 fc_list_forms ui-corner-top">
             <label class="fc_label_200" for="fc_default_template">{translate('GUID')}:</label>
