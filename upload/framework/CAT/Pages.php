@@ -469,6 +469,11 @@ if (!class_exists('CAT_Pages', false))
                         require(CAT_PATH . '/modules/' . $module . '/view.php');
                         $content = ob_get_contents();
                         ob_end_clean();
+                        // use HTMLPurifier to clean up the output
+                        if( defined('ENABLE_HTMLPURIFIER') && true === ENABLE_HTMLPURIFIER )
+                        {
+                            $content = $wb->get_helper('Protect')->purify($content);
+                        }
                     }
                     else
                     {
@@ -1824,7 +1829,7 @@ if (!class_exists('CAT_Pages', false))
                 }
                 else
                 {
-                    die("Settings not found");
+                    $this->printFatalError("No settings found in the database, please check your installation!");
                 }
 
                 // get properties for current page; overwrites globals if not empty

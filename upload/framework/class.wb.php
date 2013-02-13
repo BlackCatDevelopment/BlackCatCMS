@@ -37,9 +37,6 @@ if (defined('CAT_PATH')) {
 
 include_once(CAT_PATH . '/framework/class.securecms.php');
 
-// Include PHPLIB template class
-//require_once(CAT_PATH . "/include/phplib/template.inc");
-
 require_once(CAT_PATH . '/framework/class.database.php');
 
 // Include new wbmailer class (subclass of PHPmailer)
@@ -141,7 +138,7 @@ class wb extends SecureCMS
             default:
                 $output = "<b>Black Cat CMS NOTICE</b><br />\n&nbsp;&nbsp;Unknown error type:<br />\n&nbsp;&nbsp;[$errno] $errstr<br />\n";
                 break;
-    }
+        }   // end switch
         if ( defined('CAT_DEBUG') && true === CAT_DEBUG )
         {
                 $output .= "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">"
@@ -173,7 +170,7 @@ class wb extends SecureCMS
         {
             echo $output;
     }
-        return true;
+        return false;
     }   // end error handler
 
     // Modified addslashes public function which takes into account magic_quotes

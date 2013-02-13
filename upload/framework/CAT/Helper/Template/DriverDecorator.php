@@ -26,6 +26,8 @@
 class CAT_Helper_Template_DriverDecorator extends CAT_Helper_Template {
 
     private $te;
+    public  $path;
+    public  $fallback_path;
 
     public function __construct( $obj )
     {

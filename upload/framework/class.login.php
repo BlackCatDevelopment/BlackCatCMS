@@ -337,7 +337,6 @@ class login extends admin {
 						$data_dwoo['CAT_PATH']		= CAT_PATH;
 						$data_dwoo['CAT_ADMIN_URL']	= CAT_ADMIN_URL;
 						$data_dwoo['CAT_THEME_URL']	= CAT_THEME_URL;
-						$data_dwoo['URL_HELP']		= 'http://blackcat-cms.org/';
 
 						// ============================= 
 						// ! Add languages to Dwoo 	

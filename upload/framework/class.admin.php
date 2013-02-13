@@ -210,7 +210,7 @@ class admin extends wb
 					$data_dwoo['CAT_PATH']	= CAT_PATH;
 					$data_dwoo['CAT_ADMIN_URL']		= CAT_ADMIN_URL;
 					$data_dwoo['CAT_THEME_URL']		= CAT_THEME_URL;
-					$data_dwoo['URL_HELP']		= 'http://blackcat-cms.org/';
+
 					// ============================= 
 					// ! Add languages to Dwoo 	
 					// ============================= 
@@ -447,7 +447,6 @@ class admin extends wb
 						'TITLE_HELP' => $MENU['HELP'],
 						'TITLE_LOGOUT' =>  $MENU['LOGOUT'],
 						'URL_VIEW' => $view_url,
-						'URL_HELP' => 'http://blackcat-cms.org/',
 						'BACKEND_MODULE_FILES' => $this->__admin_register_backend_modfiles(),
 						'THEME_VERSION'	=> $backend_theme_version,
 						'THEME_NAME'	=> DEFAULT_THEME
@@ -530,7 +529,6 @@ class admin extends wb
 					$data['CAT_PATH']		= CAT_PATH;
 					$data['CAT_ADMIN_URL']		= CAT_ADMIN_URL;
 					$data['CAT_THEME_URL']		= CAT_THEME_URL;
-					$data['URL_HELP']		= 'http://blackcat-cms.org/';
 					// ============================= 
 					// ! Add languages to Dwoo 	
 					// ============================= 

@@ -43,11 +43,17 @@ if (!class_exists('CAT_Helper_DateTime'))
             return self::$instance;
         }
 
+        /**
+         * returns a list of known timezones, using DateTimeZone::listIdentifiers()
+         **/
         public function getTimezones()
         {
             return DateTimeZone::listIdentifiers();
-        }
+        }   // end function getTimezones()
 
+        /**
+         * returns a list of known time formats
+         **/
         public function getTimeFormats()
         {
             global $user_time,$language_time;
@@ -67,8 +73,11 @@ if (!class_exists('CAT_Helper_DateTime'))
                 $TIME_FORMATS[$language_time] = date($language_time,$actual_time);
             }
             return $TIME_FORMATS;
-        }
+        }   // end function getTimeFormats()
 
+        /**
+         * returns a list of known date formats
+         **/
         public function getDateFormats()
         {
             global $user_time, $language_date_long, $language_date_short;
@@ -103,19 +112,36 @@ if (!class_exists('CAT_Helper_DateTime'))
                 $DATE_FORMATS[$language_date_short] = date($language_date_short,$actual_time);
             }
             return $DATE_FORMATS;
-        }
+        }   // enc function getDateFormats()
 
+        /**
+         * returns the default time format:
+         *   - checks $_SESSION['TIME_FORMAT'] first;
+         *   - checks DEFAULT_TIME_FORMAT constant as next;
+         *   - checks $language_time var set in current language file last
+         *   - returns 'H:i' by default if none of the above is available
+         **/
         public function getDefaultTimeFormat()
         {
             global $language_time;
+            if ( isset ($_SESSION['TIME_FORMAT']) ) return $_SESSION['TIME_FORMAT'];
             if ( defined('DEFAULT_TIME_FORMAT') ) return DEFAULT_TIME_FORMAT;
             if ( isset($language_time) )          return $language_time;
             return 'H:i';
         }
 
+        /**
+         * returns the default date format (short)
+         *   - checks $_SESSION['DATE_FORMAT'] first;
+         *   - checks DEFAULT_DATE_FORMAT constant next;
+         *   - checks $language_date_short var set in current language file last
+         *   - returns 'D-M-Y' by default if none of the above is set
+         **/
         public function getDefaultDateFormatShort()
         {
             global $language_date_short;
+            if ( isset ($_SESSION['DATE_FORMAT']) ) return $_SESSION['DATE_FORMAT'];
+            if ( defined('DEFAULT_DATE_FORMAT') )   return DEFAULT_DATE_FORMAT;
             if ( isset($language_date_short) )    return $language_date_short;
             return 'D-M-Y';
         }

@@ -68,10 +68,14 @@ if (!class_exists('CAT_Helper_Template'))
          **/
         public static function getInstance( $driver )
         {
+            if ( ! preg_match('/driver$/i',$driver) )
+            {
+                $driver .= 'Driver';
+            }
             if ( ! file_exists( dirname(__FILE__).'/Template/'.$driver.'.php' ) )
             {
-                $this->printError( $this->lang->translate( 'No such template driver: ['.$driver.']' ) );
-                die;
+                $s = new self();
+                $s->printFatalError( $this->lang->translate( 'No such template driver: ['.$driver.']' ) );
             }
             if ( ! isset(self::$_drivers[$driver]) || ! is_object(self::$_drivers[$driver]) )
             {
@@ -90,6 +94,41 @@ if (!class_exists('CAT_Helper_Template'))
                         	  'URL_HELP' => URL_HELP,
                       )
                   );
+                $defs = get_defined_constants(true);
+                foreach($defs['user'] as $const => $value ) {
+                    if(preg_match('~^DEFAULT_~',$const)) { // DEFAULT_CHARSET etc.
+                        self::$_drivers[$driver]->setGlobals($const,$value);
+                        continue;
+                    }
+                    if(preg_match('~^WEBSITE_~',$const)) { // WEBSITE_HEADER etc.
+                        self::$_drivers[$driver]->setGlobals($const,$value);
+                        continue;
+                    }
+                    if(preg_match('~^SHOW_~',$const)) { // SHOW_SEARCH etc.
+                        self::$_drivers[$driver]->setGlobals($const,$value);
+                        continue;
+                    }
+                    if(preg_match('~^FRONTEND_~',$const)) { // FRONTEND_LOGIN etc.
+                        self::$_drivers[$driver]->setGlobals($const,$value);
+                        continue;
+                    }
+                    if(preg_match('~_FORMAT$~',$const)) { // DATE_FORMAT etc.
+                        self::$_drivers[$driver]->setGlobals($const,$value);
+                        continue;
+                    }
+                    if(preg_match('~^ENABLE_~',$const)) { // ENABLE_HTMLPURIFIER etc.
+                        self::$_drivers[$driver]->setGlobals($const,$value);
+                        continue;
+                    }
+                }
+                // This is for old language strings
+                global $HEADING, $TEXT, $MESSAGE, $MENU;
+                foreach ( array( 'TEXT', 'HEADING', 'MESSAGE', 'MENU' ) as $global ) {
+                    if ( isset(${$global}) && is_array(${$global}) ) {
+                        self::$_drivers[$driver]->setGlobals( $global, ${$global} );
+                    }
+                }
+
             }
             return self::$_drivers[$driver];
         }   // end function getInstance()
