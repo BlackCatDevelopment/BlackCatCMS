@@ -41,7 +41,6 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-if ( !defined('CAT_PATH')) die(header('Location: ../../index.php'));
 
 $debug = false;
 if (true === $debug) {
@@ -97,10 +96,11 @@ $plugins         = $c->getAdditionalPlugins();
 $preview      = NULL;
 $plugins_checked = array();
 
+$enable_htmlpurifier = ( isset($config['enable_htmlpurifier']) ? $config['enable_htmlpurifier'] : false );
 if(file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')))
 {
     $preview = '<img src="'
-             . sanitize_url(LEPTON_URL.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')
+             . sanitize_url(CAT_URL.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')
              . '" alt="'.$current_skin.'" title="'.$current_skin.'" />';
 }
 
@@ -141,6 +141,14 @@ if (isset($_POST['job']) && $_POST['job']=="save") {
         $errors[$key] = $admin->lang->translate('Invalid skin!');
         continue;
     }
+    // check HTMLPurifier
+    if ( $admin->get_helper('Addons')->isModuleInstalled('lib_htmlpurifier') && isset($_POST['enable_htmlpurifier']) && $_POST['enable_htmlpurifier'] == 'true' )
+    {
+        $enable_htmlpurifier = true;
+    }
+    else {
+        $enable_htmlpurifier = false;
+    }
     // check additionals
     if(count($settings))
     {
@@ -176,6 +184,7 @@ if (isset($_POST['job']) && $_POST['job']=="save") {
         $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'width\', \''.$width.$width_unit.'\' )' );
         $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'height\', \''.$height.$height_unit.'\' )' );
         $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'skin\', \''.$_POST['skin'].'\' )' );
+        $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'enable_htmlpurifier\', \''.$enable_htmlpurifier.'\' )' );
         // save additionals
         if(count($settings))
         {
@@ -239,6 +248,8 @@ echo $parser->get(
         'plugins'          => $plugins,
         'plugins_checked'  => $plugins_checked,
         'ctoken'         => $admin->getToken(),
+        'htmlpurifier'     => $admin->get_helper('Addons')->isModuleInstalled('lib_htmlpurifier'),
+        'enable_htmlpurifier' => $enable_htmlpurifier,
         'width_unit_'.($width_unit=='%'?'proz':$width_unit) => 'checked="checked"',
         'height_unit_'.($height_unit=='%'?'proz':$height_unit) => 'checked="checked"',
     )

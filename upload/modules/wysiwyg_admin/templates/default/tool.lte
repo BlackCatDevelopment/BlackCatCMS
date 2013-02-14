@@ -39,6 +39,13 @@
             <input type="radio" id="height_unit_proz" name="height_unit" value="%" {$height_unit_proz} /> %
             <br />
             {if $errors.height}<span class="error">{$errors.height}</span><br />{/if}
+        {if $htmlpurifier == true}
+        <label for="enable_htmlpurifier">{translate('Enable HTMLPurifier')}</label>
+            <input type="checkbox" id="enable_htmlpurifier" name="enable_htmlpurifier" value="true"{if isset($enable_htmlpurifier) && $enable_htmlpurifier == true} checked="checked"{/if} /><br />
+        <span class="indent">
+        {translate('If this option is enabled, all WYSIWYG content will be cleaned by using HTMLPurifier before it is stored. Users that are members of group "Administrators" are still allowed to use all HTML, including forms and script.')}
+        </span>
+        {/if}
     </fieldset>
 
     {if is_array($settings) && count($settings)}

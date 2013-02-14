@@ -54,10 +54,13 @@ $LANG = array(
 	'Editor width' => 'Editor Breite',
 	'Editor height' => 'Editor H&ouml;he',
 	'Editor toolbar' => 'Editor Toolbar',
+    'Enable HTMLPurifier' => 'HTMLPurifier aktivieren',
 	'Invalid width: {{width}}% > 100%!' => 'Ungültige Breite: {{width}}% > 100%!',
     'Invalid height: {{width}}% > 100%!' => 'Ungültige Höhe: {{width}}% > 100%!',
     'Invalid width: Too large! (>10000)' => 'Ungültige Breite: Zu groß! (>10000)',
     'Invalid height: Too large! (>10000)' => 'Ungültige Höhe: Zu groß! (>10000)',
     'Invalid skin!' => 'Ungültiger Skin!',
     'Invalid boolean value!' => 'Ungültiger Boolean Wert!',
+    'If this option is enabled, all WYSIWYG content will be cleaned by using HTMLPurifier before it is stored. Users that are members of group "Administrators" are still allowed to use all HTML, including forms and script.'
+       => 'Wenn aktiviert, wird der WYSIWYG Inhalt mit Hilfe von HTMLPurifier bereinigt, bevor er gespeichert wird. Benutzer der Gruppe "Administratoren" dürfen nach wie vor alles, inklusive Formularen und Scripts.',
 );
