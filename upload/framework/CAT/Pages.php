@@ -1097,7 +1097,7 @@ if (!class_exists('CAT_Pages', false))
     						$in_group = true;
     					}
     				}
-    				$this->parent_page[$page['page_id']]['disabled']			= ( ($in_group) || is_numeric( array_search($this->get_user_id(), $admin_users) ) ) ? false : true;
+    				$this->parent_page[$page['page_id']]['disabled']			= ( ($in_group) || is_numeric( array_search(CAT_Users::getInstance()->get_user_id(), $admin_users) ) ) ? false : true;
     				$this->parent_page[$page['page_id']]['level']				= $page['level'];
     				$this->parent_page[$page['page_id']]['id']					= $page['page_id'];
     				$this->parent_page[$page['page_id']]['menu_title']			= $page['menu_title'];
@@ -1312,7 +1312,7 @@ if (!class_exists('CAT_Pages', false))
     				// =================================================
     				// ! Check user perms and count for editable sites
     				// =================================================
-    				if ( ($in_group) || is_numeric(array_search($this->get_user_id(), $admin_users) ) )
+    				if ( ($in_group) || is_numeric(array_search(CAT_Users::getInstance()->get_user_id(), $admin_users) ) )
     				{
     					if ( $this->pages[$key]['visibility'] == 'deleted' )
     					{

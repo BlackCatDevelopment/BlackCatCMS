@@ -56,6 +56,16 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 	    const DEBUG  = 7;  // Debug: debug messages
     	const OFF    = 8;
 
+        private static $instance;
+
+        public static function getInstance()
+        {
+            if (!self::$instance)
+            {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }
         /**
          * inheritable constructor; allows to set object variables
          **/
@@ -172,7 +182,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                  $caller[1]['function'],
                  " ]</span><br />\n";
 
-            if ( $this->debugLevel == DEBUG ) {
+            if ( $this->debugLevel == self::DEBUG ) {
                 echo "<h2>Debug backtrace:</h2>\n",
                      "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
                 print_r( $caller );

@@ -230,6 +230,36 @@ if ( ! class_exists( 'CAT_Users', false ) )
             }
         }   // end function is_authenticated()
 
+        /**
+         * check if one or more group_ids are in both group_lists
+         *
+         * @access public
+         * @param  mixed   $groups_list1: an array or a coma seperated list of group-ids
+         * @param  mixed   $groups_list2: an array or a coma seperated list of group-ids
+         * @return boolean true there is a match, otherwise false
+         */
+        public function is_group_match($groups_list1 = '', $groups_list2 = '')
+        {
+            if ($groups_list1 == '')
+            {
+                return false;
+            }
+            if ($groups_list2 == '')
+            {
+                return false;
+            }
+            if (!is_array($groups_list1))
+            {
+                $groups_list1 = explode(',', $groups_list1);
+            }
+            if (!is_array($groups_list2))
+            {
+                $groups_list2 = explode(',', $groups_list2);
+            }
+
+            return(sizeof(array_intersect($groups_list1, $groups_list2)) != 0);
+        }   // end function is_group_match()
+
 		/**
 		 * Checks for valid password. Returns boolean. The following checks are done:
 		 *
