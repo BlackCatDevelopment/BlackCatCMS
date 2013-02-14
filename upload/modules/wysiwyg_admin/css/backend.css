@@ -30,6 +30,10 @@ form#wysiwyg_admin label {
     text-align: right;
     margin: 5px 5px;
 }
+form#wysiwyg_admin span.indent{
+    padding-left: 213px;
+    display: inline-block;
+}
 form#wysiwyg_admin input[type=text],
 form#wysiwyg_admin select,
 form#wysiwyg_admin .settings,

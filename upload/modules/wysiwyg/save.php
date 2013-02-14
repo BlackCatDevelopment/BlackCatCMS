@@ -1,23 +1,31 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with Black Cat CMS Core.
- * This ADDON is released under the GNU GPL.
- * Additional license terms can be seen in the info.php of this module.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @module          wysiwyg
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
  * @author          Ryan Djurovich
- * @author          LEPTON Project
- * @copyright       2004-2010 WebsiteBaker Project
- * @copyright       2010-2011 LEPTON Project 
- * @link            http://www.LEPTON-cms.org
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see info.php of this module
- *
+ *   @category        CAT_Core
+ *   @package         wysiwyg
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
 	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
@@ -34,9 +42,6 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
-
- 
 
 // Include WB admin wrapper script
 $update_when_modified = true; // Tells script to update when this page was last updated
@@ -53,8 +58,19 @@ require_once(CAT_PATH.'/framework/functions.php');
  *			- Additional test for the user CAN modify a) this modul conten and b) this section!
  */
 if(isset($_POST['content'.$section_id])) {
-	$content = $admin->add_slashes($_POST['content'.$section_id]);
-	
+    // for non-admins only
+    if(!$admin->get_controller('Users')->ami_group_member(1))
+    {
+        // if HTMLPurifier is enabled...
+        $r = $database->get_one('SELECT * FROM `'.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2` WHERE set_name="enable_htmlpurifier" AND set_value="1"');
+        if($r) {
+            // use HTMLPurifier to clean up the output
+            $content = $admin->get_helper('Protect')->purify($_POST['content'.$section_id],array('Core.CollectErrors'=>true));
+        }
+    }
+    else {
+        $content = $admin->add_slashes($_POST['content'.$section_id]);
+    }
 	/**
 	 *	searching in $text will be much easier this way
 	 *
