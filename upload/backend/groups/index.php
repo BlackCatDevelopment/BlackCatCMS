@@ -54,8 +54,6 @@ $data_dwoo['permissions']['USERS']			= $admin->get_permission('users')			? true 
 // =========================================================================== 
 global $parser;
 
-require_once( CAT_PATH . '/framework/class.pages.php');
-$pages = new pages();
 // $items	= $admin->get_controller('Pages')->get_linked_by_language($page_id);
 
 $data_dwoo['templates']			= $addons->get_addons( DEFAULT_TEMPLATE , 'template' );

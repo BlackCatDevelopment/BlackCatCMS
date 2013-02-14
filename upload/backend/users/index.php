@@ -132,9 +132,6 @@ $data_dwoo['NEWUSERHINT']					= preg_split('/, /',sprintf($TEXT['NEW_USER_HINT']
 // ============================ 
 // ! Add groups to $data_dwoo   
 // ============================ 
-require_once(CAT_PATH . '/framework/class.pages.php');
-$pages = new pages();
-
 $data_dwoo['groups']						= $admin->users->get_groups();
 
 // ====================================================================================== 
