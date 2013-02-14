@@ -38,6 +38,17 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	    protected $skip_dirs     = array();
         protected $skip_files    = array();
         protected $current_depth       = 0;
+
+        private static $instance;
+
+        public static function getInstance()
+        {
+            if (!self::$instance)
+            {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }
 	    
         /**
          *
