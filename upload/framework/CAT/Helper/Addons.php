@@ -984,6 +984,43 @@ if (!class_exists('CAT_Helper_Addons'))
             }
         } // end function upgradeModule()
 
+        /**
+         * checks if a module is installed
+         *
+         * @access public
+         * @param  string  $module  - module name or directory name
+         * @param  string  $version - (optional) version to check (>=)
+         * @return boolean
+         **/
+        public function isModuleInstalled($module,$version=NULL)
+        {
+            global $database;
+            $sql = 'SELECT * FROM `' . CAT_TABLE_PREFIX . 'addons` WHERE type="module" AND ( directory="'.$module.'" OR name="'.$module.'" )';
+            $q = $database->query($sql);
+            if (!$q->numRows())
+            {
+                return false;
+            }
+            // note: if there's more than one, the first match will be returned!
+            while ( $addon = $q->fetchRow( MYSQL_ASSOC ) )
+			{
+                if($version && $this->versionCompare($addon['version'],$version))
+                {
+                    return true;
+                }
+                // name over directory
+                if($addon['name']==$module)
+                {
+                    return true;
+                }
+                if($addon['directory']==$module)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }   // end function isModuleInstalled()
+
 
         /**
          * Allows modules to register a file which should be allowed to load the
