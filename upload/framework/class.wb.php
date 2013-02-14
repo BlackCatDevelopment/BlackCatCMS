@@ -254,7 +254,7 @@ class wb extends SecureCMS
         $args      = func_get_args();
         // remove first element (it's the name)
         array_shift($args);
-	    return $this->int_get_handle('',$name,(count($args)?$args:NULL));
+	    return $this->int_get_handle('',$name,$args=func_get_args());
     }   // end function get_controller()
     
     /**
@@ -265,39 +265,9 @@ class wb extends SecureCMS
 	public function get_helper($name)
 	{
 		// name must not contain CAT_Helper_...
-	    $name      = preg_replace( '~^lepton_helper_~i', '', $name );
+	    $name      = preg_replace( '~^cat_helper_~i', '', $name );
         return $this->int_get_handle('Helper',$name,$args=func_get_args());
 	}   // end function get_helper()
-
-    /* ****************
-     * check if one or more group_ids are in both group_lists
-     *
-     * @access public
-     * @param mixed $groups_list1: an array or a coma seperated list of group-ids
-     * @param mixed $groups_list2: an array or a coma seperated list of group-ids
-     * @return bool: true there is a match, otherwise false
-     */
-    public function is_group_match($groups_list1 = '', $groups_list2 = '')
-    {
-        if ($groups_list1 == '')
-        {
-            return false;
-        }
-        if ($groups_list2 == '')
-        {
-            return false;
-        }
-        if (!is_array($groups_list1))
-        {
-            $groups_list1 = explode(',', $groups_list1);
-        }
-        if (!is_array($groups_list2))
-        {
-            $groups_list2 = explode(',', $groups_list2);
-        }
-
-        return(sizeof(array_intersect($groups_list1, $groups_list2)) != 0);
-    }
 
     /* ****************
      * set one or more bit in a integer value
@@ -525,7 +495,7 @@ class wb extends SecureCMS
 		// check if the file exists
 		if ( ! file_exists( $filename ) )
 		{
-		    trigger_error(sprintf("[ <b>%s</b> ] Invalid helper class name: [%s]", $_SERVER['SCRIPT_NAME'], $classname), E_USER_ERROR);
+		    trigger_error(sprintf("[ <b>%s</b> ] Invalid %s name: [%s]", $_SERVER['SCRIPT_NAME'], ($namespace=='Helper'?'helper':'controller'), $classname), E_USER_ERROR);
 		    return false;
 		}
 
@@ -600,9 +570,13 @@ class wb extends SecureCMS
     public function get_home_folder()      { return CAT_Users::getInstance()->get_home_folder();  }
     public function is_authenticated()     { return CAT_Users::getInstance()->is_authenticated(); }
 
+    public function is_group_match($groups_list1 = '', $groups_list2 = '')
+    {
+        return CAT_Users::getInstance()->is_group_match($groups_list1,$groups_list2);
+    }
     public function get_groups($viewing_groups = array() , $admin_groups = array(), $insert_admin = true)
     {
-         return CAT_Users::getInstance()->get_groups();
+         return CAT_Users::getInstance()->get_groups($viewing_groups,$admin_groups,$insert_admin);
     }
 
 }
