@@ -106,7 +106,6 @@
 				{
 					according_div = $('#'+div_id);
 				}
-			
 				if ( typeof according_div != 'undefined' && according_div.length > 0 )
 				{
 					if ( action == 'show' && current.prop( 'checked' ) )
@@ -117,16 +116,19 @@
 					{
 						options.show_on_start = false;
 					}
+					else {
+						options.show_on_start = false;
+					}
 				}
-			
+
 				// if no value for show_on_start is given or if it is set to false hide the according div
 				if ( options.show_on_start == false )
 				{
-					according_div.slideUp(0).addClass('fc_inactive_element hidden').removeClass('fc_active_element');
+					according_div.addClass('fc_inactive_element hidden').slideUp(0).removeClass('fc_active_element');
 				}
 				else
 				{
-					according_div.slideDown(0).addClass('fc_active_element').removeClass('fc_inactive_element');
+					according_div.slideDown(0).addClass('fc_active_element').removeClass('hidden fc_inactive_element');
 				}
 				
 				// bind the change event - the "hidden" class is needed for elements placed in a dialog as calling .dialog() will show every element inside the dialog
