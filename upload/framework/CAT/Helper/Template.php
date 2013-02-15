@@ -133,6 +133,44 @@ if (!class_exists('CAT_Helper_Template'))
             return self::$_drivers[$driver];
         }   // end function getInstance()
 
+        /**
+         * this method checks for existance of 'register_frontend_modfiles' in
+         * a template file; not used yet
+         *
+         * @access public
+         * @param  string  $file - file to check
+         * @return boolean
+         *
+         **/
+    	public function isOldTemplate($file)
+    	{
+    		if ( ! file_exists( $file ) )
+    		{
+    			return false;
+    		}
+    		$suffix = pathinfo( $file, PATHINFO_EXTENSION );
+    		if ( $suffix == 'php' )
+    		{
+    			$string = implode( '', file($file) );
+    			if ( $string )
+    			{
+    				$tokens  = token_get_all($string);
+    				foreach( $tokens as $i => $token )
+    				{
+    					if ( is_array($token) )
+    					{
+    						if ( strcasecmp( $token[1], 'register_frontend_modfiles' ) == 0 )
+    						{
+    							return true;
+    						}
+    					}
+    				}
+    				return false;
+    			}
+    		}
+    		return true;
+    	}	// end function isOldTemplate()
+
 
     }
 }
