@@ -521,11 +521,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 			}
 		}   // end function mime_content_type()
 	}
-    // Generate a thumbnail from an image
-    function make_thumb($source, $destination, $size)
-    {
-        return $this->get_helper('Image')->make_thumb( $source, $destination, $size );
-    }   // end make_thumb()
     
     /*
      * Function to work-out a single part of an octal permission value
@@ -727,25 +722,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 		return $addons_helper->installLanguage( $file );
     }   // end function load_language()
 
-    /**
-     *  Update the module informations in the DB
-     *
-     *  @param  string  Name of the modul-directory
-     *  @param  bool  Optional boolean to run the upgrade-script of the module.
-     *
-     *  THIS METHOD WAS MOVED TO CAT_Helper_Addons!
-     *
-     */
-    function upgrade_module( $directory, $upgrade = false )
-    {
-        if ( ! class_exists( 'CAT_Helper_Addons' ) )
-                {
-	        @require_once dirname(__FILE__).'/CAT/Helper/Addons.php';
-        }
-		$addons_helper = new CAT_Helper_Addons();
-		return $addons_helper->upgradeModule( $directory, $upgrade );
-    }   // end function upgrade_module()
-
 
     function get_variable_content($search, $data, $striptags = true, $convert_to_entities = true)
     {
@@ -765,71 +741,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         }
         return false;
     }   // end function get_variable_content()
-
-    /**
-     *  Try to get the current version of a given Modul.
-     *
-     *  @param  string  $modulname: like saved in addons directory
-     *  @param  boolean  $source: true reads from database, false from info.php
-     *  @return  string  the version as string, if not found returns null
-     *
-     */
-    function get_modul_version($modulname, $source = true)
-    {
-        global $database;
-        $version = null;
-        if ($source != true)
-        {
-            $sql = "SELECT `version` FROM `" . CAT_TABLE_PREFIX . "addons` WHERE `directory`='" . $modulname . "'";
-            $version = $database->get_one($sql);
-        }
-        else
-        {
-            $info_file = CAT_PATH . '/modules/' . $modulname . '/info.php';
-            if (file_exists($info_file))
-            {
-                $module_version = null;
-                require($info_file);
-                $version = &$module_version;
-            }
-        }
-        return $version;
-    }
-    
-    /**
-     *
-     *
-     *
-     *
-     **/
-	function valid_lepton_template($file)
-	{
-		if ( ! file_exists( $file ) )
-		{
-			return false;
-		}
-		$suffix = pathinfo( $file, PATHINFO_EXTENSION );
-		if ( $suffix == 'php' )
-		{
-			$string = implode( '', file($file) );
-			if ( $string )
-			{
-				$tokens  = token_get_all($string);
-				foreach( $tokens as $i => $token )
-				{
-					if ( is_array($token) )
-					{
-						if ( strcasecmp( $token[1], 'register_frontend_modfiles' ) == 0 )
-						{
-							return false;
-						}
-					}
-				}
-				return true;
-			}
-		}
-		return false;
-	}	// end function valid_lepton_template()
 
     /**
      * Generate a globally unique identifier (GUID)
@@ -932,6 +843,21 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     }   // end function directory_list()
 
     /**
+     *  Try to get the current version of a given Modul.
+     *
+     *  @param  string  $modulname: like saved in addons directory
+     *  @param  boolean  $source: true reads from database, false from info.php
+     *  @return  string  the version as string, if not found returns null
+     *
+     *  Moved to Addons helper class (though it seems to be never used)
+     *
+     */
+    function get_modul_version($modulname, $source = true)
+    {
+        return CAT_Helper_Addons::getInstance()->getModuleVersion($modulname,$source);
+    }   // end function get_modul_version()
+
+    /**
      *  Create directories recursive
      *
      * @param string   $dir_name - directory to create
@@ -950,6 +876,12 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 		$addons_helper = new CAT_Helper_Directory();
 		return $addons_helper->createDirectory( $dir_name, $dir_mode );
     }   // end function make_dir()
+
+    // Generate a thumbnail from an image
+    function make_thumb($source, $destination, $size)
+    {
+        return $this->get_helper('Image')->make_thumb( $source, $destination, $size );
+    }   // end make_thumb()
 
     /**
      *  Function to remove a non-empty directory
@@ -1021,6 +953,26 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         }
         return $FILE;
     }   // end function scan_current_dir()
+
+    /**
+     *  Update the module informations in the DB
+     *
+     *  @param  string  Name of the modul-directory
+     *  @param  bool  Optional boolean to run the upgrade-script of the module.
+     *
+     *  THIS METHOD WAS MOVED TO CAT_Helper_Addons!
+     *
+     */
+    function upgrade_module( $directory, $upgrade = false )
+    {
+        if ( ! class_exists( 'CAT_Helper_Addons' ) )
+                {
+	        @require_once dirname(__FILE__).'/CAT/Helper/Addons.php';
+        }
+		$addons_helper = new CAT_Helper_Addons();
+		return $addons_helper->upgradeModule( $directory, $upgrade );
+    }   // end function upgrade_module()
+
 
 }
 // end .. if functions is loaded 

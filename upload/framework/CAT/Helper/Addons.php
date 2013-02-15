@@ -951,6 +951,36 @@ if (!class_exists('CAT_Helper_Addons'))
             }
         } // end function installLanguage()
 
+        /**
+         *  Try to get the current version of a given Modul.
+         *
+         *  @param  string   $modulename - module directory name
+         *  @param  boolean  $source     - true reads from database, false from info.php
+         *  @return string   the version as string, if not found returns null
+         *
+         */
+        public function getModuleVersion($modulename, $source = true)
+        {
+            global $database;
+            $version = null;
+            if ($source != true)
+            {
+                $sql = "SELECT `version` FROM `" . CAT_TABLE_PREFIX . "addons` WHERE `directory`='" . $modulname . "'";
+                $version = $database->get_one($sql);
+            }
+            else
+            {
+                $info_file = CAT_PATH . '/modules/' . $modulname . '/info.php';
+                if (file_exists($info_file))
+                {
+                    $module_version = null;
+                    require($info_file);
+                    $version = &$module_version;
+                }
+            }
+            return $version;
+        }   // end function getModuleVersion()
+
 
         /**
          * This function is used to upgrade a module (addon); function was moved
