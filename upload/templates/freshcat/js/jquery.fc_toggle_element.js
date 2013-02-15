@@ -109,11 +109,11 @@
 			
 				if ( typeof according_div != 'undefined' && according_div.length > 0 )
 				{
-					if ( action == 'show' && current.attr( 'checked' ) )
+					if ( action == 'show' && current.prop( 'checked' ) )
 					{
 						options.show_on_start = true;
 					}
-					else if ( action == 'hide' && current.attr( 'checked' ) )
+					else if ( action == 'hide' && current.prop( 'checked' ) )
 					{
 						options.show_on_start = false;
 					}
@@ -132,7 +132,7 @@
 				// bind the change event - the "hidden" class is needed for elements placed in a dialog as calling .dialog() will show every element inside the dialog
 				current.click( function()
 				{
-					if ( current.attr( 'checked' ) && action == 'show' )
+					if ( current.prop( 'checked' ) && action == 'show' )
 					{
 						according_div.removeClass('hidden').slideUp(0).slideDown(options.toggle_speed, function()
 						{
