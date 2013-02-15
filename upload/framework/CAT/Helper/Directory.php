@@ -245,7 +245,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                             {
                             	// recurse
                                 $this->current_depth++;
-                            	$subdirs = $this->scanDirectory( $dir.'/'.$file, $with_files, $files_only, $remove_prefix, $suffixes, $skip_dirs );
+                            	$subdirs = $this->scanDirectory( $dir.'/'.$file, $with_files, $files_only, $remove_prefix, $suffixes, $skip_dirs, $skip_files );
                             	$dirs    = array_merge( $dirs, $subdirs );
                                 $this->current_depth--;
 							}

@@ -35,6 +35,49 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
+    /**
+     *  Function to list all files in a given directory.
+     *
+     *  @param  string  $directory   - directory to list
+     *  @param  array   $skip        - An array with directories to skip, e.g. '.svn' or '.git'
+     *  @param  bool    $show_hidden - Show also hidden files, e.g. ".htaccess".
+     *
+     *  @retrun  array  Natsorted array within the files.
+     *
+     */
+    function file_list($directory, $skip = array(), $show_hidden = false)
+    {
+        $result_list = array();
+        if (is_dir($directory))
+        {
+            $use_skip = (count($skip) > 0);
+            // Open the directory
+            $dir = dir($directory);
+            while (false !== ($entry = $dir->read()))
+            {
+                // loop through the directory
+                // Skip hidden files
+                if (($entry[0] == '.') && (false == $show_hidden))
+                {
+                    continue;
+                }
+                // Check if we to skip anything else
+                if ((true === $use_skip) && (in_array($entry, $skip)))
+                {
+                    continue;
+                }
+                if (is_file($directory . '/' . $entry))
+                {
+                    // Add files to list
+                    $result_list[] = $directory . '/' . $entry;
+                }
+            }
+            // closing the folder-object
+            $dir->close();
+        }
+        natcasesort($result_list);
+        return $result_list;
+    }   // end function file_list()
 
 // displays the image or text inside an <iframe>
 if(!function_exists('display_captcha_real')) {

@@ -58,356 +58,10 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 	$debug_level  = 8;
 
     // include helpers
-	global $lhd, $arrayh, $logger;
+	global $dirh, $arrayh, $logger;
     include dirname(__FILE__).'/CAT/Helper/Directory.php';
-	$lhd   = new CAT_Helper_Directory();
+	$dirh   = new CAT_Helper_Directory();
 	$logger = new CAT_Helper_KLogger( CAT_PATH.'/temp', $debug_level );
-
-    
-    
-    /**
-     * Scan a given directory for dirs and files.
-     *
-     * usage: scan_current_dir ($root = '' )
-     *
-     * Used by admins/reload.php, for example
-     *
-     * @access    public
-     * @param     $root    (optional) path to be scanned; defaults to current working directory (getcwd())
-     * @return    array    returns a natsort-ed array with keys 'path' and 'filename'
-     *
-     */
-    function scan_current_dir($root = '')
-    {
-        $FILE = array();
-        clearstatcache();
-        $root = empty($root) ? getcwd() : $root;
-        if (false !== ($handle = opendir($root)))
-        {
-            // Loop through the files and dirs an add to list  DIRECTORY_SEPARATOR
-            while (false !== ($file = readdir($handle)))
-            {
-                if (substr($file, 0, 1) != '.' && $file != 'index.php')
-                {
-                    if (is_dir($root . '/' . $file))
-                    {
-                        $FILE['path'][] = $file;
-                    }
-                    else
-                    {
-                        $FILE['filename'][] = $file;
-                    }
-                }
-            }
-            $close_verz = closedir($handle);
-        }
-        if (isset($FILE['path']) && natcasesort($FILE['path']))
-        {
-            $tmp = array();
-            $FILE['path'] = array_merge($tmp, $FILE['path']);
-        }
-        if (isset($FILE['filename']) && natcasesort($FILE['filename']))
-        {
-            $tmp = array();
-            $FILE['filename'] = array_merge($tmp, $FILE['filename']);
-        }
-        return $FILE;
-    }   // end function scan_current_dir()
-    
-    /**
-     *  Function to list all files in a given directory.
-     *
-     *  @param  string  $directory   - directory to list
-     *  @param  array   $skip        - An array with directories to skip, e.g. '.svn' or '.git'
-     *  @param  bool    $show_hidden - Show also hidden files, e.g. ".htaccess".
-     *
-     *  @retrun  array  Natsorted array within the files.
-     *
-     */
-    function file_list($directory, $skip = array(), $show_hidden = false)
-    {
-        $result_list = array();
-        if (is_dir($directory))
-        {
-            $use_skip = (count($skip) > 0);
-            // Open the directory
-            $dir = dir($directory);
-            while (false !== ($entry = $dir->read()))
-            {
-                // loop through the directory
-                // Skip hidden files
-                if (($entry[0] == '.') && (false == $show_hidden))
-                {
-                    continue;
-                }
-                // Check if we to skip anything else
-                if ((true === $use_skip) && (in_array($entry, $skip)))
-                {
-                    continue;
-                }
-                if (is_file($directory . '/' . $entry))
-                {
-                    // Add files to list
-                    $result_list[] = $directory . '/' . $entry;
-                }
-            }
-            // closing the folder-object
-            $dir->close();
-        }
-        natcasesort($result_list);
-        return $result_list;
-    }   // end function file_list()
-
-    // Function to get a list of home folders not to show
-    /**
-     *  M.f.i.!  Dietrich Roland Pehlke
-     *      I would like to keep the original comment unless i understand this one!
-     *      E.g. 'ami' is for me nothing more and nothing less than an 'admim'!
-     *
-     *      I'm also not acceppt the declaration of a function inside a function at all!
-     *      E.g. what happend if the function "get_home_folders" twice? Bang!
-     *
-     * 2011-08-22
-     *      Bianka Martinovic
-     *      The only file where this is used seems to be admins/media/index.php,
-     *      so in my opinion, it should be moved there
-     *
-     */
-    function get_home_folders()
-    {
-        global $database, $admin;
-        $home_folders = array();
-        // Only return home folders is this feature is enabled
-        // and user is not admin
-        //if(HOME_FOLDERS AND ($_SESSION['GROUP_ID']!='1'))
-        if (HOME_FOLDERS && (!CAT_Users::getInstance()->ami_group_member('1')))
-        {
-            $sql = 'SELECT `home_folder` FROM `' . CAT_TABLE_PREFIX . 'users` WHERE `home_folder` != \'' . $admin->get_home_folder() . '\'';
-            $query_home_folders = $database->query($sql);
-            if ($query_home_folders->numRows() > 0)
-            {
-                while (false !== ($folder = $query_home_folders->fetchRow()))
-                {
-                    $home_folders[$folder['home_folder']] = $folder['home_folder'];
-                }
-            }
-            function remove_home_subs($directory = '/', $home_folders = '')
-            {
-                if (false !== ($handle = opendir(CAT_PATH . MEDIA_DIRECTORY . $directory)))
-                {
-                    // Loop through the dirs to check the home folders sub-dirs are not shown
-                    while (false !== ($file = readdir($handle)))
-                    {
-                        if ($file[0] != '.' && $file != 'index.php')
-                        {
-                            if (is_dir(CAT_PATH . MEDIA_DIRECTORY . $directory . '/' . $file))
-                            {
-                                if ($directory != '/')
-                                {
-                                    $file = $directory . '/' . $file;
-                                }
-                                else
-                                {
-                                    $file = '/' . $file;
-                                }
-                                foreach ($home_folders as $hf)
-                                {
-                                    $hf_length = strlen($hf);
-                                    if ($hf_length > 0)
-                                    {
-                                        if (substr($file, 0, $hf_length + 1) == $hf)
-                                        {
-                                            $home_folders[$file] = $file;
-                                        }
-                                    }
-                                }
-                                $home_folders = remove_home_subs($file, $home_folders);
-                            }
-                        }
-                    }
-                }
-                return $home_folders;
-            }
-            $home_folders = remove_home_subs('/', $home_folders);
-        }
-        return $home_folders;
-    }   // end function get_home_folders()
-
-    /*
-     * @param object &$wb: $wb from frontend or $admin from backend
-     * @return array: list of new entries
-     * @description: callback remove path in files/dirs stored in array
-     * @example: array_walk($array,'remove_path',PATH);
-     */
-    /**
-     *  M.f.o.!  MARKED FOR OBSOLETE
-     *      As this one belongs to the results of the function 'directory_list'
-     *
-     */
-    function remove_path(&$path, $key, $vars = '')
-    {
-        $path = str_replace($vars, '', $path);
-    }
-
-    /*
-     * @param object &$wb: $wb from frontend or $admin from backend
-     * @return array: list of ro-dirs
-     * @description: returns a list of directories beyound /wb/media which are ReadOnly for current user
-     *
-     *  M.f.i.!  Copy and paste crap
-     *
-     */
-    function media_dirs_ro(&$wb)
-    {
-        /**
-    		 * @deprecated media_dirs_ro() is deprecated and will be removed in LEPTON 1.2
-    		 */
-    		trigger_error('The function media_dirs_ro() is deprecated and will be removed in LEPTON 1.3.', E_USER_NOTICE);
-        global $database;
-        // if user is admin or home-folders not activated then there are no restrictions
-        $allow_list = array();
-        if ($wb->get_user_id() == 1 || !HOME_FOLDERS)
-        {
-            return array();
-        }
-        // at first read any dir and subdir from /media
-        $full_list = directory_list(CAT_PATH . MEDIA_DIRECTORY);
-        // add own home_folder to allow-list
-        if ($wb->get_home_folder())
-        {
-            // old: $allow_list[] = get_home_folder();
-            $allow_list[] = $wb->get_home_folder();
-        }
-        // get groups of current user
-        $curr_groups = $wb->get_groups_id();
-        // if current user is in admin-group
-        if (($admin_key = array_search('1', $curr_groups)) !== false)
-        {
-            // remove admin-group from list
-            unset($curr_groups[$admin_key]);
-            // search for all users where the current user is admin from
-            foreach ($curr_groups as $group)
-            {
-                $sql = 'SELECT `home_folder` FROM `' . CAT_TABLE_PREFIX . 'users` ';
-                $sql .= 'WHERE (FIND_IN_SET(\'' . $group . '\', `groups_id`) > 0) AND `home_folder` <> \'\' AND `user_id` <> ' . $wb->get_user_id();
-                if (($res_hf = $database->query($sql)) != null)
-                {
-                    while (false !== ($rec_hf = $res_hf->fetchrow(MYSQL_ASSOC)))
-                    {
-                        $allow_list[] = $rec_hf['home_folder'];
-                    }
-                }
-            }
-        }
-        $tmp_array = $full_list;
-        // create a list for readonly dir
-        $array = array();
-        while (sizeof($tmp_array) > 0)
-        {
-            $tmp = array_shift($tmp_array);
-            $x = 0;
-            while ($x < sizeof($allow_list))
-            {
-                if (strpos($tmp, $allow_list[$x]))
-                {
-                    $array[] = $tmp;
-                }
-                $x++;
-            }
-        }
-        $full_list = array_diff($full_list, $array);
-        $tmp = array();
-        $full_list = array_merge($tmp, $full_list);
-        return $full_list;
-    }   // end function media_dirs_ro()
-
-    /*
-     * @param object &$wb: $wb from frontend or $admin from backend
-     * @return array: list of rw-dirs
-     * @description: returns a list of directories beyound /wb/media which are ReadWrite for current user
-     *
-     *  M.f.i.!  Copy and paste crap!
-     *
-     *  2011-08-22 Bianka Martinovic
-     *      used only in admins/media/index.php, should be moved there
-     */
-    function media_dirs_rw(&$wb)
-    {
-        global $database;
-        // if user is admin or home-folders not activated then there are no restrictions
-        // at first read any dir and subdir from /media
-        $full_list = directory_list(CAT_PATH . MEDIA_DIRECTORY);
-        $allow_list = array();
-        if (($wb->get_user_id() == 1) || !HOME_FOLDERS)
-        {
-            return $full_list;
-        }
-        // add own home_folder to allow-list
-        if ($wb->get_home_folder())
-        {
-            $allow_list[] = $wb->get_home_folder();
-        }
-        // get groups of current user
-        $curr_groups = $wb->get_groups_id();
-        // if current user is in admin-group
-        if (($admin_key = array_search('1', $curr_groups)) !== false)
-        {
-            // remove admin-group from list
-            unset($curr_groups[$admin_key]);
-            // search for all users where the current user is admin from
-            foreach ($curr_groups as $group)
-            {
-                $sql = 'SELECT `home_folder` FROM `' . CAT_TABLE_PREFIX . 'users` ';
-                $sql .= 'WHERE (FIND_IN_SET(\'' . $group . '\', `groups_id`) > 0) AND `home_folder` <> \'\' AND `user_id` <> ' . $wb->get_user_id();
-                if (($res_hf = $database->query($sql)) != null)
-                {
-                    while (false !== ($rec_hf = $res_hf->fetchrow()))
-                    {
-                        $allow_list[] = $rec_hf['home_folder'];
-                    }
-                }
-            }
-        }
-        $tmp_array = $full_list;
-        // create a list for readwrite dir
-        $array = array();
-        while (sizeof($tmp_array) > 0)
-        {
-            $tmp = array_shift($tmp_array);
-            $x = 0;
-            while ($x < sizeof($allow_list))
-            {
-                if (strpos($tmp, $allow_list[$x]))
-                {
-                    $array[] = $tmp;
-                }
-                $x++;
-            }
-        }
-        $tmp = array();
-        $full_list = array_merge($tmp, $array);
-        return $full_list;
-    }   // end function media_dirs_rw()
-
-    /**
-     *  Create directories recursive
-     *
-     * @param string   $dir_name - directory to create
-     * @param ocatal   $dir_mode - access mode
-     * @return boolean result of operation
-     *
-     *  THIS METHOD WAS MOVED TO CAT_Helper_Addons!
-     *
-     */
-    function make_dir( $dir_name, $dir_mode = OCTAL_DIR_MODE )
-    {
-        if ( ! class_exists( 'CAT_Helper_Directory' ) )
-                {
-	        @require_once dirname(__FILE__).'/CAT/Helper/Directory.php';
-        }
-		$addons_helper = new CAT_Helper_Directory();
-		return $addons_helper->createDirectory( $dir_name, $dir_mode );
-    }   // end function make_dir()
 
     /**
      * check if the page with the given id has children
@@ -1240,8 +894,8 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      * found no file where this is really used, but left it just in case...
      **/
     function chmod_directory_contents($directory, $file_mode) {
-        global $lhd;
-        return $lhd->setPerms($directory,$file_mode);
+        global $dirh;
+        return $dirh->setPerms($directory,$file_mode);
     }   // end function chmod_directory_contents()
 
     /**
@@ -1268,14 +922,34 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      */
     function directory_list($directory, $show_hidden = false, $recursion_deep = 0, &$aList = null, &$ignore = "")
     {
-        global $lhd;
+        global $dirh;
         if ($aList == null)
         {
             $aList = array();
         }
-        $dirs = $lhd->scanDirectory( $directory, false, false, $ignore );
+        $dirs = $dirh->scanDirectory( $directory, false, false, $ignore );
         return $aList;
     }   // end function directory_list()
+
+    /**
+     *  Create directories recursive
+     *
+     * @param string   $dir_name - directory to create
+     * @param ocatal   $dir_mode - access mode
+     * @return boolean result of operation
+     *
+     * The function was moved to Directory helper class
+     *
+     */
+    function make_dir( $dir_name, $dir_mode = OCTAL_DIR_MODE )
+    {
+        if ( ! class_exists( 'CAT_Helper_Directory' ) )
+                {
+	        @require_once dirname(__FILE__).'/CAT/Helper/Directory.php';
+        }
+		$addons_helper = new CAT_Helper_Directory();
+		return $addons_helper->createDirectory( $dir_name, $dir_mode );
+    }   // end function make_dir()
 
     /**
      *  Function to remove a non-empty directory
@@ -1285,8 +959,8 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      *  @return boolean
      */
     function rm_full_dir($directory) {
-        global $lhd;
-        return $lhd->removeDirectory($directory);
+        global $dirh;
+        return $dirh->removeDirectory($directory);
     }   // end function rm_full_dir()
 
     /**
@@ -1294,8 +968,8 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      **/
     function sanitize_path( $path )
     {
-        global $lhd;
-		return $lhd->sanitizePath($path);
+        global $dirh;
+		return $dirh->sanitizePath($path);
     }   // end function sanitize_path()
 
     /**
@@ -1305,6 +979,48 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     {
         return CAT_Helper_Protect::getInstance()->sanitize_url($href);
     }   // end function sanitize_url()
+
+    /**
+     * Scan a given directory for dirs and files.
+     *
+     * Used by admins/reload.php, for example, so this is left for backward
+     * compatibility
+     *
+     * @access    public
+     * @param     $root    (optional) path to be scanned; defaults to current working directory (getcwd())
+     * @return    array    returns a natsort-ed array with keys 'path' and 'filename'
+     *
+     */
+    function scan_current_dir($root = '')
+    {
+        global $dirh;
+        clearstatcache();
+        $root   = empty($root) ? getcwd() : $root;
+        $dirh->setRecursion(false);
+        $result = $dirh->scanDirectory( $root, true, false, $root.'/', NULL, NULL, array('index') );
+        $dirh->setRecursion(true);
+        // keep backward compatibility
+        $FILE = array();
+        if ( is_array($result) && count($result) )
+        {
+            foreach( $result as $item )
+            {
+                $key = is_dir($dirh->sanitizePath($root.'/'.$item)) ? 'path' : 'filename';
+                $FILE[$key][] = $item;
+            }
+            if (isset($FILE['path']) && natcasesort($FILE['path']))
+            {
+                $tmp = array();
+                $FILE['path'] = array_merge($tmp, $FILE['path']);
+            }
+            if (isset($FILE['filename']) && natcasesort($FILE['filename']))
+            {
+                $tmp = array();
+                $FILE['filename'] = array_merge($tmp, $FILE['filename']);
+            }
+        }
+        return $FILE;
+    }   // end function scan_current_dir()
 
 }
 // end .. if functions is loaded 
