@@ -247,6 +247,11 @@ $LANG = array(
     'Create GUID' => 'GUID erzeugen',
     'Install date and time' => 'Installationsdatum und Uhrzeit',
     'Page statistics' => 'Seitenstatistik',
+    'Security settings' => 'Sicherheit',
+    'Use HTMLPurifier to clean output' => 'Mit HTMLPurifier filtern',
+    "Please note: This filters the output of every module, so it may break the layout if the module output isn't valid!"
+        => 'Hinweis: Hiermit wird die Ausgabe aller Module gefiltert, was dazu führen kann, daß das Layout zerstört wird, wenn das Modul non-valides HTML ausgibt!',
+    'Use csrf-magic to protect forms' => 'csrf-magic zur Absicherung von Formularen verwenden',
     // ----- addons - install.php -----
     'Unable to extract the file. Please check the ZIP format.'
         => 'Kann die Datei nicht entpacken. Bitte das ZIP Format prüfen.',

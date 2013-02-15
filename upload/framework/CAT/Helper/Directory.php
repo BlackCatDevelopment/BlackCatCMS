@@ -72,6 +72,25 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         }
 	    
 	    /**
+         *
+         **/
+        public function getMode($for='file')
+        {
+            $mode = NULL;
+            if (OPERATING_SYSTEM != 'windows')
+            {
+                if ($for=='directory')
+                {
+                    $mode = OCTAL_DIR_MODE;
+                }
+                else
+                {
+                    $mode = OCTAL_FILE_MODE;
+                }
+            }
+        }   // end function getMode()
+	    
+	    /**
 	     * shortcut method for scanDirectory( $dir, $remove_prefix, true, true )
 	     **/
 		public function getFiles( $dir, $remove_prefix = NULL )
@@ -496,6 +515,45 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	        }
 	    }   // end function removeDirectory()
 	    
+        /**
+         * set access perms for directory; the perms are set in the backend,
+         * so there's no param for this
+         *
+         * @access public
+         * @param  string  $directory
+         * @return void
+         **/
+        public function setPerms($item)
+        {
+            $mode  = $this->getMode();
+            if ( $mode === NULL ) return;
+
+            $umask = umask(0);
+            if (!is_dir($item))
+            {
+                if ( file_exists($item) )
+                {
+                    chmod($name, $this->getMode());
+                    umask($umask);
+                }
+            }
+            else {
+                // Open the directory then loop through its contents
+                $dir = dir($directory);
+                while (false !== $entry = $dir->read())
+                {
+                    if (!preg_match('~^.~',$entry) && is_dir("$directory/$entry"))
+                    {
+                        chmod("$directory/$entry",$this->getMode('directory'));
+                        $this->setPerms($directory . '/' . $entry);
+                    }
+                }
+                $dir->close();
+            }
+            // Restore the umask
+            umask($umask);
+        }
+
 	    /**
 	     * check if directory is world-writable
 	     * hopefully more secure than is_writable()

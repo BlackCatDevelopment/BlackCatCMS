@@ -23,7 +23,7 @@
  *   @package         CAT_Core
  *
  */
-// include class.secure.php to protect this file and the whole CMS!
+
 if (defined('CAT_PATH')) {
 	include(CAT_PATH.'/framework/class.secure.php');
 } else {
@@ -40,7 +40,6 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
 /**
  *  Define that this file has been loaded
@@ -65,138 +64,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 	$logger = new CAT_Helper_KLogger( CAT_PATH.'/temp', $debug_level );
 
     
-    /**
-     *  Function to remove a non-empty directory
-     *  The function was moved to Directory helper class
-     *  
-     *  @param string $directory
-     *  @return boolean
-     */
-    function rm_full_dir($directory) {
-        global $lhd;
-        return $lhd->removeDirectory($directory);
-    }   // end function rm_full_dir()
     
-    /**
-     *    This function returns a recursive list of all subdirectories from a given directory
-     *
-     *    @access  public
-     *    @param   string  $directory: from this dir the recursion will start.
-     *    @param   bool    $show_hidden (optional): if set to TRUE also hidden dirs (.dir) will be shown.
-     *    @param   int     $recursion_deep (optional): An optional integer to test the recursions-deep at all.
-     *    @param   array   $aList (optional): A simple storage list for the recursion.
-     *    @param   string  $ignore (optional): This is the part of the "path" to be "ignored"
-     *
-     *    @return  array
-     *
-     *    example:
-     *        /srv/www/httpdocs/wb/media/a/b/c/
-     *        /srv/www/httpdocs/wb/media/a/b/d/
-     *
-     *        if &ignore is set - directory_list('/srv/www/httpdocs/wb/media/') will return:
-     *        /a
-     *        /a/b
-     *        /a/b/c
-     *        /a/b/d
-     *
-     *
-     */
-    function directory_list($directory, $show_hidden = false, $recursion_deep = 0, &$aList = null, &$ignore = "")
-    {
-        if ($aList == null)
-        {
-            $aList = array();
-        }
-        //# if ($recursion_deep == 0) $ignore= $directory;
-        if (is_dir($directory))
-        {
-            // Open the directory
-			$dir = dir($directory);
-			if ($dir != NULL)
-            {
-				while (false !== ($entry = $dir->read())) 
-                {
-                    // loop through the directory
-                    // Skip pointers
-                    if ($entry == '.' || $entry == '..')
-                    {
-                        continue;
-                    }
-                    // Skip hidden files
-                    if ($entry[0] == '.' && $show_hidden == false)
-                    {
-                        continue;
-                    }
-                    $temp_dir = $directory . "/" . $entry;
-                    if (is_dir($temp_dir))
-                    {
-                        // Add dir and contents to list
-                        $aList[] = str_replace($ignore, "", $temp_dir);
-                        $temp_result = directory_list($temp_dir, $show_hidden, $recursion_deep + 1, $aList, $ignore);
-                    }
-                }
-                $dir->close();
-            }
-        }
-        if ($recursion_deep == 0)
-        {
-            natcasesort($aList);
-            // Now return the list
-            return $aList;
-        }
-    }   // end function directory_list()
-        
-    /**
-     *
-     *  2011-01-25:  M.f.i! Dietrich Roland Pehlke
-     *        This is one of the core functions i realy don't understand, as the second param
-     *        seems not to be use in any way! As for me it only looks for directorys and only change
-     *        the mod within the WB/LEPTON settings.
-     *        Also: there is no recursion-deep and there are no additional test if the change
-     *        has been successfull at all.
-     *
-     *  2011-08-22: Bianka Martinovic
-     *        I did a search over complete LEPTON 1.1 installation and found NO
-     *        file where this is used. Marked as deprecated.
-     *
-     *  @param  string  Path to a given directory.
-     *  @param  string  FileMode to set - but not used in any way here!
-     *
-     */
-    if (!function_exists('chmod_directory_contents'))
-    {
-        function chmod_directory_contents($directory, $file_mode)
-        {
-            /**
-        		 * @deprecated page_menu() is deprecated and will be removed in LEPTON 1.2
-        		 */
-        		trigger_error('The function chmod_directory_contents() is deprecated and will be removed in LEPTON 1.3.', E_USER_NOTICE);
-            if (is_dir($directory))
-            {
-                // Set the umask to 0
-                $umask = umask(0);
-                // Open the directory then loop through its contents
-                $dir = dir($directory);
-                while (false !== $entry = $dir->read())
-                {
-                    // Skip pointers
-                    if ($entry[0] == '.')
-                    {
-                        continue;
-                    }
-                    // Chmod the sub-dirs contents
-                    if (is_dir("$directory/$entry"))
-                    {
-                        chmod_directory_contents($directory . '/' . $entry, $file_mode);
-                    }
-                    change_mode($directory . '/' . $entry);
-                }
-                $dir->close();
-                // Restore the umask
-                umask($umask);
-            }
-        }
-    }
     /**
      * Scan a given directory for dirs and files.
      *
@@ -542,46 +410,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     }   // end function make_dir()
 
     /**
-     * chmod to octal access mode defined by initialize.php;
-     * not used on Windows Systems
-     *
-     * @access public
-     * @param  string   $name - directory or file
-     * @return boolean
-     *
-     **/
-    function change_mode($name)
-    {
-        if (OPERATING_SYSTEM != 'windows')
-        {
-            // Only chmod if os is not windows
-            if (is_dir($name))
-            {
-                $mode = OCTAL_DIR_MODE;
-            }
-            else
-            {
-                $mode = OCTAL_FILE_MODE;
-            }
-            if (file_exists($name))
-            {
-                $umask = umask(0);
-                chmod($name, $mode);
-                umask($umask);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            return true;
-        }
-    }   // function change_mode()
-
-    /**
      * check if the page with the given id has children
      *
      * @access public
@@ -822,57 +650,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         return umlauts_to_entities2($string, $charset_in);
     }
     
-    /**
-     * sanitize path (remove '/./', '/../', '//')
-     *
-     *
-     *
-     **/
-    function sanitize_path( $path )
-    {
-        global $lhd;
-		return $lhd->sanitizePath($path);
-    }   // end function sanitize_path()
-    
-    /**
-     * sanitize URL (remove '/./', '/../', '//')
-     *
-     *
-     *
-     **/
-    function sanitize_url( $href )
-    {
-        // href="http://..." ==> href isn't relative
-        $rel_parsed = parse_url($href);
-        $path       = $rel_parsed['path'];
-
-        // bla/./bloo ==> bla/bloo
-        $path       = preg_replace('~/\./~', '/', $path);
-
-        // resolve /../
-        // loop through all the parts, popping whenever there's a .., pushing otherwise.
-        $parts      = array();
-        foreach ( explode('/', preg_replace('~/+~', '/', $path)) as $part )
-        {
-            if ($part === ".." || $part == '')
-            {
-                array_pop($parts);
-            }
-            elseif ($part!="")
-            {
-                $parts[] = $part;
-            }
-        }
-
-        return
-        (
-              ( is_array($rel_parsed) && array_key_exists( 'scheme', $rel_parsed ) )
-            ? $rel_parsed['scheme'] . '://' . $rel_parsed['host'] . ( isset($rel_parsed['port']) ? ':'.$rel_parsed['port'] : NULL )
-            : ""
-        ) . "/" . implode("/", $parts);
-        
-    }   // end function sanitize_url()
-     
     // @internal webbird - moved this function from admins/modules/uninstall.php and admins/templates/uninstall.php
     function replace_all($aStr = "", &$aArray)
     {
@@ -1454,6 +1231,80 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         $entities = array('&auml;' => "%E4", '&Auml;' => "%C4", '&ouml;' => "%F6", '&Ouml;' => "%D6", '&uuml;' => "%FC", '&Uuml;' => "%DC", '&szlig;' => "%DF", '&euro;' => "%u20AC", '$' => "%24");
         return str_replace(array_keys($entities), array_values($entities), $string);
     }
+
+    //**************************************************************************
+    // wrappers to external functions (for convenience or backward compatiblity)
+    //**************************************************************************
+
+    /**
+     * found no file where this is really used, but left it just in case...
+     **/
+    function chmod_directory_contents($directory, $file_mode) {
+        global $lhd;
+        return $lhd->setPerms($directory,$file_mode);
+    }   // end function chmod_directory_contents()
+
+    /**
+     *    This function returns a recursive list of all subdirectories from a given directory
+     *
+     *    @access  public
+     *    @param   string  $directory: from this dir the recursion will start.
+     *    @param   bool    $show_hidden (optional): if set to TRUE also hidden dirs (.dir) will be shown.
+     *    @param   int     $recursion_deep (optional): An optional integer to test the recursions-deep at all.
+     *    @param   array   $aList (optional): A simple storage list for the recursion.
+     *    @param   string  $ignore (optional): This is the part of the "path" to be "ignored"
+     *
+     *    @return  array
+     *
+     *    example:
+     *        /srv/www/httpdocs/wb/media/a/b/c/
+     *        /srv/www/httpdocs/wb/media/a/b/d/
+     *
+     *        if &ignore is set - directory_list('/srv/www/httpdocs/wb/media/') will return:
+     *        /a
+     *        /a/b
+     *        /a/b/c
+     *        /a/b/d
+     */
+    function directory_list($directory, $show_hidden = false, $recursion_deep = 0, &$aList = null, &$ignore = "")
+    {
+        global $lhd;
+        if ($aList == null)
+        {
+            $aList = array();
+        }
+        $dirs = $lhd->scanDirectory( $directory, false, false, $ignore );
+        return $aList;
+    }   // end function directory_list()
+
+    /**
+     *  Function to remove a non-empty directory
+     *  The function was moved to Directory helper class
+     *
+     *  @param  string $directory
+     *  @return boolean
+     */
+    function rm_full_dir($directory) {
+        global $lhd;
+        return $lhd->removeDirectory($directory);
+    }   // end function rm_full_dir()
+
+    /**
+     * sanitize path (remove '/./', '/../', '//')
+     **/
+    function sanitize_path( $path )
+    {
+        global $lhd;
+		return $lhd->sanitizePath($path);
+    }   // end function sanitize_path()
+
+    /**
+     * sanitize URL (remove '/./', '/../', '//')
+     **/
+    function sanitize_url( $href )
+    {
+        return CAT_Helper_Protect::getInstance()->sanitize_url($href);
+    }   // end function sanitize_url()
 
 }
 // end .. if functions is loaded 

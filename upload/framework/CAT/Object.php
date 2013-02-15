@@ -56,16 +56,6 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 	    const DEBUG  = 7;  // Debug: debug messages
     	const OFF    = 8;
 
-        private static $instance;
-
-        public static function getInstance()
-        {
-            if (!self::$instance)
-            {
-                self::$instance = new self();
-            }
-            return self::$instance;
-        }
         /**
          * inheritable constructor; allows to set object variables
          **/

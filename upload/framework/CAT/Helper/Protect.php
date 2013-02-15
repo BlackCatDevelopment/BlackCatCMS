@@ -34,6 +34,7 @@ if (!class_exists('CAT_Helper_Protect'))
     {
         private static $instance;
         private static $purifier;
+        private static $csrf;
 
         public static function getInstance()
         {
@@ -44,24 +45,114 @@ if (!class_exists('CAT_Helper_Protect'))
             return self::$instance;
         }
 
-        public function purify($content)
+        //**************************************************************************
+        // interface to HTMLPurifier
+        //**************************************************************************
+        public function purify($content,$config=NULL)
         {
-            return CAT_Helper_Protect::getPurifier()->purify($content);
+            return CAT_Helper_Protect::getPurifier($config)->purify($content);
         }
 
-        private static function getPurifier()
+        private static function getPurifier($config=NULL)
         {
             if ( is_object(self::$purifier) ) return self::$purifier;
             if ( ! class_exists('HTMLPurifier', false) )
             {
-                include CAT_PATH . '/modules/lib_htmlpurifier/htmlpurifier/library/HTMLPurifier.auto.php';
+                $path = CAT_Helper_Directory::getInstance()->sanitizePath(CAT_PATH . '/modules/lib_htmlpurifier/htmlpurifier/library/HTMLPurifier.auto.php');
+                if ( ! file_exists( $path ) )
+                {
+                    CAT_Object::getInstance()->printFatalError('Missing library HTMLPurifier!');
             }
-            $config = HTMLPurifier_Config::createDefault();
-            // add some configuration
-            // this is for target="xxx" as we allow to choose
-            $config->set('Attr.AllowedFrameTargets', array('_blank','_self','_parent','_top'));
-            self::$purifier = new HTMLPurifier();
+                include $path;
+            }
+            $pconfig = HTMLPurifier_Config::createDefault();
+            if($config && is_array($config))
+            {
+                foreach($config as $key => $val)
+                {
+                    $pconfig->set($key,$val);
+                }
+            }
+            $pconfig->set('AutoFormat.Linkify', TRUE);
+            $pconfig->set('URI.Disable',false);
+            // allow most HTML but not all (no forms, for example)
+            $pconfig->set('HTML.Allowed','a[href|title],abbr[title],acronym[title],b,blockquote[cite],br,caption,cite,code,dd,del,dfn,div,dl,dt,em,h1,h2,h3,h4,h5,h6,i,img[src|alt|title|class],ins,kbd,li,ol,p,pre,s,strike,strong,sub,sup,table,tbody,td,tfoot,th,thead,tr,tt,u,ul,var');
+            self::$purifier = new HTMLPurifier($pconfig);
             return self::$purifier;
         }
+
+        public function enableCSRFMagic()
+        {
+            if ( is_object(self::$csrf) ) return self::$csrf;
+            if ( ! function_exists('csrf_ob_handler') )
+            {
+                $path = CAT_Helper_Directory::getInstance()->sanitizePath(CAT_PATH . '/modules/lib_csrfmagic/csrf-magic.php');
+                if ( ! file_exists( $path ) )
+                {
+                    CAT_Object::getInstance()->printFatalError('Missing library CSRF-Magic!');
+                }
+                include $path;
+            }
+        }
+
+        //*********************************************************************
+        // convenience methods; just wrap filter_var
+        //*********************************************************************
+        public function sanitize_string($string)
+        {
+            return filter_var($string, FILTER_SANITIZE_STRING);
+        }
+
+        public function sanitize_email($address)
+        {
+            return filter_var($address, FILTER_SANITIZE_EMAIL);
+        }
+
+        public function sanitize_url($address)
+        {
+            $address    = htmlspecialchars((filter_var($address, FILTER_SANITIZE_URL)));
+            // href="http://..." ==> href isn't relative
+            $rel_parsed = parse_url($address);
+            $path       = $rel_parsed['path'];
+            $path       = preg_replace('~/\./~', '/', $path); // bla/./bloo ==> bla/bloo
+            // resolve /../
+            // loop through all the parts, popping whenever there's a .., pushing otherwise.
+            $parts      = array();
+            foreach ( explode('/', preg_replace('~/+~', '/', $path)) as $part )
+            {
+                if ($part === ".." || $part == '')
+                {
+                    array_pop($parts);
+                }
+                elseif ($part!="")
+                {
+                    $parts[] = $part;
+                }
+            }
+            return
+            (
+                  ( is_array($rel_parsed) && array_key_exists( 'scheme', $rel_parsed ) )
+                ? $rel_parsed['scheme'] . '://' . $rel_parsed['host'] . ( isset($rel_parsed['port']) ? ':'.$rel_parsed['port'] : NULL )
+                : ""
+            ) . "/" . implode("/", $parts);
+        }
+
+        public function validate_string($string)
+        {
+            return filter_var($string, FILTER_VALIDATE_STRING);
+        }
+        public function validate_ip($ip)
+        {
+            return filter_var($ip, FILTER_VALIDATE_IP);
+        }
+        public function validate_email($address)
+        {
+            return filter_var($address, FILTER_VALIDATE_EMAIL);
+        }
+        public function validate_url($address)
+        {
+            return filter_var($address, FILTER_VALIDATE_URL);
+        }
+
     }   // ----- end class CAT_Helper_Protect -----
 }
