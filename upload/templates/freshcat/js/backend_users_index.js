@@ -38,15 +38,15 @@
 
 			if ( advanced_div.children('input').size() == advanced_div.children('input:checked').size() )
 			{
-				element.attr('checked' , true).addClass(options.standard_class).removeClass(options.individual_class);
+				element.prop('checked' , true).addClass(options.standard_class).removeClass(options.individual_class);
 			}
 			else if ( advanced_div.children('input').size() == advanced_div.children('input').not(':checked').size() )
 			{
-				element.attr('checked' , false).addClass(options.standard_class).removeClass(options.individual_class);
+				element.prop('checked' , false).addClass(options.standard_class).removeClass(options.individual_class);
 			}
 			else
 			{
-				element.attr('checked' , true).addClass(options.individual_class).removeClass(options.standard_class);
+				element.prop('checked' , true).addClass(options.individual_class).removeClass(options.standard_class);
 			}
 		};
 		return this.each(function ()
@@ -63,7 +63,7 @@
 			element.change( function()
 			{
 				var checked		= element.is(':checked');
-				advanced_div.children('input').attr('checked' , checked);
+				advanced_div.children('input').prop('checked' , checked);
 				check_inputs( element );
 			});
 			// Initial calling of function
@@ -104,7 +104,7 @@
 				var current		= $(this),
 					dates		= {
 						'id':			current.children('input[name=' + options.get_id + ']').val(),
-						'ctoken':		getToken()
+						'leptoken':		getToken()
 					};
 				$.ajax(
 				{
@@ -153,7 +153,7 @@
 									$('#fc_Group_t_' + value).prop( {checked: false});
 								});
 
-								$('input[class*=set_advanced___]').unbind().set_individual_buttons();
+								//$('input[class*=set_advanced___]').unbind().set_individual_buttons();
 							}
 							else {
 								$('#fc_User_name').val( data.username ).attr( 'name', data.username_fieldname );
@@ -287,7 +287,7 @@ jQuery(document).ready(function()
 		var current					= $(this),
 			currentForm				= current.closest('form'),
 			dates					= {
-				'ctoken':	getToken()
+				'leptoken':	getToken()
 			};
 			templates				= new Array();
 			modules					= new Array();
@@ -352,7 +352,7 @@ jQuery(document).ready(function()
 		var current					= $(this),
 			currentForm				= current.closest('form'),
 			dates					= {
-				'ctoken':		getToken(),
+				'leptoken':		getToken(),
 				'home_folder':	$('#fc_User_home_folder option:selected').val()
 			},
 			groups					= new Array();
@@ -418,7 +418,7 @@ jQuery(document).ready(function()
 			kind		= current.attr('id') == 'fc_removeUser' ? 'user' : 'group',
 			dates		= {
 				'id':			kind == 'group' ? $('#fc_Group_group_id').val() : $('#fc_User_user_id').val(),
-				'ctoken':		getToken()
+				'leptoken':		getToken()
 			},
 			current_li	= $('#fc_list_overview').children('.fc_active'),
 			afterSend	= function( data, textStatus, jqXHR )
