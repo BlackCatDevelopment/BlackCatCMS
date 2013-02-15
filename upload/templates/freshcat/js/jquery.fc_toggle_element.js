@@ -108,6 +108,7 @@
 				}
 				if ( typeof according_div != 'undefined' && according_div.length > 0 )
 				{
+					console.log(div_id + ': ' + action + ' - ' +  current.prop( 'checked' ));
 					if ( action == 'show' && current.prop( 'checked' ) )
 					{
 						options.show_on_start = true;
@@ -116,14 +117,17 @@
 					{
 						options.show_on_start = false;
 					}
-					else {
+					else if ( action == 'show' && !current.prop( 'checked' ) )
+					{
 						options.show_on_start = false;
 					}
 				}
 
+				//console.log(according_div + current.attr('rel') + ': ' + show_on_start);
 				// if no value for show_on_start is given or if it is set to false hide the according div
 				if ( options.show_on_start == false )
 				{
+				console.log(div_id + ' ' + action + ' - ' + options.show_on_start);
 					according_div.addClass('fc_inactive_element hidden').slideUp(0).removeClass('fc_active_element');
 				}
 				else
@@ -150,6 +154,6 @@
 					}
 				});
 			}
-		})
+		});
 	}
 })(jQuery);
