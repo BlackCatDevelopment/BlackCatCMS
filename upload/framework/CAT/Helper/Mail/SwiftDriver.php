@@ -108,6 +108,6 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
             }
 
             return self::$mailer->send($message);
-        }
+        }   // end function sendMail()
     }
 }

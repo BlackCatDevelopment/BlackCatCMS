@@ -127,10 +127,13 @@ $data_dwoo['values']['wb_default_sendername']		= CATMAILER_DEFAULT_SENDERNAME;
 // ==========================
 // ! Specials
 // ==========================
+
+// format installation date and time
 $data_dwoo['values']['installation_time']           = date($admin->get_helper('DateTime')->getDefaultDateFormatShort(),INSTALLATION_TIME)
                                                     . ' '
                                                     . date($admin->get_helper('DateTime')->getDefaultTimeFormat(),INSTALLATION_TIME);
 
+// get page statistics
 if(($result = $database->query('SELECT visibility, count(*) AS count FROM '.CAT_TABLE_PREFIX.'pages GROUP BY visibility')) && $result->numRows() > 0 )
 {
     while ( $row = $result->fetchRow(MYSQL_ASSOC) )
@@ -139,6 +142,16 @@ if(($result = $database->query('SELECT visibility, count(*) AS count FROM '.CAT_
     }
 }
 
+// get installed mailer libs
+$data_dwoo['CATMAILER_LIBS'] = array();
+$mailer_libs = CAT_Helper_Addons::getInstance()->getLibraries('mail');
+if ( count($mailer_libs) )
+{
+    foreach ( $mailer_libs as $item )
+    {
+        $data_dwoo['CATMAILER_LIBS'][] = $item;
+    }
+}
 
 // ========================== 
 // ! Insert language values   

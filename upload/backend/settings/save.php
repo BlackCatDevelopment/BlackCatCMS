@@ -243,7 +243,8 @@ function save_settings(&$admin, &$database)
 	}
 	
 	// check webmailer settings
-	// email should be validatet by core
+
+	// email should be validated by core
 	// Work-out which wbmailer routine should be checked
 	if ((isset ($settings['server_email'])) && (!$admin->validate_email($settings['server_email'])))
 	{
@@ -339,7 +340,7 @@ function save_settings(&$admin, &$database)
 				$value = trim($admin->add_slashes($value));
 				$sql = 'UPDATE `'.CAT_TABLE_PREFIX.'settings` ';
 				$sql .= 'SET `value` = \''.$value.'\' ';
-				$sql .= 'WHERE `name` <> \'wb_version\' ';
+				$sql .= 'WHERE `name` <> \'cat_version\' ';
 				$sql .= 'AND `name` = \''.$setting_name.'\' ';
 
 				if ($database->query($sql))

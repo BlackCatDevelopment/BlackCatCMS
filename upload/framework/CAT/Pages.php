@@ -766,6 +766,12 @@ if (!class_exists('CAT_Pages', false))
                 '/templates/' . TEMPLATE . '/templates/default/css'
             );
 
+            if(defined('PAGE_ID') && $this->link )
+            {
+                $dir = preg_replace( '~^'.CAT_Helper_Protect::getInstance()->sanitize_url(CAT_URL.'/'.PAGES_DIRECTORY).'~i', '', pathinfo($this->link,PATHINFO_DIRNAME) );
+                array_push( CAT_Pages::$css_search_path, $this->sanitizePath(PAGES_DIRECTORY.$dir) );
+            }
+
             // -----------------------------------------------------------------
             // -----                  sections (modules)                   -----
             // -----------------------------------------------------------------
@@ -1693,7 +1699,7 @@ if (!class_exists('CAT_Pages', false))
                         );
                     }
                     // PAGE_ID.css (frontend only)
-                    if ($for == 'frontend' && defined('PAGE_ID') && preg_match('#/templates/#', $directory))
+                    if ($for == 'frontend' && defined('PAGE_ID') )
                     {
                         $file = $this->sanitizePath($directory . '/' . PAGE_ID . '.css');
                         if (file_exists($this->sanitizePath(CAT_PATH . '/' . $file)))
