@@ -32,6 +32,7 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
 	class CAT_Helper_Mail extends CAT_Object
 	{
         protected        $debugLevel = 8; // 8 = OFF
+        private          $error      = NULL;
         private   static $_drivers   = array();
         private   static $init       = false;
         private   static $instance;
@@ -95,6 +96,11 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
     			    self::$settings[$match[1]] = $setting['value'];
                     continue;
                 }
+                if ( preg_match('/^catmailer_(.*)$/i',$setting['name'],$match) )
+                {
+    			    self::$settings[$match[1]] = $setting['value'];
+                    continue;
+                }
     			if ($setting['name'] == "server_email")
                 {
                     self::$settings['server_email'] = $setting['value'];
@@ -116,8 +122,28 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
             $toaddress   = preg_replace('/[\r\n]/'  , ''      , $toaddress  );
             $subject     = preg_replace('/[\r\n]/'  , ''      , $subject    );
             $message     = preg_replace('/\r\n?|\n/', '<br \>', $message    );
+        }
 
+        /**
+         *
+         *
+         *
+         *
+         **/
+        public function setError($msg)
+        {
+            $this->error = $msg;
+        }
             
+        /**
+         *
+         *
+         *
+         *
+         **/
+        public function getError()
+        {
+            return $this->error;
         }
     }
 }

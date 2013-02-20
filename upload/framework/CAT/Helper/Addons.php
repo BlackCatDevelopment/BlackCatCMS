@@ -1236,6 +1236,43 @@ if (!class_exists('CAT_Helper_Addons'))
             return $this->lang()->translate($this->error);
         }
 
+        /**
+         * find available libraries; path names must begin with 'lib_'
+         *
+         *
+         *
+         **/
+        public function getLibraries($type=NULL)
+        {
+            $dir  = self::$dirh->sanitizePath(CAT_PATH.'/modules');
+            $libs = array();
+            if ( $handle = opendir($dir) ) {
+                while ( false !== ( $file = readdir($handle) ) ) {
+                    if ( $file != "." && $file != ".." ) {
+                        if (
+                               is_dir( $dir.'/'.$file )
+                            && preg_match( '#^lib_#', $file )
+                            && file_exists( $dir.'/'.$file.'/info.php' )
+                        ) {
+                            $module_directory = $module_name = $library_function = NULL;
+                            include $dir.'/'.$file.'/info.php';
+                            if ( $type !== NULL && $library_function === NULL)
+                            {
+                                continue;
+                            }
+                            if ( $type !== NULL && $library_function !== $type )
+                            {
+                                continue;
+                            }
+                            $libs[] = array( 'name' => $module_name, 'dir' => $module_directory, 'function' => $library_function );
+                        }
+                    }
+                }
+                closedir($handle);
+            }
+            return $libs;
+        }
+
     } // class CAT_Helper_Addons
 
 } // if class_exists()
