@@ -125,6 +125,7 @@ $data_dwoo['languages']				= $addons->get_addons( LANGUAGE , 'language', false, 
 // ! Insert default timezone values   
 // ================================== 
 $counter	= 0;
+$timezone_table = CAT_Helper_DateTime::getInstance()->getTimezones();
 foreach ($timezone_table as $title)
 {
 	$data_dwoo['timezones'][$counter]['NAME']		= $title;
@@ -135,7 +136,7 @@ foreach ($timezone_table as $title)
 // =========================== 
 // ! Insert date format list   
 // =========================== 
-include_once( CAT_ADMIN_PATH.'/interface/date_formats.php' );
+$DATE_FORMATS = CAT_Helper_DateTime::getInstance()->getDateFormats();
 $counter=0;
 foreach ( $DATE_FORMATS AS $format => $title )
 {
