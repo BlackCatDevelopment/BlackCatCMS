@@ -23,7 +23,10 @@
  *
  */
 
-include(CAT_PATH.'/modules/lib_dwoo/dwoo/dwooAutoload.php');
+if ( ! class_exists('Dwoo',false) )
+{
+    include(CAT_PATH.'/modules/lib_dwoo/dwoo/dwooAutoload.php');
+}
 
 class CAT_Helper_Template_DwooDriver extends Dwoo {
 
