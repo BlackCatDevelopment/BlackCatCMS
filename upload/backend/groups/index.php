@@ -54,7 +54,7 @@ $data_dwoo['permissions']['USERS']			= $admin->get_permission('users')			? true 
 // =========================================================================== 
 global $parser;
 
-// $items	= $admin->get_controller('Pages')->get_linked_by_language($page_id);
+// $items	= $admin->get_controller('Pages')->getLinkedByLanguage($page_id);
 
 $data_dwoo['templates']			= $addons->get_addons( DEFAULT_TEMPLATE , 'template' );
 $data_dwoo['languages']			= $addons->get_addons( DEFAULT_LANGUAGE , 'language' );

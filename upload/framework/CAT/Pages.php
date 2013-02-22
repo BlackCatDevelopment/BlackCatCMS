@@ -907,24 +907,28 @@ if (!class_exists('CAT_Pages', false))
          *
          *
          **/
-        public function get_linked_by_language($page_id)
+        public function getLinkedByLanguage($page_id)
         {
-            global $database, $wb, $admin;
-            if (!is_object($wb))
-                $wb =& $admin;
-            $results = $database->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'page_langs` AS t1' . ' RIGHT OUTER JOIN `' . CAT_TABLE_PREFIX . 'pages` AS t2' . ' ON t1.link_page_id=t2.page_id' . ' WHERE t1.page_id = ' . $page_id);
+            global $database;
+            $sql     = 'SELECT * FROM `' . CAT_TABLE_PREFIX . 'page_langs` AS t1'
+                     . ' RIGHT OUTER JOIN `' . CAT_TABLE_PREFIX . 'pages` AS t2'
+                     . ' ON t1.link_page_id=t2.page_id'
+                     . ' WHERE t1.page_id = ' . $page_id
+                     ;
+                  
+            $results = $database->query($sql);
             if ($results->numRows())
             {
                 $items = array();
                 while (($row = $results->fetchRow(MYSQL_ASSOC)) !== false)
                 {
-                    $row['href'] = $wb->page_link($row['link']) . (($row['lang'] != '') ? '?lang=' . $row['lang'] : NULL);
+                    $row['href'] = $this->getLink($row['link']) . (($row['lang'] != '') ? '?lang=' . $row['lang'] : NULL);
                     $items[]     = $row;
                 }
                 return $items;
             }
             return false;
-        } // end function get_linked_by_language()
+        } // end function getLinkedByLanguage()
 
     	/**
     	 * get_template_blocks function.

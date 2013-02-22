@@ -368,12 +368,7 @@ function language_menu()
     global $wb, $parser;
     if (defined('PAGE_LANGUAGES') && PAGE_LANGUAGES)
     {
-        if ( ! class_exists( 'CAT_Pages', false ) )
-        {
-	        include sanitize_path( dirname(__FILE__).'/CAT/Pages.php' );
-		}
-        $pages = CAT_Pages::getInstance();
-        $items = $pages->get_linked_by_language(PAGE_ID);
+        $items = CAT_Pages::getInstance()->getLinkedByLanguage(PAGE_ID);
     }
     if( isset($items) && count($items) )
     {

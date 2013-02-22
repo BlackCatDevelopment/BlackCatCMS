@@ -108,19 +108,10 @@ if ( $admin->get_get('del') )
 
 $arrh = $admin->get_helper('Array');
 
-// =========================
-// ! get available languages
-// =========================
-require_once(CAT_PATH . '/framework/class.pages.php');
-$pages = new pages( ( $admin->get_permission('pages_settings') ? true : false ) );
-
-$pages->current_page['id']					= $page_id;
-$pages->current_page['parent']				= $results_array['parent'];
-
 // ===========================
 // ! find already linked pages
 // ===========================
-$items          = $admin->get_controller('Pages')->get_linked_by_language($page_id);
+$items          = CAT_Pages::getInstance(array('pages_settings'=>$admin->get_permission('pages_settings')))->getLinkedByLanguage($page_id);
 
 
 // =========================

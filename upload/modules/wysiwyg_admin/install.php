@@ -51,20 +51,15 @@ $jobs = array();
 $jobs[] = "DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_editor_admin`";
 $jobs[] = "DROP TABLE IF EXISTS `".$table."`";
 
-$jobs[] = "CREATE TABLE `".$table."` (
-	`id`		int(11) NOT NULL AUTO_INCREMENT,
-	`skin`		varchar(255) NOT NULL DEFAULT 'cirkuit',
-	`menu`		varchar(255) NOT NULL DEFAULT 'Smart',
-	`width`		varchar(64) NOT NULL DEFAULT '100%',
-	`height`	varchar(64) NOT NULL DEFAULT '250px',
-	`editor`	varchar(255) NOT NULL DEFAULT 'tiny_mce_jq',
-	PRIMARY KEY (`id`)
-)";
-
-$jobs[] = "INSERT INTO `".$table."` (`skin`, `menu`, `width`, `height`, `editor`) VALUES( 'none', 'none', '100%', '250px', 'none');";
-$jobs[] = "INSERT INTO `".$table."` (`skin`, `menu`, `width`, `height`, `editor`) VALUES( 'kama', 'Smart', '100%', '250px', 'ckeditor');";
-$jobs[] = "INSERT INTO `".$table."` (`skin`, `menu`, `width`, `height`, `editor`) VALUES( 'cirkuit', 'Smart', '100%', '250px', 'tiny_mce_jq');";
-$jobs[] = "INSERT INTO `".$table."` (`skin`, `menu`, `width`, `height`, `editor`) VALUES( 'default', 'default', '100%', '250px', 'edit_area');";
+$jobs[] = "CREATE TABLE IF NOT EXISTS `".CAT_TABLE_PREFIX."mod_wysiwyg_admin_v2` (
+	`editor` VARCHAR(50) NOT NULL,
+	`set_name` VARCHAR(50) NOT NULL,
+	`set_value` VARCHAR(50) NOT NULL,
+	UNIQUE INDEX `editor_set_name` (`editor`, `set_name`)
+)
+COMMENT='WYSIWYG Admin for Black Cat CMS'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;";
 
 /**
  *	Additonal queries to avoid db-conflicts if the install.php is reloaded by the backend-adminstration.
