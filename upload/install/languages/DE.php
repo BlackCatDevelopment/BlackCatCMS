@@ -101,9 +101,6 @@ $LANG = array(
 	'E-Mail' => 'Administrator E-Mail',
 	'Password' => 'Kennwort',
 	'Retype Password' => 'Kennwort wiederholen',
-	'Click on the image on the right to see a preview' => 'Klicken Sie auf das Bild, um eine Vorschau anzusehen',
-	'traditional' => 'traditionell',
-	'modern (jQuery enhanced)' => 'modern (mit jQuery)',
 	'Please enter an admin username (choose "admin", for example)!'
 		=> 'Bitte eine Administrator-Kennung angeben (z. B. "admin")',
 	'Please enter an email address!' => 'Bitte eine Mailadresse für das Administratorkonto angeben',
@@ -153,6 +150,7 @@ $LANG = array(
 	'backend_theme' => 'Backend Darstellung',
     'create_guid' => 'GUID erzeugen',
     'guid_prefix' => 'GUID Präfix',
+    'no_validate_db_password' => 'Datenbankkennwort nicht prüfen',
 
 );
 

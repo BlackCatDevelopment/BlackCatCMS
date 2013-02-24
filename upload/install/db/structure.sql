@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Please note:
--- The table prefix (lep_) will be replaced by the
+-- The table prefix (cat_) will be replaced by the
 -- installer! Do NOT use this file to create the tables
 -- manually! (Or patch it to fit your needs first.)
 -- --------------------------------------------------------
@@ -10,36 +10,36 @@
 /*!40014 SET FOREIGN_KEY_CHECKS=0 */;
 
 
-DROP TABLE IF EXISTS `lep_addons`;
-DROP TABLE IF EXISTS `lep_groups`;
-DROP TABLE IF EXISTS `lep_mod_captcha_control`;
-DROP TABLE IF EXISTS `lep_mod_dropleps_permissions`;
-DROP TABLE IF EXISTS `lep_mod_dropleps_settings`;
-DROP TABLE IF EXISTS `lep_mod_droplets`;
-DROP TABLE IF EXISTS `lep_mod_form_fields`;
-DROP TABLE IF EXISTS `lep_mod_form_settings`;
-DROP TABLE IF EXISTS `lep_mod_form_submissions`;
-DROP TABLE IF EXISTS `lep_mod_initial_page`;
-DROP TABLE IF EXISTS `lep_mod_menu_link`;
-DROP TABLE IF EXISTS `lep_mod_news_comments`;
-DROP TABLE IF EXISTS `lep_mod_news_groups`;
-DROP TABLE IF EXISTS `lep_mod_news_posts`;
-DROP TABLE IF EXISTS `lep_mod_news_settings`;
-DROP TABLE IF EXISTS `lep_mod_output_interface`;
-DROP TABLE IF EXISTS `lep_mod_wrapper`;
-DROP TABLE IF EXISTS `lep_mod_wysiwyg`;
-DROP TABLE IF EXISTS `lep_mod_wysiwyg_admin`;
-DROP TABLE IF EXISTS `lep_pages`;
-DROP TABLE IF EXISTS `lep_pages_load`;
-DROP TABLE IF EXISTS `lep_page_langs`;
-DROP TABLE IF EXISTS `lep_search`;
-DROP TABLE IF EXISTS `lep_sections`;
-DROP TABLE IF EXISTS `lep_settings`;
-DROP TABLE IF EXISTS `lep_users`;
-DROP TABLE IF EXISTS `lep_class_secure`;
-DROP TABLE IF EXISTS `lep_mod_wysiwyg_admin_v2`;
+DROP TABLE IF EXISTS `cat_addons`;
+DROP TABLE IF EXISTS `cat_groups`;
+DROP TABLE IF EXISTS `cat_mod_captcha_control`;
+DROP TABLE IF EXISTS `cat_mod_dropleps_permissions`;
+DROP TABLE IF EXISTS `cat_mod_dropleps_settings`;
+DROP TABLE IF EXISTS `cat_mod_droplets`;
+DROP TABLE IF EXISTS `cat_mod_form_fields`;
+DROP TABLE IF EXISTS `cat_mod_form_settings`;
+DROP TABLE IF EXISTS `cat_mod_form_submissions`;
+DROP TABLE IF EXISTS `cat_mod_initial_page`;
+DROP TABLE IF EXISTS `cat_mod_menu_link`;
+DROP TABLE IF EXISTS `cat_mod_news_comments`;
+DROP TABLE IF EXISTS `cat_mod_news_groups`;
+DROP TABLE IF EXISTS `cat_mod_news_posts`;
+DROP TABLE IF EXISTS `cat_mod_news_settings`;
+DROP TABLE IF EXISTS `cat_mod_output_interface`;
+DROP TABLE IF EXISTS `cat_mod_wrapper`;
+DROP TABLE IF EXISTS `cat_mod_wysiwyg`;
+DROP TABLE IF EXISTS `cat_mod_wysiwyg_admin`;
+DROP TABLE IF EXISTS `cat_pages`;
+DROP TABLE IF EXISTS `cat_pages_load`;
+DROP TABLE IF EXISTS `cat_page_langs`;
+DROP TABLE IF EXISTS `cat_search`;
+DROP TABLE IF EXISTS `cat_sections`;
+DROP TABLE IF EXISTS `cat_settings`;
+DROP TABLE IF EXISTS `cat_users`;
+DROP TABLE IF EXISTS `cat_class_secure`;
+DROP TABLE IF EXISTS `cat_mod_wysiwyg_admin_v2`;
 
-CREATE TABLE IF NOT EXISTS `lep_addons` (
+CREATE TABLE IF NOT EXISTS `cat_addons` (
   `addon_id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(128) NOT NULL DEFAULT '',
   `directory` varchar(128) NOT NULL DEFAULT '',
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `lep_addons` (
   UNIQUE KEY `type` (`type`,`directory`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_groups` (
+CREATE TABLE IF NOT EXISTS `cat_groups` (
   `group_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `system_permissions` text NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `lep_groups` (
   PRIMARY KEY (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_captcha_control` (
+CREATE TABLE IF NOT EXISTS `cat_mod_captcha_control` (
   `enabled_captcha` varchar(1) NOT NULL DEFAULT '1',
   `enabled_asp` varchar(1) NOT NULL DEFAULT '0',
   `captcha_type` varchar(255) NOT NULL DEFAULT 'calc_text',
@@ -74,21 +74,21 @@ CREATE TABLE IF NOT EXISTS `lep_mod_captcha_control` (
   `ct_text` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_dropleps_permissions` (
+CREATE TABLE IF NOT EXISTS `cat_mod_dropleps_permissions` (
   `id` int(10) unsigned NOT NULL,
   `edit_groups` varchar(50) NOT NULL,
   `view_groups` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_dropleps_settings` (
+CREATE TABLE IF NOT EXISTS `cat_mod_dropleps_settings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `attribute` varchar(50) NOT NULL DEFAULT '0',
   `value` varchar(50) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_droplets` (
+CREATE TABLE IF NOT EXISTS `cat_mod_droplets` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   `code` longtext NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS `lep_mod_droplets` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_form_fields` (
+CREATE TABLE IF NOT EXISTS `cat_mod_form_fields` (
   `field_id` int(11) NOT NULL AUTO_INCREMENT,
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `lep_mod_form_fields` (
   PRIMARY KEY (`field_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_form_settings` (
+CREATE TABLE IF NOT EXISTS `cat_mod_form_settings` (
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
   `header` text NOT NULL,
@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS `lep_mod_form_settings` (
   PRIMARY KEY (`section_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_form_submissions` (
+CREATE TABLE IF NOT EXISTS `cat_mod_form_submissions` (
   `submission_id` int(11) NOT NULL AUTO_INCREMENT,
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `lep_mod_form_submissions` (
   PRIMARY KEY (`submission_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_menu_link` (
+CREATE TABLE IF NOT EXISTS `cat_mod_menu_link` (
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
   `target_page_id` int(11) NOT NULL DEFAULT '0',
@@ -158,7 +158,7 @@ CREATE TABLE IF NOT EXISTS `lep_mod_menu_link` (
   PRIMARY KEY (`section_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_news_comments` (
+CREATE TABLE IF NOT EXISTS `cat_mod_news_comments` (
   `comment_id` int(11) NOT NULL AUTO_INCREMENT,
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `lep_mod_news_comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE IF NOT EXISTS `lep_mod_news_groups` (
+CREATE TABLE IF NOT EXISTS `cat_mod_news_groups` (
   `group_id` int(11) NOT NULL AUTO_INCREMENT,
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
@@ -181,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `lep_mod_news_groups` (
   PRIMARY KEY (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_news_posts` (
+CREATE TABLE IF NOT EXISTS `cat_mod_news_posts` (
   `post_id` int(11) NOT NULL AUTO_INCREMENT,
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
@@ -200,7 +200,7 @@ CREATE TABLE IF NOT EXISTS `lep_mod_news_posts` (
   PRIMARY KEY (`post_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_news_settings` (
+CREATE TABLE IF NOT EXISTS `cat_mod_news_settings` (
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
   `header` text NOT NULL,
@@ -219,14 +219,14 @@ CREATE TABLE IF NOT EXISTS `lep_mod_news_settings` (
   PRIMARY KEY (`section_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_output_interface` (
+CREATE TABLE IF NOT EXISTS `cat_mod_output_interface` (
   `module_directory` varchar(64) NOT NULL DEFAULT '',
   `module_name` varchar(64) NOT NULL DEFAULT '',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`module_directory`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_wrapper` (
+CREATE TABLE IF NOT EXISTS `cat_mod_wrapper` (
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
   `url` text NOT NULL,
@@ -236,7 +236,7 @@ CREATE TABLE IF NOT EXISTS `lep_mod_wrapper` (
   PRIMARY KEY (`section_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_wysiwyg` (
+CREATE TABLE IF NOT EXISTS `cat_mod_wysiwyg` (
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
   `content` longtext NOT NULL,
@@ -244,7 +244,7 @@ CREATE TABLE IF NOT EXISTS `lep_mod_wysiwyg` (
   PRIMARY KEY (`section_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_pages` (
+CREATE TABLE IF NOT EXISTS `cat_pages` (
   `page_id` int(11) NOT NULL AUTO_INCREMENT,
   `parent` int(11) NOT NULL DEFAULT '0',
   `root_parent` int(11) NOT NULL DEFAULT '0',
@@ -272,7 +272,7 @@ CREATE TABLE IF NOT EXISTS `lep_pages` (
   PRIMARY KEY (`page_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_pages_load` (
+CREATE TABLE IF NOT EXISTS `cat_pages_load` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `register_name` varchar(255) NOT NULL DEFAULT '',
   `register_type` varchar(64) NOT NULL DEFAULT 'droplep',
@@ -286,14 +286,14 @@ CREATE TABLE IF NOT EXISTS `lep_pages_load` (
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_page_langs` (
+CREATE TABLE IF NOT EXISTS `cat_page_langs` (
   `page_id` int(10) NOT NULL,
   `lang` char(2) NOT NULL,
   `link_page_id` int(10) NOT NULL,
   UNIQUE KEY `page_id_lang_link_page_id` (`page_id`,`lang`,`link_page_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Links pages of different languages together';
 
-CREATE TABLE IF NOT EXISTS `lep_search` (
+CREATE TABLE IF NOT EXISTS `cat_search` (
   `search_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `value` text NOT NULL,
@@ -301,7 +301,7 @@ CREATE TABLE IF NOT EXISTS `lep_search` (
   PRIMARY KEY (`search_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_sections` (
+CREATE TABLE IF NOT EXISTS `cat_sections` (
   `section_id` int(11) NOT NULL AUTO_INCREMENT,
   `page_id` int(11) NOT NULL DEFAULT '0',
   `position` int(11) NOT NULL DEFAULT '0',
@@ -313,14 +313,14 @@ CREATE TABLE IF NOT EXISTS `lep_sections` (
   PRIMARY KEY (`section_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_settings` (
+CREATE TABLE IF NOT EXISTS `cat_settings` (
   `setting_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `value` text NOT NULL,
   PRIMARY KEY (`setting_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_users` (
+CREATE TABLE IF NOT EXISTS `cat_users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL DEFAULT '0',
   `groups_id` varchar(255) NOT NULL DEFAULT '0',
@@ -341,7 +341,7 @@ CREATE TABLE IF NOT EXISTS `lep_users` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_initial_page` (
+CREATE TABLE IF NOT EXISTS `cat_mod_initial_page` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL DEFAULT '1',
   `init_page` text NOT NULL,
@@ -349,14 +349,14 @@ CREATE TABLE IF NOT EXISTS `lep_mod_initial_page` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `lep_class_secure` (
+CREATE TABLE IF NOT EXISTS `cat_class_secure` (
 	`module` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 	`filepath` VARCHAR(255) NOT NULL DEFAULT '0',
 	UNIQUE INDEX `module_filepath` (`module`, `filepath`)
 )
 COLLATE='utf8_general_ci' ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `lep_mod_wysiwyg_admin_v2` (
+CREATE TABLE IF NOT EXISTS `cat_mod_wysiwyg_admin_v2` (
 	`editor` VARCHAR(50) NOT NULL,
 	`set_name` VARCHAR(50) NOT NULL,
 	`set_value` VARCHAR(50) NOT NULL,

@@ -356,7 +356,11 @@ function show_step_globals( $step ) {
     global $lang, $parser, $installer_uri, $config;
     global $timezone_table;
 
-    include dirname(__FILE__).'/../framework/timezones.php';
+    // get timezones
+    include dirname(__FILE__).'/../framework/CAT/Helper/DateTime.php';
+    $timezone_table = CAT_Helper_DateTime::getInstance()->getTimezones();
+    
+    // set timezone default
     if ( !isset( $config['default_timezone_string' ] ) ) {
         if (date_default_timezone_get()) {
 		    $config['default_timezone_string'] = date_default_timezone_get();
@@ -671,11 +675,11 @@ function install_tables ($database) {
 	global $config ;
 	if (!defined('CAT_INSTALL_PROCESS')) define ('CAT_INSTALL_PROCESS', true);
     // import structure
-    __cat_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
+    $errors = __cat_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
 	
 	return array(
-		true,      // no error checks here! Maybe added later...
-		array()
+		( count($errors) ? false : true ),
+		$errors
 	);
 
 }   // end function install_tables()
@@ -1073,7 +1077,7 @@ function check_tables($database) {
 
 function create_default_page($database) {
 
-    __cat_installer_import_sql(dirname(__FILE__).'/db/default_page.sql',$database);
+    $errors = __cat_installer_import_sql(dirname(__FILE__).'/db/default_page.sql',$database);
 
     $pg_content = "<?php
 /**
@@ -1143,19 +1147,24 @@ function pre_installation_error( $msg ) {
  **/
 function __cat_installer_import_sql($file,$database) {
 
+    $errors = array();
     $import = file_get_contents($file);
-
-    $import = preg_replace( "%/\*(.*)\*/%Us", ''          , $import );
-    $import = preg_replace( "%^--(.*)\n%mU" , ''          , $import );
-    $import = preg_replace( "%^$\n%mU"      , ''          , $import );
-    $import = preg_replace( "%lep_%"        , CAT_TABLE_PREFIX, $import );
+    $import = preg_replace( "%/\*(.*)\*/%Us", ''              , $import );
+    $import = preg_replace( "%^--(.*)\n%mU" , ''              , $import );
+    $import = preg_replace( "%^$\n%mU"      , ''              , $import );
+    $import = preg_replace( "%cat_%"        , CAT_TABLE_PREFIX, $import );
     
     foreach (split_sql_file($import, ';') as $imp){
         if ($imp != '' && $imp != ' ') {
             $ret = $database->query($imp);
-//echo $database->get_error(), "<br />";
+            if ( $database->is_error() )
+            {
+                $errors[] = $database->get_error();
+            }
         }
     }
+    
+    return $errors;
 
 }   // end function __cat_installer_import_sql()
 
