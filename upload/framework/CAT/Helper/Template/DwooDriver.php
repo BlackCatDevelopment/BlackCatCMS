@@ -28,7 +28,9 @@ if ( ! class_exists('Dwoo',false) )
     include(CAT_PATH.'/modules/lib_dwoo/dwoo/dwooAutoload.php');
 }
 
-class CAT_Helper_Template_DwooDriver extends Dwoo {
+if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
+{
+    class CAT_Helper_Template_DwooDriver extends Dwoo {
 
     protected $debuglevel      = CAT_Helper_KLogger::CRIT;
     public    $workdir         = NULL;
@@ -96,6 +98,5 @@ class CAT_Helper_Template_DwooDriver extends Dwoo {
 
     }   // end function get()
 
-}   // end class LepDwoo
-
-?>
+    }   // end class CAT_Helper_Template_DwooDriver
+}

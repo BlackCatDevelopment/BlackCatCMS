@@ -23,7 +23,9 @@
  *
  */
 
-class CAT_Helper_Template_DriverDecorator extends CAT_Helper_Template {
+if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
+{
+    class CAT_Helper_Template_DriverDecorator extends CAT_Helper_Template {
 
     private $te;
     public  $path;
@@ -148,5 +150,6 @@ class CAT_Helper_Template_DriverDecorator extends CAT_Helper_Template {
             }
         }
         return false;
+        }
     }
 }

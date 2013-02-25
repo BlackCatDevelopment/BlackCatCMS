@@ -67,11 +67,11 @@ if ( !(is_writable( CAT_PATH .  '/modules/') && is_writable( CAT_PATH . '/templa
 $temp_dir		= CAT_PATH . '/temp/';
 $temp_unzip	  = CAT_PATH . '/temp/unzip_' . basename($_FILES['userfile']['tmp_name']) . '/';
 $temp_file	  = $temp_unzip . $_FILES['userfile']['name'];
-$addon_helper		= $admin->get_helper('Addons');
+$addon_helper = CAT_Helper_Addons::getInstance();
 
 // make sure the temp directory exists, is writable and is empty
-$admin->get_helper('Directory')->removeDirectory( $temp_unzip );
-$admin->get_helper('Directory')->createDirectory( $temp_unzip );
+CAT_Helper_Directory::getInstance()->removeDirectory( $temp_unzip );
+CAT_Helper_Directory::getInstance()->createDirectory( $temp_unzip );
 
 // Try to upload the file to the temp dir
 if ( !move_uploaded_file( $_FILES['userfile']['tmp_name'], $temp_file ) )
@@ -89,10 +89,11 @@ if ( $extension == 'php' )
 }
 else if ( $extension == 'zip' ) {
 	$temp_subdir	= $temp_unzip . 'unzip/';
-	$admin->get_helper('Directory')->createDirectory( $temp_subdir );
+    CAT_Helper_Directory::getInstance()->createDirectory( $temp_subdir );
 
 	// Setup the PclZip object and unzip the files to the temp unzip folder
-	$list	= $admin->get_helper( 'Zip', $temp_file )->config( 'Path', sanitize_path( $temp_subdir ) )->extract();
+    $list    = Cat_Helper_Zip::getInstance( $temp_file )->config( 'Path', sanitize_path( $temp_subdir ) )->extract();
+
     // check if anything was extracted
     if ( ! $list )
     {
@@ -103,7 +104,7 @@ else if ( $extension == 'zip' ) {
 	if ( ! file_exists( $temp_subdir . '/info.php' ) )
 	{
         // check subfolders for info.php
-        $info = $admin->get_helper('Directory')->maxRecursionDepth(2)->findFile('info.php',$temp_subdir);
+        $info = CAT_Helper_Directory::getInstance()->maxRecursionDepth(2)->findFile('info.php',$temp_subdir);
         if ( ! $info )
 	{
 		CLEANUP();
@@ -121,13 +122,19 @@ else {
 }
 
 // Check the info.php file / language file
+$precheck_errors = NULL;
 if ( $addon_info = $addon_helper->checkInfo( $temp_subdir ) )
 {
-	$addon_helper->preCheckAddon( $temp_file, $temp_subdir );
+    $precheck_errors = $addon_helper->preCheckAddon( $temp_file, $temp_subdir, false );
 }
 else {
 	CLEANUP();
 	$admin->print_error( 'Invalid installation file. ' . $addon_helper->getError() );
+}
+
+if ( $precheck_errors )
+{
+    $admin->print_error( 'Invalid installation file. ' . $precheck_errors );
 }
 
 // So, now we have done all preinstall checks, lets see what to do next
@@ -161,7 +168,7 @@ if ( file_exists( $addon_dir ) )
 // Make sure the module dir exists, and chmod if needed
 if ( $addon_info['addon_function'] != 'language')
 {
-	$admin->get_helper('Directory')->createDirectory( $addon_dir );
+    CAT_Helper_Directory::getInstance()->createDirectory( $addon_dir );
 
 	// copy files from temp folder
 	if ( COPY_RECURSIVE_DIRS( $temp_subdir, $addon_dir ) !== true )
@@ -285,19 +292,28 @@ $admin->print_error( 'Install/Upgrade of add-on failed' );
 function CLEANUP()
 {
 	global $admin, $temp_unzip, $temp_file;
-	$admin->get_helper('Directory')->removeDirectory($temp_unzip);
-	$admin->get_helper('Directory')->removeDirectory($temp_file);
+    CAT_Helper_Directory::getInstance()->removeDirectory($temp_unzip);
+    CAT_Helper_Directory::getInstance()->removeDirectory($temp_file);
 }
 
 // recursive function to copy
 // all subdirectories and contents:
 function COPY_RECURSIVE_DIRS( $dirsource, $dirdest )
 {
+
 	global $admin;
 	if (is_dir($dirsource))
 	{
 		$dir_handle = opendir($dirsource);
 	}
+    else
+    {
+        return false;
+    }
+    if ( ! is_resource($dir_handle) )
+    {
+        return false;
+    }
 	while ($file = readdir($dir_handle))
 	{
 		if ($file != "." && $file != "..")
@@ -307,12 +323,12 @@ function COPY_RECURSIVE_DIRS( $dirsource, $dirdest )
 				copy($dirsource . "/" . $file, $dirdest . '/' . $file);
 				if ($file != '.svn')
 				{
-					change_mode($dirdest . "/" . $file, 'file');
+                    CAT_Helper_Directory::getInstance()->setPerms($dirdest . "/" . $file);
 				}
 			}
 			else
 			{
-				$admin->get_helper('Directory')->createDirectory( $dirdest . '/' . $file );
+                CAT_Helper_Directory::getInstance()->createDirectory( $dirdest . '/' . $file );
 				COPY_RECURSIVE_DIRS($dirsource . "/" . $file, $dirdest . '/' . $file);
 			}
 		}

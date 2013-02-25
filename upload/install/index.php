@@ -50,6 +50,23 @@ if ( !defined( 'SESSION_STARTED' ) ) {
 //unset($_SESSION);
 error_reporting(E_ALL^E_NOTICE);
 
+// set global default to avoid warnings
+date_default_timezone_set('Europe/Paris');
+
+set_include_path (
+    implode(
+        PATH_SEPARATOR,
+        array(
+            realpath(dirname(__FILE__).'/../framework'),
+            get_include_path(),
+        )
+    )
+);
+function catcmsinstall_autoload($class) {
+	@include str_replace( '_', '/', $class ) . '.php';
+}
+spl_autoload_register('catcmsinstall_autoload',false,false);
+
 // Try to guess installer URL
 $installer_uri = 'http://' . $_SERVER[ "SERVER_NAME" ] . ( ( $_SERVER['SERVER_PORT'] != 80 ) ? ':'.$_SERVER['SERVER_PORT'] : '' ) . $_SERVER[ "SCRIPT_NAME" ];
 $installer_uri = dirname( $installer_uri );
@@ -126,10 +143,7 @@ foreach( $steps as $i => $step ) {
 
 // template engine; creates a global var $parser
 global $parser;
-if ( file_exists(dirname(__FILE__).'/../modules/lib_dwoo/library.php') )
-{
-	require_once dirname(__FILE__).'/../modules/lib_dwoo/library.php';
-}
+$parser = CAT_Helper_Template::getInstance('Dwoo');
 $parser->setPath( dirname(__FILE__).'/templates/default' );
 
 // set some globals
@@ -167,6 +181,21 @@ if ( file_exists( dirname(__FILE__).'/instdata.tmp' ) )
 else {
     $config = array();
 }
+
+// set timezone default
+if ( !isset( $config['default_timezone_string' ] ) ) {
+    if (date_default_timezone_get()) {
+	    $config['default_timezone_string'] = date_default_timezone_get();
+	}
+	elseif ( ini_get('date.timezone') ) {
+	    $config['default_timezone_string'] = ini_get('date.timezone');
+	}
+	else {
+		$config['default_timezone_string'] = "Europe/Berlin";
+	}
+}
+
+date_default_timezone_set($config['default_timezone_string']);
 
 if ( isset($config['cat_url']) && $config['cat_url'] != '' )
 {
@@ -360,19 +389,6 @@ function show_step_globals( $step ) {
     include dirname(__FILE__).'/../framework/CAT/Helper/DateTime.php';
     $timezone_table = CAT_Helper_DateTime::getInstance()->getTimezones();
     
-    // set timezone default
-    if ( !isset( $config['default_timezone_string' ] ) ) {
-        if (date_default_timezone_get()) {
-		    $config['default_timezone_string'] = date_default_timezone_get();
-		}
-		elseif ( ini_get('date.timezone') ) {
-		    $config['default_timezone_string'] = ini_get('date.timezone');
-		}
-		else {
-			$config['default_timezone_string'] = "Europe/Berlin";
-		}
-	}
-
 	$lang_dir = "../languages/";
 	$dir      = dir( $lang_dir );
 	$langs    = array();
@@ -1421,6 +1437,10 @@ function __cat_check_db_config() {
 		    $database_password = $users->getLastValidatedPassword();
 		}
 	}
+        else
+        {
+            $database_password = $config['database_password'];
+        }
 	}
 
 	// Check if user has entered a database name

@@ -37,6 +37,14 @@ if (!class_exists('CAT_Helper_Addons'))
         private static $dirh;
         private        $error = NULL;
         private static $instance = NULL;
+        private static $states = array(
+            '.0' => 'dev',
+            '.1' => 'preview',
+            '.2' => 'alpha',
+            '.5' => 'beta',
+            '.8' => 'rc',
+            '.9' => 'final'
+        );
         private static $info_vars_full = array(
             'module' => array(
                 'module_license',
@@ -202,10 +210,10 @@ if (!class_exists('CAT_Helper_Addons'))
 
         /**
          * Register the Addon $module_name in  $module_directory for $page_id
-         * for sending a page title to LEPTON before displaying the page.
+         * for sending a page title to BC before displaying the page.
          *
          * The registered Addon must have the file headers.load.php in the
-         * $module_directory. LEPTON will call the function
+         * $module_directory. BC will call the function
          *
          *	 $module_directory_get_page_title($page_id)
          *
@@ -223,7 +231,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
         /**
          * Unregister the Addon in $module_directory for $page_id for sending
-         * a page title to LEPTON
+         * a page title to BC
          *
          * @param integer $page_id
          * @param string $module_directory
@@ -236,7 +244,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
         /**
          * Check if the Addon in $module_directory is registered for $page_id
-         * to sending a page title to LEPTON
+         * to sending a page title to BC
          *
          * @param integer $page_id
          * @param string $module_directory
@@ -249,10 +257,10 @@ if (!class_exists('CAT_Helper_Addons'))
 
         /**
          * Register the Addon $module_name in  $module_directory for $page_id
-         * for sending a page descriptions to LEPTON before displaying the page.
+         * for sending a page descriptions to BC before displaying the page.
          *
          * The registered Addon must have the file headers.load.php in the
-         * $module_directory. LEPTON will call the function
+         * $module_directory. BC will call the function
          *
          *	 $module_directory_get_page_description($page_id)
          *
@@ -270,7 +278,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
         /**
          * Unregister the Addon in $module_directory for $page_id for sending
-         * a page description to LEPTON
+         * a page description to BC
          *
          * @param integer $page_id
          * @param string $module_directory
@@ -283,7 +291,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
         /**
          * Check if the Addon in $module_directory is registered for $page_id
-         * to sending a page description to LEPTON
+         * to sending a page description to BC
          *
          * @param integer $page_id
          * @param string $module_directory
@@ -296,10 +304,10 @@ if (!class_exists('CAT_Helper_Addons'))
 
         /**
          * Register the Addon $module_name in  $module_directory for $page_id
-         * for sending page keywords to LEPTON before displaying the page.
+         * for sending page keywords to BC before displaying the page.
          *
          * The registered Addon must have the file headers.load.php in the
-         * $module_directory. LEPTON will call the function
+         * $module_directory. BC will call the function
          *
          *	 $module_directory_get_page_keywords($page_id)
          *
@@ -317,7 +325,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
         /**
          * Unregister the Addon in $module_directory for $page_id for sending
-         * page keywords to LEPTON
+         * page keywords to BC
          *
          * @param integer $page_id
          * @param string $module_directory
@@ -330,7 +338,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
         /**
          * Check if the Addon in $module_directory is registered for $page_id
-         * to sending page keywords to LEPTON
+         * to sending page keywords to BC
          *
          * @param integer $page_id
          * @param string $module_directory
@@ -436,7 +444,7 @@ if (!class_exists('CAT_Helper_Addons'))
                             // compare versions and extract actual status
                             $status   = $this->versionCompare(CAT_VERSION, $value['VERSION'], $operator);
                             $msg[]    = array(
-                                'check' => sprintf('LEPTON-%s: ', $this->lang()->translate('Version')),
+                                'check' => sprintf('CMS-%s: ', $this->lang()->translate('Version')),
                                 'required' => sprintf('%s %s', htmlentities($operator), $value['VERSION']),
                                 'actual' => $this_version,
                                 'status' => $status
@@ -686,46 +694,27 @@ if (!class_exists('CAT_Helper_Addons'))
         } // end function getVersion()
 
         /**
-         *	As "version_compare" it self seems only got trouble
-         *	within words like "Alpha", "Beta" a.s.o. this function
-         *	only modify the version-string in the way that these words are replaced by values/numbers.
+         * removes/replaces known substrings in version string with their
+         * weights
          *
-         *	E.g:	"1.2.3 Beta2" => "1.2.3.22"
-         *			"0.1.1 ALPHA" => "0.1.1.1"
-         *
-         *	Notice:	Please keep in mind, that this will not correct the way "version_control"
-         *			handel "1 < 1.0 < 1.0.0 < 1.0.0.0" and will not correct missformed version-strings
-         *			below 2.7, e.g. "1.002 released candidate 2.3"
-         *
-         *	@since	2.8.0 RC2
-         *	@notice	2.8.2	Keys in $states have change within a leading dot to get correct results
-         *					within a compare with problematic versions like e.g. "1.1.10 > 1.1.8 rc".
-         *
-         *	@param	string	A versionstring
-         *	@return	string	The modificated versionstring
-         *
+         * @access public
+         * @param  string  $version
+         * @return string
          */
-        function getVersion2($version = "")
+        public function getVersion2($version)
         {
-            $states = array(
-                '.0' => 'dev',
-                '.1' => "alpha",
-                '.2' => "beta",
-                '.4' => "rc",
-                '.8' => "final"
-            );
-
             $version = strtolower($version);
 
-            foreach ($states as $value => $keys)
+            foreach (self::$states as $value => $keys)
+            {
                 $version = str_replace($keys, $value, $version);
+            }
 
             $version = str_replace(" ", "", $version);
 
             /**
              *	Force the version-string to get at least 4 terms.
              *	E.g. 2.7 will become 2.7.0.0
-             *
              */
             $temp_array = explode(".", $version);
             $n          = count($temp_array);
@@ -736,7 +725,7 @@ if (!class_exists('CAT_Helper_Addons'))
             }
 
             return $version;
-        }
+        }   // end function getVersion2()
 
         /**
          * This function performs a comparison of two provided version strings
