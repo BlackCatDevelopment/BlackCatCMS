@@ -548,7 +548,7 @@ class wb extends SecureCMS
     /* moved to CAT_Helper_Mail */
     public function mail($fromaddress, $toaddress, $subject, $message, $fromname = '')
     {
-        return CAT_Helper_Mail::getInstance('Swift')->sendMail($fromaddress, $toaddress, $subject, $message, $fromname);
+        return CAT_Helper_Mail::getInstance('PHPMailer')->sendMail($fromaddress, $toaddress, $subject, $message, $fromname);
     }
     public function page_is_visible($page) { return CAT_Pages::getInstance()->isVisible($page); }
     public function page_is_active($page)  { return CAT_Pages::getInstance()->isActive($page);  }

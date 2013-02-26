@@ -44,6 +44,21 @@ if (!class_exists('CAT_Helper_DateTime'))
         }
 
         /**
+         * returns formatted date
+         *
+         * @access public
+         * @param  string  $t    - timestamp
+         * @param  boolean $long - get long format (default:false)
+         **/
+        public function getDate($t=NULL,$long=false)
+        {
+            $format = ( $long === true )
+                    ? $this->getDefaultDateFormatLong()
+                    : $this->getDefaultDateFormatShort();
+            return date($format,($t?$t:time()));
+        }   // end function getDate()
+
+        /**
          * returns a list of known timezones, using DateTimeZone::listIdentifiers()
          **/
         public function getTimezones()
@@ -62,7 +77,7 @@ if (!class_exists('CAT_Helper_DateTime'))
                 'g:i|A' => date('g:i A', $actual_time),
                 'g:i|a' => date('g:i a', $actual_time),
                 'H:i:s' => date('H:i:s', $actual_time),
-                'H:i'   => date('H:i', $actual_time),
+                'H:i'   => date('H:i'  , $actual_time),
             );
             if(isset($user_time) AND $user_time == true) {
            		$TIME_FORMATS['system_default'] = date(DEFAULT_TIME_FORMAT, $actual_time).' (System Default)';

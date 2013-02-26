@@ -229,7 +229,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			if (false !== ($dh = opendir( $dir ))) {
                 while( false !== ($file = readdir($dh))) {
                     if ( ! preg_match( '#^\.#', $file ) ) {
-						if ( count($skip_dirs) && in_array( pathinfo($dir.'/'.$file,PATHINFO_DIRNAME), $skip_dirs) )
+						if ( count($skip_dirs) && in_array( pathinfo( $dir.'/'.$file, (is_dir($dir.'/'.$file)?PATHINFO_BASENAME:PATHINFO_DIRNAME)), $skip_dirs) )
 						{
 						    continue;
 						}

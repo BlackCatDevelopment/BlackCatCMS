@@ -212,6 +212,70 @@ if ( ! class_exists( 'CAT_Users', false ) )
     		return $groups;
     	}   // end function get_groups()
 
+    	/**
+    	 * Return a system permission
+    	 *
+    	 * @access public
+    	 * @param  string  $name
+    	 * @param  string  $type
+    	 * @return boolean
+    	 **/
+    	public function get_permission($name, $type = 'system')
+        {
+    		// Append to permission type
+    		$type .= '_permissions';
+    		// Check if we have a section to check for
+    		if($name == 'start')
+            {
+    			return true;
+    		}
+            else
+            {
+                $val = CAT_Helper_Validate::getInstance();
+    			// Set system permissions var
+    			$system_permissions   = $val->fromSession('SYSTEM_PERMISSIONS');
+    			// Set module permissions var
+    			$module_permissions   = $val->fromSession('MODULE_PERMISSIONS');
+    			// Set template permissions var
+    			$template_permissions = $val->fromSession('TEMPLATE_PERMISSIONS');
+    			// Return true if system perm = 1
+    			if (isset($$type) && is_array($$type) && is_numeric(array_search($name, $$type)))
+                {
+    				if($type == 'system_permissions') return true;
+                    else       					      return false;
+    			}
+                else
+                {
+    				if($type == 'system_permissions') return false;
+    				else                              return true;
+    			}
+    		}
+    	}   // end function get_permission()
+
+        /**
+         * get user details
+         *
+         * @access public
+         * @param  integer $user_id
+         * @return array
+         **/
+    	public function get_user_details($user_id)
+        {
+            global $database;
+    		$query_user = "SELECT username,display_name FROM ".CAT_TABLE_PREFIX."users WHERE user_id = '$user_id'";
+    		$get_user   = $database->query($query_user);
+    		if($get_user->numRows() != 0)
+            {
+    			$user = $get_user->fetchRow(MYSQL_ASSOC);
+    		}
+            else
+            {
+    			$user['display_name'] = 'Unknown';
+    			$user['username']     = 'unknown';
+    		}
+    		return $user;
+    	}   // end function get_user_details()
+
         /**
          * Check if the user is already authenticated
          *

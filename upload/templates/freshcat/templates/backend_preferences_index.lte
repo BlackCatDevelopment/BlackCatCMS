@@ -25,7 +25,7 @@
 			<label for="fc_language" class="fc_label_200">{translate('Language')}:</label>
 			<select name="language" id="fc_language">
 				{foreach $languages as language}
-				<option value="{$language.VALUE}"{if $language.SELECTED} selected="selected"{/if} style="background: url({$language.VALUE}.png) no-repeat center left; padding-left: 20px;">{$language.NAME} ({$language.VALUE})</option>
+				<option value="{$language.VALUE}"{if $language.SELECTED} selected="selected"{/if} style="background: url({$CAT_URL}/languages/{$language.VALUE}.png) no-repeat center left; padding-left: 20px;">{$language.NAME} ({$language.VALUE})</option>
 				{/foreach}
 			</select>
 			<div class="clear_sp"></div>

@@ -497,6 +497,17 @@
 			</p>
 			<div class="clear"></div>
 			<hr />
+
+            {if count($CATMAILER_LIBS)>1}
+            <div id="fc_catmailer_lib" class="settings_label fc_settings_max">
+                <span class="fc_label_200" for="fc_catmailer_lib">{translate('Mailer library')}:</span>
+                {foreach $CATMAILER_LIBS item}
+                    <input type="radio" class="fc_radio_jq" name="catmailer_lib" id="fc_catmailer_{$item.dir}" value="{$item.dir}" {if $values.catmailer_lib == $item.dir}checked="checked"{/if}/>
+                    <label for="fc_catmailer_{$item.dir}">{$item.name}</label>
+                {/foreach}
+            </div>
+            {/if}
+
 			<div class="clear_sp"></div>
 			<label class="fc_label_200" for="fc_list_SERVER_email">{translate('Default from mail')}:</label>
 			<input type="text" name="server_email" id="fc_list_SERVER_email" value="{$values.server_email}" />
@@ -568,9 +579,12 @@
             <label class="fc_label_200" for="fc_default_template">{translate('Security settings')}:</label>
 
             <div class="fc_settings_max">
-    			<input type="checkbox" class="fc_checkbox_jq" name="enable_htmlpurifier" id="fc_enable_htmlpurifier" value="true" {if $ENABLE_HTMLPURIFIER} checked="checked"{/if}/>
-    			<label for="fc_enable_htmlpurifier">{translate('Use HTMLPurifier to clean output')}</label>
-                <span class="fc_label_200">{translate("Please note: This filters the output of every module, so it may break the layout if the module output isn't valid!")}</span>
+                <input type="checkbox" class="fc_checkbox_jq" name="enable_csrfmagic" id="fc_enable_csrfmagic" value="true" {if $ENABLE_CSRFMAGIC} checked="checked"{/if}/>
+    			<label for="fc_enable_csrfmagic">{translate('Use csrf-magic to protect forms')}</label><br />
+
+                <input type="checkbox" value="true" class="fc_checkbox_jq" name="csrfmagic_defer" id="fc_csrfmagic_defer" {if $CSRFMAGIC_DEFER} checked="checked"{/if}/>
+                <label for="fc_csrfmagic_defer">{translate('Defer executing csrf_check() until manual call')}</label>
+                
             </div>
             <div class="clear_sp"></div>
 

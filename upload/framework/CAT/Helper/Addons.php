@@ -143,7 +143,7 @@ if (!class_exists('CAT_Helper_Addons'))
     	 * @param string $function    (default: '')     - function of addon- can be an array
     	 * @param string $permissions (default: '')     - array(!) of directories to check permissions
     	 * @param string $order       (default: 'name') - value to handle "ORDER BY" for database request of addons
-    	 * @return void
+    	 * @return array
     	 */
     	public function get_addons( $selected = 1 , $type = '', $function = '' , $permissions = '' , $order = 'name' )
     	{
@@ -954,12 +954,12 @@ if (!class_exists('CAT_Helper_Addons'))
             $version = null;
             if ($source != true)
             {
-                $sql = "SELECT `version` FROM `" . CAT_TABLE_PREFIX . "addons` WHERE `directory`='" . $modulname . "'";
+                $sql = "SELECT `version` FROM `" . CAT_TABLE_PREFIX . "addons` WHERE `directory`='" . $modulename . "'";
                 $version = $database->get_one($sql);
             }
             else
             {
-                $info_file = CAT_PATH . '/modules/' . $modulname . '/info.php';
+                $info_file = CAT_PATH . '/modules/' . $modulename . '/info.php';
                 if (file_exists($info_file))
                 {
                     $module_version = null;

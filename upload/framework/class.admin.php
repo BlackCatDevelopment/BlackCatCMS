@@ -630,49 +630,6 @@ class admin extends wb
 		}
 	}
 
-	// Return a system permission
-	public function get_permission($name, $type = 'system') {
-		// Append to permission type
-		$type .= '_permissions';
-		// Check if we have a section to check for
-		if($name == 'start') {
-			return true;
-		} else {
-			// Set system permissions var
-			$system_permissions = $this->get_session('SYSTEM_PERMISSIONS');
-			// Set module permissions var
-			$module_permissions = $this->get_session('MODULE_PERMISSIONS');
-			// Set template permissions var
-			$template_permissions = $this->get_session('TEMPLATE_PERMISSIONS');
-			// Return true if system perm = 1
-			if (isset($$type) && is_array($$type) && is_numeric(array_search($name, $$type))) {
-				if($type == 'system_permissions') {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				if($type == 'system_permissions') {
-					return false;
-				} else {
-					return true;
-				}
-			}
-		}
-	}
-		
-	public function get_user_details($user_id) {
-		$query_user = "SELECT username,display_name FROM ".CAT_TABLE_PREFIX."users WHERE user_id = '$user_id'";
-		$get_user = $this->db_handle->query($query_user);
-		if($get_user->numRows() != 0) {
-			$user = $get_user->fetchRow(MYSQL_ASSOC);
-		} else {
-			$user['display_name'] = 'Unknown';
-			$user['username'] = 'unknown';
-		}
-		return $user;
-	}	
-	
 	public function get_page_details($page_id)
 	{
 		$query = "SELECT page_id,link,page_title,menu_title,modified_by,modified_when FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '$page_id'";
@@ -852,6 +809,12 @@ class admin extends wb
 		
 		return $s;
 	}
+
+    /***************************************************************************
+     * moved to CAT_Users
+     **************************************************************************/
+    public function get_permission($name, $type = 'system') { return CAT_Users::getInstance()->get_permission($name,$type); }
+    public function get_user_details($user_id)              { return CAT_Users::getInstance()->get_user_details($user_id);  }
 }
 
 ?>
