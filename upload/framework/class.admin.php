@@ -161,7 +161,6 @@ class admin extends wb
         		 && $this->section_name !== 'Settings' && $this->section_name !== 'Page'
     		) {
 				require_once(CAT_PATH .'/modules/dropleps/droplets.php');
-				# $this->droplets_ok = true;
 			}
 		}
 	}
@@ -169,55 +168,27 @@ class admin extends wb
 	/**
 	 *	Print the admin header
 	 *
+	 *  @access public
 	 */
-	public function print_header($body_tags = '')
+	public function print_header()
 	{
-		// Get vars from the language file
-		global $MENU;
-		global $MESSAGE;
-		global $TEXT;
+        global $database;
 
-        require CAT_PATH.'/framework/CAT/Helper/Addons.php';
         $addons = CAT_Helper_Addons::getInstance();
+        $user   = CAT_Users::getInstance();
 
 		// Connect to database and get website title
-		$title = $this->db_handle->get_one("SELECT `value` FROM `".CAT_TABLE_PREFIX."settings` WHERE `name`='website_title'");
+		$title = $database->get_one("SELECT `value` FROM `".CAT_TABLE_PREFIX."settings` WHERE `name`='website_title'");
 
-		// ======================================================================================= 
-		// ! Try to include the info.php  of the template to seperate old and new TemplateEngine   
-		// ======================================================================================= 
-		if ( file_exists(CAT_THEME_PATH.'/info.php') )
-		{
-			include( CAT_THEME_PATH . '/info.php' );
-			// ================================================================= 
-			// ! Current controller to check, if it is a new template for Dwoo   
-			// ================================================================= 
-			if ( isset($template_engine) && $template_engine == 'dwoo' )
-			{
 				global $parser;
-				$data_dwoo = array();
+		$tpl_data = array();
 
 				// ============================================= 
 				// ! Create the controller, if it is not set yet
 				// ============================================= 
 				if ( !is_object($parser) )
 				{
-					$parser					= new Dwoo();
-					// ==================== 
-					// ! Add URLs to Dwoo 	
-					// ==================== 
-					$data_dwoo['LEPTON_URL']	= LEPTON_URL;
-					$data_dwoo['CAT_PATH']	= CAT_PATH;
-					$data_dwoo['CAT_ADMIN_URL']		= CAT_ADMIN_URL;
-					$data_dwoo['CAT_THEME_URL']		= CAT_THEME_URL;
-
-					// ============================= 
-					// ! Add languages to Dwoo 	
-					// ============================= 
-					$data_dwoo['HEADING']		= $HEADING;
-					$data_dwoo['TEXT']			= $TEXT;
-					$data_dwoo['MESSAGE']		= $MESSAGE;
-					$data_dwoo['MENU']			= $MENU;
+            $parser = CAT_Helper_Template::getInstance('Dwoo');
 				}
 
 				// =================================== 
@@ -227,124 +198,117 @@ class admin extends wb
 				$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
 				// ================================= 
-				// ! Add permissions to $data_dwoo   
+		// ! Add permissions to $tpl_data   
 				// ================================= 
-				$data_dwoo['permission']['pages']			= $this->get_permission('pages') ? true : false;
-				$data_dwoo['permission']['pages_add']		= $this->get_permission('pages_add') ? true : false;
-				$data_dwoo['permission']['pages_add_l0']	= $this->get_permission('pages_add_l0') ? true : false;
-				$data_dwoo['permission']['pages_modify']	= $this->get_permission('pages_modify') ? true : false;
-				$data_dwoo['permission']['pages_delete']	= $this->get_permission('pages_delete') ? true : false;
-				$data_dwoo['permission']['pages_settings']	= $this->get_permission('pages_settings') ? true : false;
-				$data_dwoo['permission']['pages_intro']		= ( $this->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
+		$tpl_data['permission']['pages']		  = $user->get_permission('pages')          ? true : false;
+		$tpl_data['permission']['pages_add']	  = $user->get_permission('pages_add')      ? true : false;
+		$tpl_data['permission']['pages_add_l0']	  = $user->get_permission('pages_add_l0')   ? true : false;
+		$tpl_data['permission']['pages_modify']	  = $user->get_permission('pages_modify')   ? true : false;
+		$tpl_data['permission']['pages_delete']	  = $user->get_permission('pages_delete')   ? true : false;
+		$tpl_data['permission']['pages_settings'] = $user->get_permission('pages_settings') ? true : false;
+		$tpl_data['permission']['pages_intro']	  = ( $user->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
+		if ( $tpl_data['permission']['pages'] == true )
+		{
+			$this->pg->setPerms($tpl_data['permission']);
 
-				if ( $data_dwoo['permission']['pages'] == true )
-				{
-					$this->pg->setPerms($data_dwoo['permission']);
-
-					$data_dwoo['DISPLAY_MENU_LIST']				= MULTIPLE_MENUS	!= false ? true : false;
-					$data_dwoo['DISPLAY_LANGUAGE_LIST']			= PAGE_LANGUAGES	!= false ? true : false;
-					$data_dwoo['DISPLAY_SEARCHING']				= SEARCH			!= false ? true : false;
+			$tpl_data['DISPLAY_MENU_LIST']	   = MULTIPLE_MENUS != false ? true : false;
+			$tpl_data['DISPLAY_LANGUAGE_LIST'] = PAGE_LANGUAGES != false ? true : false;
+			$tpl_data['DISPLAY_SEARCHING']	   = SEARCH	        != false ? true : false;
 
 					// ========================== 
 					// ! Get info for pagesTree   
 					// ========================== 
 					// list of first level of pages
-					$data_dwoo['pages']				= $this->pg->make_list( 0, true );
-					//$data_dwoo['pages']				= $pages->get_sections();
-					$data_dwoo['pages_editable']	= $this->pg->pages_editable;
-					//print_r($data_dwoo['pages']);
+			$tpl_data['pages']			= $this->pg->make_list( 0, true );
+			$tpl_data['pages_editable']	= $this->pg->pages_editable;
 
 					// ========================================== 
 					// ! Get info for the form to add new pages   
 					// ========================================== 
-					$data_dwoo['templates']			= $addons->get_addons( DEFAULT_TEMPLATE , 'template', 'template' );
-					$data_dwoo['languages']			= $addons->get_addons( DEFAULT_LANGUAGE , 'language' );
-					$data_dwoo['modules']			= $addons->get_addons( 'wysiwyg' , 'module', 'page',  $_SESSION['MODULE_PERMISSIONS'] );
-					$data_dwoo['groups']			= $this->users->get_groups();
+			$tpl_data['templates']		= $addons->get_addons( DEFAULT_TEMPLATE , 'template', 'template' );
+			$tpl_data['languages']		= $addons->get_addons( DEFAULT_LANGUAGE , 'language' );
+			$tpl_data['modules']		= $addons->get_addons( 'wysiwyg' , 'module', 'page',  $_SESSION['MODULE_PERMISSIONS'] );
+			$tpl_data['groups']			= $user->get_groups();
 
 					// list of all parent pages for dropdown parent
-					$data_dwoo['parents_list']		= $this->pg->pages_list(0 , 0);
+			$tpl_data['parents_list']	= $this->pg->pages_list(0 , 0);
 					// List of available Menus of default template
-					$data_dwoo['TEMPLATE_MENU']		= $this->pg->get_template_menus();
+			$tpl_data['TEMPLATE_MENU']	= $this->pg->get_template_menus();
 
 					// =========================================== 
 					// ! Check and set permissions for templates 	
 					// =========================================== 
-					foreach ($data_dwoo['templates'] as $key => $template)
+			foreach ($tpl_data['templates'] as $key => $template)
 					{
-						$data_dwoo['templates'][$key]['permissions']	= ( $this->get_permission($template['VALUE'], 'template') ) ? true : false;
+				$tpl_data['templates'][$key]['permissions']	= ( $this->get_permission($template['VALUE'], 'template') ) ? true : false;
 					}
 				}
 
 				// ========================= 
 				// ! Add Metadatas to Dwoo 	
 				// ========================= 
-				$data_dwoo['META']['CHARSET']				= true === defined('DEFAULT_CHARSET') ? DEFAULT_CHARSET : 'utf-8';
-				$data_dwoo['META']['LANGUAGE']				= strtolower(LANGUAGE);
-				$data_dwoo['META']['WEBSITE_TITLE']			= $title;
-				$data_dwoo['CAT_VERSION']					= CAT_VERSION;
-				$data_dwoo['CAT_CORE']						= CAT_CORE;
-				$data_dwoo['PAGE_EXTENSION']				= PAGE_EXTENSION;
+		$tpl_data['META']['CHARSET']		= (true === defined('DEFAULT_CHARSET')) ? DEFAULT_CHARSET : 'utf-8';
+		$tpl_data['META']['LANGUAGE']		= strtolower(LANGUAGE);
+		$tpl_data['META']['WEBSITE_TITLE']	= $title;
+		$tpl_data['CAT_VERSION']			= CAT_VERSION;
+		$tpl_data['CAT_CORE']				= CAT_CORE;
+		$tpl_data['PAGE_EXTENSION']			= PAGE_EXTENSION;
 
 				$date_search	= array('Y','j','n','jS','l','F');
 				$date_replace	= array('yy','y','m','d','DD','MM');
-				$data_dwoo['DATE_FORMAT']					= str_replace( $date_search, $date_replace, DATE_FORMAT );
+		$tpl_data['DATE_FORMAT']            = str_replace( $date_search, $date_replace, DATE_FORMAT );
 				$time_search	= array('H','i','s','g');
 				$time_replace	= array('hh','mm','ss','h');
-				$data_dwoo['TIME_FORMAT']					= str_replace( $time_search, $time_replace, TIME_FORMAT );
+		$tpl_data['TIME_FORMAT']            = str_replace( $time_search, $time_replace, TIME_FORMAT );
 
-				$data_dwoo['HEAD']['SECTION_NAME']			= $MENU[strtoupper($this->section_name)];
-				$data_dwoo['HEAD']['BACKEND_MODULE_FILES']	= $this->__admin_register_backend_modfiles();
-				$data_dwoo['DISPLAY_NAME']					= $this->get_display_name();
-				$data_dwoo['USER']							= $this->get_user_details($this->get_user_id());
-				/** 
-				 * For what is this needed? - creativecat
-				*/
-				$data_dwoo['BODY_TAGS']						= $body_tags;
+		$tpl_data['HEAD']['SECTION_NAME']			= $this->lang->translate(strtoupper($this->section_name));
+		$tpl_data['HEAD']['BACKEND_MODULE_FILES']	= $this->__admin_register_backend_modfiles();
+		$tpl_data['DISPLAY_NAME']					= $this->get_display_name();
+		$tpl_data['USER']							= $user->get_user_details($user->get_user_id());
 
 				// ===================================================================
 				// ! Add arrays for main menu, options menu and the Preferences-Button
 				// ===================================================================
-				$data_dwoo['MAIN_MENU']		= array();
+		$tpl_data['MAIN_MENU']		= array();
 
-				$data_dwoo['MAIN_MENU'][0]	= array(
+		$tpl_data['MAIN_MENU'][0]	= array(
 					'link'					=> CAT_ADMIN_URL . '/start/index.php',
-					'title'					=> $MENU['START'],
+			'title'					=> $this->lang->translate('Start'),
 					'permission_title'		=> 'start',
 					'permission'			=> ( $this->get_link_permission('start') ) ? true : false,
 					'current'				=> ( 'start' == strtolower($this->section_name) ) ? true : false
 					);
-				$data_dwoo['MAIN_MENU'][1]	= array(
+		$tpl_data['MAIN_MENU'][1]	= array(
 					'link'					=> CAT_ADMIN_URL . '/media/index.php',
-					'title'					=> $MENU['MEDIA'],
+			'title'					=> $this->lang->translate('Media'),
 					'permission_title'		=> 'media',
 					'permission'			=> ( $this->get_link_permission('media') ) ? true : false,
 					'current'				=> ( 'media' == strtolower($this->section_name) ) ? true : false
 					);
-				$data_dwoo['MAIN_MENU'][2]	= array(
+		$tpl_data['MAIN_MENU'][2]	= array(
 					'link'					=> CAT_ADMIN_URL . '/settings/index.php',
-					'title'					=> $MENU['SETTINGS'],
+			'title'					=> $this->lang->translate('Settings'),
 					'permission_title'		=> 'settings',
 					'permission'			=> ( $this->get_link_permission('settings') ) ? true : false,
 					'current'				=> ( 'settings' == strtolower($this->section_name) ) ? true : false
 					);
-				$data_dwoo['MAIN_MENU'][3]	= array(
+		$tpl_data['MAIN_MENU'][3]	= array(
 					'link'					=> CAT_ADMIN_URL . '/addons/index.php',
-					'title'					=> $MENU['ADDONS'],
+			'title'					=> $this->lang->translate('Addons'),
 					'permission_title'		=> 'addons',
 					'permission'			=> ( $this->get_link_permission('addons') ) ? true : false,
 					'current'				=> ( 'addons' == strtolower($this->section_name) ) ? true : false
 					);
-				$data_dwoo['MAIN_MENU'][4]	= array(
+		$tpl_data['MAIN_MENU'][4]	= array(
 					'link'					=> CAT_ADMIN_URL . '/admintools/index.php',
-					'title'					=> $MENU['ADMINTOOLS'],
+			'title'					=> $this->lang->translate('Admin-Tools'),
 					'permission_title'		=> 'admintools',
 					'permission'			=> ( $this->get_link_permission('admintools') ) ? true : false,
 					'current'				=> ( 'admintools' == strtolower($this->section_name) ) ? true : false
 					);
-				$data_dwoo['MAIN_MENU'][5]	= array(
-					'title'					=> $MENU['ACCESS'],
+		$tpl_data['MAIN_MENU'][5]	= array(
+			'title'					=> $this->lang->translate('Access'),
 					'permission_title'		=> 'access',
 					'permission'			=> ( $this->get_link_permission('access') ) ? true : false,
 					'current'				=> ( 'access' == strtolower($this->section_name) ) ? true : false
@@ -353,189 +317,52 @@ class admin extends wb
 				// ======================================= 
 				// ! Seperate access-link by permissions   
 				// ======================================= 
-				if ( $this->get_permission('users') )
+		if ( $user->get_permission('users') )
 				{
-					$data_dwoo['MAIN_MENU'][5]['link']	= CAT_ADMIN_URL . '/users/index.php';
+			$tpl_data['MAIN_MENU'][5]['link']	= CAT_ADMIN_URL . '/users/index.php';
 				}
-				elseif ( $this->get_permission('groups') )
+		elseif ( $user->get_permission('groups') )
 				{
-					$data_dwoo['MAIN_MENU'][5]['link']	= CAT_ADMIN_URL . '/groups/index.php';
+			$tpl_data['MAIN_MENU'][5]['link']	= CAT_ADMIN_URL . '/groups/index.php';
 				}
 
-				$data_dwoo['PREFERENCES']	= array(
+		$tpl_data['PREFERENCES']	= array(
 					'link'					=> CAT_ADMIN_URL . '/preferences/index.php',
-					'title'					=> $MENU['PREFERENCES'],
+			'title'					=> $this->lang->translate('Preferences'),
 					'permission_title'		=> 'preferences',
 					'permission'			=> ( $this->get_link_permission( 'preferences' ) ) ? true : false,
 					'current'				=> ( 'preferences' == strtolower($this->section_name) ) ? true : false
 					);
 
-				// =========================================================== 
-				// ! If Service is active add the Servicemenu to the options 	
-				// =========================================================== 
-				if ( (true === defined("LEPTON_SERVICE_ACTIVE")) && ( 1 == LEPTON_SERVICE_ACTIVE ) )
-				{
-					$data_dwoo['MAIN_MENU'][6]	= array(
-						'link'					=> CAT_ADMIN_URL . '/service/index.php',
-						'title'					=> $MENU['SERVICE'],
-						'permission_title'		=> 'service',
-						'permission'			=> ( $this->get_link_permission( 'service' ) ) ? true : false,
-						'current'				=> ( 'service' == strtolower( $this->section_name ) ) ? true : false
+		$tpl_data['section_name']	= strtolower($this->section_name);
+		$tpl_data['page_id']		= ( is_numeric( $this->get_get('page_id') ) && $this->get_get('page_id') != '' )
+                                    ? $this->get_get('page_id')
+                                    : (
+                                          ( is_numeric( $this->get_post('page_id') ) && $this->get_post('page_id') != '' )
+                                        ? $this->get_post('page_id')
+                                        : false
 						);
-				}
-
-				$data_dwoo['section_name']		= strtolower($this->section_name);
-				$data_dwoo['page_id']			= ( is_numeric( $this->get_get('page_id') ) && $this->get_get('page_id') != '' ) ?
-														$this->get_get('page_id') : ( ( is_numeric( $this->get_post('page_id') ) && $this->get_post('page_id') != '' ) ? 
-														$this->get_post('page_id') : false );
 
 				// ==================== 
 				// ! Parse the header 	
 				// ==================== 
-				$parser->output('header.lte', $data_dwoo);
-
-			}
-			/**
-			 * Marked as deprecated
-			 * This is only for the old TE and will be removed in future versions
-			*/
-			else
-			{
-				$header_template	= new Template(CAT_THEME_PATH.'/templates');
-		
-				$header_template->set_file('page', 'header.htt');
-				$header_template->set_block('page', 'header_block', 'header');
+		$parser->output('header.lte', $tpl_data);
 				
-				$charset = ( true === defined('DEFAULT_CHARSET')) ? DEFAULT_CHARSET : 'utf-8';
-				
-				// work out the URL for the 'View menu' link in the WB backend
-				// if the page_id is set, show this page otherwise show the root directory of WB
-				$view_url = CAT_URL;
-				if ( isset($_GET['page_id']) )
-				{
-					// extract page link from the database
-					$result		= $this->db_handle->query("SELECT `link` FROM `" .CAT_TABLE_PREFIX ."pages` WHERE `page_id`= '" .(int) addslashes($_GET['page_id']) ."'");
-					$row		= $result->fetchRow( MYSQL_ASSOC );
-					if ($row) $view_url .= PAGES_DIRECTORY .$row['link']. PAGE_EXTENSION;
-				}
+	}   // end function print_header()
 				
 				/**
-				 *	Try to get the actual version of the backend-theme from the database
+	 * Print the admin footer
 				 *
-				 */
-				$backend_theme_version = "";
-				if (defined('DEFAULT_THEME')) {
-					$backend_theme_version = $this->db_handle->get_one("SELECT `version` from `".CAT_TABLE_PREFIX."addons` where `directory`='".DEFAULT_THEME."'");	
-				}
-				
-				$header_template->set_var(	array(
-						'SECTION_NAME' => $MENU[strtoupper($this->section_name)],
-						'BODY_TAGS' => $body_tags,
-						'WEBSITE_TITLE' => $title,
-						'TEXT_ADMINISTRATION' => $TEXT['ADMINISTRATION'],
-						'CURRENT_USER' => $MESSAGE['START_CURRENT_USER'],
-						'DISPLAY_NAME' => $this->get_display_name(),
-						'CHARSET' => $charset,
-						'LANGUAGE' => strtolower(LANGUAGE),
-						'CAT_VERSION' => CAT_VERSION,
-						'CAT_CORE' => CAT_CORE,
-						'CAT_URL' => CAT_URL,
-						'CAT_ADMIN_URL' => CAT_ADMIN_URL,
-						'CAT_THEME_URL' => CAT_THEME_URL,
-						'TITLE_START' => $MENU['START'],
-						'TITLE_VIEW' => $MENU['VIEW'],
-						'TITLE_HELP' => $MENU['HELP'],
-						'TITLE_LOGOUT' =>  $MENU['LOGOUT'],
-						'URL_VIEW' => $view_url,
-						'BACKEND_MODULE_FILES' => $this->__admin_register_backend_modfiles(),
-						'THEME_VERSION'	=> $backend_theme_version,
-						'THEME_NAME'	=> DEFAULT_THEME
-					)
-				);
-		
-				// Create the menu
-				$menu = array(
-					array(CAT_ADMIN_URL.'/pages/index.php', '', $MENU['PAGES'], 'pages', 1),
-					array(CAT_ADMIN_URL.'/media/index.php', '', $MENU['MEDIA'], 'media', 1),
-					array(CAT_ADMIN_URL.'/addons/index.php', '', $MENU['ADDONS'], 'addons', 1),
-					array(CAT_ADMIN_URL.'/preferences/index.php', '', $MENU['PREFERENCES'], 'preferences', 0),
-					array(CAT_ADMIN_URL.'/settings/index.php', '', $MENU['SETTINGS'], 'settings', 1),
-					array(CAT_ADMIN_URL.'/admintools/index.php', '', $MENU['ADMINTOOLS'], 'admintools', 1),
-					array(CAT_ADMIN_URL.'/access/index.php', '', $MENU['ACCESS'], 'access', 1)
-				);
-				if ( (true === defined("LEPTON_SERVICE_ACTIVE")) && ( 1 == LEPTON_SERVICE_ACTIVE )) {
-						$menu[] = array(CAT_ADMIN_URL.'/service/index.php', '', $MENU['SERVICE'], 'service', 1);
-				}
-				$header_template->set_block('header_block', 'linkBlock', 'link');
-				foreach($menu AS $menu_item) {
-					$link = $menu_item[0];
-					$target = ($menu_item[1] == '') ? '_self' : $menu_item[1];
-					$title = $menu_item[2];
-					$permission_title = $menu_item[3];
-					$required = $menu_item[4];
-					$replace_old = array(CAT_ADMIN_URL, CAT_URL, '/', 'index.php');
-					if($required == false OR $this->get_link_permission($permission_title)) {
-						$header_template->set_var('LINK', $link);
-						$header_template->set_var('TARGET', $target);
-						// If link is the current section apply a class name
-						if($permission_title == strtolower($this->section_name)) {
-							$header_template->set_var('CLASS', $menu_item[3] . ' current');
-						} else {
-							$header_template->set_var('CLASS', $menu_item[3]);
-						}
-						$header_template->set_var('TITLE', $title);
-						// Print link
-						$header_template->parse('link', 'linkBlock', true);
-					}
-				}
-				$header_template->parse('header', 'header_block', false);
-				$header_template->pparse('output', 'page');
-			}
-		}
-		// If the script couldn't include the info.php, print an error message
-		else
-		{
-			$this->print_error('info.php is missing in theme directory. Please check your backend theme if there is a info.php.');
-		}
-	}
-	
-	// Print the admin footer
+	 * @access public
+	 **/
 	public function print_footer()
 	{
-		// ======================================================================================= 
-		// ! Try to include the info.php  of the template to seperate old and new TemplateEngine   
-		// ======================================================================================= 
-		if ( file_exists(CAT_THEME_PATH.'/info.php') )
-		{
-			include( CAT_THEME_PATH . '/info.php' );
-			// ================================================================= 
-			// ! Current controller to check, if it is a new template for Dwoo   
-			// ================================================================= 
-			if ( isset($template_engine) && $template_engine == 'dwoo' )
-			{
-				global $parser;
-				$data_dwoo = array();
+		global $parser, $database;
+		$tpl_data = array();
 
-				// ============================================= 
-				// ! Create the controller, if it is not set yet
-				// ============================================= 
 				if (!is_object($parser))
 				{
-					$parser = new Dwoo();
-					// ==================== 
-					// ! Add URLs to Dwoo 	
-					// ==================== 
-					$data['CAT_URL']			= CAT_URL;
-					$data['CAT_PATH']		= CAT_PATH;
-					$data['CAT_ADMIN_URL']		= CAT_ADMIN_URL;
-					$data['CAT_THEME_URL']		= CAT_THEME_URL;
-					// ============================= 
-					// ! Add languages to Dwoo 	
-					// ============================= 
-					$data['HEADING']		= $HEADING;
-					$data['TEXT']			= $TEXT;
-					$data['MESSAGE']		= $MESSAGE;
-					$data['MENU']			= $MENU;
+            $parser = CAT_Helper_Template::getInstance();
 				}
 
 				// initialize template search path
@@ -552,7 +379,7 @@ class admin extends wb
 				$backend_theme_version = '-';
 				if (defined('DEFAULT_THEME'))
 				{
-					$backend_theme_version	= $this->db_handle->get_one( "SELECT `version` from `" . CAT_TABLE_PREFIX . "addons` where `directory`= '" . DEFAULT_THEME . "'");
+			$backend_theme_version	= $database->get_one( "SELECT `version` from `" . CAT_TABLE_PREFIX . "addons` where `directory`= '" . DEFAULT_THEME . "'");
 				}
 				$data['THEME_VERSION']		= $backend_theme_version;
 				$data['THEME_NAME']			= DEFAULT_THEME;
@@ -571,83 +398,9 @@ class admin extends wb
 					$this->html_output_storage = evalDroplets($this->html_output_storage);
 				}
 
-				// ================================================== 
-				// ! CSRF protection - add tokens to internal links 	
-				// ================================================== 
-				if ($this->is_authenticated()) {
-					if (file_exists(CAT_PATH .'/framework/tokens.php')) {
-						include_once(CAT_PATH .'/framework/tokens.php');
-						if (function_exists('addTokens')) addTokens($this->html_output_storage, $this);
-					}
-				}
-			}
-			/**
-			 * Marked as deprecated
-			 * This is only for the old TE and will be removed in future versions
-			*/
-			else
-			{
-				$footer_template = new Template(CAT_THEME_PATH.'/templates');
-				$footer_template->set_file('page', 'footer.htt');
-				$footer_template->set_block('page', 'footer_block', 'header');
-				$footer_template->set_var(array(
-								'CAT_URL' => CAT_URL,
-								'CAT_PATH' => CAT_PATH,
-								'CAT_ADMIN_URL' => CAT_ADMIN_URL,
-								'CAT_THEME_URL' => CAT_THEME_URL
-					 			));
-				$footer_template->parse('header', 'footer_block', false);
-				$footer_template->pparse('output', 'page');
-				
-				/**
-				 *	Droplet support
-				 *
-				 */
-				$this->html_output_storage = ob_get_clean();
-				if ( true === $this->droplets_ok ) {
-					$this->html_output_storage = evalDroplets($this->html_output_storage);
-				}
-				
-				// CSRF protection - add tokens to internal links
-				if ($this->is_authenticated()) {
-					if (file_exists(CAT_PATH .'/framework/tokens.php')) {
-						include_once(CAT_PATH .'/framework/tokens.php');
-						if (function_exists('addTokens')) addTokens($this->html_output_storage, $this);
-					}
-				}
-			}
-
-			// ================== 
-			// ! Print the html 	
-			// ================== 
 			echo $this->html_output_storage;
 
-		}
-		// If the script couldn't include the info.php, print an error message
-		else
-		{
-			$this->print_error('info.php is missing in theme directory. Please check your backend theme if there is a info.php.');
-		}
-	}
-
-	public function get_page_details($page_id)
-	{
-		$query = "SELECT page_id,link,page_title,menu_title,modified_by,modified_when FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '$page_id'";
-		$results = $this->db_handle->query($query);
-		if ( $this->db_handle->is_error() )
-		{
-			//$this->print_header(); --> Causes many problems for me! Why should we print the header again as it mostly done within other functions!
-			$this->print_error($database->get_error());
-		}
-		if ( $results->numRows() == 0 )
-		{
-			//$this->print_header(); --> Causes many problems for me! Why should we print the header again as it mostly done within other functions!
-			$this->print_error($MESSAGE['PAGES_NOT_FOUND']);
-		}
-		$results_array = $results->fetchRow(MYSQL_ASSOC);
-
-		return $results_array;
-	}	
+	}   // end function print_footer()
 	
 	/** 
 	 *	Function get_page_permission takes either a numerical page_id,
@@ -700,22 +453,6 @@ class admin extends wb
 			}
 		}
 	}
-
-    /**
-     * create a guid
-     **/
-    public function createGUID($prefix)
-    {
-        if(!$prefix||$prefix='') $prefix=rand();
-        $s = strtoupper(md5(uniqid($prefix,true)));
-        $guidText =
-            substr($s,0,8) . '-' .
-            substr($s,8,4) . '-' .
-            substr($s,12,4). '-' .
-            substr($s,16,4). '-' .
-            substr($s,20);
-        return $guidText;
-    }   // end function createGUID()
 
 		private function __admin_register_backend_modfiles() {
 

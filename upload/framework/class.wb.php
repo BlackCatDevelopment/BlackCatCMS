@@ -76,7 +76,7 @@ class wb extends SecureCMS
 
     public function __construct()
     {
-        global $MENU,$TEXT,$HEADING,$MESSAGE,$OVERVIEW;
+        global $TEXT,$HEADING,$MESSAGE,$OVERVIEW;
 		// create accessor/to language helper
   		$this->lang  = CAT_Helper_I18n::getInstance(LANGUAGE);
   		// load globals from old language files
@@ -386,66 +386,6 @@ class wb extends SecureCMS
 	}
 
     /**
-     *  Print an error message
-     *
-     *  @param  mixed  A string or an array within the error messages.
-     *  @param  string  A redirect url. Default is "index.php".
-     *  @param  bool  An optional boolean to 'print' the footer. Default is true;
-     *
-     */
-	public function print_error($message, $link = 'index.php', $auto_footer = true)
-	{
-		global $TEXT;
-
-		if (true === is_array($message)){
-			$message = implode("<br />", $message);
-		}
-
-		// ======================================================================================= 
-		// ! Try to include the info.php  of the template to seperate old and new TemplateEngine   
-		// ======================================================================================= 
-		if ( file_exists(CAT_THEME_PATH.'/info.php') )
-		{
-			include( CAT_THEME_PATH . '/info.php' );
-			// ================================================================= 
-			// ! Current controller to check, if it is a new template for Dwoo   
-			// ================================================================= 
-			if ( isset($template_engine) && $template_engine == 'dwoo' )
-			{
-				global $parser;
-
-				// =================================== 
-				// ! initialize template search path   
-				// =================================== 
-				$parser->setPath(CAT_THEME_PATH . '/templates');
-				$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
-
-				$data_dwoo['MESSAGE']		= $this->lang->translate($message);
-				$data_dwoo['LINK']			= $link;
-
-				// ==================== 
-				// ! Parse the header 	
-				// ==================== 
-				$parser->output('error.lte', $data_dwoo);
-			}
-		}
-		// If the script couldn't include the info.php, print an error message
-		else
-		{
-			echo 'info.php is missing in theme directory. Please check your backend theme if there is a info.php.';
-			exit();
-		}
-		if ($auto_footer == true)
-		{
-			if (method_exists($this, "print_footer"))
-			{
-				$this->print_footer();
-			}
-		}
-		exit();
-	}
-
-    /**
      * internal method to get a handle
      *
      * @access private
@@ -543,8 +483,15 @@ class wb extends SecureCMS
 
     /***************************************************************************
      * DEPRECATED FUNCTIONS
-     * These functions are moved to CAT_Pages class
+     * These functions are moved to other classes
      **************************************************************************/
+
+    /* moved to CAT_Object */
+    public function print_error($message, $link = 'index.php', $auto_footer = true)
+    {
+        CAT_Object::getInstance()->printError($message,$link);
+    }
+
     /* moved to CAT_Helper_Mail */
     public function mail($fromaddress, $toaddress, $subject, $message, $fromname = '')
     {

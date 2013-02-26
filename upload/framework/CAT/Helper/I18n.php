@@ -82,11 +82,11 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
         /**
          * singleton pattern
          **/
-        public static function getInstance()
+        public static function getInstance( $lang = NULL )
         {
             if (!self::$instance)
             {
-                self::$instance = new self();
+                self::$instance = new self(array('lang'=>$lang));
             }
             return self::$instance;
         }   // end function getInstance()

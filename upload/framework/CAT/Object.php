@@ -118,19 +118,39 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
         }   // end function config()
         
         /**
+         * create a guid; used by the backend, but can also be used by modules
+         *
+         * @access public
+         * @param  string  $prefix - optional prefix
+         * @return string
+         **/
+        public static function createGUID($prefix='')
+        {
+            if(!$prefix||$prefix='') $prefix=rand();
+            $s = strtoupper(md5(uniqid($prefix,true)));
+            $guidText =
+                substr($s,0,8) . '-' .
+                substr($s,8,4) . '-' .
+                substr($s,12,4). '-' .
+                substr($s,16,4). '-' .
+                substr($s,20);
+            return $guidText;
+        }   // end function createGUID()
+        
+        /**
          * prints a formatted error message
          *
          * @access public
-         * @param  string  $msg  - error message
+         * @param  string  $message - error message
          * @param  mixed   $args - additional args to print
          *
          **/
-        public function printError( $msg = NULL, $args = NULL ) {
+        public function printError( $message = NULL, $link = 'index.php', $args = NULL ) {
             $print_footer = false;
             $caller       = debug_backtrace();
             // remove first item (it's the printError() method itself)
             array_shift($caller);
-            // if called by printFatalError()...
+            // if called by printFatalError(), shift again...
             if ( isset( $caller[0]['function'] ) && $caller[0]['function'] == 'printFatalError' ) {
                 array_shift($caller);
             }
@@ -138,6 +158,11 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                           ? $caller[0]['class']
                           : NULL;
 
+            if (true === is_array($message)){
+    			$message = implode("<br />", $message);
+    		}
+
+            // avoid headers already sent error
             if ( ! headers_sent() ) {
                 $print_footer = true;
                 echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -149,10 +174,20 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
   <body>';
             }
 
-            echo "<div id=\"leperror\">\n",
+            // if we're able to use the template parser...
+            global $parser;
+            if ( ! is_object($parser) )
+            {
+                echo "<div id=\"caterror\">\n",
                  "  <h1>$caller_class Fatal Error</h1><br /><br />\n",
                  "  <div style=\"color: #FF0000; font-weight: bold; font-size: 1.2em;\">\n",
-                 "  $msg\n";
+                     "  $message\n";
+            }
+            else
+            {
+                $parser->setPath(CAT_THEME_PATH.'/templates');
+				$parser->output('error.lte', array('MESSAGE'=>$this->lang->translate($message),'LINK'=>$link));
+            }
 
             if ( $args ) {
                 $dump = print_r( $args, 1 );
@@ -195,8 +230,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          * @access public
          *
          **/
-		public function printFatalError( $msg = NULL, $args = NULL ) {
-		    $this->printError( $msg, $args );
+		public function printFatalError( $message = NULL, $args = NULL ) {
+		    $this->printError( $message, $args );
 		    exit;
 		}   // end function printFatalError()
 

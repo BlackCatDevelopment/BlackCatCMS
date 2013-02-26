@@ -1,21 +1,28 @@
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ *   @category        CAT_Template
+ *   @package         freshcat
  *
  */
 
 /**
  * Import different stylesheets for different pages/elemtents
- *
  */
 @import url(reset.css);
 @import url(webfont.css);
@@ -32,6 +39,7 @@
 @import url(users.css);
 @import url(admintools.css);
 @import url(grid.css);
+@import url(forms.css);
 @import url(../../../modules/lib_jquery/jquery-ui/themes/base/jquery-ui.css);
 @import url(../../../modules/lib_jquery/plugins/tag-it/tag-it.css);
 
@@ -531,3 +539,5 @@ div#testmail_result{
     width: 350px;
     padding: 15px;
 }
+
+.fc_not_installed { color:#aaa; }

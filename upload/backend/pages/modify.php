@@ -65,7 +65,7 @@ $sectionId = isset($_GET['wysiwyg']) ? htmlspecialchars($admin->get_get('wysiwyg
 // ==================== 
 // ! Get page details   
 // ==================== 
-$results_array							= $admin->get_page_details($page_id);
+$results_array							= CAT_Pages::getInstance()->get_page_details($page_id);
 
 // ========================================================= 
 // ! Get display name of person who last modified the page   

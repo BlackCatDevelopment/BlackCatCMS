@@ -25,7 +25,6 @@
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
 	include(CAT_PATH.'/framework/class.secure.php');
 } else {
@@ -42,7 +41,6 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
 // Check if user uploaded a file
 if (!isset($_FILES['userfile']) || $_FILES['userfile']['size'] == 0)
@@ -52,10 +50,9 @@ if (!isset($_FILES['userfile']) || $_FILES['userfile']['size'] == 0)
 }
 
 require_once( CAT_PATH . '/framework/class.admin.php' );
-$admin = new admin('Addons', 'addons');
-
-// Include the WB functions file
 require_once( CAT_PATH . '/framework/functions.php' );
+
+$admin = new admin('Addons', 'addons');
 
 // Check if module dir is writable (doesn't make sense to go on if not)
 if ( !(is_writable( CAT_PATH .  '/modules/') && is_writable( CAT_PATH . '/templates/') && is_writable( CAT_PATH . '/languages/') ) )

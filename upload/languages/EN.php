@@ -60,31 +60,6 @@ $language_guid = '1412c11c-378f-44ea-9a0e-a9223a2027ef';
 $language_date_long  = 'jS|F|Y';
 $language_date_short = 'Y-m-d';
 
-$MENU = array(
-	'ACCESS' 				=> 'Access',
-	'ADDON' 				=> 'Add-on',
-	'ADDONS' 				=> 'Add-ons',
-	'ADMINTOOLS' 			=> 'Admin-Tools',
-	'BREADCRUMB' 			=> 'You are here: ',
-	'FORGOT' 				=> 'Retrieve Login Details',
-	'GROUP' 				=> 'Group',
-	'GROUPS' 				=> 'Groups',
-	'HELP' 					=> 'Help',
-	'LANGUAGES' 			=> 'Languages',
-	'LOGIN' 				=> 'Login',
-	'LOGOUT' 				=> 'Log-out',
-	'MEDIA' 				=> 'Media',
-	'MODULES' 				=> 'Modules',
-	'PAGES' 				=> 'Pages',
-	'PREFERENCES' 			=> 'Preferences',
-	'SETTINGS' 				=> 'Settings',
-	'START' 				=> 'Start',
-	'TEMPLATES' 			=> 'Templates',
-	'USERS' 				=> 'Users',
-	'VIEW' 					=> 'View',
-	'SERVICE'				=> 'Service'
-); // $MENU
-
 $TEXT = array(
 	'ACCOUNT_SIGNUP' 		=> 'Account Sign-Up',
 	'ACTION_NOT_SUPPORTED'	=> 'Action not supported',

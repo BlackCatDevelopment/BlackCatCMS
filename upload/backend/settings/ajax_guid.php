@@ -65,7 +65,8 @@ if ( $res = $database->query( $sql ) ) {
 
 if(!isset($row['value']) || $row['value'] == '')
 {
-    $guid = $admin->createGUID();
+    @require_once CAT_PATH.'/framework/CAT/Object.php';
+    $guid = CAT_Object::createGUID();
     $row['setting_id'] = isset($row['setting_id']) ? $row['setting_id'] : NULL;
     $database->query('REPLACE INTO `'.CAT_TABLE_PREFIX.'settings` VALUES("'.$row['setting_id'].'", "guid", "'.$guid.'")');
 }

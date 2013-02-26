@@ -1,17 +1,4 @@
-/**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
- *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
-  *
- */
+/* users.css */
 
 #fc_lists_overview {
 	position:		absolute;
@@ -36,6 +23,10 @@
 
 	.fc_settings_max {
 		max-width:	300px;
+	}
+
+    .fc_settings_max_large {
+		max-width:	380px;
 	}
 
 	#fc_list_overview li {
@@ -221,39 +212,4 @@
 
 #fc_list_overview .fc_activeSearch {
 	color: #1d2023;
-}
-
-.submit_settings {
-	margin-bottom:	0em;
-	margin-left:	200px;
-	padding:		0em 1em;
-	height:			30px;
-	border-top:		1px solid white;
-	border-bottom:	1px solid #9da8b2;
-	text-align:		right;
-	line-height:	30px;
-}
-	.submit_settings strong {
-		display:	inline-block;
-		float:		left;
-		height:		30px;
-	}
-
-.fc_list_forms > * {
-	margin-right:	1em;
-	margin-left:	1em;
-}
-.fc_list_forms > .submit_settings,
-#fc_preferences_form .submit_settings,
-.fc_list_forms > .fc_groups_tabs {
-	margin-right:	0em;
-	margin-left:	0em;
-}
-.fc_label_120 {
-	display:		inline-block;
-	min-width:		120px;
-}
-.fc_label_200 {
-	display:		inline-block;
-	min-width:		200px;
 }

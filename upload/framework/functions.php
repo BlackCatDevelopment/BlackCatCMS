@@ -743,50 +743,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     }   // end function get_variable_content()
 
     /**
-     * Generate a globally unique identifier (GUID)
-     * Uses COM extension under Windows otherwise
-     * create a random GUID in the same style
-     * @return STR GUID
-     */
-    function createGUID()
-    {
-        if (function_exists('com_create_guid'))
-        {
-            $guid = com_create_guid();
-            $guid = strtolower($guid);
-            if (strpos($guid, '{') == 0)
-            {
-                $guid = substr($guid, 1);
-            }
-            if (strpos($guid, '}') == strlen($guid) - 1)
-            {
-                $guid = substr($guid, 0, strlen($guid) - 1);
-            }
-            return $guid;
-        }
-        else
-        {
-            return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
-        }
-    }   // end function createGUID()
-    
-    function checkIPv4address($ip_addr)
-    {
-        if (preg_match("/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/", $ip_addr))
-        {
-            $parts = explode(".", $ip_addr);
-            foreach ($parts as $ip_parts)
-            {
-                if (intval($ip_parts) > 255 || intval($ip_parts) < 0)
-                    return false;
-            }
-            return true;
-        }
-        else
-            return false;
-    }   // end function checkIPv4address()
-    
-    /**
      *  As for some special chars, e.g. german-umlauts, inside js-alerts we are in the need to escape them.
      *  Keep in mind, that you will to have unescape them befor you use them inside a js!
      *

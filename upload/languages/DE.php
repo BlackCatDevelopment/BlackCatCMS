@@ -62,6 +62,20 @@ $language_date_short = 'd.m.Y';
 $language_time       = 'H:i:s';
 
 $LANG = array(
+    // ----- MENU -----
+	'Access' => 'Benutzerverwaltung',
+	'Add-on' => 'Add-on',
+	'Add-ons' => 'Erweiterungen',
+	'Admin-Tools' => 'Admin-Tools',
+	'You are here: ' => 'Sie sind hier: ',
+	'Retrieve Login Details' => 'Anmelde-Daten anfordern',
+	'Group' => 'Gruppe',
+	'Groups' => 'Gruppen',
+	'Help' => 'Hilfe',
+	'Languages' => 'Sprachen',
+	'Login' => 'Anmeldung',
+	'Log-out' => 'Abmelden',
+	'Media' => 'Medien',
     // ----- BACKEND -----
     'Welcome to Black Cat CMS Administration' => 'Willkommen im Black Cat CMS Administrationsbereich',
     'To use <span class="icon-logo">Black Cat CMS</span>, please enable JavaScript in your browser and try again.'
@@ -89,6 +103,7 @@ $LANG = array(
     'Reset' => 'Zurücksetzen',
     'Save & Close' => 'Speichern & Schließen',
     'General Settings' => 'Allgemeine Optionen',
+    'Search...' => 'Suchen...',
     // ----- page -----
     'Main' => 'Hauptblock',
     'Add Page' => 'Seite hinzuf&uuml;gen',
@@ -227,6 +242,26 @@ $LANG = array(
     'Users' => 'Benutzer',
     'Groups' => 'Gruppen',
     // ----- settings -----
+    'Website header' => 'Webseite Kopf',
+    'Website footer' => 'Webseite FuÃŸzeile',
+    'Signup' => 'Benutzerregistrierung',
+    'Personal folders' => 'PersÃ¶nliche Ordner',
+    'Search library' => 'Suchbibliothek',
+    'Standard page: Template for search result' => 'Standardseite: Template fÃ¼r Suchergebnisse',
+    'Individual page: PAGE_ID for search result' => 'Individuelle Seite: PAGE_ID fÃ¼r Suchergebnisse',
+    'Individual page: DropLEP for search result' => 'Individuelle Seite: DropLEP fÃ¼r Suchergebnisse',
+    'Search for images' => 'Nach Bildern suchen',
+    'Use image from content page in search result' => 'Bild aus Inhalt in Suchergebnis verwenden',
+    'Max. width/height of images in search result' => 'Max. Breite/HÃ¶he fÃ¼r Bilder in Suchergebnis',
+    'Search for page descriptions' => 'Seitenbeschreibungen einbeziehen',
+    'Show page description in search result' => 'Seitenbeschreibung in Suchergebnis zeigen',
+    'Search for page keywords' => 'SchlÃ¼sselworte in Suche einbeziehen',
+    'Search in non-public content' => 'Nicht-Ã¶ffentliche Inhalte in Suche einbeziehen',
+    'Redirect link (URL) for non-public content' => 'Redirect link (URL) fÃ¼r nicht-Ã¶ffentliche Inhalte',
+    'Module-order for searching' => 'Modulreihenfolge fÃ¼r Suche',
+    'Max lines of excerpt' => 'Maximale Anzahl Zeilen',
+    'Max time to gather excerpts per module' => 'Max. Zeit pro Modul',
+
     'Page level limit' => 'Seitenlevel Limit',
     'Page trash' => 'Seitenmülleimer',
     'Disabled' => 'Deaktiviert',
@@ -270,6 +305,32 @@ $LANG = array(
         => 'Ungültige Sprachdatei - PHP Dings fehlt',
     'invalid directory/language file or info.php is missing, check of language file failed'
         => 'Ungültiges Verzeichnis, ungültige Sprachdatei, oder info.php fehlt.',
+    // ----- addons - backend_addons_index.lte -----
+    'Addon permissions' => 'Addon Berechtigungen',
+    'You can set permissions for each group to use this addon.' => 'Es kÃ¶nnen fÃ¼r jede Gruppe Berechtigungen fÃ¼r dieses Addon gesetzt werden.',
+    'You can customize permissions later on group administration.' => 'Die Rechte kÃ¶nnen spÃ¤ter in der Gruppenadministration angepaÃŸt werden.',
+    'If you upgrade a module, those settings will have no effect on current permissions.' => 'Bei einem Update haben die hier gesetzten Rechte keine Auswirkungen.',
+    'Mark all groups' => 'Alle Gruppen markieren',
+    'Unmark all groups' => 'Keine Gruppe markieren',
+    'Module seems to be not installed yet.' => 'Das Modul ist offenbar noch nicht installiert.',
+    'No install.php found! The module cannot be installed!' => 'Keine install.php gefunden! Das Modul kann nicht installiert werden!',
+    'When modules are uploaded via FTP (not recommended), the module installation functions install, upgrade or uninstall will not be executed automatically. Those modules may not work correct or do not uninstall properly.'
+        => 'Wenn Module via FTP hochgeladen werden (nicht empfohlen), werden die Funktionen zur Installation, zum Upgrade oder zur Deinstallation nicht automatisch ausgefÃ¼hrt. Diese Module funktionieren eventuell nicht richtig oder lassen sich nicht deinstallieren.',
+    'You can execute the module functions manually for modules uploaded via FTP below.' => 'Die Methoden kÃ¶nnen unten manuell ausgefÃ¼hrt werden.',
+    'DANGER ZONE! This may delete your current data!' => 'GEFAHRENZONE! Hier kÃ¶nnen Daten verloren gehen!',
+    'Execute install.php manually' => 'install.php manuell ausfÃ¼hren',
+    'Execute upgrade.php manually' => 'upgrade.php manuell ausfÃ¼hren',
+    'Module details' => 'Moduldetails',
+    'Uninstall addon' => 'Addon deinstallieren',
+    'Author' => 'Autor',
+    'Function' => 'Funktion',
+    'Designed for' => 'Erstellt fÃ¼r',
+    'License' => 'Lizenz',
+    'Installed' => 'Installationsdatum',
+    'Upgraded' => 'Letzte Aktualisierung',
+    'Administration tool' => 'Admin-Tool',
+    'Library' => 'Funktionsbibliothek',
+    'Unknown' => 'Unbekannt',
 
     'Already installed' => 'Bereits installiert',
     'Add-On requirements not met' => 'Add-On Voraussetzungen nicht erf&uuml;llt',
@@ -280,33 +341,6 @@ $LANG = array(
         => 'Ungültige info.php - Variable module_function oder Variable template_function nicht gesetzt',
     'Invalid language file - missing PHP delimiter' => 'Ungültige Sprachdatei - PHP Delimiter fehlt',
     'Uninstalled successfully' => 'Erfolgreich deinstalliert',
-);
-
-
-
-$MENU = array(
-	'ACCESS' 				=> 'Benutzerverwaltung',
-	'ADDON' 				=> 'Add-on',
-	'ADDONS' 				=> 'Erweiterungen',
-	'ADMINTOOLS' 			=> 'Admin-Tools',
-	'BREADCRUMB' 			=> 'Sie sind hier: ',
-	'FORGOT' 				=> 'Anmelde-Daten anfordern',
-	'GROUP' 				=> 'Group',
-	'GROUPS' 				=> 'Gruppen',
-	'HELP' 					=> 'Hilfe',
-	'LANGUAGES' 			=> 'Sprachen',
-	'LOGIN' 				=> 'Anmeldung',
-	'LOGOUT' 				=> 'Abmelden',
-	'MEDIA' 				=> 'Medien',
-	'MODULES' 				=> 'Module',
-	'PAGES' 				=> 'Seiten',
-	'PREFERENCES' 			=> 'Einstellungen',
-	'SETTINGS' 				=> 'Optionen',
-	'START' 				=> 'Start',
-	'TEMPLATES' 			=> 'Designvorlagen',
-	'USERS' 				=> 'Benutzer',
-	'VIEW' 					=> 'Ansicht',
-	'SERVICE'				=> 'Service'
 );
 
 $TEXT = array(

@@ -1,21 +1,27 @@
 <?php
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
 	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
@@ -31,15 +37,17 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
 // exec initial_page
 if(file_exists(CAT_PATH .'/modules/initial_page/classes/c_init_page.php') && isset($_SESSION['USER_ID'])) {
 	require_once (CAT_PATH .'/modules/initial_page/classes/c_init_page.php');
 	$ins = new c_init_page($database, $_SESSION['USER_ID'], $_SERVER['SCRIPT_NAME']);
 }
-require_once(CAT_PATH.'/framework/class.admin.php');$admin = new admin('Start','start');
 
+require_once(CAT_PATH.'/framework/class.admin.php');
+
+$admin = new admin('Start','start');
+$lang  = CAT_Helper_I18n::getInstance();
 
 // ================================================ 
 // ! Check if installation directory still exists   
@@ -67,69 +75,63 @@ if (!is_object($parser))
 	$admin->print_error('Global parser error couldn\'t be loaded!', false);
 }
 
-$data_dwoo = array();
-
-//$data_dwoo['TEXT']['DISPLAY_NAME'] = $admin->get_display_name();
-
+$tpl_data = array();
 
 // ===================================================== 
 // ! Insert permission values into the template object   
 // ===================================================== 
-$data_dwoo['sections']['media']['permission']			= ($admin->get_permission('media')) ? true : false;
-$data_dwoo['sections']['media']['name']					= 'media';
-$data_dwoo['sections']['media']['title']				= $MENU['MEDIA'];
-$data_dwoo['sections']['media']['description']			= $OVERVIEW['MEDIA'];
+$tpl_data['sections']['media']['permission']			= ($admin->get_permission('media')) ? true : false;
+$tpl_data['sections']['media']['name']					= 'media';
+$tpl_data['sections']['media']['title']				    = $lang->translate('Media');
+$tpl_data['sections']['media']['description']			= $OVERVIEW['MEDIA'];
 
+$tpl_data['sections']['addons']['permission']			= ($admin->get_permission('addons')) ? true : false;
+$tpl_data['sections']['addons']['name']				    = 'addons';
+$tpl_data['sections']['addons']['title']				=  $lang->translate('Addons');
 
-$data_dwoo['sections']['addons']['permission']			= ($admin->get_permission('addons')) ? true : false;
-$data_dwoo['sections']['addons']['name']				= 'addons';
-$data_dwoo['sections']['addons']['title']				=  $MENU['ADDONS'];
+$tpl_data['sections']['addons']['subpages']['modules']['permission']    = ($admin->get_permission('modules')) ? true : false;
+$tpl_data['sections']['addons']['subpages']['modules']['name']          = 'addons';
+$tpl_data['sections']['addons']['subpages']['modules']['title']         = $lang->translate('Modules');
+$tpl_data['sections']['addons']['subpages']['modules']['description']   = $OVERVIEW['MODULES'];
 
-$data_dwoo['sections']['addons']['subpages']['modules']['permission'] = ($admin->get_permission('modules')) ? true : false;
-$data_dwoo['sections']['addons']['subpages']['modules']['name'] = 'addons';
-$data_dwoo['sections']['addons']['subpages']['modules']['title'] =  $MENU['MODULES'];
-$data_dwoo['sections']['addons']['subpages']['modules']['description'] = $OVERVIEW['MODULES'];
+$tpl_data['sections']['addons']['subpages']['templates']['permission']  = ($admin->get_permission('templates')) ? true : false;
+$tpl_data['sections']['addons']['subpages']['templates']['name']        = 'templates';
+$tpl_data['sections']['addons']['subpages']['templates']['title']       = $lang->translate('Templates');
+$tpl_data['sections']['addons']['subpages']['templates']['description'] = $OVERVIEW['TEMPLATES'];
 
-$data_dwoo['sections']['addons']['subpages']['templates']['permission'] = ($admin->get_permission('templates')) ? true : false;
-$data_dwoo['sections']['addons']['subpages']['templates']['name'] = 'templates';
-$data_dwoo['sections']['addons']['subpages']['templates']['title'] =  $MENU['TEMPLATES'];
-$data_dwoo['sections']['addons']['subpages']['templates']['description'] = $OVERVIEW['TEMPLATES'];
+$tpl_data['sections']['addons']['subpages']['languages']['permission']  = ($admin->get_permission('languages')) ? true : false;
+$tpl_data['sections']['addons']['subpages']['languages']['name']        = 'languages';
+$tpl_data['sections']['addons']['subpages']['languages']['title']       = $lang->translate('Languages');
+$tpl_data['sections']['addons']['subpages']['languages']['description'] = $OVERVIEW['LANGUAGES'];
 
-$data_dwoo['sections']['addons']['subpages']['languages']['permission'] = ($admin->get_permission('languages')) ? true : false;
-$data_dwoo['sections']['addons']['subpages']['languages']['name'] = 'languages';
-$data_dwoo['sections']['addons']['subpages']['languages']['title'] =  $MENU['LANGUAGES'];
-$data_dwoo['sections']['addons']['subpages']['languages']['description'] = $OVERVIEW['LANGUAGES'];
+$tpl_data['sections']['access']['permission']                           = ($admin->get_permission('access')) ? true : false;
+$tpl_data['sections']['access']['name']                                 = 'access';
+$tpl_data['sections']['access']['title']                                = $lang->translate('Access');
 
+$tpl_data['sections']['access']['subpages']['users']['permission']      = ($admin->get_permission('modules')) ? true : false;
+$tpl_data['sections']['access']['subpages']['users']['name']            = 'users';
+$tpl_data['sections']['access']['subpages']['users']['title']           = $lang->translate('Users');
+$tpl_data['sections']['access']['subpages']['users']['description']     = $OVERVIEW['USERS'];
 
-$data_dwoo['sections']['access']['permission'] = ($admin->get_permission('access')) ? true : false;
-$data_dwoo['sections']['access']['name'] = 'access';
-$data_dwoo['sections']['access']['title'] =  $MENU['ACCESS'];
+$tpl_data['sections']['access']['subpages']['groups']['permission']     = ($admin->get_permission('templates')) ? true : false;
+$tpl_data['sections']['access']['subpages']['groups']['name']           = 'groups';
+$tpl_data['sections']['access']['subpages']['groups']['title']          = $lang->translate('Groups');
+$tpl_data['sections']['access']['subpages']['groups']['description']    = $OVERVIEW['GROUPS'];
 
-$data_dwoo['sections']['access']['subpages']['users']['permission'] = ($admin->get_permission('modules')) ? true : false;
-$data_dwoo['sections']['access']['subpages']['users']['name'] = 'users';
-$data_dwoo['sections']['access']['subpages']['users']['title'] =  $MENU['USERS'];
-$data_dwoo['sections']['access']['subpages']['users']['description'] = $OVERVIEW['USERS'];
+$tpl_data['sections']['settings']['permission']                         = ($admin->get_permission('settings')) ? true : false;
+$tpl_data['sections']['settings']['name']                               = 'settings';
+$tpl_data['sections']['settings']['title']                              = $lang->translate('Settings');
+$tpl_data['sections']['settings']['description']                        = $OVERVIEW['SETTINGS'];
 
-$data_dwoo['sections']['access']['subpages']['groups']['permission'] = ($admin->get_permission('templates')) ? true : false;
-$data_dwoo['sections']['access']['subpages']['groups']['name'] = 'groups';
-$data_dwoo['sections']['access']['subpages']['groups']['title'] =  $MENU['GROUPS'];
-$data_dwoo['sections']['access']['subpages']['groups']['description'] = $OVERVIEW['GROUPS'];
-
-
-$data_dwoo['sections']['settings']['permission'] = ($admin->get_permission('settings')) ? true : false;
-$data_dwoo['sections']['settings']['name'] = 'settings';
-$data_dwoo['sections']['settings']['title'] =  $MENU['SETTINGS'];
-$data_dwoo['sections']['settings']['description'] = $OVERVIEW['SETTINGS'];
-
-$data_dwoo['sections']['admintools']['permission'] = ($admin->get_permission('admintools')) ? true : false;
-$data_dwoo['sections']['admintools']['name'] = 'admintools';
-$data_dwoo['sections']['admintools']['title'] =  $MENU['ADMINTOOLS'];
-$data_dwoo['sections']['admintools']['description'] = $OVERVIEW['ADMINTOOLS'];
+$tpl_data['sections']['admintools']['permission']                       = ($admin->get_permission('admintools')) ? true : false;
+$tpl_data['sections']['admintools']['name']                             = 'admintools';
+$tpl_data['sections']['admintools']['title']                            =  $lang->translate('Admintools');
+$tpl_data['sections']['admintools']['description']                      = $OVERVIEW['ADMINTOOLS'];
 
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_start_index.lte', $data_dwoo);
+$parser->output('backend_start_index.lte', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   
