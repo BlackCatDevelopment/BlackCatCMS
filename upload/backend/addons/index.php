@@ -1,60 +1,67 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+	if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
+	$inc = false;
+	foreach ($subs as $sub) {
+		if (empty($sub)) continue; $dir .= '/'.$sub;
+		if (file_exists($dir.'/framework/class.secure.php')) {
+			include($dir.'/framework/class.secure.php'); $inc = true;	break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 require_once(CAT_PATH . '/framework/class.admin.php');
 $admin = new admin('Addons', 'addons');
-
+$user  = CAT_Users::getInstance();
+$date  = CAT_Helper_DateTime::getInstance();
 
 global $parser;
-$data_dwoo	= array();
+$tpl_data = array();
 
-$data_dwoo['URL'] = array(
+$tpl_data['URL'] = array(
 	'addons'		=> CAT_ADMIN_URL . '/modules/index.php',
-	'TEMPLATES'		=> $admin->get_permission('templates') ? CAT_ADMIN_URL . '/templates/index.php' : false,
-	'LANGUAGES'		=> $admin->get_permission('languages') ? CAT_ADMIN_URL . '/languages/index.php' : false,
+	'TEMPLATES'	=> $user->get_permission('templates') ? CAT_ADMIN_URL . '/templates/index.php' : false,
+	'LANGUAGES'	=> $user->get_permission('languages') ? CAT_ADMIN_URL . '/languages/index.php' : false,
 );
 
 // Insert permissions values
-$data_dwoo['permissions']['ADVANCED']			= $admin->get_permission('admintools') ? true : false;
-$data_dwoo['permissions']['MODULES_VIEW']		= $admin->get_permission('modules_view') ? true : false;
-$data_dwoo['permissions']['MODULES_INSTALL']	= $admin->get_permission('modules_install') ? true : false;
-$data_dwoo['permissions']['MODULES_UNINSTALL']	= $admin->get_permission('modules_uninstall') ? true : false;
+$tpl_data['permissions']['ADVANCED']		  = $user->get_permission('admintools')        ? true : false;
+$tpl_data['permissions']['MODULES_VIEW']	  = $user->get_permission('modules_view')      ? true : false;
+$tpl_data['permissions']['MODULES_INSTALL']	  = $user->get_permission('modules_install')   ? true : false;
+$tpl_data['permissions']['MODULES_UNINSTALL'] = $user->get_permission('modules_uninstall') ? true : false;
 
 
 $counter	= 0;
+$seen_dirs  = array();
 $result		= $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "addons ORDER BY name");
 if ($result->numRows() > 0)
 {
@@ -66,17 +73,20 @@ if ($result->numRows() > 0)
 		{
 			case 'module':
 				$type	= 'modules';
+                // for later use
+                $seen_dirs[] = $addon['directory'];
 				break;
 			case 'language':
 				$type				= 'languages';
 				// Clear all variables
-				$language_code		= '';
-				$language_name		= '';
-				$language_version	= '';
-				$language_platform	= '';
-				$language_author	= '';
-				$language_license	= '';
-
+                $vars = get_defined_vars();
+                foreach( array_keys($vars) as $var )
+                {
+                    if ( preg_match( '~^language_~i', $var ) )
+                    {
+                        ${$var} = '';
+                    }
+                }
 				// Insert values
 				if ( file_exists(CAT_PATH.'/languages/'.$addon['directory'].'.php'))
 				{
@@ -95,10 +105,12 @@ if ($result->numRows() > 0)
 			default:
 				$type	= 'modules';
 		}
-		if ( $type != 'languages' && ( function_exists('file_get_contents') && file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/languages/' . LANGUAGE . '.php' ) ) )
+
+        $langfile = CAT_Helper_Directory::getInstance()->sanitizePath(CAT_PATH.'/'.$type.'/'.$addon['directory'].'/languages/'.LANGUAGE.'.php');
+		if ( $type != 'languages' && ( function_exists('file_get_contents') && file_exists($langfile) ) )
 		{
 			// read contents of the module language file into string
-			$description			= @file_get_contents(CAT_PATH . '/' . $type . '/' . $file . '/languages/' . LANGUAGE . '.php');
+			$description			= @file_get_contents($langfile);
 			// use regular expressions to fetch the content of the variable from the string
 			$tool_description		= get_variable_content('module_description', $description, false, false);
 			// replace optional placeholder {CAT_URL} with value stored in config.php
@@ -111,15 +123,11 @@ if ($result->numRows() > 0)
 				$tool_description = false;
 			}
 		}		
-		if ($tool_description !== false)
-		{
-			// Override the module-description with correct desription in users language
-			$data_dwoo['addons'][$counter]['description']	= $tool_description;
-		}
+
 		// Set a number to dimension $addon[directory] to see
 		$modules_count[$addon['directory']] = $addon['directory'];
 		
-		$data_dwoo['addons'][$counter] = array(
+		$tpl_data['addons'][$counter] = array(
 			'name'			=> $addon['name'],
 			'author'		=> $addon['author'],
 			'description'	=> $addon['description'],
@@ -128,17 +136,29 @@ if ($result->numRows() > 0)
 			'license'		=> $addon['license'],
 			'directory'		=> $addon['directory'],
 			'function'		=> $addon['function'],
+            'installed'     => ( ($addon['installed']!='') ? $date->getDate($addon['installed']) : NULL ),
+            'upgraded'      => ( ($addon['upgraded']!='') ? $date->getDate($addon['upgraded']) : NULL ),
+            'is_installed'  => true,
 			'type'			=> $type
 		);
+
+		if ($tool_description !== false)
+		{
+			// Override the module-description with correct desription in users language
+			$tpl_data['addons'][$counter]['description']	= $tool_description;
+		}
+
 		// ================================================== 
 		// ! Check whether icon is available for the module   
 		// ================================================== 
-		if(file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/icon.png')){
-			list($width, $height, $type_of, $attr) = getimagesize( CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/icon.png');
+        $icon = CAT_Helper_Directory::getInstance()->sanitizePath(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/icon.png');
+		if(file_exists($icon)){
+			list($width, $height, $type_of, $attr) = getimagesize($icon);
 			// Check whether file is 32*32 pixel and is an PNG-Image
-			$data_dwoo['addons'][$counter]['icon'] = ($width == 32 && $height == 32 && $type_of == 3) ?
-				CAT_URL . '/' . $type . '/' . $addon['directory'] . '/icon.png' :
-				false;
+			$tpl_data['addons'][$counter]['icon']
+                = ($width == 32 && $height == 32 && $type_of == 3)
+                ? CAT_URL . '/' . $type . '/' . $addon['directory'] . '/icon.png'
+                : false;
 		}
 
 		switch ($addon['function'])
@@ -171,52 +191,49 @@ if ($result->numRows() > 0)
 				$type_name	= $admin->lang->translate( 'Unknown' );
 		}
 
-		$data_dwoo['addons'][$counter]['function'] = $type_name;
+		$tpl_data['addons'][$counter]['function'] = $type_name;
 
 		// Check if the module is installable or upgradeable
-		$data_dwoo['addons'][$counter]['INSTALL']		= file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/install.php') ? true : false;
-		$data_dwoo['addons'][$counter]['UPGRADE']		= file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/upgrade.php') ? true : false;
+		$tpl_data['addons'][$counter]['INSTALL'] = file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/install.php') ? true : false;
+		$tpl_data['addons'][$counter]['UPGRADE'] = file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/upgrade.php') ? true : false;
 
 		$counter++;
 	}
 }
 
-$data_dwoo['groups']				= $admin->users->get_groups('' , '', false);
+$tpl_data['groups']	= $user->get_groups('' , '', false);
 
-// Insert modules which includes a install.php file to install list
-$module_files = glob(CAT_PATH . '/' . $type . '/*');
+// scan modules path for modules not seen yet
+$new = CAT_Helper_Directory::getInstance()
+           ->maxRecursionDepth(0)
+           ->setSkipDirs($seen_dirs)
+           ->getDirectories( CAT_PATH.'/modules', CAT_PATH.'/modules/' );
 
-foreach ($module_files as $index => $path)
+if ( count($new) )
 {
-	if ( is_dir($path) && empty($modules_count[basename($path)]) )
+    $addon = CAT_Helper_Addons::getInstance();
+    foreach( $new as $dir )
+    {
+        $info = $addon->checkInfo(CAT_PATH.'/modules/'.$dir);
+        if ( $info )
 	{
-		if (file_exists($path . '/install.php'))
+            $tpl_data['addons'][$counter] = array(
+                'is_installed'  => false,
+    			'type'			=> 'modules',
+                'INSTALL'       => file_exists(CAT_PATH.'/modules/'.$dir.'/install.php') ? true : false
+            );
+            foreach( $info as $key => $value )
 		{
-			$data_dwoo['addons'][$counter]['name']			= basename($path);
-			$data_dwoo['addons'][$counter]['directory']		= basename($path);
-			$data_dwoo['addons'][$counter]['INSTALL']		= true;
+                $tpl_data['addons'][$counter][str_ireplace('module_','',$key)] = $value;
 		}
-		/*
-		When modules are not already installed, they shouldn't be upgradeable
-		if (file_exists($path . '/'))
-		{
-			$data_dwoo['addons'][$counter]['UPGRADE'] = array(
-				'directory'		=> basename($path),
-				'name'			=> basename($path)
-			);
-			$data_dwoo['addons'][$counter]['UPGRADE'] = true;
-		}*/
 		$counter++;
 
 	}
-	else
-	{
-		unset($module_files[$index]);
 	}
 }
 
 // print page
-$parser->output( 'backend_addons_index.lte', $data_dwoo );
+$parser->output( 'backend_addons_index.lte', $tpl_data );
 
 // Print admin footer
 $admin->print_footer();

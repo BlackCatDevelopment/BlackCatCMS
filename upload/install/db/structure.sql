@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS `cat_addons` (
   `platform` varchar(255) NOT NULL DEFAULT '',
   `author` varchar(255) NOT NULL DEFAULT '',
   `license` varchar(255) NOT NULL DEFAULT '',
+  `installed` VARCHAR(255) NOT NULL DEFAULT '',
+  `upgraded` VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`addon_id`),
   UNIQUE KEY `type` (`type`,`directory`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
