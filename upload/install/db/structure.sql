@@ -36,6 +36,7 @@ DROP TABLE IF EXISTS `cat_search`;
 DROP TABLE IF EXISTS `cat_sections`;
 DROP TABLE IF EXISTS `cat_settings`;
 DROP TABLE IF EXISTS `cat_users`;
+DROP TABLE IF EXISTS `cat_users_options`;
 DROP TABLE IF EXISTS `cat_class_secure`;
 DROP TABLE IF EXISTS `cat_mod_wysiwyg_admin_v2`;
 
@@ -333,15 +334,20 @@ CREATE TABLE IF NOT EXISTS `cat_users` (
   `last_reset` int(11) NOT NULL DEFAULT '0',
   `display_name` varchar(255) NOT NULL DEFAULT '',
   `email` text NOT NULL,
-  `timezone_string` varchar(50) NOT NULL DEFAULT 'Europe/Berlin',
-  `date_format` varchar(255) NOT NULL DEFAULT '',
-  `time_format` varchar(255) NOT NULL DEFAULT '',
   `language` varchar(5) NOT NULL DEFAULT 'DE',
   `home_folder` text NOT NULL,
   `login_when` int(11) NOT NULL DEFAULT '0',
   `login_ip` varchar(15) NOT NULL DEFAULT '',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `cat_users_options` (
+	`user_id` INT(10) NOT NULL,
+	`option_name` VARCHAR(50) NOT NULL,
+	`option_value` VARCHAR(255) NOT NULL
+)
+COMMENT='additional expandable settings for users' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE IF NOT EXISTS `cat_mod_initial_page` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

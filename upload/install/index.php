@@ -730,6 +730,7 @@ function fill_tables($database) {
 		." (name, value) VALUES "
         ." ('guid', '" . ( ( isset($config['create_guid']) && $config['create_guid'] == 'true' ) ? $admin->createGUID($config['guid_prefix']) : '' ) . "'),"
 		." ('app_name', 'cat$session_rand'),"
+        ." ('auto_disable_users', 'true' ),"
 		." ('cat_version', '".VERSION."'),"
 		." ('catmailer_default_sendername', 'Black Cat CMS Mailer'),"
 		." ('catmailer_routine', 'phpmail'),"
