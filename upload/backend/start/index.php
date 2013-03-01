@@ -44,17 +44,18 @@ if(file_exists(CAT_PATH .'/modules/initial_page/classes/c_init_page.php') && iss
 	$ins = new c_init_page($database, $_SESSION['USER_ID'], $_SERVER['SCRIPT_NAME']);
 }
 
-require_once(CAT_PATH.'/framework/class.admin.php');
-
-$admin = new admin('Start','start');
+$user  = CAT_Users::getInstance();
 $lang  = CAT_Helper_I18n::getInstance();
+
+// this will redirect to the login page if the permission is not set
+$user->checkPermission('start','start',false);
 
 // ================================================ 
 // ! Check if installation directory still exists   
 // ================================================ 
 if( file_exists(CAT_PATH.'/install/') ) {
 	// Check if user is part of Adminstrators group
-	if( in_array (1, $admin->get_groups_id() ) )
+	if( in_array (1, $user->get_groups_id() ) )
 	{
 		/** 
 		 *	Try to delete it - it's still not needed anymore.
@@ -70,63 +71,54 @@ if( file_exists(CAT_PATH.'/install/') ) {
 // =========================================================================== 
 global $parser;
 
-if (!is_object($parser))
-{
-	$admin->print_error('Global parser error couldn\'t be loaded!', false);
-}
-
 $tpl_data = array();
 
 // ===================================================== 
 // ! Insert permission values into the template object   
 // ===================================================== 
-$tpl_data['sections']['media']['permission']			= ($admin->get_permission('media')) ? true : false;
-$tpl_data['sections']['media']['name']					= 'media';
-$tpl_data['sections']['media']['title']				    = $lang->translate('Media');
-$tpl_data['sections']['media']['description']			= $OVERVIEW['MEDIA'];
+foreach(
+    array(
+        'media',
+        'addons',
+        'access',
+        'settings',
+        'admintools',
+    ) as $item
+) {
+    $tpl_data['sections'][$item]['permission']			              = $user->checkPermission($item,$item,false);
+    $tpl_data['sections'][$item]['name']				              = $item;
+    $tpl_data['sections'][$item]['title']				              = $lang->translate(ucfirst($item));
+    $tpl_data['sections'][$item]['description']			              = ( isset($OVERVIEW[strtoupper($item)]) ? $OVERVIEW[strtoupper($item)] : NULL );
+}
 
-$tpl_data['sections']['addons']['permission']			= ($admin->get_permission('addons')) ? true : false;
-$tpl_data['sections']['addons']['name']				    = 'addons';
-$tpl_data['sections']['addons']['title']				=  $lang->translate('Addons');
+foreach(
+    array(
+        'modules',
+        'templates',
+        'languages',
+    ) as $item
+) {
+    $tpl_data['sections']['addons']['subpages'][$item]['permission']  = $user->checkPermission('addons',$item,false);
+    $tpl_data['sections']['addons']['subpages'][$item]['name']        = $item;
+    $tpl_data['sections']['addons']['subpages'][$item]['title']       = $lang->translate(ucfirst($item));
+    $tpl_data['sections']['addons']['subpages'][$item]['description'] = ( isset($OVERVIEW[strtoupper($item)]) ? $OVERVIEW[strtoupper($item)] : NULL );
+}
 
-$tpl_data['sections']['addons']['subpages']['modules']['permission']    = ($admin->get_permission('modules')) ? true : false;
-$tpl_data['sections']['addons']['subpages']['modules']['name']          = 'addons';
-$tpl_data['sections']['addons']['subpages']['modules']['title']         = $lang->translate('Modules');
-$tpl_data['sections']['addons']['subpages']['modules']['description']   = $OVERVIEW['MODULES'];
+foreach(
+    array(
+        'users',
+        'groups',
+    ) as $item
+) {
+    $tpl_data['sections']['access']['subpages'][$item]['permission']  = $user->checkPermission('access',$item,false);
+    $tpl_data['sections']['access']['subpages'][$item]['name']        = $item;
+    $tpl_data['sections']['access']['subpages'][$item]['title']       = $lang->translate(ucfirst($item));
+    $tpl_data['sections']['access']['subpages'][$item]['description'] = ( isset($OVERVIEW[strtoupper($item)]) ? $OVERVIEW[strtoupper($item)] : NULL );
 
-$tpl_data['sections']['addons']['subpages']['templates']['permission']  = ($admin->get_permission('templates')) ? true : false;
-$tpl_data['sections']['addons']['subpages']['templates']['name']        = 'templates';
-$tpl_data['sections']['addons']['subpages']['templates']['title']       = $lang->translate('Templates');
-$tpl_data['sections']['addons']['subpages']['templates']['description'] = $OVERVIEW['TEMPLATES'];
+}
 
-$tpl_data['sections']['addons']['subpages']['languages']['permission']  = ($admin->get_permission('languages')) ? true : false;
-$tpl_data['sections']['addons']['subpages']['languages']['name']        = 'languages';
-$tpl_data['sections']['addons']['subpages']['languages']['title']       = $lang->translate('Languages');
-$tpl_data['sections']['addons']['subpages']['languages']['description'] = $OVERVIEW['LANGUAGES'];
-
-$tpl_data['sections']['access']['permission']                           = ($admin->get_permission('access')) ? true : false;
-$tpl_data['sections']['access']['name']                                 = 'access';
-$tpl_data['sections']['access']['title']                                = $lang->translate('Access');
-
-$tpl_data['sections']['access']['subpages']['users']['permission']      = ($admin->get_permission('modules')) ? true : false;
-$tpl_data['sections']['access']['subpages']['users']['name']            = 'users';
-$tpl_data['sections']['access']['subpages']['users']['title']           = $lang->translate('Users');
-$tpl_data['sections']['access']['subpages']['users']['description']     = $OVERVIEW['USERS'];
-
-$tpl_data['sections']['access']['subpages']['groups']['permission']     = ($admin->get_permission('templates')) ? true : false;
-$tpl_data['sections']['access']['subpages']['groups']['name']           = 'groups';
-$tpl_data['sections']['access']['subpages']['groups']['title']          = $lang->translate('Groups');
-$tpl_data['sections']['access']['subpages']['groups']['description']    = $OVERVIEW['GROUPS'];
-
-$tpl_data['sections']['settings']['permission']                         = ($admin->get_permission('settings')) ? true : false;
-$tpl_data['sections']['settings']['name']                               = 'settings';
-$tpl_data['sections']['settings']['title']                              = $lang->translate('Settings');
-$tpl_data['sections']['settings']['description']                        = $OVERVIEW['SETTINGS'];
-
-$tpl_data['sections']['admintools']['permission']                       = ($admin->get_permission('admintools')) ? true : false;
-$tpl_data['sections']['admintools']['name']                             = 'admintools';
-$tpl_data['sections']['admintools']['title']                            =  $lang->translate('Admintools');
-$tpl_data['sections']['admintools']['description']                      = $OVERVIEW['ADMINTOOLS'];
+include CAT_PATH.'/framework/class.admin.php';
+$admin = new admin('start','start');
 
 // ==================== 
 // ! Parse the site   
