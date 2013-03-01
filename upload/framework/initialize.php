@@ -250,8 +250,7 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
 global $parser;
 $parser = CAT_Helper_Template::getInstance('Dwoo');
 
-// wb2 backward compatibility
-include_once CAT_PATH.'/framework/wb2compat.php';
 
+define('CAT_INITIALIZED', true);
 
 ?>

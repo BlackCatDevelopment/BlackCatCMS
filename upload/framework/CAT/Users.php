@@ -147,19 +147,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
                             $_SESSION['TIMEZONE_STRING']
                                 = ( isset($prefs['timezone_string']) && $prefs['timezone_string'] != '' )
                                 ? $prefs['timezone_string']
-                                : DEFAULT_TIMEZONESTRING
+                                : DEFAULT_TIMEZONE_STRING
                                 ;
 
                             $_SESSION['DATE_FORMAT']
                                 = ( isset($prefs['date_format']) && $prefs['date_format'] != '' )
                                 ? $prefs['date_format']
                                 : DEFAULT_DATE_FORMAT
-                                ;
-
-                            $_SESSION['DATE_FORMAT_SHORT']
-                                = ( isset($prefs['date_format_short']) && $prefs['date_format_short'] != '' )
-                                ? $prefs['date_format_short']
-                                : DEFAULT_DATE_FORMAT_SHORT
                                 ;
 
                             $_SESSION['TIME_FORMAT']

@@ -97,6 +97,8 @@ if ( !defined( 'CAT_PATH' ) && !defined( 'CAT_INSTALL' ) )
         }
     }
 
+if(!defined('CAT_INITIALIZED')) require dirname(__FILE__).'/initialize.php';
+
     $admin_dir             = str_replace( CAT_PATH, '', CAT_ADMIN_PATH );
     $db                    = new database();
     $direct_access_allowed = array();

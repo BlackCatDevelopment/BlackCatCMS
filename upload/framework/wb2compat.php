@@ -28,7 +28,7 @@ define('WB_PATH', CAT_PATH);
 define('WB_URL', CAT_URL);
 define('ADMIN_PATH', CAT_ADMIN_PATH);
 define('ADMIN_URL', CAT_ADMIN_URL);
-define('THEME_URL', CAT_THEME_URL);
+define('THEME_URL', defined('CAT_THEME_URL') ? CAT_THEME_URL : CAT_URL.'/templates/'.DEFAULT_THEME );
 define('LEPTON_SERVER_ADDR', CAT_SERVER_ADDR );
 define('LEPTON_PATH', CAT_PATH);
 define('LEPTON_URL', CAT_URL);
