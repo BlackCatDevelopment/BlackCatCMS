@@ -343,7 +343,9 @@ class admin extends wb
 				// =================== 
 				// ! Droplet support 	
 				// =================== 
-				$this->html_output_storage = ob_get_clean();
+		$this->html_output_storage = ob_get_contents();
+        ob_clean();
+
 				if ( true === $this->droplets_ok )
 				{
 					$this->html_output_storage = evalDroplets($this->html_output_storage);

@@ -58,7 +58,7 @@ $display_name = $val->add_slashes(strip_tags(trim($val->sanitizePost('display_na
 $display_name = ( $display_name == '' ) ? $user->get_display_name() : $display_name;
 
 // ================================================================================== 
-// ! check that display_name is unique in whoole system (prevents from User-faking)   
+// ! check that display_name is unique in whole system (prevents from User-faking)
 // ================================================================================== 
 $sql	 = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'users` '
          . 'WHERE `user_id` <> ' . (int)$user->get_user_id()
@@ -69,7 +69,7 @@ if( $database->get_one( $sql ) > 0 )
 	$err_msg[]		= $admin->lang->translate( 'The username you entered is already taken' );
 }
 // ============================================ 
-// ! language must be 2 upercase letters only   
+// ! language must be 2 uppercase letters only
 // ============================================ 
 $language			= strtoupper( $val->sanitizePost('language') );
 $language			= preg_match('/^[A-Z]{2}$/', $language)		? $language : DEFAULT_LANGUAGE;
@@ -106,7 +106,7 @@ $new_password_1			= $new_password_1 == null || $new_password_1 == ''		? '' : $ne
 $new_password_2			= $new_password_2 == null || $new_password_2 == ''		? '' : $new_password_2;
 if ( $current_password == '' )
 {
-	$err_msg[]			= $admin->lang->translate( 'The current password you entered is empty' );
+	$err_msg[]			= $admin->lang->translate( 'You must enter your current password to save your changes' );
 }
 else
 {
@@ -144,7 +144,7 @@ $new_password_2			= md5($new_password_2);
 if ( sizeof($err_msg) == 0 )
 {
 
-    $user_id = (int)$user->get_user_id();
+    $user_id = $user->get_user_id();
 
     // --- save basics ---
 	$sql	 = 'UPDATE `'.CAT_TABLE_PREFIX.'users` '

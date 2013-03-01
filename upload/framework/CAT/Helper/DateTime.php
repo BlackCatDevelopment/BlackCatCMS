@@ -145,11 +145,19 @@ if (!class_exists('CAT_Helper_DateTime'))
             $actual_time = time();
             $locale      = setlocale(LC_ALL, 0);
             $ord         = date('S', $actual_time);
+            $ord_long    = (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')
+                         ? '%#d #O# %B, %Y'
+                         : '%e #O# %B, %Y';
+            $j_short     = (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')
+                         ? '%#d.%-m.%Y'
+                         : '%e.%-m.%Y';
+            $long        = (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')
+                         ? '%A, %#d %B, %Y'
+                         : '%A, %e %B, %Y';
             if ( defined('LANGUAGE') ) setlocale(LC_ALL, LANGUAGE);
-echo "---", str_replace('%O', $ord,'%e%O %B, %Y'), "---<br />";
             $DATE_FORMATS = array(
-                #'%A,|%e|%B,|%Y' => utf8_encode(strftime('%A, %e %B, %Y', $actual_time)),
-                '%e|%B,|%Y'     => utf8_encode(strftime(str_replace('%O', $ord,'%e%O %B, %Y'), $actual_time)).' (jS F, Y)',
+                '%A,|%e|%B,|%Y' => utf8_encode(strftime($long, $actual_time)),
+                '%e|%B,|%Y'     => utf8_encode(strftime(str_replace(' #O#', $ord, $ord_long), $actual_time)).' (jS F, Y)',
                 '%d|%m|%Y'      => utf8_encode(strftime('%d %m %Y',      $actual_time)).' (d M Y)',
                 '%b|%d|%Y'      => utf8_encode(strftime('%b %d %Y',      $actual_time)).' (M d Y)',
                 '%a|%b|%d,|%Y'  => utf8_encode(strftime('%a %b %d, %Y',  $actual_time)).' (D M d, Y)',
@@ -159,7 +167,7 @@ echo "---", str_replace('%O', $ord,'%e%O %B, %Y'), "---<br />";
                 '%m.%d.%Y'      => utf8_encode(strftime('%m.%d.%Y',      $actual_time)).' (M.D.Y)',
                 '%d/%m/%Y'      => utf8_encode(strftime('%d/%m/%Y',      $actual_time)).' (D/M/Y)',
                 '%m/%d/%Y'      => utf8_encode(strftime('%m/%d/%Y',      $actual_time)).' (M/D/Y)',
-                '%e.%-m.%Y'     => utf8_encode(strftime('%e.%-m.%Y',     $actual_time)).' (j.n.Y)',
+                #'%e.%-m.%Y'     => utf8_encode(strftime($j_short,        $actual_time)).' (j.n.Y)',
                 '%a, %d %b %Y %H:%M:%S %z' => utf8_encode(strftime('%a, %d %b %Y %H:%M:%S %z',      $actual_time)).' (r)',
                 '%A,|%d.|%B|%Y' => utf8_encode(strftime('%A, %d. %B %Y',  $actual_time)),        // German date
             );

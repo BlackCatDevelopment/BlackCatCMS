@@ -37,14 +37,13 @@ function send_testmail(URL) {
 function create_guid(URL) {
     if ( typeof jQuery != 'undefined' ) {
         jQuery.ajax({
-            type: 'POST',
+            type: 'GET',
             url:  URL,
-            data: {'_cat_ajax': 1},
             success:	function( data, textStatus, jqXHR  ) {
                 jQuery('#guid').html(data);
                 $('#fc_createguid').hide();
             },
-            error: function() { alert('Mist!'); }
+            error: function(data, textStatus, jqXHR) { alert(textStatus); }
         });
     }
 }
