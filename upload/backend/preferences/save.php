@@ -1,22 +1,28 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
 	include(CAT_PATH.'/framework/class.secure.php');
 } else {
@@ -33,28 +39,31 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
 require_once(CAT_PATH.'/framework/class.admin.php');
 $admin		= new admin('Preferences');
 
-$js_back	= 'javascript: history.go(-1);'; // Create a javascript back link
-include_once( CAT_ADMIN_PATH . '/interface/timezones.php' );
+$user       = CAT_Users::getInstance();
+$val        = CAT_Helper_Validate::getInstance();
 
+$js_back	= 'javascript: history.go(-1);'; // Create a javascript back link
+$extended   = $user->getExtendedOptions();
 $err_msg = array();
 
 // Get entered values and validate all
 // ================================================= 
 // ! remove any dangerouse chars from display_name   
 // ================================================= 
-$display_name		= $admin->add_slashes(strip_tags(trim($admin->get_post('display_name'))));
-$display_name		= $display_name == ''	? $admin->get_display_name() : $display_name;
+$display_name = $val->add_slashes(strip_tags(trim($val->sanitizePost('display_name'))));
+$display_name = ( $display_name == '' ) ? $user->get_display_name() : $display_name;
 
 // ================================================================================== 
 // ! check that display_name is unique in whoole system (prevents from User-faking)   
 // ================================================================================== 
-$sql	 = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'users` ';
-$sql	.= 'WHERE `user_id` <> ' . (int)$admin->get_user_id() . ' AND `display_name` LIKE "' . $display_name . '"';
+$sql	 = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'users` '
+         . 'WHERE `user_id` <> ' . (int)$user->get_user_id()
+         . ' AND `display_name` LIKE "' . $display_name . '"';
+
 if( $database->get_one( $sql ) > 0 )
 {
 	$err_msg[]		= $admin->lang->translate( 'The username you entered is already taken' );
@@ -62,55 +71,24 @@ if( $database->get_one( $sql ) > 0 )
 // ============================================ 
 // ! language must be 2 upercase letters only   
 // ============================================ 
-$language			= strtoupper( $admin->get_post('language') );
+$language			= strtoupper( $val->sanitizePost('language') );
 $language			= preg_match('/^[A-Z]{2}$/', $language)		? $language : DEFAULT_LANGUAGE;
-
-// ============================================ 
-// ! timezone must match a value in the table   
-// ============================================ 
-$timezone_string	= DEFAULT_TIMEZONESTRING;
-if ( in_array($admin->get_post('timezone_string'), $timezone_table) )
-{
-	$timezone_string	= $admin->get_post('timezone_string');
-}
-
-// ========================================================== 
-// ! date_format must be a key from /interface/date_formats   
-// ========================================================== 
-$date_format		= $admin->get_post('date_format');
-$date_format_key	= str_replace(' ', '|', $date_format);
-
-include( CAT_ADMIN_PATH . '/interface/date_formats.php' );
-$date_format		= array_key_exists( $date_format_key, $DATE_FORMATS )	? $date_format : 'system_default';
-$date_format		= $date_format == 'system_default'						? '' : $date_format;
-unset($DATE_FORMATS);
-
-// ========================================================== 
-// ! time_format must be a key from /interface/time_formats   
-// ========================================================== 
-$time_format		= $admin->get_post('time_format');
-$time_format_key	= str_replace(' ', '|', $time_format);
-
-include( CAT_ADMIN_PATH . '/interface/time_formats.php' );
-$time_format		= array_key_exists($time_format_key, $TIME_FORMATS)		? $time_format : 'system_default';
-$time_format		= $time_format == 'system_default'						? '' : $time_format;
-unset($TIME_FORMATS);
 
 // ===================================== 
 // ! email should be validatet by core   
 // ===================================== 
-$email		= $admin->get_post('email') == null		? '' : $admin->get_post('email');
-if ( !$admin->validate_email($email) )
+$email		= $val->sanitizePost('email') == null ? '' : $val->sanitizePost('email');
+if ( !$val->validate_email($email) )
 {
 	$email			= '';
 	$err_msg[]		= $admin->lang->translate( 'The email address you entered is invalid' );
 }
 else
 {
-	// check that email is unique in whoole system
-	$email		= $admin->add_slashes($email);
+	// check that email is unique
+	$email		= $val->add_slashes($email);
 	$sql		 = 'SELECT COUNT(*) FROM `'.CAT_TABLE_PREFIX.'users` ';
-	$sql		.= 'WHERE `user_id` <> ' . (int)$admin->get_user_id() . ' AND `email` LIKE "' . $email . '"';
+	$sql		.= 'WHERE `user_id` <> ' . (int)$user->get_user_id() . ' AND `email` LIKE "' . $email . '"';
 	if( $database->get_one($sql) > 0 )
 	{
 		$err_msg[]		= $admin->lang->translate( 'The email you entered is already in use' );
@@ -120,9 +98,9 @@ else
 // ===================================================== 
 // ! receive password vars and calculate needed action   
 // ===================================================== 
-$current_password		= $admin->get_post('current_password');
-$new_password_1			= $admin->get_post('new_password_1');
-$new_password_2			= $admin->get_post('new_password_2');
+$current_password		= $val->sanitizePost('current_password');
+$new_password_1			= $val->sanitizePost('new_password_1');
+$new_password_2			= $val->sanitizePost('new_password_2');
 $current_password		= $current_password == null								? '' : $current_password;
 $new_password_1			= $new_password_1 == null || $new_password_1 == ''		? '' : $new_password_1;
 $new_password_2			= $new_password_2 == null || $new_password_2 == ''		? '' : $new_password_2;
@@ -165,27 +143,44 @@ $new_password_2			= md5($new_password_2);
 // ======================================================================================= 
 if ( sizeof($err_msg) == 0 )
 {
-	$sql	 = 'UPDATE `'.CAT_TABLE_PREFIX.'users` ';
-	$sql	.= 'SET `display_name` = "' . $display_name . '", ';
-	$sql	.=		'`password` = "' . $new_password_1 . '", ';
-	$sql	.=		'`email` = "' . $email . '", ';
-	$sql	.=		'`language` = "' . $language . '", ';
-	$sql	.=		"`timezone_string` = '$timezone_string', ";
-	$sql	.=		'`date_format` = "' . $date_format . '", ';
-	$sql	.=		'`time_format` = "' . $time_format . '" ';
-	$sql	.= 'WHERE `user_id` = ' . (int)$admin->get_user_id() . ' AND `password` = "' . $current_password . '"';
+
+    $user_id = (int)$user->get_user_id();
+
+    // --- save basics ---
+	$sql	 = 'UPDATE `'.CAT_TABLE_PREFIX.'users` '
+            .  'SET `display_name` = "' . $display_name . '", '
+	        .  '`password` = "' . $new_password_1 . '", '
+	        .  '`email` = "' . $email . '", '
+	        .  '`language` = "' . $language . '" '
+	        .  'WHERE `user_id` = ' . $user_id
+            .  ' AND `password` = "' . $current_password . '"'
+            ;
 
 	if ( $database->query($sql) )
 	{
 		$sql_info = mysql_info();
 		if ( preg_match('/matched: *([1-9][0-9]*)/i', $sql_info) != 1 )
 		{
-			// if the user_id or password dosn't match
+			// if the user_id or password doesn't match
 			$admin->print_error( 'The (current) password you entered is incorrect' , $js_back );
 		}
 		else
 		{
-			// update successfull, takeover values into the session
+			// update successful
+            // --- save additional settings ---
+            $database->query( 'DELETE FROM `'.CAT_TABLE_PREFIX.'users_options` WHERE `user_id` = ' . $user_id );
+            foreach( $extended as $opt => $check )
+            {
+                $value = $val->sanitizePost($opt);
+#$admin->print_error( "OPT -$opt- VAL -$value- CHECK -$check- VALID -" . call_user_func($check,$value) . "-\n<br />" );
+                if ( ! call_user_func($check,$value) ) continue;
+                $sql = 'INSERT INTO `'.CAT_TABLE_PREFIX.'users_options` '
+                     . 'VALUES ( "'.$user_id.'", "'.$opt.'", "'.$value.'" )'
+                     ;
+#$admin->print_error( $sql );
+                $database->query($sql);
+            }
+
 			$_SESSION['DISPLAY_NAME']		= $display_name;
 			$_SESSION['LANGUAGE']			= $language;
 			$_SESSION['EMAIL']				= $email;

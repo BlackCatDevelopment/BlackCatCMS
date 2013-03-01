@@ -23,7 +23,6 @@
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
 	include(CAT_PATH.'/framework/class.secure.php');
 } else {
@@ -40,14 +39,17 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
-
 
 require_once(CAT_PATH . '/framework/class.admin.php');
 $admin = new admin('Preferences');
 
+$val      = CAT_Helper_Validate::getInstance();
+$user     = CAT_Users::getInstance();
+$user_id  = $val->fromSession('USER_ID','numeric');
+$group_id = $val->fromSession('GROUP_ID','numeric');
+
 global $parser;
-$data_dwoo	= array();
+$tpl_data	= array();
 
 include_once(CAT_PATH . '/framework/functions-utf8.php');
 
@@ -56,115 +58,105 @@ include_once(CAT_PATH . '/framework/functions-utf8.php');
 // ========================= 
 require_once( CAT_PATH . '/modules/initial_page/classes/c_init_page.php' );
 $ref		= new c_init_page( $database );
-$info		= $ref->get_user_info( $_SESSION['USER_ID'] );
+$info		= $ref->get_user_info( $user_id );
 
 $options	= array(
 	'pages'			=> true,
-	'tools'			=> $_SESSION['GROUP_ID'] == 1 ? true : false,
-	'backend_pages' => $_SESSION['GROUP_ID'] == 1 ? true : false
+	'tools'			=> $group_id == 1 ? true : false,
+	'backend_pages' => $group_id == 1 ? true : false
 );
 
-$data_dwoo['INIT_PAGE_SELECT']		= $ref->get_single_user_select( $_SESSION['USER_ID'], 'init_page_select', $info['init_page'], $options);
-$data_dwoo['INIT_PAGE_LABEL']		= $ref->get_language();
-/*
-	*
-	* FOR WHAT IS THIS NEEDED? - creativecat
-	*
-*/
-# $tpl->set_var('INIT_PAGE_PARAM', $info['page_param']);
+$tpl_data['INIT_PAGE_SELECT'] = $ref->get_single_user_select( $user_id, 'init_page_select', $info['init_page'], $options);
+$tpl_data['INIT_PAGE_LABEL']  = $ref->get_language();
 
 
 // ============================================================= 
 // ! read user-info from table users and assign it to template   
 // ============================================================= 
-$sql  = 'SELECT `display_name`, `username`, `email`, `statusflags` FROM `'.CAT_TABLE_PREFIX.'users` WHERE `user_id` = '.(int)$admin->get_user_id();
+$sql  = 'SELECT `display_name`, `username`, `email`, `statusflags` FROM `'.CAT_TABLE_PREFIX.'users` WHERE `user_id` = '.(int)$user->get_user_id();
 
 $res_user	= $database->query($sql);
 if ($res_user->numRows() > 0)
 {
 	if( ($rec_user = $res_user->fetchRow()) )
 	{
-		$data_dwoo['DISPLAY_NAME']	= $rec_user['display_name'];
-		$data_dwoo['USERNAME']		= $rec_user['username'];
-		$data_dwoo['EMAIL']			= $rec_user['email'];
+		$tpl_data['DISPLAY_NAME']	= $rec_user['display_name'];
+		$tpl_data['USERNAME']		= $rec_user['username'];
+		$tpl_data['EMAIL']			= $rec_user['email'];
 	}
 }
 
 
-
-/*
-	*
-	* FOR WHAT IS THIS NEEDED? - creativecat
-	*
-*/
 // =============================== 
 // ! insert link to user-profile   
 // =============================== 
-$data_dwoo['USER_ID']	= $admin->get_user_id();
-// $tpl->set_block('main_block', 'show_cmd_profile_edit_block', 'show_cmd_profile_edit');
+$tpl_data['USER_ID']	= $user->get_user_id();
+
 if ( $admin->bit_isset($rec_user['statusflags'], USERS_PROFILE_ALLOWED) )
 {
-	$data_dwoo['PROFILE_ACTION_URL']			= CAT_ADMIN_URL.'/profiles/index.php';
-	$data_dwoo['show_cmd_profile_edit']			= true;
-	$data_dwoo['show_cmd_profile_edit_block']	= true;
+	$tpl_data['PROFILE_ACTION_URL']			    = CAT_ADMIN_URL.'/profiles/index.php';
+	$tpl_data['show_cmd_profile_edit']			= true;
+	$tpl_data['show_cmd_profile_edit_block']	= true;
 }
 else
 {
-	$data_dwoo['show_cmd_profile_edit']			= true;
-	$data_dwoo['show_cmd_profile_edit_block']	= false;
+	$tpl_data['show_cmd_profile_edit']			= true;
+	$tpl_data['show_cmd_profile_edit_block']	= false;
 }
 
 // ============================================================================ 
 // ! read available languages from table addons and assign it to the template   
 // ============================================================================ 
-require CAT_PATH.'/framework/CAT/Helper/Addons.php';
-$addons = new CAT_Helper_Addons();
-$data_dwoo['languages']				= $addons->get_addons( LANGUAGE , 'language', false, false, 'directory' );
+$addons = CAT_Helper_Addons::getInstance();
+$tpl_data['languages'] = $addons->get_addons( LANGUAGE , 'language', false, false, 'directory' );
 
 // ================================== 
 // ! Insert default timezone values   
 // ================================== 
 $counter	= 0;
-$timezone_table = CAT_Helper_DateTime::getInstance()->getTimezones();
+$timezone_table = CAT_Helper_DateTime::getTimezones();
 foreach ($timezone_table as $title)
 {
-	$data_dwoo['timezones'][$counter]['NAME']		= $title;
-	$data_dwoo['timezones'][$counter]['SELECTED']	= $admin->get_timezone_string() == $title	? true : false;
+	$tpl_data['timezones'][$counter]['NAME']		= $title;
+	$tpl_data['timezones'][$counter]['SELECTED']	= $admin->get_timezone_string() == $title	? true : false;
 	$counter++;
 }
 
 // =========================== 
 // ! Insert date format list   
 // =========================== 
-$DATE_FORMATS = CAT_Helper_DateTime::getInstance()->getDateFormats();
+$DATE_FORMATS = CAT_Helper_DateTime::getDateFormats();
+$USE_DEFAULT  = $val->fromSession('USE_DEFAULT_DATE_FORMAT');
 $counter=0;
 foreach ( $DATE_FORMATS AS $format => $title )
 {
 	$format = str_replace('|', ' ', $format); // Add's white-spaces (not able to be stored in array key)
-	$data_dwoo['dateformats'][$counter]['VALUE']		= $format != 'system_default'	? $format : 'system_default';
-	$data_dwoo['dateformats'][$counter]['NAME']			= $title;
-	$data_dwoo['dateformats'][$counter]['SELECTED']		=
-		( DATE_FORMAT == $format && !isset($_SESSION['USE_DEFAULT_DATE_FORMAT']) ) ||
-		( 'system_default' == $format && isset($_SESSION['USE_DEFAULT_DATE_FORMAT']) )	?
-		true : false;
+	$tpl_data['dateformats'][$counter]['VALUE']	= ( $format != 'system_default' ) ? $format : 'system_default';
+	$tpl_data['dateformats'][$counter]['NAME']	= $title;
+	$tpl_data['dateformats'][$counter]['SELECTED']
+        =    ( DATE_FORMAT      == $format && ! $USE_DEFAULT )
+          || ( 'system_default' == $format &&   $USE_DEFAULT )
+        ? true
+        : false;
 	$counter++;
 }
 
 // =========================== 
 // ! Insert time format list   
 // =========================== 
-include_once(CAT_ADMIN_PATH.'/interface/time_formats.php' );
+$TIME_FORMATS = CAT_Helper_DateTime::getTimeFormats();
+$USE_DEFAULT  = $val->fromSession('USE_DEFAULT_TIME_FORMAT');
 $counter	= 0;
 foreach ( $TIME_FORMATS AS $format => $title )
 {
 	$format		= str_replace('|', ' ', $format); // Add's white-spaces (not able to be stored in array key)
-	$data_dwoo['timeformats'][$counter]['VALUE']		= $format != 'system_default' ? $format : 'system_default';
-	$data_dwoo['timeformats'][$counter]['NAME']			= $title;
-	$data_dwoo['timeformats'][$counter]['SELECTED']		=
-		( TIME_FORMAT == $format && !isset($_SESSION['USE_DEFAULT_TIME_FORMAT']) ) ||
-		( 'system_default' == $format && isset($_SESSION['USE_DEFAULT_TIME_FORMAT']) )
-		? true : false;
-
+	$tpl_data['timeformats'][$counter]['VALUE']		= $format != 'system_default' ? $format : 'system_default';
+	$tpl_data['timeformats'][$counter]['NAME']		= $title;
+	$tpl_data['timeformats'][$counter]['SELECTED']
+        =    ( TIME_FORMAT      == $format && ! $USE_DEFAULT )
+          || ( 'system_default' == $format &&   $USE_DEFAULT )
+		? true
+        : false;
 	$counter++;
 }
 
@@ -173,7 +165,7 @@ foreach ( $TIME_FORMATS AS $format => $title )
 // ============== 
 // ! Print page   
 // ============== 
-$parser->output( 'backend_preferences_index.lte', $data_dwoo );
+$parser->output( 'backend_preferences_index.lte', $tpl_data );
 
 $admin->print_footer();
 
