@@ -18,7 +18,7 @@ if (SHOW_SEARCH) {
     $parser->setFallbackPath(CAT_PATH.'/modules/lib_search/templates/default');
     
     // parse the search.box template
-    return $parser->get('search.box.lte', array('action' => LEPTON_URL.'/search/index.php'));
+    return $parser->get('search.box.lte', array('action' => CAT_URL.'/search/index.php'));
 }
 else {
     // the LEPTON search function is not enabled!

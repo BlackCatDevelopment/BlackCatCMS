@@ -396,7 +396,7 @@ function print_excerpt2($search_result, $search_parameter) {
 	    if (isset($_SESSION[SESSION_SEARCH_LINK_NON_PUBLIC_CONTENT]) && 
 	        !empty($_SESSION[SESSION_SEARCH_LINK_NON_PUBLIC_CONTENT])) {
 	        // link to a special page, defined in search as CFG_LINK_NON_PUBLIC_CONTENT
-	        $search_result['page_link'] = LEPTON_URL.$_SESSION[SESSION_SEARCH_LINK_NON_PUBLIC_CONTENT];
+	        $search_result['page_link'] = CAT_URL.$_SESSION[SESSION_SEARCH_LINK_NON_PUBLIC_CONTENT];
 	    }
 	    else {
 	        $search_result['page_link'] = '';
@@ -501,13 +501,13 @@ function print_excerpt2($search_result, $search_parameter) {
 	            // image match!
 	            $image_excerpt = prepare_excerpts($excerpt_array, $search_parameter['search_words'], $search_result['max_excerpt_num']);
 	            // accept only images with complete URL
-	            if (false === strpos($image['src'], LEPTON_URL)) continue;
-	            $src = str_ireplace(LEPTON_URL, CAT_PATH, urldecode($image['src']));
+	            if (false === strpos($image['src'], CAT_URL)) continue;
+	            $src = str_ireplace(CAT_URL, CAT_PATH, urldecode($image['src']));
 	            $target = CAT_PATH.'/temp/search/'.urldecode(basename($image['src']));
 	            makeThumbnail($src, $target, $search_parameter['settings'][CFG_THUMBS_WIDTH]);
 	            $image_array[] = array(        
 	                'excerpt' => $image_excerpt,
-	                'src' => LEPTON_URL.'/temp/search/'.urldecode(basename($image['src'])),
+	                'src' => CAT_URL.'/temp/search/'.urldecode(basename($image['src'])),
 	                'alt' => $image['alt'],
 	                'title' => $image['title'],
 	                'width' => $search_parameter['settings'][CFG_THUMBS_WIDTH]
@@ -527,18 +527,18 @@ function print_excerpt2($search_result, $search_parameter) {
 	$use_thumb = 0;
 	if (!$image_match && (($search_parameter['settings'][CFG_CONTENT_IMAGE] != CONTENT_IMAGE_NONE) || !empty($search_result['image_link']))) {
 	    if (!empty($search_result['image_link'])) { 
-	        if (strpos($search_result['image_link'], LEPTON_URL) === false) {
+	        if (strpos($search_result['image_link'], CAT_URL) === false) {
 	            $src = CAT_PATH.MEDIA_DIRECTORY.DIRECTORY_SEPARATOR.$search_result['image_link'];
 	        }
 	        else {
-	            $src = str_ireplace(LEPTON_URL, CAT_PATH, $search_result['image_link']);
+	            $src = str_ireplace(CAT_URL, CAT_PATH, $search_result['image_link']);
 	        }
 	        // the path to the temporary thumbnail
 	        $target = CAT_PATH.'/temp/search/'.basename($search_result['image_link']);
 	        // create a thumbnail and place it in the temporary directory
 	        if (makeThumbnail($src, $target, $search_parameter['settings'][CFG_THUMBS_WIDTH])) {
                 $thumb_array = array(        
-                    'src' => LEPTON_URL.'/temp/search/'.urldecode(basename($search_result['image_link'])),
+                    'src' => CAT_URL.'/temp/search/'.urldecode(basename($search_result['image_link'])),
                     'alt' => $search_result['page_title'],
                     'title' => $search_result['page_title'],
                     'width' => $search_parameter['settings'][CFG_THUMBS_WIDTH]
@@ -563,14 +563,14 @@ function print_excerpt2($search_result, $search_parameter) {
 	        default:
 	            $i = 0;
 	        endswitch;
-	        if (isset($images[$i]['src']) && (false !== strpos($images[$i]['src'], LEPTON_URL))) {
-	            $src = str_ireplace(LEPTON_URL, CAT_PATH, urldecode($images[$i]['src']));
+	        if (isset($images[$i]['src']) && (false !== strpos($images[$i]['src'], CAT_URL))) {
+	            $src = str_ireplace(CAT_URL, CAT_PATH, urldecode($images[$i]['src']));
 	            // the path to the temporary thumbnail
 	            $target = CAT_PATH.'/temp/search/'.urldecode(basename($images[$i]['src']));
 	            // create a thumbnail and place it in the temporary directory
 	            if (makeThumbnail($src, $target, $search_parameter['settings'][CFG_THUMBS_WIDTH])) {
     	            $thumb_array = array(        
-    	                'src' => LEPTON_URL.'/temp/search/'.urldecode(basename($images[$i]['src'])),
+    	                'src' => CAT_URL.'/temp/search/'.urldecode(basename($images[$i]['src'])),
     	                'alt' => isset($images[$i]['alt']) ? $images[$i]['alt'] : '',
     	                'title' => isset($images[$i]['title']) ? $images[$i]['title'] : '',
     	                'width' => $search_parameter['settings'][CFG_THUMBS_WIDTH]
