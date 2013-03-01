@@ -1,23 +1,35 @@
 <?php
 
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Black Cat Development
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          LEPTON Project, Black Cat Development
+ *   @copyright       2011-2012, LEPTON Project
  * @copyright       2013, Black Cat Development
  * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-if ( !defined( 'CAT_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
+if ( !defined( 'CAT_PATH' ) && !defined( 'CAT_INSTALL' ) )
 {
-		// try to load config.php
+
+    //**************************************************************************
+    // try to find config.php
+    //**************************************************************************
 	if ( strpos( __FILE__, '/framework/class.secure.php' ) !== false )
 		{
 		$config_path = str_replace( '/framework/class.secure.php', '', __FILE__ );
@@ -36,19 +48,63 @@ if ( !defined( 'CAT_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
 			else
 			{
 				// Problem: no config.php nor installation files...
-			exit( '<p><b>Sorry, but this installation seems to be damaged! Please contact your webmaster!</b></p>' );
+            exit( '<p><strong>Sorry, but this installation seems to be damaged! Please contact your webmaster!</strong></p>' );
 			}
 		}
 		
+    //**************************************************************************
+    // include config.php
+    //**************************************************************************
 	require_once( $config_path . '/config.php' );
-    $admin_dir             = str_replace( CAT_PATH, '', CAT_ADMIN_PATH );
 		
-    //require_once( $config_path . '/framework/class.database.php' );
+    //**************************************************************************
+    // analyze path to auto-protect backend
+    //**************************************************************************
+    if ( ! defined('CAT_LOGIN_PHASE') )
+    {
+        $path = ( isset($_SERVER['SCRIPT_FILENAME']) ? CAT_Helper_Directory::getInstance()->sanitizePath($_SERVER['SCRIPT_FILENAME']) : NULL );
+#echo "path: $path<br />";
+        if ( $path )
+        {
+            $check = str_replace( '/', '\/', CAT_Helper_Directory::getInstance()->sanitizePath(CAT_ADMIN_PATH) );
+#echo "check: $check<br />";
+            if ( preg_match( '~^'.$check.'~i', $path ) )
+            {
+#echo "authentication required<br />";
+                define('CAT_REQUIRE_ADMIN',true);
+                if( ! CAT_Users::getInstance()->is_authenticated() ) {
+#echo "not authenticated, forward to login screen<br />";
+        			CAT_Users::getInstance()->handleLogin();
+                    exit(0);
+       		    }
+                // always enable CSRF protection in backend; does not work with
+                // AJAX so scripts called via AJAX should set this constant
+                if ( ! defined('CAT_AJAX_CALL') )
+                {
+                    CAT_Helper_Protect::getInstance()->enableCSRFMagic();
+                }
+                global $parser;
+                if (!is_object($parser))
+                    $parser = CAT_Helper_Template::getInstance('Dwoo');
+                // initialize template search path
+                $parser->setPath(CAT_THEME_PATH . '/templates');
+                $parser->setFallbackPath(CAT_THEME_PATH . '/templates');
+            }
+        }
+        else
+        {
+            define('CAT_REQUIRE_ADMIN',false);
+        }
+    }
 
+    $admin_dir             = str_replace( CAT_PATH, '', CAT_ADMIN_PATH );
     $db                    = new database();
     $direct_access_allowed = array();
 
-	// some core files must be allowed to load the config.php by themself!
+    //**************************************************************************
+    // some core files must be allowed to load the config.php directly. We
+    // get the list of allowed files from the DB
+    //**************************************************************************
     $q = $db->query('SELECT * FROM '.CAT_TABLE_PREFIX.'class_secure');
     if( $q->numRows()>0 )
     {
@@ -94,23 +150,50 @@ if ( !defined( 'CAT_PATH' ) &&  !defined( 'LEPTON_INSTALL' ) )
 				header( $_SERVER[ 'SERVER_PROTOCOL' ] . " 403 Forbidden" );
 				}
 				// stop program execution
-			exit( '<p><b>ACCESS DENIED!</b> - Invalid call of <i>' . $_SERVER[ 'SCRIPT_NAME' ] . '</i></p>' );
+            exit( '<p><strong style="color:#f00;">ACCESS DENIED!</strong> - Invalid call of <i>' . $_SERVER[ 'SCRIPT_NAME' ] . '</i></p>' );
+        }
 		}
+
+#echo "done secure<br />";
+#exit;
+
+}
+
+/**
+ * this is used to configure csrf-magic
+ **/
+if ( !function_exists( 'csrf_startup' ) )
+{
+    function csrf_startup() {
+        // AJAX requests are allowed via POST only and must identify themselves
+        // by adding a '_cat_ajax' param to the request
+        if (isset($_POST['_cat_ajax'])) csrf_conf('rewrite', false);
+        // This enables JavaScript rewriting and will ensure your AJAX calls
+        // don't stop working.
+        csrf_conf('rewrite-js', CAT_URL.'/modules/lib_csrfmagic/csrf-magic.js');
+        // This makes csrf-magic call my_csrf_callback() before exiting when
+        // there is a bad csrf token. This lets me customize the error page.
+        //csrf_conf('callback', 'my_csrf_callback');
+        // While this is enabled by default to boost backwards compatibility,
+        // for security purposes it should ideally be off. Some users can be
+        // NATted or have dialup addresses which rotate frequently. Cookies
+        // are much more reliable.
+        csrf_conf('allow-ip', false);
 	}
 }
 
 /**
  * strip droplets
  **/
-if ( !function_exists( '__lep_sec_formdata' ) )
+if ( !function_exists( 'cat_secure_formdata' ) )
 {
-	function __lep_sec_formdata( &$arr )
+    function cat_secure_formdata( &$arr )
 	{
 		foreach ( $arr as $key => $value )
 		{
 			if ( is_array( $value ) )
 			{
-				__lep_sec_formdata( $value );
+                cat_secure_formdata( $value );
 			}
 			else
 			{
@@ -142,17 +225,30 @@ if ( isset( $_SESSION ) && !defined( 'LEP_SEC_FORMDATA' ) && !isset( $_SESSION[ 
 {
 	if ( count( $_GET ) )
 	{
-		__lep_sec_formdata( $_GET );
+        cat_secure_formdata( $_GET );
 	}
 	if ( count( $_POST ) )
 	{
-		__lep_sec_formdata( $_POST );
+        cat_secure_formdata( $_POST );
 	}
 	if ( count( $_REQUEST ) )
 	{
-		__lep_sec_formdata( $_REQUEST );
+        cat_secure_formdata( $_REQUEST );
 	}
 	define( 'LEP_SEC_FORMDATA', true );
 }
+
+spl_autoload_register(function ($class) {
+    if(defined('CAT_PATH'))
+    {
+        $file = str_replace('_','/',$class);
+//echo "---", CAT_PATH.'/framework/'.$file.'.php', "---<br />";
+        if(file_exists(CAT_PATH.'/framework/'.$file.'.php'))
+        {
+            @require CAT_PATH.'/framework/'.$file.'.php';
+        }
+    }
+    # next in stack
+});
 
 ?>
