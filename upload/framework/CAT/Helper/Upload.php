@@ -1074,7 +1074,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
 					ob_start();
 					phpinfo(8);
 					$gd = ob_get_contents();
-					ob_end_clean();
+					ob_clean();
 					$regex = "/\bgd\s+version\b[^\d\n\r]+?([\d\.]+)/i";
 				}
 				if (preg_match($regex, $gd, $m))
