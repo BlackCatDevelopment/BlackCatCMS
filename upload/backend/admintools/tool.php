@@ -78,7 +78,8 @@ if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php') )
 	ob_start();
 	require(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php');
 	$data_dwoo['TOOL']	= ob_get_contents();
-	ob_end_clean();
+	//ob_end_clean();
+    ob_clean(); // allow multiple buffering for csrf-magic
 }
 else
 {
