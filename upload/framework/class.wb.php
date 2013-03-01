@@ -35,8 +35,6 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-include_once(CAT_PATH . '/framework/class.securecms.php');
-
 require_once(CAT_PATH . '/framework/class.database.php');
 
 // Include new wbmailer class (subclass of PHPmailer)
@@ -51,7 +49,7 @@ include CAT_PATH.'/framework/CAT/Pages.php';
 // new users class
 include CAT_PATH.'/framework/CAT/Users.php';
 
-class wb extends SecureCMS
+class wb
 {
     public  $password_chars      = 'a-zA-Z0-9\_\-\!\#\*\+';
     private $lep_active_sections = NULL;
@@ -84,7 +82,7 @@ class wb extends SecureCMS
 		{
 		    $this->lang->addFile( LANGUAGE.'.php', NULL, $var );
 		}
-        $this->pg    = CAT_Pages::getInstance();
+        $this->pg    = CAT_Pages::getInstance(-1);
         $this->users = CAT_Users::getInstance();
         set_error_handler( array('wb','cat_error_handler') );
     }   // end constructor
@@ -489,7 +487,7 @@ class wb extends SecureCMS
     /* moved to CAT_Object */
     public function print_error($message, $link = 'index.php', $auto_footer = true)
     {
-        CAT_Object::getInstance()->printError($message,$link);
+        CAT_Pages::getInstance(-1)->printError($message,$link);
     }
 
     /* moved to CAT_Helper_Mail */
@@ -497,10 +495,10 @@ class wb extends SecureCMS
     {
         return CAT_Helper_Mail::getInstance('PHPMailer')->sendMail($fromaddress, $toaddress, $subject, $message, $fromname);
     }
-    public function page_is_visible($page) { return CAT_Pages::getInstance()->isVisible($page); }
-    public function page_is_active($page)  { return CAT_Pages::getInstance()->isActive($page);  }
-    public function page_link($link)       { return CAT_Pages::getInstance()->getLink($link);   }
-    public function show_page($page)       { return CAT_Pages::getInstance()->show_page($page); }
+    public function page_is_visible($page) { return CAT_Pages::getInstance(-1)->isVisible($page); }
+    public function page_is_active($page)  { return CAT_Pages::getInstance(-1)->isActive($page);  }
+    public function page_link($link)       { return CAT_Pages::getInstance(-1)->getLink($link);   }
+    public function show_page($page)       { return CAT_Pages::getInstance(-1)->show_page($page); }
 
     /* moved to CAT_Sections */
     public function section_is_active($section_id) { return CAT_Sections::getInstance()->section_is_active($section_id); }
