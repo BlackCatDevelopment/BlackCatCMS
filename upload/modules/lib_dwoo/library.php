@@ -60,7 +60,7 @@ if (!is_object($parser))
               'CAT_ADMIN_URL' => CAT_ADMIN_URL,
               'CAT_URL' => CAT_URL,
               'CAT_PATH' => CAT_PATH,
-              'LEPTON_URL' => CAT_URL,
+              'CAT_URL' => CAT_URL,
         	  'CAT_PATH' => CAT_PATH,
               'CAT_PATH' => CAT_PATH,
               'CAT_URL' => CAT_URL,
