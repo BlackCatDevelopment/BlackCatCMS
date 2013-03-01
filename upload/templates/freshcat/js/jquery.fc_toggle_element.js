@@ -37,7 +37,7 @@
 				var current_option	= current.children('option:selected'),
 					div_id			= match_class_prefix( 'show___', current_option ),
 					action			= 'show';
-				if( typeof div_id == 'undefined' || div_id.length == 0 )
+				if( typeof div_id == 'undefined' || div_id.length === 0 )
 				{
 					div_id	= match_class_prefix( 'hide___', current_option );
 					action	= 'hide';
@@ -47,7 +47,7 @@
 					according_div = $('#' + div_id);
 				}
 				// if no value for show_on_start is given or if it is set to false hide the according div
-				if ( options.show_on_start == false )
+				if ( options.show_on_start === false )
 				{
 					according_div.slideUp(0).addClass('fc_inactive_element hidden').removeClass('fc_active_element');
 				}
@@ -62,7 +62,7 @@
 					var current_option	= current.children('option:selected'),
 						div_id			= match_class_prefix( 'show___', current_option ),
 						action			= 'show';
-					if( typeof div_id == 'undefined' || div_id.length == 0 )
+					if( typeof div_id == 'undefined' || div_id.length === 0 )
 					{
 						div_id	= match_class_prefix( 'hide___', current_option );
 						action	= 'hide';
@@ -96,7 +96,7 @@
 				// if multiple elements control an ID (the class-tag must provide action___id)
 				var div_id		= match_class_prefix('show___',current);
 				var action		= 'show';
-				if( typeof div_id == 'undefined' || div_id.length == 0 )
+				if( typeof div_id == 'undefined' || div_id.length === 0 )
 				{
 					div_id = match_class_prefix('hide___',current);
 					action = 'hide';
@@ -125,7 +125,7 @@
 
 				//console.log(according_div + current.attr('rel') + ': ' + show_on_start);
 				// if no value for show_on_start is given or if it is set to false hide the according div
-				if ( options.show_on_start == false )
+				if ( options.show_on_start === false )
 				{
 				console.log(div_id + ' ' + action + ' - ' + options.show_on_start);
 					according_div.addClass('fc_inactive_element hidden').slideUp(0).removeClass('fc_active_element');
@@ -155,5 +155,5 @@
 				});
 			}
 		});
-	}
+	};
 })(jQuery);

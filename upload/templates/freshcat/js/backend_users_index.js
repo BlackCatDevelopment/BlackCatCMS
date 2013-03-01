@@ -1,7 +1,7 @@
 /**
  * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
+ *
  * NOTICE:LEPTON CMS Package has several different licenses.
  * Please see the individual license in the header of each single file or info.php of modules and templates.
  *
@@ -69,8 +69,8 @@
 			// Initial calling of function
 			check_inputs( element );
 		});
-		
-	}
+
+	};
 })(jQuery);
 
 /**
@@ -122,11 +122,11 @@
 					{
 						var current			= $(this),
 							current_ul		= current.closest('ul');
-				
+
 						current_ul.children('li').not(current).removeClass('fc_active');
 						$('#fc_list_add').removeClass('fc_active');
 						current.addClass('fc_active');
-			
+
 						if ( data.success === true )
 						{
 							options.addOnly.hide();
@@ -181,8 +181,8 @@
 					}
 				});
 			});
-		})
-	}
+		});
+	};
 })(jQuery);
 
 /**
@@ -301,7 +301,7 @@ jQuery(document).ready(function()
 				return dates['module_permissions']		= modules.push( value );
 			}
 			else if( fieldname == 'template_permissions[]' ) {
-				return dates['template_permissions']	= templates.push( value )
+				return dates['template_permissions']	= templates.push( value );
 			}
 			else {
 				return dates[fieldname]					= value;
@@ -327,7 +327,7 @@ jQuery(document).ready(function()
 				if ( data.success === true )
 				{
 					return_success( jqXHR.process , data.message);
-					
+
 					if ( data.action == 'saved' )
 					{
 						$('#fc_list_overview').children('.fc_active').children('.fc_groups_name').text(data.name);
@@ -352,11 +352,11 @@ jQuery(document).ready(function()
 		var current					= $(this),
 			currentForm				= current.closest('form'),
 			dates					= {
-				'_cat_ajax':    1
+				'_cat_ajax':    1,
 				'home_folder':	$('#fc_User_home_folder option:selected').val()
 			},
 			groups					= new Array();
-		
+
 		dates[current.attr('name')]	= current.val();
 		currentForm.find('input[type=checkbox]:checked, input:text, input:password, #fc_User_user_id, #fc_User_fieldname').map( function()
 		{
@@ -381,7 +381,7 @@ jQuery(document).ready(function()
 				if ( data.success === true )
 				{
 					return_success( jqXHR.process , data.message);
-					
+
 					if ( data.action == 'saved' )
 					{
 						$('#fc_User_fieldname').val(data.username_fieldname);

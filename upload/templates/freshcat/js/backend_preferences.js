@@ -18,7 +18,7 @@ jQuery(document).ready(function()
 {
 	$('#fc_preferences_submit').click( function()
 	{
-		if ( $('.popup').size() == 0 )
+		if ( $('.popup').size() === 0 )
 		{
 			$('<div class="popup" />').appendTo('body');
 		}

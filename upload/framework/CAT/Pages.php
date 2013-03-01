@@ -221,7 +221,7 @@ if (!class_exists('CAT_Pages', false))
          * load the page details
          *   @access public
          * @param  integer $page_id - optional page ID (default: $this->page_id)
-         *   @return void
+         * @return array
          **/
         public function getPageDetails($page_id=NULL)
         {
@@ -232,7 +232,7 @@ if (!class_exists('CAT_Pages', false))
             if ($this->page_id != 0)
             {
                 // Query page details
-                $query_page = "SELECT * FROM " . CAT_TABLE_PREFIX . "pages WHERE page_id = '{$this->page_id}'";
+                $query_page = "SELECT * FROM " . CAT_TABLE_PREFIX . "pages WHERE page_id = '".$this->page_id."'";
                 $get_page   = $database->query($query_page);
                 // Make sure page was found in database
                 if ($get_page->numRows() == 0)
@@ -359,6 +359,7 @@ if (!class_exists('CAT_Pages', false))
             {
                 $this->page_no_active_sections = true;
             }
+            return $this->page;
         } // end function getPageDetails()
 
         /**

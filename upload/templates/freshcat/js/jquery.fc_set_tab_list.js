@@ -33,7 +33,7 @@
 				install_new		= $('#fc_install_new');
 
 			options.fc_list_forms.not(':first').slideUp(0);
-			if ( options.fc_list_add.size() == 0 )
+			if ( options.fc_list_add.size() === 0 )
 			{
 				all_items.filter(':first').addClass('fc_active');
 			}
@@ -60,5 +60,5 @@
 			});
 
 		});
-	}
+	};
 })(jQuery);

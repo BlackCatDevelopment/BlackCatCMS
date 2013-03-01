@@ -15,7 +15,7 @@
 
 jQuery(document).ready(function()
 {
-	if ( $('#fc_main_content').size() == 0 )
+	if ( $('#fc_main_content').size() === 0 )
 	{
 		$('#fc_content_container').wrapInner('<div id="fc_main_content" />');
 	}
@@ -24,7 +24,7 @@ jQuery(document).ready(function()
 		var current			= $(this),
 			current_block	= current.parents('.fc_module_block');
 
-		current_block.toggleClass('fc_active')
+		current_block.toggleClass('fc_active');
 		if ( current_block.hasClass('fc_active') )
 		{
 			current.switchClass( 'icon-eye-blocked-2', 'icon-eye-2' );
@@ -85,10 +85,10 @@ jQuery(document).ready(function()
 									myinstances = new Array();
 									
 									//this is the foreach loop
-									for(var i in CKEDITOR.instances)
+									for(var j in CKEDITOR.instances)
 									{
-										myinstances[CKEDITOR.instances[i].name] = CKEDITOR.instances[i].getData(); 
-										CKEDITOR.instances[i].destroy();
+										myinstances[CKEDITOR.instances[j].name] = CKEDITOR.instances[j].getData();
+										CKEDITOR.instances[j].destroy();
 									}
 								}
 							},
@@ -105,7 +105,7 @@ jQuery(document).ready(function()
 									for(var i in myinstances)
 									{
 										CKEDITOR.replace(i).setData(myinstances[i]);
-									};
+									}
 								}
 								//editAreaLoader.execCommand('content13', 'set_editable', true);
 							},
@@ -126,7 +126,7 @@ jQuery(document).ready(function()
 		e.preventDefault();
 
 		// Check if .popup exists - if not add div.popup before #admin_header
-		if ( $('.popup').size() == 0 )
+		if ( $('.popup').size() === 0 )
 		{
 			$('#fc_admin_header').prepend('<div class="popup" />');
 		}
@@ -161,8 +161,8 @@ jQuery(document).ready(function()
 						beforeSend:	function( data )
 						{
 							data.process	= set_activity( 'Save section' );
-							data.block_name	= dates.block_name
-							data.name		= dates.name
+							data.block_name	= dates.block_name;
+							data.name		= dates.name;
 						},
 						success:	function( data, textStatus, jqXHR  )
 						{
@@ -252,8 +252,8 @@ jQuery(document).ready(function()
 			beforeSend:	function( data )
 			{
 				data.process	= set_activity( 'Save section' );
-				data.block_name	= dates.block_name
-				data.name		= dates.name
+				data.block_name	= dates.block_name;
+				data.name		= dates.name;
 			},
 			success:	function( data, textStatus, jqXHR  )
 			{

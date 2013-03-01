@@ -88,7 +88,7 @@
 					},
 					open:			function(event, ui)
 					{
-						if ( typeof(functionOpen) != 'undefined' && functionOpen != false )
+						if ( typeof(functionOpen) != 'undefined' && functionOpen !== false )
 						{
 							functionOpen.call(this);
 						}
@@ -103,5 +103,5 @@
 			});
 //			current_item.hide();
 		});
-	}
+	};
 })(jQuery);
