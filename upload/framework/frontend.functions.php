@@ -368,7 +368,7 @@ function language_menu()
     global $wb, $parser;
     if (defined('PAGE_LANGUAGES') && PAGE_LANGUAGES)
     {
-        $items = CAT_Pages::getInstance()->getLinkedByLanguage(PAGE_ID);
+        $items = CAT_Pages::getInstance(PAGE_ID)->getLinkedByLanguage(PAGE_ID);
     }
     if( isset($items) && count($items) )
     {
