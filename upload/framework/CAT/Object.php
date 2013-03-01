@@ -199,12 +199,15 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             }
 
             // remove path info from file
-            $file = basename( $caller[1]['file'] );
+            $file = ( isset($caller[1]) && isset($caller[1]['file']) )
+                  ? basename( $caller[1]['file'] )
+                  : 'unknown';
 
             echo "<br /><br /><span style=\"font-size: smaller;\">[ ",
                  $file, ' : ',
-                 $caller[1]['line'], ' : ',
-                 $caller[1]['function'],
+                 ( ( isset($caller[1]) && isset($caller[1]['line'])     ) ? $caller[1]['line']     : '-' ),
+                 ' : ',
+                 ( ( isset($caller[1]) && isset($caller[1]['function']) ) ? $caller[1]['function'] : '-' ),
                  " ]</span><br />\n";
 
             if ( $this->debugLevel == self::DEBUG ) {
