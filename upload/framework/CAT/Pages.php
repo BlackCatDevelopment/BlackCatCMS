@@ -27,10 +27,6 @@ if (!class_exists('CAT_Object', false))
 {
     @include dirname(__FILE__) . '/Object.php';
 }
-if (!function_exists('sanitize_url'))
-{
-    @include dirname(__FILE__) . '/../functions.php';
-}
 
 if (!class_exists('CAT_Pages', false))
 {
@@ -48,6 +44,7 @@ if (!class_exists('CAT_Pages', false))
     			'parent'	=> -1
     	);
 	    public	$pages_editable;
+        public  $page_access_denied     = false;
 
 	    private $permissions		= array();
 	    private $menu				= array();
@@ -74,24 +71,32 @@ if (!class_exists('CAT_Pages', false))
         private static $f_jquery        = array();
         private static $f_js            = array();
 
-        // singleton
-        private static $instance        = NULL;
+        // singleton, but one instance per page_id!
+        private static $instances       = array();
 
-        public static function getInstance( $permissions = false )
+        /**
+         * get instance for page with ID $page_id
+         *
+         * @access public
+         * @param  integer $page_id - can be -1 to get a default handler
+         * @param  array   $permissions (optional)
+         * @return object
+         **/
+        public static function getInstance( $page_id, $permissions = false )
         {
-            if (!self::$instance)
+            if (!isset(self::$instances[$page_id]))
             {
-                self::$instance = new self();
-                self::$instance->preferences = array(
+                self::$instances[$page_id] = new self();
+                self::$instances[$page_id]->preferences = array(
     				'PAGE_LEVEL_LIMIT'		=> PAGE_LEVEL_LIMIT,
     				'MANAGE_SECTIONS'		=> MANAGE_SECTIONS,
     				'PAGE_TRASH'			=> PAGE_TRASH,
     				'MULTIPLE_MENUS'		=> MULTIPLE_MENUS == false ? false : true
     		    );
-                self::$instance->setPerms($permissions);
-            }
-            return self::$instance;
+                self::$instances[$page_id]->setPerms($permissions);
         }
+            return self::$instances[$page_id];
+        }   // end function getInstance()
 
         public function setPerms($permissions)
         {
@@ -215,11 +220,15 @@ if (!class_exists('CAT_Pages', false))
         /**
          * load the page details
          *   @access public
+         * @param  integer $page_id - optional page ID (default: $this->page_id)
          *   @return void
          **/
-        public function getPageDetails()
+        public function getPageDetails($page_id=NULL)
         {
-            global $database, $wb;
+            global $database;
+
+            if ( $page_id && $page_id != 0 ) $this->page_id = $page_id;
+
             if ($this->page_id != 0)
             {
                 // Query page details
@@ -340,7 +349,7 @@ if (!class_exists('CAT_Pages', false))
                     else
                     {
                         // User isnt allowed on this page so tell them
-                        $wb->page_access_denied = true;
+                        $this->page_access_denied = true;
                     }
 
                 }
@@ -361,13 +370,13 @@ if (!class_exists('CAT_Pages', false))
         public function getPageContent($block = 1)
         {
             // Get outside objects
-            global $TEXT, $MENU, $HEADING, $MESSAGE;
+            global $TEXT, $HEADING, $MESSAGE;
             global $logger, $globals, $database, $wb, $sec_h, $parser;
             $admin =& $wb;
 
             $logger->logDebug(sprintf('getting content for block [%s]', $block));
 
-            if ($wb->page_access_denied == true)
+            if ($this->page_access_denied == true)
             {
                 $logger->logDebug('Access denied');
                 echo $this->lang()->translate('Sorry, you do not have permissions to view this page');
@@ -468,7 +477,7 @@ if (!class_exists('CAT_Pages', false))
                         ob_start();
                         require(CAT_PATH . '/modules/' . $module . '/view.php');
                         $content = ob_get_contents();
-                        ob_end_clean();
+                        ob_clean();
                         // use HTMLPurifier to clean up the output
                         if( defined('ENABLE_HTMLPURIFIER') && true === ENABLE_HTMLPURIFIER )
                         {
@@ -502,6 +511,42 @@ if (!class_exists('CAT_Pages', false))
                 require(PAGE_CONTENT);
             }
         }
+
+        /**
+    	 *	
+    	 *
+    	 * @access public
+    	 * @param  mixed  $page
+    	 * @param  string $action - viewing|admin; default: admin
+    	 *
+    	 */
+    	public function getPagePermission($page,$action='admin')
+        {
+            global $database;
+    		if ($action!='viewing') $action='admin'; 
+    		$action_groups = $action.'_groups';
+    		$action_users  = $action.'_users';
+    		if (is_array($page)) {
+				$groups = $page[$action_groups];
+				$users  = $page[$action_users];
+    		} else {
+    			$results = $database->query("SELECT $action_groups,$action_users FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '$page'");
+    			$result  = $results->fetchRow( MYSQL_ASSOC );
+    			$groups  = explode(',', str_replace('_', '', $result[$action_groups]));
+    			$users   = explode(',', str_replace('_', '', $result[$action_users]));
+    		}
+
+    		$in_group = FALSE;
+    		foreach(CAT_Users::getInstance()->get_groups_id() as $cur_gid){
+    		    if (in_array($cur_gid, $groups)) {
+    		        $in_group = true;
+    		    }
+    		}
+    		if((!$in_group) && !is_numeric(array_search(CAT_Users::getInstance()->get_user_id(), $users))) {
+    			return false;
+    		}
+    		return true;
+    	}   // end function getPagePermission()
 
         public function getLink($link)
         {
@@ -625,12 +670,13 @@ if (!class_exists('CAT_Pages', false))
             // -----------------------------------------------------------------
             if (count(CAT_Pages::$js_search_path))
             {
+                $val = CAT_Helper_Validate::getInstance();
                 foreach (CAT_Pages::$js_search_path as $directory)
                 {
                     $file = $this->sanitizePath($directory . '/backend_body.js');
                     if (file_exists(CAT_PATH . '/' . $file))
                     {
-                        CAT_Pages::$f_js[] = '<script type="text/javascript" src="' . sanitize_url(CAT_URL . $file) . '"></script>' . "\n";
+                        CAT_Pages::$f_js[] = '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $file) . '"></script>' . "\n";
                     }
                 }
             }
@@ -724,12 +770,13 @@ if (!class_exists('CAT_Pages', false))
             // -----------------------------------------------------------------
             if (count(CAT_Pages::$js_search_path))
             {
+                $val = CAT_Helper_Validate::getInstance();
                 foreach (CAT_Pages::$js_search_path as $directory)
                 {
                     $file = $this->sanitizePath($directory . '/frontend_body.js');
                     if (file_exists(CAT_PATH . '/' . $file))
                     {
-                        CAT_Pages::$f_js[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . $file) . '"></script>' . "\n";
+                        CAT_Pages::$f_js[] = $this->space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $file) . '"></script>' . "\n";
                     }
                 }
             }
@@ -768,7 +815,7 @@ if (!class_exists('CAT_Pages', false))
 
             if(defined('PAGE_ID') && $this->link )
             {
-                $dir = preg_replace( '~^'.CAT_Helper_Protect::getInstance()->sanitize_url(CAT_URL.'/'.PAGES_DIRECTORY).'~i', '', pathinfo($this->link,PATHINFO_DIRNAME) );
+                $dir = preg_replace( '~^'.CAT_Helper_Validate::getInstance()->sanitize_url(CAT_URL.'/'.PAGES_DIRECTORY).'~i', '', pathinfo($this->link,PATHINFO_DIRNAME) );
                 array_push( CAT_Pages::$css_search_path, $this->sanitizePath(PAGES_DIRECTORY.$dir) );
             }
 
@@ -804,11 +851,12 @@ if (!class_exists('CAT_Pages', false))
             $output = NULL;
             if (count(CAT_Pages::$css))
             {
+                $val = CAT_Helper_Validate::getInstance();
                 foreach (CAT_Pages::$css as $item)
                 {
                     // make sure we have an URI (CAT_URL included)
                     $file = (preg_match('#' . CAT_URL . '#i', $item['file']) ? $item['file'] : CAT_URL . '/' . $item['file']);
-                    $output .= '<link rel="stylesheet" type="text/css" href="' . sanitize_url($file) . '" media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
+                    $output .= '<link rel="stylesheet" type="text/css" href="' . $val->sanitize_url($file) . '" media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
                 }
             }
             return $output;
@@ -1493,6 +1541,7 @@ if (!class_exists('CAT_Pages', false))
 
                 if (isset($arr['all']))
                 {
+                    $val = CAT_Helper_Validate::getInstance();
                     foreach ($arr['all'] as $item)
                     {
                         if (!preg_match('#/modules/#i', $item))
@@ -1505,7 +1554,7 @@ if (!class_exists('CAT_Pages', false))
                                 }
                             }
                         }
-                        $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . $item) . '"></script>';
+                        $static[] = $this->space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $item) . '"></script>';
                     }
                     unset($arr['all']);
                 }
@@ -1514,6 +1563,7 @@ if (!class_exists('CAT_Pages', false))
                 {
                     if (is_array($arr['individual']))
                     {
+                        $val = CAT_Helper_Validate::getInstance();
                         foreach ($arr['individual'] as $section_name => $item)
                         {
                             if ($section_name == strtolower($section))
@@ -1525,7 +1575,7 @@ if (!class_exists('CAT_Pages', false))
                                         $item = $this->sanitizePath($subdir . '/' . $item);
                                     }
                                 }
-                                $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . $item) . '"></script>';
+                                $static[] = $this->space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $item) . '"></script>';
                             }
                         }
                     }
@@ -1535,11 +1585,12 @@ if (!class_exists('CAT_Pages', false))
                 #remaining
                 if(is_array($arr) && count($arr))
                 {
+                    $val = CAT_Helper_Validate::getInstance();
                     foreach ($arr as $item)
                     {
                         if ( preg_match('/^http(s)?:/', $item))
                         {
-                            $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url($item) . '"></script>';
+                            $static[] = $this->space . '<script type="text/javascript" src="' . $val->sanitize_url($item) . '"></script>';
                             continue;
                         }
                         if (!preg_match('#/modules/#i', $item))
@@ -1552,14 +1603,14 @@ if (!class_exists('CAT_Pages', false))
                                 }
                             }
                         }
-                        $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . $item) . '"></script>';
+                        $static[] = $this->space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $item) . '"></script>';
                     }
                 }
 
             }
             else
             {
-                $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . '/' . $arr) . '"></script>';
+                $static[] = $this->space . '<script type="text/javascript" src="' . CAT_Helper_Validate::getInstance()->sanitize_url(CAT_URL . '/' . $arr) . '"></script>';
             }
         } // end function _analyze_javascripts()
 
@@ -1572,6 +1623,7 @@ if (!class_exists('CAT_Pages', false))
         private function _analyze_jquery_components(&$arr, $for = 'frontend', $section = NULL)
         {
             $static =& CAT_Pages::$jquery;
+            $val    = CAT_Helper_Validate::getInstance();
 
             // make sure that we load the core if needed, even if the
             // author forgot to set the flags
@@ -1584,20 +1636,20 @@ if (!class_exists('CAT_Pages', false))
             // load the components
             if (isset($arr['ui-theme']) && file_exists(CAT_PATH . '/modules/lib_jquery/jquery-ui/themes/' . $arr['ui-theme']))
             {
-                $static[] = $this->space . '<link rel="stylesheet" type="text/css" href="' . sanitize_url(CAT_URL . '/modules/lib_jquery/jquery-ui/themes/' . $arr['ui-theme'] . '/jquery-ui.css') . '" media="all" />' . "\n";
+                $static[] = $this->space . '<link rel="stylesheet" type="text/css" href="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/jquery-ui/themes/' . $arr['ui-theme'] . '/jquery-ui.css') . '" media="all" />' . "\n";
             }
 
             // core is always added to header
             if (!CAT_Pages::$jquery_core && isset($arr['core']) && $arr['core'] === true)
             {
-                CAT_Pages::$jquery[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . '/modules/lib_jquery/jquery-core/jquery-core.min.js') . '"></script>' . "\n";
+                CAT_Pages::$jquery[] = $this->space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/jquery-core/jquery-core.min.js') . '"></script>' . "\n";
                 CAT_Pages::$jquery_core = true;
             }
 
             // ui is always added to header
             if (!CAT_Pages::$jquery_ui_core && isset($arr['ui']) && $arr['ui'] === true)
             {
-                CAT_Pages::$jquery[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . '/modules/lib_jquery/jquery-ui/ui/jquery-ui.min.js') . '"></script>' . "\n";
+                CAT_Pages::$jquery[] = $this->space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/jquery-ui/ui/jquery-ui.min.js') . '"></script>' . "\n";
                 CAT_Pages::$jquery_ui_core = true;
             }
 
@@ -1607,7 +1659,7 @@ if (!class_exists('CAT_Pages', false))
                 foreach ($arr['all'] as $item)
                 {
                     $resolved = $this->_find_item($item);
-                    $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $resolved ) . '"></script>' . "\n";
+                    $static[] = $this->space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $resolved ) . '"></script>' . "\n";
                 }
             }
 
@@ -1619,7 +1671,7 @@ if (!class_exists('CAT_Pages', false))
                     if ($section_name == strtolower($section))
                     {
                         $resolved = $this->_find_item($item);
-                        $static[] = $this->space . '<script type="text/javascript" src="' . sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $item) . '"></script>' . "\n";
+                        $static[] = $this->space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $item) . '"></script>' . "\n";
                     }
                 }
             }
@@ -1798,12 +1850,13 @@ if (!class_exists('CAT_Pages', false))
         {
             if (count(CAT_Pages::$js_search_path))
             {
+                $val = CAT_Helper_Validate::getInstance();
                 foreach (CAT_Pages::$js_search_path as $directory)
                 {
                     $file = $this->sanitizePath($directory . '/' . $for . '.js');
                     if (file_exists(CAT_PATH . '/' . $file))
                     {
-                        CAT_Pages::$js[] = '<script type="text/javascript" src="' . sanitize_url(CAT_URL . $file) . '"></script>' . "\n";
+                        CAT_Pages::$js[] = '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $file) . '"></script>' . "\n";
                     }
                 }
             }
