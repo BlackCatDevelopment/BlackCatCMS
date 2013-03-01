@@ -123,6 +123,50 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		}   // end function getTemplateFiles()
 
 		/**
+         * convert bytes to human readable string
+         *
+         * @access public
+         * @param  integer $bytes
+         * @return string
+         **/
+        public function byte_convert($bytes)
+        {
+        	$symbol = array(' bytes', ' KB', ' MB', ' GB', ' TB');
+        	$exp = 0;
+        	$converted_value = 0;
+        	if ($bytes > 0)
+        	{
+        		$exp = floor( log($bytes) / log(1024));
+        		$converted_value = ($bytes / pow( 1024, floor($exp)));
+        	}
+        	return sprintf('%.2f '.$symbol[$exp], $converted_value);
+        }   // end function byte_convert()
+
+        /**
+         * get file size
+         *
+         * @access public
+         * @param  string  $file
+         * @param  boolean $convert - call byte_convert(); default: false
+         * @return string
+         **/
+        public function getSize($file,$convert=false)
+        {
+            if(is_dir($file)) return false;
+        	$size = filesize($file);
+        	if ($size < 0)
+        	if (!(strtoupper(substr(PHP_OS, 0, 3)) == 'WIN'))
+        		$size = trim(`stat -c%s $file`);
+        	else{
+        		$fsobj = new COM("Scripting.FileSystemObject");
+        		$f = $fsobj->GetFile($file);
+        		$size = $file->Size;
+        	}
+            if($size && $convert) $size = $this->byte_convert($size);
+        	return $size;
+        }   // end function getSize()
+
+		/**
 		 * fixes a path by removing //, /../ and other things
 		 *
 		 * @access public
