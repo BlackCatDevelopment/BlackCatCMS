@@ -122,8 +122,8 @@ if (!class_exists('CAT_Helper_Template'))
                     }
                 }
                 // This is for old language strings
-                global $HEADING, $TEXT, $MESSAGE, $MENU;
-                foreach ( array( 'TEXT', 'HEADING', 'MESSAGE', 'MENU' ) as $global ) {
+                global $HEADING, $TEXT, $MESSAGE;
+                foreach ( array( 'TEXT', 'HEADING', 'MESSAGE' ) as $global ) {
                     if ( isset(${$global}) && is_array(${$global}) ) {
                         self::$_drivers[$driver]->setGlobals( $global, ${$global} );
                     }
