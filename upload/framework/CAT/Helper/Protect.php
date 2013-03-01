@@ -53,6 +53,13 @@ if (!class_exists('CAT_Helper_Protect'))
             return CAT_Helper_Protect::getPurifier($config)->purify($content);
         }
 
+        /**
+         * include/enable HTMLPurifier
+         *
+         * @access private
+         * @param  $config - optional config array passed to HTMLPurifier
+         * @return object
+         **/
         private static function getPurifier($config=NULL)
         {
             if ( is_object(self::$purifier) ) return self::$purifier;
@@ -81,6 +88,13 @@ if (!class_exists('CAT_Helper_Protect'))
             return self::$purifier;
         }
 
+        /**
+         * enable csrf-magic by including csrf-magic.php
+         * will throw a fatal error if the lib is not available!
+         *
+         * @access public
+         * @return void
+         **/
         public function enableCSRFMagic()
         {
             if ( is_object(self::$csrf) ) return self::$csrf;
@@ -89,10 +103,104 @@ if (!class_exists('CAT_Helper_Protect'))
                 $path = CAT_Helper_Directory::getInstance()->sanitizePath(CAT_PATH . '/modules/lib_csrfmagic/csrf-magic.php');
                 if ( ! file_exists( $path ) )
                 {
-                    CAT_Object::getInstance()->printFatalError('Missing library CSRF-Magic!');
+                    $this->printFatalError('Missing library CSRF-Magic!');
                 }
                 include $path;
             }
+        }   // end function enableCSRFMagic()
+
+        /*
+         * creates tokens for CSRF protection and stores it in the session
+         * requirements: an active session must be available
+         *
+         * should be called only once for a page!
+         *
+         * @access public
+         * @return string
+         */
+    	public function createToken()
+    	{
+    		if (function_exists('microtime'))
+            {
+    			list($usec, $sec) = explode(" ", microtime());
+    			$time = (string)((float)$usec + (float)$sec);
+    		}
+            else
+            {
+    			$time = (string)time();
+    		}
+    		$token = substr(md5($time . $this->_generate_salt()), 0, 21) . "z" . substr($time, 0, 10);
+    		(isset($_SESSION['Tokens'])) ? $_SESSION['Tokens'][] = $token : $_SESSION['Tokens'] = array($token);
+    		return $token;
+    	}   // end function createToken()
+
+        /*
+         * checks received token against session-stored tokens
+         *
+         * requirements: an active session must be available
+         * this check will prevent from multiple sending a form.
+         * history.back() will never work!
+         *
+         * @access public
+         * @return boolean - true if numbers matches against one of the stored tokens
+         */
+    	function checkToken()
+    	{
+// ----- TODO: Diese Funktion muss angepasst werden! -----
+return true;
+    		if (!TOKEN_LIFETIME) return true;
+
+    		$timelimit = (string) (time() - TOKEN_LIFETIME);
+    		$retval = false;
+    		if (isset($_GET['ctoken'])) {
+    			$tok = $_GET['ctoken'];
+    		} elseif (isset($_GET['amp;ctoken'])) {
+    			$tok = $_GET['amp;ctoken'];
+    		} elseif (isset($_POST['ctoken'])) {
+    			$tok = $_POST['ctoken'];
+    		} elseif (isset($_POST['amp;ctoken'])) {
+    			$tok = $_POST['amp;ctoken'];
+    		} else {
+    			return $retval;
+    		}
+    		if (isset($_SESSION['Tokens']))
+    		{
+    			// delete dated tokens, except the last one
+    			$token = $_SESSION['Tokens'][0];
+    			while (($timelimit > substr($token, -10)) and (count($_SESSION['Tokens']) > 1)) {
+    				array_shift($_SESSION['Tokens']);
+    				$token = $_SESSION['Tokens'][0];
+    			}
+
+    			$tokens = $_SESSION['Tokens'];
+    			foreach ($tokens as $i => $token) {
+    				$retval = ($tok == $token);
+    				if ($retval) {
+    					break;
+    				}
+    			}
+    		}
+
+    		return $retval;
+    	}
+
+        /**
+         * generate salt
+         *
+         * @access private
+         * @return string
+         **/
+    	private function _generate_salt()
+    	{
+    		// server depending values
+     		$salt  = ( isset($_SERVER['SERVER_SIGNATURE']) ) ? $_SERVER['SERVER_SIGNATURE'] : 'BL';
+    		$salt .= ( isset($_SERVER['SERVER_SOFTWARE']) )  ? $_SERVER['SERVER_SOFTWARE']  : 'A';
+    		$salt .= ( isset($_SERVER['SERVER_NAME']) )      ? $_SERVER['SERVER_NAME']      : 'CK';
+    		$salt .= ( isset($_SERVER['SERVER_ADDR']) )      ? $_SERVER['SERVER_ADDR']      : 'C';
+    		$salt .= ( isset($_SERVER['SERVER_PORT']) )      ? $_SERVER['SERVER_PORT']      : 'AT';
+    		$salt .= PHP_VERSION;
+    		$salt .= time();
+    		return $salt;
         }
 
     }   // ----- end class CAT_Helper_Protect -----
