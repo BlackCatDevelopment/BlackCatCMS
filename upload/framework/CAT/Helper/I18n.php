@@ -53,7 +53,7 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	    
 	    public  static $_translated         = array();
 	    public  static $_store_translations = false;
-        private static $instance            = NULL;
+        private static $instances           = array();
 
 	    /**
 	     * private constructor; use getInstance() to load this class
@@ -84,11 +84,11 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
          **/
         public static function getInstance( $lang = NULL )
         {
-            if (!self::$instance)
+            if (!isset(self::$instances[$lang]) || !is_object(self::$instances[$lang]))
             {
-                self::$instance = new self(array('lang'=>$lang));
+                self::$instances[$lang] = new self(array('lang'=>$lang));
             }
-            return self::$instance;
+            return self::$instances[$lang];
         }   // end function getInstance()
 
 	    /**
