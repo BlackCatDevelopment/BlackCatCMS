@@ -56,7 +56,7 @@ class login extends admin {
 		$this->GROUPS_TABLE				= $config_array['GROUPS_TABLE'];
 		$this->username_fieldname		= $config_array['USERNAME_FIELDNAME'];
 		$this->password_fieldname		= $config_array['PASSWORD_FIELDNAME'];
-		$this->max_attemps				= $config_array['MAX_ATTEMPTS'];
+		$this->max_attempts				= $config_array['MAX_ATTEMPTS'];
 		$this->warning_url				= $config_array['WARNING_URL'];
 		$this->login_url				= $config_array['LOGIN_URL'];
 		$this->template_dir				= $config_array['TEMPLATE_DIR'];
@@ -94,8 +94,6 @@ class login extends admin {
 		if(strlen($this->url) < 2)
 		{
 			$this->url			= $config_array['DEFAULT_URL'];
-			$token				= (!TOKEN_LIFETIME) ? '' : '?ctoken=' . $this->getToken();
-			$this->url			= $config_array['DEFAULT_URL'] . $token;
 		}
 
 		if ( $this->is_authenticated() == true )
@@ -105,38 +103,37 @@ class login extends admin {
 			exit();
 		} elseif($this->username == '' AND $this->password == '') {
 			$this->message = $MESSAGE['LOGIN_BOTH_BLANK'];
-			$this->increase_attemps();
+			$this->increase_attempts();
 		} elseif($this->username == '') {
 			$this->message = $MESSAGE['LOGIN_USERNAME_BLANK'];
-			$this->increase_attemps();
+			$this->increase_attempts();
 		} elseif($this->password == '') {
 			$this->message = $MESSAGE['LOGIN_PASSWORD_BLANK'];
-			$this->increase_attemps();
+			$this->increase_attempts();
 		} elseif($this->username_len < $config_array['MIN_USERNAME_LEN']) {
 			$this->message = $MESSAGE['LOGIN_USERNAME_TOO_SHORT'];
-			$this->increase_attemps();
+			$this->increase_attempts();
 		} elseif( !defined('ALLOW_SHORT_PASSWORDS') && $this->password_len < $config_array['MIN_PASSWORD_LEN']) {
 			$this->message = $MESSAGE['LOGIN_PASSWORD_TOO_SHORT'];
-			$this->increase_attemps();
+			$this->increase_attempts();
 		} elseif($this->username_len > $config_array['MAX_USERNAME_LEN']) {
 			$this->message = $MESSAGE['LOGIN_USERNAME_TOO_LONG'];
-			$this->increase_attemps();
+			$this->increase_attempts();
 		} elseif($this->password_len > $config_array['MAX_PASSWORD_LEN']) {
 			$this->message = $MESSAGE['LOGIN_PASSWORD_TOO_LONG'];
-			$this->increase_attemps();
+			$this->increase_attempts();
 		} else {
 			// Check if the user exists (authenticate them)
 			$this->password = md5($this->password);
 			if($this->authenticate()) {
                 if($redirect) {
 				// Authentication successful
-				$token		= (!TOKEN_LIFETIME) ? '' : '?ctoken=' . $this->getToken();
-				header("Location: ".$this->url . $token);
+				header("Location: ".$this->url);
 				exit(0);
                 }
 			} else {
 				$this->message = $MESSAGE['LOGIN_AUTHENTICATION_FAILED'];
-				$this->increase_attemps();
+				$this->increase_attempts();
 			}
 		}
 	}
@@ -265,16 +262,16 @@ class login extends admin {
 		return $num_rows;
 	}
 	
-	// Increase the count for login attemps
-	function increase_attemps()
+	// Increase the count for login attempts
+	function increase_attempts()
 	{
-		if(!isset($_SESSION['ATTEMPS']))
+		if(!isset($_SESSION['ATTEMPTS']))
 		{
-			$_SESSION['ATTEMPS'] = 0;
+			$_SESSION['ATTEMPTS'] = 0;
 		}
 		else
 		{
-			$_SESSION['ATTEMPS'] = $this->get_session('ATTEMPS') + 1;
+			$_SESSION['ATTEMPTS'] = $this->get_session('ATTEMPTS') + 1;
 		}
 		if ( $this->output )
 		{
@@ -291,7 +288,6 @@ class login extends admin {
 		// ! Get language vars   
 		// ===================== 
 		global $MESSAGE;
-		global $MENU;
 		global $TEXT;
 
 		// =============================================== 
@@ -344,7 +340,6 @@ class login extends admin {
 						$data_dwoo['HEADING']		= $HEADING;
 						$data_dwoo['TEXT']			= $TEXT;
 						$data_dwoo['MESSAGE']		= $MESSAGE;
-						$data_dwoo['MENU']			= $MENU;
 					}
 
 					$parser->setPath(CAT_THEME_PATH . '/templates');
