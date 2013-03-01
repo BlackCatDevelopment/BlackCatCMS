@@ -179,6 +179,11 @@ if ( !function_exists( 'csrf_startup' ) )
         // NATted or have dialup addresses which rotate frequently. Cookies
         // are much more reliable.
         csrf_conf('allow-ip', false);
+        // Token lifetime
+        if ( defined('TOKEN_LIFETIME') && TOKEN_LIFETIME > 0 )
+        {
+            csrf_conf( 'expires', TOKEN_LIFETIME );
+        }
 	}
 }
 
