@@ -54,8 +54,6 @@ class frontend extends wb {
 	var $page_description,$page_keywords,$page_link;
 	var $page_trail=array();
 	
-	var $page_access_denied;
-	
 	// website settings
 	var $website_title,$website_description,$website_keywords,$website_header,$website_footer;
 
