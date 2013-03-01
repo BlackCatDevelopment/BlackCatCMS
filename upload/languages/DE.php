@@ -57,9 +57,9 @@ $language_platform = '1.0.x';
 $language_author = 'Stefan Braunewell, Matthias Gallas';
 $language_license = 'GNU General Public License';
 $language_guid = 'f49419c8-eb27-4a69-bffb-af61fce6b0c9';
-$language_date_long  = 'l,|d.|F|Y';
-$language_date_short = 'd.m.Y';
-$language_time       = 'H:i:s';
+$language_date_long  = '%A,|%d.|%B|%Y';
+$language_date_short = '%d.%m.%Y';
+$language_time       = '%H:%I:%S';
 
 $LANG = array(
     // ----- MENU -----
@@ -76,6 +76,11 @@ $LANG = array(
 	'Login' => 'Anmeldung',
 	'Log-out' => 'Abmelden',
 	'Media' => 'Medien',
+    // ----- LOGIN PAGE -----
+    'Please enter your username and password.' => 'Bitte geben Sie unten Ihren Benutzernamen und Passwort ein.',
+    'The password you entered was too short' => 'Das angegebene Passwort ist zu kurz!',
+    'The username you entered was too short' => 'Der eingegebene Benutzername war zu kurz',
+    'Invalid credentials' => 'Die Logindaten sind ung�ltig',
     // ----- BACKEND -----
     'Welcome to Black Cat CMS Administration' => 'Willkommen im Black Cat CMS Administrationsbereich',
     'To use <span class="icon-logo">Black Cat CMS</span>, please enable JavaScript in your browser and try again.'
@@ -192,6 +197,11 @@ $LANG = array(
     'The test eMail could not be sent! Please check your settings!' => 'Das Versenden der Testmail ist fehlgeschlagen! Bitte die Einstellungen pr&uuml;fen!',
 	'The test eMail was sent successfully. Please check your inbox.' => 'Die Testmail wurde erfolgreich verschickt.',
     'This is the required test mail: CAT mailer is working' => 'Dies ist die angeforderte Testmail: Die Maileinstellungen funktionieren',
+    // ----- security -----
+    'Disable user accounts when max login attempts is reached'
+       => 'Benutzerkonto deaktivieren, wenn die max. Anzahl Anmeldeversuche �berschritten wurde',
+    'Use csrf-magic to protect forms (frontend only)' => 'csrf-magic zur Absicherung von Formularen verwenden (nur Frontend)',
+    'Defer executing csrf_check() until manual call' => 'csrf_check() bis zur manuellen Ausf�hrung aussetzen',
 
     // ----- preferences -----
     'Timezone' => 'Zeitzone',
@@ -243,22 +253,22 @@ $LANG = array(
     'Groups' => 'Gruppen',
     // ----- settings -----
     'Website header' => 'Webseite Kopf',
-    'Website footer' => 'Webseite FuÃŸzeile',
+    'Website footer' => 'Webseite Fu�zeile',
     'Signup' => 'Benutzerregistrierung',
-    'Personal folders' => 'PersÃ¶nliche Ordner',
+    'Personal folders' => 'Pers�nliche Ordner',
     'Search library' => 'Suchbibliothek',
-    'Standard page: Template for search result' => 'Standardseite: Template fÃ¼r Suchergebnisse',
-    'Individual page: PAGE_ID for search result' => 'Individuelle Seite: PAGE_ID fÃ¼r Suchergebnisse',
-    'Individual page: DropLEP for search result' => 'Individuelle Seite: DropLEP fÃ¼r Suchergebnisse',
+    'Standard page: Template for search result' => 'Standardseite: Template f�r Suchergebnisse',
+    'Individual page: PAGE_ID for search result' => 'Individuelle Seite: PAGE_ID f�r Suchergebnisse',
+    'Individual page: DropLEP for search result' => 'Individuelle Seite: DropLEP f�r Suchergebnisse',
     'Search for images' => 'Nach Bildern suchen',
     'Use image from content page in search result' => 'Bild aus Inhalt in Suchergebnis verwenden',
-    'Max. width/height of images in search result' => 'Max. Breite/HÃ¶he fÃ¼r Bilder in Suchergebnis',
+    'Max. width/height of images in search result' => 'Max. Breite/H�he f�r Bilder in Suchergebnis',
     'Search for page descriptions' => 'Seitenbeschreibungen einbeziehen',
     'Show page description in search result' => 'Seitenbeschreibung in Suchergebnis zeigen',
-    'Search for page keywords' => 'SchlÃ¼sselworte in Suche einbeziehen',
-    'Search in non-public content' => 'Nicht-Ã¶ffentliche Inhalte in Suche einbeziehen',
-    'Redirect link (URL) for non-public content' => 'Redirect link (URL) fÃ¼r nicht-Ã¶ffentliche Inhalte',
-    'Module-order for searching' => 'Modulreihenfolge fÃ¼r Suche',
+    'Search for page keywords' => 'Schl�sselworte in Suche einbeziehen',
+    'Search in non-public content' => 'Nicht-�ffentliche Inhalte in Suche einbeziehen',
+    'Redirect link (URL) for non-public content' => 'Redirect link (URL) f�r nicht-�ffentliche Inhalte',
+    'Module-order for searching' => 'Modulreihenfolge f�r Suche',
     'Max lines of excerpt' => 'Maximale Anzahl Zeilen',
     'Max time to gather excerpts per module' => 'Max. Zeit pro Modul',
 
@@ -274,8 +284,6 @@ $LANG = array(
     'Intro page' => 'Einstiegsseite',
     'Homepage redirection' => 'Homepage-Weiterleitung',
     'Redirect after' => 'Weiterleitung nach',
-    'Token lifetime' => 'Token Gültigkeitsdauer',
-    '0 means no CSRF protection!' => '0 bedeutet keine CSRF Absicherung!',
     'Allowed wrong login attempts' => 'Maximale fehlerhafte Anmeldeversuche',
     'When reaching this number, more login attempts are not possible for this session.'
         => 'Nach Erreichen dieser Anzahl sind keine weiteren Anmeldeversuche mehr möglich.',
@@ -286,7 +294,6 @@ $LANG = array(
     'Use HTMLPurifier to clean output' => 'Mit HTMLPurifier filtern',
     "Please note: This filters the output of every module, so it may break the layout if the module output isn't valid!"
         => 'Hinweis: Hiermit wird die Ausgabe aller Module gefiltert, was dazu führen kann, daß das Layout zerstört wird, wenn das Modul non-valides HTML ausgibt!',
-    'Use csrf-magic to protect forms' => 'csrf-magic zur Absicherung von Formularen verwenden',
     // ----- addons - install.php -----
     'Unable to extract the file. Please check the ZIP format.'
         => 'Kann die Datei nicht entpacken. Bitte das ZIP Format prüfen.',
@@ -307,24 +314,24 @@ $LANG = array(
         => 'Ungültiges Verzeichnis, ungültige Sprachdatei, oder info.php fehlt.',
     // ----- addons - backend_addons_index.lte -----
     'Addon permissions' => 'Addon Berechtigungen',
-    'You can set permissions for each group to use this addon.' => 'Es kÃ¶nnen fÃ¼r jede Gruppe Berechtigungen fÃ¼r dieses Addon gesetzt werden.',
-    'You can customize permissions later on group administration.' => 'Die Rechte kÃ¶nnen spÃ¤ter in der Gruppenadministration angepaÃŸt werden.',
+    'You can set permissions for each group to use this addon.' => 'Es k�nnen f�r jede Gruppe Berechtigungen f�r dieses Addon gesetzt werden.',
+    'You can customize permissions later on group administration.' => 'Die Rechte k�nnen sp�ter in der Gruppenadministration angepa�t werden.',
     'If you upgrade a module, those settings will have no effect on current permissions.' => 'Bei einem Update haben die hier gesetzten Rechte keine Auswirkungen.',
     'Mark all groups' => 'Alle Gruppen markieren',
     'Unmark all groups' => 'Keine Gruppe markieren',
     'Module seems to be not installed yet.' => 'Das Modul ist offenbar noch nicht installiert.',
     'No install.php found! The module cannot be installed!' => 'Keine install.php gefunden! Das Modul kann nicht installiert werden!',
     'When modules are uploaded via FTP (not recommended), the module installation functions install, upgrade or uninstall will not be executed automatically. Those modules may not work correct or do not uninstall properly.'
-        => 'Wenn Module via FTP hochgeladen werden (nicht empfohlen), werden die Funktionen zur Installation, zum Upgrade oder zur Deinstallation nicht automatisch ausgefÃ¼hrt. Diese Module funktionieren eventuell nicht richtig oder lassen sich nicht deinstallieren.',
-    'You can execute the module functions manually for modules uploaded via FTP below.' => 'Die Methoden kÃ¶nnen unten manuell ausgefÃ¼hrt werden.',
-    'DANGER ZONE! This may delete your current data!' => 'GEFAHRENZONE! Hier kÃ¶nnen Daten verloren gehen!',
-    'Execute install.php manually' => 'install.php manuell ausfÃ¼hren',
-    'Execute upgrade.php manually' => 'upgrade.php manuell ausfÃ¼hren',
+        => 'Wenn Module via FTP hochgeladen werden (nicht empfohlen), werden die Funktionen zur Installation, zum Upgrade oder zur Deinstallation nicht automatisch ausgef�hrt. Diese Module funktionieren eventuell nicht richtig oder lassen sich nicht deinstallieren.',
+    'You can execute the module functions manually for modules uploaded via FTP below.' => 'Die Methoden k�nnen unten manuell ausgef�hrt werden.',
+    'DANGER ZONE! This may delete your current data!' => 'GEFAHRENZONE! Hier k�nnen Daten verloren gehen!',
+    'Execute install.php manually' => 'install.php manuell ausf�hren',
+    'Execute upgrade.php manually' => 'upgrade.php manuell ausf�hren',
     'Module details' => 'Moduldetails',
     'Uninstall addon' => 'Addon deinstallieren',
     'Author' => 'Autor',
     'Function' => 'Funktion',
-    'Designed for' => 'Erstellt fÃ¼r',
+    'Designed for' => 'Erstellt f�r',
     'License' => 'Lizenz',
     'Installed' => 'Installationsdatum',
     'Upgraded' => 'Letzte Aktualisierung',
@@ -796,10 +803,8 @@ $MESSAGE = array(
 	'GROUPS_SAVED' 				=> 'Die Gruppe wurde erfolgreich gespeichert.',
 	'LANG_MISSING_PARTS_NOTICE'	=> 'Sprachdatei installation fehlgeschlagen, eine oder mehrere der folgenden Variablen fehlen:<br />language_code<br />language_name<br />language_version<br />language_license',
 	'LOGIN_AUTHENTICATION_FAILED' => 'Der Benutzername oder das Passwort ist nicht korrekt.',
-	'LOGIN_BOTH_BLANK' 			=> 'Bitte geben Sie unten Ihren Benutzernamen und Passwort ein.',
 	'LOGIN_PASSWORD_BLANK' 		=> 'Bitte geben Sie Ihr Passwort ein.',
 	'LOGIN_PASSWORD_TOO_LONG' 	=> 'Das angegebene Passwort ist zu lang!',
-	'LOGIN_PASSWORD_TOO_SHORT' 	=> 'Das angegebene Passwort ist zu kurz!',
 	'LOGIN_USERNAME_BLANK' 		=> 'Bitte geben Sie Ihren Benutzernamen ein.',
 	'LOGIN_USERNAME_TOO_LONG' 	=> 'Der angegebene Benutzername ist zu lang!',
 	'LOGIN_USERNAME_TOO_SHORT' 	=> 'Der angegebene Benutzername ist zu kurz!',
@@ -965,13 +970,4 @@ $OVERVIEW = array(
 	'VIEW' 						=> 'Ansicht Ihrer Webseite in einem neuen Fenster...'
 ); // OVERVIEW
 
-/* 
- * Create the old languages definitions only if specified in settings 
- */ 
-if (ENABLE_OLD_LANGUAGE_DEFINITIONS) {
-	foreach ($MESSAGE as $key => $value) {
-		$x = strpos($key, '_');
-		$MESSAGE[substr($key, 0, $x)][substr($key, $x+1)] = $value;
-	}
-}
 ?>

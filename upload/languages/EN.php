@@ -519,12 +519,7 @@ $MESSAGE = array(
 	'GROUPS_SAVED' 			=> 'Group saved successfully',
 	'LANG_MISSING_PARTS_NOTICE' => 'Language installation failed, one (or more) of the following variables is missing:<br />language_code<br />language_name<br />language_version<br />language_license',
 	'LOGIN_AUTHENTICATION_FAILED' => 'Username or password incorrect',
-	'LOGIN_BOTH_BLANK' 		=> 'Please enter your username and password below',
-	'LOGIN_PASSWORD_BLANK' 	=> 'Please enter a password',
-	'LOGIN_PASSWORD_TOO_LONG' => 'Supplied password to long',
-	'LOGIN_PASSWORD_TOO_SHORT' => 'Supplied password to short',
 	'LOGIN_USERNAME_BLANK' 	=> 'Please enter a username',
-	'LOGIN_USERNAME_TOO_LONG' => 'Supplied username to long',
 	'LOGIN_USERNAME_TOO_SHORT' => 'Supplied username to short',
 	'MEDIA_BLANK_EXTENSION' => 'You did not enter a file extension',
 	'MEDIA_BLANK_NAME' 		=> 'You did not enter a new name',
@@ -688,13 +683,4 @@ $OVERVIEW = array(
 	'VIEW' 					=> 'Quickly view and browse your website in a new window...'
 );
 
-/* 
- * Create the old languages definitions only if specified in settings 
- */ 
-if (ENABLE_OLD_LANGUAGE_DEFINITIONS) {
-	foreach ($MESSAGE as $key => $value) {
-		$x = strpos($key, '_');
-		$MESSAGE[substr($key, 0, $x)][substr($key, $x+1)] = $value;
-	}
-}
 ?>
