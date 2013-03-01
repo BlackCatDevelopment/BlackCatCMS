@@ -56,11 +56,23 @@ set_include_path (
 //**************************************************************************
 // register autoloader
 //**************************************************************************
-function catcms_autoload($class) {
+#function catcms_autoload($class) {
 #echo "autoloading class -$class-<br />";
-	@include str_replace( '_', '/', $class ) . '.php';
-}
-spl_autoload_register('catcms_autoload',false,false);
+#	@include str_replace( '_', '/', $class ) . '.php';
+#}
+#spl_autoload_register('catcms_autoload',false,false);
+#
+spl_autoload_register(function ($class) {
+    if(defined('CAT_PATH'))
+    {
+        $file = str_replace('_','/',$class);
+        if(file_exists(CAT_PATH.'/framework/'.$file.'.php'))
+        {
+            @require CAT_PATH.'/framework/'.$file.'.php';
+        }
+    }
+    # next in stack
+});
 
 if (file_exists(dirname(__FILE__).'/class.database.php')) {
 
@@ -97,6 +109,14 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
 		unset( $row );
     } else {
         die( "No settings found in the database, please check your installation!" );
+    }
+    
+    //**************************************************************************
+    // frontend only
+    //**************************************************************************
+    if ( defined('ENABLE_CSRFMAGIC') && true === ENABLE_CSRFMAGIC )
+    {
+        CAT_Helper_Protect::getInstance()->enableCSRFMagic();
     }
     
     //**************************************************************************
@@ -229,18 +249,6 @@ if (file_exists(dirname(__FILE__).'/class.database.php')) {
 //**************************************************************************
 global $parser;
 $parser = CAT_Helper_Template::getInstance('Dwoo');
-
-spl_autoload_register(function ($class) {
-    if(defined('CAT_PATH'))
-    {
-        $file = str_replace('_','/',$class);
-        if(file_exists(CAT_PATH.'/framework/'.$file.'.php'))
-        {
-            @require CAT_PATH.'/framework/'.$file.'.php';
-        }
-    }
-    # next in stack
-});
 
 // wb2 backward compatibility
 include_once CAT_PATH.'/framework/wb2compat.php';
