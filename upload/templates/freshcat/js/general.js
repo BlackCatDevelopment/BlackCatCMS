@@ -30,12 +30,6 @@ function isValidEmailAddress(emailAddress) {
 // ! BACKEND FUNCTIONS   
 // ===================== 
 
-// Function for Ajax to get the Token
-function getToken()
-{
-	return $('#fc_hidden_inputs input[name=ctoken]').val();
-}
-
 function getThemeName()
 {
 	return 'freshcat';
@@ -49,7 +43,7 @@ function match_class_prefix(prefix,elem)
 	for (var i = 0; i < classes.length; i++)
 	{
 		var matches = regex.exec(classes[i]);
-		if (matches != null)
+		if (matches !== null)
 		{
 			return matches[1];
 		}
@@ -79,7 +73,7 @@ function return_error( process_div, message )
 	});
 
 	// Check if .fc_popup exists - if not add div.fc_popup before #admin_header
-	if ( $('.fc_popup').size() == 0 )
+	if ( $('.fc_popup').size() === 0 )
 	{
 		$('#fc_admin_header').prepend('<div class="fc_popup" />');
 	}
@@ -179,7 +173,7 @@ function set_popup_title()
 function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSend, afterSend, ajaxjQcontext )
 {
 	// Check if .fc_popup exists - if not add div.fc_popup before #admin_header
-	if ( $('.fc_popup').size() == 0 )
+	if ( $('.fc_popup').size() === 0 )
 	{
 		$('#fc_admin_header').prepend('<div class="fc_popup" />');
 	}
@@ -188,19 +182,16 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 	$('.fc_popup').html( message );
 
 	// check for all necessary values
-	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl == false					? alert( 'You send an invalid url' ) : ajaxUrl,
-		ajaxType		= typeof ajaxType == 'undefined' || ajaxType == false				? 'POST' : ajaxType,
-		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType == false		? 'JSON' : ajaxDataType,
-		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext == false		? $('document.body') : ajaxjQcontext;
-		title			= typeof title == 'undefined' || title == false						? set_popup_title() : title,
+	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl === false					? alert( 'You send an invalid url' ) : ajaxUrl,
+		ajaxType		= typeof ajaxType == 'undefined' || ajaxType === false				    ? 'POST' : ajaxType,
+		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType === false		    ? 'JSON' : ajaxDataType,
+		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext === false		? $('document.body') : ajaxjQcontext,
+		title			= typeof title == 'undefined' || title === false						? set_popup_title() : title;
 
 	// Set the array for confirm-buttons
 	buttonsOpts = new Array();
 
-	if ( typeof ajaxData.ctoken == 'undefined' || ajaxData.ctoken == false )
-	{
-		ajaxData.ctoken	= getToken();
-	}
+    ajaxData['_cat_ajax'] = 1;
 
 	// define button for confirm dialog positive
 	buttonsOpts.push(
@@ -224,19 +215,19 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 						$('.fc_popup').dialog('destroy').remove();
 
 						// check if a function beforeSend is defined and call it if true
-						if ( typeof beforeSend != 'undefined' && beforeSend != false )
+						if ( typeof beforeSend != 'undefined' && beforeSend !== false )
 						{
 							beforeSend.call(this, data);
 						}
 					},
 					success:	function( data, textStatus, jqXHR )
 					{
-						if ( data.success == true )
+						if ( data.success === true )
 						{
 							// Check if there is a div.success_box in returned data that implements that the request was completely successful
 							return_success( jqXHR.process , data.message );
 							// check if a function afterSend is defined and call it if true
-							if ( typeof afterSend != 'undefined' && afterSend != false )
+							if ( typeof afterSend != 'undefined' && afterSend !== false )
 							{
 								afterSend.call(this, data);
 							}
@@ -279,16 +270,13 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 // Function to simply send an ajaxRequest with option to call functions before and after sending data
 function dialog_ajax( title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSend, afterSend, ajaxjQcontext )
 {
-	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl == false					? alert( 'You send an invalid url' ) : ajaxUrl,
-		ajaxType		= typeof ajaxType == 'undefined' || ajaxType == false				? 'POST' : ajaxType,
-		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType == false		? 'JSON' : ajaxDataType,
-		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext == false		? $('document.body') : ajaxjQcontext,
-		title			= typeof title == 'undefined' || title == false						? set_popup_title() : title;
+	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl === false				? alert( 'You send an invalid url' ) : ajaxUrl,
+		ajaxType		= typeof ajaxType == 'undefined' || ajaxType === false				? 'POST' : ajaxType,
+		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType === false		? 'JSON' : ajaxDataType,
+		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext === false	? $('document.body') : ajaxjQcontext,
+		title			= typeof title == 'undefined' || title === false					? set_popup_title() : title;
 
-	if ( typeof ajaxData.ctoken == 'undefined' || ajaxData.ctoken == false )
-	{
-		ajaxData.ctoken	= getToken();
-	}
+    ajaxData['_cat_ajax'] = 1;
 
 	$.ajax({
 		type:		ajaxType,
@@ -303,7 +291,7 @@ function dialog_ajax( title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSe
 			// Set activity and store in a variable to use it later
 			data.process	= set_activity( title );
 			// check if a function beforeSend is defined and call it if true
-			if ( typeof beforeSend != 'undefined' && beforeSend != false )
+			if ( typeof beforeSend != 'undefined' && beforeSend !== false )
 			{
 				beforeSend.call(this);
 			}
@@ -312,10 +300,10 @@ function dialog_ajax( title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSe
 		{
 			return_success( jqXHR.process , data.message );
 			// Check if there is a div.success_box in returned data that implements that the request was completely successful
-			if ( data.success == true )
+			if ( data.success === true )
 			{
 				// check if a function afterSend is defined and call it if true
-				if ( typeof afterSend != 'undefined' && afterSend != false )
+				if ( typeof afterSend != 'undefined' && afterSend !== false )
 				{
 					afterSend.call(this, data);
 				}
@@ -363,7 +351,7 @@ function dialog_form( currentForm, beforeSend, afterSend )
 				}
 
 				// check if a function beforeSend is defined and call it if true
-				if ( typeof beforeSend != 'undefined' && beforeSend != false )
+				if ( typeof beforeSend != 'undefined' && beforeSend !== false )
 				{
 					beforeSend.call(this);
 				}
@@ -375,7 +363,7 @@ function dialog_form( currentForm, beforeSend, afterSend )
 				{
 					return_success( jqXHR.process , $( data ).find('.fc_success_box > p').text() );
 					// check if a function afterSend is defined and call it if true
-					if ( typeof afterSend != 'undefined' && afterSend != false )
+					if ( typeof afterSend != 'undefined' && afterSend !== false )
 					{
 						afterSend.call(this, data);
 					}
@@ -437,7 +425,7 @@ function confirm_link ( message, url )
 	var afterSend		= function()
 	{
 		location.reload(true);
-	}
+	};
 	dialog_confirm( message, false, url, false, 'GET', 'HTML', false, afterSend );
 
 }

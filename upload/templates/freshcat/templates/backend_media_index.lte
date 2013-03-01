@@ -61,8 +61,8 @@
 				<span class="fc_filename"> 
 				</span>
 				<div class="fc_file_more_info fc_border_all_light fc_br_all fc_gradient1">
-					<span class="fc_file_label">{translate('File type')}:</span><span class="fc_file_type"></span><br/>
-					<span class="fc_file_label">{translate('File size')}:</span><span class="fc_file_size"></span><br/>
+					<span class="fc_file_label">{translate('File type')}:</span><span class="fc_file_type"></span><br />
+					<span class="fc_file_label">{translate('File size')}:</span><span class="fc_file_size"></span><br />
 					<span class="fc_file_label">{translate('Created at')}:</span><span class="fc_file_date"></span> {translate('at')} <span class="fc_file_time"></span>
 				</div>
 				<div class="fc_file_options">

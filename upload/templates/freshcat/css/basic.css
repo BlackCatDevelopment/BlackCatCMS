@@ -541,3 +541,4 @@ div#testmail_result{
 }
 
 .fc_not_installed { color:#aaa; }
+.ui-dialog { z-index: 999; }

@@ -26,6 +26,7 @@ function send_testmail(URL) {
         jQuery.ajax({
             type: 'POST',
             url:  URL,
+            data: {'_cat_ajax': 1},
             success:	function( data, textStatus, jqXHR  ) {
                 jQuery('#testmail_result').html(data).show();
             }
@@ -38,6 +39,7 @@ function create_guid(URL) {
         jQuery.ajax({
             type: 'POST',
             url:  URL,
+            data: {'_cat_ajax': 1},
             success:	function( data, textStatus, jqXHR  ) {
                 jQuery('#guid').html(data);
                 $('#fc_createguid').hide();

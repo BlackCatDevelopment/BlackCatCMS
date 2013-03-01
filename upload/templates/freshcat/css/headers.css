@@ -28,6 +28,7 @@
 		line-height:	48px;
 		font-weight:	800;
 	}
+        #fc_side_choose a[href] { color:#000; }
 
 	#fc_account {
 		float: right;

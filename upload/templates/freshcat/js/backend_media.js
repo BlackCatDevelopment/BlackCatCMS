@@ -53,7 +53,7 @@ function get_active_media()
  **/
 function save_name( rename_input, extension )
 {
-	if ( typeof extension == 'undefined' ) var extension = '';
+	if ( typeof extension == 'undefined' ) { var extension = ''; }
 
 	// Create link for ajax
 	var current_active	= rename_input.parent('li'),
@@ -64,7 +64,7 @@ function save_name( rename_input, extension )
 			'rename_file':		current_active.children('input[name=load_url]').val(),
 			'new_name':			rename_input.val(),
 			'extension':		extension,
-			'ctoken':			getToken()
+            '_cat_ajax':        1
 		};
 	$.ajax(
 	{
@@ -83,7 +83,7 @@ function save_name( rename_input, extension )
 		},
 		success:	function( data, textStatus, jqXHR  )
 		{
-			var current_active	= $(this);
+			var current_active	= $(this),
 				current_ul		= current_active.closest('ul.fc_media_folder'),
 				rename_input	= current_active.children('input[name=rename]');
 
@@ -124,7 +124,7 @@ function reload_folder( current_ul, folder_path, load_url )
 	var dates	= {
 		'load_url':		typeof load_url !== 'undefined' ? load_url : '/',
 		'folder_path':	typeof folder_path !== 'undefined' ? folder_path : current_ul.children('input[name=folder_path]').val(),
-		'ctoken':		getToken()
+        '_cat_ajax':    1
 	};
 
 	$.ajax(
@@ -432,7 +432,7 @@ jQuery(document).ready(function()
 	{
 		e.preventDefault();
 		// Check if any item is active
-		if ( $('#fc_media_browser li.fc_active').size() == 0 )
+		if ( $('#fc_media_browser li.fc_active').size() === 0 )
 		{
 			// if not deactive the button
 			$(this).addClass('fc_inactive_button');
@@ -460,7 +460,7 @@ jQuery(document).ready(function()
 									'file_path':	current_active.closest('ul.fc_media_folder').find('input[name=folder_path]').val(),
 									'file':			current_active.find('input[name=load_url]').val(),
 									'type':			type,
-									'ctoken':		getToken()
+                                    '_cat_ajax':    1
 								},
 				beforeSend		= function( data )
 				{
@@ -470,7 +470,7 @@ jQuery(document).ready(function()
 				afterSend		= function( data, textStatus, jqXHR )
 				{
 					$('li.fc_loader').remove();
-					if ( data.success == true )
+					if ( data.success === true )
 					{
 						var current		= $(this),
 							current_ul	= current.closest('ul');
@@ -562,7 +562,7 @@ jQuery(document).ready(function()
 			dates			= {
 								'folder_path':	current_ul.children('input[name=folder_path]').val(),
 								'test':			'test',
-								'ctoken':		getToken()
+                                '_cat_ajax':    1
 							};
 
 		$.ajax(
@@ -583,7 +583,7 @@ jQuery(document).ready(function()
 			{
 				current_ul.children('.fc_loader').remove();
 
-				if ( data.created == true )
+				if ( data.created === true )
 				{
 					return_success( jqXHR.process , data.message);
 					reload_folder( current_ul );

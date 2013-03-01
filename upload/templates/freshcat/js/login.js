@@ -84,7 +84,8 @@ jQuery(document).ready(function(){
 			password_fieldname	= current_form.find('input[name=password_fieldname]').val(),
 			dates				= {
 				'username_fieldname':	username_fieldname,
-				'password_fieldname':	password_fieldname
+				'password_fieldname':	password_fieldname,
+                '_cat_ajax':            1
 			};
 			dates[username_fieldname]	= current_form.find('input[name=' + username_fieldname + ']').val();
 			dates[password_fieldname]	= current_form.find('input[name=' + password_fieldname + ']').val();
@@ -110,7 +111,7 @@ jQuery(document).ready(function(){
 					$(this).fadeIn(0);
 					if ( data.success === true )
 					{
-						window.location		= data.url + '?ctoken=' + data.ctoken;
+						window.location		= data.url
 					}
 					else {
 						$('#fc_forms').effect( 'shake', { times: 2 }, 400);
@@ -134,7 +135,8 @@ jQuery(document).ready(function(){
 
 		var current	= $(this).closest('form');
 		dates			= {
-			'email':		$('#fc_forgot').val()
+			'email':		$('#fc_forgot').val(),
+            '_cat_ajax':    1
 		};
 		if ( dates.email != '' )
 		{

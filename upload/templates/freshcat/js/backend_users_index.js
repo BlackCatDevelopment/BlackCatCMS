@@ -104,7 +104,7 @@
 				var current		= $(this),
 					dates		= {
 						'id':			current.children('input[name=' + options.get_id + ']').val(),
-						'ctoken':		getToken()
+						'_cat_ajax':    1
 					};
 				$.ajax(
 				{
@@ -287,7 +287,7 @@ jQuery(document).ready(function()
 		var current					= $(this),
 			currentForm				= current.closest('form'),
 			dates					= {
-				'ctoken':	getToken()
+				'_cat_ajax':        1
 			};
 			templates				= new Array();
 			modules					= new Array();
@@ -352,7 +352,7 @@ jQuery(document).ready(function()
 		var current					= $(this),
 			currentForm				= current.closest('form'),
 			dates					= {
-				'ctoken':		getToken(),
+				'_cat_ajax':    1
 				'home_folder':	$('#fc_User_home_folder option:selected').val()
 			},
 			groups					= new Array();

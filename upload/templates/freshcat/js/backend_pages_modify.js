@@ -139,7 +139,7 @@ jQuery(document).ready(function()
 			dates			= {
 				'delete_section_id':	current.find('input[name=section_id]').val(),
 				'page_id':				$('input[name=page_id]').val(),
-				'ctoken':				getToken()
+				'_cat_ajax':            1
 			};
 
 		// Set the array for confirm-buttons
@@ -239,7 +239,7 @@ jQuery(document).ready(function()
 				'year_to':				current.find('input[name=year_to]').val(),
 				'hour_to':				current.find('input[name=hour_to]').val(),
 				'minute_to':			current.find('input[name=minute_to]').val(),
-				'ctoken':				getToken()
+				'_cat_ajax':            1
 			};
 		$.ajax(
 		{

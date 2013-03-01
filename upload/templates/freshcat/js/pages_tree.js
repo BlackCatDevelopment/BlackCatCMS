@@ -39,7 +39,7 @@
 						var dates			= {
 							'pageid':			$(this).sortable('toArray'),
 							'table':			'pages',
-							'ctoken':			getToken()
+                            '_cat_ajax':        1
 						};
 						$.ajax(
 						{
@@ -83,7 +83,7 @@
 					page_id			= current_button.closest('li').children('input').val(),
 					dates			= {
 										'page_id' : page_id,
-										'ctoken' : getToken()
+										'_cat_ajax': 1
 									},
 					link			= CAT_ADMIN_URL + '/pages/ajax_page_settings.php';
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
@@ -118,10 +118,14 @@
 							$.each(data.parent_list, function(index, value)
 							{
 								option	= option + '<option value="' + value.id + '"';
-								option	= value.disabled == true ||
-											value.id == dates.page_id ||
-											value.current_is_parent == true
-											? option + ' disabled="disabled">' : option+ '>';
+ 								option	= (
+                                               value.disabled === true
+                                            || value.id == dates.page_id
+                                            || value.current_is_parent === true
+                                          )
+										? option + ' disabled="disabled">'
+                                        : option + '>'
+                                        ;
 								for ( var i = 0; i < value.level; i++ )
 								{
 									option	= option + '-';
@@ -146,7 +150,7 @@
 							$('#fc_addPage_target option').removeAttr('selected');
 							$('#fc_addPage_target option[value=' + data.target + ']').attr('selected',true);
 							$('#fc_addPage_template option').removeAttr('selected');
-							if (data.template == '')
+							if (data.template === '')
 							{
 								$('#fc_addPage_template option:first').attr('selected',true);
 							}
@@ -235,8 +239,8 @@
 			{
 				$(this).parent('li').removeClass('fc_tree_hover');
 			});
-		})
-	}
+		});
+	};
 })(jQuery);
 
 (function ($) {
@@ -346,7 +350,7 @@
 				{
 					search_page_tree( '' );
 					element.show().val('').focus();
-				})
+				});
 			}
 
 			element.keyup(function(e) {
@@ -373,7 +377,7 @@
 						break;
 					default:
 						var searchTerm	= element.val();
-						if ( searchTerm != '' )
+						if ( searchTerm !== '' )
 						{
 							search_page_tree( searchTerm );
 						}
@@ -393,11 +397,11 @@
 				setTimeout( function() {
 					var searchTerm	= element.val();
 
-					if ( $('#fc_searchOption').size() == 0 && searchTerm == '' )
+					if ( $('#fc_searchOption').size() === 0 && searchTerm === '' )
 					{
 						options.defaultValue.show();
 					}
-					else if ( $('#fc_searchOption').size() == 0 )
+					else if ( $('#fc_searchOption').size() === 0 )
 					{
 						setSearchTreeOption();
 						element.val('').hide();
@@ -421,8 +425,8 @@
 				options.options_ul.slideUp( 300 );
 				element.hide().val('');
 			});
-		})
-	}
+		});
+	};
 })(jQuery);
 
 
@@ -463,7 +467,7 @@ jQuery(document).ready(function()
 			}
 		});
 		var dates	= {
-			'ctoken':			getToken()
+			'_cat_ajax': 1
 		};
 		$.ajax(
 		{
@@ -483,9 +487,9 @@ jQuery(document).ready(function()
 					$.each(data.parent_list, function(index, value)
 					{
 						option	= option + '<option value="' + value.id + '"';
-						option	= value.disabled == true ||
+						option	= value.disabled === true ||
 									value.id == dates.page_id ||
-									value.current_is_parent == true
+									value.current_is_parent === true
 									? option + ' disabled="disabled">' : option+ '>';
 						for ( var i = 0; i < value.level; i++ )
 						{
@@ -496,7 +500,7 @@ jQuery(document).ready(function()
 					option	= option + '</select>';
 					$('#fc_addPage_parent').replaceWith( option );
 					console.log( page_id );
-					if ( page_id != '' )
+					if ( page_id !== '' )
 					{
 						$('#fc_addPage_parent').val( page_id );
 					}
@@ -566,7 +570,7 @@ jQuery(document).ready(function()
 			'visibility':		$('#fc_addPage_visibility option:selected').val(),
 			'admin_groups':		admin_groups,
 			'viewing_groups':	viewing_groups,
-			'ctoken':			getToken()
+			'_cat_ajax':        1
 		};
 
 		$.ajax(
@@ -583,7 +587,7 @@ jQuery(document).ready(function()
 			},
 			success:	function( data, textStatus, jqXHR  )
 			{
-				if ( data.success == true )
+				if ( data.success === true )
 				{
 					return_success( jqXHR.process , data.message );
 					var current			= $(this);
@@ -636,7 +640,7 @@ jQuery(document).ready(function()
 			'visibility':		$('#fc_addPage_visibility option:selected').val(),
 			'admin_groups':		admin_groups,
 			'viewing_groups':	viewing_groups,
-			'ctoken':			getToken()
+			'_cat_ajax':        1
 		};
 		$.ajax(
 		{
@@ -680,16 +684,16 @@ jQuery(document).ready(function()
 						default:
 							var newIcon	= 'icon-eye-blocked';
 							break;
-					};
+					}
 					if ( dates.parent != old_parent.children('input[name=pageid]').val() )
 					{
-						if ( dates.parent == 0 )
+						if ( dates.parent === 0 )
 						{
 							$('#fc_page_tree_top').children('ul').append( current );
 						}
 						else if ( new_parent.children('ul').size() > 0 )
 						{
-							if ( current.siblings('li').size() == 0 )
+							if ( current.siblings('li').size() === 0 )
 							{
 								old_parent.removeClass('fc_tree_open');
 								old_parent.find('ul').remove();
@@ -727,13 +731,13 @@ jQuery(document).ready(function()
 			current_pT		= $('.page_tree_open_options'),
 			dates	= {
 				'page_id':			current_pT.children('input[name=pageid]').val(),
-				'ctoken':			getToken()
+				'_cat_ajax':        1
 			},
 			afterSend		= function( data, textStatus, jqXHR )
 			{
 				$('#fc_add_page input[type=reset]').click();
 				var current		= $(this);
-				if ( data.success == true && data.status == 0 )
+				if ( data.success === true && data.status === 0 )
 				{
 					current.remove();
 				}
@@ -753,13 +757,13 @@ jQuery(document).ready(function()
 			current_pT		= $('.page_tree_open_options'),
 			dates	= {
 				'page_id':			current_pT.children('input[name=pageid]').val(),
-				'ctoken':			getToken()
+				'_cat_ajax':        1
 			},
 			afterSend		= function( data, textStatus, jqXHR )
 			{
 				$('#fc_add_page input[type=reset]').click();
 				var current		= $(this);
-				if ( data.success == true )
+				if ( data.success === true )
 				{
 					current.find('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-screen');
 				}
