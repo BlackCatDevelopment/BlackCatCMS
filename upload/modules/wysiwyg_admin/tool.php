@@ -247,7 +247,6 @@ echo $parser->get(
         'errors'           => $errors,
         'plugins'          => $plugins,
         'plugins_checked'  => $plugins_checked,
-        'ctoken'         => $admin->getToken(),
         'htmlpurifier'     => $admin->get_helper('Addons')->isModuleInstalled('lib_htmlpurifier'),
         'enable_htmlpurifier' => $enable_htmlpurifier,
         'width_unit_'.($width_unit=='%'?'proz':$width_unit) => 'checked="checked"',
