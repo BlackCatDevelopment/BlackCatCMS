@@ -24,8 +24,8 @@
 			<input type="text" name="search_cfg_search_use_page_id" id="fc_search_cfg_search_use_page_id" value="{$search.cfg_search_use_page_id}" />
 			<div class="clear_sp"></div>
 
-			<label class="fc_label_300" for="fc_search_cfg_search_droplep">{translate('Individual page: DropLEP for search result')}:</label>
-			<input type="text" name="search_cfg_search_droplep" id="fc_search_cfg_search_droplep" value="{$search.cfg_search_droplep}" />
+			<label class="fc_label_300" for="fc_search_cfg_search_droplet">{translate('Individual page: Droplet for search result')}:</label>
+			<input type="text" name="search_cfg_search_droplet" id="fc_search_cfg_search_droplet" value="{$search.cfg_search_droplet}" />
 			<div class="clear_sp"></div>
 
             <div class="fc_settings_max_large">
@@ -86,7 +86,7 @@
 			<label class="fc_label_300" for="fc_search_time_limit">{translate('Max time to gather excerpts per module')}:</label>
 			<input type="text" name="search_time_limit" id="fc_search_time_limit" value="{$search.time_limit}" />
 			{else}
-			<input type="hidden" name="search_template" value="{$search_template.VALUE}" />
+			<input type="hidden" name="search_template" value="{$search.template}" />
 			<input type="hidden" name="search_cfg_content_image" value="{$search.cfg_content_image}" />
 			<input type="hidden" name="search_cfg_search_droplet" value="{$search.cfg_search_droplet}" />
 			<input type="hidden" name="search_cfg_search_use_page_id" value="{$search.cfg_search_use_page_id}" />

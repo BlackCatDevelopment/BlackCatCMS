@@ -77,7 +77,7 @@
 				<input type="submit" name="submit" value="{translate('Save')}" />
 				<input type="reset" name="reset" value="{translate('Reset')}" />
 			</p>
-		</div>
+		</div><!-- SEO -->
 
 		<div id="fc_list_FRONTEND" class="fc_gradient1 fc_list_forms ui-corner-top">
 			<label class="fc_label_120" for="fc_default_template">{translate('Template')}:</label>
@@ -99,282 +99,36 @@
 				<input type="submit" name="submit" value="{translate('Save')}" />
 				<input type="reset" name="reset" value="{translate('Reset')}" />
 			</p>
-		</div>
+		</div><!-- FRONTEND -->
 
 
 		<div id="fc_list_BACKEND" class="fc_gradient1 fc_list_forms ui-corner-top">
-			<label class="fc_label_200" for="fc_default_template">{translate('Backend theme')}:</label>
-			<select name="default_theme" id="fc_default_theme">
-				{foreach $backends backend}
-				<option value="{$backend.VALUE}"{if $backend.SELECTED} selected="selected"{/if}>{$backend.NAME}</option>
-				{/foreach}
-			</select>
-			<hr />
-
-			<label class="fc_label_200" for="fc_wysiwyg_editor">{translate('WYSIWYG Editor')}:</label>
-			<select name="wysiwyg_editor" id="fc_wysiwyg_editor">
-				{foreach $wysiwyg module}
-				<option value="{$module.VALUE}"{if $module.SELECTED} selected="selected"{/if}>{$module.NAME}</option>
-				{/foreach}
-			</select>
-
-			{if $DISPLAY_ADVANCED}
-			<hr />
-			<label class="fc_label_200" for="fc_er_level">{translate('PHP Error Reporting Level')}:</label>
-			<select name="er_level" id="fc_er_level">
-				<option value="">{translate('Please select')}...</option>
-				{foreach $er_levels er}
-				<option value="{$er.VALUE}"{if $er.SELECTED} selected="selected"{/if}>{$er.NAME}</option>
-				{/foreach}
-			</select>
-			<div class="clear_sp"></div>
-
-			<label class="fc_label_200" for="fc_redirect_timer">{translate('Redirect after')}:</label>
-			<input type="text" name="redirect_timer" id="fc_redirect_timer"  value="{$values.redirect_timer}" />ms
-			<div class="clear_sp"></div>
-
-			<label class="fc_label_200" for="fc_token_lifetime">{translate('Token lifetime')}:</label>
-			<input type="text" name="token_lifetime" id="fc_token_lifetime"  value="{$values.token_lifetime}" /> s
-			<p>
-				{translate('0 means no CSRF protection!')}
-			</p>
-			<div class="clear_sp"></div>
-
-			<label class="fc_label_200" for="fc_max_attempts">{translate('Allowed wrong login attempts')}:</label>
-			<input type="text" name="max_attempts" id="fc_max_attempts"  value="{$values.max_attempts}" />
-			<p>
-				{translate('When reaching this number, more login attempts are not possible for this session.')}
-			</p>
-			<div class="clear_sp"></div>
-			{else}
-			<input type="hidden" name="er_level" value="{$ER_LEVEL}" />
-			<input type="hidden" name="redirect_timer" value="{$values.redirect_timer}" />
-			<input type="hidden" name="token_lifetime" value="{$values.token_lifetime}" />
-			<input type="hidden" name="max_attempts" value="{$values.max_attempts}" />
-			{/if}
-			<div class="clear_sp"></div>
-			<p class="submit_settings fc_gradient1">
-				<input type="submit" name="submit" value="{translate('Save')}" />
-				<input type="reset" name="reset" value="{translate('Reset')}" />
-			</p>
-		</div>
+        {include backend_settings_index_backend.lte}
+		</div><!-- BACKEND -->
 
 
 		<div id="fc_list_SYSTEM" class="fc_gradient1 fc_list_forms ui-corner-top">
-			{if $DISPLAY_ADVANCED}
-			<label class="fc_label_120" for="fc_page_level_limit">{translate('Page level limit')}:</label>
-			<select name="page_level_limit" id="fc_page_level_limit">
-				{for count 0 10 1}
-				<option value="{$count}"{if $count == $PAGE_LEVEL_LIMIT} selected="selected"{/if}>{$count}</option>
-				{/for}
-			</select>
-			<hr />
-
-			<div class="fc_settings_max">
-				<strong>{translate('Page trash')}:</strong>
-				<div class="fc_settings_label" id="fc_page_trash">
-					<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_disabled" value="disabled"{if $PAGE_TRASH == 'disabled'} checked="checked"{/if}/>
-					<label for="fc_page_trash_disabled">{translate('Disabled')}</label>
-					<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_inline" value="inline"{if $PAGE_TRASH == 'inline'} checked="checked"{/if}/>
-					<label for="fc_page_trash_inline">{translate('Inline')}</label>
-					{if $PAGE_TRASH == 'separate'}
-					<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_separate" value="separate"{if $PAGE_TRASH == 'separate'} checked="checked"{/if}/>
-					<label for="fc_page_trash_separate">{translate('Separate')}</label>
-					{/if}
-				</div>
-			</div>
-				<hr />
-			<div class="fc_settings_max">
-				<input type="checkbox" class="fc_checkbox_jq" name="manage_sections" id="fc_manage_sections" value="true" {if $MANAGE_SECTIONS} checked="checked"{/if}/>
-				<label for="fc_manage_sections">{translate('Manage sections')}</label>
-
-				<input type="checkbox" class="fc_checkbox_jq" name="section_blocks" id="fc_section_blocks" value="true" {if $SECTION_BLOCKS} checked="checked"{/if}/>
-				<label for="fc_section_blocks">{translate('Sections blocks')}</label>
-
-				<input type="checkbox" class="fc_checkbox_jq" name="multiple_menus" id="fc_multiple_menus" value="true" {if $MULTIPLE_MENUS} checked="checked"{/if}/>
-				<label for="fc_multiple_menus">{translate('Multiple menus')}</label>
-
-				<input type="checkbox" class="fc_checkbox_jq" name="page_languages" id="fc_page_languages" value="true" {if $PAGE_LANGUAGES} checked="checked"{/if}/>
-				<label for="fc_page_languages">{translate('Page languages')}</label>
-
-			{else}
-				<input type="hidden" name="page_level_limit" value="{$PAGE_LEVEL_LIMIT}" />
-				<input type="hidden" name="page_trash" value="{$PAGE_TRASH}" />
-				<input type="hidden" name="manage_sections" value="{$MANAGE_SECTIONS}" />
-				<input type="hidden" name="section_blocks" value="{$SECTION_BLOCKS}" />
-				<input type="hidden" name="multiple_menus" value="{$MULTIPLE_MENUS}" />
-				<input type="hidden" name="page_languages" value="{$PAGE_LANGUAGES}" />
-			{/if}
-
-				<input type="checkbox" class="fc_checkbox_jq" name="intro_page" id="fc_intro_page" value="true" {if $INTRO_PAGE} checked="checked"{/if}/>
-				<label for="fc_intro_page">{translate('Intro page')}</label>
-
-			{if $DISPLAY_ADVANCED}
-				<input type="checkbox" class="fc_checkbox_jq" name="homepage_redirection" id="fc_homepage_redirection" value="true" {if $HOMEPAGE_REDIRECTION} checked="checked"{/if}/>
-				<label for="fc_homepage_redirection">{translate('Homepage redirection')}</label>
-			{else}
-				<input type="hidden" name="homepage_redirection" value="{if $HOMEPAGE_REDIRECTION}true{else}false{/if}" />
-			{/if}
-			</div>
-			<div class="clear_sp"></div>
-			<p class="submit_settings fc_gradient1">
-				<input type="submit" name="submit" value="{translate('Save')}" />
-				<input type="reset" name="reset" value="{translate('Reset')}" />
-			</p>
-		</div>
+        {include backend_settings_index_system.lte}
+		</div><!-- SYSTEM -->
 
 
 		<div id="fc_list_USERS" class="fc_gradient1 fc_list_forms ui-corner-top">
-			<label class="fc_label_120" for="fc_list_FRONTEND_signup">{translate('Signup')}:</label>
-			{if !$groups.viewers}
-			<div id="fc_list_FRONTEND_signup">
-				{translate('No groups found')}
-				<input type="hidden" name="frontend_signup" value="false" />
-			</div>
-			{else}
-			<select name="frontend_signup" id="fc_list_FRONTEND_signup">
-				<option value="false">--- {translate('Disabled')} ---</option>
-				{foreach $groups.viewers group}
-				<option value="{$group.VALUE}"{if $group.CHECKED} selected="selected"{/if}>{$group.NAME}</option>
-				{/foreach}
-			</select>
-			{/if}
-			<hr />
-			<div class="fc_settings_max">
-				<input type="checkbox" class="fc_checkbox_jq" name="frontend_login" id="fc_list_FRONTEND_login" value="true" {if $FRONTEND_LOGIN} checked="checked"{/if}/>
-				<label for="fc_list_FRONTEND_login">{translate('Login')}</label>
-			</div>
-			<hr />
-			<div class="fc_settings_max">
-				<input type="checkbox" class="fc_checkbox_jq" name="home_folders" id="fc_home_folders" value="true" {if $HOME_FOLDERS} checked="checked"{/if}/>
-				<label for="fc_home_folders">{translate('Personal folders')}</label>
-			</div>
-			<div class="clear_sp"></div>
-			<p class="submit_settings fc_gradient1">
-				<input type="submit" name="submit" value="{translate('Save')}" />
-				<input type="reset" name="reset" value="{translate('Reset')}" />
-			</p>
-		</div>
+        {include backend_settings_index_users.lte}
+		</div><!-- USERS -->
 	
 		<div id="fc_list_TIME_LANGUAGE" class="fc_gradient1 fc_list_forms ui-corner-top">
-			<label class="fc_label_120" for="fc_default_language">{translate('Language')}:</label>
-			<select name="default_language" id="fc_default_language">
-				{foreach $languages language}
-				<option value="{$language.CODE}"{if $language.SELECTED} selected="selected"{/if}>{$language.NAME} ({$language.CODE})</option>
-				{/foreach}
-			</select>
-			<div class="clear_sp"></div>
-
-			{if $DISPLAY_ADVANCED}
-			<label class="fc_label_120" for="fc_default_charset">{translate('Charset')}:</label>
-			<select name="default_charset" id="fc_default_charset">
-				<option value="">{translate('Please select')}...</option>
-				{foreach $charsets charset}
-				<option value="{$charset.VALUE}"{if $charset.SELECTED} selected="selected"{/if}>{$charset.NAME}</option>
-				{/foreach}
-			</select>
-			<div class="clear_sp"></div>
-			{else}
-				<input type="hidden" name="default_charset" value="{$DEFAULT_CHARSET}" />
-			{/if}
-			<hr />
-			<label class="fc_label_120" for="fc_default_timezone_string">{translate('Timezone')}:</label>
-			<select name="default_timezone_string" id="fc_default_timezone_string">
-				<option value="0">{translate('Please select')}...</option>
-				{foreach $timezones timezone}
-				<option {if $timezone.SELECTED} selected="selected"{/if}>{$timezone.NAME}</option>
-				{/foreach}
-			</select>
-			<div class="clear_sp"></div>
-
-			<label class="fc_label_120" for="fc_default_date_format">{translate('Date format')}:</label>
-			<select name="default_date_format" id="fc_default_date_format">
-				<option value="M d Y">{translate('Please select')}...</option>
-				{foreach $dateformats dateformat}
-				<option value="{$dateformat.VALUE}"{if $dateformat.SELECTED} selected="selected"{/if}>{$dateformat.NAME}</option>
-				{/foreach}
-			</select>
-			<div class="clear_sp"></div>
-
-			<label class="fc_label_120" for="fc_default_time_format">{translate('Time format')}:</label>
-			<select name="default_time_format" id="fc_default_time_format">
-				<option value="g:i A">{translate('Please select')}...</option>
-				{foreach $timeformats timeformat}
-				<option value="{$timeformat.VALUE}"{if $timeformat.SELECTED} selected="selected"{/if}>{$timeformat.NAME}</option>
-				{/foreach}
-			</select>
-			<div class="clear_sp"></div>
-			<p class="submit_settings fc_gradient1">
-				<input type="submit" name="submit" value="{translate('Save')}" />
-				<input type="reset" name="reset" value="{translate('Reset')}" />
-			</p>
-		</div>
-
+        {include backend_settings_index_datetime.lte}
+		</div><!-- TIME_LANGUAGE -->
 
 		<div id="fc_list_SEARCHING" class="fc_gradient1 fc_list_forms ui-corner-top">
         {include backend_settings_index_searchblock.lte}
-		</div>
+		</div><!-- SEARCHING -->
 
 
 		<div id="fc_list_SERVER" class="fc_gradient1 fc_list_forms ui-corner-top">
-			<div class="clear_sp"></div>
-			<label class="fc_label_120" for="fc_operating_system">{translate('Server Operating System')}:</label>
-			<div class="settings_label fc_settings_max" id="fc_operating_system">
-				<input type="radio" class="fc_radio_jq fc_toggle_element show___fc_linux" name="operating_system" id="fc_operating_system_linux" value="linux" {if $OPERATING_SYSTEM == 'linux'} checked="checked"{/if}/>
-				<label for="fc_operating_system_linux">{translate('Linux/Unix based')}</label>
-				<input type="radio" class="fc_radio_jq fc_toggle_element hide___fc_linux" name="operating_system" id="fc_operating_system_windows" value="windows" {if $OPERATING_SYSTEM == 'windows'} checked="checked"{/if}/>
-				<label for="fc_operating_system_windows">{translate('Windows')}</label>
-			</div>
-			<div class="clear_sp"></div>
+        {include backend_settings_index_server.lte}
+		</div><!-- SERVER -->
 
-			<div id="fc_linux">
-				<div class="fc_settings_max">
-					<input type="checkbox" class="fc_checkbox_jq" name="world_writeable" id="fc_world_writeable" value="true" {if $WORLD_WRITEABLE_SELECTED} checked="checked"{/if}/>
-					<label for="fc_world_writeable">{translate('World-writeable file permissions')} (777)</label>
-				</div>
-				<div class="clear"></div>
-				<p class="fc_important">({translate('Please note: this is only recommended for testing environments')})</p>
-			</div>
-			{if $DISPLAY_ADVANCED}
-			<div class="clear"></div>
-			<hr />
-			<label class="fc_label_120" for="fc_pages_directory">{translate('Pages directory')}:</label>
-			<input type="text" name="pages_directory" id="fc_pages_directory" value="{$values.pages_directory}" />
-			<div class="clear"></div>
-			<label class="fc_label_120" for="fc_page_extension">{translate('Pages extension')}:</label>
-			<input type="text" name="page_extension" id="fc_page_extension" value="{$values.page_extension}" />
-			<div class="clear_sp"></div>
-			<label class="fc_label_120" for="fc_media_directory">{translate('Media directory')}:</label>
-			<input type="text" name="media_directory" id="fc_media_directory" value="{$values.media_directory}" />
-			<div class="clear"></div>
-			<label class="fc_label_120" for="fc_page_spacer">{translate('Page spacer')}:</label>
-			<input type="text" name="page_spacer" id="fc_page_spacer" value="{$values.page_spacer}" />
-			<div class="clear"></div>
-			<hr />
-			<label class="fc_label_120" for="fc_rename_files_on_upload">{translate('Allowed filetypes on upload')}:</label>
-			<input type="text" name="rename_files_on_upload" id="fc_rename_files_on_upload" value="{$values.rename_files_on_upload}" />
-			<div class="clear"></div>
-			<hr />
-			<label class="fc_label_120" for="fc_app_name">{translate('Session identifier')}:</label>
-			<input type="text" name="app_name" id="fc_app_name" value="{$values.app_name}" />
-			<div class="clear"></div>
-			<label class="fc_label_120" for="fc_sec_anchor">{translate('Section-Anchor text')}:</label>
-			<input type="text" name="sec_anchor" id="fc_sec_anchor" value="{$values.sec_anchor}" />
-			{else}
-				<input type="hidden" name="pages_directory" value="{$values.pages_directory}" />
-				<input type="hidden" name="page_extension" value="{$values.page_extension}" />
-				<input type="hidden" name="media_directory" value="{$values.media_directory}" />
-				<input type="hidden" name="page_spacer" value="{$values.page_spacer}" />
-				<input type="hidden" name="rename_files_on_upload" value="{$values.rename_files_on_upload}" />
-				<input type="hidden" name="app_name" value="{$values.app_name}" />
-				<input type="hidden" name="sec_anchor" value="{$values.sec_anchor}" />
-			{/if}
-			<div class="clear_sp"></div>
-			<p class="submit_settings fc_gradient1">
-				<input type="submit" name="submit" value="{translate('Save')}" />
-				<input type="reset" name="reset" value="{translate('Reset')}" />
-			</p>
-		</div>
 
 
 		<div id="fc_list_MAIL" class="fc_gradient1 fc_list_forms ui-corner-top">
@@ -394,7 +148,7 @@
             {/if}
 
 			<div class="clear_sp"></div>
-			<label class="fc_label_200" for="fc_list_SERVER_email">{translate('Default from mail')}:</label>
+			<label class="fc_label_200" for="fc_list_SERVER_email">{translate('Default "from" mail')}:</label>
 			<input type="text" name="server_email" id="fc_list_SERVER_email" value="{$values.server_email}" />
 			<div class="clear"></div>
 
@@ -458,7 +212,7 @@
 				<input type="submit" name="submit" value="{translate('Save')}" />
 				<input type="reset" name="reset" value="{translate('Reset')}" />
 			</p>
-		</div>
+		</div><!-- MAIL -->
 
         <div id="fc_list_SEC" class="fc_gradient1 fc_list_forms ui-corner-top">
             <label class="fc_label_200" for="fc_default_template">{translate('Security settings')}:</label>
@@ -482,7 +236,7 @@
 				<input type="reset" name="reset" value="{translate('Reset')}" />
 			</p>
 
-        </div>
+        </div><!-- SEC -->
 
         <div id="fc_list_SYSINFO" class="fc_gradient1 fc_list_forms ui-corner-top">
             <label class="fc_label_200" for="fc_default_template">{translate('GUID')}:</label>
@@ -505,8 +259,8 @@
             {/if}
             <div class="clear_sp"></div>
 
+        </div><!-- SYSINFO -->
         </div>
-	</div>
-</form>
+</form><!-- settings -->
 {*<script src="{$CAT_ADMIN_URL}/settings/setting.js" type="text/javascript"></script>*}
 </div>
