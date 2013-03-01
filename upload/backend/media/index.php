@@ -1,21 +1,29 @@
 <?php
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
 	include(CAT_PATH . '/framework/class.secure.php');
 } else {
@@ -32,55 +40,22 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
-
-// =================================== 
-//
-//
-// ! needs to be moved to the right file!
-//
-//
-// =================================== 
-function getSize($file)
-{
-	$size = filesize($file); 
-	if ($size < 0) 
-	if (!(strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')) 
-		$size = trim(`stat -c%s $file`); 
-	else{ 
-		$fsobj = new COM("Scripting.FileSystemObject"); 
-		$f = $fsobj->GetFile($file); 
-		$size = $file->Size; 
-	} 
-	return $size; 
-}
-
-function byte_convert($bytes)
-{
-	$symbol = array(' bytes', ' KB', ' MB', ' GB', ' TB');
-	$exp = 0;
-	$converted_value = 0;
-	if ($bytes > 0)
-	{
-		$exp = floor( log($bytes) / log(1024));
-		$converted_value = ($bytes / pow( 1024, floor($exp)));
-	}
-	return sprintf('%.2f '.$symbol[$exp], $converted_value);
-}
 
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
 include_once(CAT_PATH . '/framework/functions.php');
-
 require_once(CAT_PATH . '/framework/class.admin.php');
+
 $admin = new admin('Media', 'media');
+$dirh  = CAT_Helper_Directory::getInstance();
+$user  = CAT_Users::getInstance();
 
 // =========================================================================== 
 // ! Create the controller, it is reusable and can render multiple templates 	
 // =========================================================================== 
 global $parser;
-$data_dwoo=array();
+$tpl_data = array();
 
 // $memory_limit = ini_get('memory_limit');
 // $post_max_size = ini_get('post_max_size');
@@ -88,19 +63,19 @@ $data_dwoo=array();
 
 $allowed_img_types = array('jpg','jpeg','png','gif','tif');
 
-$data_dwoo['maxUploadFiles']		= 12;
-$data_dwoo['allowed_file_types']	= str_replace(',','|',RENAME_FILES_ON_UPLOAD);
-
-$data_dwoo['MEDIA_DIRECTORY']		= MEDIA_DIRECTORY;
+$tpl_data['maxUploadFiles']		= 12;
+$tpl_data['allowed_file_types']	= str_replace(',','|',RENAME_FILES_ON_UPLOAD);
+$tpl_data['MEDIA_DIRECTORY']	= MEDIA_DIRECTORY;
 
 // ==================================================================================================================================== 
 // ! Set the initial folder to view (mediaroot or homefolder). If the user don't have permissions to see media, redirect to admin_url   
 // ==================================================================================================================================== 
-if ($admin->get_permission('media')==true){
-	$data_dwoo['initial_folder']
-        = ( $admin->get_user_id() == 1 || (HOME_FOLDERS && $admin->get_home_folder()=='') || !HOME_FOLDERS )
-        ? sanitize_path(MEDIA_DIRECTORY)
-        : sanitize_path(MEDIA_DIRECTORY.$admin->get_home_folder());
+if ($user->checkPermission('media','media',false)==true){
+	$tpl_data['initial_folder']
+        = ( $user->get_user_id() == 1 || (HOME_FOLDERS && $user->get_home_folder()=='') || !HOME_FOLDERS )
+        ? MEDIA_DIRECTORY
+        : $dirh->sanitizePath(MEDIA_DIRECTORY.$user->get_home_folder());
+    $tpl_data['initial_folder'] = preg_replace( '~^/~', '', $tpl_data['initial_folder'] );
 }
 else {
 	header('Location: ' . CAT_ADMIN_URL);
@@ -109,50 +84,50 @@ else {
 // ======================================== 
 // ! Get contents for the intitial folder   
 // ======================================== 
-$dir = scan_current_dir(CAT_PATH . $data_dwoo['initial_folder']);
+$dir = scan_current_dir(CAT_PATH.'/'.$tpl_data['initial_folder']);
 
 // ============================= 
-// ! Add folders to $data_dwoo   
+// ! Add folders to $tpl_data   
 // ============================= 
 if(isset($dir['path']) && is_array($dir['path']))
 {
 	foreach($dir['path'] as $counter => $folder)
 	{
-		$data_dwoo['folders'][$counter]['NAME'] = $folder;
+		$tpl_data['folders'][$counter]['NAME'] = $folder;
 	}
 }
 // ================================================ 
-// ! Add files and infos about them to $data_dwoo   
+// ! Add files and infos about them to $tpl_data   
 // ================================================ 
 if(isset($dir['filename']) && is_array($dir['filename']))
 {
 	foreach($dir['filename'] as $counter => $file)
 	{
-		$file_path									= sanitize_path(CAT_PATH . $data_dwoo['initial_folder'].'/'.$file);
-		$data_dwoo['files'][$counter]['FILETYPE']	= strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
-		$data_dwoo['files'][$counter]['show_preview'] = ( in_array( strtolower($data_dwoo['files'][$counter]['FILETYPE']), $allowed_img_types ) ) ? true : false;
+		$file_path									= $dirh->sanitizePath(CAT_PATH . $tpl_data['initial_folder'].'/'.$file);
+		$tpl_data['files'][$counter]['FILETYPE']	= strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+		$tpl_data['files'][$counter]['show_preview'] = ( in_array( strtolower($tpl_data['files'][$counter]['FILETYPE']), $allowed_img_types ) ) ? true : false;
 
-		$data_dwoo['files'][$counter]['FILESIZE']	= byte_convert(getSize($file_path));
+		$tpl_data['files'][$counter]['FILESIZE']	= $dirh->getSize($file_path,true);
 
-		$data_dwoo['files'][$counter]['FILEDATE']	= date (DEFAULT_DATE_FORMAT, filemtime($file_path));
-		$data_dwoo['files'][$counter]['FILETIME']	= date (DEFAULT_TIME_FORMAT, filemtime($file_path));
-		$data_dwoo['files'][$counter]['FULL_NAME']	= $file;
-		$data_dwoo['files'][$counter]['NAME']		= substr($file , 0 , -( strlen($data_dwoo['files'][$counter]['FILETYPE'])+1 ) );
+		$tpl_data['files'][$counter]['FILEDATE']	= date (DEFAULT_DATE_FORMAT, filemtime($file_path));
+		$tpl_data['files'][$counter]['FILETIME']	= date (DEFAULT_TIME_FORMAT, filemtime($file_path));
+		$tpl_data['files'][$counter]['FULL_NAME']	= $file;
+		$tpl_data['files'][$counter]['NAME']		= substr($file , 0 , -( strlen($tpl_data['files'][$counter]['FILETYPE'])+1 ) );
 	}
 }
 
 // ================================= 
-// ! Add permissions to $data_dwoo   
+// ! Add permissions to $tpl_data   
 // ================================= 
-$data_dwoo['permissions']['media_upload']	= $admin->get_permission('media_upload');
-$data_dwoo['permissions']['media_create']	= $admin->get_permission('media_create');
-$data_dwoo['permissions']['media_rename']	= $admin->get_permission('media_rename');
-$data_dwoo['permissions']['media_delete']	= $admin->get_permission('media_delete');
+$tpl_data['permissions']['media_upload']	= $user->checkPermission('media','media_upload',false);
+$tpl_data['permissions']['media_create']	= $user->checkPermission('media','media_create',false);
+$tpl_data['permissions']['media_rename']	= $user->checkPermission('media','media_rename',false);
+$tpl_data['permissions']['media_delete']	= $user->checkPermission('media','media_delete',false);
 
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_media_index.lte', $data_dwoo);
+$parser->output('backend_media_index.lte', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   

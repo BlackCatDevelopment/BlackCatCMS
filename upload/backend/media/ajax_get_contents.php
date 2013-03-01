@@ -1,22 +1,29 @@
 <?php
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ * 
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- * @version         $Id$
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
+define('CAT_AJAX_CALL',1);
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
 	include(CAT_PATH . '/framework/class.secure.php');
 } else {
@@ -33,71 +40,32 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
-
-// ========================================================== 
-//
-//
-// ! Those functions needs to be moved to the correct file!
-//
-//
-// ========================================================== 
-
-function getSize($file) { 
-	$size = filesize($file); 
-	if ($size < 0) 
-	if (!(strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')) 
-		$size = trim(`stat -c%s $file`); 
-	else{ 
-		$fsobj = new COM("Scripting.FileSystemObject"); 
-		$f = $fsobj->GetFile($file); 
-		$size = $file->Size; 
-	} 
-	return $size; 
-}
-function byte_convert($bytes)
-{
-	$symbol = array(' bytes', ' KB', ' MB', ' GB', ' TB');
-	$exp = 0;
-	$converted_value = 0;
-	if ($bytes > 0)
-	{
-		$exp = floor( log($bytes) / log(1024));
-		$converted_value = ($bytes / pow( 1024, floor($exp)));
-	}
-	return sprintf('%.2f '.$symbol[$exp], $converted_value);
-}
-// ========================================================== 
-//
-//
-// ========================================================== 
-
 
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
-require_once(CAT_PATH . '/framework/class.admin.php');
-$admin = new admin('Media', 'media', false);
-
 include_once(CAT_PATH . '/framework/functions.php');
 
-if ( $admin->get_post('load_url') == '' || $admin->get_permission('media') !== true )
+$dirh  = CAT_Helper_Directory::getInstance();
+$user  = CAT_Users::getInstance();
+$val   = CAT_Helper_Validate::getInstance();
+$date  = CAT_Helper_DateTime::getInstance();
+
+// check viewing permissions
+if ( $val->sanitizePost('load_url') == '' || $user->checkPermission('media','media_view',false) !== true )
 {
 	header('Location: ' . CAT_ADMIN_URL);
 	exit();
 }
-header('Content-type: application/json');
 
-//$open_folder	= $admin->get_post('open_folder');
-$load_file		= $admin->get_post('load_url');
-$load_url		= $admin->get_post('folder_path') . '/' . $load_file;
-$load_path		= CAT_PATH . $load_url;// should be sanitize_path( CAT_PATH . $load_url );
+$load_file		= $val->sanitizePost('load_url');
+$load_url		= $val->sanitizePost('folder_path') . '/' . $load_file;
+$load_path		= $dirh->sanitizePath( CAT_PATH.'/'.$load_url );
 
-// =========================================================================== 
-// ! Create the controller, it is reusable and can render multiple templates 	
-// =========================================================================== 
+//echo "file -$load_file-\n<br />\nurl -$load_url-\n<br />\npath -$load_path-\n<br />";
+
 $ajax	= array(
-	'initial_folder'		=> sanitize_path( $load_url),
+	'initial_folder'		=> $dirh->sanitizePath($load_url),
 	'MEDIA_DIRECTORY'		=> MEDIA_DIRECTORY
 );
 
@@ -136,11 +104,12 @@ if ( is_dir( $load_path ) )
 			$ajax['files'][]	= array(
 				'filetype'			=> $filetype,
 				'show_preview'		=> in_array( strtolower($filetype), $allowed_img_types ) ? true : false,
-				'filesize'			=> byte_convert(getSize($file_path)),
-				'filedate'			=> date (DEFAULT_DATE_FORMAT, filemtime($file_path)),
-				'filetime'			=> date (DEFAULT_TIME_FORMAT, filemtime($file_path)),
+				'filesize'			=> $dirh->getSize($file_path,true),
+				'filedate'			=> date ($date->getDefaultDateFormatShort(), filemtime($file_path)),
+				'filetime'			=> date ($date->getDefaultTimeFormat(), filemtime($file_path)),
 				'full_name'			=> $file,
-				'filename'			=> substr($file , 0 , -( strlen($filetype) + 1 ) )
+				'filename'			=> substr($file , 0 , -( strlen($filetype) + 1 ) ),
+                'load_url'			=> $val->sanitize_url(CAT_URL.'/'.$load_url)
 			);
 		}
 	}
@@ -152,25 +121,26 @@ else
 	$ajax['files']		= array(
 		'filetype'			=> $filetype,
 		'show_preview'		=> in_array( strtolower($filetype), $allowed_img_types ) ? true : false,
-		'filesize'			=> byte_convert(getSize( $load_path )),
-		'filedate'			=> date (DEFAULT_DATE_FORMAT, filemtime( $load_path )),
-		'filetime'			=> date (DEFAULT_TIME_FORMAT, filemtime( $load_path )),
+		'filesize'			=> $dirh->getSize( $load_path, true ),
+		'filedate'			=> date ($date->getDefaultDateFormatShort(), filemtime( $load_path )),
+		'filetime'			=> date ($date->getDefaultTimeFormat(), filemtime( $load_path )),
 		'full_name'			=> $load_file,
 		'filename'			=> substr($load_file , 0 , -( strlen($filetype) + 1 ) ),
-		'load_url'			=> $load_url
+		'load_url'			=> $val->sanitize_url(CAT_URL.'/'.$load_url)
 	);
 }
 // ================================= 
 // ! Add permissions to $ajax   
 // ================================= 
-$ajax['permissions']['media_upload']	= $admin->get_permission('media_upload');
-$ajax['permissions']['media_create']	= $admin->get_permission('media_create');
-$ajax['permissions']['media_rename']	= $admin->get_permission('media_rename');
-$ajax['permissions']['media_delete']	= $admin->get_permission('media_delete');
+$ajax['permissions']['media_upload']	= $user->checkPermission('media','media_upload',false);
+$ajax['permissions']['media_create']	= $user->checkPermission('media','media_create',false);
+$ajax['permissions']['media_rename']	= $user->checkPermission('media','media_rename',false);
+$ajax['permissions']['media_delete']	= $user->checkPermission('media','media_delete',false);
 
 // ==================== 
-// ! Parse the site   
+// ! Return results
 // ==================== 
+header('Content-type: application/json');
 print json_encode( $ajax );
 
 ?>
