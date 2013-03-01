@@ -1117,10 +1117,10 @@ function __do_install() {
 "define('CAT_ADMIN_URL', CAT_URL.'/'.CAT_BACKEND_PATH);\n".
 "\n".
 ( (isset($config['no_validate_admin_password']) && $config['no_validate_admin_password'] == "true") ? "define('ALLOW_SHORT_PASSWORDS',true);\n\n" : '' ).
+"if (!defined('CAT_INSTALL')) require_once(CAT_PATH.'/framework/initialize.php');\n".
+"\n".
 "// WB2/Lepton backward compatibility\n".
 "include_once CAT_PATH.'/framework/wb2compat.php';\n".
-"\n".
-"if (!defined('CAT_INSTALL')) require_once(CAT_PATH.'/framework/initialize.php');\n".
 "\n".
 "?>";
 
