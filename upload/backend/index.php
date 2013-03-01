@@ -1,22 +1,28 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
 	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
@@ -32,7 +38,6 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
 if (!headers_sent()) header('Location: '.CAT_ADMIN_URL.'/start/index.php');
 
