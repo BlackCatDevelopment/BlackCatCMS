@@ -35,6 +35,7 @@ DROP TABLE IF EXISTS `cat_page_langs`;
 DROP TABLE IF EXISTS `cat_search`;
 DROP TABLE IF EXISTS `cat_sections`;
 DROP TABLE IF EXISTS `cat_settings`;
+DROP TABLE IF EXISTS `cat_system_permissions`
 DROP TABLE IF EXISTS `cat_users`;
 DROP TABLE IF EXISTS `cat_users_options`;
 DROP TABLE IF EXISTS `cat_class_secure`;
@@ -54,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `cat_addons` (
   `license` varchar(255) NOT NULL DEFAULT '',
   `installed` VARCHAR(255) NOT NULL DEFAULT '',
   `upgraded` VARCHAR(255) NOT NULL DEFAULT '',
+  `removable` ENUM('Y','N') NOT NULL DEFAULT 'Y',
   PRIMARY KEY (`addon_id`),
   UNIQUE KEY `type` (`type`,`directory`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -322,6 +324,16 @@ CREATE TABLE IF NOT EXISTS `cat_settings` (
   `value` text NOT NULL,
   PRIMARY KEY (`setting_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `cat_system_permissions` (
+	`perm_name` VARCHAR(50) NOT NULL,
+	`perm_group` VARCHAR(50) NOT NULL,
+	`perm_bit` INT(11) NOT NULL,
+	`perm_for` ENUM('FE','BE') NOT NULL DEFAULT 'BE',
+	`perm_comment` VARCHAR(50) NULL DEFAULT NULL
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `cat_users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
