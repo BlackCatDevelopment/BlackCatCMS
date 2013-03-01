@@ -1,24 +1,30 @@
 <?php
 
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author          Website Baker Project, LEPTON Project
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ * 
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
  * @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
  * @copyright       2013, Black Cat Development
  * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
 	include(CAT_PATH.'/framework/class.secure.php');
 } else {
@@ -35,12 +41,9 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
+
 
 require_once(CAT_PATH.'/framework/class.wb.php');
-
-// Include PHPLIB template class
-require_once(CAT_PATH."/include/phplib/template.inc");
 
 // Get CMS version
 require_once(CAT_ADMIN_PATH.'/interface/version.php');
@@ -75,93 +78,40 @@ class admin extends wb
 	 *
 	 *	Authenticate user then auto print the header
 	 *
+	 *  This is left for backward compatibility!
+	 *
 	 */
-	public function __construct($section_name, $section_permission = 'start', $auto_header = true, $auto_auth = true) {
+	public function __construct($section_name, $section_permission = 'start', $auto_header = true, $auto_auth = true)
+    {
 		global $database;
-		global $MESSAGE;
-		global $parser;
 		
 		parent::__construct();
-		
-		/**
-		 *	Droplet support
-		 *
-		 */
-		ob_start();
 		
 		$this->db_handle = clone($database);
 		
 		// Specify the current applications name
 		$this->section_name = $section_name;
 		$this->section_permission = $section_permission;
+
+        $user = CAT_Users::getInstance();
+
 		// Authenticate the user for this application
 		if($auto_auth == true) {
 			// First check if the user is logged-in
-			if($this->is_authenticated() == false) {
+			if($user->is_authenticated() == false) {
 				header('Location: '.CAT_ADMIN_URL.'/login/index.php');
 				exit(0);
 			}
-			
-			// Now check whether he has a valid token
-			if (!$this->checkToken()) {
-				unset($_SESSION['USER_ID']);
-				header('Location: '.CAT_ADMIN_URL.'/login/index.php');
-				exit(0);
 			}
-						
-			// Now check if they are allowed in this section
-			if($this->get_permission($section_permission) == false) {
-				die($MESSAGE['ADMIN_INSUFFICIENT_PRIVELLIGES']);
-			}
-		}
-		
-		// Check if the backend language is also the selected language. If not, send headers again.
-
-		$get_user_language = $this->db_handle->query("SELECT language FROM ".CAT_TABLE_PREFIX.
-			"users WHERE user_id = '" .(int) $this->get_user_id() ."'");
-		$user_language = ($get_user_language) ? $get_user_language->fetchRow() : '';
-		// prevent infinite loop if language file is not XX.php (e.g. DE_du.php)
-		$user_language = substr($user_language[0],0,2);
-		// obtain the admin folder (e.g. /admin)
-		$admin_folder = str_replace(CAT_PATH, '', CAT_ADMIN_PATH);
-		if((LANGUAGE != $user_language) && file_exists(CAT_PATH .'/languages/' .$user_language .'.php')
-			&& strpos($_SERVER['SCRIPT_NAME'],$admin_folder.'/') !== false) {
-			// check if page_id is set
-			$page_id_url = (isset($_GET['page_id'])) ? '&page_id=' .(int) $_GET['page_id'] : '';
-			$section_id_url = (isset($_GET['section_id'])) ? '&section_id=' .(int) $_GET['section_id'] : '';
-			if(isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != '') { // check if there is an query-string
-				header('Location: '.$_SERVER['SCRIPT_NAME'] .'?lang='.$user_language .$page_id_url .$section_id_url.'&'.$_SERVER['QUERY_STRING']);
-			} else {
-				header('Location: '.$_SERVER['SCRIPT_NAME'] .'?lang='.$user_language .$page_id_url .$section_id_url);
-			}
-			exit();
-		}
-		
-		// initialize template search path
-		$parser->setPath(CAT_THEME_PATH . '/templates');
-		$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
 		// Auto header code
 		if($auto_header == true) {
 			$this->print_header();
 		}
-		/**
-		 *	Droplet support
-		 *
-		 */
-		if ( file_exists(CAT_PATH .'/modules/dropleps/droplets.php') ) {
-			/**
-			 *	avoid loading on the Droplets Admin Tool itself and on the
-			 *	Settings page (this would compile Droplets added to the
-			 *	page footer)
-			 */
-			if (
-         		( !isset( $_GET['tool'] ) || 
-         		( $_GET['tool'] !== 'droplets' && $_GET['tool'] !== 'jqueryadmin' ) )
-        		 && $this->section_name !== 'Settings' && $this->section_name !== 'Page'
-    		) {
-				require_once(CAT_PATH .'/modules/dropleps/droplets.php');
-			}
+
+        if ( ! $user->checkPermission($section_name,$section_permission) )
+        {
+            $user->printFatalError('You are not allowed to do this!');
 		}
 	}
 	
@@ -200,13 +150,13 @@ class admin extends wb
 				// ================================= 
 		// ! Add permissions to $tpl_data   
 				// ================================= 
-		$tpl_data['permission']['pages']		  = $user->get_permission('pages')          ? true : false;
-		$tpl_data['permission']['pages_add']	  = $user->get_permission('pages_add')      ? true : false;
-		$tpl_data['permission']['pages_add_l0']	  = $user->get_permission('pages_add_l0')   ? true : false;
-		$tpl_data['permission']['pages_modify']	  = $user->get_permission('pages_modify')   ? true : false;
-		$tpl_data['permission']['pages_delete']	  = $user->get_permission('pages_delete')   ? true : false;
-		$tpl_data['permission']['pages_settings'] = $user->get_permission('pages_settings') ? true : false;
-		$tpl_data['permission']['pages_intro']	  = ( $user->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
+		$tpl_data['permission']['pages']		  = $user->checkPermission('pages','pages',false);
+		$tpl_data['permission']['pages_add']	  = $user->checkPermission('pages','pages_add',false);
+		$tpl_data['permission']['pages_add_l0']	  = $user->checkPermission('pages','pages_add_l0',false);
+		$tpl_data['permission']['pages_modify']	  = $user->checkPermission('pages','pages_modify',false);
+		$tpl_data['permission']['pages_delete']	  = $user->checkPermission('pages','pages_delete',false);
+		$tpl_data['permission']['pages_settings'] = $user->checkPermission('pages','pages_settings',false);
+		$tpl_data['permission']['pages_intro']	  = ( $user->checkPermission('pages','pages_intro',false) != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
 		if ( $tpl_data['permission']['pages'] == true )
 		{
@@ -276,41 +226,42 @@ class admin extends wb
 					'link'					=> CAT_ADMIN_URL . '/start/index.php',
 			'title'					=> $this->lang->translate('Start'),
 					'permission_title'		=> 'start',
-					'permission'			=> ( $this->get_link_permission('start') ) ? true : false,
+			'permission'			=> ( $user->checkPermission('start','start') ) ? true : false,
 					'current'				=> ( 'start' == strtolower($this->section_name) ) ? true : false
 					);
 		$tpl_data['MAIN_MENU'][1]	= array(
 					'link'					=> CAT_ADMIN_URL . '/media/index.php',
 			'title'					=> $this->lang->translate('Media'),
 					'permission_title'		=> 'media',
-					'permission'			=> ( $this->get_link_permission('media') ) ? true : false,
+			'permission'			=> (  $user->checkPermission('media','media') ) ? true : false,
 					'current'				=> ( 'media' == strtolower($this->section_name) ) ? true : false
 					);
 		$tpl_data['MAIN_MENU'][2]	= array(
 					'link'					=> CAT_ADMIN_URL . '/settings/index.php',
 			'title'					=> $this->lang->translate('Settings'),
 					'permission_title'		=> 'settings',
-					'permission'			=> ( $this->get_link_permission('settings') ) ? true : false,
+			'permission'			=> (  $user->checkPermission('settings','settings') ) ? true : false,
 					'current'				=> ( 'settings' == strtolower($this->section_name) ) ? true : false
 					);
 		$tpl_data['MAIN_MENU'][3]	= array(
 					'link'					=> CAT_ADMIN_URL . '/addons/index.php',
 			'title'					=> $this->lang->translate('Addons'),
 					'permission_title'		=> 'addons',
-					'permission'			=> ( $this->get_link_permission('addons') ) ? true : false,
+			'permission'			=> (  $user->checkPermission('addons','addons') ) ? true : false,
 					'current'				=> ( 'addons' == strtolower($this->section_name) ) ? true : false
 					);
 		$tpl_data['MAIN_MENU'][4]	= array(
 					'link'					=> CAT_ADMIN_URL . '/admintools/index.php',
 			'title'					=> $this->lang->translate('Admin-Tools'),
 					'permission_title'		=> 'admintools',
-					'permission'			=> ( $this->get_link_permission('admintools') ) ? true : false,
+			'permission'			=> (  $user->checkPermission('admintools','admintools') ) ? true : false,
 					'current'				=> ( 'admintools' == strtolower($this->section_name) ) ? true : false
 					);
 		$tpl_data['MAIN_MENU'][5]	= array(
+            'link'					=> CAT_ADMIN_URL . '/users/index.php',
 			'title'					=> $this->lang->translate('Access'),
 					'permission_title'		=> 'access',
-					'permission'			=> ( $this->get_link_permission('access') ) ? true : false,
+			'permission'			=> ( $user->checkPermission('access','access') ) ? true : false,
 					'current'				=> ( 'access' == strtolower($this->section_name) ) ? true : false
 					);
 
@@ -402,40 +353,9 @@ class admin extends wb
 
 	}   // end function print_footer()
 	
-	/** 
-	 *	Function get_page_permission takes either a numerical page_id,
-	 *	upon which it looks up the permissions in the database,
-	 *	or an array with keys admin_groups and admin_users  
-	 */
-	public function get_page_permission($page,$action='admin') {
-		if ($action!='viewing') $action='admin';
-		$action_groups=$action.'_groups';
-		$action_users=$action.'_users';
-		if (is_array($page)) {
-				$groups=$page[$action_groups];
-				$users=$page[$action_users];
-		} else {				
-			$results = $this->db_handle->query("SELECT $action_groups,$action_users FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '$page'");
-			$result = $results->fetchRow( MYSQL_ASSOC );
-			$groups = explode(',', str_replace('_', '', $result[$action_groups]));
-			$users = explode(',', str_replace('_', '', $result[$action_users]));
-		}
-
-		$in_group = FALSE;
-		foreach($this->get_groups_id() as $cur_gid){
-		    if (in_array($cur_gid, $groups)) {
-		        $in_group = TRUE;
-		    }
-		}
-		if((!$in_group) AND !is_numeric(array_search($this->get_user_id(), $users))) {
-			return false;
-		}
-		return true;
-	}
-		
-
 	// Returns a system permission for a menu link
 	public function get_link_permission($title) {
+return true;
 		$title = str_replace('_blank', '', $title);
 		$title = strtolower($title);
 		// Set system permissions var
@@ -552,6 +472,7 @@ class admin extends wb
      **************************************************************************/
     public function get_permission($name, $type = 'system') { return CAT_Users::getInstance()->get_permission($name,$type); }
     public function get_user_details($user_id)              { return CAT_Users::getInstance()->get_user_details($user_id);  }
+    public function get_page_permission($page,$action='admin') { return CAT_Pages::getInstance(-1)->getPagePermission($page,$action); }
 }
 
 ?>
