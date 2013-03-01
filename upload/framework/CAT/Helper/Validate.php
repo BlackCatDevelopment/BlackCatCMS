@@ -49,16 +49,28 @@ if (!class_exists('CAT_Helper_Validate'))
          * @access public
          * @param  string  $global - name of the superglobal
          * @param  string  $key    - name of the key/var to get
+         * @param  string  $require - value type (scalar, numeric, array)
          * @return mixed
          **/
-        public function get( $global, $key )
+        public function get( $global, $key, $require = NULL )
         {
             $glob = array();
             if ( isset($GLOBALS[$global]) )
             {
                 $glob =& $GLOBALS[$global];
             }
-            return isset($glob[$key]) ? $glob[$key] : NULL;
+            $value = isset($glob[$key]) ? $glob[$key] : NULL;
+            if ( $value && $require )
+            {
+                $func = 'is_'.$require;
+                if ( ! function_exists($func) )
+                {
+                    $this->printFatalError( 'No such validation method: '.$require );
+                }
+                if ( $func($value) ) return $value;
+                else                 return NULL;
+            }
+            return $value;
         }   // end function get()
 
         /**
@@ -102,11 +114,13 @@ if (!class_exists('CAT_Helper_Validate'))
          *
          * @access public
          * @param  string  $field - fieldname
+         * @param  string  $require - value type (scalar, numeric, array)
+         * @param  boolean $escape  - use add_slashes(); default: false
          * @return mixed
          **/
-        public function sanitizePost( $field, $escape = false )
+        public function sanitizePost( $field, $require=NULL, $escape = false )
         {
-            $value = $this->get('_POST',$field);
+            $value = $this->get('_POST',$field,$require);
             if ( $value && $escape )
             {
                 $value = $this->add_slashes($result);
@@ -121,11 +135,12 @@ if (!class_exists('CAT_Helper_Validate'))
          *
          * @access public
          * @param  string  $field - fieldname
+         * @param  string  $require - value type (scalar, numeric, array)
          * @return mixed
          **/
-        public function sanitizeGet($field)
+        public function sanitizeGet($field,$require=NULL)
         {
-            return $this->get('_GET',$field);
+            return $this->get('_GET',$field,$require);
         }   // end function sanitizeGet()
 
         /**
@@ -133,11 +148,12 @@ if (!class_exists('CAT_Helper_Validate'))
          *
          * @access public
          * @param  string  $field - fieldname
+         * @param  string  $require - value type (scalar, numeric, array)
          * @return mixed
          **/
-        public function fromSession($field)
+        public function fromSession($field,$require=NULL)
         {
-            return $this->get('_SESSION',$field);
+            return $this->get('_SESSION',$field,$require);
         }   // end function fromSession()
 
         //*********************************************************************
