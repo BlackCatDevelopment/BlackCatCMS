@@ -35,7 +35,7 @@ DROP TABLE IF EXISTS `cat_page_langs`;
 DROP TABLE IF EXISTS `cat_search`;
 DROP TABLE IF EXISTS `cat_sections`;
 DROP TABLE IF EXISTS `cat_settings`;
-DROP TABLE IF EXISTS `cat_system_permissions`
+DROP TABLE IF EXISTS `cat_system_permissions`;
 DROP TABLE IF EXISTS `cat_users`;
 DROP TABLE IF EXISTS `cat_users_options`;
 DROP TABLE IF EXISTS `cat_class_secure`;
