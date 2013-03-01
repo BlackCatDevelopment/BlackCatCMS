@@ -171,7 +171,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 							{
 	        include sanitize_path( dirname(__FILE__).'/CAT/Pages.php' );
 							}
-	    $pg     = CAT_Pages::getInstance();
+	    $pg     = CAT_Pages::getInstance(-1);
 	    $output = $pg->getHeaders( $for, $individual );
 		if ( $print_output )
 		{
@@ -209,7 +209,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
                 {
 	        include sanitize_path( dirname(__FILE__).'/CAT/Pages.php' );
                 }
-	    $pg     = CAT_Pages::getInstance();
+	    $pg     = CAT_Pages::getInstance(-1);
 	    $output = $pg->getFooters( $for );
         if ( $print_output )
                     {
