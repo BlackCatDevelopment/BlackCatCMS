@@ -217,8 +217,8 @@ define( 'PAGE_ID', 0 );
 define( 'ROOT_PARENT', 0 );
 define( 'PARENT', 0 );
 define( 'LEVEL', 0 );
-define( 'PAGE_TITLE', $MENU[ 'PREFERENCES' ] );
-define( 'MENU_TITLE', $MENU[ 'PREFERENCES' ] );
+define( 'PAGE_TITLE', CAT_Helper_I18n::getInstance()->translate('Preferences') );
+define( 'MENU_TITLE', CAT_Helper_I18n::getInstance()->translate('Preferences') );
 define( 'MODULE', '' );
 define( 'VISIBILITY', 'public' );
 

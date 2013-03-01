@@ -149,7 +149,7 @@ else
 
 ?>
 <h1 style="text-align: center;"><?php
-echo $MENU[ 'FORGOT' ];
+echo CAT_Helper_I18n::getInstance()->translate('Forgot');
 ?></h1>
 
 <form name="forgot_pass" action="<?php echo CAT_URL . '/account/forgot.php'; ?>" method="post">

@@ -45,8 +45,8 @@ define( 'PAGE_ID', 0 );
 define( 'ROOT_PARENT', 0 );
 define( 'PARENT', 0 );
 define( 'LEVEL', 0 );
-define( 'PAGE_TITLE', $MENU[ 'FORGOT' ] );
-define( 'MENU_TITLE', $MENU[ 'FORGOT' ] );
+define( 'PAGE_TITLE', CAT_Helper_I18n::getInstance()->translate('Forgot') );
+define( 'MENU_TITLE', CAT_Helper_I18n::getInstance()->translate('Forgot') );
 define( 'VISIBILITY', 'public' );
 
 if ( !FRONTEND_LOGIN )
