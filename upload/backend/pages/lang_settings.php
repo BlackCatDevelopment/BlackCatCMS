@@ -111,7 +111,7 @@ $arrh = $admin->get_helper('Array');
 // ===========================
 // ! find already linked pages
 // ===========================
-$items          = CAT_Pages::getInstance(array('pages_settings'=>$admin->get_permission('pages_settings')))->getLinkedByLanguage($page_id);
+$items          = CAT_Pages::getInstance($page_id,array('pages_settings'=>CAT_Users::getInstance()->checkPermission('pages_settings')))->getLinkedByLanguage($page_id);
 
 
 // =========================

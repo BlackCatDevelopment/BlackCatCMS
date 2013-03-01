@@ -37,7 +37,7 @@ if (defined('CAT_PATH')) {
 require_once( CAT_PATH . '/framework/class.admin.php' );
 $admin = new admin('Start', 'start');
 
-header( 'Location: ' . CAT_ADMIN_URL . '/start/index.php?ctoken=' . $admin->getToken() );
+header( 'Location: ' . CAT_ADMIN_URL . '/start/index.php' );
 exit(0);
 
 ?>

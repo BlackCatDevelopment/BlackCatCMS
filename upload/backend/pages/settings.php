@@ -164,7 +164,7 @@ $data_dwoo['permission']['pages_intro']		= ( $admin->get_permission('pages_intro
 // ==================
 
 require CAT_PATH . '/framework/CAT/Pages.php';
-$pg = CAT_Pages::getInstance();
+$pg = CAT_Pages::getInstance($page_id);
 
 $pg->current_page['id']					= $page_id;
 $pg->current_page['parent']				= $results_array['parent'];

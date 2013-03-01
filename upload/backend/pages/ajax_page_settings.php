@@ -136,7 +136,7 @@ $permission['pages_settings']	= $admin->get_permission('pages_settings') ? true 
 $permission['pages_intro']		= ( $admin->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
 // list of all parent pages for dropdown parent
-$pg = CAT_Pages::getInstance($permission);
+$pg = CAT_Pages::getInstance($page_id,$permission);
 $pg->current_page['id']	= $page_id;
 $dropdown_list = $pg->pages_list( 0 , 0 );
 

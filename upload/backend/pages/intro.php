@@ -76,7 +76,8 @@ $data_dwoo = array();
 ob_start();
 	show_wysiwyg_editor('content','content',$content,'100%','500px');
 	$data_dwoo['intro_page_content']	= ob_get_contents();
-ob_end_clean();
+//ob_end_clean();
+ob_clean(); // allow multiple buffering for csrf-magic
 
 // ==================== 
 // ! Parse the site   
