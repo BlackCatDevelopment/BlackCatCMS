@@ -54,7 +54,7 @@ $jobs[] = "DROP TABLE IF EXISTS `".$table."`";
 $jobs[] = "CREATE TABLE IF NOT EXISTS `".CAT_TABLE_PREFIX."mod_wysiwyg_admin_v2` (
 	`editor` VARCHAR(50) NOT NULL,
 	`set_name` VARCHAR(50) NOT NULL,
-	`set_value` VARCHAR(50) NOT NULL,
+	`set_value` TEXT NOT NULL,
 	UNIQUE INDEX `editor_set_name` (`editor`, `set_name`)
 )
 COMMENT='WYSIWYG Admin for Black Cat CMS'
