@@ -48,9 +48,10 @@ if ( !(isset($admin) && is_object($admin) && (get_class($admin) == 'admin')) )
 }
 
 $admin = new admin('Settings', 'settings_advanced');
+$user  = CAT_Users::getInstance();
 
 global $parser;
-$data_dwoo = array();
+$tpl_data = array();
 
 // Include the WB functions file
 require_once(CAT_PATH.'/framework/functions.php');
@@ -71,7 +72,7 @@ if ( $res_settings = $database->query('SELECT `name`, `value` FROM `'.CAT_TABLE_
 {
 	while ( $row = $res_settings->fetchRow( ) )
 	{
-		$data_dwoo['values'][$row['name']]		= ($row['name'] != 'catmailer_smtp_password') ? htmlspecialchars($row['value']) : $row['value'];
+		$tpl_data['values'][$row['name']]		= ($row['name'] != 'catmailer_smtp_password') ? htmlspecialchars($row['value']) : $row['value'];
 	}
 }
 
@@ -82,54 +83,57 @@ if ( ($res_search = $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'search`
 {
 	while ( $row = $res_search->fetchRow() )
 	{
-		$data_dwoo['search'][$row['name']]		= htmlspecialchars(($row['value']));
+		$tpl_data['search'][$row['name']]		= htmlspecialchars(($row['value']));
 	}
 }
 
 // ============================= 
-// ! Add setting to $data_dwoo   
+// ! Add setting to $tpl_data   
 // ============================= 
-$data_dwoo['DISPLAY_ADVANCED']						= $admin->get_permission('settings_advanced') != true ? false : true;
+$tpl_data['DISPLAY_ADVANCED']						= $user->checkPermission('Settings','settings_advanced');
 
-$data_dwoo['values']['pages_directory']				= trim(PAGES_DIRECTORY);
-$data_dwoo['values']['media_directory']				= trim(MEDIA_DIRECTORY);
-$data_dwoo['values']['page_extension']				= PAGE_EXTENSION;
-$data_dwoo['values']['page_spacer']					= PAGE_SPACER;
-$data_dwoo['values']['sec_anchor']					= SEC_ANCHOR;
-$data_dwoo['values']['DATABASE_TYPE']				= '';
-$data_dwoo['values']['DATABASE_HOST']				= '';
-$data_dwoo['values']['DATABASE_USERNAME']			= '';
-$data_dwoo['values']['DATABASE_NAME']				= '';
-$data_dwoo['values']['CAT_TABLE_PREFIX']				= CAT_TABLE_PREFIX;
+$tpl_data['values']['pages_directory']				= trim(PAGES_DIRECTORY);
+$tpl_data['values']['media_directory']				= trim(MEDIA_DIRECTORY);
+$tpl_data['values']['page_extension']				= PAGE_EXTENSION;
+$tpl_data['values']['page_spacer']					= PAGE_SPACER;
+$tpl_data['values']['sec_anchor']					= SEC_ANCHOR;
+$tpl_data['values']['DATABASE_TYPE']				= '';
+$tpl_data['values']['DATABASE_HOST']				= '';
+$tpl_data['values']['DATABASE_USERNAME']			= '';
+$tpl_data['values']['DATABASE_NAME']				= '';
+$tpl_data['values']['CAT_TABLE_PREFIX']				= CAT_TABLE_PREFIX;
+$tpl_data['values']['catmailer_smtp_host']          = defined('CATMAILER_SMTP_HOST')     ? CATMAILER_SMTP_HOST     : '';
+$tpl_data['values']['catmailer_smtp_username']      = defined('CATMAILER_SMTP_USERNAME') ? CATMAILER_SMTP_USERNAME : '';
+$tpl_data['values']['catmailer_smtp_password']      = defined('CATMAILER_SMTP_PASSWORD') ? CATMAILER_SMTP_PASSWORD : '';
 
-$data_dwoo['MULTIPLE_MENUS']						= (defined('MULTIPLE_MENUS') && MULTIPLE_MENUS == true) ? true : false;
-$data_dwoo['PAGE_LANGUAGES']						= (defined('PAGE_LANGUAGES') && PAGE_LANGUAGES == true) ? true : false;
-$data_dwoo['SMART_LOGIN']							= (defined('SMART_LOGIN') && SMART_LOGIN == true) ? true : false;
-$data_dwoo['GD_EXTENSION']							= (extension_loaded('gd') && function_exists('imageCreateFromJpeg')) ? true : false;
-$data_dwoo['SECTION_BLOCKS']						= (defined('SECTION_BLOCKS') && SECTION_BLOCKS == true) ? true : false;
-$data_dwoo['HOMEPAGE_REDIRECTION']					= (defined('HOMEPAGE_REDIRECTION') && HOMEPAGE_REDIRECTION == true) ? true : false;
-$data_dwoo['MANAGE_SECTIONS']						= (MANAGE_SECTIONS) ? true : false;
-$data_dwoo['OPERATING_SYSTEM']						= OPERATING_SYSTEM;
-$data_dwoo['WORLD_WRITEABLE_SELECTED']				= (STRING_FILE_MODE == '0666' && STRING_DIR_MODE == '0777') ? true : false;
-$data_dwoo['CATMAILER_ROUTINE']						= CATMAILER_ROUTINE;
-$data_dwoo['CATMAILER_SMTP_AUTH']					= CATMAILER_SMTP_AUTH;
-$data_dwoo['INTRO_PAGE']							= INTRO_PAGE ? true : false;
-$data_dwoo['FRONTEND_LOGIN']						= FRONTEND_LOGIN ? true : false;
-$data_dwoo['HOME_FOLDERS']							= HOME_FOLDERS;
-$data_dwoo['SEARCH']								= SEARCH;
-$data_dwoo['PAGE_LEVEL_LIMIT']						= PAGE_LEVEL_LIMIT;
-$data_dwoo['PAGE_TRASH']							= PAGE_TRASH;
-$data_dwoo['ER_LEVEL']								= ER_LEVEL;
-$data_dwoo['DEFAULT_CHARSET']						= DEFAULT_CHARSET;
-$data_dwoo['values']['server_email']				= SERVER_EMAIL;
-$data_dwoo['values']['wb_default_sendername']		= CATMAILER_DEFAULT_SENDERNAME;
+$tpl_data['MULTIPLE_MENUS']						    = (defined('MULTIPLE_MENUS') && MULTIPLE_MENUS == true) ? true : false;
+$tpl_data['PAGE_LANGUAGES']						    = (defined('PAGE_LANGUAGES') && PAGE_LANGUAGES == true) ? true : false;
+$tpl_data['SMART_LOGIN']							= (defined('SMART_LOGIN') && SMART_LOGIN == true) ? true : false;
+$tpl_data['GD_EXTENSION']							= (extension_loaded('gd') && function_exists('imageCreateFromJpeg')) ? true : false;
+$tpl_data['SECTION_BLOCKS']						    = (defined('SECTION_BLOCKS') && SECTION_BLOCKS == true) ? true : false;
+$tpl_data['HOMEPAGE_REDIRECTION']					= (defined('HOMEPAGE_REDIRECTION') && HOMEPAGE_REDIRECTION == true) ? true : false;
+$tpl_data['MANAGE_SECTIONS']						= (MANAGE_SECTIONS) ? true : false;
+$tpl_data['OPERATING_SYSTEM']						= OPERATING_SYSTEM;
+$tpl_data['WORLD_WRITEABLE_SELECTED']				= (STRING_FILE_MODE == '0666' && STRING_DIR_MODE == '0777') ? true : false;
+$tpl_data['CATMAILER_ROUTINE']						= CATMAILER_ROUTINE;
+$tpl_data['CATMAILER_SMTP_AUTH']					= CATMAILER_SMTP_AUTH;
+$tpl_data['INTRO_PAGE']							    = INTRO_PAGE ? true : false;
+$tpl_data['FRONTEND_LOGIN']						    = FRONTEND_LOGIN ? true : false;
+$tpl_data['HOME_FOLDERS']							= HOME_FOLDERS;
+$tpl_data['SEARCH']								    = SEARCH;
+$tpl_data['PAGE_LEVEL_LIMIT']						= PAGE_LEVEL_LIMIT;
+$tpl_data['PAGE_TRASH']							    = PAGE_TRASH;
+$tpl_data['ER_LEVEL']								= ER_LEVEL;
+$tpl_data['DEFAULT_CHARSET']						= DEFAULT_CHARSET;
+$tpl_data['values']['server_email']				    = SERVER_EMAIL;
+$tpl_data['values']['wb_default_sendername']		= CATMAILER_DEFAULT_SENDERNAME;
 
 // ==========================
 // ! Specials
 // ==========================
 
 // format installation date and time
-$data_dwoo['values']['installation_time']           = date($admin->get_helper('DateTime')->getDefaultDateFormatShort(),INSTALLATION_TIME)
+$tpl_data['values']['installation_time']           = date($admin->get_helper('DateTime')->getDefaultDateFormatShort(),INSTALLATION_TIME)
                                                     . ' '
                                                     . date($admin->get_helper('DateTime')->getDefaultTimeFormat(),INSTALLATION_TIME);
 
@@ -138,18 +142,18 @@ if(($result = $database->query('SELECT visibility, count(*) AS count FROM '.CAT_
 {
     while ( $row = $result->fetchRow(MYSQL_ASSOC) )
 	{
-        $data_dwoo['values']['pages_count'][] = $row;
+        $tpl_data['values']['pages_count'][] = $row;
     }
 }
 
 // get installed mailer libs
-$data_dwoo['CATMAILER_LIBS'] = array();
+$tpl_data['CATMAILER_LIBS'] = array();
 $mailer_libs = CAT_Helper_Addons::getInstance()->getLibraries('mail');
 if ( count($mailer_libs) )
 {
     foreach ( $mailer_libs as $item )
     {
-        $data_dwoo['CATMAILER_LIBS'][] = $item;
+        $tpl_data['CATMAILER_LIBS'][] = $item;
     }
 }
 
@@ -170,13 +174,13 @@ if(($result = $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'addons` WHERE
 		// ======================== 
 		// ! Insert code and name   
 		// ======================== 
-		$data_dwoo['languages'][$counter]['CODE']	= $l_codes[$l_name];
-		$data_dwoo['languages'][$counter]['NAME']	= $l_name;
-		// $data_dwoo['languages']['CODE'] = true;
+		$tpl_data['languages'][$counter]['CODE']	= $l_codes[$l_name];
+		$tpl_data['languages'][$counter]['NAME']	= $l_name;
+		// $tpl_data['languages']['CODE'] = true;
 		// =========================== 
 		// ! Check if it is selected   
 		// =========================== 
-		$data_dwoo['languages'][$counter]['SELECTED'] = (DEFAULT_LANGUAGE == $l_codes[$l_name]) ? true : false;
+		$tpl_data['languages'][$counter]['SELECTED'] = (DEFAULT_LANGUAGE == $l_codes[$l_name]) ? true : false;
 		$counter++;
 	}
 }
@@ -184,12 +188,12 @@ if(($result = $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'addons` WHERE
 // ================================== 
 // ! Insert default timezone values   
 // ================================== 
-$timezone_table = $admin->get_helper('DateTime')->getTimezones();
+$timezone_table = CAT_Helper_DateTime::getTimezones();
 $counter=0;
 
 foreach( $timezone_table as $title )
 {
-	$data_dwoo['timezones'][$counter] = array(
+	$tpl_data['timezones'][$counter] = array(
 		'NAME'			=> $title,
 		'SELECTED'		=> ( DEFAULT_TIMEZONE_STRING == $title ) ? true : false
 	);
@@ -203,7 +207,7 @@ require(CAT_ADMIN_PATH.'/interface/charsets.php');
 $counter=0;
 foreach ( $CHARSETS AS $code => $title )
 {
-	$data_dwoo['charsets'][$counter] = array(
+	$tpl_data['charsets'][$counter] = array(
 		'NAME'			=> $title,
 		'VALUE'			=> $code,
 		'SELECTED'		=> ( DEFAULT_CHARSET == $code ) ? true : false
@@ -220,12 +224,12 @@ date_default_timezone_set(DEFAULT_TIMEZONE_STRING);
 // =========================== 
 // ! Insert date format list   
 // =========================== 
-$DATE_FORMATS = $admin->get_helper('DateTime')->getDateFormats();
+$DATE_FORMATS = CAT_Helper_DateTime::getDateFormats();
 $counter=0;
 foreach ( $DATE_FORMATS AS $format => $title )
 {
-	$format = str_replace('|', ' ', $format); // Add's white-spaces (not able to be stored in array key)
-	$data_dwoo['dateformats'][$counter] = array(
+	#$format = str_replace('|', ' ', $format); // Add's white-spaces (not able to be stored in array key)
+	$tpl_data['dateformats'][$counter] = array(
 		'NAME'			=> $title,
 		'VALUE'			=> ( $format != 'system_default' ) ? $format : '',
 		'SELECTED'		=> ( DEFAULT_DATE_FORMAT == $format ) ? true : false
@@ -241,7 +245,7 @@ $counter=0;
 foreach ( $TIME_FORMATS AS $format => $title )
 {
 	$format = str_replace('|', ' ', $format); // Add's white-spaces (not able to be stored in array key)
-	$data_dwoo['timeformats'][$counter] = array(
+	$tpl_data['timeformats'][$counter] = array(
 		'NAME'			=> $title,
 		'VALUE'			=> ( $format != 'system_default' ) ? $format : '',
 		'SELECTED'		=> ( DEFAULT_TIME_FORMAT == $format ) ? true : false
@@ -256,7 +260,7 @@ require(CAT_ADMIN_PATH.'/interface/er_levels.php');
 $counter = 0;
 foreach ( $ER_LEVELS AS $value => $title )
 {
-	$data_dwoo['er_levels'][$counter] = array(
+	$tpl_data['er_levels'][$counter] = array(
 		'NAME'			=> $title,
 		'VALUE'			=> $value,
 		'SELECTED'		=> (ER_LEVEL == $value) ? true : false
@@ -275,14 +279,14 @@ $addons = new CAT_Helper_Addons();
 // ============================ 
 // ! Insert groups and addons   
 // ============================ 
-$data_dwoo['groups']				= $admin->users->get_groups(FRONTEND_SIGNUP , '', false);
-$data_dwoo['templates']				= $addons->get_addons( DEFAULT_TEMPLATE , 'template', 'template' );
-$data_dwoo['backends']				= $addons->get_addons( DEFAULT_THEME , 'template', 'theme' );
-$data_dwoo['wysiwyg']				= $addons->get_addons( WYSIWYG_EDITOR , 'module', 'wysiwyg' );
-$data_dwoo['search_templates']		= $addons->get_addons( $data_dwoo['search']['template'] , 'template', 'template' );
+$tpl_data['groups']				= $admin->users->get_groups(FRONTEND_SIGNUP , '', false);
+$tpl_data['templates']				= $addons->get_addons( DEFAULT_TEMPLATE , 'template', 'template' );
+$tpl_data['backends']				= $addons->get_addons( DEFAULT_THEME , 'template', 'theme' );
+$tpl_data['wysiwyg']				= $addons->get_addons( WYSIWYG_EDITOR , 'module', 'wysiwyg' );
+$tpl_data['search_templates']		= $addons->get_addons( $tpl_data['search']['template'] , 'template', 'template' );
 
 array_unshift (
-	$data_dwoo['wysiwyg'],
+	$tpl_data['wysiwyg'],
 	array(
 		'NAME'			=> $admin->lang->translate('None'),
 		'VALUE'			=> false,
@@ -291,18 +295,18 @@ array_unshift (
 );
 
 array_unshift (
-	$data_dwoo['search_templates'],
+	$tpl_data['search_templates'],
 	array(
 		'NAME'			=> $TEXT['SYSTEM_DEFAULT'],
 		'VALUE'			=> false,
-		'SELECTED'		=> ( ($data_dwoo['search']['template'] == '') || $data_dwoo['search']['template'] == DEFAULT_TEMPLATE ) ? true : false
+		'SELECTED'		=> ( ($tpl_data['search']['template'] == '') || $tpl_data['search']['template'] == DEFAULT_TEMPLATE ) ? true : false
 	)
 );
 
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_settings_index.lte', $data_dwoo);
+$parser->output('backend_settings_index.lte', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   
