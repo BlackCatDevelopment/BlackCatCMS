@@ -43,6 +43,52 @@ if (!class_exists('CAT_Helper_DateTime'))
             return self::$instance;
         }
 
+        public function __call($method, $args)
+        {
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
+        }
+
+        /**
+         * check given date format
+         *
+         * @access public
+         * @param  string $df
+         * @return boolean
+         **/
+        public static function checkDateformat($date_format)
+        {
+            $date_format_key	= str_replace(' ', '|', $date_format);
+            $date_formats       = CAT_Helper_DateTime::getDateFormats();
+            return array_key_exists( $date_format_key, $date_formats );
+        }   // end function checkDateformat()
+
+        public static function checkTimeformat($time_format)
+        {
+            $time_format_key	= str_replace(' ', '|', $time_format);
+            $time_formats       = CAT_Helper_DateTime::getTimeFormats();
+            return array_key_exists($time_format_key, $time_formats);
+        }   // end function checkTimeformat()
+
+        /**
+         * check given timezone
+         * the timezone string must match a value in the table
+         *
+         * @access public
+         * @param  string  $tz
+         * @return boolean
+         **/
+        public static function checkTZ($tz)
+        {
+            $timezone_table     = CAT_Helper_DateTime::getTimezones();
+            if ( in_array($tz, $timezone_table) )
+            {
+            	return true;
+            }
+            return false;
+        }   // end function checkTZ()
+
+
         /**
          * returns formatted date
          *
@@ -50,7 +96,7 @@ if (!class_exists('CAT_Helper_DateTime'))
          * @param  string  $t    - timestamp
          * @param  boolean $long - get long format (default:false)
          **/
-        public function getDate($t=NULL,$long=false)
+        public static function getDate($t=NULL,$long=false)
         {
             $format = ( $long === true )
                     ? $this->getDefaultDateFormatLong()
@@ -61,7 +107,7 @@ if (!class_exists('CAT_Helper_DateTime'))
         /**
          * returns a list of known timezones, using DateTimeZone::listIdentifiers()
          **/
-        public function getTimezones()
+        public static function getTimezones()
         {
             return DateTimeZone::listIdentifiers();
         }   // end function getTimezones()
@@ -69,7 +115,7 @@ if (!class_exists('CAT_Helper_DateTime'))
         /**
          * returns a list of known time formats
          **/
-        public function getTimeFormats()
+        public static function getTimeFormats()
         {
             global $user_time,$language_time;
             $actual_time = time();
@@ -93,25 +139,29 @@ if (!class_exists('CAT_Helper_DateTime'))
         /**
          * returns a list of known date formats
          **/
-        public function getDateFormats()
+        public static function getDateFormats()
         {
             global $user_time, $language_date_long, $language_date_short;
             $actual_time = time();
+            $locale      = setlocale(LC_ALL, 0);
+            $ord         = date('S', $actual_time);
+            if ( defined('LANGUAGE') ) setlocale(LC_ALL, LANGUAGE);
+echo "---", str_replace('%O', $ord,'%e%O %B, %Y'), "---<br />";
             $DATE_FORMATS = array(
-                'l,|jS|F,|Y' => date('l, jS F, Y', $actual_time),
-                'jS|F,|Y'    => date('jS F, Y', $actual_time).' (jS F, Y)',
-                'd|M|Y'      => date('d M Y', $actual_time).' (d M Y)',
-                'M|d|Y'      => date('M d Y', $actual_time).' (M d Y)',
-                'D|M|d,|Y'   => date('D M d, Y', $actual_time).' (D M d, Y)',
-                'd-m-Y'      => date('d-m-Y', $actual_time).' (D-M-Y)',
-                'm-d-Y'      => date('m-d-Y', $actual_time).' (M-D-Y)',
-                'd.m.Y'      => date('d.m.Y', $actual_time).' (D.M.Y)',
-                'm.d.Y'      => date('m.d.Y', $actual_time).' (M.D.Y)',
-                'd/m/Y'      => date('d/m/Y', $actual_time).' (D/M/Y)',
-                'm/d/Y'      => date('m/d/Y', $actual_time).' (M/D/Y)',
-                'j.n.Y'      => date('j.n.Y', $actual_time).' (j.n.Y)',
-                'r'          => date('r'    , $actual_time).' (r)',
-                'l,|d.|F|Y'  => date('l, d. F Y', $actual_time),        // German date
+                #'%A,|%e|%B,|%Y' => utf8_encode(strftime('%A, %e %B, %Y', $actual_time)),
+                '%e|%B,|%Y'     => utf8_encode(strftime(str_replace('%O', $ord,'%e%O %B, %Y'), $actual_time)).' (jS F, Y)',
+                '%d|%m|%Y'      => utf8_encode(strftime('%d %m %Y',      $actual_time)).' (d M Y)',
+                '%b|%d|%Y'      => utf8_encode(strftime('%b %d %Y',      $actual_time)).' (M d Y)',
+                '%a|%b|%d,|%Y'  => utf8_encode(strftime('%a %b %d, %Y',  $actual_time)).' (D M d, Y)',
+                '%d-%m-%Y'      => utf8_encode(strftime('%d-%m-%Y',      $actual_time)).' (D-M-Y)',
+                '%m-%d-%Y'      => utf8_encode(strftime('%m-%d-%Y',      $actual_time)).' (M-D-Y)',
+                '%d.%m.%Y'      => utf8_encode(strftime('%d.%m.%Y',      $actual_time)).' (D.M.Y)',
+                '%m.%d.%Y'      => utf8_encode(strftime('%m.%d.%Y',      $actual_time)).' (M.D.Y)',
+                '%d/%m/%Y'      => utf8_encode(strftime('%d/%m/%Y',      $actual_time)).' (D/M/Y)',
+                '%m/%d/%Y'      => utf8_encode(strftime('%m/%d/%Y',      $actual_time)).' (M/D/Y)',
+                '%e.%-m.%Y'     => utf8_encode(strftime('%e.%-m.%Y',     $actual_time)).' (j.n.Y)',
+                '%a, %d %b %Y %H:%M:%S %z' => utf8_encode(strftime('%a, %d %b %Y %H:%M:%S %z',      $actual_time)).' (r)',
+                '%A,|%d.|%B|%Y' => utf8_encode(strftime('%A, %d. %B %Y',  $actual_time)),        // German date
             );
             if(isset($user_time) && $user_time == true)
             {
@@ -126,6 +176,7 @@ if (!class_exists('CAT_Helper_DateTime'))
             {
                 $DATE_FORMATS[$language_date_short] = date($language_date_short,$actual_time);
             }
+            if ( defined('LANGUAGE') ) setlocale(LC_ALL, $locale);
             return $DATE_FORMATS;
         }   // enc function getDateFormats()
 
@@ -136,7 +187,7 @@ if (!class_exists('CAT_Helper_DateTime'))
          *   - checks $language_time var set in current language file last
          *   - returns 'H:i' by default if none of the above is available
          **/
-        public function getDefaultTimeFormat()
+        public static function getDefaultTimeFormat()
         {
             global $language_time;
             if ( isset ($_SESSION['TIME_FORMAT']) ) return $_SESSION['TIME_FORMAT'];
@@ -152,16 +203,17 @@ if (!class_exists('CAT_Helper_DateTime'))
          *   - checks $language_date_short var set in current language file last
          *   - returns 'D-M-Y' by default if none of the above is set
          **/
-        public function getDefaultDateFormatShort()
+        public static function getDefaultDateFormatShort()
         {
             global $language_date_short;
-            if ( isset ($_SESSION['DATE_FORMAT']) ) return $_SESSION['DATE_FORMAT'];
+            if ( isset ($_SESSION['DATE_FORMAT_SHORT']) ) return $_SESSION['DATE_FORMAT_SHORT'];
+            if ( defined('DEFAULT_DATE_FORMAT_SHORT') )   return DEFAULT_DATE_FORMAT_SHORT;
+            if ( isset($language_date_short) )            return $language_date_short;
             if ( defined('DEFAULT_DATE_FORMAT') )   return DEFAULT_DATE_FORMAT;
-            if ( isset($language_date_short) )    return $language_date_short;
             return 'D-M-Y';
         }
 
-        public function getDefaultDateFormatLong()
+        public static function getDefaultDateFormatLong()
         {
             global $language_date_long;
             if ( defined('DEFAULT_DATE_FORMAT') ) return DEFAULT_DATE_FORMAT;
