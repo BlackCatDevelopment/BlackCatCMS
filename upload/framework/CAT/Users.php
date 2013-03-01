@@ -41,10 +41,32 @@ if ( ! class_exists( 'CAT_Users', false ) )
 		
 		private $validatePasswordError = NULL;
 		private $lastValidatedPassword = NULL;
+        private $loginerror            = false;
+
+        // user options (column names) added to the session on successful logon
+        private $sessioncols = array(
+            'user_id', 'group_id', 'groups_id', 'username', 'display_name', 'email', 'home_folder'
+        );
+        // extended user options; will be extendable later
+        // '<option_name>' => '<check validity method>'
+        private $useroptions = array(
+            'timezone_string'    => 'CAT_Helper_DateTime::checkTZ',
+            'date_format'        => 'CAT_Helper_DateTime::checkDateformat',
+            'date_format_short'  => 'CAT_Helper_DateTime::checkDateformat',
+            'time_format'        => 'CAT_Helper_DateTime::checkTimeformat',
+        );
+        private static $permissions     = array();
+        private static $defaultuser     = array();
 
         // singleton
         private static $instance        = NULL;
 
+        /**
+         * get singleton
+         *
+         * @access public
+         * @return object
+         **/
         public static function getInstance()
         {
             if (!self::$instance)
@@ -52,7 +74,387 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 self::$instance = new self();
             }
             return self::$instance;
+        }   // end function getInstance()
+
+        /**
+         * handle user login
+         **/
+        public function handleLogin()
+        {
+            global $parser, $database;
+            if ( ! is_object($parser) )
+            {
+                $parser = CAT_Helper_Template::getInstance('Dwoo');
+            }
+            $parser->setPath(CAT_THEME_PATH . '/templates');
+            $parser->setFallbackPath(CAT_THEME_PATH . '/templates');
+
+            $val   = CAT_Helper_Validate::getInstance();
+            $lang  = CAT_Helper_I18n::getInstance();
+
+            if ( ! $this->is_authenticated() )
+            {
+
+                // --- login attempt ---
+                if ( $val->sanitizePost('username_fieldname') )
+                {
+
+                    // get input data
+                    $user = htmlspecialchars($val->sanitizePost($val->sanitizePost('username_fieldname')),ENT_QUOTES);
+                    $pw   = $val->sanitizePost($val->sanitizePost('password_fieldname'));
+                    $name = ( preg_match('/[\;\=\&\|\<\> ]/',$user) ? '' : $user );
+
+                    // check common issues
+                    // we do not check for too long and don't give too much hints!
+                    if ( ! $name )
+                        $this->setError($lang->translate('Invalid credentials'));
+                    if ( ! $this->loginerror && $user == '' || $pw == '' )
+                        $this->setError($lang->translate('Please enter your username and password.'));
+                    if ( ! $this->loginerror && strlen($user) < AUTH_MIN_LOGIN_LENGTH )
+                        $this->setError($lang->translate('Supplied password to short'));
+                    if ( ! $this->loginerror && ! defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < AUTH_MIN_PASS_LENGTH )
+            			$this->setError($lang->translate('The password you entered was too short'));
+
+                    if ( ! $this->loginerror )
+                    {
+                        $query	= 'SELECT * FROM `'.CAT_TABLE_PREFIX.'users` WHERE `username` = "'.$name.'" AND `password` = "'.md5($pw).'" AND `active` = 1';
+                		$result	= $database->query($query);
+                		if ( $result->numRows() == 1 )
+                        {
+
+                            // get default user preferences
+                            $prefs = $this->getDefaultUserOptions();
+                            // get basic user data
+                            $user  = $result->fetchRow( MYSQL_ASSOC );
+                            // add this user's options
+                            $prefs = array_merge(
+                                $prefs,
+                                $this->getUserOptions($user['user_id'])
+                            );
+
+                            foreach( $this->sessioncols as $key )
+                            {
+                                $_SESSION[strtoupper($key)] = $user[$key];
+                            }
+
+                            // ----- preferences -----
+                            $_SESSION['LANGUAGE']
+                                = ( $user['language'] != '' )
+                                ? $user['language']
+                                : ( isset($prefs['language']) ? $prefs['language'] : 'DE' )
+                                ;
+
+                            $_SESSION['TIMEZONE_STRING']
+                                = ( isset($prefs['timezone_string']) && $prefs['timezone_string'] != '' )
+                                ? $prefs['timezone_string']
+                                : DEFAULT_TIMEZONESTRING
+                                ;
+
+                            $_SESSION['DATE_FORMAT']
+                                = ( isset($prefs['date_format']) && $prefs['date_format'] != '' )
+                                ? $prefs['date_format']
+                                : DEFAULT_DATE_FORMAT
+                                ;
+
+                            $_SESSION['DATE_FORMAT_SHORT']
+                                = ( isset($prefs['date_format_short']) && $prefs['date_format_short'] != '' )
+                                ? $prefs['date_format_short']
+                                : DEFAULT_DATE_FORMAT_SHORT
+                                ;
+
+                            $_SESSION['TIME_FORMAT']
+                                = ( isset($prefs['time_format']) && $prefs['time_format'] != '' )
+                                ? $prefs['time_format']
+                                : DEFAULT_TIME_FORMAT
+                                ;
+
+                			date_default_timezone_set($_SESSION['TIMEZONE_STRING']);
+
+                            $_SESSION['SYSTEM_PERMISSIONS']		= 0;
+                			$_SESSION['MODULE_PERMISSIONS']		= array();
+                			$_SESSION['TEMPLATE_PERMISSIONS']	= array();
+                			$_SESSION['GROUP_NAME']				= array();
+
+                            $first_group = true;
+
+                			foreach ( explode(",",$user['groups_id']) as $cur_group_id )
+                			{
+                				$query	 = "SELECT * FROM `".CAT_TABLE_PREFIX."groups` WHERE group_id = '".$cur_group_id."'";
+                				$result	 = $database->query($query);
+                				$results = $result->fetchRow( MYSQL_ASSOC );
+
+                				$_SESSION['GROUP_NAME'][$cur_group_id] = $results['name'];
+
+                				// Set system permissions
+                				if($results['system_permissions'] != '')
+                					$_SESSION['SYSTEM_PERMISSIONS'] = $results['system_permissions'];
+
+                				// Set module permissions
+                				if ( $results['module_permissions'] != '' )
+                				{
+                					if ($first_group)
+                					{
+                						$_SESSION['MODULE_PERMISSIONS']	= explode(',', $results['module_permissions']);
+                					}
+                					else
+                					{
+                						$_SESSION['MODULE_PERMISSIONS']	= array_intersect($_SESSION['MODULE_PERMISSIONS'], explode(',', $results['module_permissions']));
+                					}
+                				}
+
+                				// Set template permissions
+                				if ( $results['template_permissions'] != '' )
+                				{
+                					if ($first_group)
+                					{
+                						$_SESSION['TEMPLATE_PERMISSIONS'] = explode(',', $results['template_permissions']);
+                					}
+                					else
+                					{
+                						$_SESSION['TEMPLATE_PERMISSIONS'] = array_intersect($_SESSION['TEMPLATE_PERMISSIONS'], explode(',', $results['template_permissions']));
+                					}
         }
+
+                				$first_group = false;
+
+                            }   // foreach ( explode(",",$user['groups_id']) as $cur_group_id )
+
+                			// Update the users table with current ip and timestamp
+                			$get_ts		= time();
+                			$get_ip		= $_SERVER['REMOTE_ADDR'];
+                			$query		= "UPDATE `".CAT_TABLE_PREFIX."users` SET login_when = '$get_ts', login_ip = '$get_ip' WHERE user_id = '".$user['user_id']."'";
+                			$database->query($query);
+                            return CAT_ADMIN_URL.'/start/index.php';
+                        }
+                        else
+                        {
+                            $this->setError($lang->translate('Invalid credentials'));
+                        }
+                    }
+
+                    if ( $val->fromSession('ATTEMPTS') > MAX_ATTEMPTS && AUTO_DISABLE_USERS )
+                    {
+                        // if we have a user name
+                        if ( $name )
+                        {
+                            $this->disableAccount($name);
+                        }
+                        return THEME_URL . '/templates/warning.html';
+                    }
+
+                    return false;
+                }
+
+                // create random fieldnames for username and password
+                $salt               = md5(microtime());
+                $username_fieldname	= 'username_'.substr($salt, 0, 7);
+                $password_fieldname	= 'password_'.substr($salt, -7);
+
+				$tpl_data = array(
+                    'USERNAME_FIELDNAME'    => $username_fieldname,
+                    'PASSWORD_FIELDNAME'    => $password_fieldname,
+                    'USERNAME'              => $val->sanitizePost($username_fieldname),
+                    'ACTION_URL'			=> CAT_ADMIN_URL.'/login/index.php',
+                    'LOGIN_URL'				=> CAT_ADMIN_URL.'/login/index.php',
+	                'DEFAULT_URL'			=> CAT_ADMIN_URL.'/start/index.php',
+                    'WARNING_URL'			=> THEME_URL . '/templates/warning.html',
+                    'REDIRECT_URL'			=> ADMIN_URL . '/start/index.php',
+	                'FORGOTTEN_DETAILS_APP'	=> ADMIN_URL . '/login/forgot/index.php',
+                    // --- database settings ---
+                	'MIN_USERNAME_LEN'		=> AUTH_MIN_LOGIN_LENGTH,
+                	'MAX_USERNAME_LEN'		=> AUTH_MAX_LOGIN_LENGTH,
+                	'MIN_PASSWORD_LEN'		=> AUTH_MIN_PASS_LENGTH,
+                	'MAX_PASSWORD_LEN'		=> AUTH_MAX_PASS_LENGTH,
+                    'PAGES_DIRECTORY'       => PAGES_DIRECTORY,
+                    'ATTEMPTS'              => $val->fromSession('ATTEMTPS'),
+                    'MESSAGE'               => $this->loginerror
+                );
+
+				$tpl_data['meta']['LANGUAGE']	= strtolower(LANGUAGE);
+				$tpl_data['meta']['CHARSET']	= (defined('DEFAULT_CHARSET')) ? DEFAULT_CHARSET : "utf-8";
+
+                $parser->output('login.lte',$tpl_data);
+
+            }
+            else
+            {
+                header('Location: '.CAT_ADMIN_URL.'/start/index.php' );
+            }
+
+        }   // end function handleLogin()
+
+        /**
+         * set login error and increase number of login attempts
+         *
+         * @access private
+         * @param  string   $msg - error message
+         * @return void
+         **/
+        private function setError($msg)
+        {
+            $this->loginerror = $msg;
+            if(!isset($_SESSION['ATTEMPTS']))
+    			$_SESSION['ATTEMPTS'] = 0;
+    		else
+    			$_SESSION['ATTEMPTS'] = CAT_Helper_Validate::getInstance()->fromSession('ATTEMPTS') + 1;
+        }   // end function setError()
+
+        /**
+         * get last login error
+         *
+         * @access public
+         * @return mixed
+         **/
+        public function loginError()
+        {
+            return $this->loginerror;
+        }   // end function loginError()
+
+        /**
+         * disable user account; if $user_id is not an int, it is used as name
+         *
+         * @access public
+         * @param  mixed  $user_id
+         * @return void
+         **/
+        public function disableAccount($user_id)
+        {
+            global $database;
+            $query		= "UPDATE `".CAT_TABLE_PREFIX."users` SET active = 0 WHERE "
+                        . ( is_numeric($user_id) ? 'user_id' : 'username' )
+                        . " = '".$user_id."'";
+            $database->query($query);
+        }   // end function disableAccount()
+
+        /**
+         *
+         **/
+        public function checkPermission( $group, $perm, $redirect = false, $for = 'BE' )
+        {
+            // root is always allowed to do it all
+            if ( $this->is_root() ) return true;
+            // all authenticated users are allowed to see the dashboard
+            if ( $perm == 'start' && $this->is_authenticated() ) return true;
+            // fill permissions cache on first call
+            if ( ! count(self::$permissions) )
+            {
+                global $database;
+                $res = $database->query('SELECT perm_name, perm_group, perm_bit FROM '.CAT_TABLE_PREFIX."system_permissions WHERE perm_for='$for';");
+                if($res->numRows())
+                {
+                    while( false !== ( $row = $res->fetchRow(MYSQL_ASSOC) ) )
+                    {
+                        $row['perm_group'] = strtolower($row['perm_group']);
+                        if ( ! isset(self::$permissions[$row['perm_group']]) )
+                            self::$permissions[$row['perm_group']] = array();
+                        self::$permissions[$row['perm_group']][$row['perm_name']] = $row['perm_bit'];
+                    }
+                }
+            }
+
+            $group = strtolower($group);
+            $perm  = strtolower($perm);
+
+            // get needed bit
+            $bit = self::$permissions[$group][$perm];
+            if ( $bit == 0 ) return true;
+
+            // get user perms from session
+            $has = CAT_Helper_Validate::getInstance()->fromSession('SYSTEM_PERMISSIONS','numeric');
+            if ( (int)$has & (int)$bit )
+            {
+                return true;
+            }
+            else
+            {
+                if ( $redirect )
+                {
+                    // cleanup session
+                    // delete most critical session variables manually
+                    $_SESSION['USER_ID'] = null;
+                    $_SESSION['GROUP_ID'] = null;
+                    $_SESSION['GROUPS_ID'] = null;
+                    $_SESSION['USERNAME'] = null;
+                    $_SESSION['PAGE_PERMISSIONS'] = null;
+                    $_SESSION['SYSTEM_PERMISSIONS'] = null;
+
+                    // overwrite session array
+                    $_SESSION = array();
+
+                    // delete session cookie if set
+                    if (isset($_COOKIE[session_name()])) {
+                        setcookie(session_name(), '', time() - 42000, '/');
+                    }
+
+                    // delete the session itself
+                    session_destroy();
+
+                    // redirect to admin login
+                    die(header('Location: ' . CAT_ADMIN_URL . '/login/index.php'));
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+
+        }   // end function checkPermission()
+
+        /**
+         * get global settings for all users
+         *
+         * @access public
+         * @return array
+         *
+         **/
+        public function getDefaultUserOptions()
+        {
+            if ( ! count(self::$defaultuser) )
+            {
+                global $database;
+                $result = $database->query( 'SELECT * FROM '.CAT_TABLE_PREFIX.'users_options WHERE user_id="0";' );
+                if($result->numRows())
+                {
+                    while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+                    {
+                        self::$defaultuser[$row['option_name']] = $row['option_value'];
+                    }
+                }
+            }
+            return self::$defaultuser;
+        }   // end function getDefaultUserOptions()
+
+        /**
+         * get user's preferences
+         *
+         * @access public
+         * @param  integer $user_id
+         * @return array
+         *
+         **/
+        public function getUserOptions($user_id)
+        {
+            global $database;
+            $options = array();
+            $result  = $database->query( 'SELECT * FROM '.CAT_TABLE_PREFIX.'users_options WHERE user_id="'.$user_id.'";' );
+            if($result->numRows())
+            {
+                while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+                {
+                    $options[$row['option_name']] = $row['option_value'];
+                }
+            }
+            return $options;
+        }   // end function getUserOptions()
+
+        public function getExtendedOptions()
+        {
+            return $this->useroptions;
+        }
+
+
+
 
         /* ****************
          * check if current user is member of at least one of given groups
@@ -74,13 +476,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
         // Get the current users id
         public function get_user_id()
         {
-            return $_SESSION['USER_ID'];
+            return CAT_Helper_Validate::getInstance()->fromSession('USER_ID','numeric');
         }
 
         // Get the current users group id (deprecated)
         public function get_group_id()
         {
-            return $_SESSION['GROUP_ID'];
+            return CAT_Helper_Validate::getInstance()->fromSession('GROUP_ID','numeric');
         }
 
         // Get the current users group ids
@@ -98,31 +500,31 @@ if ( ! class_exists( 'CAT_Users', false ) )
         // Get the current users group name
         public function get_groups_name()
         {
-            return $_SESSION['GROUP_NAME'];
+            return CAT_Helper_Validate::getInstance()->fromSession('GROUP_NAME','scalar');
         }
 
         // Get the current users username
         public function get_username()
         {
-            return $_SESSION['USERNAME'];
+            return CAT_Helper_Validate::getInstance()->fromSession('USERNAME','scalar');
         }
 
         // Get the current users display name
         public function get_display_name()
         {
-            return $_SESSION['DISPLAY_NAME'];
+            return CAT_Helper_Validate::getInstance()->fromSession('DISPLAY_NAME','scalar');
         }
 
         // Get the current users email address
         public function get_email()
         {
-            return $_SESSION['EMAIL'];
+            return CAT_Helper_Validate::getInstance()->fromSession('EMAIL');
         }
 
         // Get the current users home folder
         public function get_home_folder()
         {
-            return $_SESSION['HOME_FOLDER'];
+            return CAT_Helper_Validate::getInstance()->fromSession('HOME_FOLDER');
         }
 
     	/**
@@ -277,6 +679,20 @@ if ( ! class_exists( 'CAT_Users', false ) )
     	}   // end function get_user_details()
 
         /**
+         * Check if current user is superuser (the one who installed the CMS)
+         *
+         * @access public
+         * @return boolean
+         **/
+        public function is_root()
+        {
+            if ($this->get_user_id() == 1)
+                return true;
+            else
+                return false;
+        }   // end function is_root()
+
+        /**
          * Check if the user is already authenticated
          *
          * @access public
@@ -284,14 +700,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
          **/
         public function is_authenticated()
         {
-            if (isset($_SESSION['USER_ID']) && $_SESSION['USER_ID'] != "" && is_numeric($_SESSION['USER_ID']))
-            {
+            $user_id = CAT_Helper_Validate::getInstance()->fromSession('USER_ID','numeric');
+            if ($user_id)
                 return true;
-            }
             else
-            {
                 return false;
-            }
         }   // end function is_authenticated()
 
         /**
