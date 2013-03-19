@@ -72,7 +72,7 @@ require_once( CAT_PATH . '/framework/class.login.php' );
 $redirect = strip_tags( ( isset( $_POST[ 'redirect' ] ) ) ? $_POST[ 'redirect' ] : '' );
 $thisApp  = new Login( array(
 	"MAX_ATTEMPTS" => MAX_ATTEMPTS,
-	"WARNING_URL" => CAT_THEME_URL . "/templates/warning.html",
+	"WARNING_URL" => CAT_URL.'/templates/'.DEFAULT_THEME. "/templates/warning.html",
 	"USERNAME_FIELDNAME" => 'username',
 	"PASSWORD_FIELDNAME" => 'password',
 	"MIN_USERNAME_LEN" => AUTH_MIN_LOGIN_LENGTH,

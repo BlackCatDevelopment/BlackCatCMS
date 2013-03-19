@@ -5,7 +5,7 @@
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or (at
  *   your option) any later version.
- * 
+ *
  *   This program is distributed in the hope that it will be useful, but
  *   WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
@@ -17,13 +17,11 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license			http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Core
- *   @package         CAT_Core
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Modules
+ *   @package         lib_dwoo
  *
  */
- 
-define('CAT_LOGIN_PHASE',1);
 
 if (defined('CAT_PATH')) {
 	include(CAT_PATH.'/framework/class.secure.php');
@@ -42,29 +40,8 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-if ( CAT_Helper_Validate::getInstance()->fromSession('ATTEMPTS') > MAX_ATTEMPTS )
-{
-    $redirect = CAT_URL.'/templates/'.DEFAULT_THEME.'/templates/warning.html';
-    $ajax	= array(
-    	'url'			=> $redirect,
-    	'success'		=> true,
-    	'message'		=> NULL
-    );
+function Dwoo_Plugin_get_session( Dwoo $dwoo, $key, $require = NULL ) {
+    return CAT_Helper_Validate::getInstance()->fromSession($key,$require);
 }
-else
-{
-    #CAT_Helper_Protect::getInstance()->enableCSRFMagic();
-    $redirect = CAT_Users::getInstance()->handleLogin();
-    $error    = CAT_Users::getInstance()->loginError();
-    $ajax	= array(
-    	'url'			=> $redirect,
-    	'success'		=> CAT_Users::getInstance()->is_authenticated(),
-    	'message'		=> ( ($redirect===false||$error) ? $error : NULL ),
-    );
-}
-
-header('Content-type: application/json');
-print json_encode( $ajax );
-exit();
 
 ?>

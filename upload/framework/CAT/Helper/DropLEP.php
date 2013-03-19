@@ -32,6 +32,17 @@ if (!class_exists('CAT_Helper_DropLEP')) {
 	require_once CAT_PATH.'/modules/lib_search/search.dropleps.php';
 	
 	class CAT_Helper_DropLEP extends CAT_Object	{
+
+        private static $instance = NULL;
+
+        public static function getInstance()
+        {
+            if (!self::$instance)
+            {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }
 	
 		/**
 		 * Install a DropLEP from a ZIP file (the ZIP may contain more than one

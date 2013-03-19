@@ -46,6 +46,8 @@ if(file_exists(CAT_PATH .'/modules/initial_page/classes/c_init_page.php') && iss
 
 $user  = CAT_Users::getInstance();
 $lang  = CAT_Helper_I18n::getInstance();
+$widget = CAT_Helper_Widget::getInstance();
+$addonh = CAT_Helper_Addons::getInstance();
 
 // this will redirect to the login page if the permission is not set
 $user->checkPermission('start','start',false);
@@ -119,6 +121,30 @@ foreach(
 
 include CAT_PATH.'/framework/class.admin.php';
 $admin = new admin('start','start');
+
+// ============
+// ! Widgets
+// ============
+$widgets = $widget->getWidgets();
+
+foreach( $widgets as $widget )
+{
+    $path = pathinfo($widget,PATHINFO_DIRNAME);
+    $info = $content = NULL;
+    if ( file_exists($path.'/info.php') )
+    {
+        $info = $addonh->checkInfo($path);
+    }
+    if ( file_exists($path.'/language/'.LANGUAGE.'.php') )
+    {
+        $admin->lang->addFile($path.'/language/'.LANGUAGE.'.php');
+    }
+    ob_start();
+        include($widget);
+        $content = ob_get_contents();
+    ob_clean();
+    $tpl_data['widgets'][] = array_merge( $info, array('content'=>$content) );
+}
 
 // ==================== 
 // ! Parse the site   

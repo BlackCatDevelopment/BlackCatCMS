@@ -45,6 +45,8 @@ if (!class_exists('CAT_Helper_DateTime'))
 
         public function __call($method, $args)
         {
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
             if ( method_exists( $this, $method ) )
                 return call_user_func_array(array($this, $method), $args);
         }
@@ -99,8 +101,8 @@ if (!class_exists('CAT_Helper_DateTime'))
         public static function getDate($t=NULL,$long=false)
         {
             $format = ( $long === true )
-                    ? $this->getDefaultDateFormatLong()
-                    : $this->getDefaultDateFormatShort();
+                    ? self::getDefaultDateFormatLong()
+                    : self::getDefaultDateFormatShort();
             return date($format,($t?$t:time()));
         }   // end function getDate()
 

@@ -332,28 +332,12 @@ class wb
      */
 	public function print_success($message, $redirect = 'index.php', $auto_footer = true)
 	{
-		global $TEXT;
+		global $TEXT, $parser;
 
 		if (true === is_array($message)){
 			$message = implode("<br />", $message);
 		}
 
-		// ======================================================================================= 
-		// ! Try to include the info.php  of the template to seperate old and new TemplateEngine   
-		// ======================================================================================= 
-		if ( file_exists(CAT_THEME_PATH.'/info.php') )
-		{
-			include( CAT_THEME_PATH . '/info.php' );
-			// ================================================================= 
-			// ! Current controller to check, if it is a new template for Dwoo   
-			// ================================================================= 
-			if ( isset($template_engine) && $template_engine == 'dwoo' )
-			{
-				global $parser;
-
-				// =================================== 
-				// ! initialize template search path   
-				// =================================== 
 				$parser->setPath(CAT_THEME_PATH . '/templates');
 				$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
@@ -365,14 +349,7 @@ class wb
 				// ! Parse the header 	
 				// ==================== 
 				$parser->output('success.lte', $data_dwoo);
-			}
-		}
-		// If the script couldn't include the info.php, print an error message
-		else
-		{
-			echo 'info.php is missing in theme directory. Please check your backend theme if there is a info.php.';
-			exit();
-		}
+
 		if ($auto_footer == true)
 		{
 			if (method_exists($this, "print_footer"))

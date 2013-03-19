@@ -44,8 +44,8 @@
 <!-- OPTIONAL: display frontend login -->
 <div id="login">
 <?php
-if (FRONTEND_LOGIN == 'enabled' && VISIBILITY != 'private' 
-	&& $wb->get_session('USER_ID') == '') { ?>
+if (FRONTEND_LOGIN == 'enabled' && VISIBILITY != 'private' ) { ?>
+	{if get_session('USER_ID') == ''}
 	<!-- login form -->
 	<form name="login" id="login1" action="<?php 
 		echo LOGIN_URL; ?>" method="post">
@@ -57,7 +57,7 @@ if (FRONTEND_LOGIN == 'enabled' && VISIBILITY != 'private'
 				style="text-transform: lowercase;" /><br />
 			<label for="password" accesskey="2">{$TEXT.PASSWORD}:</label>
 			<input type="password" name="password" id="password" /><br />
-			<input type="submit" name="wb_login" id="wb_login" value="{$MENU.LOGIN}"/><br />
+			<input type="submit" name="wb_login" id="wb_login" value="{translate('Login')}"/><br />
 	
 			<!-- forgotten details link -->
 			<a href="<?php echo FORGOT_URL; ?>">{$TEXT.FORGOT_DETAILS}</a>
@@ -69,6 +69,7 @@ if (is_numeric(FRONTEND_SIGNUP) && (FRONTEND_SIGNUP != 0 )) { ?>
 			<?php } ?>
 		</fieldset>
 	</form>
+    {/if}
 <?php 
 } elseif (FRONTEND_LOGIN == 'enabled' && is_numeric($wb->get_session('USER_ID'))) { ?>
 	<!-- logout form -->
@@ -76,9 +77,9 @@ if (is_numeric(FRONTEND_SIGNUP) && (FRONTEND_SIGNUP != 0 )) { ?>
 		<fieldset>
 			<legend>{$TEXT.LOGGED_IN}:</legend>
 			<p>{$TEXT.WELCOME_BACK}, <?php echo $wb->get_display_name(); ?></p>
-			<input type="submit" name="wb_login" id="wb_login" value="{$MENU.LOGOUT}" />
+			<input type="submit" name="wb_login" id="wb_login" value="{translate('Logout')}" />
 			<!-- edit user preferences -->
-			<p><a href="<?php echo PREFERENCES_URL; ?>">{$MENU.PREFERENCES}</a></p>
+			<p><a href="<?php echo PREFERENCES_URL; ?>">{translate('Preferences')}</a></p>
 		</fieldset>
 	</form>
 <?php 

@@ -51,10 +51,12 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         }
 	    
         /**
+         * find file with given name; returns file path if found, false if not
          *
-         *
-         *
-         *
+         * @access public
+         * @param  string  $file - file to find
+         * @param  string  $dir  - directory to scan
+         * @return mixed
          **/
         public function findFile( $file, $dir )
         {
@@ -69,7 +71,31 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                 }
             }
             return false;
+        }   // end function findFile()
+
+        /**
+         *
+         *
+         *
+         *
+         **/
+        public function findFiles( $pattern, $dir, $remove_dir = false )
+        {
+            $list  = $this->scanDirectory( $dir, true, true );
+            $files = array();
+            // sort list
+            sort($list);
+            foreach($list as $entry)
+            {
+                if( preg_match( "~^$pattern$~i", pathinfo($entry,PATHINFO_BASENAME) ) )
+                {
+                    $files[] = $remove_dir
+                             ? str_ireplace( $dir, '', $entry )
+                             : $entry;
+                }
         }
+            return $files;
+        }   // end function findFiles()
 	    
 	    /**
          *

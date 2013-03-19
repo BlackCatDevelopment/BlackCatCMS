@@ -88,3 +88,6 @@
 #fc_widget_list_2 {
 	display: none;
 }
+
+.widget_error{color: #CC0000;font-weight: bold;}
+.widget_info{color: #3366CC;font-weight: bold;}

@@ -233,7 +233,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         {
                             $this->disableAccount($name);
                         }
-                        return THEME_URL . '/templates/warning.html';
+                        return CAT_THEME_URL . '/templates/warning.html';
                     }
 
                     return false;
@@ -251,7 +251,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     'ACTION_URL'			=> CAT_ADMIN_URL.'/login/index.php',
                     'LOGIN_URL'				=> CAT_ADMIN_URL.'/login/index.php',
 	                'DEFAULT_URL'			=> CAT_ADMIN_URL.'/start/index.php',
-                    'WARNING_URL'			=> THEME_URL . '/templates/warning.html',
+                    'WARNING_URL'			=> CAT_THEME_URL . '/templates/warning.html',
                     'REDIRECT_URL'			=> ADMIN_URL . '/start/index.php',
 	                'FORGOTTEN_DETAILS_APP'	=> ADMIN_URL . '/login/forgot/index.php',
                     // --- database settings ---
@@ -629,7 +629,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
             {
                 $val = CAT_Helper_Validate::getInstance();
     			// Set system permissions var
-    			$system_permissions   = $val->fromSession('SYSTEM_PERMISSIONS');
+    			$system_permissions   = explode(',',$val->fromSession('SYSTEM_PERMISSIONS'));
     			// Set module permissions var
     			$module_permissions   = $val->fromSession('MODULE_PERMISSIONS');
     			// Set template permissions var

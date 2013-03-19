@@ -1839,7 +1839,7 @@ if (!class_exists('CAT_Pages', false))
                     $this->_analyze_javascripts($temp_arr, 'header', $path_prefix . '/js', $section);
                 }
             }
-        }
+        }   // end function _load_headers_inc()
 
         /**
          *
