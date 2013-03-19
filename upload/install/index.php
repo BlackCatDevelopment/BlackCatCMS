@@ -899,7 +899,7 @@ function check_tables($database) {
 	$requested_tables = array("class_secure","pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_dropleps_settings","mod_dropleps_permissions","mod_wysiwyg","mod_wysiwyg_admin_v2");
 	for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
 
-	$result = mysql_query("SHOW TABLES FROM ".DB_NAME);
+	$result = mysql_query("SHOW TABLES FROM ".CAT_DB_NAME);
 
     if(!is_resource($result)) {
         $errors['tables'] = 'Unable to check tables - no result from SHOW TABLES!';
