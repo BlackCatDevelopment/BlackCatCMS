@@ -729,12 +729,18 @@ function fill_tables($database) {
     // fill 'hardcoded' settings and class.secure config
     __cat_installer_import_sql(dirname(__FILE__).'/db/data.sql',$database);
 
+    // get current version
+    $tag = fopen( dirname(__FILE__).'/tag.txt', 'r' );
+    $current_build = fgets($tag);
+    fclose($tag);
+
     // fill settings configured by installer
 	$settings_rows = "INSERT INTO `".CAT_TABLE_PREFIX."settings` "
 		." (name, value) VALUES "
         ." ('guid', '" . ( ( isset($config['create_guid']) && $config['create_guid'] == 'true' ) ? $admin->createGUID($config['guid_prefix']) : '' ) . "'),"
 		." ('app_name', 'cat$session_rand'),"
-		." ('cat_version', '".VERSION."'),"
+		." ('app_build', '$current_build'),"
+		." ('cat_version', '".CAT_VERSION."'),"
 		." ('default_language', '".$config['default_language']."'),"
 		." ('default_timezone_string', '".$config['default_timezone_string']."'),"
         ." ('installation_time', '".time()."'),"
