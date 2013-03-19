@@ -891,6 +891,8 @@ function check_tables($database) {
 
 	global $config;
 	$errors = array();
+	$all_tables = array();
+	$missing_tables = array();
 
 	$table_prefix = $config['table_prefix'];
 
@@ -898,15 +900,18 @@ function check_tables($database) {
 	for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
 
 	$result = mysql_query("SHOW TABLES FROM ".DB_NAME);
-	$all_tables = array();
-	for($i=0; $i < mysql_num_rows($result); $i++) $all_tables[] = mysql_table_name($result, $i);
 
-	$missing_tables = array();
-	foreach($requested_tables as $temp_table) {
-		if (!in_array($temp_table, $all_tables)) {
-			$missing_tables[] = $temp_table;
-		}
-	}
+    if(!is_resource($result)) {
+        $errors['tables'] = 'Unable to check tables - no result from SHOW TABLES!';
+    }
+    else {
+	    for($i=0; $i < mysql_num_rows($result); $i++) $all_tables[] = mysql_table_name($result, $i);
+    	foreach($requested_tables as $temp_table) {
+    		if (!in_array($temp_table, $all_tables)) {
+    			$missing_tables[] = $temp_table;
+    		}
+    	}
+    }
 
 	/**
 	 *	If one or more needed tables are missing, so
@@ -1219,6 +1224,7 @@ function __do_install() {
 
 	if ( count($errors) )
 	{
+        $parser->setPath( dirname(__FILE__).'/templates/default' );
 		$output = $parser->get(
 	        'install_errors.lte',
 	        array( 'errors' => $errors )
