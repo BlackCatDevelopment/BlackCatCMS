@@ -91,7 +91,7 @@ if ( ! class_exists( 'CAT_Helper_Zip', false ) )
             return self::$_drivers[$driver];
         }   // end function getDriver()
 
-        public function config($option,$value) { return self::$zip->config($option,$value); }
+        public function config($option,$value=NULL) { return self::$zip->config($option,$value); }
         public function add($p_filelist)    { return self::$zip->add($p_filelist);    }
         public function create($p_filelist) { return self::$zip->create($p_filelist); }
         public function extract()           { return self::$zip->extract();           }

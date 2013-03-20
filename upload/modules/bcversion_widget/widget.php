@@ -48,10 +48,26 @@ $settings = array(
 
 $error = $version = $newer = NULL;
 $debug = true;
+$doit  = true;
+$last  = $last_version = NULL;
+$fh    = @fopen(sanitize_path(dirname(__FILE__).'/.last'),'r');
 
-ini_set('include_path', CAT_PATH.'/modules/bcversion_widget/inc');
-include 'Zend/Http/Client.php';
-$client = new Zend_Http_Client(
+if ( is_resource($fh) ) {
+    $last = fgets($fh);
+    fclose($fh);
+}
+
+if ( $last ) {
+    list( $last, $last_version ) = explode('|',$last);
+    if ( ! $last <= ( time() - 60 * 60 * 24 ) ) {
+        $doit = false;
+    }
+}
+
+if ( $doit ) {
+    ini_set('include_path', CAT_PATH.'/modules/bcversion_widget/inc');
+    include 'Zend/Http/Client.php';
+    $client = new Zend_Http_Client(
     $settings['source'],
     array(
         'timeout'      => $settings['timeout'],
@@ -59,10 +75,10 @@ $client = new Zend_Http_Client(
         'proxy_host'   => $settings['proxy_host'],
 		'proxy_port'   => $settings['proxy_port'],
     )
-);
-$client->setCookieJar();
+    );
+    $client->setCookieJar();
 
-try {
+    try {
     $response = $client->request( Zend_Http_Client::GET );
     if ( $response->getStatus() != '200' ) {
         $error = "Unable to load source:<br />"
@@ -73,18 +89,27 @@ try {
 		       ;
     }
     $version = $response->getRawBody();
-} catch ( Zend_HTTP_Client_Adapter_Exception $e) {
+    } catch ( Zend_HTTP_Client_Adapter_Exception $e) {
     $error = "Unable to load source:<br />"
            . "(Using Proxy: " . ( ( isset($settings['proxy_host']) && $settings['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
            . $e->getMessage()
            . "<br />"
            ;
+    }
+}
+else {
+    $version = $last_version;
 }
 
 if ( $version ) {
     if ( CAT_Helper_Addons::getInstance()->versionCompare($version,CAT_VERSION,'>' ) ) {
         $newer = true;
     }
+}
+$fh   = @fopen(sanitize_path(dirname(__FILE__).'/.last'),'w');
+if ( is_resource($fh) ) {
+    fputs($fh,time().'|'.$version);
+    fclose($fh);
 }
 
 $parser->setPath(dirname(__FILE__).'/templates/default');

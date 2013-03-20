@@ -731,6 +731,23 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return(sizeof(array_intersect($groups_list1, $groups_list2)) != 0);
         }   // end function is_group_match()
 
+        /**
+         * very simple method to generate a random string, may be used for
+         * passwords (but not strong ones)
+         *
+         * @access public
+         * @param  integer  $length (default:10)
+         * @return string
+         **/
+        public function generateRandomString( $length = 10 ) {
+            for(
+                   $code_length = $length, $newcode = '';
+                   strlen($newcode) < $code_length;
+                   $newcode .= chr(!rand(0, 2) ? rand(48, 57) : (!rand(0, 1) ? rand(65, 90) : rand(97, 122)))
+            );
+            return $newcode;
+        }   // end function generateRandomString()
+
 		/**
 		 * Checks for valid password. Returns boolean. The following checks are done:
 		 *
