@@ -49,6 +49,18 @@ if ( ! class_exists( 'CAT_Helper_Zip', false ) )
             return self::$zip;
 		}   // end function __construct()
 
+        /**
+         * forward unknown methods to driver
+         *
+         */
+        public function __call($method,$attr)
+        {
+            if ( method_exists( self::$zip, $method ) )
+            {
+                return self::$zip->$method($attr);
+            }
+        }   // end function __call()
+
 		/**
 		 *
          *
