@@ -408,7 +408,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
                     if (!file_exists($pages_path . $parents))
                     {
                         make_dir($pages_path . $parents);
-                        change_mode($pages_path . $parents);
+                        CAT_Helper_Directory::getInstance()->setPerms($pages_path . $parents);
                     }
                 }
             }
@@ -447,7 +447,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
                  *  Chmod the file
                  *
                  */
-                change_mode($filename);
+                CAT_Helper_Directory::getInstance()->setPerms($filename);
                 /**
 				 *	Looking for the index.php inside the current directory.
 				 *	If not found - we're just copy the master_index.php from the admin/pages

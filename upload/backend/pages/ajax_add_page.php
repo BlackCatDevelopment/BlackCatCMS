@@ -1,45 +1,53 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH . '/framework/class.secure.php');
+	if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
+	$inc = false;
+	foreach ($subs as $sub) {
+		if (empty($sub)) continue; $dir .= '/'.$sub;
+		if (file_exists($dir.'/framework/class.secure.php')) {
+			include($dir.'/framework/class.secure.php'); $inc = true;	break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 require_once(CAT_PATH . '/framework/class.admin.php');
 $admin	= new admin('Pages', 'pages_add', false );
 
+$user  = CAT_Users::getInstance();
+$val   = CAT_Helper_Validate::getInstance();
+
 header('Content-type: application/json');
 
-if ( !$admin->get_permission('pages_add') )
+if ( ! $user->checkPermission('pages','pages_add',false) )
 {
 	$ajax	= array(
 		'message'	=> $admin->lang->translate('You don\'t have the permission to add a page.'),
@@ -57,20 +65,20 @@ require_once(CAT_PATH . '/framework/functions.php');
 // ============== 
 // ! Get values   
 // ============== 
-$page_title			= htmlspecialchars($admin->get_post_escaped('page_title') );
-$menu_title			= htmlspecialchars($admin->get_post_escaped('menu_title') );
-$description		= htmlspecialchars($admin->add_slashes($admin->get_post('description')) );
-$keywords			= htmlspecialchars($admin->add_slashes($admin->get_post('keywords')) );
-$parent				= $admin->get_post_escaped('parent');
-$target				= $admin->get_post_escaped('target');
-$template			= $admin->get_post_escaped('template');
-$menu				= ( $admin->get_post_escaped('menu') != '') ? $admin->get_post_escaped('menu') : 1;
-$language			= $admin->get_post_escaped('language');
-$visibility			= $admin->get_post_escaped('visibility');
-$searching			= $admin->get_post_escaped('searching') ? '1' : '0';
-$admin_groups		= $admin->get_post_escaped('admin_groups');
-$viewing_groups		= $admin->get_post_escaped('viewing_groups');
-$module				= $admin->get_post('type');
+$page_title			= htmlspecialchars($val->sanitizePost('page_title',NULL,true) );
+$menu_title			= htmlspecialchars($val->sanitizePost('menu_title',NULL,true) );
+$description		= htmlspecialchars($admin->add_slashes($val->sanitizePost('description')) );
+$keywords			= htmlspecialchars($admin->add_slashes($val->sanitizePost('keywords')) );
+$parent				= $val->sanitizePost('parent',NULL,true);
+$target				= $val->sanitizePost('target',NULL,true);
+$template			= $val->sanitizePost('template',NULL,true);
+$menu				= ( $val->sanitizePost('menu',NULL,true) != '') ? $val->sanitizePost('menu',NULL,true) : 1;
+$language			= $val->sanitizePost('language',NULL,true);
+$visibility			= $val->sanitizePost('visibility',NULL,true);
+$searching			= $val->sanitizePost('searching',NULL,true) ? '1' : '0';
+$admin_groups		= $val->sanitizePost('admin_groups',NULL,true);
+$viewing_groups		= $val->sanitizePost('viewing_groups',NULL,true);
+$module				= $val->sanitizePost('type');
 
 // ============================= 
 // ! add Admin and view groups   
@@ -93,7 +101,7 @@ if ( $parent != 0 )
 		exit();
 	}
 }
-elseif ( !$admin->get_permission('pages_add_l0','system') )
+elseif ( ! $user->checkPermission('pages_add_l0','system',false) )
 {
 	$ajax	= array(
 		'message'	=>  $admin->lang->translate('You do not have permissions to modify this page'),
