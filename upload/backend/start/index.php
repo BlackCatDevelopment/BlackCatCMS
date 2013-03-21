@@ -135,9 +135,9 @@ foreach( $widgets as $widget )
     {
         $info = $addonh->checkInfo($path);
     }
-    if ( file_exists($path.'/language/'.LANGUAGE.'.php') )
+    if ( file_exists($path.'/languages/'.LANGUAGE.'.php') )
     {
-        $admin->lang->addFile(LANGUAGE.'.php', $path.'/language/');
+        $admin->lang->addFile(LANGUAGE.'.php', $path.'/languages/');
     }
     ob_start();
         include($widget);

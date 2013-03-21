@@ -739,7 +739,7 @@ function fill_tables($database) {
 		." (name, value) VALUES "
         ." ('guid', '" . ( ( isset($config['create_guid']) && $config['create_guid'] == 'true' ) ? $admin->createGUID($config['guid_prefix']) : '' ) . "'),"
 		." ('app_name', 'cat$session_rand'),"
-		." ('app_build', '$current_build'),"
+		." ('cat_build', '$current_build'),"
 		." ('cat_version', '".CAT_VERSION."'),"
 		." ('default_language', '".$config['default_language']."'),"
 		." ('default_timezone_string', '".$config['default_timezone_string']."'),"

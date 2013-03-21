@@ -42,7 +42,8 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-if (!defined('CAT_CORE')) define('CAT_CORE', 'Black Cat CMS');
-if (!defined('CAT_VERSION')) define('CAT_VERSION', 'Black Cat CMS ALPHA 0');
+if (!defined('CAT_CORE'))    define('CAT_CORE'   , 'Black Cat CMS');
+if (!defined('CAT_VERSION')) define('CAT_VERSION', '1.0.0'        );
+if (!defined('CAT_BUILD'))   define('CAT_BUILD'  , ''             );
 
 ?>

@@ -47,10 +47,8 @@ if ( $get_tool == '' )
 	exit(0);
 }
 
-// =========================================================================== 
-// ! Create the controller, it is reusable and can render multiple templates 	
-// =========================================================================== 
 global $parser;
+$parser->setGlobals('CAT_ADMIN_URL',CAT_ADMIN_URL);
 
 // ============================== 
 // ! Check if tool is installed   
@@ -65,6 +63,7 @@ $tool	= $result->fetchRow();
 
 // Set toolname
 $data_dwoo['TOOL_NAME']		= $tool['name'];
+$parser->setGlobals('TOOL_URL',CAT_ADMIN_URL.'/admintools/tool.php?tool='.$tool['directory']);
 
 // Check if folder of tool exists
 if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php') )
