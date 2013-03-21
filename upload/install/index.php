@@ -731,7 +731,7 @@ function fill_tables($database) {
 
     // get current version
     $tag = fopen( dirname(__FILE__).'/tag.txt', 'r' );
-    $current_build = fgets($tag);
+    list ( $current_version, $current_build ) = explode( '#', fgets($tag) );
     fclose($tag);
 
     // fill settings configured by installer
@@ -740,7 +740,7 @@ function fill_tables($database) {
         ." ('guid', '" . ( ( isset($config['create_guid']) && $config['create_guid'] == 'true' ) ? $admin->createGUID($config['guid_prefix']) : '' ) . "'),"
 		." ('app_name', 'cat$session_rand'),"
 		." ('cat_build', '$current_build'),"
-		." ('cat_version', '".CAT_VERSION."'),"
+		." ('cat_version', '$current_version'),"
 		." ('default_language', '".$config['default_language']."'),"
 		." ('default_timezone_string', '".$config['default_timezone_string']."'),"
         ." ('installation_time', '".time()."'),"

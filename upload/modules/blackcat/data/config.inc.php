@@ -19,7 +19,7 @@
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
- *   @package         bcversion_widget
+ *   @package         blackcat
  *
  */
 
@@ -39,12 +39,39 @@ if (defined('CAT_PATH')) {
 	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$LANG = array(
-    'Local version' => 'Lokale Version',
-    'Remote version' => 'Ermittelte Version',
-    'A newer version is available!' => 'Eine neue Version ist verfügbar!',
-    "You're up-to-date!" => 'Ihre Version ist aktuell!',
-    'Version check source file' => 'Quelldatei für die Versionsprüfung',
-    'Proxy host (leave empty if you don\'t have one)' => 'Proxy Host (leer lassen wenn nicht vorhanden)',
-    'Proxy port (leave empty if you don\'t need a proxy)' => 'Proxy Port (leer lassen wenn nicht vorhanden)',
+$settings = array (
+  array (
+    'value' => 'http://blackcat-cms.org/media/_internal_/version.txt',
+    'name' => 'source',
+    'label' => 'Version check source file',
+    'type' => 'text',
+    'disabled' => 'disabled',
+  ),
+  array (
+    'value' => '30',
+    'name' => 'timeout',
+    'label' => 'Timeout',
+    'type' => 'text',
+  ),
+  array (
+    'value' => 'proxy.materna.de',
+    'name' => 'proxy_host',
+    'label' => 'Proxy host (leave empty if you don\'t have one)',
+    'type' => 'text',
+  ),
+  array (
+    'value' => '8080',
+    'name' => 'proxy_port',
+    'label' => 'Proxy port (leave empty if you don\'t need a proxy)',
+    'type' => 'text',
+  ),
 );
+
+// --- do not change this manually, use the Admin Tool! ---
+$current = array(
+    'source' => 'http://blackcat-cms.org/media/_internal_/version.txt',
+    'timeout' => '30',
+    'proxy_host' => 'proxy.materna.de',
+    'proxy_port' => '8080',
+);
+

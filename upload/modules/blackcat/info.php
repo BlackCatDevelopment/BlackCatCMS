@@ -19,7 +19,7 @@
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
- *   @package         bcversion_widget
+ *   @package         blackcat
  *
  */
 
@@ -39,15 +39,15 @@ if (defined('CAT_PATH')) {
 	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$module_directory	= 'bcversion_widget';
-$module_name		= 'Check BlackCat CMS Version (Widget)';
-$module_function	= 'widget';
-$module_version		= '0.1';
-$module_platform	= '2.0';
+$module_directory	  = 'blackcat';
+$module_name		  = 'BlackCat CMS Admin Tool and Widget';
+$module_function	  = 'tool';
+$module_version		  = '0.2';
+$module_platform	  = '1.0';
 $module_author		= 'BlackCat  Development';
-$module_license		= 'GNU GPL';
+$module_license		  = 'GNU General Public License';
 $module_license_terms = '';
-$module_description	= 'Checks BlackCat CMS version';
+$module_description   = 'BlackCat CMS Admin Tool and Widget - allows to check for new versions (widget demo)';
 $module_guid		= 'CF217773-24C7-4DAB-954F-98D9F7118F7D';
 
 ?>

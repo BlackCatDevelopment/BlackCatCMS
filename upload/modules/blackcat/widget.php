@@ -19,7 +19,7 @@
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
- *   @package         bcversion_widget
+ *   @package         blackcat
  *
  */
 
@@ -39,18 +39,13 @@ if (defined('CAT_PATH')) {
 	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$settings = array(
-    'source'     => 'http://blackcat-cms.org/media/_internal_/version.txt',
-    'timeout'    => '30',
-    'proxy_host' => '',
-    'proxy_port' => '',
-);
+include dirname(__FILE__).'/data/config.inc.php';
 
 $error = $version = $newer = NULL;
 $debug = true;
 $doit  = true;
 $last  = $last_version = NULL;
-$fh    = @fopen(sanitize_path(dirname(__FILE__).'/.last'),'r');
+$fh    = @fopen(sanitize_path(dirname(__FILE__).'/data/.last'),'r');
 
 if ( is_resource($fh) ) {
     $last = fgets($fh);
@@ -59,21 +54,22 @@ if ( is_resource($fh) ) {
 
 if ( $last ) {
     list( $last, $last_version ) = explode('|',$last);
-    if ( ! $last <= ( time() - 60 * 60 * 24 ) ) {
+    if ( $last > ( time() - 60 * 60 * 24 ) ) {
         $doit = false;
     }
 }
 
 if ( $doit ) {
-    ini_set('include_path', CAT_PATH.'/modules/bcversion_widget/inc');
+
+    ini_set('include_path', CAT_PATH.'/modules/blackcat/inc');
     include 'Zend/Http/Client.php';
     $client = new Zend_Http_Client(
-    $settings['source'],
+        $current['source'],
     array(
-        'timeout'      => $settings['timeout'],
+            'timeout'      => $current['timeout'],
         'adapter' 	   => 'Zend_Http_Client_Adapter_Proxy',
-        'proxy_host'   => $settings['proxy_host'],
-		'proxy_port'   => $settings['proxy_port'],
+            'proxy_host'   => $current['proxy_host'],
+    		'proxy_port'   => $current['proxy_port'],
     )
     );
     $client->setCookieJar();
@@ -82,7 +78,7 @@ if ( $doit ) {
     $response = $client->request( Zend_Http_Client::GET );
     if ( $response->getStatus() != '200' ) {
         $error = "Unable to load source:<br />"
-               . "(Using Proxy: " . ( ( isset($settings['proxy_host']) && $settings['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
+                   . "(Using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
                . "Status: " . $response->getStatus() . " - " . $response->getMessage()
                . ( ( $debug ) ? "<br />".var_dump($client->getLastRequest()) : NULL )
                . "<br />"
@@ -91,7 +87,7 @@ if ( $doit ) {
     $version = $response->getRawBody();
     } catch ( Zend_HTTP_Client_Adapter_Exception $e) {
     $error = "Unable to load source:<br />"
-           . "(Using Proxy: " . ( ( isset($settings['proxy_host']) && $settings['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
+               . "(Using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
            . $e->getMessage()
            . "<br />"
            ;
@@ -101,12 +97,14 @@ else {
     $version = $last_version;
 }
 
-if ( $version ) {
+if ( $version )
+{
     if ( CAT_Helper_Addons::getInstance()->versionCompare($version,CAT_VERSION,'>' ) ) {
         $newer = true;
     }
 }
-$fh   = @fopen(sanitize_path(dirname(__FILE__).'/.last'),'w');
+
+$fh   = @fopen(sanitize_path(dirname(__FILE__).'/data/.last'),'w');
 if ( is_resource($fh) ) {
     fputs($fh,time().'|'.$version);
     fclose($fh);

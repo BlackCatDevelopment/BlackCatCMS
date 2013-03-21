@@ -19,7 +19,7 @@
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
- *   @package         bcversion_widget
+ *   @package         blackcat
  *
  */
 
@@ -39,12 +39,34 @@ if (defined('CAT_PATH')) {
 	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$LANG = array(
-    'Local version' => 'Lokale Version',
-    'Remote version' => 'Ermittelte Version',
-    'A newer version is available!' => 'Eine neue Version ist verfügbar!',
-    "You're up-to-date!" => 'Ihre Version ist aktuell!',
-    'Version check source file' => 'Quelldatei für die Versionsprüfung',
-    'Proxy host (leave empty if you don\'t have one)' => 'Proxy Host (leer lassen wenn nicht vorhanden)',
-    'Proxy port (leave empty if you don\'t need a proxy)' => 'Proxy Port (leer lassen wenn nicht vorhanden)',
-);
+include dirname(__FILE__).'/data/config.inc.php';
+
+if(CAT_Helper_Validate::getInstance()->sanitizePost('submit'))
+{
+    $val   = CAT_Helper_Validate::getInstance();
+    $diffs = 0;
+    foreach($settings as $i => $set)
+    {
+        $field = $set['name'];
+        if ( $field == 'source' ) continue;
+        $new   = $val->sanitizePost($field);
+        if ( $new != $set['value'] )
+        {
+            $settings[$i]['value'] = $new;
+            $diffs++;
+        }
+    }
+    if($diffs)
+    {
+        $inc  = file_get_contents(dirname(__FILE__).'/data/config.inc.php');
+        $ainc = preg_split( '~// --- do not change this manually, use the Admin Tool! ---~', $inc, NULL, PREG_SPLIT_DELIM_CAPTURE);
+        $fh   = fopen(dirname(__FILE__).'/data/config.inc.php','w');
+        fwrite($fh,$ainc[0]);
+        fwrite($fh,"// --- do not change this manually, use the Admin Tool! ---\n\$settings = ");
+        fwrite($fh,var_export($settings,1).";\n");
+        fclose($fh);
+    }
+}
+
+$parser->setPath(dirname(__FILE__).'/templates/default');
+$parser->output('tool.tpl',array('settings'=>$settings));
