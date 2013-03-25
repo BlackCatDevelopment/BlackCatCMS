@@ -105,8 +105,8 @@ if ( is_dir( $load_path ) )
 				'filetype'			=> $filetype,
 				'show_preview'		=> in_array( strtolower($filetype), $allowed_img_types ) ? true : false,
 				'filesize'			=> $dirh->getSize($file_path,true),
-				'filedate'			=> date ($date->getDefaultDateFormatShort(), filemtime($file_path)),
-				'filetime'			=> date ($date->getDefaultTimeFormat(), filemtime($file_path)),
+				'filedate'			=> strftime($date->getDefaultDateFormatShort(), filemtime($file_path)),
+				'filetime'			=> strftime($date->getDefaultTimeFormat(), filemtime($file_path)),
 				'full_name'			=> $file,
 				'filename'			=> substr($file , 0 , -( strlen($filetype) + 1 ) ),
                 'load_url'			=> $val->sanitize_url(CAT_URL.'/'.$load_url)
@@ -122,8 +122,8 @@ else
 		'filetype'			=> $filetype,
 		'show_preview'		=> in_array( strtolower($filetype), $allowed_img_types ) ? true : false,
 		'filesize'			=> $dirh->getSize( $load_path, true ),
-		'filedate'			=> date ($date->getDefaultDateFormatShort(), filemtime( $load_path )),
-		'filetime'			=> date ($date->getDefaultTimeFormat(), filemtime( $load_path )),
+		'filedate'			=> strftime($date->getDefaultDateFormatShort(), filemtime( $load_path )),
+		'filetime'			=> strftime($date->getDefaultTimeFormat(), filemtime( $load_path )) . ( isset($language_time_string) ? ' '.$language_time_string : '' ),
 		'full_name'			=> $load_file,
 		'filename'			=> substr($load_file , 0 , -( strlen($filetype) + 1 ) ),
 		'load_url'			=> $val->sanitize_url(CAT_URL.'/'.$load_url)
