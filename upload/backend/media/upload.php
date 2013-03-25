@@ -1,37 +1,42 @@
 <?php
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
- * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ * 
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license		  http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH . '/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 // ================================= 
 // ! Include the WB functions file   
@@ -41,18 +46,22 @@ include_once( sanitize_path ( CAT_PATH . '/framework/functions.php' ) );
 require_once( sanitize_path( CAT_PATH . '/framework/class.admin.php' ) );
 $admin	= new admin('Media', 'media');
 
+$dirh  = CAT_Helper_Directory::getInstance();
+$val   = CAT_Helper_Validate::getInstance();
+$user  = CAT_Users::getInstance();
+
 // ================================================ 
 // ! Check if user has permission to upload files   
 // ================================================ 
-if ( $admin->get_permission('media_upload') != true )
+if ( $user->checkPermission('media','media_upload',false) !== true )
 {
 	header('Location: ' . CAT_ADMIN_URL);
 }
-else if ( is_array($admin->get_post('upload_counter')) )
+else if ( is_array($val->sanitizePost('upload_counter')) )
 {
-	if ( $admin->get_post('folder_path') != '' )
+	if ( $val->sanitizePost('folder_path') != '' )
 	{
-		$file_path	 = sanitize_path( CAT_PATH . $admin->get_post('folder_path') );
+		$file_path	 = sanitize_path( CAT_PATH . $val->sanitizePost('folder_path') );
 	}
 	else
 	{
@@ -62,8 +71,8 @@ else if ( is_array($admin->get_post('upload_counter')) )
 	{
 		$admin->print_error( 'Directory is not writeable.', false );
 	}
-	$upload_counter		= $admin->get_post('upload_counter');
-	$file_overwrite		= $admin->get_post('overwrite');
+	$upload_counter		= $val->sanitizePost('upload_counter');
+	$file_overwrite		= $val->sanitizePost('overwrite');
 	// ============================================================================ 
 	// ! Create an array to check whether uploaded file is allowed to be uploaded   
 	// ============================================================================ 
@@ -77,36 +86,45 @@ else if ( is_array($admin->get_post('upload_counter')) )
 			// =========================================== 
 			// ! Get file extension of the uploaded file   
 			// =========================================== 
-			$file_extension		= (strtolower( pathinfo( $_FILES[$field_name]['name'], PATHINFO_EXTENSION ) ) == '') ? false : strtolower( pathinfo($_FILES[$field_name]['name'], PATHINFO_EXTENSION));
+			$file_extension	= (strtolower( pathinfo( $_FILES[$field_name]['name'], PATHINFO_EXTENSION ) ) == '')
+                            ? false
+                            : strtolower( pathinfo($_FILES[$field_name]['name'], PATHINFO_EXTENSION))
+                            ;
 			// ====================================== 
 			// ! Check if file extension is allowed   
 			// ====================================== 
 			if ( isset( $file_extension ) && in_array( $file_extension, $allowed_file_types ) )
 			{
 				// ======================================= 
-				// ! Try to include the upload.class.php   
+				// ! Try to include the upload helper
 				// ======================================= 
-				$files		= $admin->get_helper( 'Upload', $_FILES[$field_name] );
+                if ( ! is_array($_FILES) || ! count($_FILES) )
+                {
+                    $admin->print_error('No files!');
+                }
+                else
+                {
 
-				if ( $files->uploaded )
+                    $current = CAT_Helper_Upload::getInstance($_FILES[$field_name]);
+
+    				if ( $current->uploaded )
 				{
 					// If-schleife wenn überschreiben
 					if ( $file_overwrite != '' )
 					{
-						$files->file_overwrite		= true;
+    						$current->file_overwrite		= true;
 					}
 					else
 					{
-						$files->file_overwrite		= false;
+    						$current->file_overwrite		= false;
 					}
-					// Replace with allowed images
-					//$files->allowed = array('image/*');
 		
-					$files->process( $file_path );
-					if ( $files->processed )
+    					$current->process( $file_path );
+
+    					if ( $current->processed )
 					{
-						$unzip_file			= $admin->get_post('unzip_' . $file_id);
-						$delete_file		= $admin->get_post('delete_zip_' . $file_id);
+    						$unzip_file			= $val->sanitizePost('unzip_' . $file_id);
+    						$delete_file		= $val->sanitizePost('delete_zip_' . $file_id);
 
 						if ( $unzip_file != '' )
 						{
@@ -125,7 +143,7 @@ else if ( is_array($admin->get_post('upload_counter')) )
 							// =============================== 
 							// ! Create the class for PclZip   
 							// =============================== 
-							$archive	= new CAT_Helper_Zip( $files->file_dst_pathname );
+    							$archive = CAT_Helper_Zip::getInstance( $files->file_dst_pathname );
 							$archive->config( 'Path', sanitize_path( $file_path ) );
 							$archive->extract();
 							if ( $archive->errorInfo() != 0 )
@@ -137,20 +155,21 @@ else if ( is_array($admin->get_post('upload_counter')) )
 							// ============================================== 
 							if ( $delete_file != '' )
 							{
-								rm_full_dir( $files->file_dst_pathname );
+    								$dirh->removeDirectory( $files->file_dst_pathname );
 							}
 						}
 						// ================================= 
 						// ! Clean the upload class $files   
 						// ================================= 
-						$files->clean();
+    						$current->clean();
 					}
 					else 
 					{
-						$admin->print_error( 'An error occurred: ' . $files->error, false );
+    						$admin->print_error( 'An error occurred (processed false): ' . $current->error, false );
+    					}
 					}
+    				else $admin->print_error( 'An error occurred (uploaded false): ' . $current->error, false );
 				}
-				else $admin->print_error( 'An error occurred: ' . $files->error, $files->log, false );
 			}
 			else $admin->print_error( 'No file extension were found.', false );
 		}

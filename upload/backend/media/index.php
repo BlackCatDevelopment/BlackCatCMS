@@ -57,18 +57,16 @@ $user  = CAT_Users::getInstance();
 global $parser;
 $tpl_data = array();
 
-// $memory_limit = ini_get('memory_limit');
-// $post_max_size = ini_get('post_max_size');
-// $upload_max_filesize = ini_get('upload_max_filesize');
-
+// ************ TODO: Move this to DB ************
 $allowed_img_types = array('jpg','jpeg','png','gif','tif');
+// ************ TODO: Move this to DB ************
 
 $tpl_data['maxUploadFiles']		= 12;
 $tpl_data['allowed_file_types']	= str_replace(',','|',RENAME_FILES_ON_UPLOAD);
 $tpl_data['MEDIA_DIRECTORY']	= MEDIA_DIRECTORY;
 
 // ==================================================================================================================================== 
-// ! Set the initial folder to view (mediaroot or homefolder). If the user don't have permissions to see media, redirect to admin_url   
+// ! Set the initial folder to view (mediaroot or homefolder). If the user doesn't have permissions to see media, redirect to admin_url
 // ==================================================================================================================================== 
 if ($user->checkPermission('media','media',false)==true){
 	$tpl_data['initial_folder']
