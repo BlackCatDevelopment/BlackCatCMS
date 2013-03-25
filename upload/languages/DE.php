@@ -60,6 +60,7 @@ $language_guid = 'f49419c8-eb27-4a69-bffb-af61fce6b0c9';
 $language_date_long  = '%A,|%d.|%B|%Y';
 $language_date_short = '%d.%m.%Y';
 $language_time       = '%H:%I:%S';
+$language_time_string = 'Uhr';
 
 $LANG = array(
     // ----- common -----
@@ -111,6 +112,7 @@ $LANG = array(
     'New password' => 'Neues Kennwort',
     'Re-Type new password' => 'Neues Kennwort wiederholen',
     'Confirm with current password' => 'Mit aktuellem Kennwort bestätigen',
+    'Details saved successfully' => 'Einstellungen gespeichert',
     // ----- page -----
     "Sorry, but you don't have the permissions for this action" => 'Sie haben leider nicht die notwendigen Rechte für diese Aktion',
     'Add child page' => 'Unterseite hinzuf&uuml;gen',
@@ -255,6 +257,10 @@ $LANG = array(
     'Unpack zip archive' => 'ZIP Archiv entpacken',
     'Delete zip archive after unpacking' => 'ZIP Archiv nach dem Entpacken löschen',
     'Are you sure you want to delete the directory {name}' => 'Wollen Sie das Verzeichnis {name} wirklich löschen?',
+    'Do you really want to delete this file?' => 'Soll die Datei wirklich gelöscht werden?',
+    'File deleted successfully' => 'Datei erfolgreich gelöscht',
+    'Rename successful' => 'Umbenennen erfolgreich',
+    'All files have been uploaded successfully.' => 'Alle Dateien erfolgreich übertragen',
     // ----- users/groups -----
     'Manage users' => 'Benutzerverwaltung',
     'Username' => 'Benutzerkennung',
