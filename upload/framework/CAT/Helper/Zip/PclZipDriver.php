@@ -83,6 +83,34 @@ if ( ! class_exists( 'CAT_Helper_Zip_PclZipDriver', false ) )
 		}   // end function __construct()
 
         /**
+         * forward unknown methods to driver
+         *
+         */
+        public function __call($method,$attr)
+        {
+            if ( method_exists( $this->zip, $method ) )
+            {
+                return $this->zip->$method($attr[0]);
+            }
+        }   // end function __call()
+
+		/**
+		 * accessor to PclZip->listContent()
+		 **/
+		public function listContent()
+  		{
+  		    return $this->zip->listContent();
+  		}   // end function listContent()
+
+  		/**
+		 * accessor to PclZip->errorInfo()
+		 **/
+  		public function errorInfo($p_full=false)
+  		{
+  		    return $this->zip->errorInfo($p_full);
+  		}
+
+        /**
          *
          *
          *
@@ -192,20 +220,18 @@ if ( ! class_exists( 'CAT_Helper_Zip_PclZipDriver', false ) )
 		}   // end function extract()
 
 		/**
-		 * accessor to PclZip->listContent()
+         * accessor to PclZip->extractByIndex()
 		 **/
-		public function listContent()
+        public function extractByIndex($p_index)
   		{
-  		    return $this->zip->listContent();
-  		}   // end function listContent()
+            $code = '$ret = $this->zip->extractByIndex( $p_index'
+			   . $this->compile_options()
+			   . ' );';
 
-  		/**
-		 * accessor to PclZip->errorInfo()
-		 **/
-  		public function errorInfo()
-  		{
-  		    return $this->zip->errorInfo();
-  		}
+			eval ( $code );
+			return $ret;
+        }   // end function extractByIndex()
+
 
         private function compile_options()
         {

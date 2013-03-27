@@ -83,6 +83,8 @@ $LANG = array(
     'Search' => 'Suche',
     'Search...' => 'Suchen...',
     'Success' => 'Erfolgreich',
+    // ----- error messages -----
+    'You sent an invalid value' => 'Es wurde ein ungültiger Wert angegeben',
     // ----- MENU -----
 	'Access' => 'Benutzerverwaltung',
 	'Add-on' => 'Add-on',
@@ -149,6 +151,7 @@ $LANG = array(
     'No pages available' => 'Keine Seiten vorhanden',
     'None' => 'Keine',
     'Page added successfully' => 'Seite wurde erfolgreich angelegt',
+    'Page deleted successfully' => 'Seite erfolgreich gelöscht',
     'Page groups' => 'Seitengruppen',
     'Page saved successfully' => 'Seite erfolgreich gespeichert',
     'Page settings' => 'Seiteneinstellungen',
@@ -874,7 +877,6 @@ $MESSAGE = array(
 	'PAGES_CANNOT_CREATE_ACCESS_FILE' => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis (page) ist ein Fehler aufgetreten (Ungen&uuml;gende Zugangsrechte)',
 	'PAGES_CANNOT_DELETE_ACCESS_FILE' => 'Beim L&ouml;schen der Zugangsdatei im Seitenverzeichnis (page) ist ein Fehler aufgetreten (Ungen&uuml;gende Zugangsrechte)',
 	'PAGES_CANNOT_REORDER' 		=> 'Bei der Zusammenstellung der Seite ist ein Fehler aufgetreten',
-	'PAGES_DELETED' 			=> 'Die Seite wurde erfolgreich gel&ouml;scht',
 	'PAGES_DELETE_CONFIRM' 		=> 'Sind Sie sicher, dass Sie die ausgew&auml;hlte Seite &raquo;%s&laquo; l&ouml;schen m&ouml;chten',
 	'PAGES_INSUFFICIENT_PERMISSIONS' => 'Sie haben keine Berechtigung, diese Seite zu &auml;ndern',
 	'PAGES_INTRO_EMPTY' 		=> 'Bitte Content einf&uuml;gen, eine leere Introseite kann nicht gespeichert werden.',    
