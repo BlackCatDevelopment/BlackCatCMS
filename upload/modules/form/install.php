@@ -87,7 +87,7 @@ $mod_form = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_form_submission
 	. ' )';
 $database->query($mod_form);
 
-$addons_helper = new CAT_Helper_Addons();
+$addons_helper = CAT_Helper_Addons::getInstance();
 
 // add files to class_secure
 foreach(
@@ -96,7 +96,7 @@ foreach(
            'move_up.php', 'save_field.php', 'save_settings.php', 'view_submission.php' )
     as $file
 ) {
-    if ( false === $addons_helper->sec_register_file( 'news', $file ) )
+    if ( false === $addons_helper->sec_register_file( 'form', $file ) )
     {
          error_log( "Unable to register file -$file-!" );
     }

@@ -170,7 +170,7 @@ if(defined('CAT_URL'))
 
     // add files to class_secure
     foreach(
-        array( 'add_field.php', 'add_group.php', 'add_post.php', 'comment.php', 'delete_comment.php', 'delete_group.php', 'delete_post.php',
+        array( 'add_group.php', 'add_post.php', 'comment.php', 'delete_comment.php', 'delete_group.php', 'delete_post.php',
                'modify_comment.php', 'modify_group.php', 'modify_post.php', 'modify_settings.php', 'move_down.php', 'move_up.php',
                'rss.php', 'save_comment.php', 'save_group.php', 'save_post.php', 'save_settings.php', 'submit_comment.php' )
         as $file
