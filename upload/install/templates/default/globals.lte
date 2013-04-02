@@ -55,6 +55,16 @@
         </select>
 	  </td>
 	</tr>
+   <tr>
+      <td><label for="installer_default_wysiwyg">{translate('Default WYSIWYG Editor')}</label></td>
+      <td>
+        <select id="installer_default_wysiwyg" name="installer_default_wysiwyg" tabindex="4">
+		  {foreach $editors dir name}
+		  <option value="{$dir}"{if $dir == $installer_default_wysiwyg} selected="selected"{/if}>{$name}</option>
+		  {/foreach}
+        </select>
+	  </td>
+	</tr>
    	<tr>
       <td><label for="installer_create_guid">{translate('Create GUID')}</label></td>
       <td>

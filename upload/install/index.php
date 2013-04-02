@@ -320,13 +320,13 @@ function show_step_precheck() {
 	    'precheck.lte',
 	    array( 'output' => $result )
 	);
-	
+
 	// scan the HTML for errors; this is easier than to extend the methods in
 	// the Addons helper
 	if ( preg_match( '~class=\"fail~i', $result, $match ) ) {
 		$ok = false;
 	}
-	
+
 	$install_dir = pathinfo( dirname(__FILE__), PATHINFO_BASENAME );
 
 	// file permissions check
@@ -352,7 +352,7 @@ function show_step_precheck() {
 		    $ok = false;
 		}
 	}
-	
+
 	// special check for install dir (must be world writable)
 	$inst_is_writable = is_writable(dirname(__FILE__)); //( substr(sprintf('%o', fileperms(dirname(__FILE__))), -1) == 7 ? true : false );
 	if ( ! $inst_is_writable ) {
@@ -372,9 +372,9 @@ function show_step_precheck() {
 			)
 		)
 	);
-	
+
 	return array( $ok, $result.$output );
-	
+
 }   // end function show_step_precheck()
 
 /**
@@ -388,11 +388,11 @@ function show_step_globals( $step ) {
     // get timezones
     include dirname(__FILE__).'/../framework/CAT/Helper/DateTime.php';
     $timezone_table = CAT_Helper_DateTime::getInstance()->getTimezones();
-    
+
 	$lang_dir = "../languages/";
 	$dir      = dir( $lang_dir );
 	$langs    = array();
-	
+
 	while( $temp_file = $dir->read() ) {
 		if ($temp_file[0] == ".") continue;
 		if ($temp_file == "index.php" ) continue;
@@ -408,10 +408,10 @@ function show_step_globals( $step ) {
 		$langs[$lang_short] = $language_name;
 
 	}
-	
+
 	$dir->close();
 	ksort($langs);
-	
+
 	if ( !isset( $config['default_language' ] ) ) {
 	    $config['default_language' ] = $lang->getLang();
 	}
@@ -421,7 +421,7 @@ function show_step_globals( $step ) {
         // VERY simple algorithm, no need for something more creative
 	    $config['installer_guid_prefix'] = implode('',array_rand(array_flip(array_merge(range('a','z'),range('A','Z'),range('0','9'))),4));
     }
-	
+
 	// operating system
 	// --> FrankH: Detect OS
 	$ctrue  = " checked='checked'";
@@ -436,7 +436,7 @@ function show_step_globals( $step ) {
 		$startstyle = "block";
 	}
 	// <-- FrankH: Detect OS
-	
+
     $output = $parser->get(
         'globals.lte',
         array(
@@ -446,6 +446,8 @@ function show_step_globals( $step ) {
 			'installer_default_timezone_string' => $config['default_timezone_string'],
 			'languages' 						=> $langs,
 			'installer_default_language'		=> $config['default_language'],
+            'editors'                           => findWYSIWYG(),
+            'installer_default_wysiwyg'         => $config['default_wysiwyg'],
 			'is_linux'   						=> $osl,
             'is_windows' 						=> $osw,
             'errors'            				=> $step['errors'],
@@ -539,7 +541,7 @@ function check_step_site() {
 	if ( ! isset($config['website_title']) || $config['website_title'] == '' ) {
 	    $errors['installer_website_title'] = $lang->translate( 'Please enter a website title!' );
 	}
-	
+
 	// check admin user name
 	if ( ! isset($config['admin_username']) || $config['admin_username'] == '' ) {
 	    $errors['installer_admin_username'] = $lang->translate( 'Please enter an admin username (choose "admin", for example)!' );
@@ -552,7 +554,7 @@ function check_step_site() {
 	        $errors['installer_admin_username'] = $lang->translate('Only characters a-z, A-Z, 0-9 and _ allowed in admin username');
 	    }
 	}
-	
+
 	// check admin password
     if ( ! isset($config['no_validate_admin_password']) )
     {
@@ -577,7 +579,7 @@ function check_step_site() {
 											. ' (' . $users->getPasswordError() . ')';
 	}
     }
-	
+
 	// check admin email address
 	if ( ! isset($config['admin_email']) || $config['admin_email'] == '' ) {
 	    $errors['installer_admin_email'] = $lang->translate( 'Please enter an email address!' );
@@ -587,7 +589,7 @@ function check_step_site() {
 			$errors['installer_admin_email'] = $lang->translate('Please enter a valid email address for the Administrator account');
 		}
 	}
-	
+
 	return array(
 		( count($errors) ? false : true ),
 		$errors
@@ -692,7 +694,7 @@ function install_tables ($database) {
 	if (!defined('CAT_INSTALL_PROCESS')) define ('CAT_INSTALL_PROCESS', true);
     // import structure
     $errors = __cat_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
-	
+
 	return array(
 		( count($errors) ? false : true ),
 		$errors
@@ -706,14 +708,14 @@ function install_tables ($database) {
 function fill_tables($database) {
 
 	global $config, $admin;
-	
+
 	$errors = array();
-	
+
 	// create a random session name
 	list($usec,$sec) = explode(' ',microtime());
 	srand((float)$sec+((float)$usec*100000));
 	$session_rand = rand(1000,9999);
-	
+
 	// Work-out file permissions
 	if( $config['operating_system'] == 'windows') {
 		$file_mode = '0644';
@@ -748,11 +750,11 @@ function fill_tables($database) {
 		." ('string_dir_mode', '$dir_mode'),"
 		." ('string_file_mode', '$file_mode'),"
 		." ('website_title', '".$config['website_title']."'),"
-		." ('wysiwyg_editor', 'ckeditor')"
+		." ('wysiwyg_editor', '".$config['default_wysiwyg']."')"
 		;
-		
+
     $logh = fopen( CAT_LOGFILE, 'a' );
-		
+
 	$database->query($settings_rows);
 	if ( $database->is_error() ) {
 		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
@@ -761,7 +763,7 @@ function fill_tables($database) {
 	else {
 	    fwrite( $logh, 'filled table [settings]'."\n" );
 	}
-	
+
 	// Admin group
 	$full_system_permissions = 'pages,pages_view,pages_add,pages_add_l0,pages_settings,pages_modify,pages_intro,pages_delete,media,media_view,media_upload,media_rename,media_delete,media_create,addons,modules,modules_view,modules_install,modules_uninstall,templates,templates_view,templates_install,templates_uninstall,languages,languages_view,languages_install,languages_uninstall,settings,settings_basic,settings_advanced,access,users,users_view,users_add,users_modify,users_delete,groups,groups_view,groups_add,groups_modify,groups_delete,admintools,service';
 	$insert_admin_group = "INSERT INTO `".CAT_TABLE_PREFIX."groups` VALUES ('1', 'Administrators', '$full_system_permissions', '', '')";
@@ -799,7 +801,7 @@ function fill_tables($database) {
 function install_modules ($cat_path) {
 
 	global $admin;
-	
+
 	$errors = array();
 
 	require $cat_path.'/framework/initialize.php';
@@ -883,7 +885,7 @@ function install_modules ($cat_path) {
 	}
 
 	fclose($logh);
-	
+
 	return array(
 		( count($errors) ? false : true ),
 		$errors
@@ -958,7 +960,7 @@ function check_tables($database) {
 	if ( $database->is_error() ) {
 		$errors['adminuser'] = $database->get_error();
 	}
-	
+
 	if ($result->numRows() == 0) {
 		$errors['adminuser'] = false;
 	} else {
@@ -970,12 +972,12 @@ function check_tables($database) {
 	 		$errors['password'] = false;
 	 	}
 	}
-	
+
 	return array(
 		( count($errors) ? false : true ),
 		$errors
 	);
-	
+
 }   // end function check_tables()
 
 function create_default_page($database) {
@@ -1044,6 +1046,26 @@ function pre_installation_error( $msg ) {
 }   // end function pre_installation_error()
 
 /**
+ * scan for WYSIWYG-Editors
+ **/
+function findWYSIWYG()
+{
+    global $dirh;
+    $info_files = $dirh->findFiles('info.php',CAT_PATH.'/modules',CAT_PATH);
+    $editors    = array();
+    foreach ( $info_files as $file )
+    {
+        $module_function = '';
+        require $dirh->sanitizePath(CAT_PATH.'/modules/'.$file);
+        if ( $module_function == 'WYSIWYG' )
+        {
+            $editors[str_replace('/','',pathinfo($file,PATHINFO_DIRNAME))] = $module_name;
+        }
+    }
+    return $editors;
+}   // end function findWYSIWYG()
+
+/**
  * parse SQL file and execute the statements
  * $file     is the name of the file
  * $database is the db handle
@@ -1056,7 +1078,7 @@ function __cat_installer_import_sql($file,$database) {
     $import = preg_replace( "%^--(.*)\n%mU" , ''              , $import );
     $import = preg_replace( "%^$\n%mU"      , ''              , $import );
     $import = preg_replace( "%cat_%"        , CAT_TABLE_PREFIX, $import );
-    
+
     foreach (split_sql_file($import, ';') as $imp){
         if ($imp != '' && $imp != ' ') {
             $ret = $database->query($imp);
@@ -1066,7 +1088,7 @@ function __cat_installer_import_sql($file,$database) {
             }
         }
     }
-    
+
     return $errors;
 
 }   // end function __cat_installer_import_sql()
@@ -1079,8 +1101,8 @@ function __do_install() {
 	global $config, $parser, $dirh;
 
 	include dirname(__FILE__).'/../framework/functions.php';
-	$cat_path = sanitize_path( dirname(__FILE__).'/..' );
-	$inst_path   = sanitize_path( $cat_path.'/'.pathinfo( dirname(__FILE__), PATHINFO_BASENAME ) );
+	$cat_path  = sanitize_path( dirname(__FILE__).'/..' );
+	$inst_path = sanitize_path( $cat_path.'/'.pathinfo( dirname(__FILE__), PATHINFO_BASENAME ) );
 
 	if( isset($config['install_tables']) && $config['install_tables'] == 'true' ) {
 		$install_tables = true;
@@ -1457,7 +1479,7 @@ function split_sql_file($sql, $delimiter)
          } // else
       }
    }
-   
+
    // remove empty
    for ( $i = count($output)+1; $i>=0; $i-- )
    {
