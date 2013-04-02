@@ -1,37 +1,47 @@
 <?php
 
 /**
- *  @module         news
- *  @version        see info.php of this module
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
  *  @author         Ryan Djurovich, Rob Smith, Dietrich Roland Pehlke, Christian M. Stefan (Stefek), Jurgen Nijhuis (Argos)
  *  @copyright      2004-2011, Ryan Djurovich, Rob Smith, Dietrich Roland Pehlke, Christian M. Stefan (Stefek), Jurgen Nijhuis (Argos) 
- *  @license        GNU General Public License
- *  @license terms  see info.php of this module
- *  @platform       see info.php of this module
- *  @requirements   PHP 5.2.x and higher
- * @version         $Id: view.php 1462 2011-12-12 16:31:23Z frankh $
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Modules
+ *   @package         news
+ *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
-
+global $MOD_NEWS;
 
 // load module language file
 $lang = (dirname(__FILE__)) . '/languages/' . LANGUAGE . '.php';
@@ -43,11 +53,12 @@ if(function_exists('ini_set'))
 	ini_set('arg_separator.output', '&amp;');
 }
 
-// Check if there is a start point defined
-if(isset($_GET['p']) AND is_numeric($_GET['p']) AND $_GET['p'] >= 0)
+$val      = CAT_Helper_Validate::getInstance();
+$dt       = CAT_Helper_DateTime::getInstance();
+$position = $val->sanitizeGet('p','numeric');
+
+if(!$position)
 {
-	$position = $_GET['p'];
-} else {
 	$position = 0;
 }
 
@@ -100,19 +111,11 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
 {
 
 	// Check if we should only list posts from a certain group
-	if(isset($_GET['g']) AND is_numeric($_GET['g']))
-    {
-		$query_extra = " AND group_id = '".$_GET['g']."'";
-	} else {
 		$query_extra = '';
-	}
-
-	// Check if we should only list posts from a certain group
-	if(isset($_GET['g']) AND is_numeric($_GET['g']))
+    $group_id    = $val->sanitizeGet('g','numeric');
+	if($group_id)
     {
-		$query_extra = " AND group_id = '".$_GET['g']."'";
-	} else {
-		$query_extra = '';
+		$query_extra = " AND group_id = '".$group_id."'";
 	}
 
 	// Get settings
@@ -147,10 +150,11 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
 	}
 
 	// Query posts (for this page)
-	$query_posts = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_posts
+    $posts_sql   = "SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_posts
 		WHERE section_id = '$section_id' AND active = '1' AND title != ''$query_extra
 		AND (published_when = '0' OR published_when <= $t) AND (published_until = 0 OR published_until >= $t)
-		ORDER BY position DESC".$limit_sql);
+		ORDER BY position DESC".$limit_sql;
+	$query_posts = $database->query($posts_sql);
 	$num_posts = $query_posts->numRows();
 
 	// Create previous and next links
@@ -176,9 +180,9 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
 			$next_link = '';
 			$next_page_link = '';
 		} else {
-			if(isset($_GET['g']) AND is_numeric($_GET['g']))
+			if($group_id)
             {
-				$nl_prepend = '<a href="?p='.($position+$setting_posts_per_page).'&amp;g='.$_GET['g'].'"> ';
+				$nl_prepend = '<a href="?p='.($position+$setting_posts_per_page).'&amp;g='.$group_id.'"> ';
 			} else {
 				$nl_prepend = '<a href="?p='.($position+$setting_posts_per_page).'"> ';
 			}
@@ -193,8 +197,8 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
 			$num_of = $position+$setting_posts_per_page;
 		}
 
-		$out_of = ($position+1).'-'.$num_of.' '.strtolower($TEXT['OUT_OF']).' '.$total_num;
-		$of = ($position+1).'-'.$num_of.' '.strtolower($TEXT['OF']).' '.$total_num;
+		$out_of = ($position+1).'-'.$num_of.' '.strtolower($wb->lang->translate('Out Of')).' '.$total_num;
+		$of = ($position+1).'-'.$num_of.' '.strtolower($wb->lang->translate('Out Of')).' '.$total_num;
 		$display_previous_next_links = '';
 	} else {
 		$display_previous_next_links = 'none';
@@ -223,11 +227,11 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
         {
 			?>
 			<div class="selected-group-title">
-				<?php print '<a href="'.htmlspecialchars(strip_tags($_SERVER['SCRIPT_NAME'])).'">'.PAGE_TITLE.'</a> &gt;&gt; '.$groups[$_GET['g']]['title']; ?>
+				<?php print '<a href="'.htmlspecialchars(strip_tags($_SERVER['SCRIPT_NAME'])).'">'.PAGE_TITLE.'</a> &gt;&gt; '.$groups[$group_id]['title']; ?>
 			</div>
 			<?php
 		}
-		while( false != ($post = $query_posts->fetchRow()) )
+		while( false != ($post = $query_posts->fetchRow(MYSQL_ASSOC)) )
         {
 			if(isset($groups[$post['group_id']]['active']) AND $groups[$post['group_id']]['active'] != false)
             { // Make sure parent group is active
@@ -236,38 +240,37 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
 				if ($post['published_when'] === '0') $post['published_when'] = time();
 				if ($post['published_when'] > $post['posted_when'])
                 {
-					$post_date = date(DATE_FORMAT, $post['published_when']);
-					$post_time = date(TIME_FORMAT, $post['published_when']);
+					$post_date = $dt->getDate($post['published_when']);
+					$post_time = $dt->getTime($post['published_when']);
 				} else {
-					$post_date = date(DATE_FORMAT, $post['posted_when']);
-					$post_time = date(TIME_FORMAT, $post['posted_when']);
+					$post_date = $dt->getDate($post['posted_when']);
+					$post_time = $dt->getTime($post['posted_when']);
 				}
 
-				$publ_date = date(DATE_FORMAT,$post['published_when']);
-				$publ_time = date(TIME_FORMAT,$post['published_when']);
-
+				$publ_date = $dt->getDate($post['published_when']);
+				$publ_time = $dt->getTime($post['published_when']);
 				// Work-out the post link
 				$post_link = page_link($post['link']);
 
-                $post_link_path = str_replace(CAT_URL, CAT_PATH,$post_link);
+                $post_link_path = str_replace(CAT_URL, CAT_PATH, $post_link);
                 if(file_exists($post_link_path))
                 {
-    				$create_date = date(DATE_FORMAT, filemtime ( $post_link_path ));
-    				$create_time = date(TIME_FORMAT, filemtime ( $post_link_path ));
+    				$create_date = $dt->getDate( filemtime ( $post_link_path ));
+    				$create_time = $dt->getTime( filemtime ( $post_link_path ));
                 } else {
                     $create_date = $publ_date;
                     $create_time = $publ_time;
                 }
 
-				if(isset($_GET['p']) AND $position > 0)
+				if($position)
                 {
 					$post_link .= '?p='.$position;
 				}
-				if(isset($_GET['g']) AND is_numeric($_GET['g']))
+				if($group_id)
                 {
-					if(isset($_GET['p']) AND $position > 0) { $post_link .= '&amp;'; } else { $post_link .= '?'; }
+					if($position) { $post_link .= '&amp;'; } else { $post_link .= '?'; }
                     {
-					$post_link .= 'g='.$_GET['g'];
+					    $post_link .= 'g='.$group_id;
                     }
 				}
 
@@ -297,10 +300,10 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
 			   $pid = $post['post_id'];
 			   $qc = $database->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_news_comments WHERE section_id = '$section_id' AND post_id = '$pid'");
 			   if ($qc->numRows() == 1) {
-				  $com_count = "1 Kommentar";
+				  $com_count = "1 ".$wb->lang->translate('comment');
 			   } 
 			   if ($qc->numRows() > 1) {
-				  $com_count = $qc->numRows() . " Kommentare";
+				  $com_count = $qc->numRows() . " ".$wb->lang->translate('comments');
 			   } 
 
 				// Replace vars with values
@@ -332,7 +335,7 @@ if(!defined('POST_ID') OR !is_numeric(POST_ID))
 										$MOD_NEWS['TEXT_READ_MORE'],'visible', $com_count);
 					}
 				}
-				print str_replace($vars, $values, $setting_post_loop);
+				echo str_replace($vars, $values, $setting_post_loop);
 			}
 		}
 	}
@@ -407,17 +410,17 @@ elseif(defined('POST_ID') AND is_numeric(POST_ID))
 			if ($post['published_when'] === '0') $post['published_when'] = time();
 			if ($post['published_when'] > $post['posted_when'])
             {
-				$post_date = date(DATE_FORMAT, $post['published_when']);
-				$post_time = date(TIME_FORMAT, $post['published_when']);
+				$post_date = $dt->getDate($post['published_when']);
+				$post_time = $dt->getTime($post['published_when']);
 			}
             else
             {
-				$post_date = date(DATE_FORMAT, $post['posted_when']);
-				$post_time = date(TIME_FORMAT, $post['posted_when']);
+				$post_date = $dt->getDate($post['posted_when']);
+				$post_time = $dt->getTime($post['posted_when']);
 			}
 
-			$publ_date = date(DATE_FORMAT,$post['published_when']);
-			$publ_time = date(TIME_FORMAT,$post['published_when']);
+			$publ_date = $dt->getDate($post['published_when']);
+			$publ_time = $dt->getTime($post['published_when']);
 
 			// Work-out the post link
 			$post_link = page_link($post['link']);
@@ -425,8 +428,8 @@ elseif(defined('POST_ID') AND is_numeric(POST_ID))
 			$post_link_path = str_replace(CAT_URL, CAT_PATH,$post_link);
             if(file_exists($post_link_path))
             {
-    			$create_date = date(DATE_FORMAT, filemtime ( $post_link_path ));
-				$create_time = date(TIME_FORMAT, filemtime ( $post_link_path ));
+    			$create_date = $dt->getDate(filemtime ( $post_link_path ));
+				$create_time = $dt->getTime(filemtime ( $post_link_path ));
 			} else {
             	$create_date = $publ_date;
                 $create_time = $publ_time;
@@ -521,8 +524,8 @@ elseif(defined('POST_ID') AND is_numeric(POST_ID))
 				$comment['comment'] = nl2br($wb->strip_slashes($comment['comment']));
 				$comment['title'] = $wb->strip_slashes($comment['title']);
 				// Print comments loop
-				$commented_date = date(DATE_FORMAT, $comment['commented_when']);
-				$commented_time = date(TIME_FORMAT, $comment['commented_when']);
+				$commented_date = $dt->getDate($comment['commented_when']);
+				$commented_time = $dt->getTime($comment['commented_when']);
 				$uid = $comment['commented_by'];
 				
 				$display_user = (isset($users[$uid]['username']) AND $users[$uid]['username'] != '') ? true : false;

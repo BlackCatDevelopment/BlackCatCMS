@@ -32,6 +32,7 @@ if (defined('CAT_PATH')) {
 //	Modul Description
 $module_description = 'Mit diesem Modul k&ouml;nnen sie eine News Seite ihrer Seite hinzuf&uuml;gen.';
 
+global $MOD_NEWS;
 $MOD_NEWS = array (
 	//	Variables for the backend
 	'SETTINGS'			=> 'News Einstellungen',
