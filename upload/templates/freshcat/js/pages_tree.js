@@ -556,6 +556,7 @@ jQuery(document).ready(function()
 			'page_id':			current_pT.children('input[name=pageid]').val(),
 			'page_title':		$('#fc_addPage_page_title').val(),
 			'menu_title':		$('#fc_addPage_title').val(),
+            'page_link':		$('#fc_addPage_page_link').val(),
 			'type':				$('#fc_addPage_type option:selected').val(),
 			'parent':			$('#fc_addPage_parent option:selected').val(),
 			'menu':				$('#fc_addPage_menu option:selected').val(),
@@ -746,7 +747,7 @@ jQuery(document).ready(function()
 				}
 			};
 
-		dialog_confirm( 'You really want to delete?!?', 'Removing page', CAT_ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
+		dialog_confirm( 'Do you really want to delete this page?', 'Removing page', CAT_ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
 
 	$('#fc_restorePageSubmit').click( function (e)

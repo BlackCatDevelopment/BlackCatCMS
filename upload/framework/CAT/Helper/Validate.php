@@ -32,6 +32,7 @@ if (!class_exists('CAT_Helper_Validate'))
 
     class CAT_Helper_Validate extends CAT_Object
     {
+        protected      $_config             = array( 'loglevel' => 8 );
         private static $instance;
 
         public static function getInstance()
@@ -52,14 +53,16 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  string  $require - value type (scalar, numeric, array)
          * @return mixed
          **/
-        public function get( $global, $key, $require = NULL )
+        public function get( $global, $key, $require = NULL, $escape = false )
         {
+            $this->log()->logDebug(sprintf('Get key [%s] from global var [%s] validate as [%s]',$key,$global,$require));
             $glob = array();
             if ( isset($GLOBALS[$global]) )
             {
                 $glob =& $GLOBALS[$global];
             }
             $value = isset($glob[$key]) ? $glob[$key] : NULL;
+            $this->log()->logDebug(sprintf('value [%s]',$value));
             if ( $value && $require )
             {
                 $func = 'is_'.$require;
@@ -67,9 +70,14 @@ if (!class_exists('CAT_Helper_Validate'))
                 {
                     $this->printFatalError( 'No such validation method: '.$require );
                 }
-                if ( $func($value) ) return $value;
-                else                 return NULL;
+                $this->log()->logDebug(sprintf('checking value with func [%s]',$func));
+                if ( ! $func($value) ) return NULL;
             }
+            if ( $value && $escape )
+            {
+                $value = $this->add_slashes($value);
+            }
+            $this->log()->logDebug(sprintf('returning value [%s]',$value));
             return $value;
         }   // end function get()
 
@@ -120,12 +128,8 @@ if (!class_exists('CAT_Helper_Validate'))
          **/
         public function sanitizePost( $field, $require=NULL, $escape = false )
         {
-            $value = $this->get('_POST',$field,$require);
-            if ( $value && $escape )
-            {
-                $value = $this->add_slashes($result);
-            }
-            return $value;
+            $this->log()->logDebug(sprintf('get field [%s] from $_POST, require type [%s], escape [%s]',$field,$require,$escape));
+            return $this->get('_POST',$field,$require,$escape);
         }   // end function sanitizePost()
 
         /**
@@ -138,9 +142,10 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  string  $require - value type (scalar, numeric, array)
          * @return mixed
          **/
-        public function sanitizeGet($field,$require=NULL)
+        public function sanitizeGet($field,$require=NULL,$escape=false)
         {
-            return $this->get('_GET',$field,$require);
+            $this->log()->logDebug(sprintf('get field [%s] from $_GET, require type [%s], escape [%s]',$field,$require,$escape));
+            return $this->get('_GET',$field,$require,$escape);
         }   // end function sanitizeGet()
 
         /**
@@ -151,9 +156,9 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  string  $require - value type (scalar, numeric, array)
          * @return mixed
          **/
-        public function fromSession($field,$require=NULL)
+        public function fromSession($field,$require=NULL,$escape=false)
         {
-            return $this->get('_SESSION',$field,$require);
+            return $this->get('_SESSION',$field,$require,$escape);
         }   // end function fromSession()
 
         //*********************************************************************

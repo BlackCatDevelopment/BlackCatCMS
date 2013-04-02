@@ -67,8 +67,9 @@ require_once(CAT_PATH . '/framework/functions.php');
 // ============== 
 $page_title			= htmlspecialchars($val->sanitizePost('page_title',NULL,true) );
 $menu_title			= htmlspecialchars($val->sanitizePost('menu_title',NULL,true) );
-$description		= htmlspecialchars($admin->add_slashes($val->sanitizePost('description')) );
-$keywords			= htmlspecialchars($admin->add_slashes($val->sanitizePost('keywords')) );
+$page_link			= htmlspecialchars($val->sanitizePost('page_link',NULL,true) );
+$description		= htmlspecialchars($val->sanitizePost('description',NULL,true) );
+$keywords			= htmlspecialchars($val->sanitizePost('keywords',NULL,true)    );
 $parent				= $val->sanitizePost('parent',NULL,true);
 $target				= $val->sanitizePost('target',NULL,true);
 $template			= $val->sanitizePost('template',NULL,true);
@@ -301,12 +302,21 @@ $root_parent	= root_parent($page_id);
 // Work out page trail
 $page_trail		= get_page_trail($page_id);
 
+// =========================================================
+// ! Set page_link
+// =========================================================
+if ( $page_link && $page_link != pathinfo($link,PATHINFO_FILENAME) )
+{
+    $link     = sanitize_path(pathinfo($link,PATHINFO_DIRNAME).'/'.page_filename($page_link));
+    $filename = sanitize_path(CAT_PATH.PAGES_DIRECTORY.'/'.pathinfo($link,PATHINFO_DIRNAME).'/'.page_filename($page_link).PAGE_EXTENSION);
+}
+
 // ======================================= 
 // ! Update page with new level and link   
 // ======================================= 
 $sql	 = 'UPDATE `'.CAT_TABLE_PREFIX.'pages` SET ';
 $sql	.= '`root_parent` = '.$root_parent.', ';
-$sql	.= '`level` = '.$level.', ';
+$sql	.= '`level` = "'.$level.'", ';
 $sql	.= '`link` = "'.$link.'", ';
 $sql	.= '`page_trail` = "'.$page_trail.'"';
 $sql	.= 'WHERE `page_id` = '.$page_id;
