@@ -103,7 +103,19 @@ if (!class_exists('CAT_Helper_DateTime'))
             $format = ( $long === true )
                     ? self::getDefaultDateFormatLong()
                     : self::getDefaultDateFormatShort();
-            return date($format,($t?$t:time()));
+            return strftime($format,($t?$t:time()));
+        }   // end function getDate()
+
+        /**
+         * returns formatted time
+         *
+         * @access public
+         * @param  string  $t    - timestamp
+         **/
+        public static function getTime($t=NULL)
+        {
+            $format = self::getDefaultTimeFormat();
+            return strftime($format,($t?$t:time()));
         }   // end function getDate()
 
         /**
@@ -122,10 +134,9 @@ if (!class_exists('CAT_Helper_DateTime'))
             global $user_time,$language_time;
             $actual_time = time();
             $TIME_FORMATS = array(
-                'g:i|A' => date('g:i A', $actual_time),
-                'g:i|a' => date('g:i a', $actual_time),
-                'H:i:s' => date('H:i:s', $actual_time),
-                'H:i'   => date('H:i'  , $actual_time),
+                '%I:%M|%p' => strftime('%I:%M %p', $actual_time),
+                '%H:%M:%S' => strftime('%H:%M:%S', $actual_time),
+                '%H:%M'    => strftime('%H:%M'   , $actual_time),
             );
             if(isset($user_time) AND $user_time == true) {
            		$TIME_FORMATS['system_default'] = date(DEFAULT_TIME_FORMAT, $actual_time).' (System Default)';
@@ -203,7 +214,7 @@ if (!class_exists('CAT_Helper_DateTime'))
             if ( isset ($_SESSION['TIME_FORMAT']) ) return $_SESSION['TIME_FORMAT'];
             if ( defined('DEFAULT_TIME_FORMAT') ) return DEFAULT_TIME_FORMAT;
             if ( isset($language_time) )          return $language_time;
-            return 'H:i';
+            return '%H:%M';
         }
 
         /**
