@@ -16,7 +16,7 @@
 			<input type="text" name="page_title" value="" id="fc_addPage_page_title" />
 
             <label for="fc_addPage_page_link">{translate('URL')}:</label>
-			<input type="text" name="page_link" value="" id="fc_addPage_page_link" />
+			<input type="text" name="page_link" value="" id="fc_addPage_page_link" />.php
 
 			<div class="fc_addPageOnly">
 				<label for="fc_addPage_type">{translate('Type')}:</label>

@@ -1,17 +1,25 @@
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ *   @category        CAT_Core
+ *   @package         freshcat
   *
- */
+ **/
 
 $.expr[":"].containsi = $.expr.createPseudo(function (selector, context, isXml) {
     return function (elem) {
@@ -178,11 +186,16 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 		$('#fc_admin_header').prepend('<div class="fc_popup" />');
 	}
 
+    // Check if leptranslate() is available
+    if ( typeof leptranslate != 'undefined' )
+    {
+        message = leptranslate(message);
+    }
 	// Add message to .fc_popup to use function set_popup_title();
 	$('.fc_popup').html( message );
 
 	// check for all necessary values
-	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl === false					? alert( 'You send an invalid url' ) : ajaxUrl,
+	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl === false					? alert( 'You sent an invalid url' ) : ajaxUrl,
 		ajaxType		= typeof ajaxType == 'undefined' || ajaxType === false				    ? 'POST' : ajaxType,
 		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType === false		    ? 'JSON' : ajaxDataType,
 		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext === false		? $('document.body') : ajaxjQcontext,

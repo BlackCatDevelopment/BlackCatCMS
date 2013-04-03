@@ -49,12 +49,12 @@ $mod_headers = array(
 			array(
 				'core'			=> true,
 				'ui'			=> true,
-				'all'			=> array ( 'jquery.highlight', 'jquery.cookies', 'tag-it', 'jquery.form' , 'jquery.livesearch' , 'jquery.smarttruncation' )
+				'all'			=> array ( 'jquery.highlight', 'jquery.cookies', 'tag-it', 'jquery.form' , 'jquery.livesearch' , 'jquery.smarttruncation', 'cattranslate' )
 			)
 		),
 		'js' => array(
 			array(
-				'all'			=> array( 'jquery.fc_set_tab_list.js' , 'jquery.fc_toggle_element.js' , 'jquery.fc_resize_elements.js', 'jquery.fc_show_popup.js' , 'general.js', 'pages_tree.js' ),
+				'all'			=> array( 'debug.js', 'jquery.fc_set_tab_list.js' , 'jquery.fc_toggle_element.js' , 'jquery.fc_resize_elements.js', 'jquery.fc_show_popup.js' , 'general.js', 'pages_tree.js' ),
 				'individual'	=> array (
 					'pages'				=> 'backend_pages_modify.js',
 					'access'			=> 'backend_users_index.js',

@@ -11,14 +11,18 @@
  */
 
 @include dirname(__FILE__).'/../../../../config.php';
-@include dirname(__FILE__).'/../../../../framework/LEPTON/Helper/I18n.php';
-@include dirname(__FILE__).'/../../../../framework/LEPTON/Helper/Directory.php';
-$lang = new CAT_Helper_I18n();
-$attr = ( isset($_POST['attr']) ? $_POST['attr'] : NULL );
 
-if ( isset($_POST['mod']) ) {
-    $mod  = $_POST['mod'];
-    $d    = new CAT_Helper_Directory();
+$lang = CAT_Helper_I18n::getInstance(LANGUAGE);
+$val  = CAT_Helper_Validate::getInstance();
+$attr = $val->get('_REQUEST','attr');
+
+if( file_exists(CAT_PATH.'/languages/'.$lang->getLang().'.php') ) {
+    $lang->addFile( $lang->getLang().'.php', CAT_PATH.'/languages/' );
+}
+
+$mod  = $val->get('_REQUEST','mod');
+if ( $mod ) {
+    $d    = CAT_Helper_Directory::getInstance();
     $path = $d->sanitizePath(dirname(__FILE__).'/../../../../modules/'.$mod);
     if( is_dir($path) ) {
         if( file_exists($path.'/languages/'.$lang->getLang().'.php') ) {
@@ -28,10 +32,10 @@ if ( isset($_POST['mod']) ) {
 }
 
 if ( is_object($lang) ) {
-	echo '<data>'.$lang->translate( $_POST['msg'], $attr ).'</data>';
+	echo '<data>'.$lang->translate( $val->get('_REQUEST','msg'), $attr ).'</data>';
 }
 else {
-	echo "Error<br />";
+	echo '<error>Unable to create I18n instance!</error>';
 }
 
 ?>

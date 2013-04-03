@@ -62,7 +62,6 @@ if (!class_exists('CAT_Helper_Validate'))
                 $glob =& $GLOBALS[$global];
             }
             $value = isset($glob[$key]) ? $glob[$key] : NULL;
-            $this->log()->logDebug(sprintf('value [%s]',$value));
             if ( $value && $require )
             {
                 $func = 'is_'.$require;
@@ -77,7 +76,7 @@ if (!class_exists('CAT_Helper_Validate'))
             {
                 $value = $this->add_slashes($value);
             }
-            $this->log()->logDebug(sprintf('returning value [%s]',$value));
+            $this->log()->logDebug('returning value:',$value);
             return $value;
         }   // end function get()
 

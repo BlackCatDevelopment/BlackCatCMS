@@ -83,9 +83,12 @@ $LANG = array(
     'Search' => 'Suche',
     'Search...' => 'Suchen...',
     'Success' => 'Erfolgreich',
-    // ----- error messages -----
+    'Out Of' => 'von',
+// ----- error messages -----
     'You sent an invalid value' => 'Es wurde ein ungültiger Wert angegeben',
-    // ----- MENU -----
+    'Error creating access file in the pages directory(page), (insufficient privileges)'
+        => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis (page) ist ein Fehler aufgetreten (Ungen&uuml;gende Zugangsrechte)',
+// ----- MENU -----
 	'Access' => 'Benutzerverwaltung',
 	'Add-on' => 'Add-on',
 	'Add-ons' => 'Erweiterungen',
@@ -99,23 +102,23 @@ $LANG = array(
 	'Login' => 'Anmeldung',
 	'Log-out' => 'Abmelden',
 	'Media' => 'Medien',
-    // ----- LOGIN PAGE -----
+// ----- LOGIN PAGE -----
     'Please enter your username and password.' => 'Bitte geben Sie unten Ihren Benutzernamen und Passwort ein.',
     'The password you entered was too short' => 'Das angegebene Passwort ist zu kurz!',
     'The username you entered was too short' => 'Der eingegebene Benutzername war zu kurz',
     'Invalid credentials' => 'Die Logindaten sind ungültig',
-    // ----- BACKEND -----
+// ----- BACKEND -----
     'Welcome to Black Cat CMS Administration' => 'Willkommen im Black Cat CMS Administrationsbereich',
     'To use <span class="icon-logo">Black Cat CMS</span>, please enable JavaScript in your browser and try again.'
         => 'Um <span class="icon-logo">Black Cat CMS</span> zu verwenden, bitte JavaScript im Browser aktivieren und nochmal versuchen.',
     'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.'
         => 'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.',
-    // ----- backend preferences -----
+// ----- backend preferences -----
     'New password' => 'Neues Kennwort',
     'Re-Type new password' => 'Neues Kennwort wiederholen',
     'Confirm with current password' => 'Mit aktuellem Kennwort bestätigen',
     'Details saved successfully' => 'Einstellungen gespeichert',
-    // ----- page -----
+// ----- page -----
     "Sorry, but you don't have the permissions for this action" => 'Sie haben leider nicht die notwendigen Rechte für diese Aktion',
     'Add child page' => 'Unterseite hinzuf&uuml;gen',
     'Add Page' => 'Seite hinzuf&uuml;gen',
@@ -165,6 +168,7 @@ $LANG = array(
     'Registered' => 'Registriert',
     'Same window' => 'Selbes Fenster',
     'Searching' => 'Suche',
+    'Section properties saved successfully' => 'Sektionseinstellungen gespeichert',
     'Security Settings' => 'Sicherheit',
     'SEO Settings' => 'SEO Einstellungen',
     'Show all sections' => 'Alle Sektionen zeigen',
@@ -179,7 +183,7 @@ $LANG = array(
     'Type' => 'Typ',
     'View page' => 'Ansicht',
     'Visibility' => 'Sichtbarkeit',
-    // ----- settings -----
+// ----- settings -----
     'Website title' => 'Webseitentitel',
     'Website description' => 'Webseitenbeschreibung',
     'Website keywords' => 'Schl&uuml;sselw&ouml;rter',
@@ -203,7 +207,7 @@ $LANG = array(
     'Session identifier' => 'Session ID',
     'Section-Anchor text' => 'Präfix für Section-Anker',
     'Mailer library' => 'Mailbibliothek',
-    // ----- mailer -----
+// ----- mailer -----
     'Default "from" mail' => 'Standard "VON" Adresse',
 	'Default sender name' => 'Standard Absender Name',
     'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by the CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.'
@@ -222,13 +226,13 @@ $LANG = array(
     'The test eMail could not be sent! Please check your settings!' => 'Das Versenden der Testmail ist fehlgeschlagen! Bitte die Einstellungen pr&uuml;fen!',
 	'The test eMail was sent successfully. Please check your inbox.' => 'Die Testmail wurde erfolgreich verschickt.',
     'This is the required test mail: CAT mailer is working' => 'Dies ist die angeforderte Testmail: Die Maileinstellungen funktionieren',
-    // ----- security -----
+// ----- security -----
     'Disable user accounts when max login attempts is reached'
        => 'Benutzerkonto deaktivieren, wenn die max. Anzahl Anmeldeversuche überschritten wurde',
     'Use csrf-magic to protect forms (frontend only)' => 'csrf-magic zur Absicherung von Formularen verwenden (nur Frontend)',
     'Defer executing csrf_check() until manual call' => 'csrf_check() bis zur manuellen Ausführung aussetzen',
 
-    // ----- preferences -----
+// ----- preferences -----
     'My settings' => 'Profil / Benutzereinstellungen',
     'Timezone' => 'Zeitzone',
     'Date format' => 'Datumsformat',
@@ -240,7 +244,7 @@ $LANG = array(
     'The password you entered was too short' => 'Das Kennwort ist zu kurz',
     'The passwords you entered do not match' => 'Die Kennworte stimmen nicht überein',
     'The (current) password you entered is incorrect' => 'Das eingegebene (aktuelle) Kennwort ist falsch',
-    // ----- media -----
+// ----- media -----
     'Media' => 'Medien',
     'New folder' => 'Neues Verzeichnis',
     'Folder created successfully' => 'Verzeichnis erfolgreich angelegt',
@@ -268,7 +272,7 @@ $LANG = array(
     'File deleted successfully' => 'Datei erfolgreich gelöscht',
     'Rename successful' => 'Umbenennen erfolgreich',
     'All files have been uploaded successfully.' => 'Alle Dateien erfolgreich übertragen',
-    // ----- users/groups -----
+// ----- users/groups -----
     'Manage users' => 'Benutzerverwaltung',
     'Username' => 'Benutzerkennung',
     'Display name' => 'Anzeigename',
@@ -288,7 +292,7 @@ $LANG = array(
     'Settings' => 'Einstellungen',
     'Users' => 'Benutzer',
     'Groups' => 'Gruppen',
-    // ----- settings -----
+// ----- settings -----
     'Website header' => 'Webseite Kopf',
     'Website footer' => 'Webseite Fußzeile',
     'Signup' => 'Benutzerregistrierung',

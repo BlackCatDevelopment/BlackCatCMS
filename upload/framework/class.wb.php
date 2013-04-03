@@ -108,6 +108,11 @@ class wb
         {
             return;
         }
+        // check for AJAX call
+        if ( CAT_Helper_Validate::getInstance()->get('_REQUEST','_cat_ajax') )
+        {
+            return;
+        }
         global $parser;
         // replace path in $errfile and $errstr to protect the data
         $errfile = str_ireplace( array(CAT_PATH,'\\'), array('/abs/path/to','/'), $errfile );

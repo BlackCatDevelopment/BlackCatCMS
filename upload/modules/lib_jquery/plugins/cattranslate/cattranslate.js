@@ -8,14 +8,16 @@
  *
  */
 
-var url = LEPTON_URL + '/modules/lib_jquery/plugins/leptranslate/leptranslate.php';
+var url = CAT_URL + '/modules/lib_jquery/plugins/leptranslate/leptranslate.php';
+var translated;
 
 if ( typeof jQuery == 'undefined' ) {
   alert( 'FATAL ERROR! jQuery not available!' );
 }
 else {  // ----- AJAX Setup -----
   jQuery.ajaxSetup({
-    error: function( x, e ){
+        error: function( x, e )
+        {
       if( x.status == 0 )           { alert('You are offline!!\n Please Check Your Network.'); }
       else if( x.status == 404 )    { alert('Requested URL not found.');                       }
       else if( x.status == 500 )    { alert('Internal Server Error.');                         }
@@ -25,22 +27,30 @@ else {  // ----- AJAX Setup -----
     }
   });
 	function leptranslate( string, elem, attributes, module ) {
-      jQuery.post(
-		url,
+        translated = '';
+        $.ajax(
 		{
+					type:		'post',
+					url:		url,
+					data:		{
 	      msg:  string,
 	      attr: attributes,
           mod: module
 	    },
-		function( data ) {
-          if ( typeof elem != 'undefined' && typeof elem != '' ) {
+					cache:		false,
+                    async:      false,
+                    success:    function( data ) {
+                                    if ( typeof elem != 'undefined' && typeof elem != '' )
+                                    {
 		      jQuery(elem).text(jQuery(data).text());
           }
-          else {
-              return jQuery(data).text();
+                                    else
+                                    {
+                                        translated = jQuery(data).text();
+                                    }
           }
-		},
-		"text"
-	  );
+	    });
+        if(translated=='') translated = string;
+        return translated;
 	}
 }
