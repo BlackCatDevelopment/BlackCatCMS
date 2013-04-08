@@ -42,6 +42,8 @@ if (defined('CAT_PATH')) {
 $LANG = array(
     'Local version' => 'Lokale Version',
     'Remote version' => 'Ermittelte Version',
+    'Last checked' => 'Letzte Überprüfung',
+    'Refresh now' => 'Jetzt erneut prüfen',
     'A newer version is available!' => 'Eine neue Version ist verfügbar!',
     "You're up-to-date!" => 'Ihre Version ist aktuell!',
     'Version check source file' => 'Quelldatei für die Versionsprüfung',

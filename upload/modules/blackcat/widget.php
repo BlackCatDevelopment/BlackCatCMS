@@ -41,21 +41,22 @@ if (defined('CAT_PATH')) {
 
 include dirname(__FILE__).'/data/config.inc.php';
 
-$error = $version = $newer = NULL;
+$error = $version = $newer = $last = $last_version = NULL;
 $debug = true;
 $doit  = true;
-$last  = $last_version = NULL;
-$fh    = @fopen(sanitize_path(dirname(__FILE__).'/data/.last'),'r');
 
-if ( is_resource($fh) ) {
+if(!CAT_Helper_Validate::getInstance()->sanitizeGet('blackcat_refresh'))
+{
+    $fh    = @fopen(sanitize_path(dirname(__FILE__).'/data/.last'),'r');
+    if ( is_resource($fh) ) {
     $last = fgets($fh);
     fclose($fh);
-}
-
-if ( $last ) {
+    }
+    if ( $last ) {
     list( $last, $last_version ) = explode('|',$last);
     if ( $last > ( time() - 60 * 60 * 24 ) ) {
         $doit = false;
+    }
     }
 }
 
@@ -73,6 +74,12 @@ if ( $doit ) {
     )
     );
     $client->setCookieJar();
+    $client->setHeaders(
+        array(
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'no-cache'
+        )
+    );
 
     try {
     $response = $client->request( Zend_Http_Client::GET );
@@ -111,5 +118,15 @@ if ( is_resource($fh) ) {
 }
 
 $parser->setPath(dirname(__FILE__).'/templates/default');
-$parser->output('widget.tpl',array('error'=>$error,'version'=>$version,'newer'=>$newer,'CAT_VERSION'=>CAT_VERSION));
+$parser->output(
+    'widget.tpl',
+    array(
+        'error' => $error,
+        'version' => $version,
+        'newer' => $newer,
+        'last' => CAT_Helper_DateTime::getInstance()->getDate($last).' '.CAT_Helper_DateTime::getInstance()->getTime($last),
+        'CAT_VERSION' => CAT_VERSION,
+        'uri' => $_SERVER['SCRIPT_NAME'],
+    )
+);
 

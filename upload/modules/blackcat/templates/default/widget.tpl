@@ -5,4 +5,10 @@
     {/if}
     <span style="display:inline-block;width:70%;">{translate('Local version')}:</span>{$CAT_VERSION}<br />
     <span style="display:inline-block;width:70%;">{translate('Remote version')}:</span>{$version}<br />
+    <span style="display:inline-block;width:70%;">{translate('Last checked')}:</span>{$last}<br /><br />
+    <form method="get" action="{$uri}" style="float:right;">
+      <input type="hidden" name="widget" value="blackcat" />
+      <input type="submit" name="blackcat_refresh" value="{translate('Refresh now')}" />
+    </form>
+    <br clear="right" />
 </div>
