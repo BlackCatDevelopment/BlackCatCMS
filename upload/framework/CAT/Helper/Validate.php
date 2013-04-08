@@ -148,6 +148,14 @@ if (!class_exists('CAT_Helper_Validate'))
         }   // end function sanitizeGet()
 
         /**
+         * convenience function to meet the names of the other ones
+         **/
+        public function sanitizeSession($field,$require=NULL,$escape=false)
+        {
+            return $this->get('_SESSION',$field,$require,$escape);
+        }   // end function sanitizeSession()
+
+        /**
          * Get SESSION data
          *
          * @access public
@@ -159,6 +167,19 @@ if (!class_exists('CAT_Helper_Validate'))
         {
             return $this->get('_SESSION',$field,$require,$escape);
         }   // end function fromSession()
+
+        /**
+         * Get SERVER data
+         *
+         * @access public
+         * @param  string  $field - fieldname
+         * @param  string  $require - value type (scalar, numeric, array)
+         * @return mixed
+         **/
+        public function sanitizeServer($field,$require=NULL,$escape=false)
+        {
+            return $this->get('_SERVER',$field,$require,$escape);
+        }   // end function sanitizeServer()
 
         //*********************************************************************
         // convenience methods; just wrap filter_var
