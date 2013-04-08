@@ -6,7 +6,7 @@
     <input type="hidden" name="tool" value="droplets" />
     <input type="hidden" name="import" value="1" />
     <fieldset>
-      <legend>{translate('Import Droplets')}</legend>
+      <legend>{translate('Import')}</legend>
         <label for="file">{translate('Please choose a file')}</label>
         <input type="file" name="file" id="file" />
         <input type="submit" name="save" value="{translate('Save')}" />

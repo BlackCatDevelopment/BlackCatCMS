@@ -67,7 +67,7 @@ elseif ( $val->get('_REQUEST','add') )
 {
     edit_droplet( 'new' );
 }
-elseif ( $val->get('_REQUEST','edit') && !$val->get('_REQUEST','cancel') ) )
+elseif ( $val->get('_REQUEST','edit') && !$val->get('_REQUEST','cancel') )
 {
     edit_droplet( $val->get('_REQUEST','edit') );
 }
@@ -75,7 +75,7 @@ elseif ( $val->get('_REQUEST','copy','numeric') )
 {
     copy_droplet( $val->get('_REQUEST','copy','numeric') );
 }
-elseif ( $val->get('_REQUEST','backupd') && !$val->get('_REQUEST','cancel') )
+elseif ( $val->get('_REQUEST','backups') && !$val->get('_REQUEST','cancel') )
 {
     manage_droplet_backups();
 }
@@ -210,6 +210,7 @@ function manage_droplet_backups()
     $info = NULL;
 
     $dirh = CAT_Helper_Directory::getInstance();
+    $val  = CAT_Helper_Validate::getInstance();
 
     // recover
     $recover = $val->get('_REQUEST','recover');
@@ -319,6 +320,7 @@ function manage_droplet_perms()
         }
     }
 
+    $val  = CAT_Helper_Validate::getInstance();
     if ( $val->get('_REQUEST','save') || $val->get('_REQUEST','save_and_back') )
     {
         foreach ( $settings as $key => $value )
@@ -768,7 +770,7 @@ function edit_droplet( $id )
 					    {
 					        echo "ERROR: ", $database->get_error();
 					    }
-                        
+
                     }
                 }
                 else
@@ -791,7 +793,7 @@ function edit_droplet( $id )
                     }
                     else
                     {
-                        if ( $id == 'new' || $val->get('_REQUEST','save_and_back') ) )
+                        if ( $id == 'new' || $val->get('_REQUEST','save_and_back') )
                         {
                             list_droplets( $admin->lang->translate( 'The Droplet was saved' ) );
                             return; // should never be reached

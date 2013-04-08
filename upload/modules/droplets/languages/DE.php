@@ -63,6 +63,7 @@ $LANG = array(
 	'Modify' => 'Bearbeiten',
 	'Packaging error' => 'Fehler beim Packen',
 	'Please check the syntax!' => 'Bitte die Syntax überprüfen!',
+    'Please choose a file' => 'Datei auswählen',
 	'Please enter a name!' => 'Bitte einen Namen eingeben!',
 	'Please mark some Droplets to delete' => 'Bitte Droplet(s) zum Löschen markieren',
 	'Please mark some Droplets to export' => 'Bitte einige Droplets zum Export markieren',

@@ -33,8 +33,19 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
 	class CAT_Helper_Array extends CAT_Object
 	{
 
-        private static $Needle = NULL;
-        private static $Key    = NULL;
+        private static $Needle  = NULL;
+        private static $Key     = NULL;
+        protected      $_config = array( 'loglevel' => 8 );
+        private static $instance;
+
+        public static function getInstance()
+        {
+            if (!self::$instance)
+            {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }
 
         private static function filter_callback($v)
         {
