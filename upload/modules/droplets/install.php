@@ -1,44 +1,45 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with Black Cat CMS Core.
- * This ADDON is released under the GNU GPL.
- * Additional license terms can be seen in the info.php of this module.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @module          dropleps
- * @author          LEPTON Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see info.php of this module
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Modules
+ *   @package         droplets
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
-if ( defined( 'CAT_PATH' ) )
-{
-    include( CAT_PATH . '/framework/class.secure.php' );
+if (defined('CAT_PATH')) {
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
+} else {
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-else
-{
-    $root  = "../";
-    $level = 1;
-    while ( ( $level < 10 ) && ( !file_exists( $root . '/framework/class.secure.php' ) ) )
-    {
-        $root .= "../";
-        $level += 1;
-    }
-    if ( file_exists( $root . '/framework/class.secure.php' ) )
-    {
-        include( $root . '/framework/class.secure.php' );
-    }
-    else
-    {
-        trigger_error( sprintf( "[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER[ 'SCRIPT_NAME' ] ), E_USER_ERROR );
-    }
-}
-// end include class.secure.php
 
 $is_upgrade = false;
 
@@ -71,7 +72,7 @@ if ( $result->numRows() == 0 ) {
 }
 
 // create the new permissions table
-$table = CAT_TABLE_PREFIX .'mod_dropleps_permissions';
+$table = CAT_TABLE_PREFIX .'mod_droplets_permissions';
 $database->query("DROP TABLE IF EXISTS `$table`");
 $database->query("CREATE TABLE `$table` (
 	`id` INT(10) UNSIGNED NOT NULL,
@@ -87,7 +88,7 @@ if( $database->is_error() ) {
 }
 
 // create the settings table
-$table = CAT_TABLE_PREFIX .'mod_dropleps_settings';
+$table = CAT_TABLE_PREFIX .'mod_droplets_settings';
 $database->query("DROP TABLE IF EXISTS `$table`");
 $database->query("CREATE TABLE `$table` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -103,21 +104,21 @@ if( $database->is_error() ) {
 }
 
 // insert settings
-$database->query("INSERT INTO `".CAT_TABLE_PREFIX ."mod_dropleps_settings` (`id`, `attribute`, `value`) VALUES
+$database->query("INSERT INTO `".CAT_TABLE_PREFIX ."mod_droplets_settings` (`id`, `attribute`, `value`) VALUES
 (1, 'manage_backups', '1'),
-(2, 'import_dropleps', '1'),
-(3, 'delete_dropleps', '1'),
-(4, 'add_dropleps', '1'),
-(5, 'export_dropleps', '1'),
-(6, 'modify_dropleps', '1'),
+(2, 'import_droplets', '1'),
+(3, 'delete_droplets', '1'),
+(4, 'add_droplets', '1'),
+(5, 'export_droplets', '1'),
+(6, 'modify_droplets', '1'),
 (7, 'manage_perms', '1');
 ");
 
-// import default dropleps
+// import default droplets
 if ( ! class_exists( 'CAT_Helper_Directory' ) ) {
 	@include CAT_PATH.'/framework/LEPTON/Helper/Directory.php';
 }
-if ( ! function_exists( 'dropleps_import' ) ) {
+if ( ! function_exists( 'droplets_import' ) ) {
 	@include dirname(__FILE__).'/include.php';
 }
 $inst_dir   = sanitize_path( dirname(__FILE__).'/install' );
@@ -127,13 +128,13 @@ $files      = $dirh->getFiles( $inst_dir, $inst_dir.'/' );
 
 if ( is_array($files) && count($files) ) {
 	foreach( $files as $file ) {
-	    // only files that have 'droplep_' as prefix
-	    if( ! preg_match( '~^droplep_~i', $file ) )
+	    // only files that have 'droplet_' as prefix
+	    if( ! preg_match( '~^droplet_~i', $file ) )
 	    {
 	        continue;
 		}
 	    // ignore the result here
-	    dropleps_import( $inst_dir.'/'.$file, $temp_unzip );
+	    droplets_import( $inst_dir.'/'.$file, $temp_unzip );
 	}
 }
 
@@ -162,7 +163,7 @@ if ( $is_upgrade ) {
 	@mkdir( CAT_PATH.'/modules/droplets', 0755 );
 	
 	// unpack the compatibility files
-	$temp_file = sanitize_path( CAT_PATH . '/modules/dropleps/install/droplets.zip' );
+	$temp_file = sanitize_path( CAT_PATH . '/modules/droplets/install/droplets.zip' );
 	$zip2 = new CAT_Helper_Zip($temp_file);
 	$zip2->config( 'Path', sanitize_path( CAT_PATH.'/modules/droplets' ) );
 	$zip2->extract( $temp_file );

@@ -1,126 +1,126 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with Black Cat CMS Core.
- * This ADDON is released under the GNU GPL.
- * Additional license terms can be seen in the info.php of this module.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @module          dropleps
- * @author          LEPTON Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see info.php of this module
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Modules
+ *   @package         droplets
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
-if ( defined( 'CAT_PATH' ) )
-{
-    include( CAT_PATH . '/framework/class.secure.php' );
+if (defined('CAT_PATH')) {
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
+} else {
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-else
-{
-    $root  = "../";
-    $level = 1;
-    while ( ( $level < 10 ) && ( !file_exists( $root . '/framework/class.secure.php' ) ) )
-    {
-        $root .= "../";
-        $level += 1;
-    }
-    if ( file_exists( $root . '/framework/class.secure.php' ) )
-    {
-        include( $root . '/framework/class.secure.php' );
-    }
-    else
-    {
-        trigger_error( sprintf( "[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER[ 'SCRIPT_NAME' ] ), E_USER_ERROR );
-    }
-}
-// end include class.secure.php
-
 
 $parser->setGlobals( array(
-    'IMGURL' => CAT_URL . '/modules/dropleps/css/images',
-    'DOCURL' => CAT_URL . '/modules/dropleps/docs/readme.html',
-    'action' => CAT_ADMIN_URL . '/admintools/tool.php?tool=dropleps'
+    'IMGURL' => CAT_URL . '/modules/droplets/css/images',
+    'DOCURL' => CAT_URL . '/modules/droplets/docs/readme.html',
+    'action' => CAT_ADMIN_URL . '/admintools/tool.php?tool=droplets'
 ) );
-$parser->setPath( CAT_PATH . '/modules/dropleps/templates/custom' );
-$parser->setFallbackPath( CAT_PATH . '/modules/dropleps/templates/default' );
-
-$admin->lang->debug( true );
+$parser->setPath( CAT_PATH . '/modules/droplets/templates/custom' );
+$parser->setFallbackPath( CAT_PATH . '/modules/droplets/templates/default' );
 
 global $settings;
 $settings = get_settings();
 
-if ( isset( $_REQUEST[ 'del' ] ) && is_numeric( $_REQUEST[ 'del' ] ) )
+$val = CAT_Helper_Validate::getInstance();
+
+if ( $val->get('_REQUEST','del','numeric') )
 {
-    $_POST[ 'markeddroplet' ] = $_REQUEST[ 'del' ];
-    $_REQUEST[ 'delete' ]     = 1;
+    $_POST['markeddroplet'] = $val->get('_REQUEST','del','numeric');
+    $_REQUEST['delete']     = 1;
 }
-if ( isset( $_REQUEST[ 'toggle' ] ) && is_numeric( $_REQUEST[ 'toggle' ] ) )
+if ( $val->get('_REQUEST','toggle','numeric') )
 {
-    toggle_active( $_REQUEST[ 'toggle' ] );
+    toggle_active( $val->get('_REQUEST','toggle','numeric') );
 }
-elseif ( isset( $_REQUEST[ 'add' ] ) )
+elseif ( $val->get('_REQUEST','add') )
 {
-    edit_droplep( 'new' );
+    edit_droplet( 'new' );
 }
-elseif ( isset( $_REQUEST[ 'edit' ] ) && !isset( $_REQUEST[ 'cancel' ] ) )
+elseif ( $val->get('_REQUEST','edit') && !$val->get('_REQUEST','cancel') ) )
 {
-    edit_droplep( $_REQUEST[ 'edit' ] );
+    edit_droplet( $val->get('_REQUEST','edit') );
 }
-elseif ( isset( $_REQUEST[ 'copy' ] ) && is_numeric( $_REQUEST[ 'copy' ] ) )
+elseif ( $val->get('_REQUEST','copy','numeric') )
 {
-    copy_droplep( $_REQUEST[ 'copy' ] );
+    copy_droplet( $val->get('_REQUEST','copy','numeric') );
 }
-elseif ( isset( $_REQUEST[ 'backups' ] ) && !isset( $_REQUEST[ 'cancel' ] ) )
+elseif ( $val->get('_REQUEST','backupd') && !$val->get('_REQUEST','cancel') )
 {
-    manage_backups();
+    manage_droplet_backups();
 }
-elseif ( isset( $_REQUEST[ 'export' ] ) && !isset( $_REQUEST[ 'cancel' ] ) )
+elseif ( $val->get('_REQUEST','export') && !$val->get('_REQUEST','cancel') )
 {
-    $info = export_dropleps();
-    list_dropleps( $info );
+    $info = export_droplets();
+    list_droplets( $info );
 }
-elseif ( isset( $_REQUEST[ 'import' ] ) && !isset( $_REQUEST[ 'cancel' ] ) )
+elseif ( $val->get('_REQUEST','import') && !$val->get('_REQUEST','cancel') )
 {
-    import_dropleps();
+    import_droplets();
 }
-elseif ( isset( $_REQUEST[ 'delete' ] ) && !isset( $_REQUEST[ 'cancel' ] ) )
+elseif ( $val->get('_REQUEST','delete') && !$val->get('_REQUEST','cancel') )
 {
-    export_dropleps();
-    delete_dropleps();
+    export_droplets();
+    delete_droplets();
 }
-elseif ( isset( $_REQUEST[ 'datafile' ] ) && is_numeric( $_REQUEST[ 'datafile' ] ) )
+elseif ($val->get('_REQUEST','datafile','numeric') )
 {
-    edit_datafile( $_REQUEST[ 'datafile' ] );
+    edit_datafile( $val->get('_REQUEST','datafile','numeric') );
 }
-elseif ( isset( $_REQUEST[ 'droplep_perms' ] ) && is_numeric( $_REQUEST[ 'droplep_perms' ] ) && !isset( $_REQUEST[ 'cancel' ] ) )
+elseif ( $val->get('_REQUEST','droplet_perms','numeric') && !$val->get('_REQUEST','cancel') )
 {
-    edit_droplep_perms( $_REQUEST[ 'droplep_perms' ] );
+    edit_droplet_perms($val->get('_REQUEST','droplet_perms','numeric'));
 }
-elseif ( isset( $_REQUEST[ 'perms' ] ) && !isset( $_REQUEST[ 'cancel' ] ) )
+elseif ( $val->get('_REQUEST','perms') && !$val->get('_REQUEST','cancel') )
 {
-    manage_perms();
+    manage_droplet_perms();
 }
 else
 {
-    list_dropleps();
+    list_droplets();
 }
 
 /**
- * get a list of all dropleps and show them
+ * get a list of all droplets and show them
  **/
-function list_dropleps( $info = NULL )
+function list_droplets( $info = NULL )
 {
     global $admin, $parser, $database, $settings;
 
     // check for global read perms
     $groups = $admin->get_groups_id();
 
-    $dirh    = $admin->get_helper( 'Directory' );
+    $dirh    = CAT_Helper_Directory::getInstance();
     $backups = $dirh->scanDirectory( $dirh->sanitizePath( dirname( __FILE__ ) . '/export' ), true, true, NULL, array(
          'zip'
     ) );
@@ -128,16 +128,16 @@ function list_dropleps( $info = NULL )
     $rows = array();
 
     $fields = 't1.id, name, code, description, active, comments, view_groups, edit_groups';
-    $query  = $database->query( "SELECT $fields FROM " . CAT_TABLE_PREFIX . "mod_droplets AS t1 LEFT OUTER JOIN " . CAT_TABLE_PREFIX . "mod_dropleps_permissions AS t2 ON t1.id=t2.id ORDER BY name ASC" );
+    $query  = $database->query( "SELECT $fields FROM " . CAT_TABLE_PREFIX . "mod_droplets AS t1 LEFT OUTER JOIN " . CAT_TABLE_PREFIX . "mod_droplets_permissions AS t2 ON t1.id=t2.id ORDER BY name ASC" );
 
     if ( $query->numRows() )
     {
         while ( $droplet = $query->fetchRow( MYSQL_ASSOC ) )
         {
-            // the current user needs global edit permissions, or specific edit permissions to see this droplep
-            if ( !is_allowed( 'modify_dropleps', $groups ) )
+            // the current user needs global edit permissions, or specific edit permissions to see this droplet
+            if ( !is_allowed( 'modify_droplets', $groups ) )
             {
-                // get edit groups for this droplep
+                // get edit groups for this drople
                 if ( $droplet[ 'edit_groups' ] )
                 {
                     if ( $admin->get_user_id() != 1 && !is_in_array( $droplet[ 'edit_groups' ], $groups ) )
@@ -169,7 +169,7 @@ function list_dropleps( $info = NULL )
             $droplet[ 'valid_code' ]   = check_syntax( $droplet[ 'code' ] );
             $droplet[ 'comments' ]     = $comments;
             // droplet included in search?
-	        $droplet['is_in_search'] = $admin->get_helper('DropLEP')->is_registered_for_search($droplet['name']);
+	        $droplet['is_in_search']   = CAT_Helper_Droplet::getInstance()->is_registered_for_search($droplet['name']);
             // is there a data file for this droplet?
             if ( file_exists( dirname( __FILE__ ) . '/data/' . $droplet[ 'name' ] . '.txt' ) || file_exists( dirname( __FILE__ ) . '/data/' . strtolower( $droplet[ 'name' ] ) . '.txt' ) || file_exists( dirname( __FILE__ ) . '/data/' . strtoupper( $droplet[ 'name' ] ) . '.txt' ) )
             {
@@ -183,20 +183,20 @@ function list_dropleps( $info = NULL )
         'rows'       => $rows,
         'info'       => $info,
         'backups'    => ( ( count( $backups ) && is_allowed( 'manage_backups', $groups ) ) ? 1 : NULL ),
-        'can_export' => ( is_allowed( 'export_dropleps', $groups ) ? 1 : NULL ),
-        'can_import' => ( is_allowed( 'import_dropleps', $groups ) ? 1 : NULL ),
-        'can_delete' => ( is_allowed( 'delete_dropleps', $groups ) ? 1 : NULL ),
-        'can_modify' => ( is_allowed( 'modify_dropleps', $groups ) ? 1 : NULL ),
-        'can_perms'  => ( is_allowed( 'manage_perms', $groups ) ? 1 : NULL ),
-        'can_add'    => ( is_allowed( 'add_dropleps', $groups ) ? 1 : NULL )
+        'can_export' => ( is_allowed( 'export_droplets', $groups ) ? 1 : NULL ),
+        'can_import' => ( is_allowed( 'import_droplets', $groups ) ? 1 : NULL ),
+        'can_delete' => ( is_allowed( 'delete_droplets', $groups ) ? 1 : NULL ),
+        'can_modify' => ( is_allowed( 'modify_droplets', $groups ) ? 1 : NULL ),
+        'can_perms'  => ( is_allowed( 'manage_perms'   , $groups ) ? 1 : NULL ),
+        'can_add'    => ( is_allowed( 'add_droplets'   , $groups ) ? 1 : NULL )
     ) );
 
-} // end function list_dropleps()
+} // end function list_droplets()
 
 /**
- *
+ * let the user manage the available backups
  **/
-function manage_backups()
+function manage_droplet_backups()
 {
     global $admin, $parser, $database, $settings;
 
@@ -209,33 +209,35 @@ function manage_backups()
     $rows = array();
     $info = NULL;
 
-    $dirh = $admin->get_helper( 'Directory' );
+    $dirh = CAT_Helper_Directory::getInstance();
 
     // recover
-    if ( isset( $_REQUEST[ 'recover' ] ) && file_exists( $dirh->sanitizePath( dirname( __FILE__ ) . '/export/' . $_REQUEST[ 'recover' ] ) ) )
+    $recover = $val->get('_REQUEST','recover');
+    if ( $recover && file_exists( $dirh->sanitizePath( dirname( __FILE__ ) . '/export/' . $recover ) ) )
     {
-        if ( !function_exists( 'dropleps_upload' ) )
+        if ( !function_exists( 'droplets_upload' ) )
         {
             @include_once( dirname( __FILE__ ) . '/include.php' );
         }
         $temp_unzip = $dirh->sanitizePath( CAT_PATH . '/temp/unzip/' );
-        $result     = dropleps_import( $dirh->sanitizePath( dirname( __FILE__ ) . '/export/' . $_REQUEST[ 'recover' ] ), $temp_unzip );
-        $info       = $admin->lang->translate( 'Successfully imported [{{count}}] Droplep(s)', array(
+        $result     = droplets_import( $dirh->sanitizePath( dirname( __FILE__ ) . '/export/' . $recover ), $temp_unzip );
+        $info       = $admin->lang->translate( 'Successfully imported [{{count}}] Droplet(s)', array(
              'count' => $result[ 'count' ]
         ) );
     }
 
     // delete single backup
-    if ( isset( $_REQUEST[ 'delbackup' ] ) && file_exists( $dirh->sanitizePath( dirname( __FILE__ ) . '/export/' . $_REQUEST[ 'delbackup' ] ) ) )
+    $delbackup = $val->get('_REQUEST','delbackup');
+    if ( $delbackup && file_exists( $dirh->sanitizePath( dirname( __FILE__ ) . '/export/' . $delbackup ) ) )
     {
-        @unlink( $dirh->sanitizePath( dirname( __FILE__ ) . '/export/' . $_REQUEST[ 'delbackup' ] ) );
+        @unlink( $dirh->sanitizePath( dirname( __FILE__ ) . '/export/' . $delbackup) );
         $info = $admin->lang->translate( 'Backup file deleted: {{file}}', array(
-             'file' => $_REQUEST[ 'delbackup' ]
+             'file' => $delbackup
         ) );
     }
 
     // delete a list of backups
-    // get all marked dropleps
+    // get all marked droplets
     $marked = isset( $_POST[ 'markeddroplet' ] ) ? $_POST[ 'markeddroplet' ] : array();
 
     if ( count( $marked ) )
@@ -271,14 +273,14 @@ function manage_backups()
             // stat
             $stat   = stat( $file );
             // get zip contents
-            $count  = $admin->get_helper('Zip',$file)->listContent();
+            $count  = CAT_Helper_Zip::getInstance($file)->listContent();
             $rows[] = array(
                 'name' => basename( $file ),
                 'size' => $stat[ 'size' ],
                 'date' => strftime( '%c', $stat[ 'ctime' ] ),
                 'files' => count( $count ),
                 'listfiles' => implode( ", ", array_map( create_function( '$cnt', 'return $cnt["filename"];' ), $count ) ),
-                'download' => sanitize_url( CAT_URL . '/modules/dropleps/export/' . basename( $file ) )
+                'download' => sanitize_url( CAT_URL . '/modules/droplets/export/' . basename( $file ) )
             );
         }
     }
@@ -289,12 +291,12 @@ function manage_backups()
         'backups' => ( count( $backups ) ? 1 : NULL )
     ) );
 
-} // end function manage_backups()
+} // end function manage_droplet_backups()
 
 /**
  *
  **/
-function manage_perms()
+function manage_droplet_perms()
 {
     global $admin, $parser, $database, $settings;
     $info   = NULL;
@@ -302,7 +304,7 @@ function manage_perms()
     $rows   = array();
 
     $this_user_groups = $admin->get_groups_id();
-    if ( !is_allowed( 'manage_perms', $this_user_groups ) )
+    if ( !is_allowed( 'manage_droplet_perms', $this_user_groups ) )
     {
         $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
     }
@@ -317,21 +319,21 @@ function manage_perms()
         }
     }
 
-    if ( isset( $_REQUEST[ 'save' ] ) || isset( $_REQUEST[ 'save_and_back' ] ) )
+    if ( $val->get('_REQUEST','save') || $val->get('_REQUEST','save_and_back') )
     {
         foreach ( $settings as $key => $value )
         {
-            if ( isset( $_REQUEST[ $key ] ) )
+            if ( $val->get('_REQUEST',$key) )
             {
-                $database->query( 'UPDATE ' . CAT_TABLE_PREFIX . "mod_dropleps_settings SET value='" . implode( '|', $_REQUEST[ $key ] ) . "' WHERE attribute='" . $key . "';" );
+                $database->query( 'UPDATE ' . CAT_TABLE_PREFIX . "mod_droplets_settings SET value='" . implode( '|',$val->get('_REQUEST',$key) ) . "' WHERE attribute='" . $key . "';" );
             }
         }
         // reload settings
         $settings = get_settings();
         $info     = $admin->lang->translate( 'Permissions saved' );
-        if ( isset( $_REQUEST[ 'save_and_back' ] ) )
+        if ( $val->get('_REQUEST','save_and_back') )
         {
-            return list_dropleps( $info );
+            return list_droplets( $info );
         }
     }
 
@@ -349,7 +351,7 @@ function manage_perms()
     }
 
     // sort rows by permission name (=text)
-    $array = $admin->get_helper( 'Array' );
+    $array = CAT_Helper_Array::getInstance();
     $rows  = $array->ArraySort( $rows, 'name', 'asc', true );
 
     $parser->output( 'permissions.lte', array(
@@ -357,24 +359,24 @@ function manage_perms()
         'info' => $info
     ) );
 
-} // end function manage_perms()
+} // end function manage_droplet_perms()
 
 /**
  *
  **/
-function export_dropleps()
+function export_droplets()
 {
     global $admin, $parser, $database;
 
     $groups = $admin->get_groups_id();
-    if ( !is_allowed( 'export_dropleps', $groups ) )
+    if ( !is_allowed( 'export_droplets', $groups ) )
     {
         $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
     }
 
     $info = array();
 
-    // get all marked dropleps
+    // get all marked droplets
     $marked = isset( $_POST[ 'markeddroplet' ] ) ? $_POST[ 'markeddroplet' ] : array();
 
     if ( isset( $marked ) && !is_array( $marked ) )
@@ -386,10 +388,10 @@ function export_dropleps()
 
     if ( !count( $marked ) )
     {
-        return $admin->lang->translate( 'Please mark some Dropleps to export' );
+        return $admin->lang->translate( 'Please mark some Droplets to export' );
     }
 
-    $temp_dir = CAT_PATH . '/temp/dropleps/';
+    $temp_dir = CAT_PATH . '/temp/droplets/';
 
     // make the temporary working directory
     @mkdir( $temp_dir );
@@ -401,7 +403,7 @@ function export_dropleps()
         {
             $droplet = $result->fetchRow( MYSQL_ASSOC );
             $name    = $droplet[ "name" ];
-            $info[]  = 'Droplep: ' . $name . '.php<br />';
+            $info[]  = 'Droplet: ' . $name . '.php<br />';
             $sFile   = $temp_dir . $name . '.php';
             $fh      = fopen( $sFile, 'w' );
             fwrite( $fh, '//:' . $droplet[ 'description' ] . "\n" );
@@ -433,22 +435,22 @@ function export_dropleps()
         }
     }
 
-    $filename = 'dropleps';
+    $filename = 'droplets';
 
     // if there's only a single droplet to export, name the zip-file after this droplet
     if ( count( $marked ) === 1 )
     {
-        $filename = 'droplep_' . $name;
+        $filename = 'droplet_' . $name;
     }
 
     // add current date to filename
     $filename .= '_' . date( 'Y-m-d' );
 
     // while there's an existing file, add a number to the filename
-    if ( file_exists( CAT_PATH . '/modules/dropleps/export/' . $filename . '.zip' ) )
+    if ( file_exists( CAT_PATH . '/modules/droplets/export/' . $filename . '.zip' ) )
     {
         $n = 1;
-        while ( file_exists( CAT_PATH . '/modules/dropleps/export/' . $filename . '_' . $n . '.zip' ) )
+        while ( file_exists( CAT_PATH . '/modules/droplets/export/' . $filename . '_' . $n . '.zip' ) )
         {
             $n++;
         }
@@ -458,15 +460,15 @@ function export_dropleps()
     $temp_file = sanitize_path( CAT_PATH . '/temp/' . $filename . '.zip' );
 
     // create zip
-    $archive   = $admin->get_helper( 'Zip', $temp_file )->config( 'removePath', $temp_dir );
+    $archive   = CAT_Helper_Zip::getInstance($temp_file)->config( 'removePath', $temp_dir );
     $file_list = $archive->create( $temp_dir );
     if ( $file_list == 0 )
     {
-        list_dropleps( $admin->lang->translate( "Packaging error" ) . ' - ' . $archive->errorInfo( true ) );
+        list_droplets( $admin->lang->translate( "Packaging error" ) . ' - ' . $archive->errorInfo( true ) );
     }
     else
     {
-        $export_dir = sanitize_path( CAT_PATH . '/modules/dropleps/export' );
+        $export_dir = sanitize_path( CAT_PATH . '/modules/droplets/export' );
         // create the export folder if it doesn't exist
         if ( !file_exists( $export_dir ) )
         {
@@ -480,25 +482,25 @@ function export_dropleps()
         else
         {
             unlink( $temp_file );
-            $download = sanitize_url( CAT_URL . '/modules/dropleps/export/' . $filename . '.zip' );
+            $download = sanitize_url( CAT_URL . '/modules/droplets/export/' . $filename . '.zip' );
         }
     }
 
-    rm_full_dir( $temp_dir );
+    CAT_Helper_Directory::getInstance()->removeDirectory( $temp_dir );
 
     return $admin->lang->translate( 'Backup created' ) . '<br /><br />' . implode( "\n", $info ) . '<br /><br /><a href="' . $download . '">Download</a>';
 
-} // end function export_dropleps()
+} // end function export_droplets()
 
 /**
  *
  **/
-function import_dropleps()
+function import_droplets()
 {
     global $admin, $parser, $database;
 
     $groups = $admin->get_groups_id();
-    if ( !is_allowed( 'import_dropleps', $groups ) )
+    if ( !is_allowed( 'import_droplets', $groups ) )
     {
         $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
     }
@@ -507,11 +509,11 @@ function import_dropleps()
 
     if ( count( $_FILES ) )
     {
-        if ( !function_exists( 'dropleps_upload' ) )
+        if ( !function_exists( 'droplets_upload' ) )
         {
             @include_once( dirname( __FILE__ ) . '/include.php' );
         }
-        list( $result, $data ) = dropleps_upload( 'file' );
+        list( $result, $data ) = droplets_upload( 'file' );
         $info = NULL;
         if ( is_array( $data ) )
         {
@@ -530,11 +532,11 @@ function import_dropleps()
         }
         if ( $result == 'error' )
         {
-            $problem = $admin->lang->translate( 'An error occurred when trying to import the Droplep(s)' ) . '<br /><br />' . $info;
+            $problem = $admin->lang->translate( 'An error occurred when trying to import the Droplet(s)' ) . '<br /><br />' . $info;
         }
         else
         {
-            list_dropleps( $admin->lang->translate( 'Successfully imported [{{count}}] Droplep(s)', array(
+            list_droplets( $admin->lang->translate( 'Successfully imported [{{count}}] Droplet(s)', array(
                  'count' => $data
             ) ) );
             return;
@@ -545,24 +547,24 @@ function import_dropleps()
          'problem' => $problem
     ) );
 
-} // end function import_dropleps()
+} // end function import_droplets()
 
 /**
  *
  **/
-function delete_dropleps()
+function delete_droplets()
 {
     global $admin, $parser, $database;
 
     $groups = $admin->get_groups_id();
-    if ( !is_allowed( 'delete_dropleps', $groups ) )
+    if ( !is_allowed( 'delete_droplets', $groups ) )
     {
         $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
     }
 
     $errors = array();
 
-    // get all marked dropleps
+    // get all marked droplets
     $marked = isset( $_POST[ 'markeddroplet' ] ) ? $_POST[ 'markeddroplet' ] : array();
 
     if ( isset( $marked ) && !is_array( $marked ) )
@@ -574,7 +576,7 @@ function delete_dropleps()
 
     if ( !count( $marked ) )
     {
-        list_dropleps( $admin->lang->translate( 'Please mark some Dropleps to delete' ) );
+        list_droplets( $admin->lang->translate( 'Please mark some Droplet(s) to delete' ) );
         return; // should never be reached
     }
 
@@ -586,7 +588,7 @@ function delete_dropleps()
         $database->query( "DELETE FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
         if ( $database->is_error() )
         {
-            $errors[] = $admin->lang->translate( 'Unable to delete droplep: {{id}}', array(
+            $errors[] = $admin->lang->translate( 'Unable to delete Droplet: {{id}}', array(
                  'id' => $id
             ) );
         }
@@ -605,20 +607,20 @@ function delete_dropleps()
         }
     }
 
-    list_dropleps( implode( "<br />", $errors ) );
+    list_droplets( implode( "<br />", $errors ) );
     return;
 
-} // end function delete_dropleps()
+} // end function delete_droplets()
 
 /**
- * copy a droplep
+ * copy a droplet
  **/
-function copy_droplep( $id )
+function copy_droplet( $id )
 {
     global $database, $admin;
 
     $groups = $admin->get_groups_id();
-    if ( !is_allowed( 'modify_dropleps', $groups ) )
+    if ( !is_allowed( 'modify_droplets', $groups ) )
     {
         $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
     }
@@ -653,7 +655,7 @@ function copy_droplep( $id )
     if ( !$database->is_error() )
     {
         $new_id = mysql_insert_id();
-        return edit_droplep( $new_id );
+        return edit_droplet( $new_id );
     }
     else
     {
@@ -662,21 +664,21 @@ function copy_droplep( $id )
 }
 
 /**
- * edit a droplep
+ * edit a droplet
  **/
-function edit_droplep( $id )
+function edit_droplet( $id )
 {
     global $admin, $parser, $database;
 
     $groups = $admin->get_groups_id();
 
-    if ( $id == 'new' && !is_allowed( 'add_dropleps', $groups ) )
+    if ( $id == 'new' && !is_allowed( 'add_droplets', $groups ) )
     {
         $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
     }
     else
     {
-        if ( !is_allowed( 'modify_dropleps', $groups ) )
+        if ( !is_allowed( 'modify_droplets', $groups ) )
         {
             $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
         }
@@ -686,9 +688,9 @@ function edit_droplep( $id )
     $info     = NULL;
     $problems = array();
 
-    if ( isset( $_POST[ 'cancel' ] ) )
+    if ( $val->get('_REQUEST','cancel') )
     {
-        return list_dropleps();
+        return list_droplets();
     }
 
     if ( $id != 'new' )
@@ -707,10 +709,10 @@ function edit_droplep( $id )
         );
     }
 
-    if ( isset( $_POST[ 'save' ] ) || isset( $_POST[ 'save_and_back' ] ) )
+    if ( $val->get('_REQUEST','save') || $val->get('_REQUEST','save_and_back') )
     {
         // check the code before saving
-        if ( !check_syntax( stripslashes( $_POST[ 'code' ] ) ) )
+        if ( !check_syntax( stripslashes( $val->get('_POST','code') ) ) )
         {
             $problem      = $admin->lang->translate( 'Please check the syntax!' );
             $data         = $_POST;
@@ -719,11 +721,11 @@ function edit_droplep( $id )
         else
         {
             // syntax okay, check fields and save
-            if ( $admin->get_post( 'name' ) == '' )
+            if ( $val->sanitizePost( 'name' ) == '' )
             {
                 $problems[] = $admin->lang->translate( 'Please enter a name!' );
             }
-            if ( $admin->get_post( 'code' ) == '' )
+            if ( $val->sanitizePost( 'code' ) == '' )
             {
                 $problems[] = $admin->lang->translate( 'You have entered no code!' );
             }
@@ -732,16 +734,16 @@ function edit_droplep( $id )
             {
                 $continue      = true;
                 $title         = $admin->add_slashes( $admin->get_post( 'name' ) );
-                $active        = $admin->get_post( 'active' );
-                $show_wysiwyg  = $admin->get_post( 'show_wysiwyg' );
-                $description   = $admin->add_slashes( $admin->get_post( 'description' ) );
+                $active        = $val->sanitizePost( 'active' );
+                $show_wysiwyg  = $val->sanitizePost( 'show_wysiwyg' );
+                $description   = $val->sanitizePost( 'description',NULL,true );
                 $tags          = array(
                     '<?php',
                     '?>',
                     '<?'
                 );
-                $content       = str_replace( $tags, '', $admin->get_post( 'code' ) );
-                $comments      = $admin->add_slashes( $admin->get_post( 'comments' ) );
+                $content       = str_replace( $tags, '', $val->sanitizePost( 'code' ) );
+                $comments      = $val->sanitizePost( 'comments',NULL,true );
                 $modified_when = time();
                 $modified_by   = $admin->get_user_id();
                 if ( $id == 'new' )
@@ -750,7 +752,7 @@ function edit_droplep( $id )
                     $query = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE name = '$title'" );
                     if ( $query->numRows() > 0 )
                     {
-                        $problem  = $admin->lang->translate( 'There is already a droplep with the same name!' );
+                        $problem  = $admin->lang->translate( 'There is already a droplet with the same name!' );
                         $continue = false;
                         $data     = $_POST;
                         $data['code'] = stripslashes( $_POST[ 'code' ] );
@@ -776,7 +778,7 @@ function edit_droplep( $id )
                                     . $admin->add_slashes( $content )
                                     . "', comments = '$comments', modified_when = '$modified_when', modified_by = '$modified_by' WHERE id = '$id'"
                     );
-                    // reload Droplep data
+                    // reload Droplet data
                     $query = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
                     $data  = $query->fetchRow( MYSQL_ASSOC );
                 }
@@ -789,14 +791,14 @@ function edit_droplep( $id )
                     }
                     else
                     {
-                        if ( $id == 'new' || isset( $_POST[ 'save_and_back' ] ) )
+                        if ( $id == 'new' || $val->get('_REQUEST','save_and_back') ) )
                         {
-                            list_dropleps( $admin->lang->translate( 'The Droplep was saved' ) );
+                            list_droplets( $admin->lang->translate( 'The Droplet was saved' ) );
                             return; // should never be reached
                         }
                         else
                         {
-                            $info = $admin->lang->translate( 'The Droplep was saved' );
+                            $info = $admin->lang->translate( 'The Droplet was saved' );
                         }
                     }
                 }
@@ -819,12 +821,12 @@ function edit_droplep( $id )
         'id'   => $id,
         'name' => $data[ 'name' ]
     ) );
-} // end function edit_droplep()
+} // end function edit_droplet()
 
 /**
  *
  **/
-function edit_droplep_perms( $id )
+function edit_droplet_perms( $id )
 {
     global $admin, $parser, $database;
 
@@ -848,28 +850,28 @@ function edit_droplep_perms( $id )
     }
 
     // save perms
-    if ( isset( $_REQUEST[ 'save' ] ) || isset( $_REQUEST[ 'save_and_back' ] ) )
+    if ( $val->get('_REQUEST','save') || $val->get('_REQUEST','save_and_back') )
     {
         $edit = (
-					  isset($_REQUEST['edit_groups'])
-					? ( is_array($_REQUEST['edit_groups']) ? implode('|',$_REQUEST['edit_groups']) : $_REQUEST['edit_groups'] )
+					  $val->get('_REQUEST','edit_groups')
+					? ( is_array($val->get('_REQUEST','edit_groups')) ? implode('|',$val->get('_REQUEST','edit_groups')) : $val->get('_REQUEST','edit_groups') )
 					: NULL
 				);
         $view = (
-					  isset($_REQUEST['view_groups'])
-					? ( is_array($_REQUEST['view_groups']) ? implode('|',$_REQUEST['view_groups']) : $_REQUEST['view_groups'] )
+					  $val->get('_REQUEST','view_groups')
+					? ( is_array($val->get('_REQUEST','view_groups')) ? implode('|',$val->get('_REQUEST','view_groups')) : $val->get('_REQUEST','view_groups') )
 					: NULL
 				);
-        $database->query( 'REPLACE INTO ' . CAT_TABLE_PREFIX . "mod_dropleps_permissions VALUES( '$id', '$edit', '$view' );" );
-        $info = $admin->lang->translate( 'The Droplep was saved' );
-        if ( isset( $_REQUEST[ 'save_and_back' ] ) )
+        $database->query( 'REPLACE INTO ' . CAT_TABLE_PREFIX . "mod_droplets_permissions VALUES( '$id', '$edit', '$view' );" );
+        $info = $admin->lang->translate( 'The Droplet was saved' );
+        if ( $val->get('_REQUEST','save_and_back') )
         {
-            return list_dropleps( $info );
+            return list_droplets( $info );
         }
     }
 
-    // get droplep data
-    $query = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets AS t1 LEFT OUTER JOIN ".CAT_TABLE_PREFIX."mod_dropleps_permissions AS t2 ON t1.id=t2.id WHERE t1.id = '$id'" );
+    // get droplet data
+    $query = $database->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets AS t1 LEFT OUTER JOIN ".CAT_TABLE_PREFIX."mod_droplets_permissions AS t2 ON t1.id=t2.id WHERE t1.id = '$id'" );
     $data  = $query->fetchRow( MYSQL_ASSOC );
 
     foreach ( array(
@@ -889,16 +891,16 @@ function edit_droplep_perms( $id )
         );
     }
 
-    $parser->output( 'droplep_permissions.lte', array(
+    $parser->output( 'droplet_permissions.lte', array(
         'rows' => $rows,
         'info' => $info,
         'id'   => $id
     ) );
 
-} // end function edit_droplep_perms()
+} // end function edit_droplet_perms()
 
 /**
- * edit a droplep's datafile
+ * edit a droplet's datafile
  **/
 function edit_datafile( $id )
 {
@@ -906,14 +908,14 @@ function edit_datafile( $id )
     $info = $problem = NULL;
 
     $groups = $admin->get_groups_id();
-    if ( !is_allowed( 'modify_dropleps', $groups ) )
+    if ( !is_allowed( 'modify_droplets', $groups ) )
     {
         $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
     }
 
-    if ( isset( $_POST[ 'cancel' ] ) )
+    if ( $val->get('_REQUEST','cancel') )
     {
-        return list_dropleps();
+        return list_droplets();
     }
 
     $query = $database->query( "SELECT name FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
@@ -922,15 +924,15 @@ function edit_datafile( $id )
     // find the file
     if ( file_exists( dirname( __FILE__ ) . '/data/' . $data[ 'name' ] . '.txt' ) )
     {
-        $file = $admin->get_helper( 'Directory' )->sanitizePath( dirname( __FILE__ ) . '/data/' . $data[ 'name' ] . '.txt' );
+        $file = CAT_Helper_Directory::getInstance()->sanitizePath( dirname( __FILE__ ) . '/data/' . $data[ 'name' ] . '.txt' );
     }
     elseif ( file_exists( dirname( __FILE__ ) . '/data/' . strtolower( $data[ 'name' ] ) . '.txt' ) )
     {
-        $file = $admin->get_helper( 'Directory' )->sanitizePath( dirname( __FILE__ ) . '/data/' . strtolower( $data[ 'name' ] ) . '.txt' );
+        $file = CAT_Helper_Directory::getInstance()->sanitizePath( dirname( __FILE__ ) . '/data/' . strtolower( $data[ 'name' ] ) . '.txt' );
     }
     elseif ( file_exists( dirname( __FILE__ ) . '/data/' . strtoupper( $data[ 'name' ] ) . '.txt' ) )
     {
-        $file = $admin->get_helper( 'Directory' )->sanitizePath( dirname( __FILE__ ) . '/data/' . strtoupper( $data[ 'name' ] ) . '.txt' );
+        $file = CAT_Helper_Directory::getInstance()->sanitizePath( dirname( __FILE__ ) . '/data/' . strtoupper( $data[ 'name' ] ) . '.txt' );
     }
 
     // slurp file
@@ -949,13 +951,13 @@ function edit_datafile( $id )
             $info = $admin->lang->translate( 'The datafile has been saved' );
             if ( isset( $_POST[ 'save_and_back' ] ) )
             {
-                return list_dropleps( $info );
+                return list_droplets( $info );
             }
         }
         else
         {
             $problem = $admin->lang->translate( 'Unable to write to file [{{file}}]', array(
-                 'file' => str_ireplace( $admin->get_helper( 'Directory' )->sanitizePath( CAT_PATH ), 'CAT_PATH', $file )
+                 'file' => str_ireplace( CAT_Helper_Directory::getInstance()->sanitizePath( CAT_PATH ), 'CAT_PATH', $file )
             ) );
         }
     }
@@ -967,7 +969,7 @@ function edit_datafile( $id )
         'id' => $id,
         'contents' => htmlspecialchars( $contents )
     ) );
-} // end function edit_droplep()
+} // end function edit_droplet()
 
 
 /**
@@ -978,7 +980,7 @@ function toggle_active( $id )
     global $admin, $parser, $database;
 
     $groups = $admin->get_groups_id();
-    if ( !is_allowed( 'modify_dropleps', $groups ) )
+    if ( !is_allowed( 'modify_droplets', $groups ) )
     {
         $admin->print_error( $admin->lang->translate( "You don't have the permission to do this" ) );
     }
@@ -1077,7 +1079,7 @@ function get_settings()
 {
     global $admin, $database;
     $settings = array();
-    $query    = $database->query( 'SELECT * FROM ' . CAT_TABLE_PREFIX . 'mod_dropleps_settings' );
+    $query    = $database->query( 'SELECT * FROM ' . CAT_TABLE_PREFIX . 'mod_droplets_settings' );
     if ( $query->numRows() )
     {
         while ( $row = $query->fetchRow( MYSQL_ASSOC ) )

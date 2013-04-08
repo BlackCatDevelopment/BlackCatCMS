@@ -23,15 +23,15 @@
  *
  */
 
-if (!class_exists('CAT_Helper_DropLEP')) {
+if (!class_exists('CAT_Helper_Droplet')) {
 
     if (!class_exists('CAT_Object', false)) {
 	    @include dirname(__FILE__).'/../Object.php';
 	}
 	require_once CAT_PATH.'/modules/lib_lepton/pages_load/library.php';
-	require_once CAT_PATH.'/modules/lib_search/search.dropleps.php';
+	require_once CAT_PATH.'/modules/lib_search/search.droplets.php';
 	
-	class CAT_Helper_DropLEP extends CAT_Object	{
+	class CAT_Helper_Droplet extends CAT_Object	{
 
         private static $instance = NULL;
 
@@ -45,26 +45,26 @@ if (!class_exists('CAT_Helper_DropLEP')) {
         }
 	
 		/**
-		 * Install a DropLEP from a ZIP file (the ZIP may contain more than one
-		 * DropLEP)
+		 * Install a Droplet from a ZIP file (the ZIP may contain more than one
+		 * Droplet)
 		 *
 		 * @access public
 		 * @param  string  $temp_file - name of the ZIP file
-		 * @return array   see dropleps_import() method
+		 * @return array   see droplets_import() method
 		 *
 		 **/
-		public function installDroplep( $temp_file )
+		public function installDroplet( $temp_file )
 		{
-		    if ( ! method_exists( 'dropleps_import' ) )
+		    if ( ! method_exists( 'droplets_import' ) )
 			{
-			    require_once CAT_PATH.'/modules/dropleps/include.php';
+			    require_once CAT_PATH.'/modules/droplets/include.php';
 			}
 			$temp_unzip = CAT_PATH.'/temp/unzip/';
-			return dropleps_import( $temp_file, $temp_unzip );
-		}   // end function installDroplep()
+			return droplets_import( $temp_file, $temp_unzip );
+		}   // end function installDroplet()
 
 	    /**
-	     * Register the DropLEP $droplep_name for the $page_id for loading a CSS 
+	     * Register the Droplet $droplet_name for the $page_id for loading a CSS
 	     * file with the specified $file_name.
 	     * If $file_path is specified the file will be loaded from $file_path, 
 	     * otherwise the file will be loaded from the desired $module_directory.
@@ -72,43 +72,43 @@ if (!class_exists('CAT_Helper_DropLEP')) {
 	     * (this option is intended for usage in templates)
 	     *
 	     * @param integer $page_id
-	     * @param string $droplep_name
+	     * @param string $droplet_name
 	     * @param string $module_directory - only the directory name
 	     * @param string $file_name - the filename with extension
 	     * @param string $file_path - relative to the root
 	     * @return boolean on success
 	     */	    	  
-	    public function register_css($page_id, $droplep_name, $module_directory, $file_name, $file_path='') {
-	        return register_droplep($page_id, $droplep_name, $module_directory, 'css', $file_name, $file_path);
+	    public function register_css($page_id, $droplet_name, $module_directory, $file_name, $file_path='') {
+	        return register_droplet($page_id, $droplet_name, $module_directory, 'css', $file_name, $file_path);
 	    }
 	    
 	    /**
-         * Unregister the DropLEP $droplep_name from the $page_id with the settings
+         * Unregister the Droplet $droplet_name from the $page_id with the settings
          * $module_directory and $file_name
          * 
          * @param integer $page_id
-         * @param string $droplep_name
+         * @param string $droplet_name
          * @param sring $module_directory
          * @param string $file_name
          */
-	    public function unregister_css($page_id, $droplep_name, $module_directory, $file_name) {
-	        return unregister_droplep($page_id, $droplep_name, $module_directory, 'css', $file_name);
+	    public function unregister_css($page_id, $droplet_name, $module_directory, $file_name) {
+	        return unregister_droplet($page_id, $droplet_name, $module_directory, 'css', $file_name);
 	    }
 	    
 	    /**
-         * Check wether the DropLEP $droplep_name is registered for setting CSS Headers
+         * Check wether the Droplet $droplet_name is registered for setting CSS Headers
          * 
          * @param integer $page_id
-         * @param string $droplep_name
+         * @param string $droplet_name
          * @param string $module_directory
-         * @return boolean true if the DropLEP is registered
+         * @return boolean true if the Droplet is registered
          */
-	    public function is_registered_css($page_id, $droplep_name, $module_directory) {
-	        return is_registered_droplep($page_id, $droplep_name, $module_directory, 'css');	    
+	    public function is_registered_css($page_id, $droplet_name, $module_directory) {
+	        return is_registered_droplet($page_id, $droplet_name, $module_directory, 'css');
 	    }
 
 	    /**
-	     * Register the DropLEP $droplep_name for the $page_id for loading a JS 
+	     * Register the Droplet $droplet_name for the $page_id for loading a JS
 	     * JavaScript file with the specified $file_name.
 	     * If $file_path is specified the file will be loaded from $file_path, 
 	     * otherwise the file will be loaded from the desired $module_directory.
@@ -116,39 +116,39 @@ if (!class_exists('CAT_Helper_DropLEP')) {
 	     * (this option is intended for usage in templates)
 	     *
 	     * @param integer $page_id
-	     * @param string $droplep_name
+	     * @param string $droplet_name
 	     * @param string $module_directory - only the directory name
 	     * @param string $file_name - the filename with extension
 	     * @param string $file_path - relative to the root
 	     * @return boolean on success
 	     */	    	  
-	    public function register_js($page_id, $droplep_name, $module_directory, $file_name, $file_path='') {
-	        return register_droplep($page_id, $droplep_name, $module_directory, 'js', $file_name, $file_path);
+	    public function register_js($page_id, $droplet_name, $module_directory, $file_name, $file_path='') {
+	        return register_droplet($page_id, $droplet_name, $module_directory, 'js', $file_name, $file_path);
 	    }
 	     
 	    /**
-         * Unregister the DropLEP $droplep_name from the $page_id with the settings
+         * Unregister the Droplet $droplet_name from the $page_id with the settings
          * $module_directory and $file_name
          * 
          * @param integer $page_id
-         * @param string $droplep_name
+         * @param string $droplet_name
          * @param sring $module_directory
          * @param string $file_name
          */
-	    public function unregister_js($page_id, $droplep_name, $module_directory, $file_name) {
-	        return unregister_droplep($page_id, $droplep_name, $module_directory, 'js', $file_name);
+	    public function unregister_js($page_id, $droplet_name, $module_directory, $file_name) {
+	        return unregister_droplet($page_id, $droplet_name, $module_directory, 'js', $file_name);
 	    }
 	     
 	    /**
-         * Check wether the DropLEP $droplep_name is registered for setting JS Headers
+         * Check wether the Droplet $droplet_name is registered for setting JS Headers
          * 
          * @param integer $page_id
-         * @param string $droplep_name
+         * @param string $droplet_name
          * @param string $module_directory
-         * @return boolean true if the DropLEP is registered
+         * @return boolean true if the Droplet is registered
          */
-	    public function is_registered_js($page_id, $droplep_name, $module_directory) {
-	        return is_registered_droplep($page_id, $droplep_name, $module_directory, 'js');
+	    public function is_registered_js($page_id, $droplet_name, $module_directory) {
+	        return is_registered_droplet($page_id, $droplet_name, $module_directory, 'js');
 	    }
 	     
 	    /**
@@ -160,44 +160,44 @@ if (!class_exists('CAT_Helper_DropLEP')) {
          * @return boolean true on success
          */
 	    public function get_headers($page_id) {
-	        return get_droplep_headers($page_id); 
+	        return get_droplet_headers($page_id);
 	    } // get_headers()
 	    
 	    /**
-	     * Register the DropLEP $droplep_name in $module_directory for the 
+	     * Register the Droplet $droplet_name in $module_directory for the
 	     * search of $page_id
 	     * 
 	     * @param integer $page_id
-	     * @param string $droplep_name
+	     * @param string $droplet_name
 	     * @param string $module_directory
 	     * @return boolean true on success
 	     */
-	    public function register_for_search($page_id, $droplep_name, $module_directory) {
-	        return register_droplep_for_search($droplep_name, $page_id, $module_directory);
+	    public function register_for_search($page_id, $droplet_name, $module_directory) {
+	        return register_droplet_for_search($droplet_name, $page_id, $module_directory);
 	    }
 	    
 	    /**
-	     * Unregister the DropLEP $droplep_name in $module_directory for the 
+	     * Unregister the Droplet $droplet_name in $module_directory for the
 	     * search of $page_id
 	     * 
 	     * @param integer $page_id
-	     * @param string $droplep_name
+	     * @param string $droplet_name
 	     * @return boolean true on success
 	     */
-	    public function unregister_for_search($page_id, $droplep_name) {
-	        return unregister_droplep_for_search($droplep_name, $page_id);
+	    public function unregister_for_search($page_id, $droplet_name) {
+	        return unregister_droplet_for_search($droplet_name, $page_id);
 	    }
 	    
 	    /**
-	     * Check if the DropLEP $droplep_name is registered for search
+	     * Check if the Droplet $droplet_name is registered for search
 	     * 
-	     * @param string $droplep_name
+	     * @param string $droplet_name
 	     * @return boolean true on success
 	     */
-	    public function is_registered_for_search($droplep_name) {
-	        return is_droplep_registered_for_search($droplep_name);
+	    public function is_registered_for_search($droplet_name) {
+	        return is_droplet_registered_for_search($droplet_name);
 	    }
 	    
-	} // class CAT_Helper_DropLEP
+	} // class CAT_Helper_Droplet
 	
 } // if class_exists()	

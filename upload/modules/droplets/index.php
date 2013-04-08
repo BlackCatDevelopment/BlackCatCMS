@@ -5,7 +5,7 @@
  * This ADDON is released under the GNU GPL.
  * Additional license terms can be seen in the info.php of this module.
  *
- * @module          dropleps
+ * @module          droplets
  * @author          LEPTON Project
  * @copyright       2010-2011, LEPTON Project
  * @link            http://www.LEPTON-cms.org

@@ -1,42 +1,50 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with Black Cat CMS Core.
- * This ADDON is released under the GNU GPL.
- * Additional license terms can be seen in the info.php of this module.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @module          dropleps
- * @author          LEPTON Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see info.php of this module
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Modules
+ *   @package         droplets
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 /**
- * this method may be called by modules to handle a droplep upload
+ * this method may be called by modules to handle a droplet upload
  **/
-function dropleps_upload( $input ) {
+function droplets_upload( $input ) {
 
     global $database, $admin;
     
@@ -56,14 +64,14 @@ function dropleps_upload( $input ) {
    	    return array( 'error', $admin->lang->translate( 'Upload failed' ) );
     }
 
-    $result = dropleps_import( $temp_file, $temp_unzip );
+    $result = droplets_import( $temp_file, $temp_unzip );
 
     // Delete the temp zip file
     if( file_exists( $temp_file) )
     {
         unlink( $temp_file );
     }
-    rm_full_dir($temp_unzip);
+    CAT_Helper_Directory::getInstance()->removeDirectory($temp_unzip);
 
     // show errors
     if ( isset( $result['errors'] ) && is_array( $result['errors'] ) && count( $result['errors'] ) > 0 ) {
@@ -73,31 +81,22 @@ function dropleps_upload( $input ) {
     // return success
     return array( 'success', $result['count'] );
     
-}   // end function dropleps_upload()
+}   // end function droplets_upload()
 
 /**
- * this method may be called by modules to handle a droplep import
+ * this method may be called by modules to handle a droplet import
  **/
-function dropleps_import( $temp_file, $temp_unzip ) {
+function droplets_import( $temp_file, $temp_unzip ) {
 
     global $admin, $database;
 
     $errors  = array();
     $imports = array();
     $count   = 0;
-    
-    if ( method_exists( $admin, 'get_helper' ) ) {
-    	$list = $admin->get_helper('Zip',$temp_file)->config( 'Path', $temp_unzip )->extract();
-	}
-	else {
-	    if ( ! class_exists( 'PclZip' ) ) {
-	        // Include the PclZip class file
-    		require_once(CAT_PATH.'/modules/lib_pclzip/pclzip.lib.php');
-		}
-		$archive = new PclZip($temp_file);
-    	$list    = $archive->extract(PCLZIP_OPT_PATH, $temp_unzip);
-	}
 
+    // extract file
+    $list = CAT_Helper_Zip::getInstance($temp_file)->config( 'Path', $temp_unzip )->extract();
+    
     // now, open all *.php files and search for the header;
     // an exported droplet starts with "//:"
     if ( $dh = @opendir($temp_unzip) ) {
@@ -123,7 +122,7 @@ function dropleps_import( $temp_file, $temp_unzip ) {
                     }
                     if ( ! $description && ! $usage ) {
                         // invalid file
-                        $errors[$file] = $admin->lang->translate( 'No valid Droplep file (missing description and/or usage instructions)' );
+                        $errors[$file] = $admin->lang->translate( 'No valid Droplet file (missing description and/or usage instructions)' );
                         continue;
                     }
                     // Remaining: Droplet code
@@ -169,11 +168,11 @@ function dropleps_import( $temp_file, $temp_unzip ) {
                 closedir($dh);
             }
         }
-        rm_full_dir($temp_unzip);
+        CAT_Helper_Directory::getInstance()->removeDirectory($temp_unzip);
     }
 
     return array( 'count' => $count, 'errors' => $errors, 'imported' => $imports );
 
-}   // end function dropleps_import()
+}   // end function droplets_import()
 
 ?>
