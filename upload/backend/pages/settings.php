@@ -64,7 +64,7 @@ else
 require_once(CAT_PATH.'/framework/functions-utf8.php');
 
 global $parser;
-$data_dwoo = array();
+$tpl_data = array();
 
 
 // =============================================================== 
@@ -106,40 +106,42 @@ $user									= $admin->get_user_details( $results_array['modified_by'] );
 // ============================================= 
 // ! Add result_array to the template variable   
 // ============================================= 
-$data_dwoo['CUR_TAB']                   = 'settings';
-$data_dwoo['PAGE_HEADER']               = $admin->lang->translate('Modify Page Settings');
-$data_dwoo['PAGE_ID']					= $results_array['page_id'];
-$data_dwoo['PAGE_TITLE']				= $results_array['page_title'];
-$data_dwoo['PAGE_GROUPS']			    = $results_array['page_groups'];
-$data_dwoo['PAGE_LINK']					= $admin->page_link($results_array['link']);
-$data_dwoo['PAGE_SHORT_LINK']			= substr( $results_array['link'], strripos( $results_array['link'], '/' ) + 1 );
-$data_dwoo['MENU_TITLE']				= $results_array['menu_title'];
-$data_dwoo['DESCRIPTION']				= $results_array['description'];
-$data_dwoo['KEYWORDS']					= $results_array['keywords'];
-$data_dwoo['VISIBILITY']				= $results_array['visibility'];
-$data_dwoo['TOP_SELECTED']				= $results_array['target'];
-$data_dwoo['MODIFIED_WHEN']				= ($results_array['modified_when'] != 0) ? date(TIME_FORMAT.', '.DATE_FORMAT, $results_array['modified_when']) : 'Unknown';
-$data_dwoo['SEARCHING_DISABLED']		= $results_array['searching'] == 0 ? true : false;
+$tpl_data['CUR_TAB']                   = 'settings';
+$tpl_data['PAGE_HEADER']               = $admin->lang->translate('Modify Page Settings');
+$tpl_data['PAGE_ID']					= $results_array['page_id'];
+$tpl_data['PAGE_TITLE']				= $results_array['page_title'];
+$tpl_data['PAGE_GROUPS']			    = $results_array['page_groups'];
+$tpl_data['PAGE_LINK']					= $admin->page_link($results_array['link']);
+$tpl_data['PAGE_SHORT_LINK']			= substr( $results_array['link'], strripos( $results_array['link'], '/' ) + 1 );
+$tpl_data['MENU_TITLE']				= $results_array['menu_title'];
+$tpl_data['DESCRIPTION']				= $results_array['description'];
+$tpl_data['KEYWORDS']					= $results_array['keywords'];
+$tpl_data['VISIBILITY']				= $results_array['visibility'];
+$tpl_data['TOP_SELECTED']				= $results_array['target'];
+$tpl_data['MODIFIED_WHEN']		  = ($results_array['modified_when'] != 0)
+                                  ? $modified_ts = CAT_Helper_DateTime::getDateTime($results_array['modified_when'])
+                                  : false;
+$tpl_data['SEARCHING_DISABLED']		= $results_array['searching'] == 0 ? true : false;
 
-$data_dwoo['MODIFIED_BY']				= $user['display_name'];
-$data_dwoo['MODIFIED_BY_USERNAME']		= $user['username'];
+$tpl_data['MODIFIED_BY']				= $user['display_name'];
+$tpl_data['MODIFIED_BY_USERNAME']		= $user['username'];
 
-$data_dwoo['DISPLAY_MENU_LIST']			= MULTIPLE_MENUS	!= false ? true : false;
-$data_dwoo['DISPLAY_LANGUAGE_LIST']		= PAGE_LANGUAGES	!= false ? true : false;
-$data_dwoo['DISPLAY_SEARCHING']			= SEARCH			!= false ? true : false;
+$tpl_data['DISPLAY_MENU_LIST']			= MULTIPLE_MENUS	!= false ? true : false;
+$tpl_data['DISPLAY_LANGUAGE_LIST']		= PAGE_LANGUAGES	!= false ? true : false;
+$tpl_data['DISPLAY_SEARCHING']			= SEARCH			!= false ? true : false;
 
 // ========================================================= 
 // ! Work-out if we should show the "manage sections" link   
 // ========================================================= 
 $query_sections	= $database->query('SELECT `section_id` FROM `'.CAT_TABLE_PREFIX.'sections` WHERE `page_id`='.$page_id.' AND `module`="menu_link"');
-$data_dwoo['MANAGE_SECTIONS']			= ( ( $query_sections->numRows() == 0 ) && MANAGE_SECTIONS == 'enabled' ) ? $HEADING['MANAGE_SECTIONS'] : false;
+$tpl_data['MANAGE_SECTIONS']			= ( ( $query_sections->numRows() == 0 ) && MANAGE_SECTIONS == 'enabled' ) ? $HEADING['MANAGE_SECTIONS'] : false;
 
 // ====================================== 
 // Get Page Extension (Filename Suffix)   
 // ====================================== 
 $settings						= $database->query( "SELECT value FROM ".CAT_TABLE_PREFIX."settings WHERE name = 'page_extension'" );
 $settings_array					= $settings->fetchRow( MYSQL_ASSOC );
-$data_dwoo['PAGE_EXTENSION']	= $settings_array['value'];
+$tpl_data['PAGE_EXTENSION']	= $settings_array['value'];
 
 // ============================================== 
 // ! Add variables for viewers- and admins-groups
@@ -149,15 +151,15 @@ $viewing_groups		= explode(',', str_replace('_', '', $results_array['viewing_gro
 
 //$get_groups			= $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'groups`');
 // ================================= 
-// ! Add permissions to $data_dwoo   
+// ! Add permissions to $tpl_data   
 // ================================= 
-$data_dwoo['permission']['pages']			= $admin->get_permission('pages') ? true : false;
-$data_dwoo['permission']['pages_add']		= $admin->get_permission('pages_add') ? true : false;
-$data_dwoo['permission']['pages_add_l0']	= $admin->get_permission('pages_add_l0') ? true : false;
-$data_dwoo['permission']['pages_modify']	= $admin->get_permission('pages_modify') ? true : false;
-$data_dwoo['permission']['pages_delete']	= $admin->get_permission('pages_delete') ? true : false;
-$data_dwoo['permission']['pages_settings']	= $admin->get_permission('pages_settings') ? true : false;
-$data_dwoo['permission']['pages_intro']		= ( $admin->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
+$tpl_data['permission']['pages']			= $admin->get_permission('pages') ? true : false;
+$tpl_data['permission']['pages_add']		= $admin->get_permission('pages_add') ? true : false;
+$tpl_data['permission']['pages_add_l0']	= $admin->get_permission('pages_add_l0') ? true : false;
+$tpl_data['permission']['pages_modify']	= $admin->get_permission('pages_modify') ? true : false;
+$tpl_data['permission']['pages_delete']	= $admin->get_permission('pages_delete') ? true : false;
+$tpl_data['permission']['pages_settings']	= $admin->get_permission('pages_settings') ? true : false;
+$tpl_data['permission']['pages_intro']		= ( $admin->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
 // ================== 
 // ! Templates list   
@@ -177,7 +179,7 @@ $addons = CAT_Helper_Addons::getInstance();
 // ========================== 
 if ( PAGE_LANGUAGES != false )
 {
-	$data_dwoo['LANGUAGES']			= $addons->get_addons( $results_array['language'] , 'language' );
+	$tpl_data['LANGUAGES']			= $addons->get_addons( $results_array['language'] , 'language' );
 }
 
 // ====================================================== 
@@ -189,15 +191,15 @@ if ( PAGE_LANGUAGES != false )
 $field_sql							= $database->query('DESCRIBE `'.CAT_TABLE_PREFIX.'pages` `page_code`');
 $field_set							= $field_sql->numRows();
 
-$data_dwoo['page_list']				= $pg->pages_list(0 , 0);
-$data_dwoo['groups']				= $admin->users->get_groups( $viewing_groups, $admin_groups );
-$data_dwoo['templates']				= $addons->get_addons( $results_array['template'] , 'template', 'template' );
-$data_dwoo['TEMPLATE_MENU']			= $pg->get_template_menus( $results_array['template'], $results_array['menu'] );
+$tpl_data['page_list']				= $pg->pages_list(0 , 0);
+$tpl_data['groups']				= $admin->users->get_groups( $viewing_groups, $admin_groups );
+$tpl_data['templates']				= $addons->get_addons( $results_array['template'] , 'template', 'template' );
+$tpl_data['TEMPLATE_MENU']			= $pg->get_template_menus( $results_array['template'], $results_array['menu'] );
 
 // ==================== 
 // ! Parse the header 	
 // ==================== 
-$parser->output('backend_pages_settings.lte', $data_dwoo);
+$parser->output('backend_pages_settings.lte', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   

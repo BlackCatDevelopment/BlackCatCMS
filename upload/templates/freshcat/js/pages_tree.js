@@ -206,10 +206,6 @@
 						}
 						form.animate({width: 'toggle'});
 					},
-					error:		function(jqXHR, textStatus, errorThrown)
-					{
-						alert(textStatus + ': ' + errorThrown );
-					}
 				});
 			});
 

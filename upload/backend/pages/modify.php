@@ -97,14 +97,16 @@ $tpl_data['PAGE_LINK']					= $admin->page_link($results_array['link']);
 
 $tpl_data['MODIFIED_BY']				= $user['display_name'];
 $tpl_data['MODIFIED_BY_USERNAME']		= $user['username'];
-$tpl_data['MODIFIED_WHEN']				= ($results_array['modified_when'] != 0) ? $modified_ts = date(TIME_FORMAT.', '.DATE_FORMAT, $results_array['modified_when']) : false;
+$tpl_data['MODIFIED_WHEN']		        = ($results_array['modified_when'] != 0)
+                                        ? $modified_ts = CAT_Helper_DateTime::getDateTime($results_array['modified_when'])
+                                        : false;
 
 $tpl_data['SECTION_BLOCKS']			    = SECTION_BLOCKS;
 $tpl_data['SEC_ANCHOR']				    = SEC_ANCHOR;
 $tpl_data['DATE_FORMAT']				= DATE_FORMAT;
 
-$tpl_data['CUR_TAB']                   = 'modify';
-$tpl_data['PAGE_HEADER']               = $admin->lang->translate('Modify page');
+$tpl_data['CUR_TAB']                    = 'modify';
+$tpl_data['PAGE_HEADER']                = $admin->lang->translate('Modify page');
 
 // ========================================================= 
 // ! Work-out if we should show the "manage sections" link   

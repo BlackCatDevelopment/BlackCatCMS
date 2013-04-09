@@ -64,7 +64,7 @@ else
 require_once(CAT_PATH.'/framework/functions-utf8.php');
 
 global $parser;
-$data_dwoo = array();
+$tpl_data = array();
 
 
 // =============================================================== 
@@ -159,24 +159,26 @@ $user									= $admin->get_user_details( $results_array['modified_by'] );
 // =============================================
 // ! Add result_array to the template variable
 // =============================================
-$data_dwoo['CUR_TAB']                   = 'lang';
-$data_dwoo['PAGE_HEADER']               = $admin->lang->translate('Modify language mappings');
-$data_dwoo['PAGE_ID']					= $page_id;
-$data_dwoo['PAGE_LINK']					= $admin->page_link($results_array['link']);
-$data_dwoo['PAGE_TITLE']				= $results_array['page_title'];
-$data_dwoo['AVAILABLE_LANGS']           = $avail;
-$data_dwoo['AVAILABLE_PAGES']           = $pages_list;
-$data_dwoo['PAGE_LINKS']                = ( ( is_array($items) && count($items) ) ? $items : NULL );
+$tpl_data['CUR_TAB']              = 'lang';
+$tpl_data['PAGE_HEADER']          = $admin->lang->translate('Modify language mappings');
+$tpl_data['PAGE_ID']			  = $page_id;
+$tpl_data['PAGE_LINK']			  = $admin->page_link($results_array['link']);
+$tpl_data['PAGE_TITLE']			  = $results_array['page_title'];
+$tpl_data['AVAILABLE_LANGS']      = $avail;
+$tpl_data['AVAILABLE_PAGES']      = $pages_list;
+$tpl_data['PAGE_LINKS']           = ( ( is_array($items) && count($items) ) ? $items : NULL );
 
-$data_dwoo['MODIFIED_BY']				= $user['display_name'];
-$data_dwoo['MODIFIED_BY_USERNAME']		= $user['username'];
-$data_dwoo['MODIFIED_WHEN']				= ($results_array['modified_when'] != 0) ? $modified_ts = date(TIME_FORMAT.', '.DATE_FORMAT, $results_array['modified_when']) : false;
+$tpl_data['MODIFIED_BY']		  = $user['display_name'];
+$tpl_data['MODIFIED_BY_USERNAME'] = $user['username'];
+$tpl_data['MODIFIED_WHEN']		  = ($results_array['modified_when'] != 0)
+                                  ? $modified_ts = CAT_Helper_DateTime::getDateTime($results_array['modified_when'])
+                                  : false;
 
 
 // ====================
 // ! Parse the header 	
 // ==================== 
-$parser->output('backend_pages_lang_settings.lte', $data_dwoo);
+$parser->output('backend_pages_lang_settings.lte', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   

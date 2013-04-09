@@ -18,30 +18,28 @@
  * @copyright       2004-2010, Website Baker Project
  *   @copyright       2011-2012, LEPTON Project
  * @copyright       2013, Black Cat Development
- *   @link            http://www.blackcat-cms.org
+ *   @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
  
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 // Define that this file is loaded
 if(!defined('TIME_FORMATS_LOADED')) {
@@ -49,16 +47,10 @@ if(!defined('TIME_FORMATS_LOADED')) {
 }
 
 // Create array
-$TIME_FORMATS = array();
+$TIME_FORMATS = CAT_Helper_DateTime::getTimeFormats();
 
 // Get the current time (in the users timezone if required)
 $actual_time = time();
-
-// Add values to list
-$TIME_FORMATS['g:i|A'] = date('g:i A', $actual_time);
-$TIME_FORMATS['g:i|a'] = date('g:i a', $actual_time);
-$TIME_FORMATS['H:i:s'] = date('H:i:s', $actual_time);
-$TIME_FORMATS['H:i'] = date('H:i', $actual_time);
 
 // Add "System Default" to list (if we need to)
 if(isset($user_time) AND $user_time == true) {

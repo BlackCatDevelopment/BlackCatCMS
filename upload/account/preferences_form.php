@@ -153,7 +153,7 @@ foreach ( $DATE_FORMATS AS $format => $title )
 $tpl->set_block( 'preferences', 'time_format_block', 'time_format_output' );
 
 //$user_time = true;
-require_once( CAT_PATH . '/framework/time_formats.php' );
+$TIME_FORMATS = CAT_Helper_DateTime::getTimeFormats();
 foreach ( $TIME_FORMATS AS $format => $title )
 {
 	$format = str_replace( '|', ' ', $format ); // Add's white-spaces (not able to be stored in array key)

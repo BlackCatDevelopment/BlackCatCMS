@@ -90,13 +90,13 @@ if (!class_exists('CAT_Helper_DateTime'))
             return false;
         }   // end function checkTZ()
 
-
         /**
          * returns formatted date
          *
          * @access public
-         * @param  string  $t    - timestamp
+         * @param  string  $t    - optional timestamp
          * @param  boolean $long - get long format (default:false)
+         * @return string
          **/
         public static function getDate($t=NULL,$long=false)
         {
@@ -110,13 +110,26 @@ if (!class_exists('CAT_Helper_DateTime'))
          * returns formatted time
          *
          * @access public
-         * @param  string  $t    - timestamp
+         * @param  string  $t   - optional timestamp
+         * @return string
          **/
         public static function getTime($t=NULL)
         {
             $format = self::getDefaultTimeFormat();
             return strftime($format,($t?$t:time()));
-        }   // end function getDate()
+        }   // end function getTime()
+
+        /**
+         * returns formatted date and time
+         *
+         * @access public
+         * @param  string  $t   - optional timestamp
+         * @return string
+         **/
+        public static function getDateTime($t=NULL)
+        {
+            return strftime(sprintf('%s %s',self::getDefaultDateFormatShort(),self::getDefaultTimeFormat()),($t?$t:time()));
+        }   // end function getDateTime()
 
         /**
          * returns a list of known timezones, using DateTimeZone::listIdentifiers()
