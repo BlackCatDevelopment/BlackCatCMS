@@ -54,6 +54,7 @@ $LANG = array(
 	'Editor width' => 'Editor Breite',
 	'Editor height' => 'Editor H&ouml;he',
 	'Editor toolbar' => 'Editor Toolbar',
+    'Available Filemanager' => 'Dateimanager',
     'Enable HTMLPurifier' => 'HTMLPurifier aktivieren',
 	'Invalid width: {{width}}% > 100%!' => 'Ungültige Breite: {{width}}% > 100%!',
     'Invalid height: {{width}}% > 100%!' => 'Ungültige Höhe: {{width}}% > 100%!',

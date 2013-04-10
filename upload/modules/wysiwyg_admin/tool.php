@@ -23,7 +23,6 @@
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
 	include(CAT_PATH.'/framework/class.secure.php');
 } else {
@@ -39,8 +38,6 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
-
 
 $debug = false;
 if (true === $debug) {
@@ -48,7 +45,10 @@ if (true === $debug) {
 	error_reporting(E_ALL|E_STRICT);
 }
 
+// backend only
 if (!isset($admin) || !is_object($admin)) die();
+
+$val =  CAT_Helper_Validate::getInstance();
 
 // check for config driver
 $cfg_file = sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
@@ -61,7 +61,7 @@ elseif(file_exists(sanitize_path(dirname(__FILE__)."/driver/".WYSIWYG_EDITOR."/c
     require_once( dirname(__FILE__)."/driver/".WYSIWYG_EDITOR."/c_editor.php");
 }
 else {
-    $admin->print_error($admin->lang->translate('No configuration file for editor ['.WYSIWYG_EDITOR.']'));
+    $admin->print_error('No configuration file for editor ['.WYSIWYG_EDITOR.']');
 }
 
 // check for language file
@@ -93,10 +93,15 @@ $skins        = $c->getSkins($c->getSkinPath());
 $current_skin = $c->getSkin($config);
 $settings     = $c->getAdditionalSettings();
 $plugins         = $c->getAdditionalPlugins();
+$filemanager  = $c->getFilemanager();
 $preview      = NULL;
 $plugins_checked = array();
+$filemanager_checked = array();
 
-$enable_htmlpurifier = ( isset($config['enable_htmlpurifier']) ? $config['enable_htmlpurifier'] : false );
+$enable_htmlpurifier = ( isset($config['enable_htmlpurifier'])
+                     ? $config['enable_htmlpurifier']
+                     : false );
+
 if(file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')))
 {
     $preview = '<img src="'
@@ -105,45 +110,50 @@ if(file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$cur
 }
 
 // something to save?
-if (isset($_POST['job']) && $_POST['job']=="save") {
+$job = $val->sanitizePost('job');
+
+if ($job && $job=="save") {
     $_POST = array_map("wysiwyg_admin_escape",$_POST);
-    $new_width = $new_height = $new_skin = $new_plugins = NULL;
+    $new_width = $new_height = $new_skin = $new_plugins = $new_fm = NULL;
     // validate width and height
     foreach( array('width','height') as $key )
     {
-        if ( isset($_POST[$key]) )
+        if ( $val->sanitizePost($key) )
         {
-            if ( ! is_numeric($_POST[$key]) )
+            if ( ! is_numeric($val->sanitizePost($key)) )
             {
                 $errors[$key] = $admin->lang->translate('Not numeric!');
                 continue;
             }
-            if ( isset($_POST[$key.'_unit']) && in_array($_POST[$key.'_unit'],array('em','px','%')) )
+            if ( $val->sanitizePost($key.'_unit') && in_array($val->sanitizePost($key.'_unit'),array('em','px','%')) )
             {
-                if ( $_POST[$key.'_unit'] == '%' && $_POST[$key] > 100 )
+                if ( $val->sanitizePost($key.'_unit') == '%' && $val->sanitizePost($key) > 100 )
                 {
-                    $errors[$key] = $admin->lang->translate('Invalid '.$key.': {{width}}% > 100%!', array('width'=>$_POST[$key]));
+                    $errors[$key] = $admin->lang->translate('Invalid '.$key.': {{width}}% > 100%!', array('width'=>$val->sanitizePost($key)));
                     continue;
                 }
-                if ( $_POST[$key] > 10000 )
+                if ( $val->sanitizePost($key) > 10000 )
                 {
                     $errors[$key] = $admin->lang->translate('Invalid '.$key.': Too large! (>10000)');
                     continue;
                 }
             }
-            ${$key} = $_POST[$key];
-            ${$key.'_unit'} = $_POST[$key.'_unit'];
+            ${$key}         = $val->sanitizePost($key);
+            ${$key.'_unit'} = $val->sanitizePost($key.'_unit');
         }
     }
     // check skin
-    if ( isset($_POST['skin']) && ! in_array($_POST['skin'],$skins) )
+    if ( $val->sanitizePost('skin') && ! in_array($val->sanitizePost('skin'),$skins) )
     {
         $errors[$key] = $admin->lang->translate('Invalid skin!');
         continue;
     }
     // check HTMLPurifier
-    if ( $admin->get_helper('Addons')->isModuleInstalled('lib_htmlpurifier') && isset($_POST['enable_htmlpurifier']) && $_POST['enable_htmlpurifier'] == 'true' )
-    {
+    if (
+           CAT_Helper_Addons::getInstance()->isModuleInstalled('lib_htmlpurifier')
+        && $val->sanitizePost(enable_htmlpurifier)
+        && $val->sanitizePost('enable_htmlpurifier') == 'true'
+    ) {
         $enable_htmlpurifier = true;
     }
     else {
@@ -175,6 +185,20 @@ if (isset($_POST['job']) && $_POST['job']=="save") {
         else
         {
             $new_plugins = implode(',',$_POST['plugins']);
+        }
+    }
+    // check filemanager
+    if($val->sanitizePost('filemanager'))
+    {
+        $fm    = $val->sanitizePost('filemanager');
+        $known = array_keys($filemanager);
+        if(! in_array($fm,$known) )
+        {
+            $errors['filemanager'] = $admin->lang->translate('Invalid filemanager!');
+        }
+        else
+        {
+            $new_fm = $fm;
         }
     }
 
@@ -210,6 +234,10 @@ if (isset($_POST['job']) && $_POST['job']=="save") {
         {
             $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'plugins\', \''.$new_plugins.'\' )' );
         }
+        if($new_fm)
+        {
+            $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'filemanager\', \''.$new_fm.'\' )' );
+        }
         // reload settings
         $config       = wysiwyg_admin_config();
     }
@@ -222,6 +250,11 @@ if ( ( isset($config['plugins']) && $config['plugins'] != '' ) )
     {
         $plugins_checked[$item] = 1;
     }
+}
+
+if ( ( isset($config['filemanager']) && $config['filemanager'] != '' ) )
+{
+    $filemanager_checked[$config['filemanager']] = true;
 }
 
 $parser->setPath(dirname(__FILE__)."/templates/default");
@@ -246,7 +279,9 @@ echo $parser->get(
         'config'           => $config,
         'errors'           => $errors,
         'plugins'          => $plugins,
+        'filemanager'      => $filemanager,
         'plugins_checked'  => $plugins_checked,
+        'filemanager_checked' => $filemanager_checked,
         'htmlpurifier'     => $admin->get_helper('Addons')->isModuleInstalled('lib_htmlpurifier'),
         'enable_htmlpurifier' => $enable_htmlpurifier,
         'width_unit_'.($width_unit=='%'?'proz':$width_unit) => 'checked="checked"',

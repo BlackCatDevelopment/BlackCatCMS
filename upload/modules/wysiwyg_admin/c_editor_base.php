@@ -56,6 +56,7 @@ abstract class c_editor_base
     private $default_height = '250px';
     private $default_width  = '100%';
 
+    abstract public function getFilemanagerPath();
     abstract public function getSkinPath();
     abstract public function getPluginsPath();
     abstract public function getToolbars();
@@ -70,6 +71,31 @@ abstract class c_editor_base
             unset($config[$name]);
             return $val;
         }
+    }
+
+    public function getFilemanager()
+    {
+        $fm_path = $this->getFilemanagerPath();
+        $d  = CAT_Helper_Directory::getInstance();
+        $fm = $d->setRecursion(true)->maxRecursionDepth(1)->findFiles('info.php',$fm_path,$fm_path.'/');
+        $r  = array();
+        $d->maxRecursionDepth();
+        if ( is_array($fm) && count($fm) )
+        {
+            foreach( $fm as $file )
+            {
+                $filemanager_name = $filemanager_dirname = $filemanager_version = $filemanager_sourceurl = $filemanager_registerfiles = $filemanager_include = NULL;
+                @include $fm_path.$file;
+                $r[$filemanager_dirname] = array(
+                    'name' => $filemanager_name,
+                    'version' => $filemanager_version,
+                    'url' => $filemanager_sourceurl,
+                    'inc' => $filemanager_include,
+                    'dir' => $filemanager_dirname,
+                );
+            }
+        }
+        return $r;
     }
 
     public function getHeight(&$config)
@@ -92,10 +118,10 @@ abstract class c_editor_base
 
     public function getSkins($skin_path)
     {
-        global $admin;
-        $admin->get_helper('Directory')->setRecursion(false);
-        $skins = $admin->get_helper('Directory')->getDirectories($skin_path,$skin_path.'/');
-        $admin->get_helper('Directory')->setRecursion(true);
+        $d = CAT_Helper_Directory::getInstance();
+        $d->setRecursion(false);
+        $skins = $d->getDirectories($skin_path,$skin_path.'/');
+        $d->setRecursion(true);
         return $skins;
     }
 }

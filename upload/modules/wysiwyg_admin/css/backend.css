@@ -41,6 +41,12 @@ form#wysiwyg_admin .error {
     width: 200px;
     display: inline-block;
 }
+form#wysiwyg_admin input,
+form#wysiwyg_admin select {
+    line-height: 1em !important;
+    min-height: 1em !important;
+}
+
 form#wysiwyg_admin #wysiwyg_admin_skin_preview {
     float: right;
 }
@@ -50,4 +56,14 @@ form#wysiwyg_admin .buttons{
 form#wysiwyg_admin .error {
     margin-left: 210px;
     color: #f00;
+}
+
+form#wysiwyg_admin fieldset#plugins {
+    width: 40%;
+    float: left;
+}
+form#wysiwyg_admin fieldset#filemanager label { text-align:left; margin: 0;}
+form#wysiwyg_admin fieldset#filemanager {
+    width: 40%;
+    float: left;
 }

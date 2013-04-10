@@ -74,13 +74,25 @@
     {/if}
 
     {if is_array($plugins) && count($plugins)}
-    <fieldset>
+    <fieldset id="plugins">
         <legend>{translate('Additional plugins')}</legend>
         {foreach $plugins as plugin}
         <input type="checkbox" name="plugins[]" id="plugins" value="{$plugin}" {if isset($plugins_checked[$plugin])}checked="checked"{/if}/> {$plugin}<br />
         {/foreach}
     </fieldset>
           {/if}
+
+    {if is_array($filemanager) && count($filemanager)}
+    <fieldset id="filemanager">
+        <legend>{translate('Available Filemanager')}</legend>
+        {foreach $filemanager as filemgr}
+        <input type="radio" name="filemanager" id="filemanager_{$filemgr.dir}" value="{$filemgr.dir}" {if isset($filemanager_checked[$filemgr.dir])}checked="checked"{/if}/>
+        <label for="filemanager_{$filemgr.dir}">{$filemgr.name}</label><br />
+        {/foreach}
+    </fieldset>
+    {/if}
+
+    <br clear="all" />
 
     <div class="buttons">
         <input type="submit" value="{$TEXT.SAVE}" />
