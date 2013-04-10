@@ -47,6 +47,16 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             {
                 self::$instance = new self();
             }
+            else
+            {
+                // reset to defaults
+                self::$instance->setRecursion(true);
+                self::$instance->maxRecursionDepth();
+                self::$instance->setPrefix(NULL);
+                self::$instance->setSkipFiles(NULL);
+                self::$instance->setSkipDirs(NULL);
+                self::$instance->setSuffixFilter(NULL);
+            }
             return self::$instance;
         }
 	    
@@ -365,7 +375,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         /**
          *
          **/
-		public function maxRecursionDepth( $number )
+		public function maxRecursionDepth( $number = 100 )
 		{
 		    if ( is_numeric($number) )
 		    {

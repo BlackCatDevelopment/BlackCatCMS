@@ -33,6 +33,7 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
     class CAT_Helper_Template_DwooDriver extends Dwoo {
 
     protected $debuglevel      = CAT_Helper_KLogger::CRIT;
+    protected $_config         = array( 'loglevel' => CAT_Helper_KLogger::CRIT, 'show_paths_on_error' => true );
     public    $workdir         = NULL;
     public    $path            = NULL;
     public    $fallback_path   = NULL;
@@ -87,7 +88,17 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
                 }
                 $this->logger->logCrit( "The template [$_tpl] does not exists in one of the possible template paths!", $paths );
                 // the template does not exists, so at least prompt an error
-                trigger_error("The template <b>$_tpl</b> does not exists in one of the possible template paths!", E_USER_ERROR);
+                trigger_error(
+                    CAT_Helper_I18n::getInstance()->translate(
+                        "The template [{{ tpl }}] does not exists in one of the possible template paths!{{ paths }}",
+                        array(
+                            'tpl'   => $_tpl,
+                            'paths' => ( $this->_config['show_paths_on_error']
+                                    ? '<br /><br />'.CAT_Helper_I18n::getInstance()->translate('Searched paths').':<br />&nbsp;&nbsp;&nbsp;'.implode('<br />&nbsp;&nbsp;&nbsp;',$paths).'<br />'
+                                    : NULL )
+                        )
+                    ), E_USER_ERROR
+                );
             } else {
             	return parent::get( $_tpl, $data, $_compiler, $_output );
             }
