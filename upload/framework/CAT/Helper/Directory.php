@@ -68,14 +68,20 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          * @param  string  $dir  - directory to scan
          * @return mixed
          **/
-        public function findFile( $file, $dir )
+        public function findFile( $file, $dir, $ignore_suffix = false )
         {
             $list = $this->scanDirectory( $dir, true, true );
             // sort list
             sort($list);
             foreach($list as $entry)
             {
+                // direct match
                 if( preg_match( "~^$file$~i", pathinfo($entry,PATHINFO_BASENAME) ) )
+                {
+                    return $entry;
+                }
+                // match with suffix ignored
+                if ( $ignore_suffix && pathinfo($file,PATHINFO_FILENAME) == pathinfo($entry,PATHINFO_FILENAME) )
                 {
                     return $entry;
                 }

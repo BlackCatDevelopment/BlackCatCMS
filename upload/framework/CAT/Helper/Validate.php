@@ -45,6 +45,25 @@ if (!class_exists('CAT_Helper_Validate'))
         }
 
         /**
+         * check a value as type
+         *
+         * @access public
+         * @param  mixed  $value
+         * @param  string $as
+         * @return mixed
+         **/
+        public static function check($value,$as)
+        {
+            $func = 'is_'.$as;
+            if ( ! function_exists($func) )
+            {
+                CAT_Object::getInstance()->printFatalError( 'No such validation method: '.$as );
+            }
+            if ( ! $func($value) ) return false;
+            return $value;
+        }
+
+        /**
          * global method to get data from globals
          *
          * @access public
@@ -64,13 +83,7 @@ if (!class_exists('CAT_Helper_Validate'))
             $value = isset($glob[$key]) ? $glob[$key] : NULL;
             if ( $value && $require )
             {
-                $func = 'is_'.$require;
-                if ( ! function_exists($func) )
-                {
-                    $this->printFatalError( 'No such validation method: '.$require );
-                }
-                $this->log()->logDebug(sprintf('checking value with func [%s]',$func));
-                if ( ! $func($value) ) return NULL;
+                $value = self::check($value,$require);
             }
             if ( $value && $escape )
             {

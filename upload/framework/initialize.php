@@ -56,12 +56,6 @@ set_include_path (
 //**************************************************************************
 // register autoloader
 //**************************************************************************
-#function catcms_autoload($class) {
-#echo "autoloading class -$class-<br />";
-#	@include str_replace( '_', '/', $class ) . '.php';
-#}
-#spl_autoload_register('catcms_autoload',false,false);
-#
 spl_autoload_register(function ($class) {
     if(defined('CAT_PATH'))
     {
@@ -73,6 +67,8 @@ spl_autoload_register(function ($class) {
     }
     # next in stack
 });
+
+CAT_Registry::getInstance();
 
 if (file_exists(dirname(__FILE__).'/class.database.php')) {
 
