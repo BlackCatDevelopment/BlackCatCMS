@@ -86,7 +86,7 @@ if (!class_exists('CAT_Helper_Directory')) {
     include_once CAT_PATH.'/framework/LEPTON/Helper/Directory.php';
 }
 if (!function_exists('dropleps_import')) {
-    include_once CAT_PATH.'/modules/dropleps/include.php';
+    include_once CAT_PATH.'/modules/droplets/include.php';
 }
 $inst_dir   = sanitize_path(dirname(__FILE__).'/install');
 $temp_unzip = sanitize_path(CAT_PATH.'/temp/unzip/' );
@@ -96,7 +96,7 @@ $files      = $dirh->getFiles($inst_dir);
 if (is_array($files) && count($files)) {
     foreach($files as $file) {
         // ignore the result here
-        dropleps_import( $file, $temp_unzip );
+        droplets_import( $file, $temp_unzip );
     }
 }
 
