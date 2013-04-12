@@ -58,7 +58,7 @@ function among_constants( $among_array )
 	}
 	if ( strpos($among_array, '|') !== false  )
 	{
-		$array		= explode( '\|', $among_array );
+        $array        = explode( '|', $among_array );
 		foreach($array as $value)
 		{
 			$return		= $return | $value;
@@ -173,6 +173,7 @@ function Dwoo_Plugin_show_menu(
 						}
 					}
 				}	
+                $link['pagename'] = pathinfo($link['href'],PATHINFO_FILENAME);
 				$menu[] = $link;
 			}
 		}

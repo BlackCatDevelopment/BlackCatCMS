@@ -88,6 +88,9 @@ $LANG = array(
     'You sent an invalid value' => 'Es wurde ein ungültiger Wert angegeben',
     'Error creating access file in the pages directory(page), (insufficient privileges)'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis (page) ist ein Fehler aufgetreten (Ungen&uuml;gende Zugangsrechte)',
+    'The template [{{ tpl }}] does not exists in one of the possible template paths!'
+        => 'Das Template [{{ tpl }}] wurde in keinem der Template-Pfade gefunden!',
+    'Searched paths' => 'Durchsuchte Pfade',
 // ----- MENU -----
 	'Access' => 'Benutzerverwaltung',
 	'Add-on' => 'Add-on',
@@ -207,6 +210,8 @@ $LANG = array(
     'Session identifier' => 'Session ID',
     'Section-Anchor text' => 'Präfix für Section-Anker',
     'Mailer library' => 'Mailbibliothek',
+    'Maintenance mode' => 'Wartungsmodus',
+    'If you enable maintenance mode, your complete site will be OFFLINE!' => 'Wenn Sie den Wartungsmodus aktivieren, ist die komplette Seite OFFLINE!',
 // ----- mailer -----
     'Default "from" mail' => 'Standard "VON" Adresse',
 	'Default sender name' => 'Standard Absender Name',

@@ -1,112 +1,121 @@
 <?php
 
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- * @reformatted     2011-10-04
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 global $wb;
-include_once( CAT_PATH . '/framework/timezones.php' );
-
-// Get entered values
-$display_name = $wb->add_slashes( strip_tags( $wb->get_post( 'display_name' ) ) );
-$language     = $wb->get_post_escaped( 'language' );
-$date_format  = $wb->get_post_escaped( 'date_format' );
-$time_format  = $wb->get_post_escaped( 'time_format' );
-
-// timezone must match a value in the table
-$timezone_string = DEFAULT_TIMEZONESTRING;
-if ( in_array( $admin->get_post( 'timezone_string' ), $timezone_table ) )
-{
-	$timezone_string = $admin->get_post( 'timezone_string' );
-}
-
 // Create a javascript back link
 $js_back = "javascript: history.go(-1);";
+
+$val = CAT_Helper_Validate::getInstance();
+
+// Get and sanitize entered values
+$display_name = strip_tags($val->sanitizePost( 'display_name', 'string', true ));
+$date_format  = ( CAT_Helper_DateTime::checkDateformat($val->sanitizePost( 'date_format', 'string', true )) === true )
+              ? $val->sanitizePost( 'date_format', 'string', true )
+              : NULL;
+$time_format  = ( CAT_Helper_DateTime::checkTimeformat($val->sanitizePost( 'time_format', 'string', true )) === true )
+              ? $val->sanitizePost( 'time_format', 'string', true )
+              : NULL;
+$language     = ( $wb->lang->checkLang($val->sanitizePost( 'language', 'string', true )) === true )
+              ? $val->sanitizePost( 'language', 'string', true )
+              : NULL;
+$timezone_string = ( CAT_Helper_DateTime::checkTZ($val->sanitizePost('timezone_string')) === true )
+                 ? $val->sanitizePost('timezone_string')
+                 : DEFAULT_TIMEZONESTRING;
 
 // Update the database
 $database = new database();
 $query    = "UPDATE " . CAT_TABLE_PREFIX . "users
-			SET display_name = '$display_name', language = '$language', timezone_string = '$timezone_string', date_format = '$date_format', time_format = '$time_format'
-			WHERE user_id = '" . $wb->get_user_id() . "'";
-$database->query( $query );
-if ( $database->is_error() )
+			SET %s = '%s'
+			WHERE user_id = '%s'";
+
+foreach ( array( 'display_name','date_format','time_format','language','timezone_string' ) as $key )
 {
+    $item = ${$key};
+    if ( $item !== NULL )
+    {
+        $database->query( sprintf($query,$key,$item,$wb->get_user_id()) );
+        if ( $database->is_error() )
+        {
 	$wb->print_error( $database->get_error, 'index.php', false );
+        }
+    }
 }
-else
+
+$wb->print_success( 'Details saved successfully',CAT_URL.'/account/preferences.php' );
+
+$_SESSION[ 'DISPLAY_NAME' ] = $display_name;
+$_SESSION[ 'LANGUAGE' ]     = $language;
+// Update date format
+if ( $date_format != '' )
 {
-	$wb->print_success( $MESSAGE[ 'PREFERENCES_DETAILS_SAVED' ], CAT_URL . '/account/preferences.php' );
-	$_SESSION[ 'DISPLAY_NAME' ] = $display_name;
-	$_SESSION[ 'LANGUAGE' ]     = $language;
-	// Update date format
-	if ( $date_format != '' )
-	{
 		$_SESSION[ 'DATE_FORMAT' ] = $date_format;
 		if ( isset( $_SESSION[ 'USE_DEFAULT_DATE_FORMAT' ] ) )
 		{
 			unset( $_SESSION[ 'USE_DEFAULT_DATE_FORMAT' ] );
 		}
-	}
-	else
-	{
+}
+else
+{
 		$_SESSION[ 'USE_DEFAULT_DATE_FORMAT' ] = true;
 		if ( isset( $_SESSION[ 'DATE_FORMAT' ] ) )
 		{
 			unset( $_SESSION[ 'DATE_FORMAT' ] );
 		}
-	}
-	// Update time format
-	if ( $time_format != '' )
-	{
+}
+// Update time format
+if ( $time_format != '' )
+{
 		$_SESSION[ 'TIME_FORMAT' ] = $time_format;
 		if ( isset( $_SESSION[ 'USE_DEFAULT_TIME_FORMAT' ] ) )
 		{
 			unset( $_SESSION[ 'USE_DEFAULT_TIME_FORMAT' ] );
 		}
-	}
-	else
-	{
+}
+else
+{
 		$_SESSION[ 'USE_DEFAULT_TIME_FORMAT' ] = true;
 		if ( isset( $_SESSION[ 'TIME_FORMAT' ] ) )
 		{
 			unset( $_SESSION[ 'TIME_FORMAT' ] );
 		}
-	}
-	// Update timezone
-	$_SESSION[ 'TIMEZONE_STRING' ] = $timezone_string;
 }
-
-?>
+// Update timezone
+$_SESSION[ 'TIMEZONE_STRING' ] = $timezone_string;

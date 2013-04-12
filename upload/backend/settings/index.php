@@ -1,53 +1,47 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
-}
-// end include class.secure.php
-
-// test $_GET querystring can only be 1 (ctoken)
-if(isset($_GET) && sizeof($_GET) > 1)
-{
-	die('Acess denied');
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-// test if valid $admin-object already exists (bit complicated about PHP4 Compatibility)
-if ( !(isset($admin) && is_object($admin) && (get_class($admin) == 'admin')) )
-{
-	require_once( CAT_PATH.'/framework/class.admin.php' );
-}
-
+require_once( CAT_PATH.'/framework/class.admin.php' );
 $admin = new admin('Settings', 'settings_advanced');
+
 $user  = CAT_Users::getInstance();
 
 global $parser;
@@ -57,33 +51,29 @@ $tpl_data = array();
 require_once(CAT_PATH.'/framework/functions.php');
 require_once(CAT_PATH.'/framework/functions-utf8.php');
 
-// check if theme language file exists for the language set by the user (e.g. DE, EN)
-$lang	= (file_exists(CAT_THEME_PATH .'/languages/'.LANGUAGE .'.php')) ? LANGUAGE : 'EN';
-// only a theme language file exists for the language, load it
-if ( file_exists(CAT_THEME_PATH .'/languages/'.$lang .'.php') )
-{
-	include_once(CAT_THEME_PATH .'/languages/'.$lang .'.php');
-}
-
 // =========================================================================== 
-// ! Query current settings in the db, then loop through them and print them   
+// ! Query current settings in the db
 // =========================================================================== 
 if ( $res_settings = $database->query('SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'settings` ORDER BY `name`'))
 {
 	while ( $row = $res_settings->fetchRow( ) )
 	{
-		$tpl_data['values'][$row['name']]		= ($row['name'] != 'catmailer_smtp_password') ? htmlspecialchars($row['value']) : $row['value'];
+		$tpl_data['values'][$row['name']]
+            = ($row['name'] != 'catmailer_smtp_password')
+            ? htmlspecialchars($row['value'])
+            : $row['value'];
 	}
 }
 
 // =========================================================================== 
-// ! Query current settings in the db, then loop through them and print them   
+// ! Query current search settings in the db
 // =========================================================================== 
 if ( ($res_search = $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'search` WHERE `extra` = \'\' ')) && ($res_search->numRows() > 0) )
 {
 	while ( $row = $res_search->fetchRow() )
 	{
-		$tpl_data['search'][$row['name']]		= htmlspecialchars(($row['value']));
+		$tpl_data['search'][$row['name']]
+            = htmlspecialchars(($row['value']));
 	}
 }
 
@@ -133,9 +123,8 @@ $tpl_data['values']['wb_default_sendername']		= CATMAILER_DEFAULT_SENDERNAME;
 // ==========================
 
 // format installation date and time
-$tpl_data['values']['installation_time']           = date($admin->get_helper('DateTime')->getDefaultDateFormatShort(),INSTALLATION_TIME)
-                                                    . ' '
-                                                    . date($admin->get_helper('DateTime')->getDefaultTimeFormat(),INSTALLATION_TIME);
+$tpl_data['values']['installation_time']
+    = CAT_Helper_DateTime::getDateTime(INSTALLATION_TIME);
 
 // get page statistics
 if(($result = $database->query('SELECT visibility, count(*) AS count FROM '.CAT_TABLE_PREFIX.'pages GROUP BY visibility')) && $result->numRows() > 0 )
@@ -203,7 +192,7 @@ foreach( $timezone_table as $title )
 // ================================= 
 // ! Insert default charset values   
 // ================================= 
-require(CAT_ADMIN_PATH.'/interface/charsets.php');
+$CHARSETS = $admin->lang->getCharsets();
 $counter=0;
 foreach ( $CHARSETS AS $code => $title )
 {
@@ -257,6 +246,7 @@ foreach ( $TIME_FORMATS AS $format => $title )
 // ! Insert default error reporting values   
 // ========================================= 
 require(CAT_ADMIN_PATH.'/interface/er_levels.php');
+$ER_LEVELS = CAT_Registry::get('ER_LEVELS','array');
 $counter = 0;
 foreach ( $ER_LEVELS AS $value => $title )
 {
@@ -306,7 +296,7 @@ array_unshift (
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_settings_index.lte', $tpl_data);
+$parser->output('backend_settings_index', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   

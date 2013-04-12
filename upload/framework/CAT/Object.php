@@ -162,6 +162,11 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
     			$message = implode("<br />", $message);
     		}
 
+            if ( is_object($this) && isset($this->lang) )
+            {
+                $message = $this->lang->translate($message);
+            }
+
             // avoid headers already sent error
             if ( ! headers_sent() ) {
                 $print_footer = true;
@@ -186,7 +191,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             else
             {
                 $parser->setPath(CAT_THEME_PATH.'/templates');
-				$parser->output('error.lte', array('MESSAGE'=>$this->lang->translate($message),'LINK'=>$link));
+				$parser->output('error.lte', array('MESSAGE'=>$message,'LINK'=>$link));
             }
 
             if ( $args ) {

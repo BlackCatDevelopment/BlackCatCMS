@@ -1,41 +1,48 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://lepton2.org
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- * @version 		$Id$
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
+
+$val = CAT_Helper_Validate::getInstance();
 
 // prevent this file from being accessed directly in the browser (would set all entries in DB settings table to '')
-if (!isset ($_POST['default_language']) || $_POST['default_language'] == '')
+if (!$val->sanitizePost('default_language') || $val->sanitizePost('default_language') == '')
 {
 	die( header('Location: index.php'));
 }
@@ -48,49 +55,16 @@ $js_back = "javascript: history.go(-1);";
  *	Find out if the user was view advanced options or not
  *
  */
-// $advanced = ($_POST['advanced'] == 'yes') ? '?advanced=yes' : '';
-// $submit = isset ($_POST['submit']) && ($_POST['submit'] == $TEXT['SAVE']) ? 'save' : 'advanced';
 
 require_once (CAT_PATH.'/framework/class.admin.php');
 /**
  *	Getting the admin-instance and print the "admin header"
  *
  */
-/* if ($advanced == '') {
-	$admin = new admin('Settings', 'settings_basic');
-} else {
-*/
 $admin = new admin('Settings', 'settings_advanced');
-// }
-global $MESSAGE;
 
 function save_settings(&$admin, &$database)
 {
-	global $MESSAGE, $HEADING, $TEXT, $timezone_table;
-	
-	//	The following line seems to be obsolete, as there is no file "tan.php"
-	//	if(file_exists('tan.php')) include('tan.php');
-
-	$err_msg	= array();
-	$bool_array	= array('true', '1'); // # 1.0 ???
-
-	/**
- 	*	Find out if the user was view advanced options or not
- 	*	M.f.i.	As this test has happend before!
- 	*
- 	*/
-   //  $advanced = ($_POST['advanced'] == 'yes') ? '?advanced=yes' : '';
-	// unset ($_POST['advanced']);
-	// $submit = isset ($_POST['submit']) && ($_POST['submit'] == $TEXT['SAVE']) ? 'save' : '';
-	// unset ($_POST['submit']);
-	
-	/** 
- 	*	Obsolete FTAN test, as we've checked the FTAN before calling this function.
- 	*	And we can't do the test twice ...
- 	*
- 	*	@removed	1.0.0	2010-12-27	by Aldus
- 	*
- 	*/
 	
 	global $old_settings, $settings;
 	$settings = array();
@@ -104,17 +78,12 @@ function save_settings(&$admin, &$database)
 	if (false !== ($res_settings = $database->query($sql))) {
 		while( false !== ($row = $res_settings->fetchRow( MYSQL_ASSOC ) ) ) {
 			$old_settings[$row['name']] = $row['value'];
-			/**
- 			*	set only isset $_POST, special checks later
- 			*	WARNING: Dietmar-Code structure begins here to became MCD (aka 'mad cow disease')!
- 			*
- 			*/
-			$settings[$row['name']] = $admin->get_post($row['name']);
+			$settings[$row['name']]     = $val->sanitizePost($row['name']);
 		}
 	}
 	else
 	{
-		$err_msg[] = $MESSAGE['SETTINGS_UNABLE_OPEN_CONFIG'];
+		$err_msg[] = $admin->lang->translate('Unable to load old settings');
 	}
 
 	$allow_tags_in_fields = array('website_header', 'website_footer');
@@ -122,42 +91,38 @@ function save_settings(&$admin, &$database)
 	$allow_empty_values = array('website_header','website_footer','sec_anchor','pages_directory');
 
 	// language must be 2 upercase letters only
-	$default_language = strtoupper( $admin->get_post('default_language'));
-	$settings['default_language'] = (preg_match('/^[A-Z]{2}$/', $default_language) ? $default_language : $old_settings['default_language']);
-	// without default value
-	$user_time = false;
-	
-	// timezone must match a value in the table
-	$default_timezone_string = DEFAULT_TIMEZONESTRING;
-	if (in_array($admin->get_post('default_timezone_string'), $timezone_table)) {
-		$default_timezone_string = $admin->get_post('default_timezone_string');
-	} 
+	$default_language = strtoupper($val->sanitizePost('default_language'));
+	$settings['default_language']
+        = $admin->lang->checkLang($default_language)
+        ? $default_language
+        : $old_settings['default_language']);
 
-	// date_format must be a key from /interface/date_formats
-	$default_date_format = $admin->get_post('default_date_format');
-	$date_format_key = str_replace(' ', '|', $default_date_format);
-	global $DATE_FORMATS;
-	include (CAT_ADMIN_PATH.'/interface/date_formats.php');
-	$settings['default_date_format'] = (array_key_exists($date_format_key, $DATE_FORMATS) ? $default_date_format : $old_settings['default_date_format']);
-	unset ($DATE_FORMATS);
-	// time_format must be a key from /interface/time_formats
-	$time_format = $admin->get_post('default_time_format');
-	$time_format_key = str_replace(' ', '|', $time_format);
-	global $TIME_FORMATS;
-	include (CAT_ADMIN_PATH.'/interface/time_formats.php');
-	$settings['default_time_format'] = (array_key_exists($time_format_key, $TIME_FORMATS) ? $time_format : $old_settings['default_time_format']);
-	unset ($TIME_FORMATS);
+    // check date format
+	$settings['default_date_format']
+        = CAT_Helper_DateTime::checkDateformat($val->sanitizePost('default_date_format'))
+        ? $val->sanitizePost('default_date_format')
+        : $old_settings['default_date_format'];
+
+    // check time format
+    $settings['default_time_format']
+        = CAT_Helper_DateTime::checkTimeformat($val->sanitizePost('default_time_format'))
+        ? $val->sanitizePost('default_time_format')
+        : $old_settings['default_date_format'];
+
 	// charsets must be a key from /interface/charsets
-	$char_set = ($admin->get_post('default_charset'));
-	global $CHARSETS;
-	include (CAT_ADMIN_PATH.'/interface/charsets.php');
-	$settings['default_charset'] = (array_key_exists($char_set, $CHARSETS) ? $char_set : $old_settings['default_charset']);
-	unset ($CHARSETS);
+    $CHARSETS = $admin->lang->getCharsets();
+	$settings['default_charset']
+        = (array_key_exists($char_set,$CHARSETS)
+        ? $char_set
+        : $old_settings['default_charset']);
+
 	//  error reporting values validation
-	global $ER_LEVELS;
 	require (CAT_ADMIN_PATH.'/interface/er_levels.php');
-	$settings['er_level'] = isset ($settings['er_level']) && (array_key_exists($settings['er_level'], $ER_LEVELS)) ? intval($settings['er_level']) : $old_settings['er_level'];
-	unset ($ER_LEVELS);
+	$settings['er_level']
+        = (isset ($settings['er_level']) && (array_key_exists($settings['er_level'], CAT_CORE::$ER_LEVELS)))
+        ? intval($settings['er_level'])
+        : $old_settings['er_level'];
+
 	//  count groups_id and <> 1, do it with sql statement if groups were added
 	$settings['frontend_login'] = $settings['frontend_login']=='' ? 'false' : 'true';
 	if (isset ($settings['frontend_signup']))
