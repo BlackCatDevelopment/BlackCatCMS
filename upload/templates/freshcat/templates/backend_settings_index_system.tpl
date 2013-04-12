@@ -1,4 +1,17 @@
 			{if $DISPLAY_ADVANCED}
+
+            <div class="fc_settings_max">
+                <div class="fc_gradient_red">
+                    <strong>{translate('Maintenance mode')}</strong><br />
+                    {translate('If you enable maintenance mode, your complete site will be OFFLINE!')}
+                </div><br />
+                <div class="fc_settings_label" id="fc_page_down">
+                    <input type="checkbox" class="fc_checkbox_jq" name="maintenance" id="fc_maintenance" value="on" />
+                    <label for="fc_maintenance">{translate('Maintenance mode')}</label>
+                </div>
+            </div>
+            <hr />
+
 			<label class="fc_label_120" for="fc_page_level_limit">{translate('Page level limit')}:</label>
 			<select name="page_level_limit" id="fc_page_level_limit">
 				{for count 0 10 1}

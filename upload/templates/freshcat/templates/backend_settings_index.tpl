@@ -80,53 +80,35 @@
 		</div><!-- SEO -->
 
 		<div id="fc_list_FRONTEND" class="fc_gradient1 fc_list_forms ui-corner-top">
-			<label class="fc_label_120" for="fc_default_template">{translate('Template')}:</label>
-			<select name="default_template" id="fc_default_template">
-				{foreach $templates template}
-				<option value="{$template.VALUE}"{if $template.SELECTED} selected="selected"{/if}>{$template.NAME}</option>
-				{/foreach}
-			</select>
-			<hr />
-
-			<label class="fc_label_120" for="fc_website_header">{translate('Website header')}:</label><br/>
-			<textarea name="website_header" id="fc_website_header" cols="80" rows="6" >{$values.website_header}</textarea>
-			<div class="clear_sp"></div>
-
-			<label class="fc_label_120" for="fc_website_footer">{translate('Website footer')}:</label><br/>
-			<textarea name="website_footer" id="fc_website_footer" cols="80" rows="6" >{$values.website_footer}</textarea>
-			<div class="clear_sp"></div>
-			<p class="submit_settings fc_gradient1">
-				<input type="submit" name="submit" value="{translate('Save')}" />
-				<input type="reset" name="reset" value="{translate('Reset')}" />
-			</p>
+		{include backend_settings_index_frontend.tpl}
 		</div><!-- FRONTEND -->
 
 
 		<div id="fc_list_BACKEND" class="fc_gradient1 fc_list_forms ui-corner-top">
-        {include backend_settings_index_backend.lte}
+        {include backend_settings_index_backend.tpl}
 		</div><!-- BACKEND -->
 
 
 		<div id="fc_list_SYSTEM" class="fc_gradient1 fc_list_forms ui-corner-top">
-        {include backend_settings_index_system.lte}
+        {include backend_settings_index_system.tpl}
 		</div><!-- SYSTEM -->
 
 
 		<div id="fc_list_USERS" class="fc_gradient1 fc_list_forms ui-corner-top">
-        {include backend_settings_index_users.lte}
+        {include backend_settings_index_users.tpl}
 		</div><!-- USERS -->
 	
 		<div id="fc_list_TIME_LANGUAGE" class="fc_gradient1 fc_list_forms ui-corner-top">
-        {include backend_settings_index_datetime.lte}
+        {include backend_settings_index_datetime.tpl}
 		</div><!-- TIME_LANGUAGE -->
 
 		<div id="fc_list_SEARCHING" class="fc_gradient1 fc_list_forms ui-corner-top">
-        {include backend_settings_index_searchblock.lte}
+        {include backend_settings_index_searchblock.tpl}
 		</div><!-- SEARCHING -->
 
 
 		<div id="fc_list_SERVER" class="fc_gradient1 fc_list_forms ui-corner-top">
-        {include backend_settings_index_server.lte}
+        {include backend_settings_index_server.tpl}
 		</div><!-- SERVER -->
 
 
