@@ -68,11 +68,11 @@ spl_autoload_register(function ($class) {
     # next in stack
 });
 
-CAT_Registry::getInstance();
+CAT_Registry::getInstance()->register('URL_HELP', 'http://blackcat-cms.org/', true);
 
-if (file_exists(dirname(__FILE__).'/class.database.php')) {
+if (file_exists(dirname(__FILE__).'/class.database.php'))
+{
 
-	require_once(dirname(__FILE__).'/sys.constants.php');
 	require_once(dirname(__FILE__).'/class.database.php');
 
     // Create database class

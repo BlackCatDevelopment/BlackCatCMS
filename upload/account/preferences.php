@@ -85,7 +85,8 @@ if ( $save && ( $save == 'account_settings' ) )
 	}
 }
 
-if (true === $submit_ok) {
+if (true === $submit_ok)
+{
 	unset($_SESSION['wb_apf_hash']);
 	unset($_POST['hash']);
 	
@@ -206,7 +207,9 @@ if (true === $submit_ok) {
 	} else {
 		$_SESSION['result_message'] = $MESSAGE['PREFERENCES_DETAILS_SAVED']."!<br /><br />";
 	}
-} else {
+}
+else
+{
 	$_SESSION['result_message'] = "";
 }
 unset($submit_ok);

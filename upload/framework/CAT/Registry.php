@@ -64,11 +64,23 @@ if (!class_exists('CAT_Registry', false))
          * @param  boolean $as_const - use define() to set as constant;
          *                             default: false
          **/
-        public static function register( $key, $value, $as_const = false )
+        public static function register( $key, $value = NULL, $as_const = false )
+        {
+            if ( ! is_array($key) && $value != '' )
         {
             self::$REGISTRY[$key] = $value;
-            // we do not catch errors here!
+                // we deliberately do not catch errors here!
             if($as_const) define($key,$value);
+            }
+            else
+            {
+                foreach ( $key as $name => $value )
+                {
+                    self::$REGISTRY[$name] = $value;
+                    if($as_const) define($name,$value);
+                }
+            }
+            
         }   // end function register()
 
         /**

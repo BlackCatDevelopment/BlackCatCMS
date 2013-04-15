@@ -63,6 +63,10 @@ $language_time       = '%H:%I:%S';
 $language_time_string = 'Uhr';
 
 $LANG = array(
+// ----- ./account folder -----
+    'Details saved successfully' => 'Pers&ouml;nliche Daten wurden erfolgreich gespeichert',
+    'The email address you entered is invalid' =>  'Die angegebene E-Mail Adresse ist ung&uuml;ltig',
+    'The email you entered is already in use' => 'Die angegebene E-Mail Adresse wird bereits verwendet',
     // ----- common -----
     'Add' => 'Anlegen',
     'Add Group' => 'Gruppe hinzuf&uuml;gen',
@@ -340,7 +344,7 @@ $LANG = array(
     'Use HTMLPurifier to clean output' => 'Mit HTMLPurifier filtern',
     "Please note: This filters the output of every module, so it may break the layout if the module output isn't valid!"
         => 'Hinweis: Hiermit wird die Ausgabe aller Module gefiltert, was dazu führen kann, daß das Layout zerstört wird, wenn das Modul non-valides HTML ausgibt!',
-     // ----- addons - install.php -----
+// ----- addons - install.php -----
     'Unable to extract the file. Please check the ZIP format.'
         => 'Kann die Datei nicht entpacken. Bitte das ZIP Format prüfen.',
     'Invalid installation file. No info.php found. Please check the ZIP format.'
@@ -351,14 +355,14 @@ $LANG = array(
     'Upgraded successfully' => 'Erfolgreich aktualisiert',
     'Installed successfully' => 'Erfolgreich installiert',
     'Install/Upgrade of add-on failed' => 'Installation/Update fehlgeschlagen',
-    // ----- addons - CAT_Helper_Addons -----
+// ----- addons - CAT_Helper_Addons -----
     'Invalid info.php - neither $module_function nor $template_function set'
         => 'Ungültige info.php - weder $module_function noch $template_function gefunden',
     'Invalid language file - missing PHP delimiter'
         => 'Ungültige Sprachdatei - PHP Dings fehlt',
     'invalid directory/language file or info.php is missing, check of language file failed'
         => 'Ungültiges Verzeichnis, ungültige Sprachdatei, oder info.php fehlt.',
-    // ----- addons - backend_addons_index.lte -----
+// ----- addons - backend_addons_index.lte -----
     'Addon permissions' => 'Addon Berechtigungen',
     'You can set permissions for each group to use this addon.' => 'Es können für jede Gruppe Berechtigungen für dieses Addon gesetzt werden.',
     'You can customize permissions later on group administration.' => 'Die Rechte können später in der Gruppenadministration angepaßt werden.',
@@ -394,6 +398,7 @@ $LANG = array(
         => 'Ungültige info.php - Variable module_function oder Variable template_function nicht gesetzt',
     'Invalid language file - missing PHP delimiter' => 'Ungültige Sprachdatei - PHP Delimiter fehlt',
     'Uninstalled successfully' => 'Erfolgreich deinstalliert',
+    'Cannot uninstall' => 'Deinstallation fehlgeschlagen.',
 );
 
 $TEXT = array(
@@ -810,7 +815,6 @@ $MESSAGE = array(
 	'FORGOT_PASS_PASSWORD_RESET' => 'Ihr Benutzername und Ihr Passwort wurden an Ihre E-Mail Adresse gesendet',
 	'GENERIC_ALREADY_INSTALLED' => 'Bereits installiert.',
 	'GENERIC_BAD_PERMISSIONS' 	=> 'Kann im Zielverzeichnis nicht schreiben.',
-	'GENERIC_CANNOT_UNINSTALL'							=> 'Deinstallation fehlgeschlagen.',
 	'GENERIC_CANNOT_UNINSTALL_IN_USE'					=> 'Deinstallation nicht m&ouml;glich: Datei wird benutzt.',
 	'GENERIC_CANNOT_UNINSTALL_IN_USE_TMPL'				=> 'Das {{type}} <b>{{type_name}}</b> kann nicht deinstalliert werden, weil es auf {{pages}} benutzt wird:',
 	'GENERIC_CANNOT_UNINSTALL_IN_USE_TMPL_PAGES'		=> 'folgender Seite;folgenden Seiten',
@@ -907,7 +911,6 @@ $MESSAGE = array(
 	'PAGES_SAVED_SETTINGS' 		=> 'Die Seiteneinstellungen wurden erfolgreich gespeichert',
 	'PAGES_SECTIONS_PROPERTIES_SAVED' => 'Einstellungen f&uuml;r diesen Abschnitt erfolgreich gespeichert',
 	'PREFERENCES_CURRENT_PASSWORD_INCORRECT' => 'Das alte Passwort, das Sie angegeben haben, ist ung&uuml;ltig',
-	'PREFERENCES_DETAILS_SAVED' => 'Pers&ouml;nliche Daten wurden erfolgreich gespeichert',
 	'PREFERENCES_EMAIL_UPDATED' => 'E-Mail Einstellung ge&auml;ndert',
 	'PREFERENCES_INVALID_CHARS' => 'Es wurden ung&uuml;ltige Zeichen f&uuml;r des Passwort verwendet, g&uuml;ltig sind: a-z\A-Z\0-9\_\-\!\#\*\+',
 	'PREFERENCES_PASSWORD_CHANGED' => 'Das Passwort wurde erfolgreich ge&auml;ndert',
@@ -988,15 +991,13 @@ Diese E-Mail wurde automatisch erstellt!
 	'USERS_CHANGING_PASSWORD'				=> 'Bitte beachten Sie: Sie sollten in die obigen Felder nur Werte eingeben, wenn Sie das Passwort dieses Benutzers &auml;ndern m&ouml;chten',
 	'USERS_CONFIRM_DELETE'					=> 'Sind Sie sicher, dass Sie den ausgew&auml;hlten Benutzer l&ouml;schen m&ouml;chten?',
 	'USERS_DELETED'							=> 'Der Benutzer wurde erfolgreich gel&ouml;scht',
-	'USERS_EMAIL_TAKEN'						=> 'Die angegebene E-Mail Adresse wird bereits verwendet',
-	'USERS_INVALID_EMAIL'					=> 'Die angegebene E-Mail Adresse ist ung&uuml;ltig',
 	'USERS_NAME_INVALID_CHARS'				=> 'Es wurden ung&uuml;ltige Zeichen f&uuml;r den Benutzernamen verwendet',
 	'USERS_NO_GROUP'						=> 'Es wurde keine Gruppe ausgew&auml;hlt',
 	'USERS_PASSWORD_MISMATCH'				=> 'Das angegebene Passwort ist ung&uuml;ltig',
 	'USERS_PASSWORD_TOO_SHORT'				=> 'Das eingegebene Passwort war zu kurz',
 	'USERS_SAVED'							=> 'Der Benutzer wurde erfolgreich gespeichert',
 	'USERS_USERNAME_TAKEN'					=> 'Der angegebene Benutzername wird bereits verwendet',
-	'USERS_USERNAME_TOO_SHORT'				=> 'Der eingegebene Benutzername war zu kurz'
+
 ); // $MESSAGE
 
 $OVERVIEW = array(

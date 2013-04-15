@@ -3,7 +3,7 @@
 #fc_lists_overview {
 	position:		absolute;
 	left:			0px;
-	width:			200px;
+	width:			260px;
 	line-height:	2em;
 }
 
@@ -14,7 +14,7 @@
 	border-right:	1px solid #9da8b2;
 }
 	.fc_all_forms {
-		margin-left:	199px;
+		margin-left:	260px;
 		border-left:	1px solid #9da8b2;
 	}
 	form .fc_all_forms {
@@ -60,9 +60,9 @@
 		}
 		#fc_list_overview .fc_module_item img {
 			float:			left;
-			padding-right:	0.3em;
 			width:			1em;
 			height:			1em;
+            margin-right:   0.2em;
 		}
 
 	#fc_list_overview li.fc_active {
@@ -90,7 +90,7 @@
 		#fc_lists_overview button {
 			display:		inline-block;
 			float:			left;
-			width:			50px;
+			width:			65px;
 			height:			25px;
 			border:			none;
 			border-right:	1px solid #9da8b2;

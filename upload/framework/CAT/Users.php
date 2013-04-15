@@ -72,6 +72,16 @@ if ( ! class_exists( 'CAT_Users', false ) )
             if (!self::$instance)
             {
                 self::$instance = new self();
+                CAT_Registry::register(
+                    array(
+                        'AUTH_MIN_PASS_LENGTH'  =>   6,	// minimum length of a password
+                    	'AUTH_MAX_PASS_LENGTH'  => 128, // maximum length of a password
+                    	'AUTH_MIN_LOGIN_LENGTH' =>   3, // minimum length of a login name
+                    	'AUTH_MAX_LOGIN_LENGTH' => 128, // maximum length of a login name
+                    ),
+                    NULL,
+                    true
+                );
             }
             return self::$instance;
         }   // end function getInstance()
@@ -751,8 +761,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
 		/**
 		 * Checks for valid password. Returns boolean. The following checks are done:
 		 *
-		 * + min length (constant AUTH_MIN_PASS_LENGTH defined in sys.constants.php)
-		 * + max length (constant AUTH_MAX_PASS_LENGTH defined in sys.constants.php)
+		 * + min length (constant AUTH_MIN_PASS_LENGTH defined in CAT_Users)
+		 * + max length (constant AUTH_MAX_PASS_LENGTH defined in CAT_Users)
 		 * + is a string (spaces allowed), no control characters
 		 * + if $allow_quotes = false: no quotes
 		 * + if $strict = true: consists of 6 or more letters, digits, underscores
@@ -770,11 +780,6 @@ if ( ! class_exists( 'CAT_Users', false ) )
 		 */
 	    public function validatePassword( $password, $allow_quotes = true, $strict = false )
 	    {
-			// make sure sys.constants.php is loaded
-			if ( ! defined( 'AUTH_MIN_PASS_LENGTH' ) )
-			{
-			    include dirname(__FILE__).'/../sys.constants.php';
-			}
 	        // check length
 	        if ( strlen($password) < AUTH_MIN_PASS_LENGTH )
 			{

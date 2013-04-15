@@ -139,6 +139,7 @@ if ($result->numRows() > 0)
             'installed'     => ( ($addon['installed']!='') ? $date->getDate($addon['installed']) : NULL ),
             'upgraded'      => ( ($addon['upgraded']!='') ? $date->getDate($addon['upgraded']) : NULL ),
             'is_installed'  => true,
+            'is_removable' => ( ($addon['removable']=='N') ? false : true ),
 			'type'			=> $type
 		);
 
