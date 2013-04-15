@@ -65,7 +65,7 @@ $data_dwoo['groups']			= $admin->users->get_groups('','',false);
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_groups_index.lte', $data_dwoo);
+$parser->output('backend_groups_index.tpl', $data_dwoo);
 
 // ====================== 
 // ! Print admin footer   

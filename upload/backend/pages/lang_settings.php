@@ -178,7 +178,7 @@ $tpl_data['MODIFIED_WHEN']		  = ($results_array['modified_when'] != 0)
 // ====================
 // ! Parse the header 	
 // ==================== 
-$parser->output('backend_pages_lang_settings.lte', $tpl_data);
+$parser->output('backend_pages_lang_settings.tpl', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   

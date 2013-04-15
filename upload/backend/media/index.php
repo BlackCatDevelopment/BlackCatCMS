@@ -125,7 +125,7 @@ $tpl_data['permissions']['media_delete']	= $user->checkPermission('media','media
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_media_index.lte', $tpl_data);
+$parser->output('backend_media_index.tpl', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   

@@ -233,7 +233,7 @@ if ( count($new) )
 }
 
 // print page
-$parser->output( 'backend_addons_index.lte', $tpl_data );
+$parser->output( 'backend_addons_index.tpl', $tpl_data );
 
 // Print admin footer
 $admin->print_footer();

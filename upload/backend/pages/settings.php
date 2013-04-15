@@ -199,7 +199,7 @@ $tpl_data['TEMPLATE_MENU']			= $pg->get_template_menus( $results_array['template
 // ==================== 
 // ! Parse the header 	
 // ==================== 
-$parser->output('backend_pages_settings.lte', $tpl_data);
+$parser->output('backend_pages_settings.tpl', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   

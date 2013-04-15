@@ -149,7 +149,7 @@ foreach( $widgets as $widget )
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_start_index.lte', $tpl_data);
+$parser->output('backend_start_index.tpl', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   

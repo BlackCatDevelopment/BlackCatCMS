@@ -91,7 +91,7 @@ else
 
 
 // print page
-$parser->output('backend_admintools_index.lte',$data_dwoo);
+$parser->output('backend_admintools_index.tpl',$data_dwoo);
 
 // Print admin footer
 $admin->print_footer();

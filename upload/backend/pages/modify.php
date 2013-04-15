@@ -197,7 +197,7 @@ if ( $query_sections->numRows() > 0 )
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_pages_modify.lte', $tpl_data);
+$parser->output('backend_pages_modify.tpl', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   

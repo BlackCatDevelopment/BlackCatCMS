@@ -149,7 +149,7 @@ foreach ( directory_list(CAT_PATH.MEDIA_DIRECTORY) as $index => $name )
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_users_index.lte', $data_dwoo);
+$parser->output('backend_users_index.tpl', $data_dwoo);
 
 // ====================== 
 // ! Print admin footer   
