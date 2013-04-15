@@ -1,4 +1,4 @@
-{include('backend_pages_header.lte')}
+{include('backend_pages_header.tpl')}
 <div id="fc_main_content">
 	<div class="fc_modified_header fc_gradient1 fc_border">
 		<div class="fc_current_page">

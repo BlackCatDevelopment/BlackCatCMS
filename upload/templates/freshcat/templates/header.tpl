@@ -79,12 +79,12 @@
 		{translate('Pages')}<span class="icon-plus fc_gradient1 fc_gradient_hover fc_side_add" title="{translate('Add page')}"></span>
 	</div>
 	<div id="fc_sidebar_content">
-		{include('backend_pageTree.lte')}
+		{include('backend_pageTree.tpl')}
 	</div>
 	<div id="fc_activity"></div>
 </aside>
 	{if $permission.pages_add}
-	{include('form_add_page.lte')}
+	{include('form_add_page.tpl')}
 	{/if}
 {/if}
 <div id="fc_content_container"{if !$pages} class="fc_no_sidebar"{/if}>

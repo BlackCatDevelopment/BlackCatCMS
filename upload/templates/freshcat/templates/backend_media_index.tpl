@@ -8,7 +8,7 @@
                 <div class="fc_br_bottom fc_br_topleft fc_gradient4 fc_shadow_small">{translate('Please note: This folder is not writable! You cannot upload files to it!')}</div>
             </li>
 			<li id="fc_media_upload_is_writable">
-				{include('form_upload_files.lte')}
+				{include('form_upload_files.tpl')}
 			</li>
 		</ul>
 		{/if}

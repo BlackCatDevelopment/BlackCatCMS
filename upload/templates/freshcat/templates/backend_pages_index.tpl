@@ -1,4 +1,4 @@
-{include('backend_pages_header.lte')}
+{include('backend_pages_header.tpl')}
 <div id="fc_content_header">
 	{translate('Pages')}
 	<div class="clear"></div>
