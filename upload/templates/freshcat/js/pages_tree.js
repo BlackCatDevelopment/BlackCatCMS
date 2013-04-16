@@ -530,6 +530,12 @@ jQuery(document).ready(function()
 		form.find('input:reset').trigger('click');
 	});
 
+	$('.fc_side_home').click( function(e)
+	{
+		e.preventDefault();
+		window.open(CAT_URL);
+	});
+
 	$('#fc_addPageSubmit').click( function (e)
 	{
 		e.preventDefault();

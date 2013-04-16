@@ -29,7 +29,8 @@
 		height:			380px;
 	}
 	
-	#fc_sidebar_header .fc_side_add {
+	#fc_sidebar_header .fc_side_add,
+    #fc_sidebar_header .fc_side_home {
 		position:		absolute;
 		zoom:			1;
 		top:			0px;
@@ -43,6 +44,7 @@
 		font-size:		0.9em;
 		cursor:			pointer;
 	}
+    #fc_sidebar_header .fc_side_home { right:24px; }
 	
 	#fc_sidebar_footer .fc_side_add {
 		position:				absolute;
