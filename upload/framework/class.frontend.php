@@ -102,6 +102,11 @@ class frontend extends wb {
 			define('FORGOT_URL', CAT_URL.'/account/forgot.php');
 			define('PREFERENCES_URL', CAT_URL.'/account/preferences.php');
 			define('SIGNUP_URL', CAT_URL.'/account/signup.php');
+            global $parser;
+            $parser->setGlobals( array(
+                'username_fieldname' => CAT_Helper_Validate::getInstance()->createFieldname('username_'),
+                'password_fieldname' => CAT_Helper_Validate::getInstance()->createFieldname('password_'),
+            ));
 		}
 	}
 

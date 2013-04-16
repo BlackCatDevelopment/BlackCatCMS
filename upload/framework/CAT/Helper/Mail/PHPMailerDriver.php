@@ -90,7 +90,7 @@ if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
 
                 // set language file for PHPMailer error messages
         		if(defined("LANGUAGE")) {
-        			self::$instance->SetLanguage(strtolower(LANGUAGE),"language");
+        			self::$instance->SetLanguage(strtolower(LANGUAGE),"language/");
         		}
 
         		// set default charset

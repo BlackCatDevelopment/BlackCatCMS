@@ -223,6 +223,20 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 		}   // end function checkFile()
 
 	    /**
+         * check language string
+         *
+         * @access public
+         * @param  string  $lang
+         * @return boolean
+         **/
+        public function checkLang($lang)
+        {
+            return (preg_match('/^[A-Z]{2}$/', $lang))
+                ? true
+                : false;
+        }
+
+	    /**
 	     * set language file path
 	     *
 	     * @access public
@@ -412,6 +426,35 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 			}
 			return false;
 		}   // end function isLoaded()
+
+        /**
+         * get known charsets; this was moved from ./backend/interface/charsets.php
+         * the list may be filled from DB later
+         *
+         * @access public
+         * @return array
+         **/
+        public function getCharsets()
+        {
+            return array(
+                'utf-8'       => 'Unicode (utf-8)',
+                'iso-8859-1'  => 'Latin-1 Western European (iso-8859-1)',
+                'iso-8859-2'  => 'Latin-2 Central European (iso-8859-2)',
+                'iso-8859-3'  => 'Latin-3 Southern European (iso-8859-3)',
+                'iso-8859-4'  => 'Latin-4 Baltic (iso-8859-4)',
+                'iso-8859-5'  => 'Cyrillic (iso-8859-5)',
+                'iso-8859-6'  => 'Arabic (iso-8859-6)',
+                'iso-8859-7'  => 'Greek (iso-8859-7)',
+                'iso-8859-8'  => 'Hebrew (iso-8859-8)',
+                'iso-8859-9'  => 'Latin-5 Turkish (iso-8859-9)',
+                'iso-8859-10' => 'Latin-6 Nordic (iso-8859-10)',
+                'iso-8859-11' => 'Thai (iso-8859-11)',
+                'gb2312'      => 'Chinese Simplified (gb2312)',
+                'big5'        => 'Chinese Traditional (big5)',
+                'iso-2022-jp' => 'Japanese (iso-2022-jp)',
+                'iso-2022-kr' => 'Korean (iso-2022-kr)'
+            );
+        }   // end function getCharsets()
 
 	    /**
 	     * This method is based on code you may find here:

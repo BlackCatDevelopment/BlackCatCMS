@@ -70,6 +70,8 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
         if ( ! is_object ( $_tpl ) ) {
             if ( ! file_exists( $_tpl ) )
             {
+                $dirh  = CAT_Helper_Directory::getInstance();
+                $dirh->setSuffixFilter(array('tpl','htt','lte'));
                 // scan search paths (if any)
                 $paths = array();
                 if ( $this->path ) {
@@ -82,8 +84,9 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
                 // remove doubles
                 $paths = array_unique($paths);
                 foreach ( $paths as $dir ) {
-                    if ( file_exists( $dir.'/'.$_tpl ) ) {
-                        return parent::get( realpath($dir.'/'.$_tpl), $data, $_compiler, $_output );
+                    $file = $dirh->findFile($_tpl,$dir,true);
+                    if ( $file ) {
+                        return parent::get( realpath($file), $data, $_compiler, $_output );
                     }
                 }
                 $this->logger->logCrit( "The template [$_tpl] does not exists in one of the possible template paths!", $paths );

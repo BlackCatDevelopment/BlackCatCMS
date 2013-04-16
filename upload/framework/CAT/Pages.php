@@ -32,12 +32,11 @@ if (!class_exists('CAT_Pages', false))
 {
     class CAT_Pages extends CAT_Object
     {
-        protected $debugLevel           = 8; // 8 = OFF
 
-        private $space                  = '    ';  // space before header items
+        protected $_config              = array( 'loglevel' => 8 );
+
         public  $current_block          = array(); // data for current block
 
-        private $preferences		    = array();
         public $page_id                 = NULL;
         public  $current_page		= array(
     			'id'		=> -1,
@@ -45,7 +44,11 @@ if (!class_exists('CAT_Pages', false))
     	);
 	    public	$pages_editable;
         public  $page_access_denied     = false;
+        public  $link                   = NULL;
 
+        private $space                  = '    ';  // space before header items
+        private $preferences		    = array();
+        private $page                   = NULL;
 	    private $permissions		= array();
 	    private $menu				= array();
 	    private $pages				= array();
@@ -82,7 +85,7 @@ if (!class_exists('CAT_Pages', false))
          * @param  array   $permissions (optional)
          * @return object
          **/
-        public static function getInstance( $page_id, $permissions = false )
+        public static function getInstance( $page_id = -1, $permissions = false )
         {
             if (!isset(self::$instances[$page_id]))
             {
@@ -229,7 +232,7 @@ if (!class_exists('CAT_Pages', false))
 
             if ( $page_id && $page_id != 0 ) $this->page_id = $page_id;
 
-            if ($this->page_id != 0)
+            if ($this->page_id != 0 )
             {
                 // Query page details
                 $query_page = "SELECT * FROM " . CAT_TABLE_PREFIX . "pages WHERE page_id = '".$this->page_id."'";
@@ -304,7 +307,10 @@ if (!class_exists('CAT_Pages', false))
             }
             else
             {
+                if ( ! defined('PAGE_CONTENT') )
+                {
                 $this->printFatalError('Missing page_id!');
+            }
             }
 
             // Figure out what template to use
@@ -370,8 +376,7 @@ if (!class_exists('CAT_Pages', false))
          **/
         public function getPageContent($block = 1)
         {
-            // Get outside objects
-            global $TEXT, $HEADING, $MESSAGE;
+
             global $logger, $globals, $database, $wb, $sec_h, $parser;
             $admin =& $wb;
 
@@ -383,7 +388,8 @@ if (!class_exists('CAT_Pages', false))
                 echo $this->lang()->translate('Sorry, you do not have permissions to view this page');
                 return;
             }
-            if ($sec_h->has_active_sections($this->page_id) === false)
+
+            if ($sec_h->has_active_sections($this->page_id) === false && ! defined('PAGE_CONTENT'))
             {
                 $logger->logDebug('no active sections found');
                 echo $this->lang()->translate('Sorry, no active content to display');

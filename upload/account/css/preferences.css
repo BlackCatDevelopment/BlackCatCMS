@@ -1,21 +1,13 @@
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
- *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
- 
-legend {
+legend.account_legend {
 	padding-left: 5px;
 	padding-right: 5px;
 	font-size: 12px;
@@ -30,31 +22,29 @@ fieldset.account_form {
 	margin-bottom: 10px;
 	border: 1px solid #999999;
 }
-div.account_label, div.account_value {
+label.account_label {
 	display: block;
 	float: left;
 	line-height: 1.4em;
 	margin-bottom: 7px;
 	height: 20px;
 }
-div.account_label {
+label.account_label {
 	width: 120px;
 	font-size: 12px;
 	color: #333333;
 	padding-left: 5px;
 }
-div.account_value {
+input.account_input {
 	width: 250px;
 	overflow:hidden;
 }
-div.account_value input, div.account_value select {
-	width: 220px;
-}
-div.account_value select {
-	 width:226px;
-}
-div.result_message {
+div.account_message {
 	color: #990000;
 	font-size: 12px;
 	font-weight: bold;
+    background-color:#FF9090;
+    border:1px solid #f00;
+    padding:5px;
+    margin:10px 5px 15px 0;
 }

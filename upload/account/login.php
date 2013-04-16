@@ -1,41 +1,43 @@
 <?php
 
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- * @reformatted     2011-10-04
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 // Make sure the login is enabled
 if ( !FRONTEND_LOGIN )
@@ -52,6 +54,8 @@ if ( !FRONTEND_LOGIN )
 	}
 }
 
+$user      = CAT_Users::getInstance();
+
 // Required page details
 $page_id          = 0;
 $page_description = '';
@@ -60,38 +64,12 @@ define( 'PAGE_ID', 0 );
 define( 'ROOT_PARENT', 0 );
 define( 'PARENT', 0 );
 define( 'LEVEL', 0 );
-define( 'PAGE_TITLE', $TEXT[ 'PLEASE_LOGIN' ] );
-define( 'MENU_TITLE', $TEXT[ 'PLEASE_LOGIN' ] );
+define( 'PAGE_TITLE', $user->lang()->translate('Please login') );
+define( 'MENU_TITLE', $user->lang()->translate('Please login') );
 define( 'VISIBILITY', 'public' );
+
 // Set the page content include file
 define( 'PAGE_CONTENT', CAT_PATH . '/account/login_form.php' );
-
-require_once( CAT_PATH . '/framework/class.login.php' );
-
-// Create new login app
-$redirect = strip_tags( ( isset( $_POST[ 'redirect' ] ) ) ? $_POST[ 'redirect' ] : '' );
-$thisApp  = new Login( array(
-	"MAX_ATTEMPTS" => MAX_ATTEMPTS,
-	"WARNING_URL" => CAT_URL.'/templates/'.DEFAULT_THEME. "/templates/warning.html",
-	"USERNAME_FIELDNAME" => 'username',
-	"PASSWORD_FIELDNAME" => 'password',
-	"MIN_USERNAME_LEN" => AUTH_MIN_LOGIN_LENGTH,
-	"MIN_PASSWORD_LEN" => AUTH_MIN_PASS_LENGTH,
-	"MAX_USERNAME_LEN" => AUTH_MAX_LOGIN_LENGTH,
-	"MAX_PASSWORD_LEN" => AUTH_MAX_PASS_LENGTH,
-	"LOGIN_URL" => CAT_URL . "/account/login.php?redirect=" . $redirect,
-	"DEFAULT_URL" => CAT_URL . PAGES_DIRECTORY . "/index.php",
-	"TEMPLATE_DIR" => CAT_THEME_PATH . "/templates",
-	"TEMPLATE_FILE" => "login.htt",
-	"FRONTEND" => true,
-	"FORGOTTEN_DETAILS_APP" => CAT_URL . "/account/forgot.php",
-	"USERS_TABLE" => CAT_TABLE_PREFIX . "users",
-	"GROUPS_TABLE" => CAT_TABLE_PREFIX . "groups",
-	"REDIRECT_URL" => $redirect
-));
-
-// Set extra outsider var
-$globals[] = 'thisApp';
 
 // Include the index (wrapper) file
 require( CAT_PATH . '/index.php' );

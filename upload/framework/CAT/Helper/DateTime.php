@@ -132,6 +132,18 @@ if (!class_exists('CAT_Helper_DateTime'))
         }   // end function getDateTime()
 
         /**
+         * get currently used timezone string
+         **/
+        public static function getTimezone()
+        {
+            $tz = CAT_Helper_Validate::getInstance()->fromSession('TIMEZONE_STRING');
+            return
+                isset($tz)
+                ? $tz
+                : DEFAULT_TIMEZONESTRING;
+        }
+
+        /**
          * returns a list of known timezones, using DateTimeZone::listIdentifiers()
          **/
         public static function getTimezones()
@@ -240,11 +252,11 @@ if (!class_exists('CAT_Helper_DateTime'))
         public static function getDefaultDateFormatShort()
         {
             global $language_date_short;
-            if ( isset ($_SESSION['DATE_FORMAT_SHORT']) ) return $_SESSION['DATE_FORMAT_SHORT'];
+            if ( isset ($_SESSION['DATE_FORMAT_SHORT']) ) return $_SESSION['DATE_FORMAT'];
             if ( defined('DEFAULT_DATE_FORMAT_SHORT') )   return DEFAULT_DATE_FORMAT_SHORT;
             if ( isset($language_date_short) )            return $language_date_short;
             if ( defined('DEFAULT_DATE_FORMAT') )   return DEFAULT_DATE_FORMAT;
-            return 'D-M-Y';
+            return '%d-%m-%Y';
         }
 
         public static function getDefaultDateFormatLong()
@@ -252,7 +264,7 @@ if (!class_exists('CAT_Helper_DateTime'))
             global $language_date_long;
             if ( defined('DEFAULT_DATE_FORMAT') ) return DEFAULT_DATE_FORMAT;
             if ( isset($language_date_long) )     return $language_date_long;
-            return 'r';
+            return '%x';
         }
     }
 }

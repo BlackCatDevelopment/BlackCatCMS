@@ -537,11 +537,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		 * @param ocatal   $dir_mode - access mode
 		 * @return boolean result of operation
 		 *
-		 *  THIS METHOD WAS MOVED TO CAT_Helper_Addons!
-		 *
-		 * @internal ralf 2011-08-05 - added recursive parameter for mkdir()
-		 * @todo ralf 2011-08-05     - checking for !is_dir() is not a good idea, perhaps $dirname
-		 * is not a valid path, i.e. a file - any better ideas?
+		 * @todo ---check for valid dir name---
 		  */
 		function createDirectory( $dir_name, $dir_mode = OCTAL_DIR_MODE, $createIndex = false )
 		{

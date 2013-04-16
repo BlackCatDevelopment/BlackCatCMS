@@ -29,7 +29,6 @@ if (!class_exists('CAT_Helper_Addons'))
     {
         @include dirname(__FILE__) . '/../Object.php';
     }
-    require_once CAT_PATH . '/modules/lib_lepton/pages_load/library.php';
 
     class CAT_Helper_Addons extends CAT_Object
     {

@@ -89,7 +89,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         /**
          * handle user login
          **/
-        public function handleLogin()
+        public function handleLogin($output=true)
         {
             global $parser, $database;
             if ( ! is_object($parser) )
@@ -121,7 +121,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     if ( ! $this->loginerror && $user == '' || $pw == '' )
                         $this->setError($lang->translate('Please enter your username and password.'));
                     if ( ! $this->loginerror && strlen($user) < AUTH_MIN_LOGIN_LENGTH )
-                        $this->setError($lang->translate('Supplied password to short'));
+                        $this->setError($lang->translate('The password you entered was too short'));
                     if ( ! $this->loginerror && ! defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < AUTH_MIN_PASS_LENGTH )
             			$this->setError($lang->translate('The password you entered was too short'));
 
@@ -249,10 +249,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     return false;
                 }
 
-                // create random fieldnames for username and password
-                $salt               = md5(microtime());
-                $username_fieldname	= 'username_'.substr($salt, 0, 7);
-                $password_fieldname	= 'password_'.substr($salt, -7);
+                if ( ! $output )
+                {
+                    return false;
+                }
 
 				$tpl_data = array(
                     'USERNAME_FIELDNAME'    => $username_fieldname,
@@ -457,6 +457,64 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return $this->useroptions;
         }
 
+        /**
+         * save user's preferences
+         *
+         * @access public
+         * @param  integer $user_id
+         * @param  array   $options
+         * @return array
+         *
+         **/
+        public function setUserOptions($user_id,$options)
+        {
+            global $database;
+            $fields = $errors = array();
+            // get extension fields
+            $ext  = $this->getExtendedOptions();
+            // get default fields
+            $desc = $database->query(sprintf('DESCRIBE %susers',CAT_TABLE_PREFIX));
+            while ( false !== ( $row = $desc->fetchRow(MYSQL_ASSOC) ) )
+            {
+                $fields[] = $row['Field'];
+            }
+            // save default options
+            $c = 0;
+            $q = "UPDATE `".CAT_TABLE_PREFIX."users` SET ";
+            foreach($fields as $key)
+            {
+                if ( isset($options[$key]) && $options[$key] !== '' )
+                {
+                    $q .= "`".$key."`='".mysql_real_escape_string($options[$key])."', ";
+                    $c++;
+                }
+            }
+            $q = substr($q, 0, -2) . " WHERE `user_id`='".$this->get_user_id()."'";
+            if($c)
+            {
+                $database->query($q);
+                   if ($database->is_error())
+                {
+                    $errors[] = $database->get_error();
+                }
+            }
+            // save extended options
+            foreach( array_keys($ext) as $key )
+            {
+                if ( isset($options[$key]) && $options[$key] !== '' )
+                {
+                    $q  = "UPDATE `".CAT_TABLE_PREFIX."users_options` SET "
+                        . "`option_value`='".mysql_real_escape_string($options[$key])."' "
+                        . " WHERE `option_name`='$key' AND `user_id`='".$this->get_user_id()."'";
+                    $database->query($q);
+                       if ($database->is_error())
+                    {
+                        $errors[] = $database->get_error();
+                    }
+                }
+            }
+            return $errors;
+        }   // end function setUserOptions()
 
 
 

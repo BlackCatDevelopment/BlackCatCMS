@@ -238,11 +238,6 @@ class wb
         return isset($_SERVER[$field]) ? $_SERVER[$field] : null;
     }
 
-    // Get the current users timezone
-    public function get_timezone_string()
-    {
-        return isset($_SESSION['TIMEZONE_STRING']) ? $_SESSION['TIMEZONE_STRING'] : DEFAULT_TIMEZONESTRING;
-    }   // end function get_timezone_string()
 
     /**
      *
@@ -505,6 +500,11 @@ class wb
     {
          return CAT_Users::getInstance()->get_groups($viewing_groups,$admin_groups,$insert_admin);
     }
+    // Get the current users timezone
+    public function get_timezone_string()
+    {
+        return CAT_Helper_DateTime::getTimezone();
+    }   // end function get_timezone_string()
 
 }
 ?>

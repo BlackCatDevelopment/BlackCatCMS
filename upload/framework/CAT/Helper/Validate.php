@@ -128,6 +128,22 @@ if (!class_exists('CAT_Helper_Validate'))
         }   // end function strip_slashes()
 
         /**
+         * create a random fieldname
+         *
+         * @access public
+         * @param  prefix - static prefix, i.e. 'username_'
+         * @param
+         **/
+        public function createFieldname($prefix,$offset=NULL,$length=12)
+        {
+            if ( substr($prefix,-1,1) != '_' ) $prefix .= '_';
+            $salt      = strtolower(md5(uniqid(rand(),true)));
+            $offset    = ( $offset === NULL ) ? rand(1,12) : $offset;
+            $fieldname = $prefix.substr($salt,$offset,$length);
+            return $fieldname;
+        }   // end function createFieldname()
+
+        /**
          * Get POST data
          *
          * TODO: add sanitize/validate

@@ -1,84 +1,61 @@
 <?php
 
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- * @reformatted     2011-10-04
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 $username_fieldname = 'username';
 $password_fieldname = 'password';
-?>
-<h1>&nbsp;Login</h1>
-&nbsp;<?php echo $thisApp->message; ?>
-<br />
-<br />
 
-<form action="<?php echo CAT_URL . '/account/login.php'; ?>" method="post">
-<p style="display:none;"><input type="hidden" name="username_fieldname" value="<?php echo $username_fieldname; ?>" /></p>
-<p style="display:none;"><input type="hidden" name="password_fieldname" value="<?php echo $password_fieldname; ?>" /></p>
-<p style="display:none;"><input type="hidden" name="redirect" value="<?php echo $thisApp->redirect_url; ?>" /></p>
+$redirect = CAT_Users::getInstance()->handleLogin(false);
+$error    = CAT_Users::getInstance()->loginError();
 
-<table cellpadding="5" cellspacing="0" border="0" width="90%">
-<tr>
-	<td style="width:100px"><?php echo $TEXT[ 'USERNAME' ]; ?>:</td>
-	<td class="value_input">
-		<input type="text" name="<?php echo $username_fieldname; ?>" maxlength="30" style="width:220px;"/>
-    	<script type="text/javascript">
-    		var ref= document.getElementById("<?php echo $username_fieldname; ?>");
-    		if (ref) ref.focus();
-    	</script>
-	</td>
-</tr>
-<tr>
-	<td style="width:100px"><?php echo $TEXT[ 'PASSWORD' ]; ?>:</td>
-	<td class="value_input">
-		<input type="password" name="<?php echo $password_fieldname; ?>" maxlength="30" style="width:220px;"/>
-	</td>
-</tr>
+if ( $redirect ) header( 'Location: '.$redirect );
 
-<tr>
-	<td>&nbsp;</td>
-	<td>
-		<input type="submit" name="submit" value="<?php echo $TEXT[ 'LOGIN' ]; ?>"  />
-		<input type="reset" name="reset" value="<?php echo $TEXT[ 'RESET' ]; ?>"  />
-	</td>
-</tr>
-</table>
+global $parser;
+$parser->setPath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/'); // if there's a template for this in the current frontend template
+$parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to default dir
+$parser->output('account_login_form',
+    array(
+        'message'            => $error,
+        'username_fieldname' => $username_fieldname,
+        'password_fieldname' => $password_fieldname,
+        'redirect_url'       => ( $redirect ? $redirect : '' ),
 
-</form>
-
-<br />
-
-<a href="<?php echo CAT_URL; ?>/account/forgot.php"><?php echo $TEXT[ 'FORGOTTEN_DETAILS' ]; ?></a>
+    )
+);
