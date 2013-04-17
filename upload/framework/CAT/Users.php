@@ -78,6 +78,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     	'AUTH_MAX_PASS_LENGTH'  => 128, // maximum length of a password
                     	'AUTH_MIN_LOGIN_LENGTH' =>   3, // minimum length of a login name
                     	'AUTH_MAX_LOGIN_LENGTH' => 128, // maximum length of a login name
+                        'USERS_PROFILE_ALLOWED' =>  16, // bit to check if user can edit his profile
                     ),
                     NULL,
                     true
@@ -254,9 +255,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     return false;
                 }
 
+                $username_fieldname = $val->createFieldname('username_');
 				$tpl_data = array(
                     'USERNAME_FIELDNAME'    => $username_fieldname,
-                    'PASSWORD_FIELDNAME'    => $password_fieldname,
+                    'PASSWORD_FIELDNAME'    => $val->createFieldname('password_'),
                     'USERNAME'              => $val->sanitizePost($username_fieldname),
                     'ACTION_URL'			=> CAT_ADMIN_URL.'/login/index.php',
                     'LOGIN_URL'				=> CAT_ADMIN_URL.'/login/index.php',

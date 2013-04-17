@@ -96,17 +96,21 @@ class frontend extends wb {
 		}
 		// Work-out if login menu constants should be set
 		if(FRONTEND_LOGIN) {
+            $constants = array(
+		        'LOGIN_URL'       => CAT_URL.'/account/login.php',
+		        'LOGOUT_URL'      => CAT_URL.'/account/logout.php',
+		        'FORGOT_URL'      => CAT_URL.'/account/forgot.php',
+		        'PREFERENCES_URL' => CAT_URL.'/account/preferences.php',
+		        'SIGNUP_URL'      => CAT_URL.'/account/signup.php',
+            );
 			// Set login menu constants
-			define('LOGIN_URL', CAT_URL.'/account/login.php');
-			define('LOGOUT_URL', CAT_URL.'/account/logout.php');
-			define('FORGOT_URL', CAT_URL.'/account/forgot.php');
-			define('PREFERENCES_URL', CAT_URL.'/account/preferences.php');
-			define('SIGNUP_URL', CAT_URL.'/account/signup.php');
+            CAT_Registry::register($constants,NULL,true);
             global $parser;
             $parser->setGlobals( array(
                 'username_fieldname' => CAT_Helper_Validate::getInstance()->createFieldname('username_'),
                 'password_fieldname' => CAT_Helper_Validate::getInstance()->createFieldname('password_'),
             ));
+            $parser->setGlobals($constants);
 		}
 	}
 
