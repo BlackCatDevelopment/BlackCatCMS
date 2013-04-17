@@ -67,7 +67,7 @@
 	</fieldset>
 
 	<fieldset class="account_form">
-		<legend>{translate('Confirm with current password')}</legend>
+		<legend>{translate('Confirm')}</legend>
 		<div class="account_label">{translate('Confirm with current password')}:</div>
 		<div class="account_value"><input type="password" name="current_password" id="current_password" onkeyup="check_input(this);"/></div>
 	</fieldset>

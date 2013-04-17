@@ -1,5 +1,6 @@
 <h1>{translate('Sign-up')}</h1>
 {if $message}<div class="account_message">{$message}</div>{/if}
+{if $form}
 <form name="user" action="{$SIGNUP_URL}" method="post">
     <fieldset class="account_form">
         <legend class="account_legend">{translate('Sign-up')}</legend>
@@ -20,11 +21,11 @@
     </div>
 {/if}
         <label class="account_label" for="username">{translate('Username')}</label>
-          <input type="text" maxlength="30" name="username" id="username" tabindex="1" class="account_input" /><br />
+          <input type="text" maxlength="30" name="username" id="username" tabindex="1" value="{$username}" class="account_input" /><br />
         <label class="account_label" for="display_name">{translate('Display name')} ({translate('Full name')})</label>
-          <input type="text" maxlength="255" name="display_name" id="display_name" tabindex="2" /><br />
+          <input type="text" maxlength="255" name="display_name" id="display_name" tabindex="2" value="{$display_name}" class="account_input" /><br />
         <label class="account_label" for="email">{translate('eMail')}</label>
-          <input type="text" maxlength="30" name="email" id="email" tabindex="3" class="account_input" /><br />
+          <input type="text" maxlength="30" name="email" id="email" tabindex="3" value="{$email}" class="account_input" /><br />
 {if $captcha}
         <label class="account_label" for="captcha">{translate('Captcha verification')}</label>
           {$captcha}<br /><br />
@@ -33,4 +34,4 @@
 		<input class="account_button" type="reset" name="reset" value="{translate('Reset')}" />
     </fieldset>
 </form><br />
-
+{/if}

@@ -39,7 +39,11 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-if(!( intval(FRONTEND_SIGNUP) && (  0 == (isset($_SESSION['USER_ID']) ? intval($_SESSION['USER_ID']) : 0) )))
+$val  = CAT_Helper_Validate::getInstance();
+$user = CAT_Users::getInstance();
+$id   = $user->get_user_id();
+
+if(!( intval(FRONTEND_SIGNUP) && (  0 == ($id ? $id : 0) )))
 {
 	if(INTRO_PAGE) {
 		header('Location: '.CAT_URL.PAGES_DIRECTORY.'/index.php');
@@ -50,72 +54,20 @@ if(!( intval(FRONTEND_SIGNUP) && (  0 == (isset($_SESSION['USER_ID']) ? intval($
 	}
 }
 
-if (
-       ENABLED_ASP
-	&& isset( $_POST[ 'username' ] )
-	&& ( // form faked? Check the honeypot-fields.
-	     (
-		      ! isset( $_POST[ 'submitted_when' ] )
-		   || ! isset( $_SESSION[ 'submitted_when' ] )
-		 )
-		 ||
-		 (
-		      $_POST[ 'submitted_when' ] != $_SESSION[ 'submitted_when' ]
-		 )
-		 ||
-		 (
-		         ! isset( $_POST[ 'email-address' ] )
-		      || $_POST[ 'email-address' ]
-		 )
-		 ||
-		 (
-		 	    ! isset( $_POST[ 'name' ] )
-			  || $_POST[ 'name' ]
-	 	 )
-		 ||
-		 (
-		         ! isset( $_POST[ 'full_name' ] )
-		 	  || $_POST[ 'full_name' ]
-		 )
-	)
-) {
-	exit( header( "Location: " . CAT_URL . PAGES_DIRECTORY . "" ) );
-}
-
-// Load the language file
-if ( !file_exists( CAT_PATH . '/languages/' . DEFAULT_LANGUAGE . '.php' ) )
-{
-	exit( 'Error loading language file ' . DEFAULT_LANGUAGE . ', please check configuration' );
-}
-else
-{
-	require_once( CAT_PATH . '/languages/' . DEFAULT_LANGUAGE . '.php' );
-	$load_language = false;
-}
-
-
 // Required page details
 $page_id          = 0;
 $page_description = '';
 $page_keywords    = '';
-define( 'PAGE_ID', 0 );
-define( 'ROOT_PARENT', 0 );
-define( 'PARENT', 0 );
-define( 'LEVEL', 0 );
-define( 'PAGE_TITLE', $TEXT[ 'SIGNUP' ] );
-define( 'MENU_TITLE', $TEXT[ 'SIGNUP' ] );
-define( 'MODULE', '' );
-define( 'VISIBILITY', 'public' );
+CAT_Registry::register( 'PAGE_ID', 0, true );
+CAT_Registry::register( 'ROOT_PARENT', 0, true );
+CAT_Registry::register( 'PARENT', 0, true );
+CAT_Registry::register( 'LEVEL', 0, true );
+CAT_Registry::register( 'PAGE_TITLE', $val->lang()->translate('Sign-up'), true );
+CAT_Registry::register( 'MENU_TITLE', $val->lang()->translate('Sign-up'), true );
+CAT_Registry::register( 'MODULE', '', true );
+CAT_Registry::register( 'VISIBILITY', 'public', true );
 
-// Set the page content include file
-if ( isset( $_POST[ 'username' ] ) )
-{
-	define( 'PAGE_CONTENT', CAT_PATH . '/account/signup2.php' );
-}
-else
-{
-	define( 'PAGE_CONTENT', CAT_PATH . '/account/signup_form.php' );
-}
+CAT_Registry::register( 'PAGE_CONTENT', CAT_PATH . '/account/signup_form.php', true );
 
 // Set auto authentication to false
 $auto_auth = false;
