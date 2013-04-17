@@ -100,7 +100,7 @@ if ( $email && $val->sanitize_email($email) )
 				// Setup email to send
 				$mail_to      = $email;
 				$mail_subject = $val->lang()->translate('Your login details...');
-                $mail_message = $parser->get('forgotpw_mail_body', array(
+                $mail_message = $parser->get('account_forgotpw_mail_body', array(
                     'LOGIN_DISPLAY_NAME'  => $results_array['display_name'],
                     'LOGIN_WEBSITE_TITLE' => WEBSITE_TITLE,
                     'LOGIN_NAME'          => $results_array['username'],
