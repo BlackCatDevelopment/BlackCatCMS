@@ -24,19 +24,19 @@
  */
 
 if (defined('CAT_PATH')) {
-	if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ($subs as $sub) {
-		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) {
-			include($dir.'/framework/class.secure.php'); $inc = true;	break;
-		}
-	}
-	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));        $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+            if (empty($sub)) continue; $dir .= '/'.$sub;
+            if (file_exists($dir.'/framework/class.secure.php')) {
+                    include($dir.'/framework/class.secure.php'); $inc = true;        break;
+            }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
 include dirname(__FILE__).'/data/config.inc.php';
@@ -47,16 +47,22 @@ $doit  = true;
 
 if(!CAT_Helper_Validate::getInstance()->sanitizeGet('blackcat_refresh'))
 {
-    $fh    = @fopen(sanitize_path(dirname(__FILE__).'/data/.last'),'r');
-    if ( is_resource($fh) ) {
-    $last = fgets($fh);
-    fclose($fh);
+    $file = sanitize_path(dirname(__FILE__).'/data/.last');
+    if ( file_exists($file) )
+    {
+        $fh = @fopen($file,'r');
+        if ( is_resource($fh) )
+        {
+            $last = fgets($fh);
+            fclose($fh);
+        }
     }
-    if ( $last ) {
-    list( $last, $last_version ) = explode('|',$last);
-    if ( $last > ( time() - 60 * 60 * 24 ) ) {
-        $doit = false;
-    }
+    if ( $last )
+    {
+        list( $last, $last_version ) = explode('|',$last);
+        if ( $last > ( time() - 60 * 60 * 24 ) ) {
+            $doit = false;
+        }
     }
 }
 
@@ -66,12 +72,12 @@ if ( $doit ) {
     include 'Zend/Http/Client.php';
     $client = new Zend_Http_Client(
         $current['source'],
-    array(
+        array(
             'timeout'      => $current['timeout'],
-        'adapter' 	   => 'Zend_Http_Client_Adapter_Proxy',
+            'adapter'      => 'Zend_Http_Client_Adapter_Proxy',
             'proxy_host'   => $current['proxy_host'],
-    		'proxy_port'   => $current['proxy_port'],
-    )
+            'proxy_port'   => $current['proxy_port'],
+        )
     );
     $client->setCookieJar();
     $client->setHeaders(
@@ -82,16 +88,16 @@ if ( $doit ) {
     );
 
     try {
-    $response = $client->request( Zend_Http_Client::GET );
-    if ( $response->getStatus() != '200' ) {
-        $error = "Unable to load source:<br />"
+        $response = $client->request( Zend_Http_Client::GET );
+        if ( $response->getStatus() != '200' ) {
+            $error = "Unable to load source:<br />"
                    . "(Using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
-               . "Status: " . $response->getStatus() . " - " . $response->getMessage()
-               . ( ( $debug ) ? "<br />".var_dump($client->getLastRequest()) : NULL )
-               . "<br />"
-		       ;
-    }
-    $version = $response->getRawBody();
+                   . "Status: " . $response->getStatus() . " - " . $response->getMessage()
+                   . ( ( $debug ) ? "<br />".var_dump($client->getLastRequest()) : NULL )
+                   . "<br />"
+                   ;
+        }
+        $version = $response->getRawBody();
     } catch ( Zend_HTTP_Client_Adapter_Exception $e) {
     $error = "Unable to load source:<br />"
                . "(Using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
