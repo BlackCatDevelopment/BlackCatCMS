@@ -732,9 +732,17 @@ function fill_tables($database) {
     __cat_installer_import_sql(dirname(__FILE__).'/db/data.sql',$database);
 
     // get current version
-    $tag = fopen( dirname(__FILE__).'/tag.txt', 'r' );
-    list ( $current_version, $current_build ) = explode( '#', fgets($tag) );
-    fclose($tag);
+    if ( file_exists(dirname(__FILE__).'/tag.txt') )
+    {
+        $tag = fopen( dirname(__FILE__).'/tag.txt', 'r' );
+        list ( $current_version, $current_build ) = explode( '#', fgets($tag) );
+        fclose($tag);
+    }
+    else
+    {
+        $current_version = '0.0.0';
+        $current_build   = 'unknown';
+    }
 
     // fill settings configured by installer
 	$settings_rows = "INSERT INTO `".CAT_TABLE_PREFIX."settings` "
