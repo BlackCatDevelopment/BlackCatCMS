@@ -1,4 +1,5 @@
 <form id="wysiwyg_admin" method="post" action="{$action}">
+    <h2>{translate('Manage settings for editor')} -{$id}-</h2>
     <input type="hidden" name="job" value="save" />
     <input type="hidden" name="id" value="{$id}" />
     <fieldset>
@@ -15,11 +16,11 @@
                   {$preview}
               </div>
             {/if}<br />
-        <label for="editor_toolbar">{translate('Editor Toolbar')}</label>
+        <label for="toolbar">{translate('Editor Toolbar')}</label>
         {if is_array($toolbars)}
-          <select name="editor_toolbar" id="editor_toolbar">
+          <select name="toolbar" id="toolbar">
             {foreach $toolbars as toolbar}
-            <option value="{$toolbar}">{$toolbar}</option>
+            <option value="{$toolbar}"{if $toolbar == $current_toolbar} selected="selected"{/if}>{$toolbar}</option>
             {/foreach}
           </select>
         {else}
@@ -80,7 +81,7 @@
         <input type="checkbox" name="plugins[]" id="plugins" value="{$plugin}" {if isset($plugins_checked[$plugin])}checked="checked"{/if}/> {$plugin}<br />
         {/foreach}
     </fieldset>
-          {/if}
+    {/if}
 
     {if is_array($filemanager) && count($filemanager)}
     <fieldset id="filemanager">

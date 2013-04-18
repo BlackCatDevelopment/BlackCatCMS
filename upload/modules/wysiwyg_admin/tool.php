@@ -94,6 +94,7 @@ $current_skin = $c->getSkin($config);
 $settings     = $c->getAdditionalSettings();
 $plugins         = $c->getAdditionalPlugins();
 $filemanager  = $c->getFilemanager();
+$toolbars            = $c->getToolbars();
 $preview      = NULL;
 $plugins_checked = array();
 $filemanager_checked = array();
@@ -114,7 +115,7 @@ $job = $val->sanitizePost('job');
 
 if ($job && $job=="save") {
     $_POST = array_map("wysiwyg_admin_escape",$_POST);
-    $new_width = $new_height = $new_skin = $new_plugins = $new_fm = NULL;
+    $new_width = $new_height = $new_skin = $new_toolbar = $new_plugins = $new_fm = NULL;
     // validate width and height
     foreach( array('width','height') as $key )
     {
@@ -143,10 +144,17 @@ if ($job && $job=="save") {
         }
     }
     // check skin
-    if ( $val->sanitizePost('skin') && ! in_array($val->sanitizePost('skin'),$skins) )
+    if ( $val->sanitizePost('skin') )
+    {
+        if ( ! in_array($val->sanitizePost('skin'),$skins) )
     {
         $errors[$key] = $admin->lang->translate('Invalid skin!');
         continue;
+    }
+        else
+        {
+            $new_skin = $val->sanitizePost('skin');
+        }
     }
     // check HTMLPurifier
     if (
@@ -159,6 +167,20 @@ if ($job && $job=="save") {
     else {
         $enable_htmlpurifier = false;
     }
+    // check toolbar
+    if($val->sanitizePost('toolbar') )
+    {
+        if ( ! in_array($val->sanitizePost('toolbar'),$toolbars) )
+        {
+            $errors[$key] = $admin->lang->translate('Invalid toolbar!');
+            continue;
+        }
+        else
+        {
+            $new_toolbar = $val->sanitizePost('toolbar');
+        }
+    }
+
     // check additionals
     if(count($settings))
     {
@@ -207,7 +229,6 @@ if ($job && $job=="save") {
     {
         $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'width\', \''.$width.$width_unit.'\' )' );
         $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'height\', \''.$height.$height_unit.'\' )' );
-        $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'skin\', \''.$_POST['skin'].'\' )' );
         $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'enable_htmlpurifier\', \''.$enable_htmlpurifier.'\' )' );
         // save additionals
         if(count($settings))
@@ -238,6 +259,14 @@ if ($job && $job=="save") {
         {
             $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'filemanager\', \''.$new_fm.'\' )' );
         }
+        if($new_toolbar)
+        {
+            $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'toolbar\', \''.$new_toolbar.'\' )' );
+        }
+        if($new_skin)
+        {
+            $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'skin\', \''.$new_skin.'\' )' );
+        }
         // reload settings
         $config       = wysiwyg_admin_config();
     }
@@ -259,7 +288,7 @@ if ( ( isset($config['filemanager']) && $config['filemanager'] != '' ) )
 
 $parser->setPath(dirname(__FILE__)."/templates/default");
 echo $parser->get(
-    'tool.lte',
+    'tool',
     array(
         'width_unit_em'    => '',
         'width_unit_px'    => '',
@@ -270,10 +299,11 @@ echo $parser->get(
         'action'           => CAT_ADMIN_URL.'/admintools/tool.php?tool=wysiwyg_admin',
         'id'               => WYSIWYG_EDITOR,
         'skins'            => $skins,
-        'toolbars'         => $c->getToolbars(),
+        'toolbars'         => $toolbars,
+        'current_toolbar'  => $c->getToolbar($config),
         'width'            => $width,
         'height'           => $height,
-        'current_skin'     => $current_skin,
+        'current_skin'     => $c->getSkin($config),
         'preview'          => $preview,
         'settings'         => $settings,
         'config'           => $config,

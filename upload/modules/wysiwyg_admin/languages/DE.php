@@ -47,9 +47,11 @@ $module_description = 'WYSIWYG Admin ermöglicht die Verwaltung diverser Editor-
                     . 'Der Editor kann weitere Optionen definieren, die dann ebenfalls verwaltet werden können.';
 
 $LANG = array(
+    'Manage settings for editor' => 'Verwalte Einstellungen für Editor',
     'Common options' => 'Allgemeine Einstellungen',
     'Additional options' => 'Weitere Einstellungen',
     'Additional plugins' => 'Optionale Plugins',
+    'Available Filemanager' => 'Verfügbare Dateimanager',
     'Skin preview' => 'Skin Vorschau',
 	'Editor width' => 'Editor Breite',
 	'Editor height' => 'Editor H&ouml;he',

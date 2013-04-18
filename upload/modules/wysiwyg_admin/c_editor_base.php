@@ -53,6 +53,7 @@ abstract class c_editor_base
 {
 
     private $default_skin = NULL;
+    private $default_toolbar = NULL;
     private $default_height = '250px';
     private $default_width  = '100%';
 
@@ -114,6 +115,12 @@ abstract class c_editor_base
     {
         $val = $this->get('skin',$config);
         return ( $val != '' ) ? $val : $this->default_skin;
+    }
+
+    public function getToolbar(&$config)
+    {
+        $val = $this->get('toolbar',$config);
+        return ( $val != '' ) ? $val : $this->default_toolbar;
     }
 
     public function getSkins($skin_path)
