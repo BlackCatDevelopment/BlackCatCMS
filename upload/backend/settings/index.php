@@ -292,6 +292,21 @@ array_unshift (
 		'SELECTED'		=> ( ($tpl_data['search']['template'] == '') || $tpl_data['search']['template'] == DEFAULT_TEMPLATE ) ? true : false
 	)
 );
+// ====================
+// ! Pages list
+// ====================
+$pages_list = CAT_Pages::getInstance()->getPages();
+$deleted    = CAT_Pages::getInstance()->getPages('deleted');
+if(count($deleted))
+{
+    $arrh = CAT_Helper_Array::getInstance();
+    foreach($deleted as $page)
+    {
+        $arrh->ArrayRemove( $page['page_id'], $pages_list, 'page_id' );
+    }
+}
+$tpl_data['PAGES_LIST'] = CAT_Helper_ListBuilder::getInstance()->config(array('space' => '|-- '))
+                                           ->dropdown( 'fc_maintenance_page', $pages_list, 0, MAINTENANCE_PAGE );
 
 // ==================== 
 // ! Parse the site   

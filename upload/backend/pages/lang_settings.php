@@ -183,7 +183,7 @@ $tpl_data['MODIFIED_WHEN']		  = ($results_array['modified_when'] != 0)
                                   ? $modified_ts = CAT_Helper_DateTime::getDateTime($results_array['modified_when'])
                                   : false;
 
-$tpl_data['PAGES'] #
+$tpl_data['PAGES']
     = CAT_Helper_ListBuilder::getInstance()->config(array('space' => '|-- '))
                                            ->dropdown( '', $pages_list, 0, false, true );
 

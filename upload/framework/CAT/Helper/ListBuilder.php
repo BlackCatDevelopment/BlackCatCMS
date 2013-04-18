@@ -32,13 +32,14 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
 	{
 	    protected $_config
 			= array(
+                 'loglevel'             => 8,
 			// ----- used globally -----
 	            // array key that contains the id of the parent item
 	            '__parent_key'          => 'parent',
 	            // array key that contains the item id
-	            '__id_key'              => 'id',
+	            '__id_key'              => 'page_id',
 	            // array key that contains the name (text) of the element
-	            '__title_key'           => 'title',
+	            '__title_key'           => 'menu_title',
 	            // array key that contains the item level (=depth)
 	            '__level_key'           => 'level',
 			    // array key to store child references
@@ -52,8 +53,19 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 // suppress html creation
                 '__no_html'             => false,
 			// ----- used for dropdown -----
-			    'space'                 => '    ',
+			    'space'                 => '&nbsp;&nbsp;',
 			);
+
+        private static $instance;
+
+        public static function getInstance()
+        {
+            if (!self::$instance)
+            {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }
 
         /**
          * sort array by children
@@ -130,7 +142,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          * http://codjng.blogspot.com/2010/10/how-to-build-unlimited-level-of-menu.html
          *
          **/
-        public function dropdown ( $name, $list, $root_id, $selected = NULL ) {
+        public function dropdown ( $name, $list, $root_id, $selected = NULL, $options_only = false ) {
 
             if ( empty($list) || ! is_array( $list ) || count($list) == 0 ) {
                 return NULL;
@@ -200,6 +212,9 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 }
 
             }
+
+            if ( $options_only )
+                return join( "\n\t", $output )."\n";
 
             return $this->startSelect($name)
 				  . join( "\n\t", $output )."\n"
