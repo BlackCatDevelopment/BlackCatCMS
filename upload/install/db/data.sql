@@ -28,6 +28,8 @@ INSERT INTO `cat_settings` (name, value) VALUES
     ('home_folders', 'true'),
     ('homepage_redirection', 'false'),
     ('intro_page', 'false'),
+    ('maintenance_mode', 'off'),
+    ('maintenance_page', '3'),
     ('manage_sections', 'true'),
     ('max_attempts', '9'),
     ('media_directory', '/media'),
