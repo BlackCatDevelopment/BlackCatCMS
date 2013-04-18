@@ -63,19 +63,20 @@ require_once (CAT_PATH.'/framework/class.admin.php');
  */
 $admin = new admin('Settings', 'settings_advanced');
 
-function save_settings(&$admin, &$database)
+function save_settings(&$admin)
 {
 	
 	global $old_settings, $settings;
 	$settings = array();
 	$old_settings = array();
+    $val          = CAT_Helper_Validate::getInstance();
 	
 	/**
 	 *	Query current settings in the db, then loop through them to get old values
 	 *
 	 */
 	$sql = 'SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'settings` ORDER BY `name`';
-	if (false !== ($res_settings = $database->query($sql))) {
+	if (false !== ($res_settings = $val->db()->query($sql))) {
 		while( false !== ($row = $res_settings->fetchRow( MYSQL_ASSOC ) ) ) {
 			$old_settings[$row['name']] = $row['value'];
 			$settings[$row['name']]     = $val->sanitizePost($row['name']);
@@ -95,7 +96,7 @@ function save_settings(&$admin, &$database)
 	$settings['default_language']
         = $admin->lang->checkLang($default_language)
         ? $default_language
-        : $old_settings['default_language']);
+        : $old_settings['default_language'];
 
     // check date format
 	$settings['default_date_format']
@@ -117,9 +118,9 @@ function save_settings(&$admin, &$database)
         : $old_settings['default_charset']);
 
 	//  error reporting values validation
-	require (CAT_ADMIN_PATH.'/interface/er_levels.php');
+    $ER_LEVELS = CAT_Registry::get('ER_LEVELS','array');
 	$settings['er_level']
-        = (isset ($settings['er_level']) && (array_key_exists($settings['er_level'], CAT_CORE::$ER_LEVELS)))
+        = (isset ($settings['er_level']) && (array_key_exists($settings['er_level'], $ER_LEVELS)))
         ? intval($settings['er_level'])
         : $old_settings['er_level'];
 
@@ -128,22 +129,28 @@ function save_settings(&$admin, &$database)
 	if (isset ($settings['frontend_signup']))
 	{
 		$sql = 'SELECT count(*) AS `tcount` FROM '.CAT_TABLE_PREFIX.'groups ';
-		if (($result = $database->query($sql)) && ($result->numRows() > 0))
+		if (($result = $val->db()->query($sql)) && ($result->numRows() > 0))
 		{
 			$row = $result->fetchRow();
-			$settings['frontend_signup'] = ($settings['frontend_signup'] > 1) && ($settings['frontend_signup'] <= $row['tcount']) ? intval($settings['frontend_signup']) : $old_settings['frontend_signup'];
+			$settings['frontend_signup']
+                = ($settings['frontend_signup'] > 1) && ($settings['frontend_signup'] <= $row['tcount'])
+                ? intval($settings['frontend_signup'])
+                : $old_settings['frontend_signup']
+                ;
 		}
 	}
 	// bools checks
-	$settings['home_folders'] = $settings['home_folders']=='' ? 'false' : 'true';
-	$settings['homepage_redirection'] = $settings['homepage_redirection']=='' ? 'false' : 'true';
-	$settings['intro_page'] = $settings['intro_page']=='' ? 'false' : 'true';
-	$settings['manage_sections'] = $settings['manage_sections']=='' ? 'false' : 'true';
-	$settings['multiple_menus'] = $settings['multiple_menus']=='' ? 'false' : 'true';
-	$settings['page_languages'] = $settings['page_languages']=='' ? 'false' : 'true';
-	$settings['section_blocks'] = $settings['section_blocks']=='' ? 'false' : 'true';
+    foreach ( array(
+        'home_folders'  , 'homepage_redirection', 'intro_page'    , 'manage_sections',
+        'multiple_menus', 'page_languages'      , 'section_blocks', 'page_trash',
+        'users_allow_mailaddress' ) as $key )
+    {
+	    $settings[$key] = ( $settings[$key] == '' ) ? 'false' : 'true';
+    }
 	$settings['page_trash'] = isset ($settings['page_trash']) ? ($settings['page_trash']) : $old_settings['page_trash'];
-	//  we have to check two situations a) is the POST set b) is vakue within the area
+
+
+    //  we have to check two situations a) is the POST set b) is value within the area
 	$page_level_limit = isset ($settings['page_level_limit']) ? intval($settings['page_level_limit']) : $old_settings['page_level_limit'];
 	$settings['page_level_limit'] = ($page_level_limit <= 10) ? $page_level_limit : $old_settings['page_level_limit'];
 	//  do the same
@@ -161,9 +168,7 @@ function save_settings(&$admin, &$database)
 	$settings['app_name'] = isset ($settings['app_name']) ? $settings['app_name'] : $old_settings['app_name'];
 
 	$settings['sec_anchor'] = isset ($settings['sec_anchor']) ? $settings['sec_anchor'] : $old_settings['sec_anchor'];
-/**
- *	M.f.i.	Pages_directory could be empty
- */
+
 	$settings['pages_directory'] = isset ($settings['pages_directory']) ? '/'.$settings['pages_directory'] : $old_settings['pages_directory'];
 	$bad = array('"','`','!','@','#','$','%','^','&','*','=','+','|',';',':',',','?'	);
 	$settings['pages_directory'] = str_replace($bad, '', $settings['pages_directory']);
@@ -178,13 +183,13 @@ function save_settings(&$admin, &$database)
 		$pattern = '/^[a-z][a-z_0-9]*$/i';
 		if(!preg_match($pattern, $settings['sec_anchor'], $array))
 		{
-			$err_msg[] = $TEXT['SEC_ANCHOR'].' '.$TEXT['INVALID_SIGNS'];
+			$err_msg[] = $admin->lang->translate('Section-Anchor text').' '.$admin->lang->translate('must begin with a letter or has invalid signs');
 		}
 	}
 
 	// Work-out file mode
 	// Check if should be set to 777 or left alone
-	if ($admin->get_post('world_writeable') == 'true')
+	if ($val->sanitizePost('world_writeable') == 'true')
 	{
 		$settings['string_file_mode'] = '0666';
 		$settings['string_dir_mode'] = '0777';
@@ -194,16 +199,14 @@ function save_settings(&$admin, &$database)
 		$settings['string_dir_mode'] = '0755';
 	}
 
-	include CAT_PATH.'/framework/backend_switch.php';
-
 	// check home folder settings
 	// remove home folders for all users if the option is changed to "false"
 	if ( !isset($settings['home_folders']) && $old_settings['home_folders'] == 'true' ) {
 		$sql = 'UPDATE `'.CAT_TABLE_PREFIX.'users` ';
 		$sql .= 'SET `home_folder` = \'\';';
-		if (!$database->query($sql))
+		if (!$val->db()->query($sql))
 		{
-			$err_msg[] = $database->get_error();
+			$err_msg[] = $val->db()->get_error();
 		}
 	}
 	
@@ -211,7 +214,7 @@ function save_settings(&$admin, &$database)
 
 	// email should be validated by core
 	// Work-out which wbmailer routine should be checked
-	if ((isset ($settings['server_email'])) && (!$admin->validate_email($settings['server_email'])))
+	if ((isset ($settings['server_email'])) && (!$val->validate_email($settings['server_email'])))
 	{
 		$err_msg[] = $admin->lang->translate('Default Sender Name');
 	}
@@ -242,7 +245,7 @@ function save_settings(&$admin, &$database)
 			}
 			else
 			{
-				$err_msg[] = $MESSAGE['MOD_FORM_REQUIRED_FIELDS'].': '.$admin->lang->translate('SMTP Host');
+				$err_msg[] = $admin->lang->translate('You must enter details for the following fields').': '.$admin->lang->translate('SMTP Host');
 			}
 		}
 		// Work-out if SMTP authentification should be checked
@@ -254,7 +257,7 @@ function save_settings(&$admin, &$database)
 			$catmailer_smtp_username = (isset ($settings['catmailer_smtp_username'])) ? $settings['catmailer_smtp_username'] : $old_settings['catmailer_smtp_username'];
 			if (($catmailer_smtp_username == '') && !preg_match($pattern, $catmailer_smtp_username))
 			{
-				$err_msg[] = $admin->lang->translate('SMTP').': '.$MESSAGE['LOGIN_AUTHENTICATION_FAILED'];
+				$err_msg[] = $admin->lang->translate('SMTP').': '.$admin->lang->translate('Username or password incorrect');
 			}
 			else
 			{
@@ -262,15 +265,15 @@ function save_settings(&$admin, &$database)
 			}
 			// receive password vars and calculate needed action
 			$pattern = '/[^'.$admin->password_chars.']/';
-			$current_password = $admin->get_post('catmailer_smtp_password');
+			$current_password = $val->sanitizePost('catmailer_smtp_password');
 			$current_password = ($current_password == null ? '' : $current_password);
 			if (($current_password == ''))
 			{
-				$err_msg[] = $admin->lang->translate('SMTP').': '.$MESSAGE['LOGIN_AUTHENTICATION_FAILED'];
+				$err_msg[] = $admin->lang->translate('SMTP').': '.$admin->lang->translate('Username or password incorrect');
 			}
 			elseif (preg_match($pattern, $current_password))
 			{
-				$err_msg[] = $MESSAGE['PREFERENCES_INVALID_CHARS'];
+				$err_msg[] = $admin->lang->translate('Invalid password chars used, valid chars are: a-z\A-Z\0-9\_\-\!\#\*\+');
 			}
 		}
 		// If SMTP-Authentification is disabled delete USER and PASSWORD for securityreasons
@@ -286,7 +289,7 @@ function save_settings(&$admin, &$database)
 	// Query current settings in the db, then loop through them and update the db with the new value
 		$sql = 'SELECT `name` FROM `'.CAT_TABLE_PREFIX.'settings` ';
 		$sql .= 'ORDER BY `name`';
-		$results = $database->query($sql);
+		$results = $val->db()->query($sql);
 		while (false !== ($row = $results->fetchRow()))
 		{
 		// get fieldname from table and store it
@@ -302,13 +305,13 @@ function save_settings(&$admin, &$database)
 
 			if ((trim($value) <> '') || $passed == true )
 			{
-				$value = trim($admin->add_slashes($value));
+				$value = trim($val->add_slashes($value));
 				$sql = 'UPDATE `'.CAT_TABLE_PREFIX.'settings` ';
 				$sql .= 'SET `value` = \''.$value.'\' ';
 				$sql .= 'WHERE `name` <> \'cat_version\' ';
 				$sql .= 'AND `name` = \''.$setting_name.'\' ';
 
-				if ($database->query($sql))
+				if ($val->db()->query($sql))
 				{
 					$sql_info = mysql_info();
 					if (preg_match('/matched: *([1-9][0-9]*)/i', $sql_info) != 1)
@@ -321,30 +324,30 @@ function save_settings(&$admin, &$database)
 		// Query current search settings in the db, then loop through them and update the db with the new value
 		$sql = 'SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'search` ';
 		$sql .= 'WHERE `extra` = ""';
-		$res_search = $database->query($sql);
+		$res_search = $val->db()->query($sql);
 		while (false !== ($row = $res_search->fetchRow()))
 		{
 			$old_value = $row['value'];
 			$post_name = 'search_'.$row['name'];
-			$value = $admin->get_post($post_name);
+			$value = $val->sanitizePost($post_name);
 			// hold old value if post is empty
 			if (isset ($value))
 			{
 			// check search template
-				$value = (($value == '') && ($setting_name == 'template')) ? $settings['default_template'] : $admin->get_post($post_name);
-				$value = (($admin->get_post($post_name) == '') && ($setting_name != 'template')) ? $value : $admin->get_post($post_name);
-				$value = $admin->add_slashes($value);
+				$value = (($value == '') && ($setting_name == 'template')) ? $settings['default_template'] : $val->sanitizePost($post_name);
+				$value = (($val->sanitizePost($post_name) == '') && ($setting_name != 'template')) ? $value : $val->sanitizePost($post_name);
+				$value = $val->add_slashes($value);
 				$sql = 'UPDATE `'.CAT_TABLE_PREFIX.'search` ';
 				$sql .= 'SET `value` = "'.$value.'" ';
 				$sql .= 'WHERE `name` = "'.$row['name'].'" ';
 				$sql .= 'AND `extra` = ""';
-				if ($database->query($sql))
+				if ($val->db()->query($sql))
 				{
 					$sql_info = mysql_info();
 					if (preg_match('/matched: *([1-9][0-9]*)/i', $sql_info) != 1)
 					{
 					// if the user_id and password dosn't match
-						$err_msg[] = $HEADING['SEARCH_SETTINGS'].': '.$MESSAGE['PAGES_NOT_SAVED'];
+						$err_msg[] = $admin->lang->translate('Search settings').': '.$admin->lang->translate('Error saving page');
 					}
 				}
 			}
@@ -357,10 +360,10 @@ function save_settings(&$admin, &$database)
 	$admin->print_success($TEXT['REDIRECT_AFTER'].' '.$MENU['SETTINGS'], $js_back );
 	exit ();
 }*/
-$retval = save_settings($admin, $database);
+$retval = save_settings($admin);
 if ($retval == '')
 {
-	$admin->print_success($MESSAGE['SETTINGS_SAVED'], $js_back );
+	$admin->print_success($admin->lang->translate('Settings saved'), $js_back );
 }
 else
 {

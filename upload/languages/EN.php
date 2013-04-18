@@ -478,11 +478,6 @@ $MESSAGE = array(
 	'ADDON_TEMPLATES_RELOADED' => 'Templates reloaded successfully',
 	'ADMIN_INSUFFICIENT_PRIVILEGES' => 'Insufficient privelliges to be here',
 	'CUSTOMIZE_PERMISSIONS_LATER'		=> 'You can customize permissions later on group administration.',
-	'FORGOT_PASS_ALREADY_RESET' => 'Password cannot be reset more than once per hour, sorry',
-	'FORGOT_PASS_CANNOT_EMAIL' => 'Unable to email password, please contact system administrator',
-	'FORGOT_PASS_EMAIL_NOT_FOUND' => 'The email that you entered cannot be found in the database',
-	'FORGOT_PASS_NO_DATA' 	=> 'Please enter your email address below',
-	'FORGOT_PASS_PASSWORD_RESET' => 'Your username and password have been sent to your email address',
 	'GENERIC_BAD_PERMISSIONS' => 'Unable to write to the target directory',
 	'GENERIC_CANNOT_UNINSTALL'						=> 'Cannot uninstall',
 	'GENERIC_CANNOT_UNINSTALL_IN_USE'				=> 'Cannot Uninstall: the selected file is in use',
@@ -640,7 +635,6 @@ if you have received this message by an error, please delete it immediately!
 -------------------------------------
 This message was automatic generated!
 ',
-	'SIGNUP2_SUBJECT_LOGIN_INFO'			=> 'Your login details...',
 	'SIGNUP_NO_EMAIL'						=> 'You must enter an email address',
 	'START_CURRENT_USER'					=> 'You are currently logged in as:',
 	'START_INSTALL_DIR_EXISTS'				=> 'Warning, Installation Directory Still Exists!',

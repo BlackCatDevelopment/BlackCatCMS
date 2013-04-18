@@ -62,9 +62,7 @@
 
             <label for="fc_link_page_id" class="fc_label_120">{translate('Map to page')}</label>
             <select id="fc_link_page_id" name="link_page_id">
-            {foreach $AVAILABLE_PAGES as pg}
-                <option value="{$pg.page_id}">{$pg.menu_title}</li>
-            {/foreach}
+            {$PAGES}
             </select>
 
     		<div class="fc_confirm_bar ui-corner-bottom">

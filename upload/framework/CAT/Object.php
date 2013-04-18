@@ -42,6 +42,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
         protected $_config         = array( 'loglevel' => 8 );
         // Language helper object handle
         protected $lang;
+        // database handle
+        protected $db;
         // KLogger object handle
         private   $logObj;
         
@@ -296,6 +298,26 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 			    $this->debugLevel = 8; // 8 = OFF
 			}
         }   // end function debug()
+
+        /**
+         * returns a database connection handle
+         *
+         * This function must be used by all classes, as we plan to replace
+         * the database class in later versions!
+         *
+         * @access public
+         * @return object
+         **/
+        public function db()
+        {
+            if ( ! $this->db || ! is_object($this->db) )
+            {
+                if ( ! class_exists('database') )
+                    @include CAT_PATH.'/framework/class.database.php';
+                $this->db = new database();
+            }
+            return $this->db;
+        }   // end function db()
 
         /**
       	 * Accessor to KLogger class; this makes using the class significant faster!

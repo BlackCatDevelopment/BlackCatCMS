@@ -14,34 +14,34 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * @author          Ryan Djurovich
  *   @author          Website Baker Project, LEPTON Project, Black Cat Development
  *   @copyright       2004-2010, Website Baker Project
  *   @copyright       2011-2012, LEPTON Project
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
- *   @package         wysiwyg
+ *   @package         CAT_Core
  *
  */
 
 if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
+
+global $database;
 
 // Include WB admin wrapper script
 $update_when_modified = true; // Tells script to update when this page was last updated
@@ -59,13 +59,13 @@ require_once(CAT_PATH.'/framework/functions.php');
  */
 if(isset($_POST['content'.$section_id])) {
     // for non-admins only
-    if(!$admin->get_controller('Users')->ami_group_member(1))
+    if(!CAT_Users::getInstance()->ami_group_member(1))
     {
         // if HTMLPurifier is enabled...
         $r = $database->get_one('SELECT * FROM `'.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2` WHERE set_name="enable_htmlpurifier" AND set_value="1"');
         if($r) {
             // use HTMLPurifier to clean up the output
-            $content = $admin->get_helper('Protect')->purify($_POST['content'.$section_id],array('Core.CollectErrors'=>true));
+            $content = CAT_Helper_Protect::getInstance()->purify($_POST['content'.$section_id],array('Core.CollectErrors'=>true));
         }
     }
     else {

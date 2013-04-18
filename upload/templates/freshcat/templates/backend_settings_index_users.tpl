@@ -10,7 +10,12 @@
 				{foreach $groups.viewers group}
 				<option value="{$group.VALUE}"{if $group.CHECKED} selected="selected"{/if}>{$group.NAME}</option>
 				{/foreach}
-			</select>
+			</select><br /><br />
+            <div class="fc_settings_max">
+			    <input type="checkbox" class="fc_checkbox_jq" name="users_allow_mailaddress" id="fc_users_allow_mailaddress" value="true" {if $users_allow_mailaddress} checked="checked"{/if}/>
+			    <label for="fc_users_allow_mailaddress">{translate('Allow mail address as login name')}</label>
+            </div>
+
 			{/if}
 			<hr />
 			<div class="fc_settings_max">

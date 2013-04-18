@@ -66,7 +66,7 @@ if (!class_exists('CAT_Registry', false))
          **/
         public static function register( $key, $value = NULL, $as_const = false )
         {
-            if ( ! is_array($key) && $value != '' )
+            if ( ! is_array($key) )
         {
             self::$REGISTRY[$key] = $value;
                 // we deliberately do not catch errors here!
@@ -80,7 +80,6 @@ if (!class_exists('CAT_Registry', false))
                     if($as_const) define($name,$value);
                 }
             }
-            
         }   // end function register()
 
         /**
@@ -112,5 +111,23 @@ if (!class_exists('CAT_Registry', false))
                 return ( $require == 'array' ? array() : NULL );
             }
         }   // end function get()
+
+        /**
+         * check if a global var exists
+         *
+         * @access public
+         * @param  string  $key
+         * @return boolean
+         *
+         **/
+        public static function exists($key)
+        {
+            if(isset(self::$REGISTRY[$key]))
+            {
+                return true;
+            }
+            return false;
+        }   // end function exists()
+
     }
 }

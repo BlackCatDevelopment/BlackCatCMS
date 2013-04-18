@@ -245,7 +245,7 @@ foreach ( $TIME_FORMATS AS $format => $title )
 // ========================================= 
 // ! Insert default error reporting values   
 // ========================================= 
-require(CAT_ADMIN_PATH.'/interface/er_levels.php');
+
 $ER_LEVELS = CAT_Registry::get('ER_LEVELS','array');
 $counter = 0;
 foreach ( $ER_LEVELS AS $value => $title )

@@ -1,40 +1,46 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
+
+$users = CAT_Users::getInstance();
+$val   = CAT_Helper_Validate::getInstance();
 
 // =================================================== 
 // ! Include the class.admin.php and WB functions file
@@ -42,23 +48,20 @@ if (defined('CAT_PATH')) {
 require_once(CAT_PATH.'/framework/class.admin.php');
 $admin = new admin('Pages', 'pages_settings');
 
-if (!$admin->get_permission('pages_settings')){
+if (!$users->checkPermission('pages','pages_settings')){
 	header("Location: index.php");
 	exit(0);
 }
 
+$page_id = $val->sanitizeGet('page_id','numeric');
 
 // =============== 
 // ! Get page id   
 // =============== 
-if ( !is_numeric( $admin->get_get('page_id') ) )
+if ( ! $page_id )
 {
 	header("Location: index.php");
 	exit(0);
-}
-else
-{
-	$page_id = $admin->get_get('page_id');
 }
 
 require_once(CAT_PATH.'/framework/functions-utf8.php');
@@ -70,12 +73,12 @@ $tpl_data = array();
 // =============================================================== 
 // ! Get perms & Check if there is an error and get page details   
 // =============================================================== 
-$results		= $database->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id);
+$results		= $users->db()->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id);
 $results_array	= $results->fetchRow( MYSQL_ASSOC );
 
-if ( $database->is_error() )
+if ( $users->db()->is_error() )
 {
-	$admin->print_error( $database->get_error() );
+	$admin->print_error( $users->db()->get_error() );
 }
 if ( $results->numRows() == 0 )
 {
@@ -85,14 +88,14 @@ if ( $results->numRows() == 0 )
 $old_admin_groups	= explode(',', $results_array['admin_groups']);
 $old_admin_users	= explode(',', $results_array['admin_users']);
 $in_old_group = false;
-foreach ( $admin->get_groups_id() as $cur_gid )
+foreach ( $users->get_groups_id() as $cur_gid )
 {
 	if ( in_array($cur_gid, $old_admin_groups) )
 	{
 		$in_old_group = true;
 	}
 }
-if ( !$in_old_group && !is_numeric(array_search($admin->get_user_id(), $old_admin_users)) )
+if ( !$in_old_group && !is_numeric(array_search($users->get_user_id(), $old_admin_users)) )
 {
 	$admin->print_error('You do not have permissions to modify this page');
 }
@@ -102,23 +105,22 @@ if ( !$in_old_group && !is_numeric(array_search($admin->get_user_id(), $old_admi
 //
 if ( $admin->get_get('del') )
 {
-    list( $lang, $page ) = explode( '_', $admin->get_get('del') );
-    $database->query( 'DELETE FROM '.CAT_TABLE_PREFIX.'page_langs WHERE link_page_id = "'.$page.'" AND lang = "'.$lang.'"' );
+    list( $lang, $page ) = explode( '_', $val->sanitizeGet('del') );
+    $users->db()->query( 'DELETE FROM '.CAT_TABLE_PREFIX.'page_langs WHERE link_page_id = "'.$page.'" AND lang = "'.$lang.'"' );
 }
 
-$arrh = $admin->get_helper('Array');
+$arrh = CAT_Helper_Array::getInstance();
 
 // ===========================
 // ! find already linked pages
 // ===========================
-$items          = CAT_Pages::getInstance($page_id,array('pages_settings'=>CAT_Users::getInstance()->checkPermission('pages_settings')))->getLinkedByLanguage($page_id);
+$items = CAT_Pages::getInstance($page_id)->getLinkedByLanguage($page_id);
 
 
 // =========================
 // ! get installed languages
 // =========================
-require CAT_PATH.'/framework/CAT/Helper/Addons.php';
-$addons = new CAT_Helper_Addons();
+$addons = CAT_Helper_Addons::getInstance();
 $avail  = $addons->get_addons( $results_array['language'] , 'language' );
 // skip current lang
 foreach( $avail as $i => &$l )
@@ -140,21 +142,28 @@ if(is_array($items) && count($items)) {
 // ===========
 // ! get pages
 // ===========
-$pages_list = $admin->pg->make_list();
+$pages_list = $admin->pg->getPages();
 // skip current page
 $arrh->ArrayRemove( $page_id, $pages_list, 'page_id' );
 // skip already linked pages
-if(is_array($items) && count($items)) {
+if(is_array($items) && count($items))
+{
     foreach($items as $item)
     {
     $arrh->ArrayRemove( $item['link_page_id'], $pages_list, 'page_id' );
     }
 }
+// skip deleted pages
+$deleted = $admin->pg->getPages('deleted');
+foreach($deleted as $item)
+{
+    $arrh->ArrayRemove( $item['page_id'], $pages_list, 'page_id' );
+}
 
 // =========================================================
 // ! Get display name of person who last modified the page
 // =========================================================
-$user									= $admin->get_user_details( $results_array['modified_by'] );
+$user							  = $users->get_user_details( $results_array['modified_by'] );
 
 // =============================================
 // ! Add result_array to the template variable
@@ -173,6 +182,10 @@ $tpl_data['MODIFIED_BY_USERNAME'] = $user['username'];
 $tpl_data['MODIFIED_WHEN']		  = ($results_array['modified_when'] != 0)
                                   ? $modified_ts = CAT_Helper_DateTime::getDateTime($results_array['modified_when'])
                                   : false;
+
+$tpl_data['PAGES'] #
+    = CAT_Helper_ListBuilder::getInstance()->config(array('space' => '|-- '))
+                                           ->dropdown( '', $pages_list, 0, false, true );
 
 
 // ====================

@@ -121,6 +121,17 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
     }
     
     //**************************************************************************
+    // moved from ./backend/interface/er_levels.php
+    //**************************************************************************
+    CAT_Registry::register('ER_LEVELS', array(
+        'System Default',
+        '6135' => 'E_ALL^E_NOTICE', // standard: E_ALL without E_NOTICE
+        '0'    => 'E_NONE',
+        '6143' => 'E_ALL',
+        '8191' => htmlentities('E_ALL&E_STRICT'), // for programmers
+    ));
+
+    //**************************************************************************
     //**************************************************************************
     $string_file_mode = STRING_FILE_MODE;
     $reg->register('OCTAL_FILE_MODE', (int) octdec($string_file_mode), true);

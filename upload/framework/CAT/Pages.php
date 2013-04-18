@@ -56,6 +56,8 @@ if (!class_exists('CAT_Pages', false))
 	    private $template_block		= array();
 
         private static $properties      = array();
+        private static $pages_list      = array();
+        private static $pages_by_vis    = array();
 
         // header components
         private static $css             = array();
@@ -106,16 +108,52 @@ if (!class_exists('CAT_Pages', false))
             if ( is_array($permissions) && count($permissions) )
     		{
     			$this->permissions = array(
-					'PAGES'			 => $permissions['pages'],
-					'DISPLAY_ADD_L0' => $permissions['pages_add_l0'],
-					'DISPLAY_ADD'	 => $permissions['pages_add'],
-					'PAGES_MODIFY'	 => $permissions['pages_modify'],
-					'PAGES_DELETE'	 => $permissions['pages_delete'],
-					'PAGES_SETTINGS' => $permissions['pages_settings'],
-					'DISPLAY_INTRO'	 => $permissions['pages_intro']
+					'PAGES'			 => (isset($permissions['pages'])?$permissions['pages']:false),
+					'DISPLAY_ADD_L0' => (isset($permissions['pages_add_l0'])?$permissions['pages_add_l0']:false),
+					'DISPLAY_ADD'	 => (isset($permissions['pages_add'])?$permissions['pages_add']:false),
+					'PAGES_MODIFY'	 => (isset($permissions['pages_modify'])?$permissions['pages_modify']:false),
+					'PAGES_DELETE'	 => (isset($permissions['pages_delete'])?$permissions['pages_delete']:false),
+					'PAGES_SETTINGS' => (isset($permissions['pages_settings'])?$permissions['pages_settings']:false),
+					'DISPLAY_INTRO'	 => (isset($permissions['pages_intro'])?$permissions['pages_intro']:false),
     			);
     		}
         }   // end function setPerms()
+
+        /**
+         * This gets a complete list of pages 
+         *
+         * NOTE: I KNOW THIS IS DOUBLE! (make_list()) WE WILL HAVE TO FIX THIS LATER!
+         *
+         * @access public
+         * @param  boolean $visibility - only return pages with given visibility
+         *                               example: 'deleted', 'public', ...
+         * @return array
+         **/
+        public function getPages( $visibility = false )
+        {
+            // cache
+            if ( ! count(self::$pages_list) || ! count(self::$pages_by_vis) )
+            {
+                // get complete list
+                $result = $this->db()->query(sprintf(
+                    'SELECT * FROM %spages ORDER BY `level` ASC, `position` ASC',
+                    CAT_TABLE_PREFIX
+                ));
+                if( $result && $result->numRows()>0 )
+                {
+                    while ( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+                    {
+                        self::$pages_list[] = $row;
+                        self::$pages_by_vis[$row['visibility']][] = $row;
+                    }
+                }
+            }
+            if( $visibility )
+            {
+                return self::$pages_by_vis[$visibility];
+            }
+            return self::$pages_list;
+        }   // end function getPages()
 
         /**
          * identify the page to show
@@ -126,7 +164,26 @@ if (!class_exists('CAT_Pages', false))
          **/
         public function getPage($no_intro, $page_id)
         {
-            global $database, $wb;
+            global $wb;
+
+            if ( $this->isMaintenance() )
+            {
+                // admin can still see any page
+                if(!CAT_Users::getInstance()->is_root() )
+                {
+                if(!CAT_Registry::exists('MAINTENANCE_PAGE'))
+                {
+                    $result = $this->db()->query(sprintf('SELECT `value` FROM %ssettings WHERE `name`="maintenance_page"',CAT_TABLE_PREFIX));
+                    if(is_resource($result)&&$result->numRows()==1)
+                    {
+                        $row = $result->fetchRow(MYSQL_ASSOC);
+                        CAT_Registry::register('MAINTENANCE_PAGE',$row['maintenance_page'],true);
+                    }
+                }
+                $page_id = MAINTENANCE_PAGE;
+            }
+            }
+
             $wb->sql_where_language = NULL;
             // We have no page id and are supposed to show the intro page
             if ((INTRO_PAGE AND !isset($no_intro)) AND (!isset($page_id) OR !is_numeric($page_id)))
@@ -169,7 +226,7 @@ if (!class_exists('CAT_Pages', false))
          **/
         public function getDefaultPage($where_lang)
         {
-            global $database, $wb;
+            global $wb;
             // Check for a page id
             $table_p       = CAT_TABLE_PREFIX . 'pages';
             $table_s       = CAT_TABLE_PREFIX . 'sections';
@@ -181,7 +238,7 @@ if (!class_exists('CAT_Pages', false))
     			AND (($now>=`publ_start` OR `publ_start`=0) AND ($now<=`publ_end` OR `publ_end`=0))
     			$where_lang
     			ORDER BY `p`.`position` ASC LIMIT 1";
-            $get_default   = $database->query($query_default);
+            $get_default   = $this->db()->query($query_default);
             if (!$get_default->numRows() > 0)
             {
                 // no default page for this lang, try without
@@ -191,7 +248,7 @@ if (!class_exists('CAT_Pages', false))
         			WHERE `parent` = '0' AND `visibility` = 'public'
         			AND (($now>=`publ_start` OR `publ_start`=0) AND ($now<=`publ_end` OR `publ_end`=0))
         			ORDER BY `p`.`position` ASC LIMIT 1";
-                $get_default   = $database->query($query_default);
+                $get_default   = $this->db()->query($query_default);
             }
             if ($get_default->numRows() > 0)
             {
@@ -228,7 +285,7 @@ if (!class_exists('CAT_Pages', false))
          **/
         public function getPageDetails($page_id=NULL)
         {
-            global $database;
+            
 
             if ( $page_id && $page_id != 0 ) $this->page_id = $page_id;
 
@@ -236,7 +293,7 @@ if (!class_exists('CAT_Pages', false))
             {
                 // Query page details
                 $query_page = "SELECT * FROM " . CAT_TABLE_PREFIX . "pages WHERE page_id = '".$this->page_id."'";
-                $get_page   = $database->query($query_page);
+                $get_page   = $this->db()->query($query_page);
                 // Make sure page was found in database
                 if ($get_page->numRows() == 0)
                 {
@@ -377,7 +434,7 @@ if (!class_exists('CAT_Pages', false))
         public function getPageContent($block = 1)
         {
 
-            global $logger, $globals, $database, $wb, $sec_h, $parser;
+            global $logger, $globals, $wb, $sec_h, $parser;
             $admin =& $wb;
 
             $logger->logDebug(sprintf('getting content for block [%s]', $block));
@@ -529,7 +586,7 @@ if (!class_exists('CAT_Pages', false))
     	 */
     	public function getPagePermission($page,$action='admin')
         {
-            global $database;
+            
     		if ($action!='viewing') $action='admin'; 
     		$action_groups = $action.'_groups';
     		$action_users  = $action.'_users';
@@ -537,7 +594,7 @@ if (!class_exists('CAT_Pages', false))
 				$groups = $page[$action_groups];
 				$users  = $page[$action_users];
     		} else {
-    			$results = $database->query("SELECT $action_groups,$action_users FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '$page'");
+    			$results = $this->db()->query("SELECT $action_groups,$action_users FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '$page'");
     			$result  = $results->fetchRow( MYSQL_ASSOC );
     			$groups  = explode(',', str_replace('_', '', $result[$action_groups]));
     			$users   = explode(',', str_replace('_', '', $result[$action_users]));
@@ -964,14 +1021,14 @@ if (!class_exists('CAT_Pages', false))
          **/
         public function getLinkedByLanguage($page_id)
         {
-            global $database;
+            
             $sql     = 'SELECT * FROM `' . CAT_TABLE_PREFIX . 'page_langs` AS t1'
                      . ' RIGHT OUTER JOIN `' . CAT_TABLE_PREFIX . 'pages` AS t2'
                      . ' ON t1.link_page_id=t2.page_id'
                      . ' WHERE t1.page_id = ' . $page_id
                      ;
                   
-            $results = $database->query($sql);
+            $results = $this->db()->query($sql);
             if ($results->numRows())
             {
                 $items = array();
@@ -1135,9 +1192,9 @@ if (!class_exists('CAT_Pages', false))
     	 */
     	public function parent_list( $parent = 0 )
     	{
-            global $database;
 
-    		$get_pages = $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "pages WHERE parent = '$parent' AND visibility!='deleted' ORDER BY position ASC");
+
+    		$get_pages = $this->db()->query("SELECT * FROM " . CAT_TABLE_PREFIX . "pages WHERE parent = '$parent' AND visibility!='deleted' ORDER BY position ASC");
 
     		while ( $page = $get_pages->fetchRow( MYSQL_ASSOC ) )
     		{
@@ -1186,14 +1243,36 @@ if (!class_exists('CAT_Pages', false))
          **/
         public function isActive($page)
         {
-            global $database;
             $now = time();
             $sql = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'sections` ';
             $sql .= 'WHERE (' . $now . ' BETWEEN `publ_start` AND `publ_end`) OR ';
             $sql .= '(' . $now . ' > `publ_start` AND `publ_end`=0) ';
             $sql .= 'AND `page_id`=' . (int) $page['page_id'];
-            return ($database->get_one($sql) != false);
+            return ($this->db()->get_one($sql) != false);
         } // end function isActive()
+
+        /**
+         * check if system is in maintenance mode
+         *
+         * @access public
+         * @return boolean
+         **/
+        public function isMaintenance()
+        {
+            if(!CAT_Registry::exists('MAINTENANCE_MODE'))
+            {
+                $result = $this->db()->query(sprintf('SELECT `value` FROM %ssettings WHERE `name`="maintenance_mode"',CAT_TABLE_PREFIX));
+                if(is_resource($result)&&$result->numRows()==1)
+                {
+                    $row = $result->fetchRow(MYSQL_ASSOC);
+                    CAT_Registry::register('MAINTENANCE_MODE',$row['maintenance_mode'],true);
+                }
+            }
+            return
+                ( CAT_Registry::get('MAINTENANCE_MODE') == 'on' )
+                ? true
+                : false;
+        }   // end function isMaintenance()
 
         /**
          * Check whether a page is visible or not.
@@ -1236,12 +1315,12 @@ if (!class_exists('CAT_Pages', false))
          **/
         public function show_page($page)
         {
-            global $database;
+            
             if (!is_array($page))
             {
                 $sql = 'SELECT `page_id`, `visibility`, `viewing_groups`, `viewing_users` ';
                 $sql .= 'FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id`=' . (int)$page;
-                if (($res_pages = $database->query($sql)) != null)
+                if (($res_pages = $this->db()->query($sql)) != null)
                 {
                     if (!($page = $res_pages->fetchRow()))
                     {
@@ -1268,7 +1347,7 @@ if (!class_exists('CAT_Pages', false))
     	 */
     	public function make_list( $parent = 0 , $add_sections = false )
     	{
-            global $database;
+            
 
     		// ===================================================
     		// ! Get objects and vars from outside this function
@@ -1291,7 +1370,7 @@ if (!class_exists('CAT_Pages', false))
     		// ===============================
     		// ! Get page list from database
     		// ===============================
-    		$get_pages		= $database->query($sql);
+    		$get_pages		= $this->db()->query($sql);
     		if ( $get_pages->numRows() > 0 )
     		{
     			$this->pages_editable = true;
@@ -1331,7 +1410,7 @@ if (!class_exists('CAT_Pages', false))
     			if ( $add_sections && $sql_sections != '' )
     			{
     				$sql_sections	= 'SELECT page_id, section_id, name FROM `'.CAT_TABLE_PREFIX.'sections` WHERE ' . substr( $sql_sections, 4 ) . ' ORDER BY position';
-    				$sections		= $database->query($sql_sections);
+    				$sections		= $this->db()->query($sql_sections);
     				if ( $sections->numRows() > 0 )
     				{
     					$sections_array	= array();
@@ -1420,7 +1499,7 @@ if (!class_exists('CAT_Pages', false))
     	 */
     	public function get_child_pages( $page_id = 0, $field = '*' )
     	{
-            global $database;
+            
     		if ( $this->permissions['PAGES'] == true)
     		{
 
@@ -1438,7 +1517,7 @@ if (!class_exists('CAT_Pages', false))
     			}
     			else $get_field = '*';
 
-    			$get_child_pages = $database->query('SELECT '.$get_field.' FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `parent` = '.$page_id.' ORDER BY `position` ASC');
+    			$get_child_pages = $this->db()->query('SELECT '.$get_field.' FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `parent` = '.$page_id.' ORDER BY `position` ASC');
 
     			if ( $get_child_pages->numRows() > 0)
     			{
@@ -1462,7 +1541,7 @@ if (!class_exists('CAT_Pages', false))
     					// =================================
     					// ! Check if page has child pages
     					// =================================
-    					$check_for_childs = $database->query('SELECT `page_id` FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `parent` = '.$child_page['page_id']);
+    					$check_for_childs = $this->db()->query('SELECT `page_id` FROM `'.CAT_TABLE_PREFIX.'pages` WHERE `parent` = '.$child_page['page_id']);
     					$this->child_pages[$counter]['is_parent']		= ( $check_for_childs->numRows() > 0 ) ? true : false;
 
     					$counter++;
@@ -1877,13 +1956,13 @@ if (!class_exists('CAT_Pages', false))
          **/
         private function _load_page_properties()
         {
-            global $database;
+            
 
             if (!is_array(self::$properties) || !count(self::$properties))
             {
                 // get global settings
                 $sql = sprintf('SELECT `name`,`value` FROM `%ssettings` ORDER BY `name`', CAT_TABLE_PREFIX);
-                if (($result = $database->query($sql)) && ($result->numRows() > 0))
+                if (($result = $this->db()->query($sql)) && ($result->numRows() > 0))
                 {
                     while (false != ($row = $result->fetchRow(MYSQL_ASSOC)))
                     {
@@ -1904,7 +1983,7 @@ if (!class_exists('CAT_Pages', false))
 
                 // get properties for current page; overwrites globals if not empty
                 $sql = sprintf('SELECT page_title, description, keywords FROM %spages WHERE page_id = "%d"', CAT_TABLE_PREFIX, PAGE_ID);
-                if (($result = $database->query($sql)) && ($result->numRows() > 0))
+                if (($result = $this->db()->query($sql)) && ($result->numRows() > 0))
                 {
                     while (false != ($row = $result->fetchRow(MYSQL_ASSOC)))
                     {
