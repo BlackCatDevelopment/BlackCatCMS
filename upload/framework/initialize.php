@@ -102,7 +102,6 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
                 $value = $row['value'];
             }
             $temp_name = strtoupper($row['name']);
-            //if (!defined($temp_name)) define( $temp_name , $value );
             $reg->register($temp_name, $value, true);
         }
         unset($row);

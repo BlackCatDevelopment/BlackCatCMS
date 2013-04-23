@@ -44,8 +44,21 @@ if (defined('CAT_PATH')) {
 
 require_once CAT_PATH.'/framework/functions.php';
 
-function Dwoo_Plugin_page_footer(Dwoo $dwoo, $date_format='Y') {
-	return page_footer($date_format, true);
+function Dwoo_Plugin_page_footer(Dwoo $dwoo, $date_format='Y', $mode=false) {
+	global $starttime;
+    $vars   = array( '[YEAR]', '[PROCESS_TIME]' );
+    $ptime  = array_sum( explode( " ", microtime() ) ) - $starttime;
+    $values = array( date($date_format), $ptime );
+    $temp   = str_replace( $vars, $values, WEBSITE_FOOTER );
+    if ( true === $mode )
+    {
+        return $temp;
+    }
+    else
+    {
+        echo $temp;
+        return true;
+    }
 }
 
 ?>

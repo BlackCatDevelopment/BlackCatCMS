@@ -45,11 +45,8 @@ if (defined('CAT_PATH')) {
 require_once CAT_PATH.'/framework/functions.php';
 
 function Dwoo_plugin_page_content(Dwoo $dwoo, $block=1) {
-	ob_start();
-	page_content($block);
-	$result = ob_get_contents();
-	ob_end_clean();
-	return $result;
+	global $page_id;
+    CAT_Page::getInstance($page_id)->getPageContent($block);
 }
 
 ?>

@@ -32,35 +32,71 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 	class CAT_Sections extends CAT_Object
 	{
 	
-	    private $lep_active_sections;
-	    private $pages_seen;
+        protected      $_config  = array( 'loglevel' => 7 );
+
+        private static $active   = array();
+        private static $instance = NULL;
 
 	    /**
+         * constructor
 	     *
+         * @access private
+         * @return void
+         **/
+        public static function getInstance()
+        {
+            if (!self::$instance)
+            {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }
+
+        /**
+         * allow to use methods in OO context
+         **/
+        public function __call($method, $args)
+        {
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
+        }   // end function __call()
+
+	    /**
+	     * retrieves all active sections for a page
 	     *
-	     *
-	     *
+	     * @access public
+	     * @param  integer  $page_id
+	     * @param  integer  $block    optional block ID
+	     * @param  boolean  $backend  default false
+	     * @return array()
 	     **/
-	    public function get_active_sections( $page_id, $block = null, $backend = false )
+	    public static function getActiveSections( $page_id, $block = null, $backend = false )
 	    {
-	        global $database;
-	        if ( ! is_object( $database ) )
+            $active = ( isset(self::$active) && isset(self::$active[$page_id]) && is_array(self::$active[$page_id]) )
+                    ? self::$active[$page_id]
+                    : NULL;
+
+	        if (!$active)
 	        {
-	            @require_once(dirname(__FILE__).'/../class.database.php');
-			    // Create database class
-			    $database = new database();
-	        }
-	        if (!isset($this->active_sections) || !is_array($this->active_sections))
-	        {
-	            $this->active_sections = array();
-	            // First get all sections for this page
-	            $sql = "SELECT section_id,module,block,publ_start,publ_end FROM " . CAT_TABLE_PREFIX . "sections WHERE page_id = '" . $page_id . "' ORDER BY block, position";
-	            $query_sections = $database->query($sql);
-	            if ($query_sections->numRows() == 0)
+
+                if(!self::$instance)
+                    self::getInstance();
+
+	            // First, get all sections for this page
+	            $sec = self::$instance->db()->query(sprintf(
+                      'SELECT section_id, module, block, publ_start, publ_end FROM %ssections '
+                    . 'WHERE page_id = "%d" ORDER BY block, position',
+                    CAT_TABLE_PREFIX, $page_id
+                ));
+
+	            if ($sec->numRows() == 0)
 	            {
 	                return NULL;
 	            }
-	            while ($section = $query_sections->fetchRow(MYSQL_ASSOC))
+
+	            while ($section = $sec->fetchRow(MYSQL_ASSOC))
 	            {
 	                // skip this section if it is out of publication-date
 	                $now = time();
@@ -68,21 +104,19 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 	                {
 	                    continue;
 	                }
-	                $this->active_sections[$section['block']][] = $section;
+	                self::$active[$page_id][$section['block']][] = $section;
 	            }
 	        }
 
-	        $this->pages_seen[$page_id] = true;
-
 	        if ( $block )
 	        {
-				return ( isset( $this->active_sections[$block] ) )
-					? $this->active_sections[$block]
-					: NULL;
+				return ( isset( self::$active[$page_id][$block] ) )
+					? self::$active[$page_id][$block]
+					: array();
 			}
 
 			$all = array();
-			foreach( $this->active_sections as $block => $values )
+			foreach( self::$active[$page_id] as $block => $values )
 			{
 				foreach( $values as $value )
 				{
@@ -92,22 +126,22 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 			
 			return $all;
 			
-	    }   // end function get_active_sections()
+	    }   // end function getActiveSections()
 	    
 	    /**
+	     * checks if a page has active sections
 	     *
-	     *
-	     *
+	     * @access public
+	     * @param  integer $page_id
+	     * @return boolean
 	     *
 	     **/
-	    public function has_active_sections( $page_id )
-		{
-	        if ( ! isset( $this->pages_seen[$page_id] ) )
+	    public static function hasActiveSections( $page_id )
 	        {
-	            $this->get_active_sections($page_id);
-	        }
-	        return ( count($this->active_sections) ? true : false );
-	    }   // end function has_active_sections()
+	        if (!isset(self::$active[$page_id]) )
+	            self::getActiveSections($page_id);
+	        return ( count(self::$active[$page_id]) ? true : false );
+	    }   // end function hasActiveSections()
 
         /**
          * checks if given section is active
@@ -116,7 +150,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
          * @param  int    $section_id
          * @return boolean
          **/
-        public function section_is_active($section_id)
+        public static function section_is_active($section_id)
         {
             global $database;
             $now = time();
@@ -126,6 +160,29 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
             $sql .= 'AND `section_id`=' . $section_id;
             return($database->get_one($sql) != false);
 	    }
+
+        /**
+         * checks if given page is of type menu_link
+         *
+         * @access public
+         * @param  integer $page_id
+         * @return boolean
+         **/
+        public static function isMenuLink($page_id)
+        {
+            if(!self::$instance)
+                self::getInstance();
+            $res = self::$instance->db()->query(sprintf(
+                  'SELECT module FROM `%ssections` '
+                . 'WHERE `page_id` = %d AND `module` = "menu_link"',
+                CAT_TABLE_PREFIX,
+                $page_id
+            ));
+            if($res && $res->numRows())
+                return true;
+            return false;
+        }   // end function isMenuLink()
+
 
 	}
 }

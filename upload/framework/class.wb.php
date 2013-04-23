@@ -1,58 +1,53 @@
 <?php
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Website Baker Project, LEPTON Project
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
  * @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
  * @copyright       2013, Black Cat Development
  * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 require_once(CAT_PATH . '/framework/class.database.php');
 
 // Include new wbmailer class (subclass of PHPmailer)
-require_once(CAT_PATH . "/framework/class.wbmailer.php");
-
-// new internationalization helper class
-include CAT_PATH.'/framework/CAT/Helper/I18n.php';
-
-// new pages class
-include CAT_PATH.'/framework/CAT/Pages.php';
-
-// new users class
-include CAT_PATH.'/framework/CAT/Users.php';
+#require_once(CAT_PATH . "/framework/class.wbmailer.php");
 
 class wb
 {
     public  $password_chars      = 'a-zA-Z0-9\_\-\!\#\*\+';
-    private $lep_active_sections = NULL;
     private $_handles            = NULL;
     public  $lang                = NULL;
     public  $users               = NULL;
@@ -64,9 +59,11 @@ class wb
         'register_backend_modfiles_body' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_footers()">get_page_footers("backend")</a>',
         'register_frontend_modfiles' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers()</a>',
         'register_frontend_modfiles_body' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_footers()">get_page_footers()</a>',
-        'page_menu()' => 'show_menu2()',
-        'show_menu()' => 'show_menu2()',
-        'show_breadcrumbs()' => 'show_menu2()',
+        'page_menu' => 'show_menu2()',
+        'show_menu' => 'show_menu2()',
+        'show_breadcrumbs' => 'show_menu2()',
+        'menu' => 'show_menu2()',
+        'search_highlight' => 'nothing',
     );
 
     // General initialization public function
@@ -82,7 +79,7 @@ class wb
 		{
 		    $this->lang->addFile( LANGUAGE.'.php', NULL, $var );
 		}
-        $this->pg    = CAT_Pages::getInstance(-1);
+
         $this->users = CAT_Users::getInstance();
         set_error_handler( array('wb','cat_error_handler') );
     }   // end constructor
@@ -176,96 +173,11 @@ class wb
         return false;
     }   // end error handler
 
-    // Modified addslashes public function which takes into account magic_quotes
-    public function add_slashes($input)
-    {
-        if (get_magic_quotes_gpc() || (!is_string($input)))
-        {
-            return $input;
-        }
-        $output = addslashes($input);
-        return $output;
-    }
-
-    // Ditto for stripslashes
-    // Attn: this is _not_ the counterpart to $this->add_slashes() !
-    // Use stripslashes() to undo a preliminarily done $this->add_slashes()
-    // The purpose of $this->strip_slashes() is to undo the effects of magic_quotes_gpc==On
-    public function strip_slashes($input)
-    {
-        if (!get_magic_quotes_gpc() || (!is_string($input)))
-        {
-            return $input;
-        }
-        $output = stripslashes($input);
-        return $output;
-    }
-
     // Escape backslashes for use with mySQL LIKE strings
     public function escape_backslashes($input)
     {
         return str_replace("\\", "\\\\", $input);
     }
-
-    // Get POST data
-    public function get_post($field)
-    {
-        return isset($_POST[$field]) ? $_POST[$field] : null;
-    }
-
-    // Get POST data and escape it
-    public function get_post_escaped($field)
-    {
-        $result = $this->get_post($field);
-        return(is_null($result)) ? null : $this->add_slashes($result);
-    }
-
-    // Get GET data
-    public function get_get($field)
-    {
-        return isset($_GET[$field]) ? $_GET[$field] : null;
-    }
-
-    // Get SESSION data
-    public function get_session($field)
-    {
-        return isset($_SESSION[$field]) ? $_SESSION[$field] : null;
-    }
-
-    // Get SERVER data
-    public function get_server($field)
-    {
-        return isset($_SERVER[$field]) ? $_SERVER[$field] : null;
-    }
-
-
-    /**
-     *
-     *
-     *
-     *
-     **/
-    public function get_controller($name)
-    {
-		// name must not contain CAT_...
-	    $name      = preg_replace( '~^cat_~i', '', $name );
-        $args      = func_get_args();
-        // remove first element (it's the name)
-        array_shift($args);
-	    return $this->int_get_handle('',$name,$args=func_get_args());
-    }   // end function get_controller()
-    
-    /**
-     * get accessor to helper class
-     * @access public
-     * @param  string $name - name of the class
-     **/
-	public function get_helper($name)
-	{
-		// name must not contain CAT_Helper_...
-	    $name      = preg_replace( '~^cat_helper_~i', '', $name );
-        return $this->int_get_handle('Helper',$name,$args=func_get_args());
-	}   // end function get_helper()
 
     /* ****************
      * set one or more bit in a integer value
@@ -307,22 +219,6 @@ class wb
     }
 
     /**
-     *  Validate supplied email address
-     *
-     */
-    public function validate_email($email)
-    {
-        if (preg_match('/^([0-9a-zA-Z]+[-._+&])*[0-9a-zA-Z-_]+@([-0-9a-zA-Z]+[.])+[a-zA-Z]{2,6}$/', $email))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /**
      *  Print a success message which then automatically redirects the user to another page
      *
      *  @param  mixed  A string within the message, or an array with a couple of messages.
@@ -360,102 +256,6 @@ class wb
 		exit();
 	}
 
-    /**
-     * internal method to get a handle
-     *
-     * @access private
-     * @param  string  $namespace - 'Helper',''
-     * @param  string  $name      - class to load
-     * @param  mixed   $args      - optional arguments
-     *
-     **/
-    private function int_get_handle( $namespace, $name )
-    {
-
-        $classname = 'CAT_' . ( $namespace != '' ? $namespace.'_' : '' ) . $name;
-        $numargs   = func_num_args();
-        $argstring = '';
-
-        if ( $numargs > 2 )
-        {
-            $args     = func_get_args();
-            $arg_list = $args[2];
-            $numargs  = count($arg_list);
-            for ( $x=1; $x<$numargs; $x++ )
-            {
-                $argstring .= '$arg_list['.$x.']';
-                if ($x != $numargs-1) $argstring .= ',';
-            }
-        }
-
-		// do we already have a handle?
-	    if (
-				   isset($this->_handles[$classname])
-			&&     isset($this->_handles[$classname]['__handle__'])
-			&& is_object($this->_handles[$classname]['__handle__']) )
-	    {
-	        // if we have additional arguments, compare them with the ones
-	        // we used in the last call
-	        if (
-					$argstring
-				&&  isset($this->_handles[$classname]['__args__'])
-				&&  $argstring == $this->_handles[$classname]['__args__'] )
-	        {
-	        	return $this->_handles[$classname]['__handle__'];
-			}
-	    }
-
-        $filename = sanitize_path(CAT_PATH.'/framework/CAT/'.$namespace.'/'.$name.'.php');
-
-		// check if the file exists
-		if ( ! file_exists( $filename ) )
-		{
-		    trigger_error(sprintf("[ <b>%s</b> ] Invalid %s name: [%s]", $_SERVER['SCRIPT_NAME'], ($namespace=='Helper'?'helper':'controller'), $classname), E_USER_ERROR);
-		    return false;
-		}
-
-		// okay, let's see if we already have that class
-		if ( ! class_exists( $classname ) )
-		{
-		    @require_once $filename;
-		}
-
-  		// no handle or different arguments?
-	    if (
-				! isset( $this->_handles[$classname]['__handle__'] )
-			||
-			    (
-				    $argstring
-					&&  isset($this->_handles[$classname]['__args__'])
-					&&  $argstring != $this->_handles[$classname]['__args__']
-				)
-		) {
-	        // the class exists, but we don't have a handle
-            try {
-                $this->_handles[$classname]['__handle__'] = eval( "return new $classname($argstring);" );
-            }
-            catch( Exception $e ) {
-                trigger_error(sprintf('Callback failed: %s($args)',$func), E_USER_ERROR);
-            }
-            
-            if ( $argstring )
-			{
-                $this->_handles[$classname]['__args__'] = $argstring;
-            }
-		}
-
-		if ( isset($this->_handles[$classname]['__handle__']) && is_object($this->_handles[$classname]['__handle__']) )
-	    {
-	        return $this->_handles[$classname]['__handle__'];
-	    }
-	    else {
-	        trigger_error(sprintf("[ <b>%s</b> ] Invalid helper class: [%s]", $_SERVER['SCRIPT_NAME'], $name), E_USER_ERROR);
-	        return false;
-	    }
-    
-    }   // end function int_get_handle()
-
-
     /***************************************************************************
      * DEPRECATED FUNCTIONS
      * These functions are moved to other classes
@@ -472,10 +272,12 @@ class wb
     {
         return CAT_Helper_Mail::getInstance('PHPMailer')->sendMail($fromaddress, $toaddress, $subject, $message, $fromname);
     }
-    public function page_is_visible($page) { return CAT_Pages::getInstance(-1)->isVisible($page); }
-    public function page_is_active($page)  { return CAT_Pages::getInstance(-1)->isActive($page);  }
-    public function page_link($link)       { return CAT_Pages::getInstance(-1)->getLink($link);   }
-    public function show_page($page)       { return CAT_Pages::getInstance(-1)->show_page($page); }
+
+    /* moved to CAT_Helper_Page */
+    public function page_is_visible($page) { return CAT_Helper_Page::getInstance()->isVisible($page['page_id']); }
+    public function page_is_active($page)  { return CAT_Helper_Page::getInstance()->isActive($page['page_id']);  }
+    public function page_link($link)       { return CAT_Helper_Page::getInstance()->getLink($link);   }
+    public function show_page($page)       { return CAT_Helper_Page::getInstance()->show_page($page); }
 
     /* moved to CAT_Sections */
     public function section_is_active($section_id) { return CAT_Sections::getInstance()->section_is_active($section_id); }
@@ -505,6 +307,17 @@ class wb
     {
         return CAT_Helper_DateTime::getTimezone();
     }   // end function get_timezone_string()
+
+    /* moved to CAT_Helper_Validate */
+    public function add_slashes($input)  { return CAT_Helper_Validate::getInstance()->add_slashes($input);    }
+    public function strip_slashes($input){ return CAT_Helper_Validate::getInstance()->strip_slashes($input);  }
+    public function get_post($field)     { return CAT_Helper_Validate::getInstance()->sanitizePost($field);   }
+    public function get_get($field)      { return CAT_Helper_Validate::getInstance()->sanitizeGet($field);    }
+    public function get_session($field)  { return CAT_Helper_Validate::getInstance()->fromSession($field);    }
+    public function get_server($field)   { return CAT_Helper_Validate::getInstance()->sanitizeServer($field); }
+    public function get_post_escaped($field){ return CAT_Helper_Validate::getInstance()->sanitizePost($field,NULL,true); }
+    public function validate_email($email)  { return CAT_Helper_Validate::getInstance()->validate_email($email); }
+
 
 }
 ?>

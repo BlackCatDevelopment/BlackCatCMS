@@ -44,8 +44,16 @@ if (defined('CAT_PATH')) {
 
 require_once CAT_PATH.'/framework/functions.php';
 
-function Dwoo_Plugin_page_title(Dwoo $dwoo, $spacer = ' - ', $template = '[WEBSITE_TITLE][SPACER][PAGE_TITLE]') {
-	return page_title($spacer, $template, true);
+function Dwoo_Plugin_page_title(Dwoo $dwoo, $spacer = ' - ', $template = '[WEBSITE_TITLE][SPACER][PAGE_TITLE]', $mode=true) {
+	$vars   = array('[WEBSITE_TITLE]', '[PAGE_TITLE]', '[MENU_TITLE]', '[SPACER]');
+	$values = array(CAT_Registry::get('WEBSITE_TITLE'), CAT_Registry::get('PAGE_TITLE'), CAT_Registry::get('MENU_TITLE'), $spacer);
+	$temp = str_replace($vars, $values, $template);
+	if ( true === $mode ) {
+		return $temp;
+	} else {
+		echo $temp;
+		return true;
+	}
 }
 
 ?>

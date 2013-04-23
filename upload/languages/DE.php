@@ -115,6 +115,7 @@ $LANG = array(
     'Page' => 'Seite',
     'Page title' => 'Seitentitel',
     'Pages' => 'Seiten',
+    'Please check back soon...' => 'Bitte versuchen Sie es sp&auml;ter noch einmal ...',
     'Please select' => 'Bitte wählen',
     'Reset' => 'Zurücksetzen',
     'Save & Close' => 'Speichern & Schließen',
@@ -122,6 +123,7 @@ $LANG = array(
     'Search' => 'Suche',
     'Search...' => 'Suchen...',
     'Success' => 'Erfolgreich',
+    'Website Under Construction' => 'Momentan in Bearbeitung.',
 // ----- error messages -----
     'You sent an invalid value' => 'Es wurde ein ungültiger Wert angegeben',
     'Error creating access file in the pages directory(page), (insufficient privileges)'
@@ -133,6 +135,8 @@ $LANG = array(
     'Username or password incorrect' => 'Der Benutzername oder das Passwort ist nicht korrekt.',
     'Invalid password chars used, valid chars are: a-z\A-Z\0-9\_\-\!\#\*\+'
         => 'Es wurden ung&uuml;ltige Zeichen f&uuml;r des Passwort verwendet, g&uuml;ltig sind: a-z\A-Z\0-9\_\-\!\#\*\+',
+    'You are not allowed to view this page!' => 'Sie besitzen nicht die erforderlichen Rechte, um diese Seite zu besuchen!',
+    'The page does not have any content!' => 'Diese Seite hat keine aktiven Inhalte!',
 // ----- MENU -----
 	'Access' => 'Benutzerverwaltung',
 	'Add-on' => 'Add-on',
@@ -238,6 +242,7 @@ $LANG = array(
     'Maintenance mode' => 'Wartungsmodus',
     'Media directory' => 'Medienverzeichnis',
     'must begin with a letter or has invalid signs' => 'muss mit einem Buchstaben beginnen oder hat ung&uuml;ltige Zeichen',
+    'Page to show in maintenance mode' => 'Im Wartungsmodus Seite anzeigen',
     'Pages directory' => 'Seitenverzeichnis',
     'Pages extension' => 'Dateierweiterung für Seiten',
     'Search settings' => 'Sucheinstellungen',
@@ -853,14 +858,12 @@ $MESSAGE = array(
 	'GENERIC_NOT_COMPARE' 		=> ' nicht m&ouml;glich',
 	'GENERIC_NOT_INSTALLED' 	=> 'Nicht installiert.',
 	'GENERIC_PLEASE_BE_PATIENT' => 'Die Datenbanksicherung kann je nach Gr&ouml;&szlig;e der Datenbank einige Zeit dauern.',
-	'GENERIC_PLEASE_CHECK_BACK_SOON' => 'Bitte versuchen Sie es sp&auml;ter noch einmal ...',
 	'GENERIC_PLEASE_CHOOSE' => 'Bitte etwas ausw&auml;hlen...',
 	'GENERIC_UNINSTALLED' 		=> 'Erfolgreich deinstalliert.',
 	'GENERIC_UPGRADED' 			=> 'Erfolgreich aktualisiert.',
 	'GENERIC_VERSION_COMPARE' 	=> 'Versionsabgleich',
 	'GENERIC_VERSION_GT' 		=> 'Upgrade erforderlich!',
 	'GENERIC_VERSION_LT' 		=> 'Downgrade',
-	'GENERIC_WEBSITE_UNDER_CONSTRUCTION' => 'Momentan in Bearbeitung.',
 	'GROUPS_ADDED' 				=> 'Die Gruppe wurde erfolgreich hinzugef&uuml;gt.',
 	'GROUPS_CONFIRM_DELETE' 	=> 'Sind Sie sicher, dass Sie die ausgew&auml;hlte Gruppe l&ouml;schen m&ouml;chten (und alle Benutzer, die dazugeh&ouml;ren)?',
 	'GROUPS_DELETED' 			=> 'Die Gruppe wurde erfolgreich gel&ouml;scht.',

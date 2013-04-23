@@ -44,8 +44,18 @@ if (defined('CAT_PATH')) {
 
 require_once CAT_PATH.'/framework/functions.php';
 
-function Dwoo_Plugin_page_keywords(Dwoo $dwoo) {
-	return page_keywords(true);
+function Dwoo_Plugin_page_keywords(Dwoo $dwoo, $mode = true) {
+    global $page_id;
+	$temp = CAT_Page::getInstance($page_id)->getKeywords();
+    if ( true === $mode )
+    {
+        return $temp;
+    }
+    else
+    {
+        echo $temp;
+        return true;
+    }
 }
 
 ?>

@@ -167,12 +167,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 	function get_page_headers( $for = 'frontend', $print_output = true, $individual = false )
 	{
         if ( defined('CAT_HEADERS_SENT') ) return false;
-	    if ( ! class_exists( 'CAT_Pages', false ) )
-							{
-	        include sanitize_path( dirname(__FILE__).'/CAT/Pages.php' );
-							}
-	    $pg     = CAT_Pages::getInstance(-1);
-	    $output = $pg->getHeaders( $for, $individual );
+	    $output = CAT_Helper_Page::getInstance()->getHeaders( $for, $individual );
 		if ( $print_output )
 		{
 			echo $output;
