@@ -196,6 +196,7 @@ $LANG = array(
     'Modify section' => 'Sektion bearbeiten',
     'New window' => 'Neues Fenster',
     'No current links' => 'Keine Verknüpfungen vorhanden',
+    'No editable pages were found' => 'Keine bearbeitbaren Seiten verfügbar',
     'No more languages available' => 'Keine weiteren Sprachen verfügbar',
     'No pages available' => 'Keine Seiten vorhanden',
     'None' => 'Keine',

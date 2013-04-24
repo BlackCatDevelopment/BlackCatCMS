@@ -95,7 +95,7 @@ if (!class_exists('CAT_Helper_Page'))
             if(!count(self::$pages))
             {
                 $now = time();
-                $result = self::getInstance()->db()->query(sprintf(
+                $result = self::$instance->db()->query(sprintf(
                     'SELECT * FROM %spages ORDER BY `level` ASC, `position` ASC',
                     CAT_TABLE_PREFIX
                 ));
@@ -105,10 +105,13 @@ if (!class_exists('CAT_Helper_Page'))
                     {
                         self::$pages[] = $row;
                         end(self::$pages);
+                        $key = key(self::$pages);
+                        reset(self::$pages);
+
                         self::$pages_by_visibility[$row['visibility']][]
-                            =& self::$pages[key(self::$pages)];
+                            =& self::$pages[$key];
                         self::$pages_by_id[$row['page_id']]
-                            =& self::$pages[key(self::$pages)];
+                            =& self::$pages[$key];
                         // get active sections
                         $sec = self::getInstance()->db()->query(sprintf(
                               'SELECT COUNT(*) FROM `%ssections` '
@@ -123,6 +126,126 @@ if (!class_exists('CAT_Helper_Page'))
                 }
             }
         }   // end function init()
+
+        /**
+         * prints the backend footers
+         *
+         * @access public
+         * @return string
+         **/
+        public static function getBackendFooters()
+        {
+            // -----------------------------------------------------------------
+            // -----                    backend theme                      -----
+            // -----------------------------------------------------------------
+            $tpl  = CAT_Registry::get('DEFAULT_THEME');
+            $file = sanitize_path(CAT_PATH.'/templates/'.$tpl.'/footers.inc.php');
+            if (file_exists($file))
+            {
+                self::getInstance()->log()->logDebug(sprintf('adding footer items for backend theme [%s]', $tpl));
+                self::_load_footers_inc($file, 'backend', 'templates/'.$tpl);
+            } // end loading theme
+
+            // -----------------------------------------------------------------
+            // -----                     admin tool                        -----
+            // -----------------------------------------------------------------
+            $tool = CAT_Helper_Validate::get('_REQUEST','tool','string');
+            if ($tool)
+            {
+                $path = sanitize_path(CAT_PATH.'/modules/'.$tool.'/tool.php');
+                self::getInstance()->log()->logDebug(sprintf('handle admin tool [%s] - path [%s]', $tool, $path));
+                if (file_exists($path))
+                {
+                    $file = sanitize_path(CAT_PATH . '/modules/' . $tool . '/footers.inc.php');
+                    if (file_exists($file))
+                    {
+                        self::getInstance()->log()->logDebug(sprintf('adding footer items for admin tool [%s]', $_REQUEST['tool']));
+                        self::_load_footers_inc($file, 'backend', 'templates/' . $tpl);
+                    }
+                }
+            }
+
+            // -----------------------------------------------------------------
+            // -----                scan for js files                      -----
+            // -----------------------------------------------------------------
+            if (count(self::$js_search_path))
+            {
+                $val = CAT_Helper_Validate::getInstance();
+                foreach (self::$js_search_path as $directory)
+                {
+                    $file = sanitize_path($directory . '/backend_body.js');
+                    if (file_exists(CAT_PATH . '/' . $file))
+                    {
+                        self::$f_js[] = '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $file) . '"></script>' . "\n";
+                    }
+                }
+            }
+
+            return self::getJQuery('footer') . self::getJavaScripts('footer');
+
+        } // end function getBackendFooters()
+
+        /**
+         *
+         *
+         *
+         *
+         **/
+        public static function getBackendHeaders($section)
+        {
+            // -----------------------------------------------------------------
+            // -----                    backend theme                      -----
+            // -----------------------------------------------------------------
+            $file = sanitize_path(CAT_PATH . '/templates/' . DEFAULT_THEME . '/headers.inc.php');
+            if (file_exists($file))
+            {
+                self::$instance->log()->logDebug(sprintf('adding items for backend theme [%s]', DEFAULT_THEME));
+                self::_load_headers_inc($file, 'backend', 'templates/' . DEFAULT_THEME, $section);
+            } // end loading theme
+
+            // -----------------------------------------------------------------
+            // -----                     admin tool                        -----
+            // -----------------------------------------------------------------
+            if (isset($_REQUEST['tool']))
+            {
+                $path = sanitize_path(CAT_PATH . '/modules/' . $_REQUEST['tool'] . '/tool.php');
+                self::$instance->log()->logDebug(sprintf('handle admin tool [%s] - path [%s]', $_REQUEST['tool'], $path));
+
+                if (file_exists($path))
+                {
+                    array_push(CAT_Pages::$css_search_path, '/modules/' . $_REQUEST['tool'], '/modules/' . $_REQUEST['tool'] . '/css');
+                    array_push(CAT_Pages::$js_search_path, '/modules/' . $_REQUEST['tool'], '/modules/' . $_REQUEST['tool'] . '/js');
+
+                    $file = sanitize_path(CAT_PATH . '/modules/' . $_REQUEST['tool'] . '/headers.inc.php');
+                    if (file_exists($file))
+                    {
+                        self::$instance->log()->logDebug(sprintf('adding items for admin tool [%s]', $_REQUEST['tool']));
+                        self::_load_headers_inc($file, 'backend', 'modules/' . $_REQUEST['tool'], $section);
+                    }
+                }
+            }
+            // -----------------------------------------------------------------
+            // -----                  edit page                            -----
+            // -----------------------------------------------------------------
+            else
+            {
+                self::_load_sections('backend');
+            }
+
+            // -----------------------------------------------------------------
+            // -----                scan for css files                     -----
+            // -----------------------------------------------------------------
+            self::_load_css('backend');
+
+            // -----------------------------------------------------------------
+            // -----                scan for js files                      -----
+            // -----------------------------------------------------------------
+            self::_load_js('backend');
+
+            // return the results
+            return self::getCSS() . self::getJQuery('header') . self::getJavaScripts('header');
+
+        } // end function getBackendHeaders()
 
         /**
          * returns the items of static array $css as HTML link markups
@@ -190,7 +313,6 @@ if (!class_exists('CAT_Helper_Page'))
             {
                 $for = 'frontend';
             }
-            self::$instance->log()->logDebug('creating footers for [' . $for . ']');
 
             if ($for == 'backend')
             {
@@ -482,6 +604,18 @@ if (!class_exists('CAT_Helper_Page'))
             return implode("\n", $output) . "\n";
 
         } // end function getMeta()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getPages()
+        {
+            if(!count(self::$pages)) self::getInstance();
+            return self::$pages;
+        }   // end function getPages()
+        
 
         /**
          * identify the page to show
@@ -879,7 +1013,7 @@ if (!class_exists('CAT_Helper_Page'))
             {
                 foreach ($arr['all'] as $item)
                 {
-                    $resolved = $this->_find_item($item);
+                    $resolved = self::_find_item($item);
                     $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $resolved ) . '"></script>' . "\n";
                 }
             }
@@ -891,7 +1025,7 @@ if (!class_exists('CAT_Helper_Page'))
                 {
                     if ($section_name == strtolower($section))
                     {
-                        $resolved = $this->_find_item($item);
+                        $resolved = self::_find_item($item);
                         $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $item) . '"></script>' . "\n";
                     }
                 }
@@ -1061,18 +1195,18 @@ if (!class_exists('CAT_Helper_Page'))
                 // ----- CSS -----
                 if (isset($mod_headers[$for]['css']) && is_array($mod_headers[$for]['css']) && count($mod_headers[$for]['css']))
                 {
-                    $this->_analyze_css($mod_headers[$for]['css'], $path_prefix);
+                    self::_analyze_css($mod_headers[$for]['css'], $path_prefix);
                 }
                 // ----- jQuery -----
                 if (isset($mod_headers[$for]['jquery']) && is_array($mod_headers[$for]['jquery']) && count($mod_headers[$for]['jquery']))
                 {
-                    $this->_analyze_jquery_components($mod_headers[$for]['jquery'][0], $for, $section);
+                    self::_analyze_jquery_components($mod_headers[$for]['jquery'][0], $for, $section);
                 }
                 // ----- other JS -----
                 if (isset($mod_headers[$for]['js']) && is_array($mod_headers[$for]['js']) && count($mod_headers[$for]['js']))
                 {
                     $temp_arr = ( is_array($mod_headers[$for]['js'][0]) ? $mod_headers[$for]['js'][0] : $mod_headers[$for]['js'] );
-                    $this->_analyze_javascripts($temp_arr, 'header', $path_prefix . '/js', $section);
+                    self::_analyze_javascripts($temp_arr, 'header', $path_prefix . '/js', $section);
                 }
             }
             else

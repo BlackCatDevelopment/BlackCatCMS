@@ -198,7 +198,8 @@ if (!class_exists('CAT_Helper_Addons'))
     					$addons_array[$counter]	= array(
     						'VALUE'			=> $addon['directory'],
     						'NAME'			=> $addon['name'],
-    						'SELECTED'		=> ( $selected == $counter || $selected == $addon['name'] || $selected == $addon['directory'] ) ? true : false
+    						'SELECTED'		=> ( $selected == $counter || $selected == $addon['name'] || $selected == $addon['directory'] ) ? true : false,
+                            'DESCRIPTION'   => $addon['description']
     					);
     					$counter++;
     				}

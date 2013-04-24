@@ -200,16 +200,11 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      **/
     function get_page_footers( $for = 'frontend', $print_output = true )
             {
-        if ( ! class_exists( 'CAT_Pages', false ) )
-                {
-	        include sanitize_path( dirname(__FILE__).'/CAT/Pages.php' );
-                }
-	    $pg     = CAT_Pages::getInstance(-1);
-	    $output = $pg->getFooters( $for );
+	    $output = CAT_Helper_Page::getFooters( $for );
         if ( $print_output )
                     {
 			echo $output;
-			define('LEP_FOOTERS_SENT', true);
+			define('CAt_FOOTERS_SENT', true);
                     }
 		else
                         {
@@ -348,11 +343,11 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     /**
      * wrapper to $admin->page_link()
      **/
-    function page_link($link)
-    {
-        global $admin;
-        return $admin->page_link($link);
-    }   // end function page_link()
+#    function page_link($link)
+#    {
+#        global $admin;
+#        return $admin->page_link($link);
+#    }   // end function page_link()
 
     /*
      * create_access_file

@@ -44,6 +44,7 @@ if(file_exists(CAT_PATH .'/modules/initial_page/classes/c_init_page.php') && iss
 	$ins = new c_init_page($database, $_SESSION['USER_ID'], $_SERVER['SCRIPT_NAME']);
 }
 
+$backend = CAT_Backend::getInstance('start');
 $user  = CAT_Users::getInstance();
 $lang  = CAT_Helper_I18n::getInstance();
 $widget = CAT_Helper_Widget::getInstance();
@@ -60,7 +61,7 @@ if( file_exists(CAT_PATH.'/install/') ) {
 	if( in_array (1, $user->get_groups_id() ) )
 	{
 		/** 
-		 *	Try to delete it - it's still not needed anymore.
+         * Try to delete it - it's not needed anymore and may be dangerous
 		 */
 		if (function_exists('rm_full_dir') ) {
 			rm_full_dir(CAT_PATH.'/install/');
@@ -68,9 +69,6 @@ if( file_exists(CAT_PATH.'/install/') ) {
 	}
 }
 
-// =========================================================================== 
-// ! Create the controller, it is reusable and can render multiple templates 	
-// =========================================================================== 
 global $parser;
 
 $tpl_data = array();
@@ -119,9 +117,6 @@ foreach(
 
 }
 
-include CAT_PATH.'/framework/class.admin.php';
-$admin = new admin('start','start');
-
 // ============
 // ! Widgets
 // ============
@@ -137,7 +132,7 @@ foreach( $widgets as $widget )
     }
     if ( file_exists($path.'/languages/'.LANGUAGE.'.php') )
     {
-        $admin->lang->addFile(LANGUAGE.'.php', $path.'/languages/');
+        $backend->lang()->addFile(LANGUAGE.'.php', $path.'/languages/');
     }
     ob_start();
         include($widget);
@@ -149,12 +144,12 @@ foreach( $widgets as $widget )
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_start_index.tpl', $tpl_data);
+$parser->output('backend_start_index', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   
 // ====================== 
-$admin->print_footer();
+$backend->print_footer();
 
 
 ?>

@@ -44,6 +44,14 @@ if (!class_exists('CAT_Helper_Validate'))
             return self::$instance;
         }
 
+        public function __call($method, $args)
+        {
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
+        }
+
         /**
          * check a value as type
          *
@@ -72,9 +80,9 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  string  $require - value type (scalar, numeric, array)
          * @return mixed
          **/
-        public function get( $global, $key, $require = NULL, $escape = false )
+        public static function get( $global, $key, $require = NULL, $escape = false )
         {
-            $this->log()->logDebug(sprintf('Get key [%s] from global var [%s] validate as [%s]',$key,$global,$require));
+            self::$instance->log()->logDebug(sprintf('Get key [%s] from global var [%s] validate as [%s]',$key,$global,$require));
             $glob = array();
             if ( isset($GLOBALS[$global]) )
             {
@@ -87,9 +95,9 @@ if (!class_exists('CAT_Helper_Validate'))
             }
             if ( $value && $escape )
             {
-                $value = $this->add_slashes($value);
+                $value = self::add_slashes($value);
             }
-            $this->log()->logDebug('returning value:',$value);
+            self::$instance->log()->logDebug('returning value:',$value);
             return $value;
         }   // end function get()
 
@@ -100,7 +108,7 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  string  $input
          * @return string
          **/
-        public function add_slashes($input)
+        public static function add_slashes($input)
         {
             if (get_magic_quotes_gpc() || (!is_string($input)))
             {
@@ -117,7 +125,7 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  string  $input
          * @return string
          **/
-        public function strip_slashes($input)
+        public static function strip_slashes($input)
         {
             if (!get_magic_quotes_gpc() || (!is_string($input)))
             {
@@ -134,7 +142,7 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  prefix - static prefix, i.e. 'username_'
          * @param
          **/
-        public function createFieldname($prefix,$offset=NULL,$length=12)
+        public static function createFieldname($prefix,$offset=NULL,$length=12)
         {
             if ( substr($prefix,-1,1) != '_' ) $prefix .= '_';
             $salt      = strtolower(md5(uniqid(rand(),true)));
@@ -154,10 +162,10 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  boolean $escape  - use add_slashes(); default: false
          * @return mixed
          **/
-        public function sanitizePost( $field, $require=NULL, $escape = false )
+        public static function sanitizePost( $field, $require=NULL, $escape = false )
         {
-            $this->log()->logDebug(sprintf('get field [%s] from $_POST, require type [%s], escape [%s]',$field,$require,$escape));
-            return $this->get('_POST',$field,$require,$escape);
+            self::$instance->log()->logDebug(sprintf('get field [%s] from $_POST, require type [%s], escape [%s]',$field,$require,$escape));
+            return self::get('_POST',$field,$require,$escape);
         }   // end function sanitizePost()
 
         /**
@@ -170,18 +178,18 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  string  $require - value type (scalar, numeric, array)
          * @return mixed
          **/
-        public function sanitizeGet($field,$require=NULL,$escape=false)
+        public static function sanitizeGet($field,$require=NULL,$escape=false)
         {
-            $this->log()->logDebug(sprintf('get field [%s] from $_GET, require type [%s], escape [%s]',$field,$require,$escape));
-            return $this->get('_GET',$field,$require,$escape);
+            self::$instance->log()->logDebug(sprintf('get field [%s] from $_GET, require type [%s], escape [%s]',$field,$require,$escape));
+            return self::get('_GET',$field,$require,$escape);
         }   // end function sanitizeGet()
 
         /**
          * convenience function to meet the names of the other ones
          **/
-        public function sanitizeSession($field,$require=NULL,$escape=false)
+        public static function sanitizeSession($field,$require=NULL,$escape=false)
         {
-            return $this->get('_SESSION',$field,$require,$escape);
+            return self::get('_SESSION',$field,$require,$escape);
         }   // end function sanitizeSession()
 
         /**
@@ -192,9 +200,9 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  string  $require - value type (scalar, numeric, array)
          * @return mixed
          **/
-        public function fromSession($field,$require=NULL,$escape=false)
+        public static function fromSession($field,$require=NULL,$escape=false)
         {
-            return $this->get('_SESSION',$field,$require,$escape);
+            return self::get('_SESSION',$field,$require,$escape);
         }   // end function fromSession()
 
         /**
@@ -205,25 +213,25 @@ if (!class_exists('CAT_Helper_Validate'))
          * @param  string  $require - value type (scalar, numeric, array)
          * @return mixed
          **/
-        public function sanitizeServer($field,$require=NULL,$escape=false)
+        public static function sanitizeServer($field,$require=NULL,$escape=false)
         {
-            return $this->get('_SERVER',$field,$require,$escape);
+            return self::get('_SERVER',$field,$require,$escape);
         }   // end function sanitizeServer()
 
         //*********************************************************************
         // convenience methods; just wrap filter_var
         //*********************************************************************
-        public function sanitize_string($string)
+        public static function sanitize_string($string)
         {
             return filter_var($string, FILTER_SANITIZE_STRING);
         }
 
-        public function sanitize_email($address)
+        public static function sanitize_email($address)
         {
             return filter_var($address, FILTER_SANITIZE_EMAIL);
         }
 
-        public function sanitize_url($address)
+        public static function sanitize_url($address)
         {
             $address    = htmlspecialchars((filter_var($address, FILTER_SANITIZE_URL)));
             // href="http://..." ==> href isn't relative
@@ -252,19 +260,19 @@ if (!class_exists('CAT_Helper_Validate'))
             ) . "/" . implode("/", $parts);
         }
 
-        public function validate_string($string)
+        public static function validate_string($string)
         {
             return filter_var($string, FILTER_VALIDATE_STRING);
         }
-        public function validate_ip($ip)
+        public static function validate_ip($ip)
         {
             return filter_var($ip, FILTER_VALIDATE_IP);
         }
-        public function validate_email($address)
+        public static function validate_email($address)
         {
             return filter_var($address, FILTER_VALIDATE_EMAIL);
         }
-        public function validate_url($address)
+        public static function validate_url($address)
         {
             return filter_var($address, FILTER_VALIDATE_URL);
         }
