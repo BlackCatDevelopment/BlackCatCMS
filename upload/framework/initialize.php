@@ -62,8 +62,8 @@ spl_autoload_register(function($class)
     // next in stack
 });
 
-$reg = CAT_Registry::getInstance();
-$reg->register('URL_HELP', 'http://blackcat-cms.org/', true);
+CAT_Registry::register('CAT_CORE', 'Black Cat CMS', true);
+CAT_Registry::register('URL_HELP', 'http://blackcat-cms.org/', true);
 
 if (file_exists(dirname(__FILE__) . '/class.database.php'))
 {
@@ -102,7 +102,7 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
                 $value = $row['value'];
             }
             $temp_name = strtoupper($row['name']);
-            $reg->register($temp_name, $value, true);
+            CAT_Registry::register($temp_name, $value, true);
         }
         unset($row);
         }
@@ -133,9 +133,9 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
     //**************************************************************************
     //**************************************************************************
     $string_file_mode = STRING_FILE_MODE;
-    $reg->register('OCTAL_FILE_MODE', (int) octdec($string_file_mode), true);
+    CAT_Registry::register('OCTAL_FILE_MODE', (int) octdec($string_file_mode), true);
     $string_dir_mode = STRING_DIR_MODE;
-    $reg->register('OCTAL_DIR_MODE', (int) octdec($string_dir_mode), true);
+    CAT_Registry::register('OCTAL_DIR_MODE', (int) octdec($string_dir_mode), true);
 
     //**************************************************************************
     // get CAPTCHA and ASP settings
@@ -150,12 +150,12 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
                 die("CAPTCHA-Settings not found");
             }
             $setting = $get_settings->fetchRow(MYSQL_ASSOC);
-            $reg->register('ENABLED_CAPTCHA', (($setting['enabled_captcha'] == '1') ? true : false), true);
-            $reg->register('ENABLED_ASP', (($setting['enabled_asp'] == '1') ? true : false), true);
-            $reg->register('CAPTCHA_TYPE', $setting['captcha_type'], true);
-            $reg->register('ASP_SESSION_MIN_AGE', (int) $setting['asp_session_min_age'], true);
-            $reg->register('ASP_VIEW_MIN_AGE', (int) $setting['asp_view_min_age'], true);
-            $reg->register('ASP_INPUT_MIN_AGE', (int) $setting['asp_input_min_age'], true);
+            CAT_Registry::register('ENABLED_CAPTCHA', (($setting['enabled_captcha'] == '1') ? true : false), true);
+            CAT_Registry::register('ENABLED_ASP', (($setting['enabled_asp'] == '1') ? true : false), true);
+            CAT_Registry::register('CAPTCHA_TYPE', $setting['captcha_type'], true);
+            CAT_Registry::register('ASP_SESSION_MIN_AGE', (int) $setting['asp_session_min_age'], true);
+            CAT_Registry::register('ASP_VIEW_MIN_AGE', (int) $setting['asp_view_min_age'], true);
+            CAT_Registry::register('ASP_INPUT_MIN_AGE', (int) $setting['asp_input_min_age'], true);
             unset($setting);
         }
     }
@@ -184,7 +184,7 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
 		);
         unset($cookie_settings);
     	session_start();
-        $reg->register('SESSION_STARTED', true, true);
+        CAT_Registry::register('SESSION_STARTED', true, true);
     }
     if (defined('ENABLED_ASP') && ENABLED_ASP && !isset($_SESSION['session_started']))
         $_SESSION['session_started'] = time();
@@ -196,10 +196,10 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
     $user_lang = $val->sanitizeGet('lang');
     if ( $user_lang && $user_lang != '' && !is_numeric($user_lang) && strlen($user_lang) == 2 && file_exists(CAT_PATH . '/languages/' . $user_lang . '.php'))
     {
-        $reg->register('LANGUAGE', strtoupper($user_lang), true);
+        CAT_Registry::register('LANGUAGE', strtoupper($user_lang), true);
         }
-    if ( ! $reg->exists('LANGUAGE') )
-        $reg->register('LANGUAGE',DEFAULT_LANGUAGE,true);
+    if ( ! CAT_Registry::exists('LANGUAGE') )
+        CAT_Registry::register('LANGUAGE',DEFAULT_LANGUAGE,true);
 
     // Load Language file
     if (!defined('LANGUAGE_LOADED'))
@@ -219,8 +219,8 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
     //**************************************************************************
     $timezone_string = (isset($_SESSION['TIMEZONE_STRING']) ? $_SESSION['TIMEZONE_STRING'] : DEFAULT_TIMEZONE_STRING);
 	date_default_timezone_set($timezone_string);
-    $reg->register('TIME_FORMAT', CAT_Helper_DateTime::getDefaultTimeFormat(), true);
-    $reg->register('DATE_FORMAT', CAT_Helper_DateTime::getDefaultDateFormatShort(), true);
+    CAT_Registry::register('TIME_FORMAT', CAT_Helper_DateTime::getDefaultTimeFormat(), true);
+    CAT_Registry::register('DATE_FORMAT', CAT_Helper_DateTime::getDefaultDateFormatShort(), true);
     
     //**************************************************************************
     // Disable magic_quotes_runtime
@@ -233,8 +233,8 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
     //**************************************************************************
     // Set theme
     //**************************************************************************
-    $reg->register('CAT_THEME_URL', CAT_URL . '/templates/' . DEFAULT_THEME, true);
-    $reg->register('CAT_THEME_PATH', CAT_PATH . '/templates/' . DEFAULT_THEME, true);
+    CAT_Registry::register('CAT_THEME_URL', CAT_URL . '/templates/' . DEFAULT_THEME, true);
+    CAT_Registry::register('CAT_THEME_PATH', CAT_PATH . '/templates/' . DEFAULT_THEME, true);
     
     $database->prompt_on_error(PROMPT_MYSQL_ERRORS);
     
@@ -246,16 +246,16 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
         if (false !== ($query = $database->query("SELECT value FROM " . CAT_TABLE_PREFIX . "search WHERE name = 'cfg_search_library' LIMIT 1")))
         {
             ($query->numRows() > 0) ? $res = $query->fetchRow() : $res['value'] = 'lib_search';
-            $reg->register('SEARCH_LIBRARY', $res['value'], true);
+            CAT_Registry::register('SEARCH_LIBRARY', $res['value'], true);
         }
         else
         {
-            $reg->register('SEARCH_LIBRARY', 'lib_search', true);
+            CAT_Registry::register('SEARCH_LIBRARY', 'lib_search', true);
         }
     }
     else
     {
-        $reg->register('SEARCH_LIBRARY', 'lib_search', true);
+        CAT_Registry::register('SEARCH_LIBRARY', 'lib_search', true);
     }        
 }
 
@@ -265,4 +265,4 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
 global $parser;
 $parser = CAT_Helper_Template::getInstance('Dwoo');
 
-$reg->register('CAT_INITIALIZED', true, true);
+CAT_Registry::register('CAT_INITIALIZED', true, true);

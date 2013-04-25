@@ -180,6 +180,6 @@ else $admin->print_error( 'File could not be uploaded. Maybe it is too big?', fa
 // ====================== 
 // ! Print admin footer   
 // ====================== 
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

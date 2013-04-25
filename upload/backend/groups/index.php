@@ -70,6 +70,6 @@ $parser->output('backend_groups_index.tpl', $data_dwoo);
 // ====================== 
 // ! Print admin footer   
 // ====================== 
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

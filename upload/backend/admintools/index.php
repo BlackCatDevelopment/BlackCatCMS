@@ -95,6 +95,6 @@ else
 $parser->output('backend_admintools_index',$tpl_data);
 
 // Print admin footer
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

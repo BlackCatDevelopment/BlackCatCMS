@@ -82,11 +82,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 		{
             if ( ! is_object($this->lang) )
             {
-                if ( ! class_exists( 'CAT_Helper_I18n', false ) )
-		    {
-					@include dirname(__FILE__).'/Helper/I18n.php';
-				}
-                $this->lang = CAT_Helper_I18n::getInstance();
+                $this->lang = CAT_Helper_I18n::getInstance(CAT_Registry::get('LANGUAGE',NULL,'EN'));
 		}
             return $this->lang;
         }   // end function lang()

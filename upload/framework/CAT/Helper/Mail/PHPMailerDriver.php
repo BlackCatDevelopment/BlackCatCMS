@@ -106,7 +106,7 @@ if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
         /**
          *
          **/
-        public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname)
+        public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname='')
         {
             // format
             $fromaddress = preg_replace('/[\r\n]/'  , ''      , $fromaddress);

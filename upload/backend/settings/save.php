@@ -369,5 +369,5 @@ else
 {
 	$admin->print_error($retval, $js_back);
 }
-$admin->print_footer();
+$backend->print_footer();
 ?>

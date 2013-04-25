@@ -39,8 +39,7 @@ if (defined('CAT_PATH')) {
 	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-require_once(CAT_PATH . '/framework/class.admin.php');
-$admin = new admin('Addons', 'addons');
+$backend = CAT_Backend::getInstance('Addons', 'addons');
 $user  = CAT_Users::getInstance();
 $date  = CAT_Helper_DateTime::getInstance();
 
@@ -62,11 +61,11 @@ $tpl_data['permissions']['MODULES_UNINSTALL'] = $user->get_permission('modules_u
 
 $counter	= 0;
 $seen_dirs  = array();
-$result		= $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "addons ORDER BY name");
-if ($result->numRows() > 0)
+
+$addons = CAT_Helper_Addons::get_addons();
+
+foreach( $addons as $addon )
 {
-	while ( $addon = $result->fetchRow() )
-	{
 		// check if a module description exists for the displayed backend language
 		$tool_description	= false;
 		switch ($addon['type'])
@@ -165,31 +164,31 @@ if ($result->numRows() > 0)
 		switch ($addon['function'])
 		{
 			case NULL:
-				$type_name	= $admin->lang->translate( 'Unknown' );
+            $type_name    = $backend->lang()->translate( 'Unknown' );
 				break;
 			case 'page':
-				$type_name	= $admin->lang->translate( 'Page' );
+            $type_name    = $backend->lang()->translate( 'Page' );
 				break;
 			case 'wysiwyg':
-				$type_name	= $admin->lang->translate( 'WYSIWYG Editor' );
+            $type_name    = $backend->lang()->translate( 'WYSIWYG Editor' );
 				break;
 			case 'tool':
-				$type_name	= $admin->lang->translate( 'Administration tool' );
+            $type_name    = $backend->lang()->translate( 'Administration tool' );
 				break;
 			case 'admin':
-				$type_name	= $admin->lang->translate( 'Admin' );
+            $type_name    = $backend->lang()->translate( 'Admin' );
 				break;
 			case 'administration':
-				$type_name	= $admin->lang->translate( 'Administration' );
+            $type_name    = $backend->lang()->translate( 'Administration' );
 				break;
 			case 'snippet':
-				$type_name	= $admin->lang->translate( 'Code-Snippet' );
+            $type_name    = $backend->lang()->translate( 'Code-Snippet' );
 				break;
 			case 'library':
-				$type_name	= $admin->lang->translate( 'Library' );
+            $type_name    = $backend->lang()->translate( 'Library' );
 				break;
 			default:
-				$type_name	= $admin->lang->translate( 'Unknown' );
+            $type_name    = $backend->lang()->translate( 'Unknown' );
 		}
 
 		$tpl_data['addons'][$counter]['function'] = $type_name;
@@ -199,7 +198,6 @@ if ($result->numRows() > 0)
 		$tpl_data['addons'][$counter]['UPGRADE'] = file_exists(CAT_PATH . '/' . $type . '/' . $addon['directory'] . '/upgrade.php') ? true : false;
 
 		$counter++;
-	}
 }
 
 $tpl_data['groups']	= $user->get_groups('' , '', false);
@@ -234,9 +232,7 @@ if ( count($new) )
 }
 
 // print page
-$parser->output( 'backend_addons_index.tpl', $tpl_data );
+$parser->output( 'backend_addons_index', $tpl_data );
 
 // Print admin footer
-$admin->print_footer();
-
-?>
+$backend->print_footer();

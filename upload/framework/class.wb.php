@@ -228,7 +228,7 @@ class wb
      */
 	public function print_success($message, $redirect = 'index.php', $auto_footer = true)
 	{
-		global $TEXT, $parser;
+		global $parser;
 
 		if (true === is_array($message)){
 			$message = implode("<br />", $message);
@@ -244,7 +244,7 @@ class wb
 				// ==================== 
 				// ! Parse the header 	
 				// ==================== 
-				$parser->output('success.lte', $data_dwoo);
+		$parser->output('success', $data_dwoo);
 
 		if ($auto_footer == true)
 		{

@@ -41,9 +41,16 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-function __construct($section_name, $section_permission = 'start', $auto_header = true, $auto_auth = true)
+require_once(CAT_PATH.'/framework/class.wb.php');
+
+class admin extends wb
 {
+
+    function __construct($section_name, $section_permission = 'start', $auto_header = true, $auto_auth = true)
+    {
     return CAT_Backend::getInstance($section_name);
+    }
+
 }
 
 /*

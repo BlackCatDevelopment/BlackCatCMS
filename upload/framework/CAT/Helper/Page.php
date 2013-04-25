@@ -606,9 +606,10 @@ if (!class_exists('CAT_Helper_Page'))
         } // end function getMeta()
 
         /**
+         * returns complete pages array
          *
          * @access public
-         * @return
+         * @return array
          **/
         public static function getPages()
         {
@@ -616,6 +617,20 @@ if (!class_exists('CAT_Helper_Page'))
             return self::$pages;
         }   // end function getPages()
         
+        /**
+         * returns pages by visibility array
+         *
+         * @access public
+         * @param  string  $visibility - optional
+         * @return array
+         **/
+        public static function getPagesByVisibility($visibility=NULL)
+        {
+            if(!count(self::$pages_by_visibility)) self::getInstance();
+            if($visibility)
+                return self::$pages_by_visibility[$visibility];
+            return self::$pages_by_visibility;
+        }   // end function getPagesByVisibility()
 
         /**
          * identify the page to show

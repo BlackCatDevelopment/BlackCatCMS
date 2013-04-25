@@ -1,62 +1,61 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
- * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
- 
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
-} else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
-}
-// end include class.secure.php
 
-require_once(CAT_PATH.'/framework/class.admin.php');
-$admin = new admin('Access', 'users');
+if (defined('CAT_PATH')) {
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
+} else {
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+}
+
+$backend = CAT_Backend::getInstance('Access', 'users');
+$users   = CAT_Users::getInstance();
+
+// this will redirect to the login page if the permission is not set
+$user->checkPermission('Access','users',false);
 
 require_once(CAT_PATH.'/framework/functions.php');
 
-// =========================================================================== 
-// ! Create the controller, it is reusable and can render multiple templates 	
-// =========================================================================== 
 global $parser;
-
-if (!is_object($parser))
-{
-	$admin->print_error('Global parser error couldn\'t be loaded!', false);
-}
 
 // ============================================= 
 // ! Insert values into the modify/remove menu   
 // ============================================= 
-$results = $database->query("SELECT * FROM `".CAT_TABLE_PREFIX."users` WHERE `user_id` != '1' ORDER BY `display_name`,`username`");
-if ( $database->is_error())
+$results = $backend->db()->query("SELECT * FROM `".CAT_TABLE_PREFIX."users` WHERE `user_id` != '1' ORDER BY `display_name`,`username`");
+if ( $backend->db()->is_error())
 {
-	$admin->print_error($database->get_error(), 'index.php');
+	$backend->print_error($backend->db()->get_error(), 'index.php');
 }
 if ( $results->numRows() > 0 )
 {
@@ -100,10 +99,10 @@ if ( $results->numRows() > 0 )
 // =========================== 
 // ! Add permissions to Dwoo   
 // =========================== 
-$data_dwoo['permissions']['USERS_ADD']		= ($admin->get_permission('users_add')) ? true : false;
-$data_dwoo['permissions']['USERS_MODIFY']	= ($admin->get_permission('users_modify')) ? true : false;
-$data_dwoo['permissions']['USERS_DELETE']	= ($admin->get_permission('users_delete')) ? true : false;
-$data_dwoo['permissions']['GROUPS']			= ($admin->get_permission('groups')) ? true : false;
+$data_dwoo['permissions']['USERS_ADD']		= ($users->checkPermission('access','users_add'))    ? true : false;
+$data_dwoo['permissions']['USERS_MODIFY']	= ($users->checkPermission('access','users_modify')) ? true : false;
+$data_dwoo['permissions']['USERS_DELETE']	= ($users->checkPermission('access','users_delete')) ? true : false;
+$data_dwoo['permissions']['GROUPS']			= ($users->checkPermission('access','groups'))       ? true : false;
 
 if ( $data_dwoo['permissions']['USERS_ADD'] == true )
 {
@@ -132,12 +131,12 @@ $data_dwoo['NEWUSERHINT']					= preg_split('/, /',sprintf($TEXT['NEW_USER_HINT']
 // ============================ 
 // ! Add groups to $data_dwoo   
 // ============================ 
-$data_dwoo['groups']						= $admin->users->get_groups();
+$data_dwoo['groups']						= $users->get_groups();
 
 // ====================================================================================== 
 // ! Only allow the user to add a user to the Administrators group if he belongs to it   
 // ====================================================================================== 
-$data_dwoo['is_admin']						= in_array(1, $admin->get_groups_id()) ? true : false;
+$data_dwoo['is_admin']						= in_array(1, $users->get_groups_id()) ? true : false;
 
 // Add media folders to home folder list
 foreach ( directory_list(CAT_PATH.MEDIA_DIRECTORY) as $index => $name )
@@ -149,11 +148,11 @@ foreach ( directory_list(CAT_PATH.MEDIA_DIRECTORY) as $index => $name )
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_users_index.tpl', $data_dwoo);
+$parser->output('backend_users_index', $data_dwoo);
 
 // ====================== 
 // ! Print admin footer   
 // ====================== 
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

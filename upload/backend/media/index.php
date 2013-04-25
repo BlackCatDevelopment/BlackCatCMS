@@ -41,15 +41,18 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+$backend = CAT_Backend::getInstance('Media','media');
+
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
 include_once(CAT_PATH . '/framework/functions.php');
-require_once(CAT_PATH . '/framework/class.admin.php');
 
-$admin = new admin('Media', 'media');
 $dirh  = CAT_Helper_Directory::getInstance();
 $user  = CAT_Users::getInstance();
+
+// this will redirect to the login page if the permission is not set
+$user->checkPermission('Media','media',false);
 
 // =========================================================================== 
 // ! Create the controller, it is reusable and can render multiple templates 	
@@ -130,6 +133,6 @@ $parser->output('backend_media_index.tpl', $tpl_data);
 // ====================== 
 // ! Print admin footer   
 // ====================== 
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

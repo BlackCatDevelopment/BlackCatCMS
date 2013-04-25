@@ -23,32 +23,29 @@
  *
  */
 
-ob_start();
-
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
+
+ob_start();
 
 header( "Cache-Control: no-cache, must-revalidate" );
 header( "Pragma: no-cache" );
 header( "Content-Type: text/html; charset:utf-8;" );
 
-include realpath(dirname(__FILE__)).'/../../framework/class.admin.php';
-$admin = new admin('Settings', 'settings_basic', false);
+$backend = CAT_Backend::getInstance('Settings', 'settings_basic');
 
 $curr_user_is_admin = ( in_array(1, CAT_Users::getInstance()->get_groups_id()) );
 
@@ -59,7 +56,7 @@ if ( ! $curr_user_is_admin ) {
 
 $settings = array();
 $sql      = 'SELECT * FROM `'.CAT_TABLE_PREFIX.'settings` WHERE name="guid"';
-if ( $res = $database->query( $sql ) ) {
+if ( $res = $backend->db()->query( $sql ) ) {
     $row = $res->fetchRow(MYSQL_ASSOC);
 }
 
@@ -68,7 +65,7 @@ if(!isset($row['value']) || $row['value'] == '')
     @require_once CAT_PATH.'/framework/CAT/Object.php';
     $guid = CAT_Object::createGUID();
     $row['setting_id'] = isset($row['setting_id']) ? $row['setting_id'] : NULL;
-    $database->query('REPLACE INTO `'.CAT_TABLE_PREFIX.'settings` VALUES("'.$row['setting_id'].'", "guid", "'.$guid.'")');
+    $backend->db()->query('REPLACE INTO `'.CAT_TABLE_PREFIX.'settings` VALUES("'.$row['setting_id'].'", "guid", "'.$guid.'")');
 }
 else
 {

@@ -1,66 +1,72 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
- * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
- 
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
-} else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
-}
-// end include class.secure.php
 
-require_once(CAT_PATH.'/framework/class.admin.php');
-$admin = new admin('Access', 'users', false);
+if (defined('CAT_PATH')) {
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
+} else {
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+}
+
+$backend = CAT_Backend::getInstance('Access', 'users',false);
+$users   = CAT_Users::getInstance();
+$val     = CAT_Helper_Validate::getInstance();
 
 header('Content-type: application/json');
 
-
-if ( !$admin->get_permission('users') )
+if ( !$users->checkPermission('access','users') )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You do not have the permission to view users'),
+		'message'	=> $backend->lang()->translate('You do not have the permission to view users'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
 
-$user_id		= $admin->get_post('id');
-if ( !is_numeric($user_id ) || $user_id == 1 )
+$user_id		= $val->sanitizePost('id','numeric');
+if ( !$user_id || $user_id == 1 )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You sent an invalid value'),
+		'message'	=> $backend->lang()->translate('You sent an invalid value'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
-$get_user		= $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "users WHERE user_id = '$user_id'");
+
+$get_user		= $backend->db()->query("SELECT * FROM " . CAT_TABLE_PREFIX . "users WHERE user_id = '$user_id'");
 
 // ==============================================
 // ! Insert admin group and current group first
@@ -89,7 +95,7 @@ if ( $user = $get_user->fetchRow( MYSQL_ASSOC ) )
 		'active'				=> $user['active'] == 1 ? true : false,
 		'home_folder'			=> $user['home_folder'],
 		'username_fieldname'	=> $username_fieldname,
-		'message'				=> $admin->lang->translate( 'User loaded successfully' ),
+		'message'				=> $backend->lang()->translate( 'User loaded successfully' ),
 		'success'				=> true
 	);
 	print json_encode( $ajax );
@@ -97,7 +103,7 @@ if ( $user = $get_user->fetchRow( MYSQL_ASSOC ) )
 }
 else {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('User could not be found in database'),
+		'message'	=> $backend->lang()->translate('User could not be found in database'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );

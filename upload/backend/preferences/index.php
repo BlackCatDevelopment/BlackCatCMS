@@ -167,6 +167,6 @@ foreach ( $TIME_FORMATS AS $format => $title )
 // ============== 
 $parser->output( 'backend_preferences_index.tpl', $tpl_data );
 
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

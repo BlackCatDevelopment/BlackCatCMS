@@ -1,53 +1,59 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 // ==================================== 
 // ! check if there is anything to do   
 // ==================================== 
-require_once('../../framework/class.admin.php');
+$backend = CAT_Backend::getInstance('Addons', 'modules_install');
+$user    = CAT_Users::getInstance();
 
-// check user permissions for admintools (redirect users with wrong permissions)
-$admin		= new admin('Admintools', 'admintools', false, false);
-if ($admin->get_permission('admintools') == false)
+if ($user->get_permission('admintools') == false)
 {
 	die(header('Location: ../../index.php'));
 }
 
-$action		= $admin->get_post('action');
-$file		= $admin->get_post('file');
+$val = CAT_Helper_Validate::getInstance();
+
+$action		= $val->sanitizePost('action');
+$file		= $val->sanitizePost('file');
 
 if ( !in_array( $action, array('install', 'upgrade') ) )
 {
@@ -61,8 +67,6 @@ if ( $file == '' || !( strpos($file, '..') === false ) )
 // include WB functions file
 require_once(CAT_PATH . '/framework/functions.php');
 
-// create Admin object with admin header
-$admin		= new admin('Addons', '', true, false);
 $js_back	= CAT_ADMIN_URL . '/addons/index.php';
 
 /**
@@ -76,12 +80,10 @@ $mod_path		= CAT_PATH . '/modules/' . basename(CAT_PATH . '/' . $file);
 $module_dir		= $mod_path;
 if ( !file_exists( $mod_path . '/' . $action . '.php') )
 {
-	$admin->print_error($admin->lang->translate( 'Not found' ) . ': <tt>"' . htmlentities(basename($mod_path)) . '/' . $action . '.php"</tt> ', $js_back);
+	$backend->print_error($backend->lang()->translate( 'Not found' ) . ': <tt>"' . htmlentities(basename($mod_path)) . '/' . $action . '.php"</tt> ', $js_back);
 }
 
-// Perform Add-on requirement checks before proceeding
-require ( CAT_PATH . '/framework/addon.precheck.inc.php' );
-preCheckAddon( NULL, $mod_path, false );
+CAT_Helper_Addons::preCheckAddon( NULL, $mod_path, false );
 
 // include modules install.php script
 require ( $mod_path . '/' . $action . '.php' );
@@ -89,16 +91,16 @@ require ( $mod_path . '/' . $action . '.php' );
 // load module info into database and output status message
 require( $mod_path . '/info.php' );
 load_module($mod_path, false);
-$msg		= $admin->lang->translate( 'Execute' ) . ': <tt>"' . htmlentities(basename($mod_path)) . '/' . $action . '.php"</tt>';
+$msg		= $backend->lang()->translate( 'Execute' ) . ': <tt>"' . htmlentities(basename($mod_path)) . '/' . $action . '.php"</tt>';
 
 switch ($action)
 {
 	case 'install':
 	case 'upgrade':
-		$admin->print_success($msg, $js_back);
+		$backend->print_success($msg, $js_back);
 		break;
 	default:
-		$admin->print_error( 'Action not supported', $js_back );
+		$backend->print_error( 'Action not supported', $js_back );
 }
 
 ?>

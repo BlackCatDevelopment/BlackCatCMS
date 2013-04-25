@@ -48,6 +48,8 @@ if (!class_exists('CAT_Backend', false))
             if (!self::$instance)
             {
                 self::$instance = new self();
+                if(!CAT_Registry::defined('CAT_INITIALIZED'))
+    include CAT_PATH.'/framework/initialize.php';
                 $user = CAT_Users::getInstance();
        			if($user->is_authenticated() == false) {
     				header('Location: '.CAT_ADMIN_URL.'/login/index.php');
@@ -193,7 +195,7 @@ if (!class_exists('CAT_Backend', false))
             );
             $tpl_data['TIME_FORMAT'] = str_replace($time_search, $time_replace, CAT_Registry::get('TIME_FORMAT'));
 
-            #$tpl_data['HEAD']['SECTION_NAME'] = $this->lang()->translate(strtoupper($this->section_name));
+            $tpl_data['HEAD']['SECTION_NAME'] = $this->lang()->translate(strtoupper(self::$instance->section_name));
             $tpl_data['DISPLAY_NAME']         = $user->get_display_name();
             $tpl_data['USER']                 = $user->get_user_details($user->get_user_id());
 

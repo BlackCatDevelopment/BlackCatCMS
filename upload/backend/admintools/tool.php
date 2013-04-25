@@ -89,6 +89,6 @@ else
 $parser->output( 'backend_admintools_tool.tpl', $data_dwoo );
 
 // Print admin footer
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

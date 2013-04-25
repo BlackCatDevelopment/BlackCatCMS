@@ -37,20 +37,20 @@ if ( ! class_exists( 'CAT_Users', false ) )
 		// letters, digits, underscores and hyphens.
 		// The input must contain at least one upper case letter, one lower case
 		// letter and one digit.
-        private $PCRE_PASSWORD
+        private static $PCRE_PASSWORD
             = "/^\A(?=[\.,;\:&\"\'\?\!\(\)a-zA-Z0-9]*?[A-Z])(?=[\.,;\:&\"\'\?\!\(\)a-zA-Z0-9]*?[a-z])(?=[\.,;\:&\"\'\?\!\(\)a-zA-Z0-9]*?[0-9])\S{6,}\z$/";
 		
-		private $validatePasswordError = NULL;
-		private $lastValidatedPassword = NULL;
-        private $loginerror            = false;
+        private static $validatePasswordError = NULL;
+        private static $lastValidatedPassword = NULL;
+        private static $loginerror            = false;
 
         // user options (column names) added to the session on successful logon
-        private $sessioncols = array(
+        private static $sessioncols = array(
             'user_id', 'group_id', 'groups_id', 'username', 'display_name', 'email', 'home_folder'
         );
         // extended user options; will be extendable later
         // '<option_name>' => '<check validity method>'
-        private $useroptions = array(
+        private static $useroptions = array(
             'timezone_string'    => 'CAT_Helper_DateTime::checkTZ',
             'date_format'        => 'CAT_Helper_DateTime::checkDateformat',
             'date_format_short'  => 'CAT_Helper_DateTime::checkDateformat',
@@ -88,10 +88,18 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return self::$instance;
         }   // end function getInstance()
 
+        public function __call($method, $args)
+        {
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
+        }
+
         /**
          * handle user login
          **/
-        public function handleLogin($output=true)
+        public static function handleLogin($output=true)
         {
             global $parser;
             if ( ! is_object($parser) )
@@ -103,8 +111,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
             $val   = CAT_Helper_Validate::getInstance();
             $lang  = CAT_Helper_I18n::getInstance();
+            $self  = self::getInstance();
 
-            if ( ! $this->is_authenticated() )
+            if ( ! self::is_authenticated() )
             {
 
                 // --- login attempt ---
@@ -119,32 +128,32 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     // check common issues
                     // we do not check for too long and don't give too much hints!
                     if ( ! $name )
-                        $this->setError($lang->translate('Invalid credentials'));
-                    if ( ! $this->loginerror && $user == '' || $pw == '' )
-                        $this->setError($lang->translate('Please enter your username and password.'));
-                    if ( ! $this->loginerror && strlen($user) < AUTH_MIN_LOGIN_LENGTH )
-                        $this->setError($lang->translate('The password you entered was too short'));
-                    if ( ! $this->loginerror && ! defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < AUTH_MIN_PASS_LENGTH )
-            			$this->setError($lang->translate('The password you entered was too short'));
+                        self::setError($lang->translate('Invalid credentials'));
+                    if ( ! self::loginerror && $user == '' || $pw == '' )
+                        self::setError($lang->translate('Please enter your username and password.'));
+                    if ( ! self::loginerror && strlen($user) < AUTH_MIN_LOGIN_LENGTH )
+                        self::setError($lang->translate('The password you entered was too short'));
+                    if ( ! self::loginerror && ! defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < AUTH_MIN_PASS_LENGTH )
+                        self::setError($lang->translate('The password you entered was too short'));
 
-                    if ( ! $this->loginerror )
+                    if ( ! self::loginerror )
                     {
                         $query	= 'SELECT * FROM `'.CAT_TABLE_PREFIX.'users` WHERE `username` = "'.$name.'" AND `password` = "'.md5($pw).'" AND `active` = 1';
-                        $result    = $this->db()->query($query);
+                        $result    = $self->db()->query($query);
                 		if ( $result->numRows() == 1 )
                         {
 
                             // get default user preferences
-                            $prefs = $this->getDefaultUserOptions();
+                            $prefs = self::getDefaultUserOptions();
                             // get basic user data
                             $user  = $result->fetchRow( MYSQL_ASSOC );
                             // add this user's options
                             $prefs = array_merge(
                                 $prefs,
-                                $this->getUserOptions($user['user_id'])
+                                self::getUserOptions($user['user_id'])
                             );
 
-                            foreach( $this->sessioncols as $key )
+                            foreach( self::sessioncols as $key )
                             {
                                 $_SESSION[strtoupper($key)] = $user[$key];
                             }
@@ -186,7 +195,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 			foreach ( explode(",",$user['groups_id']) as $cur_group_id )
                 			{
                 				$query	 = "SELECT * FROM `".CAT_TABLE_PREFIX."groups` WHERE group_id = '".$cur_group_id."'";
-                                $result     = $this->db()->query($query);
+                                $result     = $self->db()->query($query);
                 				$results = $result->fetchRow( MYSQL_ASSOC );
 
                 				$_SESSION['GROUP_NAME'][$cur_group_id] = $results['name'];
@@ -229,12 +238,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 			$get_ts		= time();
                 			$get_ip		= $_SERVER['REMOTE_ADDR'];
                 			$query		= "UPDATE `".CAT_TABLE_PREFIX."users` SET login_when = '$get_ts', login_ip = '$get_ip' WHERE user_id = '".$user['user_id']."'";
-                            $this->db()->query($query);
+                            $self->db()->query($query);
                             return CAT_ADMIN_URL.'/start/index.php';
                         }
                         else
                         {
-                            $this->setError($lang->translate('Invalid credentials'));
+                            self::setError($lang->translate('Invalid credentials'));
                         }
                     }
 
@@ -243,7 +252,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         // if we have a user name
                         if ( $name )
                         {
-                            $this->disableAccount($name);
+                            self::disableAccount($name);
                         }
                         return CAT_THEME_URL . '/templates/warning.html';
                     }
@@ -274,7 +283,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 	'MAX_PASSWORD_LEN'		=> AUTH_MAX_PASS_LENGTH,
                     'PAGES_DIRECTORY'       => PAGES_DIRECTORY,
                     'ATTEMPTS'              => $val->fromSession('ATTEMTPS'),
-                    'MESSAGE'               => $this->loginerror
+                    'MESSAGE'               => self::loginerror
                 );
 
 				$tpl_data['meta']['LANGUAGE']	= strtolower(LANGUAGE);
@@ -299,7 +308,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
          **/
         private function setError($msg)
         {
-            $this->loginerror = $msg;
+            self::$loginerror = $msg;
             if(!isset($_SESSION['ATTEMPTS']))
     			$_SESSION['ATTEMPTS'] = 0;
     		else
@@ -312,9 +321,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @access public
          * @return mixed
          **/
-        public function loginError()
+        public static function loginError()
         {
-            return $this->loginerror;
+            return self::$loginerror;
         }   // end function loginError()
 
         /**
@@ -324,27 +333,33 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  mixed  $user_id
          * @return void
          **/
-        public function disableAccount($user_id)
+        public static function disableAccount($user_id)
         {
-            $query		= "UPDATE `".CAT_TABLE_PREFIX."users` SET active = 0 WHERE "
+            $self  = self::getInstance();
+            $self->db()->query(sprintf(
+                'UPDATE `%susers` SET active = 0 WHERE '
                         . ( is_numeric($user_id) ? 'user_id' : 'username' )
-                        . " = '".$user_id."'";
-            $this->db()->query($query);
+                . " = '%s'",CAT_TABLE_PREFIX,$user_id));
+            return $self->db()->isError();
         }   // end function disableAccount()
 
         /**
          *
          **/
-        public function checkPermission( $group, $perm, $redirect = false, $for = 'BE' )
+        public static function checkPermission( $group, $perm, $redirect = false, $for = 'BE' )
         {
             // root is always allowed to do it all
-            if ( $this->is_root() ) return true;
+            if ( self::is_root() ) return true;
             // all authenticated users are allowed to see the dashboard
-            if ( $perm == 'start' && $this->is_authenticated() ) return true;
+            if ( $perm == 'start' && self::is_authenticated() ) return true;
             // fill permissions cache on first call
             if ( ! count(self::$permissions) )
             {
-                $res = $this->db()->query('SELECT perm_name, perm_group, perm_bit FROM '.CAT_TABLE_PREFIX."system_permissions WHERE perm_for='$for';");
+                $self = self::getInstance();
+                $res  = $self->db()->query(sprintf(
+                    'SELECT perm_name, perm_group, perm_bit FROM `%ssystem_permissions` WHERE perm_for=\'%s\';',
+                    CAT_TABLE_PREFIX, $for
+                ));
                 if($res->numRows())
                 {
                     while( false !== ( $row = $res->fetchRow(MYSQL_ASSOC) ) )
@@ -412,9 +427,14 @@ if ( ! class_exists( 'CAT_Users', false ) )
          *
          *
          **/
-        public function checkEmailExists($email)
+        public static function checkEmailExists($email)
         {
-            $results = $this->db()->query( "SELECT user_id FROM " . CAT_TABLE_PREFIX . "users WHERE email = '" . CAT_Helper_Validate::getInstance()->add_slashes( $email ) . "'" );
+            $self    = self::getInstance();
+            $results = $self->db()->query(sprintf(
+                'SELECT user_id FROM `%susers` WHERE email = "%s"',
+                CAT_TABLE_PREFIX,
+                CAT_Helper_Validate::add_slashes( $email )
+            ));
             if ( $results->numRows() > 0 )
             {
                 return true;
@@ -429,9 +449,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  string  $username
          * @return boolean
          **/
-        public function checkUsernameExists($username)
+        public static function checkUsernameExists($username)
         {
-            $results = $this->db()->query( "SELECT user_id FROM " . CAT_TABLE_PREFIX . "users WHERE username = '$username'" );
+            $self    = self::getInstance();
+            $results = $self->db()->query(sprintf(
+                'SELECT user_id FROM `%susers` WHERE username = "%s"',
+                CAT_TABLE_PREFIX, $username
+            ));
             if ( $results->numRows() > 0 )
             {
                 return true;
@@ -445,18 +469,32 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @access public
          *
          **/
-        public function createUser($groups_id, $active, $username, $md5_password, $display_name, $email )
+        public static function createUser($groups_id, $active, $username, $md5_password, $display_name, $email )
         {
-            $query = "INSERT INTO " . CAT_TABLE_PREFIX . "users (group_id,groups_id,active,username,password,display_name,email) "
-                   . "VALUES ('$groups_id', '$groups_id', '$active', '$username','$md5_password','$display_name','$email')";
-            $this->db()->query( $query );
+            $self  = self::getInstance();
+            $query = 'INSERT INTO `%susers` (group_id,groups_id,active,username,password,display_name,email) '
+                   . "VALUES ('$groups_id', '$groups_id', '$active', '$username','$md5_password','$display_name','$email');";
+            $self->db()->query(sprintf($query,CAT_TABLE_PREFIX));
 
-            if ( $this->db()->is_error() )
+            if ( $self->db()->is_error() )
             {
-            	return $this->db()->get_error();
+            	return $self->db()->get_error();
             }
             return true;
         }   // end function createUser()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function deleteUser($user_id)
+        {
+            $self = self::getInstance();
+       		$self->db()->query(sprintf("DELETE FROM %susers WHERE `user_id` = %d",CAT_TABLE_PREFIX,$user_id));
+            return ( $self->db()->is_error() ? $self->db()->get_error() : true );
+        }   // end function deleteUser()
+        
 
         /**
          * get global settings for all users
@@ -465,11 +503,15 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @return array
          *
          **/
-        public function getDefaultUserOptions()
+        public static function getDefaultUserOptions()
         {
+            $self  = self::getInstance();
             if ( ! count(self::$defaultuser) )
             {
-                $result = $this->db()->query( 'SELECT * FROM '.CAT_TABLE_PREFIX.'users_options WHERE user_id="0";' );
+                $result = $self->db()->query(sprintf(
+                    'SELECT * FROM `%susers_options` WHERE user_id="0";',
+                    CAT_TABLE_PREFIX
+                ));
                 if($result->numRows())
                 {
                     while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
@@ -489,10 +531,14 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @return array
          *
          **/
-        public function getUserOptions($user_id)
+        public static function getUserOptions($user_id)
         {
             $options = array();
-            $result  = $this->db()->query( 'SELECT * FROM '.CAT_TABLE_PREFIX.'users_options WHERE user_id="'.$user_id.'";' );
+            $self    = self::getInstance();
+            $result  = $self->db()->query(sprintf(
+                'SELECT * FROM `%susers_options` WHERE user_id="%d";',
+                CAT_TABLE_PREFIX, $user_id
+            ));
             if($result->numRows())
             {
                 while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
@@ -503,9 +549,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return $options;
         }   // end function getUserOptions()
 
-        public function getExtendedOptions()
+        public static function getExtendedOptions()
         {
-            return $this->useroptions;
+            return self::useroptions;
         }
 
         /**
@@ -517,13 +563,14 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @return array
          *
          **/
-        public function setUserOptions($user_id,$options)
+        public static function setUserOptions($user_id,$options)
         {
             $fields = $errors = array();
             // get extension fields
-            $ext  = $this->getExtendedOptions();
+            $ext  = self::getExtendedOptions();
+            $self = self::getInstance();
             // get default fields
-            $desc = $this->db()->query(sprintf('DESCRIBE %susers',CAT_TABLE_PREFIX));
+            $desc = $self->db()->query(sprintf('DESCRIBE %susers',CAT_TABLE_PREFIX));
             while ( false !== ( $row = $desc->fetchRow(MYSQL_ASSOC) ) )
             {
                 $fields[] = $row['Field'];
@@ -539,13 +586,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     $c++;
                 }
             }
-            $q = substr($q, 0, -2) . " WHERE `user_id`='".$this->get_user_id()."'";
+            $q = substr($q, 0, -2) . " WHERE `user_id`='".$user_id."'";
             if($c)
             {
-                $this->db()->query($q);
-                   if ($this->db()->is_error())
+                $self->db()->query($q);
+                   if ($self->db()->is_error())
                 {
-                    $errors[] = $this->db()->get_error();
+                    $errors[] = $self->db()->get_error();
                 }
             }
             // save extended options
@@ -555,11 +602,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 {
                     $q  = "UPDATE `".CAT_TABLE_PREFIX."users_options` SET "
                         . "`option_value`='".mysql_real_escape_string($options[$key])."' "
-                        . " WHERE `option_name`='$key' AND `user_id`='".$this->get_user_id()."'";
-                    $this->db()->query($q);
-                       if ($this->db()->is_error())
+                        . " WHERE `option_name`='$key' AND `user_id`='".$user_id."'";
+                    $self->db()->query($q);
+                       if ($self->db()->is_error())
                     {
-                        $errors[] = $this->db()->get_error();
+                        $errors[] = $self->db()->get_error();
                     }
                 }
             }
@@ -576,65 +623,65 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  mixed  $groups_list: an array or a comma seperated list of group-ids
          * @return bool   true if current user is member of one of this groups, otherwise false
          */
-        public function ami_group_member($groups_list = '')
+        public static function ami_group_member($groups_list = '')
         {
-            if ($this->get_user_id() == 1)
+            if (self::get_user_id() == 1)
             {
                 return true;
             }
-            return $this->is_group_match($groups_list, $this->get_groups_id());
+            return self::is_group_match($groups_list, self::get_groups_id());
         }
 
         // Get the current users id
-        public function get_user_id()
+        public static function get_user_id()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('USER_ID','numeric');
         }
 
         // Get the current users group id (deprecated)
-        public function get_group_id()
+        public static function get_group_id()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('GROUP_ID','numeric');
         }
 
         // Get the current users group ids
-        public function get_groups_id()
+        public static function get_groups_id()
         {
             return explode(",", isset($_SESSION['GROUPS_ID']) ? $_SESSION['GROUPS_ID'] : '');
         }
 
         // Get the current users group name
-        public function get_group_name()
+        public static function get_group_name()
         {
             return implode(",", $_SESSION['GROUP_NAME']);
         }
 
         // Get the current users group name
-        public function get_groups_name()
+        public static function get_groups_name()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('GROUP_NAME','scalar');
         }
 
         // Get the current users username
-        public function get_username()
+        public static function get_username()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('USERNAME','scalar');
         }
 
         // Get the current users display name
-        public function get_display_name()
+        public static function get_display_name()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('DISPLAY_NAME','scalar');
         }
 
         // Get the current users email address
-        public function get_email()
+        public static function get_email()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('EMAIL');
         }
 
         // Get the current users home folder
-        public function get_home_folder()
+        public static function get_home_folder()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('HOME_FOLDER');
         }
@@ -650,17 +697,21 @@ if ( ! class_exists( 'CAT_Users', false ) )
     	 * @param  bool   $insert_admin   (default: true)
     	 * @return void
     	 */
-    	public function get_groups( $viewing_groups = array() , $admin_groups = array(), $insert_admin = true )
+        public static function get_groups( $viewing_groups = array() , $admin_groups = array(), $insert_admin = true )
     	{
 
     		$groups				= false;
     		$viewing_groups		= is_array( $viewing_groups )	? $viewing_groups	: array( $viewing_groups );
     		$admin_groups		= is_array( $admin_groups )		? $admin_groups		: array( $viewing_groups );
+            $self           = self::getInstance();
 
             // ================
     		// ! Getting Groups
     		// ================
-            $get_groups = $this->db()->query("SELECT * FROM " . CAT_TABLE_PREFIX . "groups");
+            $get_groups = $self->db()->query(sprintf(
+                'SELECT * FROM `%sgroups`',
+                CAT_TABLE_PREFIX
+            ));
 
     		// ==============================================
     		// ! Insert admin group and current group first
@@ -698,7 +749,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
     				'VALUE'					=> $group['group_id'],
     				'NAME'					=> $group['name'],
     				'CHECKED'				=> is_numeric( array_search($group['group_id'], $viewing_groups) )	? true : false,
-    				'DISABLED'				=> in_array( $group["group_id"], $this->get_groups_id() )			? true : false,
+                    'DISABLED'                => in_array( $group["group_id"], self::get_groups_id() )            ? true : false,
     				'system_permissions'	=> array_flip( $system_permissions ),
     				'module_permissions'	=> array_flip( $module_permissions ),
     				'template_permissions'	=> array_flip( $template_permissions )
@@ -714,7 +765,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
     					'VALUE'					=> $group['group_id'],
     					'NAME'					=> $group['name'],
     					'CHECKED'				=> is_numeric( array_search($group['group_id'], $admin_groups) )	? true : false,
-    					'DISABLED'				=> in_array( $group["group_id"], $this->get_groups_id() )			? true : false,
+                        'DISABLED'                => in_array( $group["group_id"], self::get_groups_id() )            ? true : false,
     					'system_permissions'	=> array_flip( explode(',',$group['system_permissions']) ),
     					'module_permissions'	=> array_flip( explode(',',$group['module_permissions']) ),
     					'template_permissions'	=> array_flip( explode(',',$group['template_permissions']) )
@@ -733,7 +784,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
     	 * @param  string  $type
     	 * @return boolean
     	 **/
-    	public function get_permission($name, $type = 'system')
+        public static function get_permission($name, $type = 'system')
         {
     		// Append to permission type
     		$type .= '_permissions';
@@ -772,10 +823,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  integer $user_id
          * @return array
          **/
-    	public function get_user_details($user_id)
+        public static function get_user_details($user_id)
         {
-    		$query_user = "SELECT username,display_name FROM ".CAT_TABLE_PREFIX."users WHERE user_id = '$user_id'";
-            $get_user   = $this->db()->query($query_user);
+            $self     = self::getInstance();
+            $get_user = $self->db()->query(sprintf(
+                'SELECT username, display_name FROM `%susers` WHERE user_id=%d',
+                CAT_TABLE_PREFIX, $user_id
+            ));
     		if($get_user->numRows() != 0)
             {
     			$user = $get_user->fetchRow(MYSQL_ASSOC);
@@ -794,9 +848,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @access public
          * @return boolean
          **/
-        public function is_root()
+        public static function is_root()
         {
-            if ($this->get_user_id() == 1)
+            if (self::get_user_id() == 1)
                 return true;
             else
                 return false;
@@ -808,7 +862,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @access public
          * @return boolean
          **/
-        public function is_authenticated()
+        public static function is_authenticated()
         {
             $user_id = CAT_Helper_Validate::getInstance()->fromSession('USER_ID','numeric');
             if ($user_id)
@@ -825,7 +879,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  mixed   $groups_list2: an array or a coma seperated list of group-ids
          * @return boolean true there is a match, otherwise false
          */
-        public function is_group_match($groups_list1 = '', $groups_list2 = '')
+        public static function is_group_match($groups_list1 = '', $groups_list2 = '')
         {
             if ($groups_list1 == '')
             {
@@ -855,7 +909,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  integer  $length (default:10)
          * @return string
          **/
-        public function generateRandomString( $length = 10 ) {
+        public static function generateRandomString( $length = 10 ) {
             for(
                    $code_length = $length, $newcode = '';
                    strlen($newcode) < $code_length;
@@ -884,44 +938,44 @@ if ( ! class_exists( 'CAT_Users', false ) )
 		 * @return boolean
 		 *
 		 */
-	    public function validatePassword( $password, $allow_quotes = true, $strict = false )
+        public static function validatePassword( $password, $allow_quotes = true, $strict = false )
 	    {
 	        // check length
 	        if ( strlen($password) < AUTH_MIN_PASS_LENGTH )
 			{
-			    $this->validatePasswordError = $this->lang()->translate('The password is too short.');
+                self::$validatePasswordError = self::lang()->translate('The password is too short.');
 	            return false;
 	        }
 	        elseif ( strlen($password) > AUTH_MAX_PASS_LENGTH )
 			{
-			    $this->validatePasswordError = $this->lang()->translate('The password is too long.');
+                self::$validatePasswordError = self::lang()->translate('The password is too long.');
 				return false;
 	        }
 	        // any string that doesn't have control characters (ASCII 0 - 31) - spaces allowed
 	        if ( ! preg_match( '/^[^\x-\x1F]+$/D', $password, $match ) )
 	        {
-	            $this->validatePasswordError = $this->lang()->translate('Invalid password!');
+                self::$validatePasswordError = self::lang()->translate('Invalid password!');
 				return false;
 	        }
 	        else
 	        {
-	            $this->lastValidatedPassword = $match[0];
+                self::$lastValidatedPassword = $match[0];
 	        }
 	        if ( ! $allow_quotes )
 	        {
 	            // don't allow quotes in the PW!
 				if ( preg_match( '/(\%27)|(\')|(%2D%2D)|(\-\-)/i', $password ) )
 				{
-					$this->validatePasswordError = $this->lang()->translate('Invalid password!');
+                    self::$validatePasswordError = self::lang()->translate('Invalid password!');
 					return false;
 				}
 			}
 	        // check complexity
 	        if ( $strict )
 	        {
-	            if ( ! preg_match( $this->PCRE_PASSWORD, $password ) )
+                if ( ! preg_match( self::PCRE_PASSWORD, $password ) )
 	            {
-	                $this->validatePasswordError = $this->lang()->translate('The required password complexity is not met');
+                    self::$validatePasswordError = self::lang()->translate('The required password complexity is not met');
 					return false;
 	            }
 	        }
@@ -945,7 +999,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @return booelan
          *
          **/
-        public function validateUsername($username)
+        public static function validateUsername($username)
         {
             if ( CAT_Registry::exists('USERS_ALLOW_MAILADDRESS') )
                 $allow_mailaddress = CAT_Registry::get('USERS_ALLOW_MAILADDRESS');
@@ -967,14 +1021,14 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return true;
         }
         
-	    public function getPasswordError()
+        public static function getPasswordError()
 	    {
-	        return $this->validatePasswordError;
+            return self::validatePasswordError;
 	    }   // end function getPasswordError()
 	    
-	    public function getLastValidatedPassword()
+        public static function getLastValidatedPassword()
 	    {
-	        return $this->lastValidatedPassword;
+            return self::lastValidatedPassword;
 	    }
 	}
 

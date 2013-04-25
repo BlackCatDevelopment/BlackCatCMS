@@ -67,6 +67,6 @@ if($database->is_error()) {
 }
 
 // Print admin 
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

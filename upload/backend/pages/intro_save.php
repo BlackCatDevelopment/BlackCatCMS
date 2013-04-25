@@ -79,6 +79,6 @@ else
 }
 
 // Print admin footer
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

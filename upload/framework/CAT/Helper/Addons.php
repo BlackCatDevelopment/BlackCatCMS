@@ -34,7 +34,7 @@ if (!class_exists('CAT_Helper_Addons'))
     {
 
         private static $dirh;
-        private        $error = NULL;
+        private static $error = NULL;
         private static $instance = NULL;
         private static $states = array(
             '.0' => 'dev',
@@ -122,6 +122,14 @@ if (!class_exists('CAT_Helper_Addons'))
             self::$dirh = new CAT_Helper_Directory();
         }
 
+        public function __call($method, $args)
+        {
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
+        }
+
         public static function getInstance()
         {
             if (!self::$instance)
@@ -144,13 +152,14 @@ if (!class_exists('CAT_Helper_Addons'))
     	 * @param string $order       (default: 'name') - value to handle "ORDER BY" for database request of addons
     	 * @return array
     	 */
-    	public function get_addons( $selected = 1 , $type = '', $function = '' , $permissions = '' , $order = 'name' )
+    	public static function get_addons( $selected = 1 , $type = '', $function = '' , $permissions = '' , $order = 'name' )
     	{
-            global $database;
+            $self = self::getInstance();
 
     		$and				= '';
     		$get_type			= '';
     		$get_function		= '';
+            $where              = '';
 
     		if ( is_array($type) )
     		{
@@ -182,12 +191,14 @@ if (!class_exists('CAT_Helper_Addons'))
     			$get_function		= $and.'function = \''.htmlspecialchars( $function ).'\'';
     		}
 
+            if ( $get_type || $get_function ) $where = 'WHERE ';
+
     		// ==================
     		// ! Get all addons
     		// ==================
     		$addons_array = array();
 
-    		$addons = $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "addons WHERE ".$get_type.$get_function." ORDER BY ".htmlspecialchars( $order ) );
+    		$addons = $self->db()->query("SELECT * FROM " . CAT_TABLE_PREFIX . "addons ".$where.$get_type.$get_function." ORDER BY ".htmlspecialchars( $order ) );
     		if ( $addons->numRows() > 0 )
     		{
     			$counter = 1;
@@ -195,11 +206,13 @@ if (!class_exists('CAT_Helper_Addons'))
     			{
     				if ( ( is_array( $permissions ) && !is_numeric( array_search($addon['directory'], $permissions) ) ) || !is_array( $permissions ) )
     				{
-    					$addons_array[$counter]	= array(
+    					$addons_array[$counter]	= array_merge(
+                            $addon,
+                            array(
     						'VALUE'			=> $addon['directory'],
     						'NAME'			=> $addon['name'],
     						'SELECTED'		=> ( $selected == $counter || $selected == $addon['name'] || $selected == $addon['directory'] ) ? true : false,
-                            'DESCRIPTION'   => $addon['description']
+        					)
     					);
     					$counter++;
     				}
@@ -224,7 +237,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param string $module_directory
          * @return boolean true on success
          */
-        public function register_page_title($page_id, $module_name, $module_directory)
+        public static function register_page_title($page_id, $module_name, $module_directory)
         {
             return register_addon_header($page_id, $module_name, $module_directory, 'title');
         } // register_page_title()
@@ -237,7 +250,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param string $module_directory
          * @return boolean true on success
          */
-        public function unregister_page_title($page_id, $module_directory)
+        public static function unregister_page_title($page_id, $module_directory)
         {
             return unregister_addon_header($page_id, $module_directory, 'title');
         }
@@ -250,7 +263,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param string $module_directory
          * @return boolen on success
          */
-        public function is_registered_page_title($page_id, $module_directory)
+        public static function is_registered_page_title($page_id, $module_directory)
         {
             return is_registered_addon_header($page_id, $module_directory, 'title');
         }
@@ -271,7 +284,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param string $module_directory
          * @return boolean true on success
          */
-        public function register_page_description($page_id, $module_name, $module_directory)
+        public static function register_page_description($page_id, $module_name, $module_directory)
         {
             return register_addon_header($page_id, $module_name, $module_directory, 'description');
         } // register_page_description()
@@ -284,7 +297,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param string $module_directory
          * @return boolean true on success
          */
-        public function unregister_page_description($page_id, $module_directory)
+        public static function unregister_page_description($page_id, $module_directory)
         {
             return unregister_addon_header($page_id, $module_directory, 'description');
         }
@@ -297,7 +310,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param string $module_directory
          * @return boolen on success
          */
-        public function is_registered_page_description($page_id, $module_directory)
+        public static function is_registered_page_description($page_id, $module_directory)
         {
             return is_registered_addon_header($page_id, $module_directory, 'description');
         }
@@ -318,7 +331,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param string $module_directory
          * @return boolean true on success
          */
-        public function register_page_keywords($page_id, $module_name, $module_directory)
+        public static function register_page_keywords($page_id, $module_name, $module_directory)
         {
             return register_addon_header($page_id, $module_name, $module_directory, 'keywords');
         } // register_page_keywords()
@@ -331,7 +344,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param string $module_directory
          * @return boolean true on success
          */
-        public function unregister_page_keywords($page_id, $module_directory)
+        public static function unregister_page_keywords($page_id, $module_directory)
         {
             return unregister_addon_header($page_id, $module_directory, 'keywords');
         }
@@ -344,7 +357,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param string $module_directory
          * @return boolen on success
          */
-        public function is_registered_page_keywords($page_id, $module_directory)
+        public static function is_registered_page_keywords($page_id, $module_directory)
         {
             return is_registered_addon_header($page_id, $module_directory, 'keywords');
         }
@@ -355,7 +368,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param integer $page_id
          * @return boolean true on success
          */
-        public function get_page_title($page_id)
+        public static function get_page_title($page_id)
         {
             return get_addon_page_title($page_id);
         } // get_page_title()
@@ -366,7 +379,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param integer $page_id
          * @return boolean true on success
          */
-        public function get_page_description($page_id)
+        public static function get_page_description($page_id)
         {
             return get_addon_page_description($page_id);
         } // get_addon_page_description()
@@ -377,7 +390,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param integer $page_id
          * @return boolean true on success
          */
-        public function get_page_keywords($page_id)
+        public static function get_page_keywords($page_id)
         {
             return get_addon_page_keywords($page_id);
         } // get_addon_page_description()
@@ -393,7 +406,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param  boolean $delete_on_fail - delete $temp_addon_file if the checks fail; default: true
          * @param  boolean $always_return_result - by default, the function returns void on success. Set this to true to receive the result as HTML
          */
-        public function preCheckAddon($temp_addon_file, $temp_path = NULL, $delete_on_fail = true, $always_return_result = false)
+        public static function preCheckAddon($temp_addon_file, $temp_path = NULL, $delete_on_fail = true, $always_return_result = false)
         {
             global $parser, $database;
 
@@ -422,7 +435,7 @@ if (!class_exists('CAT_Helper_Addons'))
             }
 
             // sort precheck array
-            $PRECHECK      = $this->__sortPreCheckArray($PRECHECK);
+            $PRECHECK      = self::sortPreCheckArray($PRECHECK);
             $failed_checks = 0;
             $msg           = array();
 
@@ -436,78 +449,19 @@ if (!class_exists('CAT_Helper_Addons'))
                     case 'CAT_VERSION':
                     case 'WB_VERSION':
                     case 'LEPTON_VERSION':
-                        if (isset($value['VERSION']))
-                        {
-                            $this_version = CAT_VERSION;
-                            // obtain operator for string comparison if exist
-                            $operator = (isset($value['OPERATOR']) && trim($value['OPERATOR']) != '') ? $value['OPERATOR'] : '>=';
-                            // compare versions and extract actual status
-                            $status   = $this->versionCompare(CAT_VERSION, $value['VERSION'], $operator);
-                            $msg[]    = array(
-                                'check' => sprintf('CMS-%s: ', $this->lang()->translate('Version')),
-                                'required' => sprintf('%s %s', htmlentities($operator), $value['VERSION']),
-                                'actual' => $this_version,
-                                'status' => $status
-                            );
+                    case 'VERSION':
+                        list($status,$msg[]) = self::checkCMSVersion($key,$value);
                             // increase counter if required
                             if (!$status)
                                 $failed_checks++;
-                        }
                         break;
 
                     // check prerequisite modules
                     case 'CAT_ADDONS':
-                        if (is_array($PRECHECK['CAT_ADDONS']))
-                        {
-                            foreach ($PRECHECK['CAT_ADDONS'] as $addon => $values)
-                            {
-                                if (is_array($values))
-                                {
-                                    // extract module version and operator
-                                    $version  = (isset($values['VERSION']) && trim($values['VERSION']) != '') ? $values['VERSION'] : '';
-                                    $operator = (isset($values['OPERATOR']) && trim($values['OPERATOR']) != '') ? $values['OPERATOR'] : '>=';
-                                }
-                                else
-                                {
-                                    // no version and operator specified (only check if addon exists)
-                                    $addon    = strip_tags($values);
-                                    $version  = '';
-                                    $operator = '';
-                                }
-
-                                // check if addon is listed in WB database
-                                $table   = CAT_TABLE_PREFIX . 'addons';
-                                $sql     = "SELECT * FROM `$table` WHERE `directory` = '" . addslashes($addon) . "'";
-                                $results = $database->query($sql);
-
-                                $status       = false;
-                                $addon_status = $this->lang()->translate('Not installed');
-                                if ($results && $row = $results->fetchRow())
-                                {
-                                    $status       = true;
-                                    $addon_status = $this->lang()->translate('Installed');
-
-                                    // compare version if required
-                                    if ($version != '')
-                                    {
-                                        $status       = $this->versionCompare($row['version'], $version, $operator);
-                                        $addon_status = $row['version'];
-                                    }
-                                }
-
-                                // provide addon status
-                                $msg[] = array(
-                                    'check' => '&nbsp; ' . $this->lang()->translate('Addon') . ': ' . htmlentities($addon),
-                                    'required' => ($version != '') ? $operator . '&nbsp;' . $version : $this->lang()->translate('installed'),
-                                    'actual' => $addon_status,
-                                    'status' => $status
-                                );
-
-                                // increase counter if required
+                    case 'WB_ADDONS':
+                        list($status,$msg[]) = self::checkAddons($PRECHECK[$key]);
                                 if (!$status)
                                     $failed_checks++;
-                            }
-                        }
                         break;
 
                     // check required PHP version
@@ -518,9 +472,9 @@ if (!class_exists('CAT_Helper_Addons'))
                             $operator = (isset($value['OPERATOR']) && trim($value['OPERATOR']) != '') ? $value['OPERATOR'] : '>=';
 
                             // compare versions and extract actual status
-                            $status = $this->versionCompare(PHP_VERSION, $value['VERSION'], $operator);
+                            $status = self::versionCompare(PHP_VERSION, $value['VERSION'], $operator);
                             $msg[]  = array(
-                                'check' => 'PHP-' . $this->lang()->translate('Version'),
+                                'check' => 'PHP-' . self::getInstance()->lang()->translate('Version'),
                                 'required' => htmlentities($operator) . '&nbsp;' . $value['VERSION'],
                                 'actual' => PHP_VERSION,
                                 'status' => $status
@@ -541,9 +495,9 @@ if (!class_exists('CAT_Helper_Addons'))
                             {
                                 $status = extension_loaded(strtolower($extension));
                                 $msg[]  = array(
-                                    'check' => '&nbsp; ' . $this->lang()->translate('Extension') . ': ' . htmlentities($extension),
-                                    'required' => $this->lang()->translate('installed'),
-                                    'actual' => ($status) ? $this->lang()->translate('installed') : $this->lang()->translate('not_installed'),
+                                    'check' => '&nbsp; ' . self::getInstance()->lang()->translate('Extension') . ': ' . htmlentities($extension),
+                                    'required' => self::getInstance()->lang()->translate('installed'),
+                                    'actual' => ($status) ? self::getInstance()->lang()->translate('installed') : self::getInstance()->lang()->translate('not_installed'),
                                     'status' => $status
                                 );
 
@@ -629,8 +583,8 @@ if (!class_exists('CAT_Helper_Addons'))
 
             $parser->setPath(dirname(__FILE__) . '/templates/Addons');
             $output = $parser->get('summary.lte', array(
-                'heading' => ($failed_checks ? $this->lang()->translate('Precheck failed') : $this->lang()->translate('Precheck successful')),
-                'message' => ($failed_checks ? $this->lang()->translate('Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.') : ''),
+                'heading' => ($failed_checks ? self::getInstance()->lang()->translate('Precheck failed') : self::getInstance()->lang()->translate('Precheck successful')),
+                'message' => ($failed_checks ? self::getInstance()->lang()->translate('Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.') : ''),
                 'summary' => $summary,
                 'fail' => ($failed_checks ? true : false)
             ));
@@ -670,7 +624,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @return string
          *
          */
-        public function getVersion($version, $strip_suffix = true)
+        public static function getVersion($version, $strip_suffix = true)
         {
             // replace comma by decimal point
             $version = str_replace(',', '.', $version);
@@ -701,7 +655,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param  string  $version
          * @return string
          */
-        public function getVersion2($version)
+        public static function getVersion2($version)
         {
             $version = strtolower($version);
 
@@ -739,7 +693,7 @@ if (!class_exists('CAT_Helper_Addons'))
          */
         function versionCompare($version1, $version2, $operator = '>=')
         {
-            return version_compare($this->getVersion2($version1), $this->getVersion2($version2), $operator);
+            return version_compare(self::getVersion2($version1), self::getVersion2($version2), $operator);
         } // end versionCompare()
 
         /**
@@ -750,10 +704,10 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param  string  Any valid directory(-path)
          * @param  boolean Call the install-script of the module? Default: false
          **/
-        public function installModule($directory, $install = false)
+        public static function installModule($directory, $install = false)
         {
             global $database, $admin;
-            $this->log()->logDebug('module directory [' . $directory . '], install flag [' . $install . ']');
+            self::getInstance()->log()->logDebug('module directory [' . $directory . '], install flag [' . $install . ']');
             if (is_dir($directory) && file_exists($directory . "/info.php"))
             {
                 global $module_name, $module_license, $module_author, $module_directory, $module_version, $module_function, $module_description, $module_platform, $module_guid, $lepton_platform;
@@ -793,11 +747,11 @@ if (!class_exists('CAT_Helper_Addons'))
                     }
                     $sql .= $sqlwhere;
                     $database->query($sql);
-                    $this->log()->logDebug('SQL: ' . $sql);
+                    self::getInstance()->log()->logDebug('SQL: ' . $sql);
                     if ($database->is_error())
                     {
                         $admin->print_error($database->get_error());
-                        $this->log()->logDebug('database error: ' . $database->get_error());
+                        self::getInstance()->log()->logDebug('database error: ' . $database->get_error());
                     }
                     /**
                      *  Run installation script
@@ -807,14 +761,14 @@ if (!class_exists('CAT_Helper_Addons'))
                     {
                         if (file_exists($directory . '/install.php'))
                         {
-                            $this->log()->logDebug('require install.php');
+                            self::getInstance()->log()->logDebug('require install.php');
                             require($directory . '/install.php');
                         }
                     }
                 }
                 else
                 {
-                    $this->log()->logDebug('var $module_name not set, unable to install module');
+                    self::getInstance()->log()->logDebug('var $module_name not set, unable to install module');
                 }
             }
         } // end function installModule()
@@ -826,10 +780,10 @@ if (!class_exists('CAT_Helper_Addons'))
          * @access public
          * @param  string  Any valid directory(-path)
          **/
-        public function installTemplate($directory)
+        public static function installTemplate($directory)
         {
             global $database, $admin;
-            $this->log()->logDebug('template directory [' . $directory . ']');
+            self::getInstance()->log()->logDebug('template directory [' . $directory . ']');
             if (is_dir($directory) && file_exists($directory . '/info.php'))
             {
                 global $template_license, $template_directory, $template_author, $template_version, $template_function, $template_description, $template_platform, $template_name, $template_guid;
@@ -866,17 +820,17 @@ if (!class_exists('CAT_Helper_Addons'))
                         $sql .= ", `guid` = '' ";
                     }
                     $sql .= $sqlwhere;
-                    $this->log()->logDebug('SQL: ' . $sql);
+                    self::getInstance()->log()->logDebug('SQL: ' . $sql);
                     $database->query($sql);
                     if ($database->is_error())
                     {
                         $admin->print_error($database->get_error());
-                        $this->log()->logDebug('database error: ' . $database->get_error());
+                        self::getInstance()->log()->logDebug('database error: ' . $database->get_error());
                     }
                 }
                 else
                 {
-                    $this->log()->logDebug('var $module_name not set, unable to install module');
+                    self::getInstance()->log()->logDebug('var $module_name not set, unable to install module');
                 }
             }
         } // end function installTemplate()
@@ -889,7 +843,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @access public
          * @param  string  Any valid file(-path)
          **/
-        public function installLanguage($file)
+        public static function installLanguage($file)
         {
             global $database, $admin;
             if (file_exists($file) && preg_match('#^([A-Z]{2}.php)#', basename($file)))
@@ -934,7 +888,7 @@ if (!class_exists('CAT_Helper_Addons'))
                     if ($database->is_error())
                     {
                         $admin->print_error($database->get_error());
-                        $this->log()->logDebug('database error: ' . $database->get_error());
+                        self::getInstance()->log()->logDebug('database error: ' . $database->get_error());
                     }
                 }
             }
@@ -948,7 +902,7 @@ if (!class_exists('CAT_Helper_Addons'))
          *  @return string   the version as string, if not found returns null
          *
          */
-        public function getModuleVersion($modulename, $source = true)
+        public static function getModuleVersion($modulename, $source = true)
         {
             global $database;
             $version = null;
@@ -978,7 +932,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @access public
          * @param  string  Any valid file(-path)
          **/
-        public function upgradeModule($directory, $upgrade = false)
+        public static function upgradeModule($directory, $upgrade = false)
         {
             global $database, $admin;
             global $module_license, $module_author, $module_name, $module_directory, $module_version, $module_function, $module_guid, $module_description, $module_platform;
@@ -999,7 +953,7 @@ if (!class_exists('CAT_Helper_Addons'))
             if ($database->is_error())
             {
                 $admin->print_error($database->get_error());
-                $this->log()->logDebug('database error: ' . $database->get_error());
+                self::getInstance()->log()->logDebug('database error: ' . $database->get_error());
             }
         } // end function upgradeModule()
 
@@ -1011,7 +965,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param  string  $version - (optional) version to check (>=)
          * @return boolean
          **/
-        public function isModuleInstalled($module,$version=NULL)
+        public static function isModuleInstalled($module,$version=NULL)
         {
             global $database;
             $sql = 'SELECT * FROM `' . CAT_TABLE_PREFIX . 'addons` WHERE type="module" AND ( directory="'.$module.'" OR name="'.$module.'" )';
@@ -1023,7 +977,7 @@ if (!class_exists('CAT_Helper_Addons'))
             // note: if there's more than one, the first match will be returned!
             while ( $addon = $q->fetchRow( MYSQL_ASSOC ) )
 			{
-                if($version && $this->versionCompare($addon['version'],$version))
+                if($version && self::versionCompare($addon['version'],$version))
                 {
                     return true;
                 }
@@ -1051,7 +1005,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param  string  $module   - module name
          * @param  string  $filepath - relative file path
          **/
-        public function sec_register_file($module, $filepath)
+        public static function sec_register_file($module, $filepath)
         {
             global $database, $admin;
             // check for admin context
@@ -1098,49 +1052,13 @@ if (!class_exists('CAT_Helper_Addons'))
             }
         } // end function sec_register_file()
 
-
-        /**
-         * sort the $PRECHECK array by keys
-         *
-         * @access private
-         * @param  array
-         * @return array
-         *
-         **/
-        private function __sortPreCheckArray($precheck_array)
-        {
-            /**
-             * This funtion sorts the precheck array to a common format
-             */
-            // define desired precheck order
-            $key_order = array(
-                'CAT_VERSION',
-                'CAT_VERSION',
-                'CAT_ADDONS',
-                'PHP_VERSION',
-                'PHP_EXTENSIONS',
-                'PHP_SETTINGS',
-                'CUSTOM_CHECKS'
-            );
-
-            $temp_array = array();
-            foreach ($key_order as $key)
-            {
-                if (!isset($precheck_array[$key]))
-                    continue;
-                $temp_array[$key] = $precheck_array[$key];
-            }
-            return $temp_array;
-        } // end function __sortPreCheckArray()
-
-
         /**
          * This function is used to check info.php
          *
          * @access public
          * @param  string  Any valid directory(-path)
          **/
-        public function checkInfo($directory)
+        public static function checkInfo($directory)
         {
             if (is_dir($directory) && file_exists($directory . '/info.php'))
             {
@@ -1161,8 +1079,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 }
                 else
                 {
-                    $this->error = 'Invalid info.php - neither $module_function nor $template_function set';
-                    $this->log()->logDebug($this->error);
+                    self::$error = 'Invalid info.php - neither $module_function nor $template_function set';
+                    self::getInstance()->log()->logDebug(self::$error);
                     return false;
                 }
                 // Check if the file is valid
@@ -1170,8 +1088,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 {
                     if (!isset(${$varname}))
                     {
-                        $this->error = 'Invalid info.php - mandatory var ' . $varname . ' not set';
-                        $this->log()->logDebug($this->error);
+                        self::$error = 'Invalid info.php - mandatory var ' . $varname . ' not set';
+                        self::getInstance()->log()->logDebug(self::$error);
                         return false;
                     }
                     else
@@ -1187,8 +1105,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 $content = file_get_contents($directory);
                 if (strpos($content, '<?php') === false)
                 {
-                    $this->error = 'Invalid language file - missing PHP delimiter';
-                    $this->log()->logDebug($this->error);
+                    self::$error = 'Invalid language file - missing PHP delimiter';
+                    self::getInstance()->log()->logDebug(self::$error);
                     return false;
                 }
 
@@ -1201,8 +1119,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 {
                     if (!isset(${$varname}))
                     {
-                        $this->error = 'Invalid language file - var ' . $varname . ' not set';
-                        $this->log()->logDebug($this->error);
+                        self::$error = 'Invalid language file - var ' . $varname . ' not set';
+                        self::getInstance()->log()->logDebug(self::$error);
                         return false;
                     }
                     else
@@ -1214,15 +1132,15 @@ if (!class_exists('CAT_Helper_Addons'))
             }
             else
             {
-                $this->error = 'invalid directory/language file or info.php is missing, check of language file failed';
-                $this->log()->logDebug($this->error);
+                self::$error = 'invalid directory/language file or info.php is missing, check of language file failed';
+                self::getInstance()->log()->logDebug(self::$error);
                 return false;
             }
         } // end function checkInfo()
 
-        public function getError()
+        public static function getError()
         {
-            return $this->lang()->translate($this->error);
+            return self::getInstance()->lang()->translate(self::$error);
         }
 
         /**
@@ -1231,7 +1149,7 @@ if (!class_exists('CAT_Helper_Addons'))
          *
          *
          **/
-        public function getLibraries($type=NULL)
+        public static function getLibraries($type=NULL)
         {
             $dir  = self::$dirh->sanitizePath(CAT_PATH.'/modules');
             $libs = array();
@@ -1260,7 +1178,132 @@ if (!class_exists('CAT_Helper_Addons'))
                 closedir($handle);
             }
             return $libs;
+        }   // end function getLibraries()
+
+        /**
+         *
+         * @access private
+         * @return
+         **/
+        private static function checkAddons($addons) {
+            if (is_array($addons))
+            {
+                foreach ($addons as $addon => $values)
+                {
+                    if (is_array($values))
+                    {
+                        // extract module version and operator
+                        $version  = (isset($values['VERSION'])  && trim($values['VERSION']) != '')  ? $values['VERSION']  : '';
+                        $operator = (isset($values['OPERATOR']) && trim($values['OPERATOR']) != '') ? $values['OPERATOR'] : '>=';
+                    }
+                    else
+                    {
+                        // no version and operator specified (only check if addon exists)
+                        $addon    = strip_tags($values);
+                        $version  = '';
+                        $operator = '';
+                    }
+
+                    // defaults
+                    $inst_version = NULL;
+                    $status       = false;
+                    $addon_status = self::getInstance()->lang()->translate('Not installed');
+
+                    // check if addon is installed
+                    if(self::isModuleInstalled($addon))
+                    {
+                        $inst_version = self::getModuleVersion($addon);
+                        $status       = true;
+                        $addon_status = self::getInstance()->lang()->translate('Installed');
+                        // compare version if required
+                        if ($version != '')
+                        {
+                            $status       = self::versionCompare($inst_version, $version, $operator);
+                            $addon_status = $inst_version;
+                        }
+                    }
+
+                    // provide addon status
+                    $msg = array(
+                        'check'    => '&nbsp; ' . self::getInstance()->lang()->translate('Addon') . ': ' . htmlentities($addon),
+                        'required' => ($version != '') ? $operator . '&nbsp;' . $version : self::getInstance()->lang()->translate('installed'),
+                        'actual'   => $addon_status,
+                        'status'   => $status
+                    );
+                }
+                return array( $status, $msg );
+            }
+            return array( true, '' );
+        }   // end function checkAddons()
+        
+
+        /**
+         *
+         * @access private
+         * @param  array   $value -> 'VERSION' => x, 'OPERATOR' => y
+         * @return
+         **/
+        private static function checkCMSVersion($key, $value)
+        {
+            $check_version = $value['VERSION'];
+            switch($key) {
+                case 'WB_VERSION': // we support WB 2.8.3
+                    $this_version = '2.8.3';
+                    break;
+                case 'LEPTON_VERSION': // we support LEPTON 1.x
+                    $this_version = '1.2';
+                    break;
+                default:
+                    $this_version = CAT_VERSION;
+                    break;
+            }
+            // obtain operator for string comparison if exist
+            $operator = (isset($value['OPERATOR']) && trim($value['OPERATOR']) != '') ? $value['OPERATOR'] : '>=';
+            // compare versions and extract actual status
+            $status   = self::versionCompare($this_version, $value['VERSION'], $operator);
+            $msg      = array(
+                'check'    => sprintf('CMS-%s: ', self::getInstance()->lang()->translate('Version')),
+                'required' => sprintf('%s %s', htmlentities($operator), $value['VERSION']),
+                'actual'   => $this_version,
+                'status'   => $status
+            );
+            return array( $status, $msg );
+        }   // end function checkCMSVersion()
+        
+
+        /**
+         * sort the $PRECHECK array by keys
+         *
+         * @access private
+         * @param  array
+         * @return array
+         *
+         **/
+        private static function sortPreCheckArray($precheck_array)
+        {
+            /**
+             * This funtion sorts the precheck array to a common format
+             */
+            // define desired precheck order
+            $key_order = array(
+                'CAT_VERSION',
+                'CAT_VERSION',
+                'CAT_ADDONS',
+                'PHP_VERSION',
+                'PHP_EXTENSIONS',
+                'PHP_SETTINGS',
+                'CUSTOM_CHECKS'
+            );
+
+            $temp_array = array();
+            foreach ($key_order as $key)
+            {
+                if (!isset($precheck_array[$key]))
+                    continue;
+                $temp_array[$key] = $precheck_array[$key];
         }
+            return $temp_array;
+        } // end function sortPreCheckArray()
 
     } // class CAT_Helper_Addons
 

@@ -85,6 +85,6 @@ ob_clean(); // allow multiple buffering for csrf-magic
 $parser->output('backend_pages_intro.tpl', $data_dwoo);
 
 // Print admin footer
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

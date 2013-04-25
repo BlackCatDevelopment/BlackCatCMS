@@ -56,31 +56,44 @@ if (!class_exists('CAT_Registry', false))
         }   // end function getInstance()
 
         /**
-         * register globally stored data
+         * check if $key is defined; same as exists() but similar to defined(CONSTANT)
          *
          * @access public
          * @param  string  $key
-         * @param  mixed   $value
-         * @param  boolean $as_const - use define() to set as constant;
-         *                             default: false
+         * @return boolean
          **/
-        public static function register( $key, $value = NULL, $as_const = false )
+        public static function defined($key)
         {
-            if ( ! is_array($key) )
+            return self::exists($key);
+        }   // end function defined()
+
+        /**
+         * dump all; this is for debugging only as it uses var_dump()
+         *
+         * @access public
+         * @return void
+         **/
+        public static function dump()
         {
-            self::$REGISTRY[$key] = $value;
-                // we deliberately do not catch errors here!
-            if($as_const) define($key,$value);
+            var_dump(self::$REGISTRY);
             }
-            else
+
+        /**
+         * check if a global var exists; same as defined()
+         *
+         * @access public
+         * @param  string  $key
+         * @return boolean
+         *
+         **/
+        public static function exists($key)
             {
-                foreach ( $key as $name => $value )
+            if(isset(self::$REGISTRY[$key]))
                 {
-                    self::$REGISTRY[$name] = $value;
-                    if($as_const) define($name,$value);
+                return true;
                 }
-            }
-        }   // end function register()
+            return false;
+        }   // end function exists()
 
         /**
          * get globally stored data
@@ -89,45 +102,67 @@ if (!class_exists('CAT_Registry', false))
          * @param  string  $key
          * @param  string  $require - function to check value with
          *                            i.e. 'array' => is_array()
+         * @param  mixed   $default - default value to return if the key is not found
          **/
-        public static function get( $key, $require = NULL )
+        public static function get( $key, $require=NULL, $default=NULL )
         {
+            $return_value = NULL;
             if(isset(self::$REGISTRY[$key]))
             {
                 if($require)
                 {
-                    $value = CAT_Helper_Validate::check(self::$REGISTRY[$key],$require);
-                    return ( $value )
-                        ? $value
-                        : ( $require == 'array' ? array() : NULL );
+                    $return_value = CAT_Helper_Validate::check(self::$REGISTRY[$key],$require);
                 }
                 else
                 {
-                    return self::$REGISTRY[$key];
+                    $return_value = self::$REGISTRY[$key];
                 }
             }
-            else
+            if(!$return_value)
             {
-                return ( $require == 'array' ? array() : NULL );
+                if($require && $require == 'array')
+                    if($default && is_array($default))
+                        return $default;
+            else
+                        return array();
+                return NULL;
             }
+            return $return_value;
         }   // end function get()
 
         /**
-         * check if a global var exists
+         * register globally stored data
          *
          * @access public
          * @param  string  $key
-         * @return boolean
-         *
+         * @param  mixed   $value
+         * @param  boolean $as_const - use define() to set as constant; this is for backward compatibility as WB works with global constants very much
+         *                             default: false
          **/
-        public static function exists($key)
+        public static function register( $key, $value=NULL, $as_const=false )
         {
-            if(isset(self::$REGISTRY[$key]))
+            if ( ! is_array($key) )
             {
-                return true;
+                self::$REGISTRY[$key] = $value;
+                // we deliberately do not catch errors here!
+                if($as_const) define($key,$value);
             }
-            return false;
-        }   // end function exists()
+            else
+        {
+                foreach ( $key as $name => $value )
+            {
+                    self::$REGISTRY[$name] = $value;
+                    if($as_const) define($name,$value);
+                }
+            }
+        }   // end function register()
 
+        /**
+         * same as register(), just shorter
+         **/
+        public static function set($key,$value=NULL,$as_const=false)
+        {
+            return self::register($key,$value,$as_const);
+        }   // end function set()
     }
 }
