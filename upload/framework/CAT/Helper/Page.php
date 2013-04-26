@@ -37,6 +37,7 @@ if (!class_exists('CAT_Helper_Page'))
         private static $space               = '    '; // space before header items
         private static $pages               = array();
         private static $pages_by_visibility = array();
+        private static $pages_by_parent     = array();
         private static $pages_by_id         = array();
         private static $pages_sections      = array();
 
@@ -101,18 +102,48 @@ if (!class_exists('CAT_Helper_Page'))
                 ));
                 if( $result && $result->numRows()>0 )
                 {
+                    $children_count = array();
                     while ( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
                     {
+                        $row['children']  = 0;
+                        $row['is_parent'] = false;
+                        $row['editable']  = false;
+
+                        // mark editable pages by checking user perms and page
+                        // visibility
+// --------------------- NOT READY YET! ----------------------------------------
+        				if ( CAT_Users::getInstance()->ami_group_member($row['admin_groups']) )
+        				{
+                            if ( CAT_Registry::get('PAGE_TRASH') != 'inline' || $row['visibility'] != 'deleted' )
+                            {
+                                $row['editable'] = true;
+                            }
+        				}
+// --------------------- NOT READY YET! ----------------------------------------
+
                         self::$pages[] = $row;
+
+                        // count children; this lets us mark pages that have
+                        // children later
+                        if(!isset($children_count[$row['parent']]))
+                            $children_count[$row['parent']] = 1;
+                        else
+                            $children_count[$row['parent']]++;
+
+                        // get last element
                         end(self::$pages);
                         $key = key(self::$pages);
                         reset(self::$pages);
 
+                        // add element to visibility array
                         self::$pages_by_visibility[$row['visibility']][]
                             =& self::$pages[$key];
+
+                        // add element to id array
                         self::$pages_by_id[$row['page_id']]
                             =& self::$pages[$key];
-                        // get active sections
+
+                        // get active sections (count)
                         $sec = self::getInstance()->db()->query(sprintf(
                               'SELECT COUNT(*) FROM `%ssections` '
                             . 'WHERE ( "%s" BETWEEN `publ_start` AND `publ_end`) OR '
@@ -122,6 +153,15 @@ if (!class_exists('CAT_Helper_Page'))
                         ));
                         self::$pages_sections[$row['page_id']]
                             = ( $sec ? $sec->numRows() : 0 );
+
+                    }
+                    foreach(self::$pages as $i => $page)
+                    {
+                        if(isset($children_count[$page['page_id']]))
+                        {
+                            self::$pages[$i]['children']  = $children_count[$page['page_id']];
+                            self::$pages[$i]['is_parent'] = true;
+                        }
                     }
                 }
             }
@@ -616,6 +656,26 @@ if (!class_exists('CAT_Helper_Page'))
             if(!count(self::$pages)) self::getInstance();
             return self::$pages;
         }   // end function getPages()
+
+        /**
+         *
+         *
+         *
+         *
+         **/
+    	public static function getPagesByParent( $parent = 0 , $add_sections = false )
+    	{
+            if(!count(self::$pages_by_parent))
+            {
+                $pages = self::getPages();
+                foreach($pages as &$page)
+                {
+                    $page['sections'] = self::$pages_sections[$page['page_id']];
+                    self::$pages_by_parent[$page['parent']][] = $page;
+                }
+            }
+    		return self::$pages_by_parent[$parent];
+    	}   // end function getPagesByParent()
         
         /**
          * returns pages by visibility array

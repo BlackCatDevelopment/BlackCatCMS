@@ -236,7 +236,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                                . "<span>$text</span>";
                         // open sub list
                         $output[] = $tab . "\t" . $self->startUL( $space, '', $option['value'][$level_key] );
-                        $output[] = $option['value'][$id_key];
+                        #$output[] = '-'.$option['value'][$id_key].'-';
                     }
                     array_push( $parent_stack, $option['value'][$p_key] );
                     $parent = $option['value'][$id_key];

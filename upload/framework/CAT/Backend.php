@@ -122,15 +122,25 @@ if (!class_exists('CAT_Backend', false))
                 // ==========================
                 // ! Get info for pagesTree
                 // ==========================
+                $pages = CAT_Helper_Page::getPages();
+                // create LI content for ListBuilder
+                foreach($pages as $i => $page)
+                {
+    $text = $parser->get('backend_pagetree_item',$page);
+    $pages[$i]['text'] = $text;
+                }
+
                 // list of first level of pages
                 $tpl_data['pages']          = CAT_Helper_ListBuilder::getInstance()->config(array(
                     '__li_level_css'       => true,
                     '__li_id_prefix'       => 'pageid_',
                     '__li_css_prefix'      => 'fc_page_',
-                    '__li_has_child_class' => 'fc_expandable'
+                    '__li_has_child_class' => 'fc_expandable',
+                    '__title_key'          => 'text',
                 ))->tree( CAT_Helper_Page::getPages(), 0 );
+                // todo: count editables first
                 $tpl_data['pages_editable'] = true;
-                #$tpl_data['pages_editable'] = $this->pg->pages_editable;
+
 
                 // ==========================================
                 // ! Get info for the form to add new pages
@@ -280,7 +290,7 @@ if (!class_exists('CAT_Backend', false))
             // ====================
             // ! Parse the header
             // ====================
-            $parser->output('header.lte', $tpl_data);
+            $parser->output('header', $tpl_data);
 
         } // end function print_header()
 
