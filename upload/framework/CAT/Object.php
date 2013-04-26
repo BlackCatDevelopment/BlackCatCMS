@@ -36,12 +36,10 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 
 	class CAT_Object
 	{
-	
-	    protected $debugLevel      = 8; // 8 = OFF
 	    // array to store config options
         protected $_config         = array( 'loglevel' => 8 );
         // Language helper object handle
-        protected $lang;
+        protected static $lang;
         // database handle
         protected $db;
         // KLogger object handle
@@ -78,13 +76,21 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 		
 		public function __destruct() {}
 		
-		public function lang()
+        public function __call($method, $args)
 		{
-            if ( ! is_object($this->lang) )
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
+        }
+        
+        public static function lang()
             {
-                $this->lang = CAT_Helper_I18n::getInstance(CAT_Registry::get('LANGUAGE',NULL,'EN'));
+            if ( ! is_object(CAT_Object::$lang) )
+            {
+                CAT_Object::$lang = CAT_Helper_I18n::getInstance(CAT_Registry::get('LANGUAGE',NULL,'EN'));
 		}
-            return $this->lang;
+            return CAT_Object::$lang;
         }   // end function lang()
 		
 		/**
@@ -140,10 +146,11 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          *
          * @access public
          * @param  string  $message - error message
+         * @param  string  $link    - page to forward to
          * @param  mixed   $args - additional args to print
          *
          **/
-        public function printError( $message = NULL, $link = 'index.php', $args = NULL ) {
+        public static function printError( $message = NULL, $link = 'index.php', $args = NULL ) {
             $print_footer = false;
             $caller       = debug_backtrace();
             // remove first item (it's the printError() method itself)
@@ -160,10 +167,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
     			$message = implode("<br />", $message);
     		}
 
-            if ( is_object($this) )
-            {
-                $message = $this->lang()->translate($message);
-            }
+            $message = CAT_Object::lang()->translate($message);
 
             // avoid "headers already sent" error
             if ( ! headers_sent() ) {
@@ -199,10 +203,11 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             {
                 $parser->setPath(sanitize_path(CAT_PATH.'/templates/'.TEMPLATE.'/templates/default'));
                 $parser->setFallbackPath(CAT_THEME_PATH.'/templates/default');
-				$parser->output('error.tpl', array('MESSAGE'=>$message,'LINK'=>$link));
+                $parser->output('error', array('MESSAGE'=>$message,'LINK'=>$link));
             }
 
-            if ( $args ) {
+            if ( $args )
+            {
                 $dump = print_r( $args, 1 );
                 $dump = preg_replace( "/\r?\n/", "\n          ", $dump );
                 echo "<br />\n";
@@ -223,14 +228,14 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                  ( ( isset($caller[1]) && isset($caller[1]['function']) ) ? $caller[1]['function'] : '-' ),
                  " ]</span><br />\n";
 
-            if ( $this->debugLevel == self::DEBUG ) {
-                echo "<h2>Debug backtrace:</h2>\n",
-                     "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
-                print_r( $caller );
-                echo "</textarea>";
-            }
+            #if ( $this->debugLevel == self::DEBUG ) {
+            #    echo "<h2>Debug backtrace:</h2>\n",
+            #         "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
+            #    print_r( $caller );
+            #    echo "</textarea>";
+            #}
 
-            echo "  </div>\n</div><!-- id=\"leperror\" -->\n";
+            echo "  </div>\n</div>\n";
 
             if ( $print_footer ) {
                 echo "</body></html>\n";
@@ -242,7 +247,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
         {
             echo $message;
             exit;
-        }
+        }   // end function fatalError()
 
         
         /**
@@ -254,43 +259,50 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          *
          **/
 		public function printFatalError( $message = NULL, $args = NULL ) {
-		    $this->printError( $message, $args );
+            CAT_Object::printError( $message, $args );
 		    exit;
 		}   // end function printFatalError()
 
         /**
-         * sanitize path (remove '/./', '/../', '//')
+         *  Print a success message and redirect the user to another page
          *
          * @access public
-         * @param  string  $path - path to sanitize
-         * @return string
-         *
-         **/
-        public function sanitizePath( $path )
+         *  @param  mixed   $message     - message string or an array with a couple of messages
+         *  @param  string  $redirect    - redirect url; default is "index.php"
+         *  @param  boolean $auto_footer - optional flag to 'print' the footer. Default is true.
+         *  @return void    exit()s
+         */
+    	public function printMsg($message, $redirect = 'index.php', $auto_footer = true)
         {
-			$path       = str_replace( '\\', '/', $path );
-            $path       = preg_replace('~/\./~', '/', $path); // bla/./bloo ==> bla/bloo
-            // resolve /../
-            // loop through all the parts, popping whenever there's a .., pushing otherwise.
-            $parts      = array();
-            foreach ( explode('/', preg_replace('~/+~', '/', $path)) as $part )
+    		global $parser;
+
+    		if (true === is_array($message)){
+    			$message = implode("<br />", $message);
+    		}
+
+    		$parser->setPath(CAT_THEME_PATH . '/templates');
+    		$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
+
+    		$data_dwoo['MESSAGE']			= $this->lang()->translate($message);
+    		$data_dwoo['REDIRECT']			= $redirect;
+    		$data_dwoo['REDIRECT_TIMER']	= REDIRECT_TIMER;
+
+    		// ====================
+    		// ! Parse the header
+    		// ====================
+    		$parser->output('success', $data_dwoo);
+
+    		if ($auto_footer == true)
             {
-                if ($part === ".." || $part == '')
+    			if (method_exists($this, "print_footer"))
                 {
-                    array_pop($parts);
+    				$this->print_footer();
                 }
-                elseif ($part!="")
-                {
-                    $parts[] = $part;
                 }
-            }
-            $new_path = implode("/", $parts);
-            // windows
-            if ( ! preg_match( '/^[a-z]\:/i', $new_path ) ) {
-				$new_path = '/' . $new_path;
-			}
-            return $new_path;
-        }   // end function sanitizePath()
+    		exit();
+    	}   // end function printMsg()
+
+
         
 /*******************************************************************************
  * LOGGING / DEBUGGING

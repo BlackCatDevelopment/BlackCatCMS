@@ -31,13 +31,13 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	class CAT_Helper_Directory extends CAT_Object
 	{
 	
-	    protected $recurse = true;
-        protected $max_recursion_depth = 100;
-	    protected $prefix  = NULL;
-	    protected $suffix_filter = array();
-	    protected $skip_dirs     = array();
-        protected $skip_files    = array();
-        protected $current_depth       = 0;
+	    protected static $recurse = true;
+        protected static $max_recursion_depth = 100;
+	    protected static $prefix  = NULL;
+	    protected static $suffix_filter = array();
+	    protected static $skip_dirs     = array();
+        protected static $skip_files    = array();
+        protected static $current_depth = 0;
 
         private static $instance;
 
@@ -60,6 +60,14 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             return self::$instance;
         }
 	    
+        public function __call($method, $args)
+        {
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
+        }
+	    
         /**
          * find file with given name; returns file path if found, false if not
          *
@@ -68,9 +76,9 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          * @param  string  $dir  - directory to scan
          * @return mixed
          **/
-        public function findFile( $file, $dir, $ignore_suffix = false )
+        public static function findFile( $file, $dir, $ignore_suffix = false )
         {
-            $list = $this->scanDirectory( $dir, true, true );
+            $list = self::scanDirectory( $dir, true, true );
             // sort list
             sort($list);
             foreach($list as $entry)
@@ -95,9 +103,9 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          *
          *
          **/
-        public function findFiles( $pattern, $dir, $remove_dir = false )
+        public static function findFiles( $pattern, $dir, $remove_dir = false )
         {
-            $list  = $this->scanDirectory( $dir, true, true );
+            $list  = self::scanDirectory( $dir, true, true );
             $files = array();
             // sort list
             sort($list);
@@ -116,7 +124,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	    /**
          *
          **/
-        public function getMode($for='file')
+        public static function getMode($for='file')
         {
             $mode = NULL;
             if (OPERATING_SYSTEM != 'windows')
@@ -135,33 +143,33 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	    /**
 	     * shortcut method for scanDirectory( $dir, $remove_prefix, true, true )
 	     **/
-		public function getFiles( $dir, $remove_prefix = NULL )
+		public static function getFiles( $dir, $remove_prefix = NULL )
 		{
-		    return $this->scanDirectory( $dir, true, true, $remove_prefix );
+		    return self::scanDirectory( $dir, true, true, $remove_prefix );
 		}   // end function getFiles()
 		
 		/**
 	     * shortcut method for scanDirectory( $dir, $remove_prefix, false, false )
 	     **/
-		public function getDirectories( $dir, $remove_prefix = NULL )
+		public static function getDirectories( $dir, $remove_prefix = NULL )
 		{
-		    return $this->scanDirectory( $dir, false, false, $remove_prefix );
+		    return self::scanDirectory( $dir, false, false, $remove_prefix );
 		}   // end function getFiles()
 		
 	    /**
 	     * shortcut method for scanDirectory( $dir, $remove_prefix, true, true, array('php') )
 	     **/
-		public function getPHPFiles( $dir, $remove_prefix = NULL )
+		public static function getPHPFiles( $dir, $remove_prefix = NULL )
 		{
-		    return $this->scanDirectory( $dir, true, true, $remove_prefix, array('php') );
+		    return self::scanDirectory( $dir, true, true, $remove_prefix, array('php') );
 		}   // end function getPHPFiles()
 
 		/**
 	     * shortcut method for scanDirectory( $dir, $remove_prefix, true, true, array('lte','htt','tpl') )
 	     **/
-		public function getTemplateFiles( $dir, $remove_prefix = NULL )
+		public static function getTemplateFiles( $dir, $remove_prefix = NULL )
 		{
-		    return $this->scanDirectory( $dir, true, true, $remove_prefix, array('lte','htt','tpl') );
+		    return self::scanDirectory( $dir, true, true, $remove_prefix, array('lte','htt','tpl') );
 		}   // end function getTemplateFiles()
 
 		/**
@@ -171,7 +179,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          * @param  integer $bytes
          * @return string
          **/
-        public function byte_convert($bytes)
+        public static function byte_convert($bytes)
         {
         	$symbol = array(' bytes', ' KB', ' MB', ' GB', ' TB');
         	$exp = 0;
@@ -192,7 +200,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          * @param  boolean $convert - call byte_convert(); default: false
          * @return string
          **/
-        public function getSize($file,$convert=false)
+        public static function getSize($file,$convert=false)
         {
             if(is_dir($file)) return false;
         	$size = filesize($file);
@@ -204,7 +212,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         		$f = $fsobj->GetFile($file);
         		$size = $file->Size;
         	}
-            if($size && $convert) $size = $this->byte_convert($size);
+            if($size && $convert) $size = self::byte_convert($size);
         	return $size;
         }   // end function getSize()
 
@@ -215,7 +223,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		 * @param  string  $path - path to fix
 		 * @return string
 		 **/
-		public function sanitizePath( $path )
+		public static function sanitizePath( $path )
 		{
 		
 		    // remove / at end of string; this will make sanitizePath fail otherwise!
@@ -278,7 +286,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		 *     => result is /to/subdir1, /to/subdir2, ...
 		 *
 		 **/
-		function scanDirectory( $dir, $with_files = false, $files_only = false, $remove_prefix = NULL, $suffixes = array(), $skip_dirs = array(), $skip_files = array() ) {
+		public static function scanDirectory( $dir, $with_files = false, $files_only = false, $remove_prefix = NULL, $suffixes = array(), $skip_dirs = array(), $skip_files = array() ) {
 
 			$dirs = array();
 
@@ -286,31 +294,31 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             if ( $suffixes && is_scalar($suffixes) ) {
                 $suffixes = array( $suffixes );
 			}
-			if ( ! count($suffixes) && count( $this->suffix_filter ) ) {
-			    $suffixes = $this->suffix_filter;
+			if ( ! count($suffixes) && count( self::$suffix_filter ) ) {
+			    $suffixes = self::$suffix_filter;
 			}
 			// make sure $skip_dirs is an array
 			if ( $skip_dirs && is_scalar($skip_dirs) ) {
 			    $skip_dirs = array( $skip_dirs );
 			}
-			if ( ! count($skip_dirs) && count( $this->skip_dirs ) )
+			if ( ! count($skip_dirs) && count( self::$skip_dirs ) )
 			{
-			    $skip_dirs = $this->skip_dirs;
+			    $skip_dirs = self::$skip_dirs;
 			}
             // same for $skip_files
             if ( $skip_files && is_scalar($skip_files) ) {
 			    $skip_files = array( $skip_files );
 			}
-			if ( ! count($skip_files) && count( $this->skip_files ) )
+			if ( ! count($skip_files) && count( self::$skip_files ) )
 			{
-			    $skip_files = $this->skip_files;
+			    $skip_files = self::$skip_files;
 			}
-			if ( ! $remove_prefix && $this->prefix )
+			if ( ! $remove_prefix && self::$prefix )
 			{
-			    $remove_prefix = $this->prefix;
+			    $remove_prefix = self::$prefix;
 			}
 
-            if ( $this->current_depth > $this->max_recursion_depth ) { return array(); }
+            if ( self::$current_depth > self::$max_recursion_depth ) { return array(); }
 
 			if (false !== ($dh = opendir( $dir ))) {
                 while( false !== ($file = readdir($dh))) {
@@ -327,13 +335,13 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                             if ( ! $files_only ) {
                                 $dirs[]  = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
                             }
-                            if ( $this->recurse )
+                            if ( self::$recurse )
                             {
                             	// recurse
-                                $this->current_depth++;
-                            	$subdirs = $this->scanDirectory( $dir.'/'.$file, $with_files, $files_only, $remove_prefix, $suffixes, $skip_dirs, $skip_files );
+                                self::$current_depth++;
+                            	$subdirs = self::scanDirectory( $dir.'/'.$file, $with_files, $files_only, $remove_prefix, $suffixes, $skip_dirs, $skip_files );
                             	$dirs    = array_merge( $dirs, $subdirs );
-                                $this->current_depth--;
+                                self::$current_depth--;
 							}
                         }
                         elseif ( $with_files ) {
@@ -351,54 +359,51 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		/**
 		 *
 		 **/
-		public function setPrefix( $prefix )
+		public static function setPrefix( $prefix )
 		{
 		    if ( is_scalar($prefix) )
 		    {
-		        $this->prefix = $prefix;
+		        self::$prefix = $prefix;
 		        return;
 			}
 			// reset
 			if ( is_null($prefix) )
 			{
-			    $this->prefix = NULL;
+			    self::$prefix = NULL;
 			}
-            return $this;
 		}   // end function setPrefix()
 
         /**
          *
          **/
-		public function setRecursion( $bool )
+		public static function setRecursion( $bool )
 		{
 		    if ( is_bool($bool) )
 		    {
-		        $this->recurse = $bool;
+		        self::$recurse = $bool;
 			}
-            return $this;
 		}   // end function setRecursion()
 
         /**
          *
          **/
-		public function maxRecursionDepth( $number = 100 )
+		public static function maxRecursionDepth( $number = 100 )
 		{
 		    if ( is_numeric($number) )
 		    {
-		        $this->max_recursion_depth = $number;
+		        self::$max_recursion_depth = $number;
 			}
-            return $this;
 		}   // end function setRecursion()
 
         /**
          *
          **/
-        public function setSkipFiles($files)
+        public static function setSkipFiles($files)
         {
             // reset
 		    if ( is_null( $files ) )
 		    {
-		        $this->skip_files = array();
+		        self::$skip_files = array();
 		        return;
 			}
 		    // make sure $dirs is an array
@@ -407,20 +412,19 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			}
 			if ( is_array($files) )
 			{
-			    $this->skip_files = $files;
+			    self::$skip_files = $files;
 			}
-            return $this;
         }   // end function setSkipFiles()
 		
 		/**
 		 *
 		 **/
-		public function setSkipDirs( $dirs )
+		public static function setSkipDirs( $dirs )
 		{
 		    // reset
 		    if ( is_null( $dirs ) )
 		    {
-		        $this->skip_dirs = array();
+		        self::$skip_dirs = array();
 		        return;
 			}
 		    // make sure $dirs is an array
@@ -429,20 +433,19 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			}
 			if ( is_array($dirs) )
 			{
-			    $this->skip_dirs = $dirs;
+			    self::$skip_dirs = $dirs;
 			}
-            return $this;
 		}   // end function setSkipDirs()
 		
 		/**
 		 *
 		 **/
-		public function setSuffixFilter( $suffixes )
+		public static function setSuffixFilter( $suffixes )
 		{
 		    // reset
 		    if ( is_null( $suffixes ) )
 		    {
-		        $this->suffix_filter = array();
+		        self::$suffix_filter = array();
 		        return;
 			}
 		    // make sure $suffixes is an array
@@ -451,9 +454,8 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			}
 			if ( is_array($suffixes) )
 			{
-			    $this->suffix_filter = $suffixes;
+			    self::$suffix_filter = $suffixes;
 			}
-            return $this;
 		}   // end function setSuffixFilter()
 		
 		/**
@@ -464,7 +466,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		 * @return void
 		 *
 		 **/
-        public function setReadOnly($item)
+        public static function setReadOnly($item)
 	    {
 	        // Only chmod if os is not windows
 	        if (OPERATING_SYSTEM != 'windows')
@@ -486,7 +488,6 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	        {
 	            return true;
 	        }
-            return $this;
 	    }   // function setReadOnly()
 	    
         /**
@@ -497,7 +498,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          * @return void
          *
          **/
-        public function recursiveCreateIndex( $dir )
+        public static function recursiveCreateIndex( $dir )
         {
             if ( $handle = opendir($dir) )
             {
@@ -505,7 +506,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                 {
                     $fh = fopen( $dir.'/index.php', 'w' );
                     fwrite( $fh, '<' . '?' . 'php' . "\n" );
-        	        fwrite( $fh, $this->_class_secure_code() );
+        	        fwrite( $fh, self::_class_secure_code() );
         	        fclose( $fh );
                 }
 
@@ -515,7 +516,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                     {
                         if( is_dir( $dir.'/'.$file ) )
                         {
-                            $this->recursiveCreateIndex( $dir.'/'.$file );
+                            self::recursiveCreateIndex( $dir.'/'.$file );
                         }
                     }
                 }
@@ -525,7 +526,6 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             else {
                 return false;
             }
-            return $this;
         }   // end function recursiveCreateIndex()
 
 
@@ -538,8 +538,8 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		 * @return boolean result of operation
 		 *
 		 * @todo ---check for valid dir name---
-		  */
-		function createDirectory( $dir_name, $dir_mode = OCTAL_DIR_MODE, $createIndex = false )
+		 **/
+		public static function createDirectory( $dir_name, $dir_mode = OCTAL_DIR_MODE, $createIndex = false )
 		{
 		     if ( $dir_name != '' && !is_dir($dir_name) )
 		     {
@@ -548,7 +548,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		         umask($umask);
 		         if ( $createIndex )
 		         {
-			         $this->recursiveCreateIndex( $dir_name );
+			         self::recursiveCreateIndex( $dir_name );
 		         }
 		         return true;
 		     }
@@ -563,7 +563,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		 * @return boolean
 		 *
 		 **/
-	    public function removeDirectory($directory)
+	    public static function removeDirectory($directory)
 	    {
 	        // If suplied dirname is a file then unlink it
 	        if (is_file($directory))
@@ -584,7 +584,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	                // recursive delete
 	                if (is_dir($directory . '/' . $entry))
 	                {
-	                    $this->removeDirectory($directory . '/' . $entry);
+	                    self::removeDirectory($directory . '/' . $entry);
 	                }
 	                else
 	                {
@@ -605,9 +605,9 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          * @param  string  $directory
          * @return void
          **/
-        public function setPerms($item)
+        public static function setPerms($item)
         {
-            $mode  = $this->getMode();
+            $mode  = self::getMode();
             if ( $mode === NULL ) return;
 
             $umask = umask(0);
@@ -615,7 +615,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             {
                 if ( file_exists($item) )
                 {
-                    chmod($name, $this->getMode());
+                    chmod($name, self::getMode());
                     umask($umask);
                 }
             }
@@ -626,8 +626,8 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                 {
                     if (!preg_match('~^.~',$entry) && is_dir("$directory/$entry"))
                     {
-                        chmod("$directory/$entry",$this->getMode('directory'));
-                        $this->setPerms($directory . '/' . $entry);
+                        chmod("$directory/$entry",self::getMode('directory'));
+                        self::setPerms($directory . '/' . $entry);
                     }
                 }
                 $dir->close();
@@ -645,7 +645,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	     * @return boolean
 	     *
 	     **/
-		public function is_world_writable($directory)
+		public static function is_world_writable($directory)
 		{
 		    if ( ! is_dir( $directory ) )
 		    {
@@ -660,7 +660,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		 *
 		 *
 		 **/
-		private function _class_secure_code()
+		private static function _class_secure_code()
 		{
 			return "
 // include class.secure.php to protect this file and the whole CMS!

@@ -2,14 +2,12 @@
  * This file is part of Black Cat CMS Core, released under the GNU GPL
  * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
- *
- * @author		  LEPTON Project
- * @copyright	   2012, LEPTON Project
- * @link			http://www.LEPTON-cms.org
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license		 http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ *   @category        CAT_Core
+ *   @package         freshcat
   *
  */
 
@@ -417,8 +415,7 @@ jQuery(document).ready(function()
 		var current		= $(this),
 			kind		= current.attr('id') == 'fc_removeUser' ? 'user' : 'group',
 			dates		= {
-				'id':			kind == 'group' ? $('#fc_Group_group_id').val() : $('#fc_User_user_id').val(),
-				'ctoken':		getToken()
+				'id':			kind == 'group' ? $('#fc_Group_group_id').val() : $('#fc_User_user_id').val()
 			},
 			current_li	= $('#fc_list_overview').children('.fc_active'),
 			afterSend	= function( data, textStatus, jqXHR )
@@ -437,8 +434,7 @@ jQuery(document).ready(function()
 				current.remove();
 			},
 			url		= kind == 'group' ? '/groups/ajax_delete_group.php' : '/users/ajax_delete_user.php';
-
-		dialog_confirm( 'You really want to delete this ' + kind + '?', 'Removing group', CAT_ADMIN_URL + url, dates, 'POST', 'JSON', false, afterSend, current_li );
+		    dialog_confirm( 'You really want to delete this ' + kind + '?', 'Removing '+kind, CAT_ADMIN_URL + url, dates, 'POST', 'JSON', false, afterSend, current_li );
 	});
 
 	$('ul.fc_groups_tabs').find('a').click( function(e)

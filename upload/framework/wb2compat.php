@@ -41,7 +41,7 @@ define('DB_PASSWORD', CAT_DB_PASSWORD);
 define('DB_NAME', CAT_DB_NAME);
 define('WB_PREPROCESS_PREG', '/\[wblink([0-9]+)\]/isU' );
 define('WBMAILER_DEFAULT_SENDERNAME', CATMAILER_DEFAULT_SENDERNAME );
-// define WB_VERSION for backward compatibility and for checks within addon.precheck.inc.php
-if (!defined('WB_VERSION')) define('WB_VERSION', '2.8.1');
+// define WB_VERSION for backward compatibility
+if (!defined('WB_VERSION')) define('WB_VERSION', '2.8.3');
 
 ?>

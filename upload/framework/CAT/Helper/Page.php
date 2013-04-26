@@ -32,7 +32,7 @@ if (!class_exists('CAT_Helper_Page'))
 
     class CAT_Helper_Page extends CAT_Object
     {
-        protected      $_config             = array( 'loglevel' => 7 );
+        protected      $_config             = array( 'loglevel' => 8 );
         private static $instance;
         private static $space               = '    '; // space before header items
         private static $pages               = array();

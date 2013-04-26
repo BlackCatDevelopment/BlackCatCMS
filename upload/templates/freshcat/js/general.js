@@ -21,6 +21,31 @@
   *
  **/
 
+if ( typeof jQuery != 'undefined' )
+{
+    jQuery.ajaxSetup({
+        error: function( jqXHR, textStatus, errorThrown )
+        {
+            console.log();
+            if (jqXHR.status === 0) {
+                alert('Not connected.\n Verify Network.');
+            } else if (jqXHR.status == 404) {
+                alert('Requested page not found. [404]');
+            } else if (jqXHR.status == 500) {
+                alert('Internal Server Error [500].');
+            } else if (errorThrown === 'parsererror') {
+                alert('JSON parse failed.');
+            } else if (errorThrown === 'timeout') {
+                alert('Time out error.');
+            } else if (errorThrown === 'abort') {
+                alert('Ajax request aborted.');
+            } else {
+                alert('Uncaught Error.\n' + jqXHR.responseText);
+            }
+        }
+    });
+}
+
 $.expr[":"].containsi = $.expr.createPseudo(function (selector, context, isXml) {
     return function (elem) {
         return (elem.textContent || elem.innerText || $.text(elem)).toLowerCase().indexOf(selector.toLowerCase()) > -1;
@@ -186,10 +211,10 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 		$('#fc_admin_header').prepend('<div class="fc_popup" />');
 	}
 
-    // Check if leptranslate() is available
-    if ( typeof leptranslate != 'undefined' )
+    // Check if cattranslate() is available
+    if ( typeof cattranslate != 'undefined' )
     {
-        message = leptranslate(message);
+        message = cattranslate(message);
     }
 	// Add message to .fc_popup to use function set_popup_title();
 	$('.fc_popup').html( message );

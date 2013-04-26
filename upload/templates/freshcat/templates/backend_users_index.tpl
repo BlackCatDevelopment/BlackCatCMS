@@ -87,7 +87,7 @@
 				{/foreach}
 			</select>
 			{/if}
-			<hr/>
+			<hr />
 
 			<label for="fc_User_group">{translate('Groups')}:</label>
 			<div id="fc_User_group" class="fc_settings_max">
@@ -97,7 +97,7 @@
 				<label for="fc_User_groups_{$group.VALUE}">{$group.NAME}</label>
 				{/foreach}
 			</div>
-			<hr/>
+			<hr />
 
 			<div class="fc_settings_max">
 				<input type="checkbox" class="fc_checkbox_jq" name="active" id="fc_User_active_user" value="1" checked="checked" />
@@ -106,7 +106,7 @@
 			<div class="clear_sp"></div>
 
 			<p class="submit_settings fc_gradient1">
-				{if $permissions.USERS_DELETE}<input type="submit" id="fc_removeUser" class="fc_modifyUser fc_list_remove fc_gradient_red" name="removeGroup" value="{translate('Delete user')}" />{/if}
+				{if $permissions.USERS_DELETE}<input type="submit" id="fc_removeUser" class="fc_modifyUser fc_list_remove fc_gradient_red" name="removeUser" value="{translate('Delete user')}" />{/if}
 				<input type="submit" name="addUser" value="{translate('Add user')}" class="fc_addUser" />
 				<input type="submit" name="saveUser" value="{translate('Save user')}" class="fc_modifyUser" />
 				<input type="reset" name="reset_user" value="{translate('Reset')}">

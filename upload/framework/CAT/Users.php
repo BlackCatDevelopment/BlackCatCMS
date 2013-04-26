@@ -129,14 +129,14 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     // we do not check for too long and don't give too much hints!
                     if ( ! $name )
                         self::setError($lang->translate('Invalid credentials'));
-                    if ( ! self::loginerror && $user == '' || $pw == '' )
+                    if ( ! self::$loginerror && $user == '' || $pw == '' )
                         self::setError($lang->translate('Please enter your username and password.'));
-                    if ( ! self::loginerror && strlen($user) < AUTH_MIN_LOGIN_LENGTH )
+                    if ( ! self::$loginerror && strlen($user) < AUTH_MIN_LOGIN_LENGTH )
                         self::setError($lang->translate('The password you entered was too short'));
-                    if ( ! self::loginerror && ! defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < AUTH_MIN_PASS_LENGTH )
+                    if ( ! self::$loginerror && ! defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < AUTH_MIN_PASS_LENGTH )
                         self::setError($lang->translate('The password you entered was too short'));
 
-                    if ( ! self::loginerror )
+                    if ( ! self::$loginerror )
                     {
                         $query	= 'SELECT * FROM `'.CAT_TABLE_PREFIX.'users` WHERE `username` = "'.$name.'" AND `password` = "'.md5($pw).'" AND `active` = 1';
                         $result    = $self->db()->query($query);
@@ -153,7 +153,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                                 self::getUserOptions($user['user_id'])
                             );
 
-                            foreach( self::sessioncols as $key )
+                            foreach( self::$sessioncols as $key )
                             {
                                 $_SESSION[strtoupper($key)] = $user[$key];
                             }
@@ -283,7 +283,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 	'MAX_PASSWORD_LEN'		=> AUTH_MAX_PASS_LENGTH,
                     'PAGES_DIRECTORY'       => PAGES_DIRECTORY,
                     'ATTEMPTS'              => $val->fromSession('ATTEMTPS'),
-                    'MESSAGE'               => self::loginerror
+                    'MESSAGE'               => self::$loginerror
                 );
 
 				$tpl_data['meta']['LANGUAGE']	= strtolower(LANGUAGE);
@@ -551,7 +551,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
         public static function getExtendedOptions()
         {
-            return self::useroptions;
+            return self::$useroptions;
         }
 
         /**
@@ -973,7 +973,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
 	        // check complexity
 	        if ( $strict )
 	        {
-                if ( ! preg_match( self::PCRE_PASSWORD, $password ) )
+                if ( ! preg_match( self::$PCRE_PASSWORD, $password ) )
 	            {
                     self::$validatePasswordError = self::lang()->translate('The required password complexity is not met');
 					return false;
@@ -1023,13 +1023,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
         
         public static function getPasswordError()
 	    {
-            return self::validatePasswordError;
+            return self::$validatePasswordError;
 	    }   // end function getPasswordError()
 	    
         public static function getLastValidatedPassword()
 	    {
-            return self::lastValidatedPassword;
-	    }
+            return self::$lastValidatedPassword;
+        }   // end function getLastValidatedPassword()
 	}
 
 }

@@ -72,28 +72,3 @@ function dump(arr,level) {
     }
     return dumped_text;
 }
-
-if ( typeof jQuery != 'undefined' )
-{
-    jQuery.ajaxSetup({
-        error: function( jqXHR, textStatus, errorThrown )
-        {
-            //console.log();
-            if (jqXHR.status === 0) {
-                alert('Not connected.\n Verify Network.');
-            } else if (jqXHR.status == 404) {
-                alert('Requested page not found. [404]');
-            } else if (jqXHR.status == 500) {
-                alert('Internal Server Error [500].');
-            } else if (errorThrown === 'parsererror') {
-                alert('JSON parse failed.');
-            } else if (errorThrown === 'timeout') {
-                alert('Time out error.');
-            } else if (errorThrown === 'abort') {
-                alert('Ajax request aborted.');
-            } else {
-                alert('Uncaught Error.\n' + jqXHR.responseText);
-            }
-        }
-    });
-}

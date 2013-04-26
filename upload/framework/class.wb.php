@@ -218,44 +218,6 @@ class wb
         return(($value & $bits2test) == $bits2test);
     }
 
-    /**
-     *  Print a success message which then automatically redirects the user to another page
-     *
-     *  @param  mixed  A string within the message, or an array with a couple of messages.
-     *  @param  string  A redirect url. Default is "index.php".
-     *  @param  bool  An optional flag to 'print' the footer. Default is true.
-     *
-     */
-	public function print_success($message, $redirect = 'index.php', $auto_footer = true)
-	{
-		global $parser;
-
-		if (true === is_array($message)){
-			$message = implode("<br />", $message);
-		}
-
-				$parser->setPath(CAT_THEME_PATH . '/templates');
-				$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
-
-				$data_dwoo['MESSAGE']			= $this->lang->translate($message);
-				$data_dwoo['REDIRECT']			= $redirect;
-				$data_dwoo['REDIRECT_TIMER']	= REDIRECT_TIMER;
-
-				// ==================== 
-				// ! Parse the header 	
-				// ==================== 
-		$parser->output('success', $data_dwoo);
-
-		if ($auto_footer == true)
-		{
-			if (method_exists($this, "print_footer"))
-			{
-				$this->print_footer();
-			}
-		}
-		exit();
-	}
-
     /***************************************************************************
      * DEPRECATED FUNCTIONS
      * These functions are moved to other classes
@@ -264,7 +226,11 @@ class wb
     /* moved to CAT_Object */
     public function print_error($message, $link = 'index.php', $auto_footer = true)
     {
-        CAT_Pages::getInstance(-1)->printError($message,$link);
+        CAT_Object::getInstance()->printError($message,$link);
+    }
+	public function print_success($message, $redirect = 'index.php', $auto_footer = true)
+	{
+		CAT_Object::getInstance()->printMsg($message,$redirect,$auto_footer);
     }
 
     /* moved to CAT_Helper_Mail */

@@ -36,10 +36,8 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	class CAT_Helper_I18n extends CAT_Object
 	{
-        protected      $debugLevel          = 8; // 8 = OFF
-	    // default language
 	    protected      $_config
-            = array( 'defaultlang' => 'EN', 'langPath' => '/languages' );
+            = array( 'defaultlang' => 'EN', 'langPath' => '/languages', 'loglevel' => 8 );
 	    // array to store language strings
 	    private static $_lang               = array();
 	    // default language
@@ -74,7 +72,7 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 			}
 			if ( ! is_object( $this->_path ) )
 			{
-			    $this->_path = new CAT_Helper_Directory();
+			    $this->_path = CAT_Helper_Directory::getInstance();
 			}
 	        $this->init();
 	    } // end function __construct()
@@ -165,7 +163,7 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 
 	        if ( empty( $path ) )
 	        {
-	            $path = $this->_config[ 'langPath' ];
+	            $path = CAT_PATH.'/'.$this->_config[ 'langPath' ];
 	        }
 
 	        $file = $this->_path->sanitizePath( $path . '/' . $file );
