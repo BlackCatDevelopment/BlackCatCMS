@@ -35,6 +35,7 @@ if (!class_exists('CAT_Helper_Template'))
         protected $debuglevel      = CAT_Helper_KLogger::CRIT;
         protected $logger          = NULL;
         private   static $_drivers = array();
+        protected static $template_menus = array();
 
         public function __construct($compileDir = null, $cacheDir = null)
         {
@@ -132,6 +133,103 @@ if (!class_exists('CAT_Helper_Template'))
             }
             return self::$_drivers[$driver];
         }   // end function getInstance()
+
+    	/**
+    	 * get_template_blocks function.
+    	 *
+    	 * Function to get all menus of an template
+    	 *
+    	 * @access public
+    	 * @param  mixed  $template (default: DEFAULT_TEMPLATE)
+    	 * @param  int    $selected (default: 1)
+    	 * @return void
+    	 */
+    	public static function get_template_blocks( $template = DEFAULT_TEMPLATE , $selected = 1)
+    	{
+    		// =============================================
+    		// ! Include template info file (if it exists)
+    		// =============================================
+    		if ( SECTION_BLOCKS != false )
+    		{
+    			$template_location = ( $template != '' ) ?
+    				CAT_PATH . '/templates/' . $template . '/info.php' :
+    				CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/info.php';
+
+    			if ( file_exists($template_location) )
+    			{
+    				require($template_location);
+    			}
+
+    			// =========================
+    			// ! Check if $menu is set
+    			// =========================
+    			if ( !isset($block[1]) || $block[1] == '' )
+    			{
+    				$block[1]	= $this->lang()->translate('Main');
+    			}
+
+    			// ================================
+    			// ! Add menu options to the list
+    			// ================================
+    			foreach ( $block AS $number => $name )
+    			{
+    				$this->template_block[$number] = array(
+    					'NAME'			=> $name,
+    					'VALUE'			=> $number,
+    					'SELECTED'		=> ( $selected == $number || $selected == $name ) ? true : false
+    				);
+    				if ( $selected == $number || $selected == $name )
+    				{
+    					$this->current_block	= array(
+    						'name'		=> $name,
+    						'id'		=> $number
+    					);
+    				}
+    			}
+    			return $this->template_block;
+    		}
+    		else return false;
+    	}   // end function get_template_blocks()
+
+    	/**
+    	 * get all menus of an template
+    	 *
+    	 * @access public
+    	 * @param  mixed $template (default: DEFAULT_TEMPLATE)
+    	 * @param  int   $selected (default: 1)
+    	 * @return void
+    	 */
+    	public static function get_template_menus( $template = DEFAULT_TEMPLATE , $selected = 1)
+    	{
+    		if ( CAT_Registry::get('MULTIPLE_MENUS') !== false )
+    		{
+    			$template_location = ( $template != '') ?
+    				CAT_PATH . '/templates/' . $template . '/info.php' :
+    				CAT_PATH . '/templates/' . CAT_Registry::get('DEFAULT_TEMPLATE') . '/info.php';
+
+    			if ( file_exists($template_location) )
+    			{
+    				require($template_location);
+    			}
+    			if ( !isset($menu[1]) || $menu[1] == '' )
+    			{
+    				$menu[1]	= $this->lang()->translate('Main');
+    			}
+    			foreach ( $menu AS $number => $name )
+    			{
+    				self::$template_menus[$number] = array(
+    					'NAME'			=> $name,
+    					'VALUE'			=> $number,
+    					'SELECTED'		=> ( $selected == $number || $selected == $name ) ? true : false
+    				);
+    			}
+    			return self::$template_menus;
+    		}
+    		else
+            {
+                return false;
+            }
+    	}   // end function get_template_menus()
 
         /**
          * this method checks for existance of 'register_frontend_modfiles' in

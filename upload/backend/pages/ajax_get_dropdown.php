@@ -24,31 +24,31 @@
  */
  
 if (defined('CAT_PATH')) {
-	include(CAT_PATH . '/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-require_once ( CAT_PATH . '/framework/class.admin.php' );
-$admin		= new admin('Pages', 'pages_add', false);
+
+$backend = CAT_Backend::getInstance('Pages','pages_add');
+$users   = CAT_Users::getInstance();
 
 header('Content-type: application/json');
 
-if ( !$admin->get_permission('pages_add') )
+if ( !$users->checkPermission('Pages','pages_add') )
 {
 	$ajax	= array(
-		'message'	=>  $admin->lang->translate('You do not have the permission to add a page.'),
+		'message'	=> $backend->lang()->translate('You do not have the permission to add a page.'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -58,16 +58,15 @@ if ( !$admin->get_permission('pages_add') )
 // ================================= 
 // ! Add permissions to $data_dwoo   
 // ================================= 
-$permission['pages']			= $admin->get_permission('pages') ? true : false;
-$permission['pages_add']		= $admin->get_permission('pages_add') ? true : false;
-$permission['pages_add_l0']		= $admin->get_permission('pages_add_l0') ? true : false;
-$permission['pages_modify']		= $admin->get_permission('pages_modify') ? true : false;
-$permission['pages_delete']		= $admin->get_permission('pages_delete') ? true : false;
-$permission['pages_settings']	= $admin->get_permission('pages_settings') ? true : false;
-$permission['pages_intro']		= ( $admin->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
+$permission['pages']			= $users->checkPermission('Pages','pages') ? true : false;
+$permission['pages_add']		= $users->checkPermission('Pages','pages_add') ? true : false;
+$permission['pages_add_l0']		= $users->checkPermission('Pages','pages_add_l0') ? true : false;
+$permission['pages_modify']		= $users->checkPermission('Pages','pages_modify') ? true : false;
+$permission['pages_delete']		= $users->checkPermission('Pages','pages_delete') ? true : false;
+$permission['pages_settings']	= $users->checkPermission('Pages','pages_settings') ? true : false;
+$permission['pages_intro']		= ( $users->checkPermission('Pages','pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
-$pg = CAT_Pages::getInstance(-1,$permission);
-$dropdown_list = $pg->pages_list( 0 , 0 );
+$dropdown_list = CAT_Helper_Page::getPages();
 
 // ============================================= 
 // ! Add result_array to the template variable   

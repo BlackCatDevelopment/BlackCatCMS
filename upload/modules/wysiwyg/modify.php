@@ -42,21 +42,31 @@ if (defined('CAT_PATH')) {
 }
 
 /**
- *	Get page content
- *
+ *	Get content
  */
-$query       = "SELECT `content` FROM `".CAT_TABLE_PREFIX."mod_wysiwyg` WHERE `section_id`= '".$section_id."'";
-$get_content = $database->query($query);
-$data        = $get_content->fetchRow( MYSQL_ASSOC );
-$content     = htmlspecialchars($data['content']);
+$result = CAT_Helper_Page::getInstance()->db()->query(sprintf(
+    "SELECT `content` FROM `%smod_wysiwyg` WHERE `section_id`= '%d'",
+    CAT_TABLE_PREFIX, $section_id
+));
+if( $result && $result->numRows() > 0 )
+{
+    $data    = $result->fetchRow(MYSQL_ASSOC);
+    $content = htmlspecialchars($data['content']);
+}
+else
+{
+    $content = '';
+}
 
 if(!isset($wysiwyg_editor_loaded))
 {
-	$wysiwyg_editor_loaded=true;
-    // get settings
-    $query  = "SELECT * from `".CAT_TABLE_PREFIX."mod_wysiwyg_admin_v2` where `editor`='".WYSIWYG_EDITOR."' AND (`set_name`='width' OR `set_name`='height')";
-    $result = $database->query($query);
+	$wysiwyg_editor_loaded = true;
     $config = array('width'=>'100%','height'=>'250px');
+    // get settings
+    $result = CAT_Helper_Page::getInstance()->db()->query(sprintf(
+        "SELECT * from `%smod_wysiwyg_admin_v2` where `editor`='%s' AND (`set_name`='width' OR `set_name`='height')",
+        CAT_TABLE_PREFIX, WYSIWYG_EDITOR
+    ));
     if($result->numRows())
     {
         while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
@@ -64,7 +74,7 @@ if(!isset($wysiwyg_editor_loaded))
             $config[$row['set_name']] = $row['set_value'];
         }
     }
-	if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php'))
+	if (!defined('WYSIWYG_EDITOR') || WYSIWYG_EDITOR=="none" || !file_exists(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php'))
     {
 		function show_wysiwyg_editor( $name,$id,$content,$width,$height)
         {
@@ -74,14 +84,15 @@ if(!isset($wysiwyg_editor_loaded))
     else
     {
 		$id_list       = array();
-		$query_wysiwyg = $database->query(
-              "SELECT `section_id` FROM `".CAT_TABLE_PREFIX."sections` "
-            . "WHERE `page_id`= '".$page_id."' AND `module`= 'wysiwyg' "
-            . "ORDER BY position"
-        );
-		if ( $query_wysiwyg->numRows() > 0)
+		$result  = CAT_Helper_Page::getInstance()->db()->query(sprintf(
+              "SELECT `section_id` FROM `%ssections` "
+            . "WHERE `page_id`= '%d' AND `module`= 'wysiwyg' "
+            . "ORDER BY position",
+            CAT_TABLE_PREFIX, $page_id
+        ));
+		if ( $result->numRows() > 0)
         {
-			while( !false == ($wysiwyg_section = $query_wysiwyg->fetchRow( MYSQL_ASSOC ) ) )
+			while( !false == ($wysiwyg_section = $result->fetchRow(MYSQL_ASSOC) ) )
             {
 				$temp_id   = abs(intval($wysiwyg_section['section_id']));
 				$id_list[] = 'content'.$temp_id;
@@ -98,7 +109,7 @@ if (isset($preview) && $preview == true) return false;
 $parser->setPath(dirname(__FILE__).'/templates/default');
 
 $parser->output(
-    'modify.tpl',
+    'modify',
     array(
         'section_id' => $section_id,
         'page_id'    => $page_id,

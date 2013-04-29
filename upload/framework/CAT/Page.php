@@ -37,6 +37,8 @@ if (!class_exists('CAT_Page', false))
 
         // current page
         private        $_page_id        = NULL;
+        // active blocks
+        private        $sections        = array();
         // helper handle
         private static $helper          = NULL;
         // singleton, but one instance per page_id!
@@ -279,6 +281,30 @@ if (!class_exists('CAT_Page', false))
         {
             return self::$helper->properties($this->_page_id);
         }   // end function getProperties()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function getSections() {
+            if(!count($this->sections))
+            {
+                $sec = self::$helper->db()->query(sprintf(
+                    'SELECT * FROM `%ssections` WHERE `page_id` = %d ORDER BY position ASC',
+                    CAT_TABLE_PREFIX, $this->_page_id
+                ));
+                if ( $sec->numRows() > 0 )
+                {
+                	while ( false !== ( $section = $sec->fetchRow( MYSQL_ASSOC ) ) )
+                	{
+                		$this->sections[] = $section;
+                    }
+                }
+            }
+            return $this->sections;
+        }   // end function getSections()
+        
 
         /**
          * Figure out which template to use

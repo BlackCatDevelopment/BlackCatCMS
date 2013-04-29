@@ -56,6 +56,8 @@ if (!class_exists('CAT_Backend', false))
     				exit(0);
     			}
                 self::$instance->section_name = $section_name;
+                global $parser;
+                $parser->setGlobals('TEMPLATE_MENU', CAT_Helper_Template::get_template_menus());
                 // Auto header code
         		if($auto_header == true) {
         			self::$instance->print_header();

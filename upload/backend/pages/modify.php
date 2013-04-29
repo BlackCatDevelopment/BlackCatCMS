@@ -14,32 +14,29 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
+ *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license			http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
  
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
 $val     = CAT_Helper_Validate::getInstance();
@@ -54,18 +51,17 @@ if ( !$page_id )
 	exit(0);
 }
 
-require_once(CAT_PATH.'/framework/class.admin.php');
 
-$admin = new admin('Pages', 'pages_modify');
-$page   = CAT_Pages::getInstance($page_id);
+$backend = CAT_Backend::getInstance('Pages', 'pages_modify');
+$page    = CAT_Page::getInstance($page_id);
 $addons = CAT_Helper_Addons::getInstance();
 
 // ============= 
 // ! Get perms   
 // ============= 
-if ( !$page->getPagePermission($page_id,'admin') )
+if ( !CAT_Helper_Page::getPagePermission($page_id,'admin') )
 {
-	$admin->print_error( 'You do not have permissions to modify this page' );
+	$backend->print_error( 'You do not have permissions to modify this page' );
 }
 
 $wysiwyg   = $val->get('_GET','wysiwyg','scalar');
@@ -74,7 +70,7 @@ $sectionId = isset($wysiwyg) ? htmlspecialchars($wysiwyg) : NULL;
 // ==================== 
 // ! Get page details   
 // ==================== 
-$results_array							= $page->getPageDetails($page_id);
+$results_array							= CAT_Helper_Page::properties($page_id);
 
 // ========================================================= 
 // ! Get display name of person who last modified the page   
@@ -93,7 +89,7 @@ $tpl_data = array();
 $tpl_data['PAGE_ID']					= $results_array['page_id'];
 $tpl_data['PAGE_TITLE']				    = $results_array['page_title'];
 $tpl_data['MENU_TITLE']				    = $results_array['menu_title'];
-$tpl_data['PAGE_LINK']					= $admin->page_link($results_array['link']);
+$tpl_data['PAGE_LINK']					= $backend->page_link($results_array['link']);
 
 $tpl_data['MODIFIED_BY']				= $user['display_name'];
 $tpl_data['MODIFIED_BY_USERNAME']		= $user['username'];
@@ -106,7 +102,7 @@ $tpl_data['SEC_ANCHOR']				    = SEC_ANCHOR;
 $tpl_data['DATE_FORMAT']				= DATE_FORMAT;
 
 $tpl_data['CUR_TAB']                    = 'modify';
-$tpl_data['PAGE_HEADER']                = $admin->lang->translate('Modify page');
+$tpl_data['PAGE_HEADER']               = $backend->lang()->translate('Modify page');
 
 // ========================================================= 
 // ! Work-out if we should show the "manage sections" link   
@@ -138,13 +134,11 @@ foreach ( $tpl_data['modules'] as $index => $module )
 	}
 }
 
-$query_sections = $database->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'sections` WHERE `page_id` = '.intval($page_id).' ORDER BY position ASC');
+$sections = $page->getSections();
+$tpl_data['blocks_counter']	= 0;
 
-if ( $query_sections->numRows() > 0 )
+foreach( $sections as $section )
 {
-	$tpl_data['blocks_counter']	= 0;
-	while ( $section = $query_sections->fetchRow( MYSQL_ASSOC ) )
-	{
 		$module		= $section['module'];
 		// ==================== 
 		// ! Have permission?   
@@ -159,12 +153,12 @@ if ( $query_sections->numRows() > 0 )
 				// =========================================== 
 				// ! output block name if blocks are enabled   
 				// =========================================== 
-				if ( SECTION_BLOCKS )
+			if ( CAT_Registry::get('SECTION_BLOCKS') )
 				{
 					$section_id		= $section['section_id'];
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['template_blocks']		= $page->get_template_blocks( $current_template, $section['block'] );
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['current_block_id']	= $page->current_block['id'];
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['current_block_name']	= $page->current_block['name'];
+				$tpl_data['blocks'][$tpl_data['blocks_counter']]['template_blocks']		= $parser->get_template_blocks( $current_template, $section['block'] );
+				$tpl_data['blocks'][$tpl_data['blocks_counter']]['current_block_id']	= $section['block'];
+				$tpl_data['blocks'][$tpl_data['blocks_counter']]['current_block_name']	= $section['name'];
 					$tpl_data['blocks'][$tpl_data['blocks_counter']]['section_id']			= $section['section_id'];
 					$tpl_data['blocks'][$tpl_data['blocks_counter']]['module']				= $section['module'];
 					$tpl_data['blocks'][$tpl_data['blocks_counter']]['name']				= $section['name'];
@@ -191,17 +185,16 @@ if ( $query_sections->numRows() > 0 )
 				}
 			}
 		}
-	}
 }
 
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_pages_modify.tpl', $tpl_data);
+$parser->output('backend_pages_modify', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   
 // ====================== 
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

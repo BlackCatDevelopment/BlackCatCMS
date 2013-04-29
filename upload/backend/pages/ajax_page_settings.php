@@ -1,52 +1,53 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
  
-
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH . '/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
-// =================================================== 
-// ! Include the class.admin.php and WB functions file
-// =================================================== 
-require_once ( CAT_PATH . '/framework/class.admin.php' );
-$admin		= new admin('Pages', 'pages_settings', false);
+$backend = CAT_Backend::getInstance('Pages','pages_settings',false);
+$users   = CAT_Users::getInstance();
 
 header('Content-type: application/json');
 
-if ( !$admin->get_permission('pages_settings') )
+if ( !$users->checkPermission('Pages','pages_settings') )
 {
 	$ajax	= array(
-		'message'	=>  $admin->lang->translate('You don\'t have the permission to change page settings.'),
+		'message'	=> $backend->lang()->translate('You don\'t have the permission to change page settings.'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -56,18 +57,20 @@ if ( !$admin->get_permission('pages_settings') )
 // =============== 
 // ! Get page id   
 // =============== 
-if ( !is_numeric( $admin->get_post('page_id') ) )
+$val     = CAT_Helper_Validate::getInstance();
+
+// ===============
+// ! Get page id
+// ===============
+$page_id = $val->get('_REQUEST','page_id','numeric');
+if ( !$page_id )
 {
 	$ajax	= array(
-		'message'	=>  $admin->lang->translate('You send an invalid value'),
+		'message'	=>  $admin->lang->translate('You sent an invalid value'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
-}
-else
-{
-	$page_id	= $admin->get_post('page_id');
 }
 
 require_once( CAT_PATH . '/framework/functions-utf8.php' );
@@ -76,13 +79,15 @@ require_once( CAT_PATH . '/framework/functions-utf8.php' );
 // =============================================================== 
 // ! Get perms & Check if there is an error and get page details   
 // =============================================================== 
-$results		= $database->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id);
-$results_array	= $results->fetchRow( MYSQL_ASSOC );
+$results		= $backend->db()->query(sprintf(
+    'SELECT * FROM `%spages` WHERE `page_id` = %d',
+    CAT_TABLE_PREFIX, $page_id
+));
 
-if ( $database->is_error() )
+if ( $backend->db()->is_error() )
 {
 	$ajax	= array(
-		'message'	=> $database->get_error(),
+		'message'	=> $backend->db()->get_error(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -91,28 +96,29 @@ if ( $database->is_error() )
 if ( $results->numRows() == 0 )
 {
 	$ajax	= array(
-		'message'	=>  $admin->lang->translate( 'Page not found' ),
+		'message'	=> $backend->lang()->translate( 'Page not found' ),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
 
+$results_array	    = $results->fetchRow(MYSQL_ASSOC);
 $old_admin_groups	= explode(',', $results_array['admin_groups']);
 $old_admin_users	= explode(',', $results_array['admin_users']);
 $in_old_group		= false;
 
-foreach ( $admin->get_groups_id() as $cur_gid )
+foreach ( $users->get_groups_id() as $cur_gid )
 {
 	if ( in_array($cur_gid, $old_admin_groups) )
 	{
 		$in_old_group	= true;
 	}
 }
-if ( !$in_old_group && !is_numeric(array_search($admin->get_user_id(), $old_admin_users)) )
+if ( !$in_old_group && !is_numeric(array_search($users->get_user_id(), $old_admin_users)) )
 {
 	$ajax	= array(
-		'message'	=>  $admin->lang->translate( 'You do not have permissions to modify this page' ),
+		'message'	=> $backend->lang()->translate( 'You do not have permissions to modify this page' ),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -122,23 +128,21 @@ if ( !$in_old_group && !is_numeric(array_search($admin->get_user_id(), $old_admi
 // ========================================================= 
 // ! Get display name of person who last modified the page   
 // ========================================================= 
-$user									= $admin->get_user_details( $results_array['modified_by'] );
+$user							= $users->get_user_details( $results_array['modified_by'] );
 
 // ================================= 
 // ! Add permissions to $data_dwoo   
 // ================================= 
-$permission['pages']			= $admin->get_permission('pages') ? true : false;
-$permission['pages_add']		= $admin->get_permission('pages_add') ? true : false;
-$permission['pages_add_l0']		= $admin->get_permission('pages_add_l0') ? true : false;
-$permission['pages_modify']		= $admin->get_permission('pages_modify') ? true : false;
-$permission['pages_delete']		= $admin->get_permission('pages_delete') ? true : false;
-$permission['pages_settings']	= $admin->get_permission('pages_settings') ? true : false;
-$permission['pages_intro']		= ( $admin->get_permission('pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
+$permission['pages']			= $users->checkPermission('Pages','pages')          ? true : false;
+$permission['pages_add']		= $users->checkPermission('Pages','pages_add')      ? true : false;
+$permission['pages_add_l0']		= $users->checkPermission('Pages','pages_add_l0')   ? true : false;
+$permission['pages_modify']		= $users->checkPermission('Pages','pages_modify')   ? true : false;
+$permission['pages_delete']		= $users->checkPermission('Pages','pages_delete')   ? true : false;
+$permission['pages_settings']	= $users->checkPermission('Pages','pages_settings') ? true : false;
+$permission['pages_intro']		= ( $users->checkPermission('Pages','pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
-// list of all parent pages for dropdown parent
-$pg = CAT_Pages::getInstance($page_id,$permission);
-$pg->current_page['id']	= $page_id;
-$dropdown_list = $pg->pages_list( 0 , 0 );
+// list of all pages for dropdown, sorted by parent->child
+$pages = CAT_Helper_ListBuilder::sort(CAT_Helper_Page::getPages(),0);
 
 // ============================================= 
 // ! Add result_array to the template variable   
@@ -158,7 +162,7 @@ $ajax	= array(
 		'language'					=> $results_array['language'],
 		'target'					=> $results_array['target'],
 		'level'						=> $results_array['level'],
-		'modified_when'				=> ($results_array['modified_when'] != 0) ? date(TIME_FORMAT.', '.DATE_FORMAT, $results_array['modified_when']) : 'Unknown',
+	'modified_when'				=> ($results_array['modified_when'] != 0) ? CAT_Helper_DateTime::getDate($results_array['modified_when']) : 'Unknown',
 		'searching'					=> $results_array['searching'] == 0 ? false : true,
 		'visibility'				=> $results_array['visibility'],
 
@@ -172,8 +176,8 @@ $ajax	= array(
 		'admin_groups'				=> explode(',', str_replace('_', '', $results_array['admin_groups']) ),
 		'viewing_groups'			=> explode(',', str_replace('_', '', $results_array['viewing_groups']) ),
 
-		'parent_list'				=> $dropdown_list,
-		'PAGE_EXTENSION'			=> $database->get_one("SELECT value FROM " . CAT_TABLE_PREFIX . "settings WHERE name = 'page_extension'")
+	'parent_list'				=> $pages,
+	'PAGE_EXTENSION'			=> $backend->db()->get_one(sprintf("SELECT value FROM `%ssettings` WHERE name = 'page_extension'",CAT_TABLE_PREFIX)),
 );
 
 // ==================== 

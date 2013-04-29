@@ -104,6 +104,52 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
         }   // end function __call()
 
         /**
+         * sort array by children
+         **/
+        public static function sort ( $list, $root_id ) {
+
+            if ( empty($list) || ! is_array( $list ) || count($list) == 0 )
+                return NULL;
+
+            $self      = self::getInstance();
+            $return    = array();
+            $children  = array();
+            $p_key     = $self->_config['__parent_key'];
+            $id_key    = $self->_config['__id_key'];
+
+            // create a list of children for each item
+            foreach ( $list as $item ) {
+                $children[$item[$p_key]][] = $item;
+            }
+
+            // loop will be false if the root has no children
+            $loop         = !empty( $children[$root_id] );
+
+            // initializing $parent as the root
+            $parent       = $root_id;
+            $parent_stack = array();
+
+            while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
+            {
+                if ( $option === false ) // no more children
+                {
+                    $parent = array_pop( $parent_stack );
+                }
+                // current item has children
+                elseif ( ! empty( $children[ $option['value'][$id_key] ] ) )
+                {
+                    $return[] = $option['value'];
+                    array_push( $parent_stack, $option['value'][$p_key] );
+                    $parent = $option['value'][$id_key];
+                }
+                else {
+                    $return[] = $option['value'];
+                }
+            }
+            return $return;
+        }
+
+        /**
          *
          * This function creates an (optionally indented) dropdown from a flat
          * array using an iterative loop

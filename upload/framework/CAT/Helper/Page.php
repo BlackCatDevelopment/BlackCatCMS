@@ -92,6 +92,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         private static function init()
         {
+            global $page_id;
             // get complete list
             if(!count(self::$pages))
             {
@@ -103,11 +104,16 @@ if (!class_exists('CAT_Helper_Page'))
                 if( $result && $result->numRows()>0 )
                 {
                     $children_count = array();
+                    $direct_parent  = 0;
                     while ( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
                     {
                         $row['children']  = 0;
                         $row['is_parent'] = false;
-                        $row['editable']  = false;
+                        $row['has_children']     = false; // same as is_parent!
+                        $row['is_editable']      = false;
+                        $row['is_in_trail']      = false;
+                        $row['is_direct_parent'] = false;
+                        $row['is_current']       = false;
 
                         // mark editable pages by checking user perms and page
                         // visibility
@@ -116,10 +122,17 @@ if (!class_exists('CAT_Helper_Page'))
         				{
                             if ( CAT_Registry::get('PAGE_TRASH') != 'inline' || $row['visibility'] != 'deleted' )
                             {
-                                $row['editable'] = true;
+                                $row['is_editable'] = true;
                             }
         				}
 // --------------------- NOT READY YET! ----------------------------------------
+
+                        // mark current page
+                        if ( $page_id && $row['page_id'] == $page_id )
+                        {
+                            $row['is_current'] = true;
+                            $direct_parent = $row['parent'];
+                        }
 
                         self::$pages[] = $row;
 
@@ -143,17 +156,34 @@ if (!class_exists('CAT_Helper_Page'))
                         self::$pages_by_id[$row['page_id']]
                             =& self::$pages[$key];
 
-                        // get active sections (count)
+                        // get active sections 
                         $sec = self::getInstance()->db()->query(sprintf(
-                              'SELECT COUNT(*) FROM `%ssections` '
+                              'SELECT * FROM `%ssections` '
                             . 'WHERE ( "%s" BETWEEN `publ_start` AND `publ_end`) OR '
                             . '("%s" > `publ_start` AND `publ_end`=0) '
                             . 'AND `page_id`=' . (int)$row['page_id'],
                             CAT_TABLE_PREFIX, $now, $now
                         ));
-                        self::$pages_sections[$row['page_id']]
-                            = ( $sec ? $sec->numRows() : 0 );
+                        if ( $sec->numRows() > 0 )
+                        {
+                            while ( false !== ( $section = $sec->fetchRow(MYSQL_ASSOC) ) )
+                            {
+                                self::$pages_sections[$row['page_id']][] = $section;
+                            }
+                        }
+                        else
+                        {
+                            self::$pages_sections[$row['page_id']] = array();
+                        }
+                    }
 
+                    // resolve the trail
+                    $trail = array();
+                    if($page_id)
+                    {
+                        // mark parents
+                        $trail = explode(",", '0,'.self::$pages_by_id[$page_id]['page_trail']);
+                        array_pop($trail); // remove the current page
                     }
                     foreach(self::$pages as $i => $page)
                     {
@@ -161,7 +191,13 @@ if (!class_exists('CAT_Helper_Page'))
                         {
                             self::$pages[$i]['children']  = $children_count[$page['page_id']];
                             self::$pages[$i]['is_parent'] = true;
+                            self::$pages[$i]['has_children'] = true;
                         }
+                        // mark pages in current trail
+                        if($page_id && in_array($page['page_id'],$trail))
+                            self::$pages[$i]['is_in_trail'] = true;
+                        if($direct_parent && $page['page_id'] == $direct_parent)
+                            self::$pages[$i]['is_direct_parent'] = true;
                     }
                 }
             }
@@ -269,6 +305,7 @@ if (!class_exists('CAT_Helper_Page'))
             // -----------------------------------------------------------------
             else
             {
+                self::$instance->log()->logDebug('Loading sections');
                 self::_load_sections('backend');
             }
 
@@ -646,6 +683,57 @@ if (!class_exists('CAT_Helper_Page'))
         } // end function getMeta()
 
         /**
+    	 * checks permission for a page
+    	 *
+    	 * @access public
+    	 * @param  int    $page_id
+    	 * @param  string $action - viewing|admin; default: admin
+    	 * @return boolean
+    	 */
+    	public static function getPagePermission($page_id,$action='admin')
+        {
+    		if ($action!='viewing') $action='admin';
+    		$action_groups = $action.'_groups';
+    		$action_users  = $action.'_users';
+            $page          = self::properties($page_id);
+
+    		if (is_array($page)) {
+				$groups = explode(',',$page[$action_groups]);
+				$users  = $page[$action_users];
+    		}
+
+            // check if user is in any admin group
+    		$in_group = FALSE;
+    		foreach(CAT_Users::getInstance()->get_groups_id() as $cur_gid){
+    		    if (in_array($cur_gid, $groups)) {
+    		        $in_group = true;
+    		    }
+    		}
+    		if((!$in_group) && !is_numeric(array_search(CAT_Users::getInstance()->get_user_id(), $users))) {
+    			return false;
+    		}
+    		return true;
+    	}   // end function getPagePermission()
+
+        /**
+         * uses ListBuilder to create a dropdown list of pages
+         *
+         * @access public
+         * @return HTML
+         **/
+        public static function getPageSelect()
+        {
+            $pages  = CAT_Helper_Page::getPages();
+            return CAT_Helper_ListBuilder::getInstance()->config(array(
+                '__li_level_css'       => true,
+                '__li_id_prefix'       => 'pageid_',
+                '__li_css_prefix'      => 'fc_page_',
+                '__li_has_child_class' => 'fc_expandable',
+                '__title_key'          => 'menu_title',
+            ))->tree( $pages, 0 );
+        }
+
+        /**
          * returns complete pages array
          *
          * @access public
@@ -827,7 +915,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function isActive($page_id)
         {
-            if(self::$pages_sections[$page_id]>0)
+            if(count(self::$pages_sections[$page_id]))
                 return true;
             return false;
         } // end function isActive()
@@ -1327,9 +1415,12 @@ if (!class_exists('CAT_Helper_Page'))
             if ($page_id && is_numeric($page_id))
             {
                 $sections = self::$pages_sections[$page_id];
+                $wysiwyg_seen = false;
+                self::$instance->log()->logDebug('sections:',$sections);
                 if (is_array($sections) && count($sections))
                 {
                     global $current_section;
+                    global $wysiwyg_seen;
                     foreach ($sections as $section)
                     {
                         $module = $section['module'];
@@ -1337,8 +1428,15 @@ if (!class_exists('CAT_Helper_Page'))
                         // find header definition file
                         if (file_exists($file))
                         {
+                            self::$instance->log()->logDebug(sprintf('loading headers.inc.php for module [%s]',$module));
                             $current_section = $section['section_id'];
                             self::_load_headers_inc($file, $for, 'modules/' . $module, $section);
+                        }
+                        if ( $module == 'wysiwyg' && ! $wysiwyg_seen )
+                        {
+                            self::$instance->log()->logDebug('adding headers.inc.php for wysiwyg');
+                            self::_load_headers_inc(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php'), $for, 'modules/' . $module, $section);
+                            $wysiwyg_seen = true;
                         }
                         array_push(CAT_Helper_Page::$css_search_path, '/modules/' . $module, '/modules/' . $module . '/css');
                         array_push(CAT_Helper_Page::$js_search_path, '/modules/' . $module, '/modules/' . $module . '/js');
@@ -1346,6 +1444,17 @@ if (!class_exists('CAT_Helper_Page'))
                 } // if (count($sections))
             }
         }   // end function _load_sections()
+
+        /**
+         *
+         * @access private
+         * @return
+         **/
+        private static function _set_current($page_id)
+        {
+        
+        }   // end function _set_current()
+        
 
 
     }

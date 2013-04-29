@@ -1,17 +1,12 @@
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
- *
- * @author			LEPTON Project
- * @copyright		2012, LEPTON Project
- * @link			http://www.LEPTON-cms.org
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   @category        CAT_Core
+ *   @package         freshcat
   *
- */
+ **/
 
 (function ($) {
 	$.fn.page_tree = function (options)
@@ -119,16 +114,16 @@
 							{
 								option	= option + '<option value="' + value.id + '"';
  								option	= (
-                                               value.disabled === true
-                                            || value.id == dates.page_id
-                                            || value.current_is_parent === true
+                                               value.is_editable === false      // no permission or deleted page
+                                            || value.is_current === true        // current page
+                                            || value.is_direct_parent === true  // direct parent
                                           )
 										? option + ' disabled="disabled">'
                                         : option + '>'
                                         ;
 								for ( var i = 0; i < value.level; i++ )
 								{
-									option	= option + '-';
+									option	= option + '|-- ';
 								}
 								option	= option + value.menu_title + '</option>';
 							});
@@ -144,23 +139,23 @@
 							
 							// Set selectfields
 							$('#fc_addPage_parent option').removeAttr('selected');
-							$('#fc_addPage_parent option[value=' + data.parent + ']').attr('selected', true);
+							$('#fc_addPage_parent option[value=' + data.parent + ']').prop('selected', true);
 							$('#fc_addPage_menu option').removeAttr('selected');
-							$('#fc_addPage_menu option[value=' + data.menu + ']').attr('selected',true);
+							$('#fc_addPage_menu option[value=' + data.menu + ']').prop('selected', true);
 							$('#fc_addPage_target option').removeAttr('selected');
-							$('#fc_addPage_target option[value=' + data.target + ']').attr('selected',true);
+							$('#fc_addPage_target option[value=' + data.target + ']').prop('selected', true);
 							$('#fc_addPage_template option').removeAttr('selected');
 							if (data.template === '')
 							{
-								$('#fc_addPage_template option:first').attr('selected',true);
+								$('#fc_addPage_template option:first').prop('selected', true);
 							}
 							else {
-								$('#fc_addPage_template option[value=' + data.template + ']').attr('selected',true);
+								$('#fc_addPage_template option[value=' + data.template + ']').prop('selected', true);
 							}
 							$('#fc_addPage_language option').removeAttr('selected');
-							$('#fc_addPage_language option[value=' + data.language + ']').attr('selected',true);
+							$('#fc_addPage_language option[value=' + data.language + ']').prop('selected', true);
 							$('#fc_addPage_visibility option').removeAttr('selected');
-							$('#fc_addPage_visibility option[value=' + data.visibility + ']').attr('selected',true);
+							$('#fc_addPage_visibility option[value=' + data.visibility + ']').prop('selected', true);
 							
 							// Set checkboxesfields
 							$('#fc_addPage_Searching').attr('checked', data.searching);
