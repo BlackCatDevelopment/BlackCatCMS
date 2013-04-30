@@ -39,18 +39,16 @@ if (defined('CAT_PATH')) {
 	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-require_once(CAT_PATH . '/framework/class.admin.php');
-$admin	= new admin('Pages', 'pages_add', false );
-
-$user  = CAT_Users::getInstance();
+$backend = CAT_Backend::getInstance('Pages','pages_add',false);
+$users   = CAT_Users::getInstance();
 $val   = CAT_Helper_Validate::getInstance();
 
 header('Content-type: application/json');
 
-if ( ! $user->checkPermission('pages','pages_add',false) )
+if ( ! $users->checkPermission('pages','pages_add',false) )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You don\'t have the permission to add a page.'),
+		'message'	=>$backend->lang()->translate('You don\'t have the permission to add a page.'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -65,47 +63,53 @@ require_once(CAT_PATH . '/framework/functions.php');
 // ============== 
 // ! Get values   
 // ============== 
-$page_title			= htmlspecialchars($val->sanitizePost('page_title',NULL,true) );
-$menu_title			= htmlspecialchars($val->sanitizePost('menu_title',NULL,true) );
+$options = array(
+    'parent'         => ( $val->sanitizePost('parent','integer',true) ? $val->sanitizePost('parent','integer',true) : 0 ),
+    'target'         => $val->sanitizePost('target',NULL,true),
+    'page_title'     => htmlspecialchars($val->sanitizePost('page_title',NULL,true) ),
+    'menu_title'     => htmlspecialchars($val->sanitizePost('menu_title',NULL,true) ),
+    'description'    => htmlspecialchars($val->sanitizePost('description',NULL,true) ),
+    'keywords'       => htmlspecialchars($val->sanitizePost('keywords',NULL,true)    ),
+    'template'       => $val->sanitizePost('template',NULL,true),
+    'visibility'     => $val->sanitizePost('visibility',NULL,true),
+    'position'       => 0,
+    'menu'           => ( ( $val->sanitizePost('menu',NULL,true) != '') ? $val->sanitizePost('menu',NULL,true) : 1 ),
+    'language'       => $val->sanitizePost('language',NULL,true),
+    'searching'      => $val->sanitizePost('searching',NULL,true) ? '1' : '0',
+    'modified_when'  => time(),
+    'modified_by'    => $users->get_user_id(),
+    'admin_groups'	 => $val->sanitizePost('admin_groups',NULL,true),
+    'viewing_groups' => $val->sanitizePost('viewing_groups',NULL,true),
+);
+
 $page_link			= htmlspecialchars($val->sanitizePost('page_link',NULL,true) );
-$description		= htmlspecialchars($val->sanitizePost('description',NULL,true) );
-$keywords			= htmlspecialchars($val->sanitizePost('keywords',NULL,true)    );
-$parent				= $val->sanitizePost('parent',NULL,true);
-$target				= $val->sanitizePost('target',NULL,true);
-$template			= $val->sanitizePost('template',NULL,true);
-$menu				= ( $val->sanitizePost('menu',NULL,true) != '') ? $val->sanitizePost('menu',NULL,true) : 1;
-$language			= $val->sanitizePost('language',NULL,true);
-$visibility			= $val->sanitizePost('visibility',NULL,true);
-$searching			= $val->sanitizePost('searching',NULL,true) ? '1' : '0';
-$admin_groups		= $val->sanitizePost('admin_groups',NULL,true);
-$viewing_groups		= $val->sanitizePost('viewing_groups',NULL,true);
 $module				= $val->sanitizePost('type');
 
 // ============================= 
 // ! add Admin and view groups   
 // ============================= 
-$admin_groups[]		= 1;
-$viewing_groups[]	= 1;
+$options['admin_groups'][]		= 1;
+$options['viewing_groups'][]	= 1;
 
 // ============================================== 
 // ! Check if user has permission to add a page   
 // ============================================== 
-if ( $parent != 0 )
+if ( $options['parent'] != 0 )
 {
-	if ( !$admin->get_page_permission( $parent,'admin' ) )
+	if ( !CAT_Helper_Page::getPagePermission($options['parent'],'admin') )
 	{
 		$ajax	= array(
-			'message'	=>  $admin->lang->translate('You do not have permissions to modify this page.'),
+			'message'	=> $backend->lang()->translate('You do not have permissions to modify this page.'),
 			'success'	=> false
 		);
 		print json_encode( $ajax );
 		exit();
 	}
 }
-elseif ( ! $user->checkPermission('pages_add_l0','system',false) )
+elseif ( ! $users->checkPermission('pages_add_l0','system',false) )
 {
 	$ajax	= array(
-		'message'	=>  $admin->lang->translate('You do not have permissions to modify this page'),
+		'message'	=> $backend->lang()->translate('You do not have permissions to modify this page'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -115,10 +119,10 @@ elseif ( ! $user->checkPermission('pages_add_l0','system',false) )
 // ======================= 
 // ! Validate menu_title   
 // ======================= 
-if ($menu_title == '' || substr($menu_title,0,1)=='.')
+if ($options['menu_title'] == '' || substr($options['menu_title'],0,1)=='.')
 {
 	$ajax	= array(
-		'message'	=>  $admin->lang->translate( 'Please enter a page title' ),
+		'message'	=> $backend->lang()->translate( 'Please enter a menu title' ),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -128,18 +132,18 @@ if ($menu_title == '' || substr($menu_title,0,1)=='.')
 // ========================================================= 
 // ! Set page_title to menu_title if page_title is not set   
 // ========================================================= 
-$page_title		= $page_title == '' ? $menu_title : $page_title;
+$options['page_title'] = $options['page_title'] == '' ? $options['menu_title'] : $options['page_title'];
 
 // ======================================================= 
 // ! Check to see if page created has needed permissions   
 // ======================================================= 
-if ( !in_array(1, $admin->get_groups_id()) )
+if ( !in_array(1, $users->get_groups_id()) )
 {
 	$admin_perm_ok = false;
 
-	foreach ($admin_groups as $adm_group)
+	foreach ($options['admin_groups'] as $adm_group)
 	{
-		if ( in_array( $adm_group, $admin->get_groups_id() ) )
+		if ( in_array( $adm_group, $users->get_groups_id() ) )
 		{
 			$admin_perm_ok = true;
 		}
@@ -147,7 +151,7 @@ if ( !in_array(1, $admin->get_groups_id()) )
 	if ( $admin_perm_ok == false )
 	{
 		$ajax	= array(
-			'message'	=>  $admin->lang->translate( 'You do not have permissions to modify this page' ),
+			'message'	=> $backend->lang()->translate( 'You do not have permissions to modify this page' ),
 			'success'	=> false
 		);
 		print json_encode( $ajax );
@@ -156,9 +160,9 @@ if ( !in_array(1, $admin->get_groups_id()) )
 
 	$admin_perm_ok = false;
 
-	foreach ($viewing_groups as $view_group)
+	foreach ($options['viewing_groups'] as $view_group)
 	{
-		if ( in_array( $view_group, $admin->get_groups_id() ) )
+		if ( in_array( $view_group, $users->get_groups_id() ) )
 		{
 			$admin_perm_ok = true;
 		}
@@ -166,7 +170,7 @@ if ( !in_array(1, $admin->get_groups_id()) )
 	if ($admin_perm_ok == false)
 	{
 		$ajax	= array(
-			'message'	=>  $admin->lang->translate( 'You do not have permissions to modify this page' ),
+			'message'	=> $backend->lang()->translate( 'You do not have permissions to modify this page' ),
 			'success'	=> false
 		);
 		print json_encode( $ajax );
@@ -174,56 +178,59 @@ if ( !in_array(1, $admin->get_groups_id()) )
 	}
 }
 
-$admin_groups		= implode(',', $admin_groups);
-$viewing_groups		= implode(',', $viewing_groups);
+$options['admin_groups']		= implode(',', $options['admin_groups']);
+$options['viewing_groups']		= implode(',', $options['viewing_groups']);
 
 // ====================================================== 
 // ! Work-out what the link and page filename should be   
 // ====================================================== 
-if ( $parent == '0' )
+if ( !$options['parent'] || $options['parent'] == '0' )
 {
-	$link = '/'.page_filename($menu_title);
+	$link = '/'.page_filename($options['menu_title']);
+
 	// =================================================================================================================== 
 	// ! rename menu titles: index && intro to prevent clashes with intro page feature and WB core file /pages/index.php   
 	// =================================================================================================================== 
 	if( $link == '/index' || $link == '/intro' )
 	{
 		$link	.= '_0';
-		$filename	= CAT_PATH . PAGES_DIRECTORY .'/' . page_filename($menu_title) . '_0' . PAGE_EXTENSION;
+		$filename	= CAT_PATH . PAGES_DIRECTORY .'/' . page_filename($options['menu_title']) . '_0' . PAGE_EXTENSION;
 	}
 	else
 	{
-		$filename	= CAT_PATH . PAGES_DIRECTORY . '/' . page_filename($menu_title) . PAGE_EXTENSION;
+		$filename	= CAT_PATH . PAGES_DIRECTORY . '/' . page_filename($options['menu_title']) . PAGE_EXTENSION;
 	}
 }
 else
 {
-	$parent_section		= '';
-	$parent_titles		 = array_reverse( get_parent_titles($parent) );
-	foreach ( $parent_titles as $parent_title )
+/*
+		$options['parent']_section	= '';
+	$options['parent']_titles	= array_reverse( get_parent_titles($options['parent']) );
+	foreach ( $options['parent']_titles as $options['parent']_title )
 	{
-		$parent_section	.= page_filename($parent_title).'/';
+		$options['parent']_section	.= page_filename($options['parent']_title).'/';
 	}
-	if($parent_section == '/') { $parent_section = ''; }
-	$link = '/' . $parent_section . page_filename($menu_title);
-	$filename = CAT_PATH . PAGES_DIRECTORY . '/' . $parent_section . page_filename($menu_title) . PAGE_EXTENSION;
-	make_dir(CAT_PATH . PAGES_DIRECTORY.'/'.$parent_section);
+	if($options['parent']_section == '/') { $options['parent']_section = ''; }
+	$link = '/' . $options['parent']_section . page_filename($options['menu_title']);
+	$filename = CAT_PATH . PAGES_DIRECTORY . '/' . $options['parent']_section . page_filename($options['menu_title']) . PAGE_EXTENSION;
+	make_dir(CAT_PATH . PAGES_DIRECTORY.'/'.$options['parent']_section);
 	
-	/**
-	 *
-	 */
 	$source = CAT_ADMIN_PATH . "/pages/master_index.php";
-	copy( $source, CAT_PATH . PAGES_DIRECTORY . '/' . $parent_section . "/index.php" );
+	copy( $source, CAT_PATH . PAGES_DIRECTORY . '/' . $options['parent']_section . "/index.php" );
+*/
 }
 
 // ================================================== 
 // ! Check if a page with same page filename exists   
 // ================================================== 
-$get_same_page = $database->query("SELECT page_id FROM ".CAT_TABLE_PREFIX."pages WHERE link = '$link'");
+$get_same_page = $backend->db()->query(sprintf(
+    "SELECT page_id FROM `%spages` WHERE link = '%s'",
+    CAT_TABLE_PREFIX, $link
+));
 if ( $get_same_page->numRows() > 0 || file_exists(CAT_PATH . PAGES_DIRECTORY.$link.PAGE_EXTENSION) || file_exists(CAT_PATH . PAGES_DIRECTORY.$link.'/') )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate( 'A page with the same or similar title exists' ),
+		'message'	=>$backend->lang()->translate( 'A page with the same or similar title exists' ),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -236,65 +243,49 @@ if ( $get_same_page->numRows() > 0 || file_exists(CAT_PATH . PAGES_DIRECTORY.$li
 require(CAT_PATH . '/framework/class.order.php');
 $order = new order(CAT_TABLE_PREFIX.'pages', 'position', 'page_id', 'parent');
 // First clean order
-$order->clean($parent);
+$order->clean($options['parent']);
 // Get new order
-$position = $order->get_new($parent);
+$options['position'] = $order->get_new($options['parent']);
 
 // ================================================================================================ 
 // ! Work-out if the page parent (if selected) has a seperate template or language to the default   
 // ================================================================================================ 
-if ( $language == '' || $template == '')
+if ( $options['language'] == '' || $options['template'] == '')
 {
-	$query_parent = $database->query("SELECT template, language FROM ".CAT_TABLE_PREFIX."pages WHERE page_id = '$parent'");
+	$query_parent = $backend->db()->query(sprintf(
+        "SELECT template, language FROM `%spages` WHERE page_id = %d",
+        CAT_TABLE_PREFIX, $options['parent']
+    ));
 	if ( $query_parent->numRows() > 0 )
 	{
 		$fetch_parent		= $query_parent->fetchRow();
-		$template			= ( $template == '' ) ? $fetch_parent['template'] : $template;
-		$language			= ( $language == '' ) ? $fetch_parent['language'] : $language;
+		$options['template'] = ( $options['template'] == '' ) ? $fetch_parent['template'] : $options['template'];
+		$options['language'] = ( $options['language'] == '' ) ? $fetch_parent['language'] : $options['language'];
 	}
 	else
 	{
 		$fetch_parent		= $query_parent->fetchRow();
-		$template			= ( $template == '' ) ? '' : $template;
-		$language			= ( $language == '' ) ? DEFAULT_LANGUAGE : $language;
+		$options['template'] = ( $options['template'] == '' ) ? '' : $options['template'];
+		$options['language'] = ( $options['language'] == '' ) ? DEFAULT_LANGUAGE : $options['language'];
 	}
 }
 
 // ================================ 
 // ! Insert page into pages table   
 // ================================ 
-$sql	 = 'INSERT INTO `'.CAT_TABLE_PREFIX.'pages` SET ';
-$sql	.= '`parent` = '.$parent.', ';
-$sql	.= '`target` = "'.$target.'", ';
-$sql	.= '`page_title` = "'.$page_title.'", ';
-$sql	.= '`menu_title` = "'.$menu_title.'", ';
-$sql	.= '`description` = "'.$description.'", ';
-$sql	.= '`keywords` = "'.$keywords.'", ';
-$sql	.= '`template` = "'.$template.'", ';
-$sql	.= '`visibility` = "'.$visibility.'", ';
-$sql	.= '`position` = '.$position.', ';
-$sql	.= '`menu` = '.$menu.', ';
-$sql	.= '`language` = "'.$language.'", ';
-$sql	.= '`searching` = '.$searching.', ';
-$sql	.= '`modified_when` = '.time().', ';
-$sql	.= '`modified_by` = '.$admin->get_user_id().', ';
-$sql	.= '`admin_groups` = "'.$admin_groups.'", ';
-$sql	.= '`viewing_groups` = "'.$viewing_groups.'"';
+$page_id = CAT_Helper_Page::addPage($options);
 
-$database->query($sql);
-
-if ( $database->is_error() )
+if ( !$page_id )
 {
 	$ajax	= array(
-		'message'	=> $database->get_error(),
+		'message'	=> $backend->db()->get_error(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
 
-// Get the page id
-$page_id		= $database->get_one("SELECT LAST_INSERT_ID()");
+
 // Work out level
 $level			= level_count($page_id);
 // Work out root parent
@@ -314,18 +305,18 @@ if ( $page_link && $page_link != pathinfo($link,PATHINFO_FILENAME) )
 // ======================================= 
 // ! Update page with new level and link   
 // ======================================= 
-$sql	 = 'UPDATE `'.CAT_TABLE_PREFIX.'pages` SET ';
+$sql	 = 'UPDATE `%spages` SET ';
 $sql	.= '`root_parent` = '.$root_parent.', ';
 $sql	.= '`level` = "'.$level.'", ';
 $sql	.= '`link` = "'.$link.'", ';
 $sql	.= '`page_trail` = "'.$page_trail.'"';
 $sql	.= 'WHERE `page_id` = '.$page_id;
-$database->query($sql);
+$backend->db()->query(sprintf($sql,CAT_TABLE_PREFIX));
 
-if ( $database->is_error() )
+if ( $backend->db()->is_error() )
 {
 	$ajax	= array(
-		'message'	=> $database->get_error(),
+		'message'	=> $backend->db()->get_error(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -340,12 +331,12 @@ $position	= 1;
 // ========================================== 
 // ! Add new record into the sections table   
 // ========================================== 
-$database->query("INSERT INTO " . CAT_TABLE_PREFIX . "sections (page_id,position,module,block) VALUES ('$page_id','$position', '$module','1')");
+$backend->db()->query("INSERT INTO " . CAT_TABLE_PREFIX . "sections (page_id,position,module,block) VALUES ('$page_id','$position', '$module','1')");
 
 // ====================== 
 // ! Get the section id   
 // ====================== 
-$section_id	= $database->get_one("SELECT LAST_INSERT_ID()");
+$section_id	= $backend->db()->get_one("SELECT LAST_INSERT_ID()");
 
 // ====================================================== 
 // ! Include the selected modules add file if it exists   
@@ -358,10 +349,10 @@ if ( file_exists(CAT_PATH . '/modules/' . $module . '/add.php') )
 // ========================================================== 
 // ! Check if there is a db error, otherwise say successful   
 // ========================================================== 
-if ( $database->is_error() )
+if ( $backend->db()->is_error() )
 {
 	$ajax	= array(
-		'message'	=> $database->get_error(),
+		'message'	=> $backend->db()->get_error(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -370,7 +361,7 @@ if ( $database->is_error() )
 else
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate( 'Page added successfully' ),
+		'message'	=>$backend->lang()->translate( 'Page added successfully' ),
 		'url'		=> CAT_ADMIN_URL . '/pages/modify.php?page_id='. $page_id,
 		'success'	=> true
 	);

@@ -16,7 +16,7 @@
 			<input type="text" name="page_title" value="" id="fc_addPage_page_title" />
 
             <label for="fc_addPage_page_link">{translate('URL')}:</label>
-			<input type="text" name="page_link" value="" id="fc_addPage_page_link" />.php
+			<input type="text" name="page_link" value="" id="fc_addPage_page_link" />{$PAGE_EXTENSION}
 
 			<div class="fc_addPageOnly">
 				<label for="fc_addPage_type">{translate('Type')}:</label>
@@ -74,11 +74,6 @@
 		</li>
 	
 		<li id="fc_tabs_seo">
-			<div class="fc_changePageOnly">
-				<label for="fc_addPage_page_link">{translate('URL')}:</label>
-				<input type="text" name="page_link" id="fc_addPage_page_link" value="" />{$PAGE_EXTENSION}
-			</div>
-
 			<label for="fc_addPage_description">{translate('Description')}:</label>
 			<textarea name="description" id="fc_addPage_description" rows="10" cols="1" ></textarea>
 

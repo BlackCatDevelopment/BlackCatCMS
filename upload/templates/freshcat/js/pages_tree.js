@@ -32,7 +32,7 @@
 					update:			function(event, ui)
 					{
 						var dates			= {
-							'pageid':			$(this).sortable('toArray'),
+							'page_id':			$(this).sortable('toArray'),
 							'table':			'pages',
                             '_cat_ajax':        1
 						};
@@ -75,7 +75,7 @@
 			{
 				event.preventDefault();
 				var current_button	= $(this),
-					page_id			= current_button.closest('li').children('input').val(),
+					page_id			= current_button.closest('li').find('input').val(),
 					dates			= {
 										'page_id' : page_id,
 										'_cat_ajax': 1
@@ -550,7 +550,7 @@ jQuery(document).ready(function()
 		});
 
 		var dates	= {
-			'page_id':			current_pT.children('input[name=pageid]').val(),
+			'page_id':			current_pT.children('input[name=page_id]').val(),
 			'page_title':		$('#fc_addPage_page_title').val(),
 			'menu_title':		$('#fc_addPage_title').val(),
             'page_link':		$('#fc_addPage_page_link').val(),
@@ -617,7 +617,7 @@ jQuery(document).ready(function()
 			viewing_groups.push( $(this).val() );
 		});
 		var dates	= {
-			'page_id':			current_pT.children('input[name=pageid]').val(),
+			'page_id':			current_pT.children('input[name=page_id]').val(),
 			'page_title':		$('#fc_addPage_page_title').val(),
 			'menu_title':		$('#fc_addPage_title').val(),
 			'parent':			$('#fc_addPage_parent option:selected').val(),
@@ -679,7 +679,7 @@ jQuery(document).ready(function()
 							var newIcon	= 'icon-eye-blocked';
 							break;
 					}
-					if ( dates.parent != old_parent.children('input[name=pageid]').val() )
+					if ( dates.parent != old_parent.children('input[name=page_id]').val() )
 					{
 						if ( dates.parent === 0 )
 						{
@@ -720,7 +720,7 @@ jQuery(document).ready(function()
 			current_form	= current.closest('form'),
 			current_pT		= $('.page_tree_open_options'),
 			dates	= {
-				'page_id':			current_pT.children('input[name=pageid]').val(),
+				'page_id':			current_pT.find('input[name=page_id]').val(),
 				'_cat_ajax':        1
 			},
 			afterSend		= function( data, textStatus, jqXHR )
@@ -746,7 +746,7 @@ jQuery(document).ready(function()
 			current_form	= current.closest('form'),
 			current_pT		= $('.page_tree_open_options'),
 			dates	= {
-				'page_id':			current_pT.children('input[name=pageid]').val(),
+				'page_id':			current_pT.children('input[name=page_id]').val(),
 				'_cat_ajax':        1
 			},
 			afterSend		= function( data, textStatus, jqXHR )
@@ -767,7 +767,7 @@ jQuery(document).ready(function()
 	$('#fc_addPageChildSubmit').click( function(e)
 	{
 		e.preventDefault();
-		$('#fc_addPage_parent_page_id').val( $('.page_tree_open_options').children('input[name=pageid]').val() );
+		$('#fc_addPage_parent_page_id').val( $('.page_tree_open_options').children('input[name=page_id]').val() );
 		$('.fc_side_add').click();
 	});
 });

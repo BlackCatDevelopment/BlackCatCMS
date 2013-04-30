@@ -66,12 +66,12 @@ if (!class_exists('CAT_Helper_Page'))
          * @access private
          * @return void
          **/
-        public static function getInstance()
+        public static function getInstance($skip_init=false)
         {
             if (!self::$instance)
             {
                 self::$instance = new self();
-                self::init();
+                if(!$skip_init) self::init();
             }
             return self::$instance;
         }
@@ -85,18 +85,17 @@ if (!class_exists('CAT_Helper_Page'))
         }
 
         /**
-         * initialize
+         * initialize; fills the internal pages array
          *
          * @access private
          * @return void
          **/
         private static function init()
         {
-            global $page_id;
-            // get complete list
-            if(!count(self::$pages))
+            if(count(self::$pages)==0)
             {
                 $now = time();
+                if(!self::$instance) self::getInstance(true);
                 $result = self::$instance->db()->query(sprintf(
                     'SELECT * FROM %spages ORDER BY `level` ASC, `position` ASC',
                     CAT_TABLE_PREFIX
@@ -126,82 +125,107 @@ if (!class_exists('CAT_Helper_Page'))
                             }
         				}
 // --------------------- NOT READY YET! ----------------------------------------
-
-                        // mark current page
-                        if ( $page_id && $row['page_id'] == $page_id )
-                        {
-                            $row['is_current'] = true;
-                            $direct_parent = $row['parent'];
-                        }
-
                         self::$pages[] = $row;
 
-                        // count children; this lets us mark pages that have
-                        // children later
-                        if(!isset($children_count[$row['parent']]))
-                            $children_count[$row['parent']] = 1;
-                        else
-                            $children_count[$row['parent']]++;
-
-                        // get last element
                         end(self::$pages);
-                        $key = key(self::$pages);
+                        self::$pages_by_id[$row['page_id']] = key(self::$pages);
                         reset(self::$pages);
 
-                        // add element to visibility array
-                        self::$pages_by_visibility[$row['visibility']][]
-                            =& self::$pages[$key];
-
-                        // add element to id array
-                        self::$pages_by_id[$row['page_id']]
-                            =& self::$pages[$key];
-
-                        // get active sections 
-                        $sec = self::getInstance()->db()->query(sprintf(
-                              'SELECT * FROM `%ssections` '
-                            . 'WHERE ( "%s" BETWEEN `publ_start` AND `publ_end`) OR '
-                            . '("%s" > `publ_start` AND `publ_end`=0) '
-                            . 'AND `page_id`=' . (int)$row['page_id'],
-                            CAT_TABLE_PREFIX, $now, $now
-                        ));
-                        if ( $sec->numRows() > 0 )
-                        {
-                            while ( false !== ( $section = $sec->fetchRow(MYSQL_ASSOC) ) )
-                            {
-                                self::$pages_sections[$row['page_id']][] = $section;
-                            }
-                        }
-                        else
-                        {
-                            self::$pages_sections[$row['page_id']] = array();
-                        }
-                    }
-
-                    // resolve the trail
-                    $trail = array();
-                    if($page_id)
-                    {
-                        // mark parents
-                        $trail = explode(",", '0,'.self::$pages_by_id[$page_id]['page_trail']);
-                        array_pop($trail); // remove the current page
-                    }
-                    foreach(self::$pages as $i => $page)
-                    {
-                        if(isset($children_count[$page['page_id']]))
-                        {
-                            self::$pages[$i]['children']  = $children_count[$page['page_id']];
-                            self::$pages[$i]['is_parent'] = true;
-                            self::$pages[$i]['has_children'] = true;
-                        }
-                        // mark pages in current trail
-                        if($page_id && in_array($page['page_id'],$trail))
-                            self::$pages[$i]['is_in_trail'] = true;
-                        if($direct_parent && $page['page_id'] == $direct_parent)
-                            self::$pages[$i]['is_direct_parent'] = true;
-                    }
-                }
+                    }   // end while()
+                }       // end if($result)
             }
         }   // end function init()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function addPage($options)
+        {
+            if(!self::$instance) self::getInstance();
+            $sql	 = 'INSERT INTO `%spages` SET ';
+            foreach($options as $key => $value)
+            {
+                $sql .= '`'.$key.'` = \''.$value.'\', ';
+            }
+            $sql = preg_replace('~,\s*$~','',$sql);
+            self::$instance->db()->query(sprintf($sql,CAT_TABLE_PREFIX));
+            return
+                  self::$instance->db()->is_error()
+                ? false
+                : self::$instance->db()->get_one("SELECT LAST_INSERT_ID()");
+        }   // end function addPage()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function deleteLanguageLink($page_id,$lang)
+        {
+            if(!self::$instance) self::getInstance(true);
+            self::$instance->db()->query(sprintf(
+                'DELETE FROM `%spage_langs` WHERE link_page_id = %d AND lang = "%s"',
+                CAT_TABLE_PREFIX, $page_id, $lang
+            ));
+        }   // end function deleteLanguageLink()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function deletePage($page_id,$use_trash=false)
+        {
+            if($use_trash)
+            {
+            	// Update the page visibility to 'deleted'
+            	self::getInstance()->db()->query(sprintf(
+                    "UPDATE `%spages` SET visibility = 'deleted' WHERE page_id = %d LIMIT 1",
+                    CAT_TABLE_PREFIX, $page_id
+                ));
+            	self::trashPages($page_id);
+            }
+            else
+            {
+                // remove sub pages
+           	    $sub_pages = self::getSubPages($page_id);
+            	foreach($sub_pages as $sub_page_id)
+            	{
+            		self::_deletePage( $sub_page_id );
+            	}
+            	// remove the page itself
+            	self::_deletePage($page_id);
+            }
+        }   // end function deletePage()
+
+        /**
+         * marks pages as 'deleted' if trash is enabled
+         * this method works recursively for sub pages
+         *
+         * @access private
+         * @param  integer $parent
+         * @return void
+         **/
+       	private static function trashPages($parent = 0)
+    	{
+            // get pages for current parent
+            $pages = self::getPagesByParent($parent);
+            if(count($pages))
+            {
+    			foreach($pages as $page)
+    			{
+    				// Update the page visibility to 'deleted'
+    				self::getInstance()->db()->query(sprintf(
+                        "UPDATE `%spages` SET visibility = 'deleted' WHERE page_id = %d LIMIT 1",
+                        CAT_TABLE_PREFIX, $page['page_id']
+                    ));
+    				// Run this function again for all sub-pages
+    				self::trashPages( $page['page_id'] );
+    			}
+    		}
+    	}   // end function trashPages()
 
         /**
          * prints the backend footers
@@ -633,7 +657,7 @@ if (!class_exists('CAT_Helper_Page'))
                 $items = array();
                 while (($row = $results->fetchRow(MYSQL_ASSOC)) !== false)
                 {
-                    $row['href'] = $this->getLink($row['link']) . (($row['lang'] != '') ? '?lang=' . $row['lang'] : NULL);
+                    $row['href'] = self::getLink($row['link']) . (($row['lang'] != '') ? '?lang=' . $row['lang'] : NULL);
                     $items[]     = $row;
                 }
                 return $items;
@@ -683,6 +707,46 @@ if (!class_exists('CAT_Helper_Page'))
         } // end function getMeta()
 
         /**
+         * convert page title to a valid filename
+         *
+         * @access public
+         * @param  string  $string - page title
+         * @return string
+         **/
+        public static function getFilename($string)
+        {
+            require_once(CAT_PATH . '/framework/functions-utf8.php');
+            $string = entities_to_7bit($string);
+            // Now remove all bad characters
+            $bad = array('\'', '"', '`', '!', '@', '#', '$', '%', '^', '&', '*', '=', '+', '|', '/', '\\', ';', ':', ',', '?');
+            $string = str_replace($bad, '', $string);
+            // replace multiple dots in filename to single dot and (multiple) dots at the end of the filename to nothing
+            $string = preg_replace(array('/\.+/', '/\.+$/'), array('.', ''), $string);
+            // Now replace spaces with page spcacer
+            $string = trim($string);
+            $string = preg_replace('/(\s)+/', PAGE_SPACER, $string);
+            // Now convert to lower-case
+            $string = strtolower($string);
+            // If there are any weird language characters, this will protect us against possible problems they could cause
+            $string = str_replace(array('%2F', '%'), array('/', ''), urlencode($string));
+            // Finally, return the cleaned string
+            return $string;
+        }   // end function getFilename()
+
+        /**
+         * returns properties of given page (same as properties())
+         *
+         * @access public
+         * @param  integer $page_id
+         * @return array
+         **/
+        public static function getPage($page_id)
+        {
+            return self::properties($page_id);
+        }   // end function getPage()
+
+
+        /**
     	 * checks permission for a page
     	 *
     	 * @access public
@@ -698,8 +762,12 @@ if (!class_exists('CAT_Helper_Page'))
             $page          = self::properties($page_id);
 
     		if (is_array($page)) {
-				$groups = explode(',',$page[$action_groups]);
-				$users  = $page[$action_users];
+				$groups = ( isset($page[$action_groups]) )
+                        ? explode(',',$page[$action_groups])
+                        : array();
+				$users  = ( isset($page[$action_users]) )
+                        ? $page[$action_users]
+                        : array();
     		}
 
             // check if user is in any admin group
@@ -746,27 +814,30 @@ if (!class_exists('CAT_Helper_Page'))
         }   // end function getPages()
 
         /**
+         * returns a list of page_id's containing the children of given parent
          *
-         *
-         *
-         *
+         * @access public
+         * @param  integer  $parent (default:0)
+         * @param  boolean  $add_sections (default:false)
+         * @return array
          **/
-    	public static function getPagesByParent( $parent = 0 , $add_sections = false )
+    	public static function getPagesByParent($parent=0, $add_sections=false)
     	{
             if(!count(self::$pages_by_parent))
             {
                 $pages = self::getPages();
-                foreach($pages as &$page)
-                {
-                    $page['sections'] = self::$pages_sections[$page['page_id']];
-                    self::$pages_by_parent[$page['parent']][] = $page;
+                foreach ( $pages as $page ) {
+                    self::$pages_by_parent[$page['parent']][] = $page['page_id'];
                 }
             }
-    		return self::$pages_by_parent[$parent];
+    		return
+                  isset(self::$pages_by_parent[$parent])
+                ? self::$pages_by_parent[$parent]
+                : array();
     	}   // end function getPagesByParent()
         
         /**
-         * returns pages by visibility array
+         * returns a list of page_id's by visibility
          *
          * @access public
          * @param  string  $visibility - optional
@@ -774,11 +845,102 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function getPagesByVisibility($visibility=NULL)
         {
-            if(!count(self::$pages_by_visibility)) self::getInstance();
+            if(!count(self::$pages)) self::getInstance();
+            if(!count(self::$pages_by_visibility))
+            {
+                foreach(self::$pages as $page)
+                {
+                    self::$pages_by_visibility[$page['visibility']][] = $page['page_id'];
+                }
+            }
             if($visibility)
+            {
+                if(isset(self::$pages_by_visibility[$visibility]))
                 return self::$pages_by_visibility[$visibility];
+                else
+                    return array();
+            }
             return self::$pages_by_visibility;
         }   // end function getPagesByVisibility()
+
+        /**
+         * returns the root level page of a trail
+         *
+         * @access public
+         * @return integer
+         **/
+        public static function getRootParent($page_id)
+        {
+            $parent = self::properties($page_id,'parent');
+            $level  = self::properties($page_id,'level');
+            if ($level == 1)
+                return $parent;
+            elseif ($parent == 0)
+                return $page_id;
+            else
+            {
+                $trail = self::properties($page_id,'trail');
+                return
+                    ( $trail )
+                    ? substr(self::properties($page_id,'trail'),0,strpos($trail,','))
+                    : 0;
+            }
+        }   // end function getRootParent()
+        
+        /**
+         * returns the sections of a page
+         *
+         * @access public
+         * @return array
+         **/
+        public static function getSections($page_id)
+        {
+            if(!count(self::$pages)) self::getInstance();
+            if(!count(self::$pages_sections)||!isset(self::$pages_sections[$page_id]))
+            {
+                // get active sections
+                $now = time();
+                $sec = self::getInstance(true)->db()->query(sprintf(
+                      'SELECT * FROM `%ssections` '
+                    . 'WHERE ( "%s" BETWEEN `publ_start` AND `publ_end`) OR '
+                    . '("%s" > `publ_start` AND `publ_end`=0) '
+                    . 'AND `page_id`=%d',
+                    CAT_TABLE_PREFIX, $now, $now, $page_id
+                ));
+                if ( $sec->numRows() > 0 )
+                {
+                    while ( false !== ( $section = $sec->fetchRow(MYSQL_ASSOC) ) )
+                    {
+                        self::$pages_sections[$page_id][] = $section;
+                    }
+                }
+                else
+                {
+                    self::$pages_sections[$page_id] = array();
+                }
+            }
+            return
+                  isset(self::$pages_sections[$page_id])
+                ? self::$pages_sections[$page_id]
+                : array();
+        }   // end function getSections()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getSubPages($page_id,$result=array())
+        {
+            $subs = self::getPagesByParent($page_id);
+            if(!$subs || !is_array($subs)) return $result;
+            foreach($subs as $pg)
+            {
+                $result[] = $pg;
+                $result   = self::getSubPages($pg,$result);
+            }
+            return $result;
+        }   // end function getSubPages()
 
         /**
          * identify the page to show
@@ -846,15 +1008,22 @@ if (!class_exists('CAT_Helper_Page'))
         public static function properties($page_id,$key=NULL)
         {
             if(!count(self::$pages)) self::init();
-            if($key && isset(self::$pages_by_id[$page_id]) && isset(self::$pages_by_id[$page_id][$key]))
+            // get page data
+            $page = isset(self::$pages_by_id[$page_id])
+                  ? self::$pages[self::$pages_by_id[$page_id]]
+                  : array();
+            if(count($page))
             {
-                return self::$pages_by_id[$page_id][$key];
+                if($key && isset($page[$key]))
+                {
+                    return $page[$key];
+                }
+                else
+                {
+                    return $page;
+                }
             }
-            return (
-                isset(self::$pages_by_id[$page_id])
-                ? self::$pages_by_id[$page_id]
-                : array()
-            );
+            return array();
         }   // end function properties()
 
         /**
@@ -1197,6 +1366,73 @@ if (!class_exists('CAT_Helper_Page'))
         } // end function _analyze_jquery_components()
 
         /**
+         * really deletes a page
+         *
+         * @access private
+         * @return
+         **/
+        private static function _deletePage($page_id)
+        {
+            $self   = self::getInstance();
+            $errors = array();
+            // delete sections
+            $sections = self::getSections($page_id);
+            if(count($sections))
+            {
+                foreach($sections as $section)
+                {
+                    $section_id = $section['section_id'];
+                    if (file_exists(CAT_PATH.'/modules/'.$section['module'].'/delete.php'))
+                    {
+                        include(CAT_PATH.'/modules/'.$section['module'].'/delete.php');
+                    }
+                }
+            }
+            // remove the page
+            $self->db()->query(sprintf(
+                'DELETE FROM `%spages` WHERE `page_id` = %d',
+                CAT_TABLE_PREFIX, $page_id
+            ));
+            if ($self->db()->is_error())
+            {
+                $errors[] = $self->db()->get_error();
+            }
+            // Update the sections table
+            $self->db()->query(sprintf(
+                'DELETE FROM `%ssections` WHERE `page_id` = %d',
+                CAT_TABLE_PREFIX, $page_id
+            ));
+            if ($self->db()->is_error())
+            {
+                $errors[] = $self->db()->get_error();
+            }
+            // Include the ordering class or clean-up ordering
+            include_once(CAT_PATH . '/framework/class.order.php');
+            $order = new order(CAT_TABLE_PREFIX . 'pages', 'position', 'page_id', 'parent');
+            $order->clean($page_id);
+            // Unlink the access file and directory
+            $directory  = CAT_PATH . PAGES_DIRECTORY . self::properties($page_id,'link');
+            $filename   = $directory . PAGE_EXTENSION;
+            $directory .= '/';
+            if (file_exists($filename))
+            {
+                if (!is_writable(CAT_PATH . PAGES_DIRECTORY . '/'))
+                {
+                    $errors[] = $self->lang()->translate('Cannot delete access file!');
+                }
+                else
+                {
+                    unlink($filename);
+                    if (file_exists($directory) && (rtrim($directory, '/') != CAT_PATH . PAGES_DIRECTORY) && (substr($link, 0, 1) != '.'))
+                    {
+                        CAT_Helper_Directory::removeDirectory($directory);
+                    }
+                }
+            }
+            return $errors;
+        }   // end function _deletePage()
+
+        /**
          * evaluate correct item path
          *
          * @access private
@@ -1414,7 +1650,7 @@ if (!class_exists('CAT_Helper_Page'))
             global $page_id;
             if ($page_id && is_numeric($page_id))
             {
-                $sections = self::$pages_sections[$page_id];
+                $sections     = self::getSections($page_id);
                 $wysiwyg_seen = false;
                 self::$instance->log()->logDebug('sections:',$sections);
                 if (is_array($sections) && count($sections))

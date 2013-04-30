@@ -30,7 +30,7 @@
 					<td class="fc_page_list_link">
 						{$page.link}
 					</td>
-					<td class="fc_page_list_pageid">
+					<td class="fc_page_list_page_id">
 						{$page.page_id}
 					</td>
 				</tr>

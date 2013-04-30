@@ -44,4 +44,8 @@ define('WBMAILER_DEFAULT_SENDERNAME', CATMAILER_DEFAULT_SENDERNAME );
 // define WB_VERSION for backward compatibility
 if (!defined('WB_VERSION')) define('WB_VERSION', '2.8.3');
 
+require_once CAT_PATH.'/framework/class.database.php';
+global $database;
+$database = new database();
+
 ?>

@@ -5,7 +5,7 @@
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or (at
  *   your option) any later version.
- * 
+ *
  *   This program is distributed in the hope that it will be useful, but
  *   WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
@@ -17,12 +17,12 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license			http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
- 
+
 if (defined('CAT_PATH')) {
     if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
@@ -35,33 +35,25 @@ if (defined('CAT_PATH')) {
         if (file_exists($dir.'/framework/class.secure.php')) {
             include($dir.'/framework/class.secure.php'); $inc = true;    break;
         }
-	}
+    }
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$users = CAT_Users::getInstance();
-$val   = CAT_Helper_Validate::getInstance();
-
-// =================================================== 
-// ! Include the class.admin.php and WB functions file
-// =================================================== 
-require_once(CAT_PATH.'/framework/class.admin.php');
-$admin = new admin('Pages', 'pages_settings');
+$users   = CAT_Users::getInstance();
+$val     = CAT_Helper_Validate::getInstance();
+$backend = CAT_Backend::getInstance('Pages', 'pages_settings');
 
 if (!$users->checkPermission('pages','pages_settings')){
-	header("Location: index.php");
-	exit(0);
+	$backend->print_error( 'You do not have permissions to modify this page' );
 }
 
+// ===============
+// ! Get page id
+// ===============
 $page_id = $val->sanitizeGet('page_id','numeric');
-
-// =============== 
-// ! Get page id   
-// =============== 
 if ( ! $page_id )
 {
-	header("Location: index.php");
-	exit(0);
+	$backend->print_error( 'Missing page ID!' );
 }
 
 require_once(CAT_PATH.'/framework/functions-utf8.php');
@@ -69,24 +61,17 @@ require_once(CAT_PATH.'/framework/functions-utf8.php');
 global $parser;
 $tpl_data = array();
 
-
 // =============================================================== 
 // ! Get perms & Check if there is an error and get page details   
 // =============================================================== 
-$results		= $users->db()->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id);
-$results_array	= $results->fetchRow( MYSQL_ASSOC );
-
-if ( $users->db()->is_error() )
+$page = CAT_Helper_Page::getPage($page_id);
+if(!$page || count($page)==0)
 {
-	$admin->print_error( $users->db()->get_error() );
-}
-if ( $results->numRows() == 0 )
-{
-	$admin->print_error('Page not found');
+	$backend->print_error('Page not found');
 }
 
-$old_admin_groups	= explode(',', $results_array['admin_groups']);
-$old_admin_users	= explode(',', $results_array['admin_users']);
+$old_admin_groups	= explode(',', $page['admin_groups']);
+$old_admin_users	= explode(',', $page['admin_users']);
 $in_old_group = false;
 foreach ( $users->get_groups_id() as $cur_gid )
 {
@@ -97,16 +82,16 @@ foreach ( $users->get_groups_id() as $cur_gid )
 }
 if ( !$in_old_group && !is_numeric(array_search($users->get_user_id(), $old_admin_users)) )
 {
-	$admin->print_error('You do not have permissions to modify this page');
+	$backend->print_error('You do not have permissions to modify this page');
 }
 
 //
 // ! delete link
 //
-if ( $admin->get_get('del') )
+if ( $val->sanitizeGet('del') )
 {
-    list( $lang, $page ) = explode( '_', $val->sanitizeGet('del') );
-    $users->db()->query( 'DELETE FROM '.CAT_TABLE_PREFIX.'page_langs WHERE link_page_id = "'.$page.'" AND lang = "'.$lang.'"' );
+    list( $lang, $page_id ) = explode( '_', $val->sanitizeGet('del') );
+    CAT_Helper_Page::deleteLanguageLink($page_id,$lang);
 }
 
 $arrh = CAT_Helper_Array::getInstance();
@@ -114,18 +99,18 @@ $arrh = CAT_Helper_Array::getInstance();
 // ===========================
 // ! find already linked pages
 // ===========================
-$items = CAT_Pages::getInstance($page_id)->getLinkedByLanguage($page_id);
+$items = CAT_Helper_Page::getInstance($page_id)->getLinkedByLanguage($page_id);
 
 
 // =========================
 // ! get installed languages
 // =========================
 $addons = CAT_Helper_Addons::getInstance();
-$avail  = $addons->get_addons( $results_array['language'] , 'language' );
+$avail  = $addons->get_addons( $page['language'] , 'language' );
 // skip current lang
 foreach( $avail as $i => &$l )
 {
-    if ( $l['VALUE'] == $results_array['language'] )
+    if ( $l['VALUE'] == $page['language'] )
     {
         unset($avail[$i]);
         break;
@@ -135,14 +120,14 @@ foreach( $avail as $i => &$l )
 if(is_array($items) && count($items)) {
     foreach($items as $item)
     {
-    $arrh->ArrayRemove( $item['lang'], $avail, 'VALUE' );
+        $arrh->ArrayRemove( $item['lang'], $avail, 'VALUE' );
     }
 }
 
 // ===========
 // ! get pages
 // ===========
-$pages_list = $admin->pg->getPages();
+$pages_list = CAT_Helper_Page::getPages();
 // skip current page
 $arrh->ArrayRemove( $page_id, $pages_list, 'page_id' );
 // skip already linked pages
@@ -150,11 +135,11 @@ if(is_array($items) && count($items))
 {
     foreach($items as $item)
     {
-    $arrh->ArrayRemove( $item['link_page_id'], $pages_list, 'page_id' );
+        $arrh->ArrayRemove( $item['link_page_id'], $pages_list, 'page_id' );
     }
 }
 // skip deleted pages
-$deleted = $admin->pg->getPages('deleted');
+$deleted = CAT_Helper_Page::getPagesByVisibility('deleted');
 foreach($deleted as $item)
 {
     $arrh->ArrayRemove( $item['page_id'], $pages_list, 'page_id' );
@@ -163,39 +148,40 @@ foreach($deleted as $item)
 // =========================================================
 // ! Get display name of person who last modified the page
 // =========================================================
-$user							  = $users->get_user_details( $results_array['modified_by'] );
+$user							  = $users->get_user_details( $page['modified_by'] );
 
 // =============================================
 // ! Add result_array to the template variable
 // =============================================
 $tpl_data['CUR_TAB']              = 'lang';
-$tpl_data['PAGE_HEADER']          = $admin->lang->translate('Modify language mappings');
+$tpl_data['PAGE_HEADER']          = $backend->lang()->translate('Modify language mappings');
 $tpl_data['PAGE_ID']			  = $page_id;
-$tpl_data['PAGE_LINK']			  = $admin->page_link($results_array['link']);
-$tpl_data['PAGE_TITLE']			  = $results_array['page_title'];
+$tpl_data['PAGE_LINK']			  = $backend->page_link($page['link']);
+$tpl_data['PAGE_TITLE']			  = $page['page_title'];
 $tpl_data['AVAILABLE_LANGS']      = $avail;
 $tpl_data['AVAILABLE_PAGES']      = $pages_list;
 $tpl_data['PAGE_LINKS']           = ( ( is_array($items) && count($items) ) ? $items : NULL );
 
 $tpl_data['MODIFIED_BY']		  = $user['display_name'];
 $tpl_data['MODIFIED_BY_USERNAME'] = $user['username'];
-$tpl_data['MODIFIED_WHEN']		  = ($results_array['modified_when'] != 0)
-                                  ? $modified_ts = CAT_Helper_DateTime::getDateTime($results_array['modified_when'])
+$tpl_data['MODIFIED_WHEN']		  = ($page['modified_when'] != 0)
+                                  ? $modified_ts = CAT_Helper_DateTime::getDateTime($page['modified_when'])
                                   : false;
 
 $tpl_data['PAGES']
-    = CAT_Helper_ListBuilder::getInstance()->config(array('space' => '|-- '))
+    = CAT_Helper_ListBuilder::getInstance()->reset()
+                                           ->config(array('space' => '|-- '))
                                            ->dropdown( '', $pages_list, 0, false, true );
 
 
 // ====================
 // ! Parse the header 	
 // ==================== 
-$parser->output('backend_pages_lang_settings.tpl', $tpl_data);
+$parser->output('backend_pages_lang_settings', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   
 // ====================== 
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

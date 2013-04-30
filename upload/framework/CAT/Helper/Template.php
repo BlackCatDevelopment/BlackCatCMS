@@ -35,6 +35,7 @@ if (!class_exists('CAT_Helper_Template'))
         protected $debuglevel      = CAT_Helper_KLogger::CRIT;
         protected $logger          = NULL;
         private   static $_drivers = array();
+        private   static $_driver  = NULL;
         protected static $template_menus = array();
 
         public function __construct($compileDir = null, $cacheDir = null)
@@ -78,6 +79,7 @@ if (!class_exists('CAT_Helper_Template'))
                 $s = new self();
                 $s->printFatalError( $this->lang->translate( 'No such template driver: ['.$driver.']' ) );
             }
+            self::$_driver = $driver;
             if ( ! isset(self::$_drivers[$driver]) || ! is_object(self::$_drivers[$driver]) )
             {
                 require dirname(__FILE__).'/Template/DriverDecorator.php';
@@ -137,7 +139,7 @@ if (!class_exists('CAT_Helper_Template'))
     	/**
     	 * get_template_blocks function.
     	 *
-    	 * Function to get all menus of an template
+    	 * Function to get all blocks of an template
     	 *
     	 * @access public
     	 * @param  mixed  $template (default: DEFAULT_TEMPLATE)
@@ -161,32 +163,32 @@ if (!class_exists('CAT_Helper_Template'))
     			}
 
     			// =========================
-    			// ! Check if $menu is set
+    			// ! Check if $block is set
     			// =========================
     			if ( !isset($block[1]) || $block[1] == '' )
     			{
-    				$block[1]	= $this->lang()->translate('Main');
+    				$block[1]	= self::getInstance(self::$_driver)->lang()->translate('Main');
     			}
 
     			// ================================
-    			// ! Add menu options to the list
+    			// ! Add block options to the list
     			// ================================
     			foreach ( $block AS $number => $name )
     			{
-    				$this->template_block[$number] = array(
+    				self::getInstance(self::$_driver)->template_block[$number] = array(
     					'NAME'			=> $name,
     					'VALUE'			=> $number,
     					'SELECTED'		=> ( $selected == $number || $selected == $name ) ? true : false
     				);
     				if ( $selected == $number || $selected == $name )
     				{
-    					$this->current_block	= array(
+    					self::getInstance(self::$_driver)->current_block	= array(
     						'name'		=> $name,
     						'id'		=> $number
     					);
     				}
     			}
-    			return $this->template_block;
+    			return self::getInstance(self::$_driver)->template_block;
     		}
     		else return false;
     	}   // end function get_template_blocks()

@@ -5,7 +5,7 @@
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or (at
  *   your option) any later version.
- * 
+ *
  *   This program is distributed in the hope that it will be useful, but
  *   WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
@@ -17,12 +17,12 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license			http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
- 
+
 if (defined('CAT_PATH')) {
     if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
@@ -34,104 +34,89 @@ if (defined('CAT_PATH')) {
         if (empty($sub)) continue; $dir .= '/'.$sub;
         if (file_exists($dir.'/framework/class.secure.php')) {
             include($dir.'/framework/class.secure.php'); $inc = true;    break;
-	}
-	}
+        }
+    }
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$users = CAT_Users::getInstance();
-$val   = CAT_Helper_Validate::getInstance();
-
-// ===================================================
-// ! Include the class.admin.php and WB functions file
-// =================================================== 
-require_once(CAT_PATH.'/framework/class.admin.php');
-$admin = new admin('Pages', 'pages_settings');
+$users   = CAT_Users::getInstance();
+$val     = CAT_Helper_Validate::getInstance();
+$backend = CAT_Backend::getInstance('Pages', 'pages_settings');
 
 if (!$users->checkPermission('pages','pages_settings')){
-	header("Location: index.php");
-	exit(0);
+	$backend->print_error( 'You do not have permissions to modify this page' );
 }
 
+// ===============
+// ! Get page id
+// ===============
 $page_id = $val->sanitizePost('page_id','numeric');
-
-// =============== 
-// ! Get page id   
-// =============== 
 if ( ! $page_id )
 {
-	header("Location: index.php");
-	exit(0);
+	$backend->print_error( 'Missing page ID!' );
 }
 
 // Include the WB functions file
 require_once( CAT_PATH . '/framework/functions.php' );
 
-
 // get form data
 $language			= $val->sanitizePost('map_language',NULL,true);
-$page               = $val->sanitizePost('link_page_id','numeric',true);
+$link_page_id       = $val->sanitizePost('link_page_id','numeric',true);
 
-if ( ! $page )
+if ( ! $link_page_id )
 {
-	header("Location: index.php");
-	exit(0);
+	$backend->print_error('No page to link to!', CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
 }
 
 // =====================================
 // ! check if linked page has given lang
 // =====================================
-$results		= $users->db()->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page);
-$results_array	= $results->fetchRow( MYSQL_ASSOC );
-
-if ( $results_array['language'] !== $language )
+$page = CAT_Helper_Page::getPage($page_id);
+if ( $page['language'] !== $language )
 {
-    $admin->print_error("The page you've chosen does not have the right language! (".$results_array['language']." !== $language");
+    $backend->print_error("The page you've chosen does not have the right language! (".$page['language']." !== $language)");
 }
-
 
 // ===============================================
 // ! check if there's already a page for this lang
 // ===============================================
-$results		= $users->db()->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'page_langs` WHERE page_id = "' . $page_id . '" AND lang = "'.$language.'"');
-
-if ( $users->db()->is_error() )
+$results = $backend->db()->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'page_langs` WHERE page_id = "' . $page_id . '" AND lang = "'.$language.'"');
+if ( $backend->db()->is_error() )
 {
-	$admin->print_error( $users->db()->get_error() );
+	$backend->print_error( $backend->db()->get_error() );
 }
 if ( $results->numRows() )
 {
-    $admin->print_error( 'There is already a page for this language!' );
+    $backend->print_error( 'There is already a page for this language!' );
 }
 
 
 // =========================================
 // ! Update page settings in the pages table
 // =========================================
+$backend->db()->query(sprintf(
+    'REPLACE INTO `%spage_langs` VALUES ( "%d", "%s", "%d" )',
+    CAT_TABLE_PREFIX, $page_id, $language, $link_page_id
+));
 
-$sql	= 'REPLACE INTO `' . CAT_TABLE_PREFIX . 'page_langs` VALUES ( ';
-$sql	.= '"'.$page_id.'", "'.$language.'", "'.$page.'" ) ';
-
-$users->db()->query($sql);
-
-if ( $users->db()->is_error() )
+if ( $backend->db()->is_error() )
 {
-	$admin->print_error($users->db()->get_error(), CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
+	$backend->print_error($backend->db()->get_error(), CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
 }
 
 // Check if there is a db error, otherwise say successful
-if ( $users->db()->is_error() )
+if ( $backend->db()->is_error() )
 {
-	$admin->print_error($users->db()->get_error(), CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
+	$backend->print_error($backend->db()->get_error(), CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
 }
 else
 {
-	$admin->print_success('Page saved successfully', CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
+	$backend->print_success('Page saved successfully', CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
 }
 
 // ====================== 
 // ! Print admin footer   
 // ====================== 
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

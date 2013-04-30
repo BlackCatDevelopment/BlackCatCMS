@@ -5,7 +5,7 @@
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or (at
  *   your option) any later version.
- * 
+ *
  *   This program is distributed in the hope that it will be useful, but
  *   WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
@@ -17,12 +17,12 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license			http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
- 
+
 if (defined('CAT_PATH')) {
     if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
@@ -34,8 +34,8 @@ if (defined('CAT_PATH')) {
         if (empty($sub)) continue; $dir .= '/'.$sub;
         if (file_exists($dir.'/framework/class.secure.php')) {
             include($dir.'/framework/class.secure.php'); $inc = true;    break;
-	}
-	}
+        }
+    }
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
@@ -66,7 +66,7 @@ $page_id = $val->get('_REQUEST','page_id','numeric');
 if ( !$page_id )
 {
 	$ajax	= array(
-		'message'	=>  $admin->lang->translate('You sent an invalid value'),
+		'message'	=> $backend->lang()->translate('You sent an invalid value'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -148,33 +148,33 @@ $pages = CAT_Helper_ListBuilder::sort(CAT_Helper_Page::getPages(),0);
 // ! Add result_array to the template variable   
 // ============================================= 
 $ajax	= array(
-		'page_id'					=> $results_array['page_id'],
-		'page_title'				=> $results_array['page_title'],
-		'short_link'				=> substr( $results_array['link'], strripos( $results_array['link'], '/' ) + 1 ),
-		'menu_title'				=> $results_array['menu_title'],
-		'parent'					=> $results_array['parent'],
-		'description'				=> $results_array['description'],
-		'keywords'					=> $results_array['keywords'],
-		'parent'					=> $results_array['parent'],
-		'menu'						=> $results_array['menu'],
-		'visibility'				=> $results_array['visibility'],
-		'template'					=> $results_array['template'],
-		'language'					=> $results_array['language'],
-		'target'					=> $results_array['target'],
-		'level'						=> $results_array['level'],
+	'page_id'					=> $results_array['page_id'],
+	'page_title'				=> $results_array['page_title'],
+	'short_link'				=> substr( $results_array['link'], strripos( $results_array['link'], '/' ) + 1 ),
+	'menu_title'				=> $results_array['menu_title'],
+	'parent'					=> $results_array['parent'],
+	'description'				=> $results_array['description'],
+	'keywords'					=> $results_array['keywords'],
+	'parent'					=> $results_array['parent'],
+	'menu'						=> $results_array['menu'],
+	'visibility'				=> $results_array['visibility'],
+	'template'					=> $results_array['template'],
+	'language'					=> $results_array['language'],
+	'target'					=> $results_array['target'],
+	'level'						=> $results_array['level'],
 	'modified_when'				=> ($results_array['modified_when'] != 0) ? CAT_Helper_DateTime::getDate($results_array['modified_when']) : 'Unknown',
-		'searching'					=> $results_array['searching'] == 0 ? false : true,
-		'visibility'				=> $results_array['visibility'],
+	'searching'					=> $results_array['searching'] == 0 ? false : true,
+	'visibility'				=> $results_array['visibility'],
 
-		'display_name'				=> $user['display_name'],
-		'username'					=> $user['username'],
+	'display_name'				=> $user['display_name'],
+	'username'					=> $user['username'],
 
-		'DISPLAY_MENU_LIST'			=> MULTIPLE_MENUS	!= false ? true : false,
-		'DISPLAY_LANGUAGE_LIST'		=> PAGE_LANGUAGES	!= false ? true : false,
-		'DISPLAY_SEARCHING'			=> SEARCH			!= false ? true : false,
+	'DISPLAY_MENU_LIST'			=> MULTIPLE_MENUS	!= false ? true : false,
+	'DISPLAY_LANGUAGE_LIST'		=> PAGE_LANGUAGES	!= false ? true : false,
+	'DISPLAY_SEARCHING'			=> SEARCH			!= false ? true : false,
 
-		'admin_groups'				=> explode(',', str_replace('_', '', $results_array['admin_groups']) ),
-		'viewing_groups'			=> explode(',', str_replace('_', '', $results_array['viewing_groups']) ),
+	'admin_groups'				=> explode(',', str_replace('_', '', $results_array['admin_groups']) ),
+	'viewing_groups'			=> explode(',', str_replace('_', '', $results_array['viewing_groups']) ),
 
 	'parent_list'				=> $pages,
 	'PAGE_EXTENSION'			=> $backend->db()->get_one(sprintf("SELECT value FROM `%ssettings` WHERE name = 'page_extension'",CAT_TABLE_PREFIX)),

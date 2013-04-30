@@ -30,6 +30,7 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
     private $te;
     public  $path;
     public  $fallback_path;
+    public  $template_block;
 
     public function __construct( $obj )
     {

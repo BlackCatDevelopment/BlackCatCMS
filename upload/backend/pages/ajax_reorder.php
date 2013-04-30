@@ -1,70 +1,75 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
- * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
- 
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
-// =================================================== 
-// ! Include the class.admin.php and WB functions file
-// =================================================== 
-require_once(CAT_PATH . '/framework/class.admin.php');
-$admin = new admin('Pages', 'pages', false);
+$backend = CAT_Backend::getInstance('Pages', 'pages', false);
+$users   = CAT_Users::getInstance();
+$val     = CAT_Helper_Validate::getInstance();
 
 // Set header for json
 header('Content-type: application/json');
 
-if ( !$admin->get_permission('pages') )
+if ( !$users->checkPermission('Pages','pages') )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You do not have the permission to proceed this action'),
+		'message'	=> $backend->lang()->translate('You do not have the permission to proceed this action'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
 
-
-// =============== 
+// ===============
 // ! Get page id   
-// =============== 
-if ( ( !is_array( $admin->get_post('pageid') )		&& ( $admin->get_post('table') == 'pages' ) ) ||
-	 ( !is_array( $admin->get_post('sectionid') )	&& ( $admin->get_post('table') == 'sections' ) ) ||
-	 ( $admin->get_post('table') != 'pages' && $admin->get_post('table') != 'sections' ) )
-{
+// ===============
+$pages = $val->sanitizePost('page_id');
+$sect  = $val->sanitizePost('sectionid');
+$table = $val->sanitizePost('table');
+
+if (
+       (!is_array($pages) && ($table == 'pages'))
+    || (!is_array($sect)  && ($table == 'sections'))
+    || ($table != 'pages' && $table != 'sections' )
+) {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You send invalid data'),
+		'message'	=> $backend->lang()->translate('You sent invalid data'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -76,22 +81,21 @@ if ( ( !is_array( $admin->get_post('pageid') )		&& ( $admin->get_post('table') =
 // ======================= 
 require(CAT_PATH . '/framework/class.order.php');
 
-$id_field	= ( $admin->get_post('table') == 'pages' ) ? 'page_id' : 'section_id';
-$new_array	= ( $admin->get_post('table') == 'pages' ) ? $admin->get_post('pageid') : $admin->get_post('sectionid');
+$id_field	= ( $table == 'pages' ) ? 'page_id' : 'section_id';
+$new_array	= ( $table == 'pages' ) ? $pages    : $sect;
 
 foreach ( $new_array as $index => $element)
 {
 	$new_array[$index]	= intval( str_replace( 'pageid_' ,'', str_replace('sectionid_' ,'', $element) ) );
 }
 
-
-$order		= new order(CAT_TABLE_PREFIX.$admin->get_post('table'), 'position', $id_field);
+$order		= new order(CAT_TABLE_PREFIX.$table, 'position', $id_field);
 $reorder	= $order->reorder_by_array( $new_array );
 
 if ( $reorder === true )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('Page re-ordered successfully'),
+		'message'	=> $backend->lang()->translate('Re-ordered successfully'),
 		'success'	=> true
 	);
 	print json_encode( $ajax );
@@ -100,7 +104,7 @@ if ( $reorder === true )
 else
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate( $reorder.': Error re-ordering page'),
+		'message'	=> $backend->lang()->translate( $reorder.': Error re-ordering page'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );

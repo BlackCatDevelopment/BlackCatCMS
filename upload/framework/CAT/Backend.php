@@ -96,6 +96,9 @@ if (!class_exists('CAT_Backend', false))
                 CAT_TABLE_PREFIX
             ));
 
+            // check current URL for page tree
+            $uri = CAT_Helper_Validate::get('_SERVER','SCRIPT_NAME');
+
             // ===================================
             // ! initialize template search path
             // ===================================
@@ -128,7 +131,17 @@ if (!class_exists('CAT_Backend', false))
                 // create LI content for ListBuilder
                 foreach($pages as $i => $page)
                 {
-    $text = $parser->get('backend_pagetree_item',$page);
+                    $text = $parser->get(
+                        'backend_pagetree_item',
+                        array_merge(
+                            $page,
+                            array(
+                                'action' => ( pathinfo($uri,PATHINFO_FILENAME) == 'lang_settings' )
+                                         ? 'lang_settings'
+                                         : 'modify'
+                            )
+                        )
+                    );
     $pages[$i]['text'] = $text;
                 }
 
@@ -139,7 +152,7 @@ if (!class_exists('CAT_Backend', false))
                     '__li_css_prefix'      => 'fc_page_',
                     '__li_has_child_class' => 'fc_expandable',
                     '__title_key'          => 'text',
-                ))->tree( CAT_Helper_Page::getPages(), 0 );
+                ))->tree( $pages, 0 );
                 // todo: count editables first
                 $tpl_data['pages_editable'] = true;
 

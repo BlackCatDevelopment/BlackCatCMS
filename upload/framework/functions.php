@@ -59,38 +59,8 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 
     // include helpers
 	global $dirh, $arrayh, $logger;
-    include dirname(__FILE__).'/CAT/Helper/Directory.php';
-	$dirh   = new CAT_Helper_Directory();
+	$dirh   = CAT_Helper_Directory::getInstance();
 	$logger = new CAT_Helper_KLogger( CAT_PATH.'/temp', $debug_level );
-
-    /**
-     * check if the page with the given id has children
-     *
-     * @access public
-     * @param  integer $page_id - page ID
-     * @return mixed   (false if page hasn't children, parent id if not)
-     *
-     * 2011-08-22 Bianka Martinovic
-     *    Should be moved to new page object when ready
-     *    I don't understand why this returns the parent page, as methods
-     *    beginning with is* should always return boolean only IMHO
-     **/
-    function is_parent($page_id)
-    {
-        global $database;
-        // Get parent
-        $sql = 'SELECT `parent` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
-        $parent = $database->get_one($sql);
-        // If parent isnt 0 return its ID
-        if (is_null($parent))
-        {
-            return false;
-        }
-        else
-        {
-            return $parent;
-        }
-    }   // end function is_parent()
 
     /**
      * counts the levels from given page_id to root
@@ -120,42 +90,9 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     }   // function level_count()
 
     /**
-     * Function to work out root parent
-     *
-     * @access public
-     * @param  integer $page_id
-     * @return integer ID of the root page
-     *
-     **/
-    function root_parent($page_id)
-    {
-        global $database;
-        // Get page details
-        $sql = 'SELECT `parent`, `level` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
-        $query_page = $database->query($sql);
-        $fetch_page = $query_page->fetchRow();
-        $parent = $fetch_page['parent'];
-        $level = $fetch_page['level'];
-        if ($level == 1)
-        {
-            return $parent;
-        }
-        elseif ($parent == 0)
-        {
-            return $page_id;
-        }
-        else
-        {
-            // Figure out what the root parents id is
-            $parent_ids = array_reverse(get_parent_ids($page_id));
-            return $parent_ids[0];
-        }
-    }   // end root_parent()
-
-    /**
      * get additions for page header (css, js, meta)
      *
-     * This is a wrapper for CAT_Pages->getHeaders()
+     * This is a wrapper for CAT_Helper_Page->getHeaders()
      *
      * @access public
      * @param  string  $for - 'frontend' (default) / 'backend'
@@ -212,24 +149,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
                 }
     }   // end function get_page_footers()
 
-    // Function to get page title
-    function get_page_title($id)
-    {
-        global $database;
-        // Get title
-        $sql = 'SELECT `page_title` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $id;
-        $page_title = $database->get_one($sql);
-        return $page_title;
-    }
-    // Function to get a pages menu title
-    function get_menu_title($id)
-    {
-        global $database;
-        // Get title
-        $sql = 'SELECT `menu_title` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $id;
-        $menu_title = $database->get_one($sql);
-        return $menu_title;
-    }
     // Function to get all parent page titles
     function get_parent_titles($parent_id)
     {
@@ -241,43 +160,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         }
         return $titles;
     }
-    // Function to get all parent page id's
-    function get_parent_ids($parent_id)
-    {
-        $ids[] = $parent_id;
-        if (is_parent($parent_id) != false)
-        {
-            $parent_ids = get_parent_ids(is_parent($parent_id));
-            $ids = array_merge($ids, $parent_ids);
-        }
-        return $ids;
-    }
-    // Function to generate page trail
-    function get_page_trail($page_id)
-    {
-        return implode(',', array_reverse(get_parent_ids($page_id)));
-    }
     
-    // Function to get all sub pages id's
-    function get_subs($parent, $subs)
-    {
-        // Connect to the database
-        global $database;
-        // Get id's
-        $sql = 'SELECT `page_id` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `parent` = ' . $parent;
-        $query = $database->query($sql);
-        if ($query->numRows() > 0)
-        {
-            while (false !== ($fetch = $query->fetchRow()))
-            {
-                $subs[] = $fetch['page_id'];
-                // Get subs of this sub
-                $subs = get_subs($fetch['page_id'], $subs);
-            }
-        }
-        // Return subs array
-        return $subs;
-    }
     // Convert a string from mixed html-entities/umlauts to pure $charset_out-umlauts
     // Will replace all numeric and named entities except &gt; &lt; &apos; &quot; &#039; &nbsp;
     // In case of error the returned string is unchanged, and a message is emitted.
@@ -294,36 +177,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         return umlauts_to_entities2($string, $charset_in);
     }
     
-    // @internal webbird - moved this function from admins/modules/uninstall.php and admins/templates/uninstall.php
-    function replace_all($aStr = "", &$aArray)
-    {
-        foreach ($aArray as $k => $v)
-        {
-            $aStr = str_replace("{{" . $k . "}}", $v, $aStr);
-        }
-        return $aStr;
-    }   // end function replace_all()
-
-    // Function to convert a page title to a page filename
-    function page_filename($string)
-    {
-        require_once(CAT_PATH . '/framework/functions-utf8.php');
-        $string = entities_to_7bit($string);
-        // Now remove all bad characters
-        $bad = array('\'', '"', '`', '!', '@', '#', '$', '%', '^', '&', '*', '=', '+', '|', '/', '\\', ';', ':', ',', '?');
-        $string = str_replace($bad, '', $string);
-        // replace multiple dots in filename to single dot and (multiple) dots at the end of the filename to nothing
-        $string = preg_replace(array('/\.+/', '/\.+$/'), array('.', ''), $string);
-        // Now replace spaces with page spcacer
-        $string = trim($string);
-        $string = preg_replace('/(\s)+/', PAGE_SPACER, $string);
-        // Now convert to lower-case
-        $string = strtolower($string);
-        // If there are any weird language characters, this will protect us against possible problems they could cause
-        $string = str_replace(array('%2F', '%'), array('/', ''), urlencode($string));
-        // Finally, return the cleaned string
-        return $string;
-    }
     // Function to convert a desired media filename to a clean filename
     function media_filename($string)
     {
@@ -339,15 +192,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         // Finally, return the cleaned string
         return $string;
     }
-
-    /**
-     * wrapper to $admin->page_link()
-     **/
-#    function page_link($link)
-#    {
-#        global $admin;
-#        return $admin->page_link($link);
-#    }   // end function page_link()
 
     /*
      * create_access_file
@@ -571,91 +415,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         // return result of binary-AND
         return(($right_mask & $action_mask) != 0);
     }
-    
-    /**
-     * delete a page
-     *
-     * @access public
-     * @param  integer $page_id
-     * @return void
-     *
-     **/
-    function delete_page($page_id)
-    {
-        global $admin, $database, $MESSAGE;
-        // Find out more about the page
-        // $database = new database();
-        $sql = 'SELECT `page_id`, `menu_title`, `page_title`, `level`, `link`, `parent`, `modified_by`, `modified_when` ';
-        $sql .= 'FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
-        $results = $database->query($sql);
-        if ($database->is_error())
-        {
-            $admin->print_error($database->get_error());
-        }
-        if ($results->numRows() == 0)
-        {
-            $admin->print_error($MESSAGE['PAGES_NOT_FOUND']);
-        }
-        $results_array = $results->fetchRow();
-        $parent = $results_array['parent'];
-        $level = $results_array['level'];
-        $link = $results_array['link'];
-        $page_title = $results_array['page_title'];
-        $menu_title = $results_array['menu_title'];
-        // Get the sections that belong to the page
-        $sql = 'SELECT `section_id`, `module` FROM `' . CAT_TABLE_PREFIX . 'sections` WHERE `page_id` = ' . $page_id;
-        $query_sections = $database->query($sql);
-        if ($query_sections->numRows() > 0)
-        {
-            while (false !== ($section = $query_sections->fetchRow()))
-            {
-                // Set section id
-                $section_id = $section['section_id'];
-                // Include the modules delete file if it exists
-                if (file_exists(CAT_PATH . '/modules/' . $section['module'] . '/delete.php'))
-                {
-                    include(CAT_PATH . '/modules/' . $section['module'] . '/delete.php');
-                }
-            }
-        }
-        // Update the pages table
-        $sql = 'DELETE FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
-        $database->query($sql);
-        if ($database->is_error())
-        {
-            $admin->print_error($database->get_error());
-        }
-        // Update the sections table
-        $sql = 'DELETE FROM `' . CAT_TABLE_PREFIX . 'sections` WHERE `page_id` = ' . $page_id;
-        $database->query($sql);
-        if ($database->is_error())
-        {
-            $admin->print_error($database->get_error());
-        }
-        // Include the ordering class or clean-up ordering
-        include_once(CAT_PATH . '/framework/class.order.php');
-        $order = new order(CAT_TABLE_PREFIX . 'pages', 'position', 'page_id', 'parent');
-        $order->clean($parent);
-        // Unlink the page access file and directory
-        $directory = CAT_PATH . PAGES_DIRECTORY . $link;
-        $filename = $directory . PAGE_EXTENSION;
-        $directory .= '/';
-        if (file_exists($filename))
-        {
-            if (!is_writable(CAT_PATH . PAGES_DIRECTORY . '/'))
-            {
-                $admin->print_error($MESSAGE['PAGES_CANNOT_DELETE_ACCESS_FILE']);
-            }
-            else
-            {
-                unlink($filename);
-                if (file_exists($directory) && (rtrim($directory, '/') != CAT_PATH . PAGES_DIRECTORY) && (substr($link, 0, 1) != '.'))
-                {
-                    rm_full_dir($directory);
-                }
-            }
-        }
-    }   // end function delete_page()
     
     /**
      *  Load module-info into the current DB
@@ -919,6 +678,37 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 		return $addons_helper->upgradeModule( $directory, $upgrade );
     }   // end function upgrade_module()
 
+
+    // *************************************************************************
+    // Deprecated methods, moved to appropriate classes
+    // *************************************************************************
+
+    /**
+     * I don't understand why this returns the parent page, as methods
+     * beginning with is* should always return boolean only IMHO
+     **/
+    function is_parent($id)         { return CAT_Helper_Page::properties($id,'parent'); }
+
+    function delete_page($id)       { return CAT_Helper_Page::deletePage($id); }
+    function get_page_title($id)    { return CAT_Helper_Page::properties($id,'page_title'); }
+    function get_menu_title($id)    { return CAT_Helper_Page::properties($id,'menu_title'); }
+    function page_filename($string) { return CAT_Helper_Page::getFilename($string); }
+    function root_parent($id)       { return CAT_Helper_Page::getRootParent($id); }
+    
+    function get_parent_ids($parent)
+    {
+        $ids[] = $parent;
+        if (is_parent($parent) != false)
+        {
+            $parent_ids = get_parent_ids(is_parent($parent));
+            $ids = array_merge($ids, $parent);
+        }
+        return $ids;
+    }
+    function get_page_trail($id)
+    {
+        return implode(',', array_reverse(get_parent_ids($id)));
+    }
 
 }
 // end .. if functions is loaded 

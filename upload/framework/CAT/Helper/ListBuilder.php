@@ -33,65 +33,18 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
 	    protected $_config
 			= array(
                  'loglevel'             => 7,
-	            // array key that contains the id of the parent item
-	            '__parent_key'          => 'parent',
-	            // array key that contains the item id
-	            '__id_key'              => 'page_id',
-	            // array key that contains the name (text) of the element
-	            '__title_key'           => 'menu_title',
-	            // array key that contains the item level (=depth)
-	            '__level_key'           => 'level',
-			    // array key to store child references
-	            '__children_key'        => 'children',
-	            // array key to mark current item
-	            '__current_key'         => 'current',
-	            // array key to mark items as hidden
-	            '__hidden_key'          => 'hidden',
-                //
-                '__editable_key'        => 'editable',
-                // default CSS class for <select>
-                '__select_class'        => '',
-                // template for <ul>
-                '__list_open'           => '<ul id="%%id%%" class="%%class%%">',
-                // template for </ul>
-                '__list_close'          => '</ul>',
-                // template for <li>
-                '__list_item_open'      => '<li id="%%id%%" class="%%class%%">',
-                // template for </li>
-                '__list_item_close'     => '</li>',
-                // prefix to be used for CSS classes
-                '__ul_css_prefix'       => NULL,
-                // default CSS class for <ul>
-                '__ul_class'            => 'ui-sortable',
-                // create CSS classes per sublevel
-                '__ul_level_css'        => false,
-                // default CSS class for <li>
-                '__li_class'            => 'tree_item',
-                // create CSS classes per sublevel
-                '__li_level_css'        => false,
-                // prefix to be used for CSS classes for <li>
-                '__li_css_prefix'       => NULL,
-                //
-                '__li_id_prefix'        => NULL,
-                '__li_first_item_class' => 'first_item',
-                '__li_last_item_class'  => 'last_item',
-                '__li_has_child_class'  => 'has_child',
-                '__li_is_open_class'    => 'is_open',
-
-                // suppress html creation
-                '__no_html'             => false,
-			// ----- used for dropdown -----
-			    'space'                 => '    ',
 			);
 
         private static $instance;
 
-        public static function getInstance()
+        public static function getInstance($reset=false)
         {
             if (!self::$instance)
             {
                 self::$instance = new self();
+                $reset = true;
             }
+            if($reset) self::$instance->reset();
             return self::$instance;
         }   // end function getInstance()
 
@@ -481,6 +434,44 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             return $space . self::getInstance()->_config['__list_item_close'];
         }   // end function closeLI()
         
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function reset() {
+            $this->_config = array(
+	            '__parent_key'          => 'parent',
+	            '__id_key'              => 'page_id',
+	            '__title_key'           => 'menu_title',
+	            '__level_key'           => 'level',
+	            '__children_key'        => 'children',
+	            '__current_key'         => 'current',
+	            '__hidden_key'          => 'hidden',
+                '__editable_key'        => 'editable',
+                '__select_class'        => '',
+                '__list_open'           => '<ul id="%%id%%" class="%%class%%">',
+                '__list_close'          => '</ul>',
+                '__list_item_open'      => '<li id="%%id%%" class="%%class%%">',
+                '__list_item_close'     => '</li>',
+                '__ul_css_prefix'       => NULL,
+                '__ul_class'            => 'ui-sortable',
+                '__ul_level_css'        => false,
+                '__li_class'            => 'tree_item',
+                '__li_level_css'        => false,
+                '__li_css_prefix'       => NULL,
+                '__li_id_prefix'        => NULL,
+                '__li_first_item_class' => 'first_item',
+                '__li_last_item_class'  => 'last_item',
+                '__li_has_child_class'  => 'has_child',
+                '__li_is_open_class'    => 'is_open',
+                '__no_html'             => false,
+			    'space'                 => '    ',
+			);
+            return $this; // make chainable
+        }   // end function reset()
+        
+
 	}
 }
 
