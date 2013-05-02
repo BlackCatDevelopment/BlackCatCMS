@@ -1,63 +1,66 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
-require_once( CAT_PATH . '/framework/class.admin.php' );
-$admin = new admin('Pages', 'pages_settings', false);
+$backend = CAT_Backend::getInstance('Pages', 'pages_settings', false);
+$val     = CAT_Helper_Validate::getInstance();
+$users   = CAT_Users::getInstance();
 
 header('Content-type: application/json');
 
 // Get page id
-$page_id		= $admin->get_post('page_id');
-
-// Check page_id
-if ( $page_id == '' || !is_numeric($page_id) )
+$page_id		= $val->sanitizePost('page_id','numeric');
+if ( !$page_id )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You send an invalid value.'),
+		'message'	=> $backend->lang()->translate('You sent an invalid value.'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
 
-if ( !$admin->get_permission('pages_settings') )
+if ( !$users->checkPermission('Pages','pages_settings') )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You do not have permissions to modify this page'),
+		'message'	=> $backend->lang()->translate('You do not have permissions to modify this page'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -68,67 +71,67 @@ if ( !$admin->get_permission('pages_settings') )
 require_once( CAT_PATH . '/framework/functions.php' );
 
 // Get values
-$page_title			= htmlspecialchars($admin->get_post_escaped('page_title'));
-$menu_title			= htmlspecialchars($admin->get_post_escaped('menu_title'));
-$page_link			= htmlspecialchars($admin->get_post_escaped('page_link'));
-$description		= htmlspecialchars($admin->get_post_escaped('description'));
-$keywords			= htmlspecialchars($admin->get_post_escaped('keywords'));
-$page_groups		= htmlspecialchars($admin->get_post_escaped('page_groups'));
-$parent				= $admin->get_post_escaped('parent');
-$target				= $admin->get_post_escaped('target');
-$template			= $admin->get_post_escaped('template');
-$menu				= $admin->get_post_escaped('menu');
-$language			= $admin->get_post_escaped('language');
-$visibility			= $admin->get_post_escaped('visibility');
-$searching			= $admin->get_post('searching') ? '1' : '0';
-$admin_groups		= $admin->get_post_escaped('admin_groups');
-$viewing_groups		= $admin->get_post_escaped('viewing_groups');
+$options = array(
+    'parent'         => ( $val->sanitizePost('parent','numeric',true) ? $val->sanitizePost('parent','numeric',true) : 0 ),
+    'target'         => $val->sanitizePost('target',NULL,true),
+    'page_title'     => htmlspecialchars($val->sanitizePost('page_title',NULL,true) ),
+    'menu_title'     => htmlspecialchars($val->sanitizePost('menu_title',NULL,true) ),
+    'description'    => htmlspecialchars($val->sanitizePost('description',NULL,true) ),
+    'keywords'       => htmlspecialchars($val->sanitizePost('keywords',NULL,true)    ),
+    'template'       => $val->sanitizePost('template',NULL,true),
+    'visibility'     => $val->sanitizePost('visibility',NULL,true),
+    'position'       => 0,
+    'menu'           => ( ( $val->sanitizePost('menu',NULL,true) != '') ? $val->sanitizePost('menu',NULL,true) : 1 ),
+    'language'       => $val->sanitizePost('language',NULL,true),
+    'searching'      => $val->sanitizePost('searching',NULL,true) ? '1' : '0',
+    'modified_when'  => time(),
+    'modified_by'    => $users->get_user_id(),
+    'admin_groups'	 => $val->sanitizePost('admin_groups',NULL,true),
+    'viewing_groups' => $val->sanitizePost('viewing_groups',NULL,true),
+    'level'          => 0,
+    'root_parent'    => 0,
+);
 
+$page_link			= htmlspecialchars($val->sanitizePost('page_link',NULL,true));
+$page_groups		= htmlspecialchars($val->sanitizePost('page_groups',NULL,true));
 
-// Validate data
-if ( $page_title == '' || substr( $page_title, 0, 1 ) == '.' )
+// =======================
+// ! Validate menu_title
+// =======================
+if ($options['menu_title'] == '' || substr($options['menu_title'],0,1)=='.')
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('Please enter a page title'),
+		'message'	=> $backend->lang()->translate( 'Please enter a menu title' ),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
-if ( $menu_title == '' || substr($menu_title,0,1)=='.' )
-{
-	$ajax	= array(
-		'message'	=> $admin->lang->translate('Please enter a menu title'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
-}
 
+$options['page_title'] = ( $options['page_title'] == '' )
+                       ? $options['menu_title']
+                       : $options['page_title'];
 
-// Get existing perms
-$results			= $database->query('SELECT `parent`, `link`, `position`, `admin_groups`, `admin_users` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id`=' . $page_id);
-$results_array		= $results->fetchRow();
-
-$old_parent			= $results_array['parent'];
-$old_link			= $results_array['link'];
-$old_position		= $results_array['position'];
-$old_admin_groups	= explode(',', str_replace('_', '', $results_array['admin_groups']));
-$old_admin_users	= explode(',', str_replace('_', '', $results_array['admin_users']));
-
-
+// Get existing page data
+$page               = CAT_Helper_Page::getPage($page_id);
+$old_parent			= $page['parent'];
+$old_link			= $page['link'];
+$old_position		= $page['position'];
+$old_admin_groups	= explode(',', str_replace('_', '', $page['admin_groups']));
+$old_admin_users	= explode(',', str_replace('_', '', $page['admin_users']));
 $in_old_group		= false;
-foreach ( $admin->get_groups_id() as $cur_gid )
+
+foreach ( $users->get_groups_id() as $cur_gid )
 {
 	if ( in_array($cur_gid, $old_admin_groups) )
 	{
 		$in_old_group = true;
 	}
 }
-if ( (!$in_old_group) && !is_numeric( array_search($admin->get_user_id(), $old_admin_users) ) )
+if ( (!$in_old_group) && !is_numeric( array_search($users->get_user_id(), $old_admin_users) ) )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You do not have permissions to modify this page'),
+		'message'	=> $backend->lang()->translate('You do not have permissions to modify this page'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -137,135 +140,102 @@ if ( (!$in_old_group) && !is_numeric( array_search($admin->get_user_id(), $old_a
 
 // Setup admin groups
 $admin_groups[]		= 1;
-$admin_groups		= implode(',', $admin_groups);
+$admin_groups		= implode(',', $options['admin_groups']);
 // Setup viewing groups
 $viewing_groups[]	= 1;
-$viewing_groups		= implode(',', $viewing_groups);
+$viewing_groups		= implode(',', $options['viewing_groups']);
 
 // If needed, get new order
-if ( $parent != $old_parent )
+if ( $options['parent'] != $old_parent )
 {
 	// Include ordering class
 	require( CAT_PATH . '/framework/class.order.php' );
 
 	$order			= new order(CAT_TABLE_PREFIX.'pages', 'position', 'page_id', 'parent');
 	// Get new order
-	$position		= $order->get_new( $parent );
-
+	$options['position'] = $order->get_new( $options['parent'] );
 	// Clean new order
-	$order->clean($parent);
+	$order->clean($options['parent']);
 }
 else
 {
-	$position		= $old_position;
+	$options['position'] = $old_position;
 }
 
 // Work out level and root parent
-if ( $parent != '0' )
+if ( $options['parent'] != '0' )
 {
-	$level			= level_count( $parent )+1;
-	$root_parent	= root_parent( $parent );
-}
-else
-{
-	$level			= '0';
-	$root_parent	= '0';
+	$options['level']       = CAT_Helper_Page::properties($options['parent'],'level') + 1;
+	$options['root_parent'] = CAT_Helper_Page::getRootParent($options['parent']);
 }
 
 // Work-out what the link should be
-if ( $parent == '0' )
+if ( $options['parent'] == '0' )
 {
-	$link			 = '/' . page_filename( $page_link );
+	$options['link']  = '/' . CAT_Helper_Page::getFilename($page_link);
 	// rename menu titles: index && intro to prevent clashes with intro page feature and Lepton core file /pages/index.php
-	$link			.= ( $link == '/index' || $link == '/intro' ) ? '_' .$page_id : '';
+	$options['link'] .= ( $options['link'] == '/index' || $options['link'] == '/intro' ) ? '_' .$page_id : '';
 }
 else
 {
-	$parent_titles			= array_reverse(get_parent_titles($parent));
+	$parent_titles	= array_reverse(CAT_Helper_Page::getParentTitles($options['parent']));
 	$parent_section			 = '';
 	foreach ( $parent_titles AS $parent_title )
 	{
-		$parent_section		.= page_filename( $parent_title ) . '/';
+		$parent_section		.= CAT_Helper_Page::getFilename( $parent_title ) . '/';
 	}
 	if($parent_section == '/')
 	{
 		$parent_section		 = '';
 	}
-	$link			= '/' . $parent_section . page_filename( $page_link );
+	$options['link']			= '/' . $parent_section . CAT_Helper_Page::getFilename( $page_link );
 }
 
-$filename			= CAT_PATH . PAGES_DIRECTORY . $link . PAGE_EXTENSION;
+$filename = CAT_PATH . PAGES_DIRECTORY . $options['link'] . PAGE_EXTENSION;
 
-
-// Check if a page with same page filename exists
-$get_same_page		= $database->query( 'SELECT `page_id`,`page_title` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `link` = "' . $link . '" AND `page_id` != ' . $page_id);
-
-if ( $get_same_page->numRows() > 0 )
+// ==================================================
+// ! Check if a page with same page filename exists
+// ==================================================
+if ( $options['link'] !== $old_link )
 {
+    $get_same_page = $backend->db()->query(sprintf(
+        "SELECT page_id FROM `%spages` WHERE link = '%s'",
+        CAT_TABLE_PREFIX, $options['link']
+    ));
+    if ( $get_same_page->numRows() > 0 || file_exists(CAT_PATH . PAGES_DIRECTORY.$options['link'].PAGE_EXTENSION) || file_exists(CAT_PATH . PAGES_DIRECTORY.$options['link'].'/') )
+    {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('A page with the same or similar url exists'),
+    		'message'	=>$backend->lang()->translate( 'A page with the same or similar link exists' ),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
+    }
 }
 
-
-// Update page with new order
-$database->query('UPDATE `' . CAT_TABLE_PREFIX . 'pages` SET `parent`=' . $parent . ', `position`=' . $position . ' WHERE `page_id`=' . $page_id);
-
 // Get page trail
-$page_trail		= get_page_trail( $page_id );
+$options['page_trail'] = CAT_Helper_Page::getPageTrail($options['parent']).','.$page_id;
 
-// Update page settings in the pages table
-$sql	= 'UPDATE `' . CAT_TABLE_PREFIX . 'pages` SET ';
-$sql	.= '`page_title` = "'.$page_title.'", ';
-$sql	.= '`menu_title` = "'.$menu_title.'", ';
-$sql	.= '`link` = "'.$link.'" ';
-$sql	.= ', `parent` = '.$parent.', ';
-$sql	.= '`menu` = '.$menu.', ';
-$sql	.= '`level` = '.$level.', ';
-$sql	.= '`page_trail` = "'.$page_trail.'", ';
-$sql	.= '`root_parent` = '.$root_parent.', ';
-$sql	.= '`template` = "'.$template.'", ';
-$sql	.= '`target` = "'.$target.'", ';
-$sql	.= '`description` = "'.$description.'", ';
-$sql	.= '`keywords` = "'.$keywords.'", ';
-$sql	.= '`position` = '.$position.', ';
-$sql	.= '`visibility` = "'.$visibility.'", ';
-$sql	.= '`searching` = '.$searching.', ';
-if ($language != '') $sql	.= '`language` = "'.$language.'", ';
-$sql	.= '`admin_groups` = "'.$admin_groups.'", ';
-$sql	.= '`viewing_groups` = "'.$viewing_groups.'", ';
-$sql    .= '`page_groups`= "'.$page_groups.'"';
-
-$sql	.= 'WHERE `page_id` = '.$page_id;
-
-
-$database->query($sql);
-
-if ( $database->is_error() )
+if ( !CAT_Helper_Page::updatePage($page_id,$options) )
 {
 	$ajax	= array(
-		'message'	=> $database->get_error(),
+		'message'	=> 'Database error: '.$backend->db()->get_error(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
 // Clean old order if needed
-if ( $parent != $old_parent )
+if ( $options['parent'] != $old_parent )
 {
 	$order->clean($old_parent);
 }
-
-/* BEGIN page "access file" code */
 
 // Create a new file in the /pages dir if title changed
 if ( !is_writable( CAT_PATH . PAGES_DIRECTORY . '/') )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('Error creating access file in the pages directory(page), (insufficient privileges)'),
+		'message'	=> $backend->lang()->translate('Error creating access file in the pages directory, (insufficient privileges)'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -276,7 +246,7 @@ else
 	$old_filename	= CAT_PATH.PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
 
 	// First check if we need to create a new file
-	if ( ( $old_link != $link ) || (!file_exists($old_filename) ) )
+	if ( ( $old_link != $options['link'] ) || (!file_exists($old_filename) ) )
 	{
 		// Delete old file
 		$old_filename		= CAT_PATH.PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
@@ -286,12 +256,12 @@ else
 		}
 
 		// Create access file
-		create_access_file( $filename, $page_id, $level );
+		CAT_Helper_Page::createAccessFile( $filename, $page_id, $options['level'] );
 
 		// Move a directory for this page
 		if ( file_exists( CAT_PATH . PAGES_DIRECTORY . $old_link . '/') && is_dir( CAT_PATH . PAGES_DIRECTORY . $old_link . '/' ) )
 		{
-			rename( CAT_PATH . PAGES_DIRECTORY . $old_link . '/', CAT_PATH . PAGES_DIRECTORY . $link . '/' );
+			rename( CAT_PATH . PAGES_DIRECTORY . $old_link . '/', CAT_PATH . PAGES_DIRECTORY . $options['link'] . '/' );
 		}
 
 		// Update any pages that had the old link with the new one
@@ -310,7 +280,7 @@ else
 					// Get new link
 					$replace_this		= $old_link;
 					$old_sub_link_len	= strlen( $sub['link'] );
-					$new_sub_link		= $link . '/' . substr( $sub['link'], $old_link_len + 1, $old_sub_link_len );
+					$new_sub_link		= $options['link'] . '/' . substr( $sub['link'], $old_link_len + 1, $old_sub_link_len );
 
 					// Work out level
 					$new_sub_level		= level_count( $sub['page_id'] );
@@ -332,40 +302,14 @@ else
 	}
 }
 
-// Function to fix page trail of subs
-function fix_page_trail( $parent,$root_parent )
-{
-	// Get objects and vars from outside this function
-	global $admin, $database;
-
-	// Get page list from database
-	$get_pages	= $database->query("SELECT page_id FROM " . CAT_TABLE_PREFIX . "pages WHERE parent = '$parent'");
-
-	// Insert values into main page list
-	if ( $get_pages->numRows() > 0 )
-	{
-		while ( $page = $get_pages->fetchRow() )
-		{
-			// Fix page trail
-			$database->query("UPDATE " . CAT_TABLE_PREFIX . "pages SET " . 
-				($root_parent != 0 ? "root_parent = '$root_parent', " : "")
-				. " page_trail = '" . get_page_trail( $page['page_id'] ) . "' WHERE page_id = '" . $page['page_id'] . "'");
-			// Run this query on subs
-			fix_page_trail( $page['page_id'], $root_parent );
-		}
-	}
-}
-
 // Fix sub-pages page trail
-fix_page_trail( $page_id, $root_parent );
-
-/* END page "access file" code */
+CAT_Helper_Page::updatePageTrail( $page_id, $options['root_parent'] );
 
 // Check if there is a db error, otherwise say successful
-if ( $database->is_error() )
+if ( CAT_Helper_Page::getInstance()->db()->is_error() )
 {
 	$ajax	= array(
-		'message'		=> $database->get_error(),
+		'message'		=> CAT_Helper_Page::getInstance()->db()->get_error(),
 		'success'		=> false
 	);
 	print json_encode( $ajax );
@@ -374,12 +318,12 @@ if ( $database->is_error() )
 else
 {
 	$ajax	= array(
-		'message'		=> $admin->lang->translate('Page settings saved successfully'),
-		'menu_title'	=> $menu_title,
-		'page_title'	=> $page_title,
-		'visibility'	=> $visibility,
-		'parent'		=> $parent,
-		'position'		=> $position,
+		'message'		=> $backend->lang()->translate('Page settings saved successfully'),
+		'menu_title'	=> $options['menu_title'],
+		'page_title'	=> $options['page_title'],
+		'visibility'	=> $options['visibility'],
+		'parent'		=> $options['parent'],
+		'position'		=> $options['position'],
 		'success'		=> true
 	);
 	print json_encode( $ajax );

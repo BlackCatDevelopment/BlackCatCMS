@@ -101,7 +101,7 @@
 					success:	function( data, textStatus, jqXHR  )
 					{
 						var form	= $('#fc_add_page'),
-							option	= '<select name="parent" id="fc_addPage_parent">';
+							option	= '<select name="parent" id="fc_addPage_parent"><option value=""></option>';
 						if ( data.visibility == 'deleted' )
 						{
 							form.find('nav, ul, .fc_changePageOnly, .fc_addPageOnly').hide();
@@ -112,7 +112,7 @@
 							form.find('nav, ul, .fc_changePageOnly').show();
 							$.each(data.parent_list, function(index, value)
 							{
-								option	= option + '<option value="' + value.id + '"';
+								option	= option + '<option value="' + value.page_id + '"';
  								option	= (
                                                value.is_editable === false      // no permission or deleted page
                                             || value.is_current === true        // current page

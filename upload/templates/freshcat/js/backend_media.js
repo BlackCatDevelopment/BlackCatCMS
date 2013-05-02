@@ -99,10 +99,6 @@ function save_name( rename_input, extension )
 			}
 			// Scroll to the very right to put the new loaded files into viewable area
 			scrollToRight();
-		},
-		error:		function(jqXHR, textStatus, errorThrown)
-		{
-			alert(textStatus + ': ' + errorThrown );
 		}
 	});
 }
@@ -206,10 +202,6 @@ function reload_folder( current_ul, folder_path, load_url )
 			}
 			// Scroll to the very right to put the new loaded files into viewable area
 			scrollToRight();
-		},
-		error:		function(jqXHR, textStatus, errorThrown)
-		{
-			alert(textStatus + ': ' + errorThrown );
 		}
 	});
 }
@@ -589,10 +581,6 @@ jQuery(document).ready(function()
 				{
 					return_error( jqXHR.process , data.message);
 				}
-			},
-			error:		function(jqXHR, textStatus, errorThrown)
-			{
-				alert(textStatus + ': ' + errorThrown );
 			}
 		});
 	});

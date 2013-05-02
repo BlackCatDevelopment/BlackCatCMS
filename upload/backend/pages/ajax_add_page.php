@@ -48,7 +48,7 @@ header('Content-type: application/json');
 if ( ! $users->checkPermission('pages','pages_add',false) )
 {
 	$ajax	= array(
-		'message'	=>$backend->lang()->translate('You don\'t have the permission to add a page.'),
+		'message'	=>$backend->lang()->translate("You don't have the permission to add a page."),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -64,22 +64,23 @@ require_once(CAT_PATH . '/framework/functions.php');
 // ! Get values   
 // ============== 
 $options = array(
-    'parent'         => ( $val->sanitizePost('parent','integer',true) ? $val->sanitizePost('parent','integer',true) : 0 ),
-    'target'         => $val->sanitizePost('target',NULL,true),
-    'page_title'     => htmlspecialchars($val->sanitizePost('page_title',NULL,true) ),
-    'menu_title'     => htmlspecialchars($val->sanitizePost('menu_title',NULL,true) ),
+    'admin_groups'	 => $val->sanitizePost('admin_groups',NULL,true),
     'description'    => htmlspecialchars($val->sanitizePost('description',NULL,true) ),
     'keywords'       => htmlspecialchars($val->sanitizePost('keywords',NULL,true)    ),
-    'template'       => $val->sanitizePost('template',NULL,true),
-    'visibility'     => $val->sanitizePost('visibility',NULL,true),
-    'position'       => 0,
-    'menu'           => ( ( $val->sanitizePost('menu',NULL,true) != '') ? $val->sanitizePost('menu',NULL,true) : 1 ),
     'language'       => $val->sanitizePost('language',NULL,true),
-    'searching'      => $val->sanitizePost('searching',NULL,true) ? '1' : '0',
-    'modified_when'  => time(),
+    'level'          => 0, // just a default here
+    'menu'           => ( ( $val->sanitizePost('menu',NULL,true) != '') ? $val->sanitizePost('menu',NULL,true) : 1 ),
+    'menu_title'     => htmlspecialchars($val->sanitizePost('menu_title',NULL,true) ),
     'modified_by'    => $users->get_user_id(),
-    'admin_groups'	 => $val->sanitizePost('admin_groups',NULL,true),
+    'modified_when'  => time(),
+    'page_title'     => htmlspecialchars($val->sanitizePost('page_title',NULL,true) ),
+    'parent'         => ( $val->sanitizePost('parent','integer',true) ? $val->sanitizePost('parent','integer',true) : 0 ),
+    'position'       => 0, // just a default here
+    'searching'      => $val->sanitizePost('searching',NULL,true) ? '1' : '0',
+    'target'         => $val->sanitizePost('target',NULL,true),
+    'template'       => $val->sanitizePost('template',NULL,true),
     'viewing_groups' => $val->sanitizePost('viewing_groups',NULL,true),
+    'visibility'     => $val->sanitizePost('visibility',NULL,true),
 );
 
 $page_link			= htmlspecialchars($val->sanitizePost('page_link',NULL,true) );
@@ -99,17 +100,21 @@ if ( $options['parent'] != 0 )
 	if ( !CAT_Helper_Page::getPagePermission($options['parent'],'admin') )
 	{
 		$ajax	= array(
-			'message'	=> $backend->lang()->translate('You do not have permissions to modify this page.'),
+			'message'	=> $backend->lang()->translate('You do not have the permission add a page here.'),
 			'success'	=> false
 		);
 		print json_encode( $ajax );
 		exit();
 	}
 }
+// *****************************************************************************
+// Hier wird LEVEL 0 geprüft, aber wir wissen doch noch gar nicht, ob die Seite
+// eine L0-Seite ist???
+// *****************************************************************************
 elseif ( ! $users->checkPermission('pages_add_l0','system',false) )
 {
 	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You do not have permissions to modify this page'),
+		'message'	=> $backend->lang()->translate('You do not have the permission add a page here.'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -151,7 +156,7 @@ if ( !in_array(1, $users->get_groups_id()) )
 	if ( $admin_perm_ok == false )
 	{
 		$ajax	= array(
-			'message'	=> $backend->lang()->translate( 'You do not have permissions to modify this page' ),
+			'message'	=> $backend->lang()->translate( 'You do not have the permission add a page here.' ),
 			'success'	=> false
 		);
 		print json_encode( $ajax );
@@ -170,7 +175,7 @@ if ( !in_array(1, $users->get_groups_id()) )
 	if ($admin_perm_ok == false)
 	{
 		$ajax	= array(
-			'message'	=> $backend->lang()->translate( 'You do not have permissions to modify this page' ),
+			'message'	=> $backend->lang()->translate( 'You do not have the permission add a page here.' ),
 			'success'	=> false
 		);
 		print json_encode( $ajax );
@@ -194,11 +199,11 @@ if ( !$options['parent'] || $options['parent'] == '0' )
 	if( $link == '/index' || $link == '/intro' )
 	{
 		$link	.= '_0';
-		$filename	= CAT_PATH . PAGES_DIRECTORY .'/' . page_filename($options['menu_title']) . '_0' . PAGE_EXTENSION;
+		$filename	= CAT_PATH . PAGES_DIRECTORY .'/' . CAT_Helper_Page::getFilename($options['menu_title']) . '_0' . PAGE_EXTENSION;
 	}
 	else
 	{
-		$filename	= CAT_PATH . PAGES_DIRECTORY . '/' . page_filename($options['menu_title']) . PAGE_EXTENSION;
+		$filename	= CAT_PATH . PAGES_DIRECTORY . '/' . CAT_Helper_Page::getFilename($options['menu_title']) . PAGE_EXTENSION;
 	}
 }
 else
@@ -230,7 +235,7 @@ $get_same_page = $backend->db()->query(sprintf(
 if ( $get_same_page->numRows() > 0 || file_exists(CAT_PATH . PAGES_DIRECTORY.$link.PAGE_EXTENSION) || file_exists(CAT_PATH . PAGES_DIRECTORY.$link.'/') )
 {
 	$ajax	= array(
-		'message'	=>$backend->lang()->translate( 'A page with the same or similar title exists' ),
+		'message'	=>$backend->lang()->translate( 'A page with the same or similar link exists' ),
 		'success'	=> false
 	);
 	print json_encode( $ajax );

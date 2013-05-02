@@ -63,33 +63,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 	$logger = new CAT_Helper_KLogger( CAT_PATH.'/temp', $debug_level );
 
     /**
-     * counts the levels from given page_id to root
-     *
-     * @access public
-     * @param  integer  $page_id
-     * @return integer  level (>=0)
-     *
-     **/
-    function level_count($page_id)
-    {
-        global $database;
-        // Get page parent
-        $sql = 'SELECT `parent` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $page_id;
-        $parent = $database->get_one($sql);
-        if ($parent > 0)
-        {
-            // Get the level of the parent
-            $sql = 'SELECT `level` FROM `' . CAT_TABLE_PREFIX . 'pages` WHERE `page_id` = ' . $parent;
-            $level = $database->get_one($sql);
-            return $level + 1;
-        }
-        else
-        {
-            return 0;
-        }
-    }   // function level_count()
-
-    /**
      * get additions for page header (css, js, meta)
      *
      * This is a wrapper for CAT_Helper_Page->getHeaders()
@@ -149,18 +122,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
                 }
     }   // end function get_page_footers()
 
-    // Function to get all parent page titles
-    function get_parent_titles($parent_id)
-    {
-        $titles[] = get_menu_title($parent_id);
-        if (is_parent($parent_id) != false)
-        {
-            $parent_titles = get_parent_titles(is_parent($parent_id));
-            $titles = array_merge($titles, $parent_titles);
-        }
-        return $titles;
-    }
-    
     // Convert a string from mixed html-entities/umlauts to pure $charset_out-umlauts
     // Will replace all numeric and named entities except &gt; &lt; &apos; &quot; &#039; &nbsp;
     // In case of error the returned string is unchanged, and a message is emitted.
@@ -193,126 +154,6 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         return $string;
     }
 
-    /*
-     * create_access_file
-     * @param string $filename: full path and filename to the new access-file
-     * @param int $page_id: ID of the page for which the file should created
-     * @param int $level: never needed argument, for compatibility only
-     * @param mixed $opt_cmds: a string or an array with one or more additional statements
-     *                         to include in accessfile.
-     *                         Example: $opt_cmds = "$section_id = '.$section_id"
-     *                                  $opt_cmds = array(
-     *                                       '$section_id = '.$section_id,
-     *                                       '$mod_var_txt = \''.$mod_var_txt.'\'',
-     *                                       '$mod_var_int = '.$mod_var_int
-     *                                  );
-     * @description: Create a new access file in the pages directory ans subdirectory also if needed
-     * @warning: the params $level and $opt_cmds should NOT be used for new developments!! It will
-     *           be removed in one of the next releases !!!!!!!!!!!!!
-     */
-    // M.f.i.   2011-02-17  drp: this one is worse ...
-    //        a) test where call from
-    //        b) test the circumstances
-    //        c) optimize the code as it is .. even the two params at the end!
-    function create_access_file($filename, $page_id, $level, $opt_cmds = null)
-    {
-        global $admin, $MESSAGE;
-        $pages_path = CAT_PATH . PAGES_DIRECTORY;
-        $rel_pages_dir = str_replace($pages_path, '', dirname($filename));
-        $rel_filename = str_replace($pages_path, '', $filename);
-        // root_check prevent system directories and importent files from being overwritten if PAGES_DIR = '/'
-        $denied = false;
-        if (PAGES_DIRECTORY == '')
-        {
-            $forbidden = array('account', 'admin', 'framework', 'include', 'install', 'languages', 'media', 'modules', 'pages', 'search', 'temp', 'templates', 'index.php', 'config.php', 'upgrade-script.php');
-            $search = explode('/', $rel_filename);
-            //! 6 -- why only the first level?
-            $denied = in_array($search[1], $forbidden);
-        }
-        if ((true === is_writable($pages_path)) && (false == $denied))
-        {
-            // First make sure parent folder exists
-            $parent_folders = explode('/', $rel_pages_dir);
-            $parents = '';
-            foreach ($parent_folders as $parent_folder)
-            {
-                if ($parent_folder != '/' && $parent_folder != '')
-                {
-                    $parents .= '/' . $parent_folder;
-                    if (!file_exists($pages_path . $parents))
-                    {
-                        make_dir($pages_path . $parents);
-                        CAT_Helper_Directory::getInstance()->setPerms($pages_path . $parents);
-                    }
-                }
-            }
-            $step_back = str_repeat('../', substr_count($rel_pages_dir, '/') + (PAGES_DIRECTORY == "" ? 0 : 1));
-            $content = '<?php' . "\n";
-            $content .= "/**\n *\tThis file is autogenerated by Black Cat CMS Version " . CAT_VERSION . "\n";
-            $content .= " *\tDo not modify this file!\n */\n";
-            $content .= "\t" . '$page_id = ' . $page_id . ';' . "\n";
-            if ($opt_cmds)
-            {
-                // #! 3 -- not clear what this meeans at all! and in witch circumstances this 'param' will be make sence?
-                if (!is_array($opt_cmds))
-                {
-                    $opt_cmds = explode('!', $opt_cmds);
-                }
-                foreach ($opt_cmds as $command)
-                {
-                    $new_cmd = rtrim(trim($command), ';');
-                    $content .= (preg_match('/include|require/i', $new_cmd) ? '// *not allowed command >> * ' : "\t");
-                    $content .= $new_cmd . ';' . "\n";
-                }
-            }
-            //! 4 -- should be require once ...
-            $content .= "\t" . 'require(\'' . $step_back . 'index.php\');' . "\n";
-            $content .= '?>';
-            /**
-             *  write the file
-             *
-             */
-            $fp = fopen($filename, 'w');
-            if ($fp)
-            {
-                fwrite($fp, $content, strlen($content));
-                fclose($fp);
-                /**
-                 *  Chmod the file
-                 *
-                 */
-                CAT_Helper_Directory::getInstance()->setPerms($filename);
-                /**
-				 *	Looking for the index.php inside the current directory.
-				 *	If not found - we're just copy the master_index.php from the admin/pages
-				 *
-				 */
-				$temp_index_path = dirname($filename)."/index.php";
-				if (!file_exists($temp_index_path))
-				{
-					$origin = CAT_ADMIN_PATH."/pages/master_index.php";
-					if (file_exists($origin)) copy( $origin, $temp_index_path);
-				}
-
-            }
-            else
-            {
-                /**
-                 *  M.f.i  drp:  as long as we've got no key for this situation inside the languagefiles
-                 *          we're in the need to make a little addition to the given one, to get it unique for trouble-shooting.
-                 */
-                $admin->print_error($MESSAGE['PAGES_CANNOT_CREATE_ACCESS_FILE'] . "<br />Problems while trying to open the file!");
-                return false;
-            }
-            return true;
-        }
-        else
-        {
-            $admin->print_error($MESSAGE['PAGES_CANNOT_CREATE_ACCESS_FILE']);
-            return false;
-        }
-    }
-    
     /**
      *	Get the mime-type of a given file.
      *
@@ -691,25 +532,14 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 
     function delete_page($id)       { return CAT_Helper_Page::deletePage($id); }
     function get_page_title($id)    { return CAT_Helper_Page::properties($id,'page_title'); }
+    function get_parent_titles($id) { return CAT_Helper_Page::getParentTitles($id); }
     function get_menu_title($id)    { return CAT_Helper_Page::properties($id,'menu_title'); }
+    function level_count($id)       {}
     function page_filename($string) { return CAT_Helper_Page::getFilename($string); }
     function root_parent($id)       { return CAT_Helper_Page::getRootParent($id); }
     
-    function get_parent_ids($parent)
-    {
-        $ids[] = $parent;
-        if (is_parent($parent) != false)
-        {
-            $parent_ids = get_parent_ids(is_parent($parent));
-            $ids = array_merge($ids, $parent);
-        }
-        return $ids;
-    }
-    function get_page_trail($id)
-    {
-        return implode(',', array_reverse(get_parent_ids($id)));
-    }
-
+    function get_parent_ids($id)    { return CAT_Helper_Page::getParentIDs($id); }
+    function get_page_trail($id)    { return CAT_Helper_Page::getPageTrail($id); }
 }
 // end .. if functions is loaded 
 ?>

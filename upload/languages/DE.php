@@ -107,6 +107,7 @@ $LANG = array(
     'Administrators' => 'Administratoren',
     'Back' => 'Zurück',
     'Close' => 'Schließen',
+    'Close & Reset' => 'Schließen & Zurücksetzen',
     'General Settings' => 'Allgemeine Optionen',
     'Notification' => 'Hinweis',
     'Options' => 'Optionen',
@@ -126,8 +127,12 @@ $LANG = array(
     'Website Under Construction' => 'Momentan in Bearbeitung.',
 // ----- error messages -----
     'You sent an invalid value' => 'Es wurde ein ungültiger Wert angegeben',
-    'Error creating access file in the pages directory(page), (insufficient privileges)'
-        => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis (page) ist ein Fehler aufgetreten (Ungen&uuml;gende Zugangsrechte)',
+    'Error creating access file in the pages directory, insufficient privileges'
+        => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Ungen&uuml;gende Zugangsrechte)',
+    'Error creating access file in the pages directory, cannot open file'
+        => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Datei kann nicht geschrieben werden)',
+    'Error creating access file in the pages directory, path not writable or forbidden file / directory name'
+        => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Verzeichnis nicht schreibbar oder verbotener Datei-/Verzeichnisname)',
     'The template [{{ tpl }}] does not exists in one of the possible template paths!'
         => 'Das Template [{{ tpl }}] wurde in keinem der Template-Pfade gefunden!',
     'Searched paths' => 'Durchsuchte Pfade',
@@ -172,7 +177,6 @@ $LANG = array(
     'Current links' => 'Vorhandene Verknüpfungen',
     'Current page' => 'Aktuelle Seite',
     'Delete' => 'Löschen',
-    'Delete page' => 'Seite löschen',
     'Delete page finally' => 'Seite endgültig löschen',
     'delete section' => 'Sektion löschen',
     'Description' => 'Beschreibung',
@@ -201,7 +205,7 @@ $LANG = array(
     'No pages available' => 'Keine Seiten vorhanden',
     'None' => 'Keine',
     'Page added successfully' => 'Seite wurde erfolgreich angelegt',
-    'Page deleted successfully' => 'Seite erfolgreich gelöscht',
+    'Page(s) deleted successfully' => 'Seite(n) erfolgreich gelöscht',
     'Page groups' => 'Seitengruppen',
     'Page saved successfully' => 'Seite erfolgreich gespeichert',
     'Page settings' => 'Seiteneinstellungen',
@@ -210,9 +214,12 @@ $LANG = array(
     'Preferences' => 'Optionen',
     'Private' => 'Privat',
     'Public' => 'Öffentlich',
+    'Re-ordered successfully' => 'Neusortierung erfolgreich',
     'Quick changes' => 'Expresseinstellungen',
     'Registered' => 'Registriert',
+    'Remove page' => 'Seite löschen',
     'Same window' => 'Selbes Fenster',
+    'Save page' => 'Seite speichern',
     'Searching' => 'Suche',
     'Section properties saved successfully' => 'Sektionseinstellungen gespeichert',
     'Security Settings' => 'Sicherheit',
@@ -229,6 +236,8 @@ $LANG = array(
     'Type' => 'Typ',
     'View page' => 'Ansicht',
     'Visibility' => 'Sichtbarkeit',
+    "You don't have the permission to add a page." => 'Sie haben nicht die notwendigen Berechtigungen zum Anlegen einer Seite.',
+    'You do not have the permission add a page here.' => 'Sie haben nicht die notwendigen Berechtigungen zum Anlegen einer Seite an dieser Stelle.',
 // ----- settings -----
     '0 means default, which is 7200s = 2 hours' => '0 bedeutet Standardeinstellung, diese ist 7200 Sekunden = 2 Stunden',
     'Allow mail address as login name' => 'Erlaube Mailadresse als Login-Namen',

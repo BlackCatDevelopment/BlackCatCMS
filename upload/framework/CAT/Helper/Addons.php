@@ -32,7 +32,9 @@ if (!class_exists('CAT_Helper_Addons'))
 
     class CAT_Helper_Addons extends CAT_Object
     {
-
+        // array to store config options
+        protected $_config         = array( 'loglevel' => 8 );
+        protected $debugLevel = 8;
         private static $dirh;
         private static $error = NULL;
         private static $instance = NULL;

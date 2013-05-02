@@ -371,6 +371,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			{
 			    self::$prefix = NULL;
 			}
+            if(self::$instance) return self::$instance;
 		}   // end function setPrefix()
 
         /**
@@ -382,6 +383,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		    {
 		        self::$recurse = $bool;
 			}
+            if(self::$instance) return self::$instance;
 		}   // end function setRecursion()
 
         /**
@@ -393,6 +395,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		    {
 		        self::$max_recursion_depth = $number;
 			}
+            if(self::$instance) return self::$instance;
 		}   // end function setRecursion()
 
         /**
@@ -414,6 +417,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			{
 			    self::$skip_files = $files;
 			}
+            if(self::$instance) return self::$instance;
         }   // end function setSkipFiles()
 		
 		/**
@@ -435,6 +439,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			{
 			    self::$skip_dirs = $dirs;
 			}
+            if(self::$instance) return self::$instance;
 		}   // end function setSkipDirs()
 		
 		/**
@@ -456,6 +461,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			{
 			    self::$suffix_filter = $suffixes;
 			}
+            if(self::$instance) return self::$instance;
 		}   // end function setSuffixFilter()
 		
 		/**
@@ -488,6 +494,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	        {
 	            return true;
 	        }
+            if(self::$instance) return self::$instance;
 	    }   // function setReadOnly()
 	    
         /**
@@ -500,7 +507,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          **/
         public static function recursiveCreateIndex( $dir )
         {
-            if ( $handle = opendir($dir) )
+            if ( $handle = dir($dir) )
             {
                 if ( ! file_exists( $dir . '/index.php' ) )
                 {
@@ -510,7 +517,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         	        fclose( $fh );
                 }
 
-                while ( false !== ( $file = readdir($handle) ) )
+                while ( false !== ( $file = $handle->read() ) )
                 {
                     if ( $file != "." && $file != ".." )
                     {
@@ -520,7 +527,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                         }
                     }
                 }
-                closedir($handle);
+                $handle->close();
                 return true;
             }
             else {

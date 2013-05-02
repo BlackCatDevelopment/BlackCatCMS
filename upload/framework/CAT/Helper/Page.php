@@ -32,7 +32,26 @@ if (!class_exists('CAT_Helper_Page'))
 
     class CAT_Helper_Page extends CAT_Object
     {
-        protected      $_config             = array( 'loglevel' => 8 );
+        protected      $_config             = array(
+            'loglevel'  => 8,
+            'forbidden_l0' => array( // configurables will be added later
+                'account',
+                'framework',
+                'include',
+                'install',
+                'languages',
+                'modules',
+                'search',
+                'temp',
+                'templates',
+                'index.php'
+            ),
+            'forbidden_filenames_l0' => array(
+                'index.php',
+                'config.php',
+                'upgrade-script.php'
+            ),
+        );
         private static $instance;
         private static $space               = '    '; // space before header items
         private static $pages               = array();
@@ -40,6 +59,7 @@ if (!class_exists('CAT_Helper_Page'))
         private static $pages_by_parent     = array();
         private static $pages_by_id         = array();
         private static $pages_sections      = array();
+        private static $pages_editable      = 0;
 
         // header components
         private static $css             = array();
@@ -88,14 +108,23 @@ if (!class_exists('CAT_Helper_Page'))
          * initialize; fills the internal pages array
          *
          * @access private
+         * @param  boolean $force - always reload
          * @return void
          **/
-        private static function init()
+        private static function init($force=false)
         {
-            if(count(self::$pages)==0)
+            if(!self::$instance) self::getInstance(true);
+            // add configurable dirs to forbidden array (level 0)
+            foreach( array(PAGES_DIRECTORY,MEDIA_DIRECTORY,CAT_BACKEND_FOLDER) as $dir )
+            {
+                $dir = preg_replace('~^/~','',$dir);
+                if(!in_array($dir,self::$instance->_config['forbidden_l0']))
+                    array_push(self::$instance->_config['forbidden_l0'],$dir);
+            }
+            // fill pages array
+            if(count(self::$pages)==0 || $force)
             {
                 $now = time();
-                if(!self::$instance) self::getInstance(true);
                 $result = self::$instance->db()->query(sprintf(
                     'SELECT * FROM %spages ORDER BY `level` ASC, `position` ASC',
                     CAT_TABLE_PREFIX
@@ -122,6 +151,7 @@ if (!class_exists('CAT_Helper_Page'))
                             if ( CAT_Registry::get('PAGE_TRASH') != 'inline' || $row['visibility'] != 'deleted' )
                             {
                                 $row['is_editable'] = true;
+                                self::$pages_editable++;
                             }
         				}
 // --------------------- NOT READY YET! ----------------------------------------
@@ -156,6 +186,79 @@ if (!class_exists('CAT_Helper_Page'))
                 ? false
                 : self::$instance->db()->get_one("SELECT LAST_INSERT_ID()");
         }   // end function addPage()
+        
+        /**
+         *
+         *
+         **/
+        public static function createAccessFile($filename, $page_id)
+        {
+            $pages_path    = CAT_PATH . PAGES_DIRECTORY;
+            $rel_pages_dir = str_replace($pages_path, '', dirname($filename));
+            $rel_filename  = str_replace($pages_path, '', $filename);
+            // prevent system directories and files from being overwritten (level 0)
+            $denied   = false;
+            if (PAGES_DIRECTORY == '')
+            {
+                $forbidden_dirs = self::$instance->_config['forbidden_l0'];
+                $forbidden_files = self::$instance->_config['forbidden_filenames_l0'];
+                $search = explode('/', $rel_filename);
+                $denied = in_array($search[1], $forbidden_dirs);
+                $denied = in_array($search[1], $forbidden_files);
+            }
+
+            if ((true === is_writable($pages_path)) && (false == $denied))
+            {
+                // First make sure parent folder exists
+                $parent_folders = explode('/', $rel_pages_dir);
+                $parents = '';
+                foreach ($parent_folders as $parent_folder)
+                {
+                    if ($parent_folder != '/' && $parent_folder != '')
+                    {
+                        $parents .= '/' . $parent_folder;
+                        if (!file_exists($pages_path . $parents))
+                        {
+                            // create dir; also creates index.php (last param = true)
+                            CAT_Helper_Directory::createDirectory($pages_path . $parents, OCTAL_DIR_MODE, true);
+                            CAT_Helper_Directory::setPerms($pages_path . $parents);
+                        }
+                    }
+                }
+
+                $step_back = str_repeat('../', substr_count($rel_pages_dir, '/') + (PAGES_DIRECTORY == "" ? 0 : 1));
+                $content = '<?php' . "\n";
+                $content .= "/**\n *\tThis file is autogenerated by Black Cat CMS Version " . CAT_VERSION . "\n";
+                $content .= " *\tDo not modify this file!\n */\n";
+                $content .= "\t" . '$page_id = ' . $page_id . ';' . "\n";
+                $content .= "\t" . 'require_once \'' . $step_back . 'index.php\';' . "\n";
+                $content .= '?>';
+                /**
+                 *  write the file
+                 */
+                $fp = fopen($filename, 'w');
+                if ($fp)
+                {
+                    fwrite($fp, $content, strlen($content));
+                    fclose($fp);
+                    /**
+                     *  Chmod the file
+                     */
+                    CAT_Helper_Directory::getInstance()->setPerms($filename);
+                }
+                else
+                {
+                    CAT_Backend::getInstance()->print_error('Error creating access file in the pages directory, cannot open file');
+                    return false;
+                }
+                return true;
+            }
+            else
+            {
+                CAT_Backend::getInstance()->print_error('Error creating access file in the pages directory, path not writable or forbidden file / directory name');
+                return false;
+            }
+        }
         
         /**
          *
@@ -399,6 +502,46 @@ if (!class_exists('CAT_Helper_Page'))
                 }
             }
         } // end function getDefaultPage()
+
+        /**
+         * returns the number of editable pages
+         *
+         * @access public
+         * @return integer
+         **/
+        public static function getEditable()
+        {
+            if(!count(self::$pages)) self::init();
+            return self::$pages_editable;
+        }   // end function getEditable()
+        
+
+        /**
+         * convert page title to a valid filename
+         *
+         * @access public
+         * @param  string  $string - page title
+         * @return string
+         **/
+        public static function getFilename($string)
+        {
+            require_once(CAT_PATH . '/framework/functions-utf8.php');
+            $string = entities_to_7bit($string);
+            // Now remove all bad characters
+            $bad = array('\'', '"', '`', '!', '@', '#', '$', '%', '^', '&', '*', '=', '+', '|', '/', '\\', ';', ':', ',', '?');
+            $string = str_replace($bad, '', $string);
+            // replace multiple dots in filename to single dot and (multiple) dots at the end of the filename to nothing
+            $string = preg_replace(array('/\.+/', '/\.+$/'), array('.', ''), $string);
+            // Now replace spaces with page spcacer
+            $string = trim($string);
+            $string = preg_replace('/(\s)+/', PAGE_SPACER, $string);
+            // Now convert to lower-case
+            $string = strtolower($string);
+            // If there are any weird language characters, this will protect us against possible problems they could cause
+            $string = str_replace(array('%2F', '%'), array('/', ''), urlencode($string));
+            // Finally, return the cleaned string
+            return $string;
+        }   // end function getFilename()
 
         /**
          * calls appropriate function for analyzing and printing page footers
@@ -707,33 +850,6 @@ if (!class_exists('CAT_Helper_Page'))
         } // end function getMeta()
 
         /**
-         * convert page title to a valid filename
-         *
-         * @access public
-         * @param  string  $string - page title
-         * @return string
-         **/
-        public static function getFilename($string)
-        {
-            require_once(CAT_PATH . '/framework/functions-utf8.php');
-            $string = entities_to_7bit($string);
-            // Now remove all bad characters
-            $bad = array('\'', '"', '`', '!', '@', '#', '$', '%', '^', '&', '*', '=', '+', '|', '/', '\\', ';', ':', ',', '?');
-            $string = str_replace($bad, '', $string);
-            // replace multiple dots in filename to single dot and (multiple) dots at the end of the filename to nothing
-            $string = preg_replace(array('/\.+/', '/\.+$/'), array('.', ''), $string);
-            // Now replace spaces with page spcacer
-            $string = trim($string);
-            $string = preg_replace('/(\s)+/', PAGE_SPACER, $string);
-            // Now convert to lower-case
-            $string = strtolower($string);
-            // If there are any weird language characters, this will protect us against possible problems they could cause
-            $string = str_replace(array('%2F', '%'), array('/', ''), urlencode($string));
-            // Finally, return the cleaned string
-            return $string;
-        }   // end function getFilename()
-
-        /**
          * returns properties of given page (same as properties())
          *
          * @access public
@@ -745,6 +861,40 @@ if (!class_exists('CAT_Helper_Page'))
             return self::properties($page_id);
         }   // end function getPage()
 
+        /**
+         * resolves the path to root and returns the list of parent IDs
+         *
+         * @access public
+         * @return
+         **/
+        public static function getParentIDs($page_id)
+        {
+            $page  = self::properties($page_id);
+            $ids   = array($page_id,$page['parent']);
+            if($page['is_parent'])
+            {
+                $parent_ids = self::getParentIDs($page['parent']);
+                $ids = array_merge($ids, $parent_ids);
+            }
+            return $ids;
+        }   // end function getParentIDs()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getParentTitles($page_id)
+        {
+            $page     = self::properties($page_id);
+            $titles[] = $page['menu_title'];
+            if ($page['is_parent'])
+            {
+                $parent_titles = self::getParentTitles($page['parent']);
+                $titles = array_merge($titles, $parent_titles);
+            }
+            return $titles;
+        }   // end function getParentTitles()
 
         /**
     	 * checks permission for a page
@@ -863,6 +1013,16 @@ if (!class_exists('CAT_Helper_Page'))
             return self::$pages_by_visibility;
         }   // end function getPagesByVisibility()
 
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getPageTrail($page_id)
+        {
+            return implode(',', array_reverse(self::getParentIDs($page_id)));
+        }   // end function getPageTrail()
+        
         /**
          * returns the root level page of a trail
          *
@@ -1014,9 +1174,12 @@ if (!class_exists('CAT_Helper_Page'))
                   : array();
             if(count($page))
             {
-                if($key && isset($page[$key]))
+                if($key)
                 {
+                    if(isset($page[$key]))
                     return $page[$key];
+                    else
+                        return NULL;
                 }
                 else
                 {
@@ -1073,6 +1236,53 @@ if (!class_exists('CAT_Helper_Page'))
     		}
     	}
 
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function updatePage($page_id,$options)
+        {
+            if(!self::$instance) self::getInstance();
+            $sql	 = 'UPDATE `%spages` SET ';
+            foreach($options as $key => $value)
+            {
+                if(is_array($value))
+                    $value = implode(',',$value);
+                $sql .= '`'.$key.'` = \''.$value.'\', ';
+            }
+            $sql = preg_replace('~,\s*$~','',$sql);
+            $sql .= ' WHERE page_id=%d';
+            self::$instance->db()->query(sprintf($sql,CAT_TABLE_PREFIX,$page_id));
+            // update internal array
+            if(!self::$instance->db()->is_error())
+                self::init(true);
+            return
+                  self::$instance->db()->is_error()
+                ? false
+                : true;
+        }   // end function updatePage()
+        
+        /**
+         * recursivly update page trail of subs
+         *
+         * @access public
+         * @param  integer $parent
+         * @param  integer $root_parent
+         **/
+        public static function updatePageTrail($parent,$root_parent)
+        {
+            $page_id = self::properties($parent,'page_id');
+            if($page_id)
+            {
+                self::$instance->db()->query(sprintf(
+                    'UPDATE `%spages` SET root_parent=%d, page_trail="%s" WHERE page_id=%d',
+                    CAT_TABLE_PREFIX, $root_parent, self::getPageTrail($page_id), $page_id
+                ));
+                // recurse
+        		self::updatePageTrail( $page_id, $root_parent );
+        	}
+        }   // end function updatePageTrail()
 
         /**
          * checks if page is active (=has active sections and is between

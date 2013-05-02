@@ -153,9 +153,9 @@ if (!class_exists('CAT_Backend', false))
                     '__li_has_child_class' => 'fc_expandable',
                     '__title_key'          => 'text',
                 ))->tree( $pages, 0 );
-                // todo: count editables first
-                $tpl_data['pages_editable'] = true;
 
+                // number of editable pages (for current user)
+                $tpl_data['pages_editable'] = CAT_Helper_Page::getEditable();
 
                 // ==========================================
                 // ! Get info for the form to add new pages
