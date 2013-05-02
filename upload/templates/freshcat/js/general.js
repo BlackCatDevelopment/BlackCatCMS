@@ -397,9 +397,9 @@ function dialog_form( currentForm, beforeSend, afterSend )
 			success:		function( data, textStatus, jqXHR )
 			{
 				// Check if there is a div.success_box in returned data that implements that the request was completely successful
-				if( $( data ).find('.fc_success_box').size() > 0 )
+				if ( data.success === true )
 				{
-					return_success( jqXHR.process , $( data ).find('.fc_success_box > p').text() );
+					return_success( jqXHR.process , data.message );
 					// check if a function afterSend is defined and call it if true
 					if ( typeof afterSend != 'undefined' && afterSend !== false )
 					{
@@ -408,7 +408,7 @@ function dialog_form( currentForm, beforeSend, afterSend )
 				}
 				else {
 					// else return error
-					return_error( jqXHR.process , $( data ).find('.fc_error_box > p').text());
+					return_error( jqXHR.process , data.message );
 				}
 			},
 			error:		function( jqXHR, textStatus, errorThrown )
