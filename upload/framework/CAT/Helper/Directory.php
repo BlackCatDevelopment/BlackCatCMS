@@ -59,7 +59,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             }
             return self::$instance;
         }
-	    
+
         public function __call($method, $args)
         {
             if ( ! isset($this) || ! is_object($this) )
@@ -117,11 +117,11 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                              ? str_ireplace( $dir, '', $entry )
                              : $entry;
                 }
-        }
+            }
             return $files;
         }   // end function findFiles()
-	    
-	    /**
+
+        /**
          *
          **/
         public static function getMode($for='file')
@@ -138,6 +138,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                     $mode = OCTAL_FILE_MODE;
                 }
             }
+            return $mode;
         }   // end function getMode()
 	    
 	    /**
@@ -548,6 +549,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		 **/
 		public static function createDirectory( $dir_name, $dir_mode = OCTAL_DIR_MODE, $createIndex = false )
 		{
+             if ( ! $dir_mode ) $dir_mode = OCTAL_DIR_MODE;
 		     if ( $dir_name != '' && !is_dir($dir_name) )
 		     {
 		         $umask = umask(0);
@@ -612,17 +614,17 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          * @param  string  $directory
          * @return void
          **/
-        public static function setPerms($item)
+        public static function setPerms($directory)
         {
             $mode  = self::getMode();
             if ( $mode === NULL ) return;
 
             $umask = umask(0);
-            if (!is_dir($item))
+            if (!is_dir($directory))
             {
-                if ( file_exists($item) )
+                if ( file_exists($directory) )
                 {
-                    chmod($name, self::getMode());
+                    chmod($name, $mode);
                     umask($umask);
                 }
             }
