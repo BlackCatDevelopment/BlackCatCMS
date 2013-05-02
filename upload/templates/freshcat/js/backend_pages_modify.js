@@ -108,8 +108,7 @@ jQuery(document).ready(function()
 							{
 								var dates			= {
 									'sectionid':			$(this).sortable('toArray'),
-									'table':				'sections',
-									'ctoken':				getToken()
+									'table':				'sections'
 								};
 								dialog_ajax( 'Reorder pages', CAT_ADMIN_URL + '/pages/ajax_reorder.php', dates, 'POST', 'json', false, false, false );
 							}
@@ -127,13 +126,12 @@ jQuery(document).ready(function()
 		}
 
 		// Add message to .popup to use function set_popup_title();
-		$('.popup').html('<p>'+CAT_TEXT["SECTION_CONFIRM_DELETE"]+'</p>');
+		$('.popup').html('<p>'+cattranslate('Do you really want to delete this section?')+'</p>');
 
 		// Create dates for ajax
 		var current		= $(this);
 			dates			= {
-				'delete_section_id':	current.find('input[name=section_id]').val(),
-				'page_id':				$('input[name=page_id]').val(),
+				'delete_section_id':	current.find('input[name=delete_section_id]').val(),
 				'_cat_ajax':            1
 			};
 
@@ -264,10 +262,6 @@ jQuery(document).ready(function()
 				else {
 					return_error( jqXHR.process , data.message);
 				}
-			},
-			error:		function(jqXHR, textStatus, errorThrown)
-			{
-				alert(textStatus + ': ' + errorThrown );
 			}
 		});
 	});

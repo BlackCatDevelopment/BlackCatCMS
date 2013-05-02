@@ -57,29 +57,29 @@
 										<span class="fc_section_button fc_open_section_modify icon-calendar" title="{translate('Modify section')}"></span>
 										<div class="fc_section_modify_div fc_gradient1 fc_border_all_light fc_shadow_small fc_br_all">
 											<div class="fc_arrow_up"></div>
-											<form action="{$CAT_ADMIN_URL}/pages/sections_save.php" name="modify_section" class="fc_modify_section">
+											<form method="post" action="{$CAT_ADMIN_URL}/pages/ajax_sections_save.php" name="modify_section" class="fc_modify_section ajaxForm">
 												<div>
-													<input type="hidden" name="section_id" value="{$block.section_id}" />
-													<span class="fc_section_modify_label">{translate('Name')} :</span>
+													<input type="hidden" name="update_section_id" value="{$block.section_id}" />
+													<span class="fc_section_modify_label">{translate('Name')}:</span>
 													<input type="text" name="blockname" value="{$block.name}" />
 													<div class="clear"></div>
-													<hr/>
-													<span class="fc_section_modify_label left">{translate('Block')} :</span>
+													<hr />
+													<span class="fc_section_modify_label left">{translate('Block')}:</span>
 													<select name="set_block" class="left">
 													{foreach $block.template_blocks as template_block}
 														<option value="{$template_block.VALUE}"{if $template_block.SELECTED} selected="selected"{/if}>{$template_block.NAME}</option>
 													{/foreach}
 													</select>
 													<div class="clear"></div>
-													<hr/>
-													<span class="fc_section_modify_label">{translate('From')} :</span>
+													<hr />
+													<span class="fc_section_modify_label">{translate('From')}:</span>
 													<input type="text" name="day_from" value="{$block.date_day_from}" class="fc_date_two" maxlength="2" title="{translate('Day')}" /> . 
 													<input type="text" name="month_from" value="{$block.date_month_from}" class="fc_date_two" maxlength="2" title="{translate('Month')}" /> . 
 													<input type="text" name="year_from" value="{$block.date_year_from}" class="fc_date_four" maxlength="4" title="{translate('Year')}" /> - 
 													<input type="text" name="hour_from" value="{$block.date_hour_from}" class="fc_date_two" maxlength="2" title="{translate('Hour')}" /> : 
 													<input type="text" name="minute_from" value="{$block.date_minute_from}" class="fc_date_two" maxlength="2" title="{translate('Minute')}" />
 													<div class="clear"></div>
-													<span class="fc_section_modify_label">{translate('To')} :</span>
+													<span class="fc_section_modify_label">{translate('To')}:</span>
 													<input type="text" name="day_to" value="{$block.date_day_to}" class="fc_date_two" maxlength="2" title="{translate('Day')}" /> . 
 													<input type="text" name="month_to" value="{$block.date_month_to}" class="fc_date_two" maxlength="2" title="{translate('Month')}" /> . 
 													<input type="text" name="year_to" value="{$block.date_year_to}" class="fc_date_four" maxlength="4" title="{translate('Year')}" /> - 
@@ -87,15 +87,14 @@
 													<input type="text" name="minute_to" value="{$block.date_minute_to}" class="fc_date_two" maxlength="2" title="{translate('Minute')}" />
 													<div class="clear"></div>
 												</div>
+                                                <input type="submit" name="save_section" value="{translate('Save & Close')}" />
 											</form>
-											<div class="fc_save_section">
-												<input type="hidden" name="section_id" value="{$block.section_id}" />
-												<input type="submit" name="save_section" value="{translate('Save & Close')}" />
-											</div>
 										</div>
 									</div>
 									<div class="fc_section_button fc_delete_section icon-remove" title="delete section">
-										<input type="hidden" name="section_id" value="{$block.section_id}" />
+                                        <form method="post" action="{$CAT_ADMIN_URL}/pages/ajax_sections_save.php" name="modify_section" class="fc_modify_section ajaxForm">
+										    <input type="hidden" name="delete_section_id" value="{$block.section_id}" />
+                                        </form>
 									</div>
 								</td>
 								{/if}
@@ -113,7 +112,7 @@
 		{/foreach}
 	</ul>
 	{else}
-	<li class="fc_module_block">{translate('No sections were found for this page')}</li>
+	<div class="fc_module_block"><span class="highlight">{translate('No sections were found for this page')}</span></div>
 	{/if}
 	<div id="fc_main_content_footer"></div>
 </div>

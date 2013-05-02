@@ -182,12 +182,12 @@
 .fc_date_two {
 	display: inline;
 	margin: 0px;
-	width: 25px;
+	width: 25px !important;
 }
 .fc_date_four {
 	display: inline;
 	margin: 0px;
-	width: 40px;
+	width: 40px !important;
 }
 .fc_section_modify_label {
 	display: inline-block;
