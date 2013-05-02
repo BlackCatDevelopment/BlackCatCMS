@@ -167,9 +167,11 @@ if (!class_exists('CAT_Helper_Page'))
         }   // end function init()
 
         /**
+         * creates a new page
          *
          * @access public
-         * @return
+         * @param  array  $options
+         * @return mixed  - new page ID or false on error
          **/
         public static function addPage($options)
         {
@@ -181,12 +183,81 @@ if (!class_exists('CAT_Helper_Page'))
             }
             $sql = preg_replace('~,\s*$~','',$sql);
             self::$instance->db()->query(sprintf($sql,CAT_TABLE_PREFIX));
+            // reload pages list
+            if(!self::$instance->db()->is_error()) self::init(1);
             return
                   self::$instance->db()->is_error()
                 ? false
                 : self::$instance->db()->get_one("SELECT LAST_INSERT_ID()");
         }   // end function addPage()
         
+        /**
+         * update page options
+         *
+         * @access public
+         * @param  integer $page_id
+         * @param  array   $options
+         * @return boolean
+         **/
+        public static function updatePage($page_id,$options)
+        {
+            if(!self::$instance) self::getInstance();
+            $sql	 = 'UPDATE `%spages` SET ';
+            foreach($options as $key => $value)
+            {
+                if(is_array($value))
+                    $value = implode(',',$value);
+                $sql .= '`'.$key.'` = \''.$value.'\', ';
+            }
+            $sql = preg_replace('~,\s*$~','',$sql);
+            $sql .= ' WHERE page_id=%d';
+            self::$instance->db()->query(sprintf($sql,CAT_TABLE_PREFIX,$page_id));
+            // reload pages list
+            if(!self::$instance->db()->is_error()) self::init(1);
+            return
+                  self::$instance->db()->is_error()
+                ? false
+                : true;
+        }   // end function updatePage()
+
+        /**
+         * delete page; uses _trashPages() if trash is enabled, _deletePage()
+         * otherwise
+         *
+         * @access public
+         * @param  integer $page_id
+         * @param  boolean $use_trash
+         * @return boolean
+         **/
+        public static function deletePage($page_id,$use_trash=false)
+        {
+            if($use_trash)
+            {
+            	// Update the page visibility to 'deleted'
+            	self::getInstance()->db()->query(sprintf(
+                    "UPDATE `%spages` SET visibility = 'deleted' WHERE page_id = %d LIMIT 1",
+                    CAT_TABLE_PREFIX, $page_id
+                ));
+            	return self::_trashPages($page_id);
+            }
+            else
+            {
+                // remove sub pages
+           	    $sub_pages = self::getSubPages($page_id);
+                $errors    = array();
+            	foreach($sub_pages as $sub_page_id)
+            	{
+            		$err = self::_deletePage( $sub_page_id );
+                    $errors = array_merge($errors,$err);
+            	}
+            	// remove the page itself
+            	$err = self::_deletePage($page_id);
+                $errors = array_merge($errors,$err);
+                if(count($errors)) return false;
+                return true;
+            }
+        }   // end function deletePage()
+
         /**
          *
          *
@@ -258,77 +329,50 @@ if (!class_exists('CAT_Helper_Page'))
                 CAT_Backend::getInstance()->print_error('Error creating access file in the pages directory, path not writable or forbidden file / directory name');
                 return false;
             }
-        }
+        }   // end function createAccessFile()
         
         /**
          *
          * @access public
          * @return
          **/
-        public static function deleteLanguageLink($page_id,$lang)
+        public static function deleteAccessFile($page_id) {
+            // Unlink the access file and directory
+            $directory  = CAT_PATH . PAGES_DIRECTORY . self::properties($page_id,'link');
+            $filename   = $directory . PAGE_EXTENSION;
+            $directory .= '/';
+            if (file_exists($filename))
         {
-            if(!self::$instance) self::getInstance(true);
-            self::$instance->db()->query(sprintf(
-                'DELETE FROM `%spage_langs` WHERE link_page_id = %d AND lang = "%s"',
-                CAT_TABLE_PREFIX, $page_id, $lang
-            ));
-        }   // end function deleteLanguageLink()
+                if (!is_writable(CAT_PATH . PAGES_DIRECTORY . '/'))
+        {
+                    $errors[] = $self->lang()->translate('Cannot delete access file!');
+            }
+            else
+            {
+                    unlink($filename);
+                    if (file_exists($directory) && (rtrim($directory, '/') != CAT_PATH . PAGES_DIRECTORY) && (substr($link, 0, 1) != '.'))
+            	{
+                        CAT_Helper_Directory::removeDirectory($directory);
+                    }
+            	}
+            }
+
+        }   // end function deleteAccessFile()
+        
 
         /**
          *
          * @access public
          * @return
          **/
-        public static function deletePage($page_id,$use_trash=false)
-        {
-            if($use_trash)
-            {
-            	// Update the page visibility to 'deleted'
-            	self::getInstance()->db()->query(sprintf(
-                    "UPDATE `%spages` SET visibility = 'deleted' WHERE page_id = %d LIMIT 1",
-                    CAT_TABLE_PREFIX, $page_id
-                ));
-            	self::trashPages($page_id);
-            }
-            else
-            {
-                // remove sub pages
-           	    $sub_pages = self::getSubPages($page_id);
-            	foreach($sub_pages as $sub_page_id)
-            	{
-            		self::_deletePage( $sub_page_id );
-            	}
-            	// remove the page itself
-            	self::_deletePage($page_id);
-            }
-        }   // end function deletePage()
-
-        /**
-         * marks pages as 'deleted' if trash is enabled
-         * this method works recursively for sub pages
-         *
-         * @access private
-         * @param  integer $parent
-         * @return void
-         **/
-       	private static function trashPages($parent = 0)
+        public static function deleteLanguageLink($page_id,$lang)
     	{
-            // get pages for current parent
-            $pages = self::getPagesByParent($parent);
-            if(count($pages))
-            {
-    			foreach($pages as $page)
-    			{
-    				// Update the page visibility to 'deleted'
-    				self::getInstance()->db()->query(sprintf(
-                        "UPDATE `%spages` SET visibility = 'deleted' WHERE page_id = %d LIMIT 1",
-                        CAT_TABLE_PREFIX, $page['page_id']
+            if(!self::$instance) self::getInstance(true);
+            self::$instance->db()->query(sprintf(
+                'DELETE FROM `%spage_langs` WHERE link_page_id = %d AND lang = "%s"',
+                CAT_TABLE_PREFIX, $page_id, $lang
                     ));
-    				// Run this function again for all sub-pages
-    				self::trashPages( $page['page_id'] );
-    			}
-    		}
-    	}   // end function trashPages()
+        }   // end function deleteLanguageLink()
 
         /**
          * prints the backend footers
@@ -754,6 +798,30 @@ if (!class_exists('CAT_Helper_Page'))
         } // end function getJQuery()
 
         /**
+         * counts the levels from given page_id to root
+         *
+         * taken from old functions.php, dunno why this is done this way, maybe
+         * it's more 'secure' than just taking the level of the parent?
+         *
+         * @access public
+         * @param  integer  $page_id
+         * @return integer  level (>=0)
+         **/
+        public static function getLevel($page_id)
+        {
+            $parent = self::properties($page_id,'level');
+            if ($parent > 0)
+            {
+                $level = self::properties($parent,'level');
+                return $level + 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }   // end function getLevel()
+
+        /**
          *
          *
          *
@@ -870,6 +938,7 @@ if (!class_exists('CAT_Helper_Page'))
         public static function getParentIDs($page_id)
         {
             $page  = self::properties($page_id);
+            if(!$page || !is_array($page) || !count($page)) return array(0);
             $ids   = array($page_id,$page['parent']);
             if($page['is_parent'])
             {
@@ -1237,33 +1306,6 @@ if (!class_exists('CAT_Helper_Page'))
     	}
 
         /**
-         *
-         * @access public
-         * @return
-         **/
-        public static function updatePage($page_id,$options)
-        {
-            if(!self::$instance) self::getInstance();
-            $sql	 = 'UPDATE `%spages` SET ';
-            foreach($options as $key => $value)
-            {
-                if(is_array($value))
-                    $value = implode(',',$value);
-                $sql .= '`'.$key.'` = \''.$value.'\', ';
-            }
-            $sql = preg_replace('~,\s*$~','',$sql);
-            $sql .= ' WHERE page_id=%d';
-            self::$instance->db()->query(sprintf($sql,CAT_TABLE_PREFIX,$page_id));
-            // update internal array
-            if(!self::$instance->db()->is_error())
-                self::init(true);
-            return
-                  self::$instance->db()->is_error()
-                ? false
-                : true;
-        }   // end function updatePage()
-        
-        /**
          * recursivly update page trail of subs
          *
          * @access public
@@ -1585,7 +1627,7 @@ if (!class_exists('CAT_Helper_Page'))
         {
             $self   = self::getInstance();
             $errors = array();
-            // delete sections
+            // delete sections (call delete.php for each)
             $sections = self::getSections($page_id);
             if(count($sections))
             {
@@ -1598,7 +1640,9 @@ if (!class_exists('CAT_Helper_Page'))
                     }
                 }
             }
-            // remove the page
+            // delete access file
+            self::deleteAccessFile($page_id);
+            // remove page from DB
             $self->db()->query(sprintf(
                 'DELETE FROM `%spages` WHERE `page_id` = %d',
                 CAT_TABLE_PREFIX, $page_id
@@ -1616,31 +1660,41 @@ if (!class_exists('CAT_Helper_Page'))
             {
                 $errors[] = $self->db()->get_error();
             }
-            // Include the ordering class or clean-up ordering
+            // clean-up ordering
             include_once(CAT_PATH . '/framework/class.order.php');
             $order = new order(CAT_TABLE_PREFIX . 'pages', 'position', 'page_id', 'parent');
             $order->clean($page_id);
-            // Unlink the access file and directory
-            $directory  = CAT_PATH . PAGES_DIRECTORY . self::properties($page_id,'link');
-            $filename   = $directory . PAGE_EXTENSION;
-            $directory .= '/';
-            if (file_exists($filename))
-            {
-                if (!is_writable(CAT_PATH . PAGES_DIRECTORY . '/'))
-                {
-                    $errors[] = $self->lang()->translate('Cannot delete access file!');
-                }
-                else
-                {
-                    unlink($filename);
-                    if (file_exists($directory) && (rtrim($directory, '/') != CAT_PATH . PAGES_DIRECTORY) && (substr($link, 0, 1) != '.'))
-                    {
-                        CAT_Helper_Directory::removeDirectory($directory);
-                    }
-                }
-            }
             return $errors;
         }   // end function _deletePage()
+
+        /**
+         * marks pages as 'deleted' if trash is enabled
+         * this method works recursively for sub pages
+         *
+         * @access private
+         * @param  integer $parent
+         * @return void
+         **/
+       	private static function _trashPages($parent = 0)
+            {
+            // get pages for current parent
+            $pages = self::getPagesByParent($parent);
+            if(count($pages))
+                {
+    			foreach($pages as $page)
+                {
+    				// Update the page visibility to 'deleted'
+    				self::getInstance()->db()->query(sprintf(
+                        "UPDATE `%spages` SET visibility = 'deleted' WHERE page_id = %d LIMIT 1",
+                        CAT_TABLE_PREFIX, $page['page_id']
+                    ));
+    				// Run this function again for all sub-pages
+    				self::_trashPages( $page['page_id'] );
+                    if(self::getInstance()->db()->is_error()) return false;
+                    return true;
+                }
+            }
+    	}   // end function _trashPages()
 
         /**
          * evaluate correct item path

@@ -101,7 +101,7 @@
 					success:	function( data, textStatus, jqXHR  )
 					{
 						var form	= $('#fc_add_page'),
-							option	= '<select name="parent" id="fc_addPage_parent"><option value=""></option>';
+							option	= '<select name="parent" id="fc_addPage_parent"><option value="">['+cattranslate('None')+']</option>';
 						if ( data.visibility == 'deleted' )
 						{
 							form.find('nav, ul, .fc_changePageOnly, .fc_addPageOnly').hide();
@@ -473,18 +473,22 @@ jQuery(document).ready(function()
 				if ( data.success === true )
 				{
 					var form	= $(this),
-						option	= '<select name="parent" id="fc_addPage_parent">',
+						option	= '<select name="parent" id="fc_addPage_parent"><option value="">['+cattranslate('None')+']</option>',
 						page_id	= $('#fc_addPage_parent_page_id').val();
 					$.each(data.parent_list, function(index, value)
 					{
-						option	= option + '<option value="' + value.id + '"';
-						option	= value.disabled === true ||
-									value.id == dates.page_id ||
-									value.current_is_parent === true
-									? option + ' disabled="disabled">' : option+ '>';
+						option	= option + '<option value="' + value.page_id + '"';
+                        option	= (
+                                       value.is_editable === false      // no permission or deleted page
+                                    || value.is_current === true        // current page
+                                    || value.is_direct_parent === true  // direct parent
+                                  )
+								? option + ' disabled="disabled">'
+                                : option + '>'
+                                ;
 						for ( var i = 0; i < value.level; i++ )
 						{
-							option	= option + '-';
+							option	= option + '|-- ';
 						}
 						option	= option + value.menu_title + '</option>';
 					});

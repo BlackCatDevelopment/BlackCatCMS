@@ -56,9 +56,6 @@ if ( ! $users->checkPermission('pages','pages_delete',false) )
 	exit();
 }
 
-// Include the LEPTON functions file
-require_once(CAT_PATH . '/framework/functions.php');
-
 $page_id        = $val->sanitizePost('page_id','numeric');
 
 // Get page id
@@ -75,7 +72,7 @@ if (!$page_id)
 if ( !CAT_Helper_Page::getPagePermission( $page_id, 'admin' ) )
 {
 	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You do not have permissions to modify this page'),
+		'message'	=> $backend->lang()->translate('You do not have the permission to delete this page.'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -98,18 +95,18 @@ if (!$page)
 $visibility		= $page['visibility'];
 
 // Check if we should delete it or just set the visibility to 'deleted'
-if ( PAGE_TRASH != 'disabled' && $visibility != 'deleted' )
+if ( CAT_Registry::get('PAGE_TRASH') != 'disabled' && $visibility != 'deleted' )
 {
 	$ajax_status	= 1;
 	// Page trash is enabled and page has not yet been deleted
-    CAT_Helper_Page::deletePage($page_id,true);
+    $result         = CAT_Helper_Page::deletePage($page_id,true);
 } else {
 	$ajax_status	= 0;
-    CAT_Helper_Page::deletePage($page_id);
+    $result         = CAT_Helper_Page::deletePage($page_id);
 }	
 
 // Check if there is a db error, otherwise say successful
-if ( $backend->db()->is_error() )
+if (!$result)
 {
 	$ajax	= array(
 		'message'	=> $backend->db()->get_error(),

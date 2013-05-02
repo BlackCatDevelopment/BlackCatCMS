@@ -89,7 +89,7 @@ $tpl_data = array();
 $tpl_data['PAGE_ID']					= $results_array['page_id'];
 $tpl_data['PAGE_TITLE']				    = $results_array['page_title'];
 $tpl_data['MENU_TITLE']				    = $results_array['menu_title'];
-$tpl_data['PAGE_LINK']					= $backend->page_link($results_array['link']);
+$tpl_data['PAGE_LINK']					= CAT_Helper_Page::getLink($results_array['page_id']);
 
 $tpl_data['MODIFIED_BY']				= $user['display_name'];
 $tpl_data['MODIFIED_BY_USERNAME']		= $user['username'];

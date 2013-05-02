@@ -226,11 +226,11 @@ class wb
     /* moved to CAT_Object */
     public function print_error($message, $link = 'index.php', $auto_footer = true)
     {
-        CAT_Object::getInstance()->printError($message,$link);
+        CAT_Object::printError($message,$link);
     }
 	public function print_success($message, $redirect = 'index.php', $auto_footer = true)
 	{
-		CAT_Object::getInstance()->printMsg($message,$redirect,$auto_footer);
+		CAT_Object::printMsg($message,$redirect,$auto_footer);
     }
 
     /* moved to CAT_Helper_Mail */

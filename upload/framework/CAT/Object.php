@@ -243,13 +243,6 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 
         }   // end function printError()
 
-        public static function fatalError( $message = NULL, $args = NULL )
-        {
-            echo $message;
-            exit;
-        }   // end function fatalError()
-
-        
         /**
          * wrapper to printError(); print error message and exit
          *
@@ -258,7 +251,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          * @access public
          *
          **/
-		public function printFatalError( $message = NULL, $args = NULL ) {
+        public static function printFatalError( $message = NULL, $args = NULL ) {
             CAT_Object::printError( $message, $args );
 		    exit;
 		}   // end function printFatalError()
@@ -272,7 +265,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          *  @param  boolean $auto_footer - optional flag to 'print' the footer. Default is true.
          *  @return void    exit()s
          */
-    	public function printMsg($message, $redirect = 'index.php', $auto_footer = true)
+    	public static function printMsg($message, $redirect = 'index.php', $auto_footer = true)
         {
     		global $parser;
 
@@ -283,22 +276,27 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
     		$parser->setPath(CAT_THEME_PATH . '/templates');
     		$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
-    		$data_dwoo['MESSAGE']			= $this->lang()->translate($message);
-    		$data_dwoo['REDIRECT']			= $redirect;
-    		$data_dwoo['REDIRECT_TIMER']	= REDIRECT_TIMER;
+    		$parser->output('success',array(
+                'MESSAGE' => $this->lang()->translate($message),
+                'REDIRECT' => $redirect,
+                'REDIRECT_TIMER' => CAT_Registry::get('REDIRECT_TIMER'),
+            ));
 
-    		// ====================
-    		// ! Parse the header
-    		// ====================
-    		$parser->output('success', $data_dwoo);
 
     		if ($auto_footer == true)
             {
-    			if (method_exists($this, "print_footer"))
+                $caller       = debug_backtrace();
+                // remove first item (it's the printMsg() method itself)
+                array_shift($caller);
+                $caller_class
+                    = isset( $caller[0]['class'] )
+                    ? $caller[0]['class']
+                    : NULL;
+    			if ($caller_class && method_exists($caller_class, "print_footer"))
                 {
-    				$this->print_footer();
+    				$caller_class->print_footer();
                 }
-                }
+            }
     		exit();
     	}   // end function printMsg()
 

@@ -48,7 +48,7 @@ header('Content-type: application/json');
 if ( ! $users->checkPermission('pages','pages_add',false) )
 {
 	$ajax	= array(
-		'message'	=>$backend->lang()->translate("You don't have the permission to add a page."),
+		'message'	=>$backend->lang()->translate('You don not have the permission to add a page.'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -74,8 +74,8 @@ $options = array(
     'modified_by'    => $users->get_user_id(),
     'modified_when'  => time(),
     'page_title'     => htmlspecialchars($val->sanitizePost('page_title',NULL,true) ),
-    'parent'         => ( $val->sanitizePost('parent','integer',true) ? $val->sanitizePost('parent','integer',true) : 0 ),
-    'position'       => 0, // just a default here
+    'parent'         => ( $val->sanitizePost('parent','numeric',true) ? $val->sanitizePost('parent','numeric',true) : 0 ),
+    'position'       => 1, // just a default here
     'searching'      => $val->sanitizePost('searching',NULL,true) ? '1' : '0',
     'target'         => $val->sanitizePost('target',NULL,true),
     'template'       => $val->sanitizePost('template',NULL,true),
@@ -191,14 +191,14 @@ $options['viewing_groups']		= implode(',', $options['viewing_groups']);
 // ====================================================== 
 if ( !$options['parent'] || $options['parent'] == '0' )
 {
-	$link = '/'.page_filename($options['menu_title']);
+	$options['link'] = '/'.page_filename($options['menu_title']);
 
 	// =================================================================================================================== 
 	// ! rename menu titles: index && intro to prevent clashes with intro page feature and WB core file /pages/index.php   
 	// =================================================================================================================== 
-	if( $link == '/index' || $link == '/intro' )
+	if( $options['link'] == '/index' || $options['link'] == '/intro' )
 	{
-		$link	.= '_0';
+		$options['link']	.= '_0';
 		$filename	= CAT_PATH . PAGES_DIRECTORY .'/' . CAT_Helper_Page::getFilename($options['menu_title']) . '_0' . PAGE_EXTENSION;
 	}
 	else
@@ -208,21 +208,18 @@ if ( !$options['parent'] || $options['parent'] == '0' )
 }
 else
 {
-/*
-		$options['parent']_section	= '';
-	$options['parent']_titles	= array_reverse( get_parent_titles($options['parent']) );
-	foreach ( $options['parent']_titles as $options['parent']_title )
+    // get the titles of the parent pages to create the subdirectory
+    $parent_section = '';
+    $parent_titles  = array_reverse(CAT_Helper_Page::getParentTitles($options['parent']));
+    foreach( $parent_titles as $parent_title )
 	{
-		$options['parent']_section	.= page_filename($options['parent']_title).'/';
+        $parent_section	.= CAT_Helper_Page::getFilename($parent_title).'/';
 	}
-	if($options['parent']_section == '/') { $options['parent']_section = ''; }
-	$link = '/' . $options['parent']_section . page_filename($options['menu_title']);
-	$filename = CAT_PATH . PAGES_DIRECTORY . '/' . $options['parent']_section . page_filename($options['menu_title']) . PAGE_EXTENSION;
-	make_dir(CAT_PATH . PAGES_DIRECTORY.'/'.$options['parent']_section);
-	
-	$source = CAT_ADMIN_PATH . "/pages/master_index.php";
-	copy( $source, CAT_PATH . PAGES_DIRECTORY . '/' . $options['parent']_section . "/index.php" );
-*/
+    if ($parent_section == '/') $parent_section = '';
+    $options['link'] = '/'.$parent_section.CAT_Helper_Page::getFilename($options['menu_title']);
+   	$filename = CAT_PATH.PAGES_DIRECTORY.'/'.$parent_section.CAT_Helper_Page::getFilename($options['menu_title']).PAGE_EXTENSION;
+	CAT_Helper_Directory::createDirectory(CAT_PATH.PAGES_DIRECTORY.'/'.$parent_section);
+    $options['level'] = count($parent_titles);
 }
 
 // ================================================== 
@@ -230,9 +227,9 @@ else
 // ================================================== 
 $get_same_page = $backend->db()->query(sprintf(
     "SELECT page_id FROM `%spages` WHERE link = '%s'",
-    CAT_TABLE_PREFIX, $link
+    CAT_TABLE_PREFIX, $options['link']
 ));
-if ( $get_same_page->numRows() > 0 || file_exists(CAT_PATH . PAGES_DIRECTORY.$link.PAGE_EXTENSION) || file_exists(CAT_PATH . PAGES_DIRECTORY.$link.'/') )
+if ( $get_same_page->numRows() > 0 || file_exists(CAT_PATH . PAGES_DIRECTORY.$options['link'].PAGE_EXTENSION) || file_exists(CAT_PATH . PAGES_DIRECTORY.$options['link'].'/') )
 {
 	$ajax	= array(
 		'message'	=>$backend->lang()->translate( 'A page with the same or similar link exists' ),
@@ -283,43 +280,38 @@ $page_id = CAT_Helper_Page::addPage($options);
 if ( !$page_id )
 {
 	$ajax	= array(
-		'message'	=> $backend->db()->get_error(),
+		'message'	=> $backend->lang()->translate('Unable to create the page: ') . $backend->db()->get_error(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
 
-
-// Work out level
-$level			= level_count($page_id);
 // Work out root parent
-$root_parent	= root_parent($page_id);
+$root_parent	= CAT_Helper_Page::getRootParent($page_id);
 // Work out page trail
-$page_trail		= get_page_trail($page_id);
+$page_trail		= CAT_Helper_Page::getPageTrail($page_id);
 
 // =========================================================
 // ! Set page_link
 // =========================================================
-if ( $page_link && $page_link != pathinfo($link,PATHINFO_FILENAME) )
+if ( $page_link && $page_link != pathinfo($options['link'],PATHINFO_FILENAME) )
 {
-    $link     = sanitize_path(pathinfo($link,PATHINFO_DIRNAME).'/'.page_filename($page_link));
-    $filename = sanitize_path(CAT_PATH.PAGES_DIRECTORY.'/'.pathinfo($link,PATHINFO_DIRNAME).'/'.page_filename($page_link).PAGE_EXTENSION);
+    $options['link'] = sanitize_path(pathinfo($link,PATHINFO_DIRNAME).'/'.page_filename($page_link));
+    $filename        = sanitize_path(CAT_PATH.PAGES_DIRECTORY.'/'.pathinfo($options['link'],PATHINFO_DIRNAME).'/'.page_filename($page_link).PAGE_EXTENSION);
 }
 
 // ======================================= 
 // ! Update page with new level and link   
 // ======================================= 
-$sql	 = 'UPDATE `%spages` SET ';
-$sql	.= '`root_parent` = '.$root_parent.', ';
-$sql	.= '`level` = "'.$level.'", ';
-$sql	.= '`link` = "'.$link.'", ';
-$sql	.= '`page_trail` = "'.$page_trail.'"';
-$sql	.= 'WHERE `page_id` = '.$page_id;
-$backend->db()->query(sprintf($sql,CAT_TABLE_PREFIX));
-
-if ( $backend->db()->is_error() )
+$result = CAT_Helper_Page::updatePage($page_id,array(
+    'root_parent' => $root_parent,
+    'page_trail'  => $page_trail,
+));
+if (!$result)
 {
+    // try to recover = delete page
+    CAT_Helper_Page::deletePage($page_id);
 	$ajax	= array(
 		'message'	=> $backend->db()->get_error(),
 		'success'	=> false
@@ -328,15 +320,23 @@ if ( $backend->db()->is_error() )
 	exit();
 }
 // Create a new file in the /pages dir
-create_access_file($filename, $page_id, $level);
-
-// add position 1 to new page
-$position	= 1;
+$result = CAT_Helper_Page::createAccessFile($filename, $page_id, $options['level']);
+if (!$result)
+{
+    // try to recover = delete page
+    CAT_Helper_Page::deletePage($page_id);
+	$ajax	= array(
+		'message'	=> $backend->lang()->translate('Error creating access file in the pages directory, cannot open file'),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
+}
 
 // ========================================== 
 // ! Add new record into the sections table   
 // ========================================== 
-$backend->db()->query("INSERT INTO " . CAT_TABLE_PREFIX . "sections (page_id,position,module,block) VALUES ('$page_id','$position', '$module','1')");
+$backend->db()->query("INSERT INTO " . CAT_TABLE_PREFIX . "sections (page_id,position,module,block) VALUES ('$page_id','1', '$module','1')");
 
 // ====================== 
 // ! Get the section id   
@@ -365,8 +365,9 @@ if ( $backend->db()->is_error() )
 }
 else
 {
+    // print success and redirect
 	$ajax	= array(
-		'message'	=>$backend->lang()->translate( 'Page added successfully' ),
+		'message'	=> $backend->lang()->translate( 'Page added successfully' ),
 		'url'		=> CAT_ADMIN_URL . '/pages/modify.php?page_id='. $page_id,
 		'success'	=> true
 	);
