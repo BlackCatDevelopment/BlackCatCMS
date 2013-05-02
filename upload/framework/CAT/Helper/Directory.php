@@ -59,7 +59,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             }
             return self::$instance;
         }
-	    
+
         public function __call($method, $args)
         {
             if ( ! isset($this) || ! is_object($this) )
@@ -117,11 +117,11 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                              ? str_ireplace( $dir, '', $entry )
                              : $entry;
                 }
-        }
+            }
             return $files;
         }   // end function findFiles()
-	    
-	    /**
+
+        /**
          *
          **/
         public static function getMode($for='file')
