@@ -139,7 +139,26 @@ if (!class_exists('CAT_Helper_Addons'))
                 self::$instance = new self();
             }
             return self::$instance;
+        }   // end function getInstance()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getAddonDetails($directory)
+        {
+            $self  = self::getInstance();
+            $addon = $self->db()->query(sprintf(
+                'SELECT * FROM `%saddons` WHERE directory="%s"',
+                CAT_TABLE_PREFIX, $directory
+            ));
+    		if ( $addon->numRows() > 0 )
+            {
+                return $addon->fetchRow(MYSQL_ASSOC);
         }
+        }   // end function getAddonDetails()
+        
 
     	/**
     	 * get_addons function.
@@ -693,10 +712,23 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param  string  $version2
          * @param  string  $operator - default '>='
          */
-        function versionCompare($version1, $version2, $operator = '>=')
+        public static function versionCompare($version1, $version2, $operator = '>=')
         {
             return version_compare(self::getVersion2($version1), self::getVersion2($version2), $operator);
         } // end versionCompare()
+
+
+        /**
+         * check module permissions for current user
+         *
+         * @access public
+         * @param  string  $module - module to check
+         * @return
+         **/
+        public static function checkModulePermissions($module)
+        {
+            return false;
+        }   // end function checkModulePermissions()
 
         /**
          * This function is used to install a module (addon); function was moved
@@ -706,195 +738,299 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param  string  Any valid directory(-path)
          * @param  boolean Call the install-script of the module? Default: false
          **/
-        public static function installModule($directory, $install = false)
+        public static function installModule($tmpfile, $name)
         {
-            global $database, $admin;
-            self::getInstance()->log()->logDebug('module directory [' . $directory . '], install flag [' . $install . ']');
-            if (is_dir($directory) && file_exists($directory . "/info.php"))
+
+            // Set temp vars
+            $temp_dir     = CAT_PATH . '/temp/';
+            $temp_unzip   = CAT_PATH . '/temp/unzip_'.basename($tmpfile).'/';
+            $temp_file    = $temp_unzip . $name;
+
+            // make sure the temp directory exists, is writable and is empty
+            CAT_Helper_Directory::removeDirectory( $temp_unzip );
+            CAT_Helper_Directory::createDirectory( $temp_unzip );
+
+            // Try to upload the file to the temp dir
+            if ( !move_uploaded_file( $tmpfile, $temp_file ) )
             {
-                global $module_name, $module_license, $module_author, $module_directory, $module_version, $module_function, $module_description, $module_platform, $module_guid, $lepton_platform;
-                /**
-                 * @internal frankH 2011-08-02 - added $lepton_platform, can be removed when addons are built only for LEPTON
-                 */
-                if (isset($lepton_platform) && ($lepton_platform != ''))
-                    $module_platform = $lepton_platform;
-                require($directory . "/info.php");
-                if (isset($module_name))
+                CAT_Helper_Directory::removeDirectory($temp_unzip);
+                CAT_Helper_Directory::removeDirectory($temp_file);
+                self::printError('Unable to install. Cannot move uploaded file');
+                return false;
+            }
+
+            // Check for language or template/module
+            $extension = pathinfo( $temp_file, PATHINFO_EXTENSION );
+            if ( $extension == 'php' )
+            {
+                $temp_subdir = $temp_file;
+            }
+            elseif ( $extension == 'zip' )
+            {
+                $temp_subdir = $temp_unzip . 'unzip/';
+                CAT_Helper_Directory::createDirectory( $temp_subdir );
+
+                // Setup the PclZip object and unzip the files to the temp unzip folder
+                $list    = Cat_Helper_Zip::getInstance( $temp_file )->config( 'Path', sanitize_path( $temp_subdir ) )->extract();
+
+                // check if anything was extracted
+                if ( ! $list )
                 {
-                    $module_function = strtolower($module_function);
-                    // Check that it doesn't already exist
-                    $sqlwhere        = "WHERE `type` = 'module' AND `directory` = '" . $module_directory . "'";
-                    $sql             = "SELECT COUNT(*) FROM `" . CAT_TABLE_PREFIX . "addons` " . $sqlwhere;
-                    if ($database->get_one($sql))
-                    {
-                        $sql = "UPDATE `" . CAT_TABLE_PREFIX . "addons` SET ";
+                    CAT_Helper_Directory::removeDirectory($temp_unzip);
+                    CAT_Helper_Directory::removeDirectory($temp_file);
+                    self::printError( 'Unable to extract the file. Please check the ZIP format.' );
+                    return false;
+                }
+                // check for info.php
+                if ( ! file_exists( $temp_subdir . '/info.php' ) )
+                {
+                    // check subfolders for info.php
+                    $info = CAT_Helper_Directory::maxRecursionDepth(2)->findFile('info.php',$temp_subdir);
+                    if ( ! $info )
+                {
+                        CAT_Helper_Directory::removeDirectory($temp_unzip);
+                        CAT_Helper_Directory::removeDirectory($temp_file);
+                        self::printError( 'Invalid installation file. No info.php found. Please check the ZIP format.' );
+                        return false;
                     }
                     else
                     {
-                        $sql      = "INSERT INTO `" . CAT_TABLE_PREFIX . "addons` SET ";
-                        $sqlwhere = '';
+                        $temp_subdir = pathinfo($info,PATHINFO_DIRNAME);
                     }
-                    $sql .= "`directory` = '" . mysql_real_escape_string($module_directory) . "',";
-                    $sql .= "`name` = '" . mysql_real_escape_string($module_name) . "',";
-                    $sql .= "`description`= '" . mysql_real_escape_string($module_description) . "',";
-                    $sql .= "`type`= 'module',";
-                    $sql .= "`function` = '" . mysql_real_escape_string(strtolower($module_function)) . "',";
-                    $sql .= "`version` = '" . mysql_real_escape_string($module_version) . "',";
-                    $sql .= "`platform` = '" . mysql_real_escape_string($module_platform) . "',";
-                    $sql .= "`author` = '" . mysql_real_escape_string($module_author) . "',";
-                    $sql .= "`license` = '" . mysql_real_escape_string($module_license) . "'";
-                    if (isset($module_guid))
+                }
+                    }
+                    else
                     {
-                        $sql .= ", `guid` = '" . mysql_real_escape_string($module_guid) . "'";
+                CAT_Helper_Directory::removeDirectory($temp_unzip);
+                CAT_Helper_Directory::removeDirectory($temp_file);
+                self::printError( 'Invalid installation file. Wrong extension. Please check the ZIP format.' );
+                return false;
                     }
-                    $sql .= $sqlwhere;
-                    $database->query($sql);
-                    self::getInstance()->log()->logDebug('SQL: ' . $sql);
-                    if ($database->is_error())
+
+            // Check the info.php file / language file
+            $precheck_errors = NULL;
+            if ( $addon_info = self::checkInfo( $temp_subdir ) )
                     {
-                        $admin->print_error($database->get_error());
-                        self::getInstance()->log()->logDebug('database error: ' . $database->get_error());
+                $precheck_errors = self::preCheckAddon( $temp_file, $temp_subdir, false );
                     }
+            else {
+                CAT_Helper_Directory::removeDirectory($temp_unzip);
+                CAT_Helper_Directory::removeDirectory($temp_file);
+                self::printError( 'Invalid installation file. {{error}}', array('error'=>self::getError()) );
+                return false;
+            }
+            if ( $precheck_errors )
+                    {
+                self::printError( 'Invalid installation file. {{error}}', array('error'=>$precheck_errors) );
+                return false;
+                    }
+
+            // So, now we have done all preinstall checks, lets see what to do next
+            $addon_directory
+                = $addon_info['addon_function'] == 'language'
+                ? $addon_info[$addon_info['addon_function'] . '_code'] . '.php'
+                : $addon_info[$addon_info['addon_function'] . '_directory'];
+
+            // Set module directory
+            $addon_dir         = CAT_PATH.'/'.$addon_info['addon_function'].'s/'.$addon_directory;
+            $action            = 'install';
+
+            if ( file_exists( $addon_dir ) )
+            {
+                $action        = 'upgrade';
+                // look for old info.php
+                $previous_info = self::checkInfo( $addon_dir );
+                if (
+                       $previous_info
+                    || $addon_info['addon_function'] == 'language'
+                ) {
                     /**
-                     *  Run installation script
-                     *
+                    *    Version to be installed is older than currently installed version
                      */
-                    if ($install == true)
+                    if ( self::versionCompare ($previous_info[$addon_info['addon_function'] . '_version'], $addon_info[$addon_info['addon_function'] . '_version'], '>=' ) )
                     {
-                        if (file_exists($directory . '/install.php'))
-                        {
-                            self::getInstance()->log()->logDebug('require install.php');
-                            require($directory . '/install.php');
+                        CAT_Helper_Directory::removeDirectory($temp_unzip);
+                        CAT_Helper_Directory::removeDirectory($temp_file);
+                        self::printError( 'Already installed' );
+                        return false;
                         }
                     }
                 }
-                else
-                {
-                    self::getInstance()->log()->logDebug('var $module_name not set, unable to install module');
-                }
-            }
-        } // end function installModule()
 
-        /**
-         * This function is used to install a template (addon); function was moved
-         * from functions.php
-         *
-         * @access public
-         * @param  string  Any valid directory(-path)
-         **/
-        public static function installTemplate($directory)
-        {
-            global $database, $admin;
-            self::getInstance()->log()->logDebug('template directory [' . $directory . ']');
-            if (is_dir($directory) && file_exists($directory . '/info.php'))
+            // Make sure the module dir exists, and chmod if needed
+            if ( $addon_info['addon_function'] != 'language')
             {
-                global $template_license, $template_directory, $template_author, $template_version, $template_function, $template_description, $template_platform, $template_name, $template_guid;
-                require($directory . "/info.php");
+                CAT_Helper_Directory::createDirectory( $addon_dir );
+                // copy files from temp folder
+                if ( CAT_Helper_Directory::copyRecursive( $temp_subdir, $addon_dir ) !== true )
+                {
+                    CAT_Helper_Directory::removeDirectory($temp_unzip);
+                    CAT_Helper_Directory::removeDirectory($temp_file);
+                    self::printError( 'Unable to install - error copying files' );
+                    return false;
+                }
+                // remove temp
+                CAT_Helper_Directory::removeDirectory($temp_unzip);
+                CAT_Helper_Directory::removeDirectory($temp_file);
+            }
+
+            // Run the modules install // upgrade script if there is one
+            if ( file_exists( $addon_dir . '/' . $action . '.php') )
+                require( $addon_dir . '/' . $action . '.php' );
+
+            // load info.php again to have current values
+            if ( file_exists($addon_dir . '/info.php') )
+                require( $addon_dir . '/info.php' );
+
+            if ( $action == 'install' )
+            {
+                // Load module info into DB
+                if ( $addon_info['addon_function'] == 'language' )
+        {
+                    rename($temp_file, $addon_dir);
+                    change_mode( $addon_dir , 'file');
+                }
+                if (isset($module_name))
+            {
+                    $module_function = strtolower($module_function);
+                    $do              = 'insert';
                 // Check that it doesn't already exist
-                if (isset($template_name))
+                    $sql = sprintf(
+                        "SELECT COUNT(*) FROM `%saddons` WHERE `type`='module' AND `directory`='%s'",
+                        CAT_TABLE_PREFIX, $module_directory
+                    );
+                    if ($self->db()->get_one($sql))
                 {
-                    $sqlwhere = "WHERE `type` = 'template' AND `directory` = '" . $template_directory . "'";
-                    $sql      = "SELECT COUNT(*) FROM `" . CAT_TABLE_PREFIX . "addons` " . $sqlwhere;
-                    if ($database->get_one($sql))
-                    {
-                        $sql = "UPDATE `" . CAT_TABLE_PREFIX . "addons` SET ";
+                        $sql = "UPDATE `%saddons` SET ";
+                        $do  = 'update';
                     }
                     else
                     {
-                        $sql      = "INSERT INTO `" . CAT_TABLE_PREFIX . "addons` SET ";
-                        $sqlwhere = "";
+                        $sql = "INSERT INTO `%saddons` SET ";
                     }
-                    $sql .= "`directory` = '" . mysql_real_escape_string($template_directory) . "',";
-                    $sql .= "`name` = '" . mysql_real_escape_string($template_name) . "',";
-                    $sql .= "`description`= '" . mysql_real_escape_string($template_description) . "',";
-                    $sql .= "`type`= 'template',";
-                    $sql .= "`function` = '" . mysql_real_escape_string($template_function) . "',";
-                    $sql .= "`version` = '" . mysql_real_escape_string($template_version) . "',";
-                    $sql .= "`platform` = '" . mysql_real_escape_string($template_platform) . "',";
-                    $sql .= "`author` = '" . mysql_real_escape_string($template_author) . '\', ';
-                    $sql .= "`license` = '" . mysql_real_escape_string($template_license) . "' ";
-                    if (isset($template_guid))
+
+                    $options = array(
+                        mysql_real_escape_string($module_directory),
+                        mysql_real_escape_string($module_name),
+                        mysql_real_escape_string($module_description),
+                        mysql_real_escape_string(strtolower($module_function)),
+                        mysql_real_escape_string($module_version),
+                        mysql_real_escape_string($module_platform),
+                        mysql_real_escape_string($module_author),
+                        mysql_real_escape_string($module_license),
+                    );
+
+                    $sql .= "`directory`='%s', `name`='%s', `description`='%s', "
+                         .  "`type`='module', `function`='%s', `version`='%s', "
+                         .  "`platform`='%s', `author`='%s', `license`='%s'";
+
+                    if (isset($module_guid))
                     {
-                        $sql .= ", `guid` = '" . mysql_real_escape_string($template_guid) . "' ";
+                        $sql .= ", `guid`='%s'";
+                        array_push($options,mysql_real_escape_string($module_guid));
                     }
-                    else
+                    if ($do == 'update')
                     {
-                        $sql .= ", `guid` = '' ";
+                        $sql .= "WHERE `type`='module' AND `directory`='%s'";
+                        array_push($options, $module_directory );
                     }
-                    $sql .= $sqlwhere;
-                    self::getInstance()->log()->logDebug('SQL: ' . $sql);
-                    $database->query($sql);
-                    if ($database->is_error())
+
+                    $self = self::getInstance();
+                    $self->db()->query(vsprintf($sql,$options));
+
+                    if ($self->db()->is_error())
                     {
-                        $admin->print_error($database->get_error());
-                        self::getInstance()->log()->logDebug('database error: ' . $database->get_error());
+                        // recovery
+                        if ( file_exists($addon_dir.'/uninstall.php') )
+                            require $addon_dir.'/uninstall.php';
+                        CAT_Helper_Directory::removeDirectory($temp_unzip);
+                        CAT_Helper_Directory::removeDirectory($temp_file);
+                        CAT_Helper_Directory::removeDirectory($addon_dir);
+                        self::printError($self->db()->get_error());
+                        return false;
                     }
                 }
+
+                // let admin set access permissions for modules of type 'page' and 'tool'
+                if ( ( $addon_info['addon_function'] == 'module' && ( $module_function == 'page' || $module_function == 'tool' ) )
+                    || $addon_info['addon_function'] == 'template' )
+                {
+                    $check_permission    = $addon_info['addon_function'] . '_permissions';
+
+                    // get groups
+                    $stmt = $self->db()->query(sprintf(
+                        'SELECT * FROM `%sgroups` WHERE group_id <> 1',
+                        CAT_TABLE_PREFIX
+                    ));
+                    if ( $stmt->numRows() > 0 )
+                    {
+                        $group_ids    = CAT_Helper_Validate::sanitizePost('group_id');
+                        // get marked groups
+                        if ( is_array($group_ids) )
+                            foreach ( $group_ids as $gid )
+                                $allowed_groups[$gid]    = $gid;
                 else
+                            $allowed_groups    = array();
+
+                        // get all known groups
+                        $groups    = array();
+                        while( $row = $stmt->fetchRow(MYSQL_ASSOC) )
+                        {
+                            $groups[ $row['group_id'] ] = $row;
+                            $gid                        = $row['group_id'];
+                            // add newly installed module to any group that's NOT in the $allowed_groups array
+                            if ( ! array_key_exists( $gid, $allowed_groups ) )
+                            {
+                                // get current value
+                                $addons   = explode(',', $groups[$gid][$check_permission] );
+                                // add newly installed module
+                                $addons[] = $addon_directory;
+                                $addons   = array_unique($addons);
+                                asort( $addons );
+                                // Update the database
+                                $addon_permissions = implode(',', $addons);
+                                $self->db()->query(sprintf(
+                                    'UPDATE `%sgroups` SET `%s`="%s" WHERE `group_id`=%d',
+                                    CAT_TABLE_PREFIX, $check_permission, $addon_permissions, $gid
+                                ));
+                                if ( $self->db()->is_error() )
                 {
-                    self::getInstance()->log()->logDebug('var $module_name not set, unable to install module');
+                                    self::printError($self->db()->get_error());
+                                    return false;
                 }
             }
-        } // end function installTemplate()
-
-
-        /**
-         * This function is used to install a language (addon); function was moved
-         * from functions.php
-         *
-         * @access public
-         * @param  string  Any valid file(-path)
-         **/
-        public static function installLanguage($file)
-        {
-            global $database, $admin;
-            if (file_exists($file) && preg_match('#^([A-Z]{2}.php)#', basename($file)))
-            {
-                $language_license  = null;
-                $language_code     = null;
-                $language_version  = null;
-                $language_guid     = null;
-                $language_name     = null;
-                $language_author   = null;
-                $language_platform = null;
-                require($file);
-                if (isset($language_name))
-                {
-                    if ((!isset($language_license)) || (!isset($language_code)) || (!isset($language_version)) || (!isset($language_guid)))
-                    {
-                        $admin->print_error($MESSAGE["LANG_MISSING_PARTS_NOTICE"], $language_name);
                     }
-                    // Check that it doesn't already exist
-                    $sqlwhere = 'WHERE `type` = \'language\' AND `directory` = \'' . $language_code . '\'';
-                    $sql      = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'addons` ' . $sqlwhere;
-                    if ($database->get_one($sql))
-                    {
-                        $sql = 'UPDATE `' . CAT_TABLE_PREFIX . 'addons` SET ';
+                        return true;
                     }
                     else
                     {
-                        $sql      = 'INSERT INTO `' . CAT_TABLE_PREFIX . 'addons` SET ';
-                        $sqlwhere = '';
+                        return true;
                     }
-                    $sql .= '`directory` = \'' . $language_code . '\', ';
-                    $sql .= '`name` = \'' . $language_name . '\', ';
-                    $sql .= '`type`= \'language\', ';
-                    $sql .= '`version` = \'' . $language_version . '\', ';
-                    $sql .= '`platform` = \'' . $language_platform . '\', ';
-                    $sql .= '`author` = \'' . addslashes($language_author) . '\', ';
-                    $sql .= '`license` = \'' . addslashes($language_license) . '\', ';
-                    $sql .= '`guid` = \'' . $language_guid . '\', ';
-                    $sql .= '`description` = \'\'  ';
-                    $sql .= $sqlwhere;
-                    $database->query($sql);
-                    if ($database->is_error())
+                    }
+                else
                     {
-                        $admin->print_error($database->get_error());
-                        self::getInstance()->log()->logDebug('database error: ' . $database->get_error());
+                    return true;
                     }
                 }
-            }
-        } // end function installLanguage()
+#            elseif ( $addon_info['addon_function'] == 'module' && $action == 'upgrade' )
+#            {
+#                $addon_helper->upgradeModule( $addon_directory, false );
+#                $backend->print_success( 'Upgraded successfully' );
+#            }
+#            elseif ( $addon_info['addon_function'] == 'template' && $action == 'upgrade' )
+#            {
+#                $addon_helper->installTemplate( $addon_dir );
+#                $backend->print_success( 'Upgraded successfully' );
+#            }
+#            elseif ( $addon_info['addon_function'] == 'language' && $action == 'upgrade' )
+#            {
+#                rename( $temp_file, $addon_dir );
+#                // Chmod the file
+#                change_mode( $addon_dir , 'file');
+#                $addon_helper->installLanguage( $addon_dir );
+#                $backend->print_success( 'Upgraded successfully' );
+#            }
+        } // end function installModule()
 
         /**
          *  Try to get the current version of a given Modul.
@@ -908,10 +1044,11 @@ if (!class_exists('CAT_Helper_Addons'))
         {
             global $database;
             $version = null;
+            $self    = self::getInstance();
             if ($source != true)
             {
                 $sql = "SELECT `version` FROM `" . CAT_TABLE_PREFIX . "addons` WHERE `directory`='" . $modulename . "'";
-                $version = $database->get_one($sql);
+                $version = $self->db()->get_one($sql);
             }
             else
             {
@@ -950,12 +1087,14 @@ if (!class_exists('CAT_Helper_Addons'))
             foreach ($fields as $key => $value)
                 $sql .= "`" . $key . "`='" . $value . "',";
             $sql = substr($sql, 0, -1) . " WHERE `directory`= '" . $module_directory . "'";
-            $database->query($sql);
 
-            if ($database->is_error())
+            $self = self::getInstance();
+            $self->db()->query($sql);
+
+            if ($self->db()->is_error())
             {
-                $admin->print_error($database->get_error());
-                self::getInstance()->log()->logDebug('database error: ' . $database->get_error());
+                $admin->print_error($self->db()->get_error());
+                self::getInstance()->log()->logDebug('database error: ' . $self->db()->get_error());
             }
         } // end function upgradeModule()
 
@@ -970,8 +1109,9 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function isModuleInstalled($module,$version=NULL)
         {
             global $database;
+            $self = self::getInstance();
             $sql = 'SELECT * FROM `' . CAT_TABLE_PREFIX . 'addons` WHERE type="module" AND ( directory="'.$module.'" OR name="'.$module.'" )';
-            $q = $database->query($sql);
+            $q    = $self->db()->query($sql);
             if (!$q->numRows())
             {
                 return false;
@@ -1038,7 +1178,7 @@ if (!class_exists('CAT_Helper_Addons'))
             {
                 $database = new database();
             }
-            $q = $database->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'addons WHERE directory = "' . $module . '"');
+            $q = $self->db()->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'addons WHERE directory = "' . $module . '"');
             if (!$q->numRows())
             {
                 error_log("sec_register_file() called for non existing module [$module] (path: [$filepath]) - not found in addons table!", 0);
@@ -1047,10 +1187,10 @@ if (!class_exists('CAT_Helper_Addons'))
             $row = $q->fetchRow();
             // remove trailing / from $filepath
             $filepath = preg_replace( '~^/~', '', $filepath );
-            $q   = $database->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'class_secure WHERE module="' . $row['addon_id'] . '" AND filepath="/modules/' . $module . '/' . $filepath . '"');
+            $q   = $self->db()->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'class_secure WHERE module="' . $row['addon_id'] . '" AND filepath="/modules/' . $module . '/' . $filepath . '"');
             if (!$q->numRows())
             {
-                $database->query('REPLACE INTO ' . CAT_TABLE_PREFIX . 'class_secure VALUES ( "' . $row['addon_id'] . '", "/modules/' . $module . '/' . $filepath . '" )');
+                $self->db()->query('REPLACE INTO ' . CAT_TABLE_PREFIX . 'class_secure VALUES ( "' . $row['addon_id'] . '", "/modules/' . $module . '/' . $filepath . '" )');
             }
         } // end function sec_register_file()
 

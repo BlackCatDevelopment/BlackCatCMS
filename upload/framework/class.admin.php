@@ -48,6 +48,13 @@ class admin extends wb
 
     function __construct($section_name, $section_permission = 'start', $auto_header = true, $auto_auth = true)
     {
+        if(defined('WB2COMPAT'))
+        {
+            global $admin;
+            require_once CAT_PATH.'/framework/class.admin.php';
+            $admin = CAT_Backend::getInstance($section_name);
+            return $admin;
+        }
     return CAT_Backend::getInstance($section_name);
     }
 

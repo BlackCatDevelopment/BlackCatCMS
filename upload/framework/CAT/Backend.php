@@ -36,7 +36,6 @@ if (!class_exists('CAT_Backend', false))
         protected      $_config         = array( 'loglevel' => 8 );
         private static $instance        = array();
 
-//$section_name, $section_permission = 'start', $auto_header = true, $auto_auth = true
         /**
          * get instance; forwards to login page if the user is not logged in
          *
@@ -371,6 +370,21 @@ if (!class_exists('CAT_Backend', false))
     	{
     		CAT_Object::printMsg($message,$redirect,$auto_footer);
     	}
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function isBackend()
+        {
+            $url = CAT_Helper_Validate::sanitizeServer('SCRIPT_NAME');
+            if ( preg_match( '~/'.CAT_BACKEND_FOLDER.'/~i', $url ) )
+                return true;
+            else
+                return false;
+        }   // end function isBackend()
+        
 
 
     }

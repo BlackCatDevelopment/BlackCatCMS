@@ -110,7 +110,7 @@ elseif ( $type == 'modules' )
 		// ============================================= 
 		// ! Printing out the error-message and die().   
 		// ============================================= 
-		print_r($values);*/
+		print_r($values);
 		$backend->print_error( $backend->lang()->translate( 'Cannot Uninstall: the selected {{type}} is in use.' , $values ), $js_back );
 	}
 	/**
@@ -148,7 +148,7 @@ elseif ( $type == 'templates' )
 	/**
 	*	Check if the template is still in use by a page ...
 	*/
-	$info	= $backend->db()->->query( "SELECT page_id, page_title FROM " . CAT_TABLE_PREFIX . "pages WHERE template='" . $file . "' order by page_title" );
+	$info	= $backend->db()->query( "SELECT page_id, page_title FROM " . CAT_TABLE_PREFIX . "pages WHERE template='" . $file . "' order by page_title" );
 	if ( $info->numRows() > 0 )
 	{
 		/**
@@ -201,8 +201,8 @@ if ( !rm_full_dir(CAT_PATH . '/' . $type . '/' . $file) )
 else
 {
 	// Remove entry from DB
-	if ( $type != 'languages' ) $backend->db()->->query("DELETE FROM " . CAT_TABLE_PREFIX . "addons WHERE directory = '" . $file . "' AND type = '" . substr( $type, 0, -1 ) . "'");
-	else $backend->db()->->query("DELETE FROM " . CAT_TABLE_PREFIX . "addons WHERE directory = '" . $language_name . "' AND type = '" . substr( $type, 0, -1 ) . "'");
+	if ( $type != 'languages' ) $backend->db()->query("DELETE FROM " . CAT_TABLE_PREFIX . "addons WHERE directory = '" . $file . "' AND type = '" . substr( $type, 0, -1 ) . "'");
+	else $backend->db()->query("DELETE FROM " . CAT_TABLE_PREFIX . "addons WHERE directory = '" . $language_name . "' AND type = '" . substr( $type, 0, -1 ) . "'");
 }
 
 // ============================= 
@@ -210,7 +210,7 @@ else
 // ============================= 
 if ( $type != 'languages' )
 {
-	$stmt = $backend->db()->->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'groups WHERE group_id <> 1');
+	$stmt = $backend->db()->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'groups WHERE group_id <> 1');
 	if ($stmt->numRows() > 0)
 	{
 		while ( $row = $stmt->fetchRow(MYSQL_ASSOC) )
@@ -227,7 +227,7 @@ if ( $type != 'languages' )
 				asort($permissions);
 				// Update the database
 				$addon_permissions		= implode(',', $permissions);
-				$backend->db()->->query("UPDATE " . CAT_TABLE_PREFIX . "groups SET " . substr( $type, 0, -1 ) . "_permissions = '$addon_permissions' WHERE group_id='$gid'");
+				$backend->db()->query("UPDATE " . CAT_TABLE_PREFIX . "groups SET " . substr( $type, 0, -1 ) . "_permissions = '$addon_permissions' WHERE group_id='$gid'");
 			}
 		}
 	}

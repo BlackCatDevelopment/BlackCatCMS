@@ -1,41 +1,47 @@
 <?php
 
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * @author          Website Baker Project, LEPTON Project
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
  * @copyright       2004-2010, Website Baker Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
-    /**
+/**
      *  Function to list all files in a given directory.
      *
      *  @param  string  $directory   - directory to list
@@ -45,8 +51,8 @@ if (defined('CAT_PATH')) {
      *  @retrun  array  Natsorted array within the files.
      *
      */
-    function file_list($directory, $skip = array(), $show_hidden = false)
-    {
+function file_list($directory, $skip = array(), $show_hidden = false)
+{
         $result_list = array();
         if (is_dir($directory))
         {
@@ -77,7 +83,7 @@ if (defined('CAT_PATH')) {
         }
         natcasesort($result_list);
         return $result_list;
-    }   // end function file_list()
+}   // end function file_list()
 
 // displays the image or text inside an <iframe>
 if(!function_exists('display_captcha_real')) {
@@ -137,18 +143,18 @@ if ( ! is_object($wb) )
 
 // get list of available CAPTCHAS for the dropdown-listbox in admin-tools
 $useable_captchas = array(
-    'calc_text' => $wb->lang->translate('Calculation as text'),
-    'text'      => $wb->lang->translate('Text-CAPTCHA'),
+    'calc_text' => $wb->lang()->translate('Calculation as text'),
+    'text'      => $wb->lang()->translate('Text-CAPTCHA'),
 );
 
 if(extension_loaded('gd') && function_exists('imagepng') )
 {
-    $useable_captchas['calc_image'] = $wb->lang->translate('Calculation as image');
-    $useable_captchas['old_image']  = $wb->lang->translate('Old style (not recommended)');
+    $useable_captchas['calc_image'] = $wb->lang()->translate('Calculation as image');
+    $useable_captchas['old_image']  = $wb->lang()->translate('Old style (not recommended)');
     if (function_exists('imagettftext'))
     {
-	    $useable_captchas['calc_ttf_image'] = $wb->lang->translate('Calculation as image with varying fonts and backgrounds');
-		$useable_captchas['ttf_image']      = $wb->lang->translate('Image with varying fonts and backgrounds');
+	    $useable_captchas['calc_ttf_image'] = $wb->lang()->translate('Calculation as image with varying fonts and backgrounds');
+		$useable_captchas['ttf_image']      = $wb->lang()->translate('Image with varying fonts and backgrounds');
 	}
 }
 

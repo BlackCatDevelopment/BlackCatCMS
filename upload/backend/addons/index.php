@@ -48,15 +48,15 @@ $tpl_data = array();
 
 $tpl_data['URL'] = array(
 	'addons'		=> CAT_ADMIN_URL . '/modules/index.php',
-	'TEMPLATES'	=> $user->get_permission('templates') ? CAT_ADMIN_URL . '/templates/index.php' : false,
-	'LANGUAGES'	=> $user->get_permission('languages') ? CAT_ADMIN_URL . '/languages/index.php' : false,
+    'TEMPLATES'    => $user->checkPermission('addons', 'templates') ? CAT_ADMIN_URL . '/templates/index.php' : false,
+    'LANGUAGES'    => $user->checkPermission('addons', 'languages') ? CAT_ADMIN_URL . '/languages/index.php' : false,
 );
 
 // Insert permissions values
-$tpl_data['permissions']['ADVANCED']		  = $user->get_permission('admintools')        ? true : false;
-$tpl_data['permissions']['MODULES_VIEW']	  = $user->get_permission('modules_view')      ? true : false;
-$tpl_data['permissions']['MODULES_INSTALL']	  = $user->get_permission('modules_install')   ? true : false;
-$tpl_data['permissions']['MODULES_UNINSTALL'] = $user->get_permission('modules_uninstall') ? true : false;
+$tpl_data['permissions']['ADVANCED']          = $user->checkPermission('addons', 'admintools')        ? true : false;
+$tpl_data['permissions']['MODULES_VIEW']      = $user->checkPermission('addons', 'modules_view')      ? true : false;
+$tpl_data['permissions']['MODULES_INSTALL']   = $user->checkPermission('addons', 'modules_install')   ? true : false;
+$tpl_data['permissions']['MODULES_UNINSTALL'] = $user->checkPermission('addons', 'modules_uninstall') ? true : false;
 
 
 $counter	= 0;
@@ -96,6 +96,9 @@ foreach( $addons as $addon )
 					$addon['platform']		= $language_platform;
 					$addon['license']		= $language_license;
 				}
+// -------------------------------------------------------
+// ----- TODO: check for old fashioned language file -----
+// -------------------------------------------------------
 				require( CAT_PATH . '/languages/' . LANGUAGE . '.php');
 				break;
 			case 'template':
@@ -105,7 +108,7 @@ foreach( $addons as $addon )
 				$type	= 'modules';
 		}
 
-        $langfile = CAT_Helper_Directory::getInstance()->sanitizePath(CAT_PATH.'/'.$type.'/'.$addon['directory'].'/languages/'.LANGUAGE.'.php');
+    $langfile = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type.'/'.$addon['directory'].'/languages/'.LANGUAGE.'.php');
 		if ( $type != 'languages' && ( function_exists('file_get_contents') && file_exists($langfile) ) )
 		{
 			// read contents of the module language file into string

@@ -305,7 +305,7 @@ if(count($deleted))
         $arrh->ArrayRemove( $page['page_id'], $pages_list, 'page_id' );
     }
 }
-$tpl_data['PAGES_LIST'] = CAT_Helper_ListBuilder::getInstance()
+$tpl_data['PAGES_LIST'] = CAT_Helper_ListBuilder::getInstance(true)
                           ->config(array('space' => '|-- '))
                           ->dropdown( 'fc_maintenance_page', $pages_list, 0, CAT_Registry::get('MAINTENANCE_PAGE') );
 

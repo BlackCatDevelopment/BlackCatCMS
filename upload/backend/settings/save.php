@@ -51,17 +51,19 @@ if (!$val->sanitizePost('default_language') || $val->sanitizePost('default_langu
 global $js_back;
 $js_back = "javascript: history.go(-1);";
 
-/**
- *	Find out if the user was view advanced options or not
- *
- */
+$backend = CAT_Backend::getInstance('Settings', 'settings_advanced');
 
-require_once (CAT_PATH.'/framework/class.admin.php');
-/**
- *	Getting the admin-instance and print the "admin header"
- *
- */
-$admin = new admin('Settings', 'settings_advanced');
+$retval  = save_settings($backend);
+if ($retval == '')
+{
+    $backend->print_success($backend->lang()->translate('Settings saved'), $js_back );
+}
+else
+{
+    $backend->print_error($retval, $js_back);
+}
+$backend->print_footer();
+
 
 function save_settings(&$admin)
 {
@@ -72,8 +74,7 @@ function save_settings(&$admin)
     $val          = CAT_Helper_Validate::getInstance();
 	
 	/**
-	 *	Query current settings in the db, then loop through them to get old values
-	 *
+     * load current settings
 	 */
 	$sql = 'SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'settings` ORDER BY `name`';
 	if (false !== ($res_settings = $val->db()->query($sql))) {
@@ -355,19 +356,3 @@ function save_settings(&$admin)
 	}
 	return ((sizeof($err_msg) > 0) ? implode('<br />', $err_msg) : '');
 }
-/*if ($submit == 'advanced')
-{   // if Javascript is disabled
-	$admin->print_success($TEXT['REDIRECT_AFTER'].' '.$MENU['SETTINGS'], $js_back );
-	exit ();
-}*/
-$retval = save_settings($admin);
-if ($retval == '')
-{
-	$admin->print_success($admin->lang->translate('Settings saved'), $js_back );
-}
-else
-{
-	$admin->print_error($retval, $js_back);
-}
-$backend->print_footer();
-?>

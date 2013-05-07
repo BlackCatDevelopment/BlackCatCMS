@@ -14,8 +14,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          LEPTON Project, Black Cat Development
- *   @copyright       2011-2012, LEPTON Project
+ *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
@@ -31,13 +30,10 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
     // try to find config.php
     //**************************************************************************
     if (strpos(__FILE__, '/framework/class.secure.php') !== false)
-    {
         $config_path = str_replace('/framework/class.secure.php', '', __FILE__);
-    }
     else
-    {
         $config_path = str_replace('\framework\class.secure.php', '', __FILE__);
-    }
+
     if (!file_exists($config_path . '/config.php'))
     {
         if (file_exists($config_path . '/install/index.php'))

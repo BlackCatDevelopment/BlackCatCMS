@@ -238,6 +238,12 @@ if (!class_exists('CAT_Page', false))
                         if (file_exists(CAT_PATH . '/modules/' . $module . '/view.php'))
                         {
                             // load language file (if any)
+                            $langfile = sanitize_path(CAT_PATH.'/modules/'.$module.'/languages/'.LANGUAGE.'.php');
+                            if ( ! $this->lang()->checkFile($langfile, '$LANG', true ))
+                                // old fashioned language file
+                                require $langfile;
+                            else
+                                // modern language file
                             $this->lang()->addFile(LANGUAGE . '.php', sanitize_path(CAT_PATH . '/modules/' . $module . '/languages'));
                             // set template path
                             if (file_exists(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates')))
@@ -369,7 +375,9 @@ if (!class_exists('CAT_Page', false))
         		{
         			// get link of target-page
                     $target_page = $target_page_link = self::$helper->properties($target_page_id);
-        			$target_page_link = $target_page['link'];
+        			$target_page_link = ( isset($target_page['link']) )
+                                      ? $target_page['link']
+                                      : NULL;
         			if($target_page_link != null)
         			{
         				$target_url = CAT_URL.PAGES_DIRECTORY.$target_page_link.PAGE_EXTENSION.$anchor;

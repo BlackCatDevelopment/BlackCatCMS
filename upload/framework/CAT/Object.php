@@ -277,7 +277,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
     		$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
 
     		$parser->output('success',array(
-                'MESSAGE' => $this->lang()->translate($message),
+                'MESSAGE'        => CAT_Helper_I18n::getInstance()->translate($message),
                 'REDIRECT' => $redirect,
                 'REDIRECT_TIMER' => CAT_Registry::get('REDIRECT_TIMER'),
             ));

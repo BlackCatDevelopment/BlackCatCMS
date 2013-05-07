@@ -460,8 +460,8 @@ if (!class_exists('CAT_Helper_Page'))
 
                 if (file_exists($path))
                 {
-                    array_push(CAT_Pages::$css_search_path, '/modules/' . $_REQUEST['tool'], '/modules/' . $_REQUEST['tool'] . '/css');
-                    array_push(CAT_Pages::$js_search_path, '/modules/' . $_REQUEST['tool'], '/modules/' . $_REQUEST['tool'] . '/js');
+                    array_push(CAT_Helper_Page::$css_search_path, '/modules/' . $_REQUEST['tool'], '/modules/' . $_REQUEST['tool'] . '/css');
+                    array_push(CAT_Helper_Page::$js_search_path, '/modules/' . $_REQUEST['tool'], '/modules/' . $_REQUEST['tool'] . '/js');
 
                     $file = sanitize_path(CAT_PATH . '/modules/' . $_REQUEST['tool'] . '/headers.inc.php');
                     if (file_exists($file))
@@ -1116,6 +1116,25 @@ if (!class_exists('CAT_Helper_Page'))
             }
         }   // end function getRootParent()
         
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getSection($page_id,$section_id)
+        {
+            $sections = self::getSections($page_id);
+            if(count($sections))
+            {
+                foreach($sections as $section)
+                {
+                    if($section['section_id']==$section_id)
+                        return $section;
+                }
+            }
+            return false;
+        }   // end function getSection()
+
         /**
          * returns the sections of a page
          *

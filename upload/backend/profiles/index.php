@@ -84,7 +84,7 @@ if (defined('CAT_PATH')) {
 		if(sizeof($err) == 0)
 		{
 			echo $output;
-			$admin->print_footer();
+			$backend->print_footer();
 		}else {
 			$err_msg = ( (sizeof($err) > 0) ? implode('<br />', $err) : '' );
 			$admin->print_error($err_msg);

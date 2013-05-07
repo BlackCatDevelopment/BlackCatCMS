@@ -69,6 +69,44 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         }
 	    
         /**
+         * copy directory structure with files
+         *
+         * @access public
+         * @param  string  $dirsource
+         * @param  string  $dirdest
+         **/
+        public static function copyRecursive( $dirsource, $dirdest )
+        {
+            if (is_dir($dirsource))
+                $dir_handle = dir($dirsource);
+            else
+                return false;
+
+            if ( ! is_object($dir_handle) )
+                return false;
+
+            while ($file = $dir_handle->read())
+            {
+                if ($file != "." && $file != "..")
+                {
+                    if (!is_dir($dirsource . "/" . $file))
+                    {
+                        copy($dirsource . "/" . $file, $dirdest . '/' . $file);
+                        if ($file != '.svn' && $file != '.git')
+                            CAT_Helper_Directory::setPerms($dirdest . "/" . $file);
+                    }
+                    else
+                    {
+                        CAT_Helper_Directory::createDirectory( $dirdest . '/' . $file );
+                        self::copyRecursive($dirsource . "/" . $file, $dirdest . '/' . $file);
+                    }
+                }
+            }
+            $dir_handle->close();
+            return true;
+        }   // end function copyRecursive()
+	    
+        /**
          * find file with given name; returns file path if found, false if not
          *
          * @access public

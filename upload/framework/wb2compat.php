@@ -23,6 +23,8 @@
  *
  */
 
+define('WB2COMPAT',true);
+
 define('WB_SERVER_ADDR', CAT_SERVER_ADDR );
 define('WB_PATH', CAT_PATH);
 define('WB_URL', CAT_URL);
@@ -43,9 +45,8 @@ define('WB_PREPROCESS_PREG', '/\[wblink([0-9]+)\]/isU' );
 define('WBMAILER_DEFAULT_SENDERNAME', CATMAILER_DEFAULT_SENDERNAME );
 // define WB_VERSION for backward compatibility
 if (!defined('WB_VERSION')) define('WB_VERSION', '2.8.3');
+if (!defined('TIMEZONE'))   define('TIMEZONE',DEFAULT_TIMEZONE_STRING);
 
 require_once CAT_PATH.'/framework/class.database.php';
 global $database;
 $database = new database();
-
-?>

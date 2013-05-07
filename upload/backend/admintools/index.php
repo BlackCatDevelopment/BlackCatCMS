@@ -46,9 +46,6 @@ $lang    = CAT_Helper_I18n::getInstance();
 // this will redirect to the login page if the permission is not set
 $user->checkPermission('admintools','admintools',false);
 
-// Include the WB functions file
-require_once(CAT_PATH.'/framework/functions.php');
-
 global $parser;
 
 // get tools

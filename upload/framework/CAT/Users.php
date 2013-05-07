@@ -300,22 +300,6 @@ if ( ! class_exists( 'CAT_Users', false ) )
         }   // end function handleLogin()
 
         /**
-         * set login error and increase number of login attempts
-         *
-         * @access private
-         * @param  string   $msg - error message
-         * @return void
-         **/
-        private function setError($msg)
-        {
-            self::$loginerror = $msg;
-            if(!isset($_SESSION['ATTEMPTS']))
-    			$_SESSION['ATTEMPTS'] = 0;
-    		else
-    			$_SESSION['ATTEMPTS'] = CAT_Helper_Validate::getInstance()->fromSession('ATTEMPTS') + 1;
-        }   // end function setError()
-
-        /**
          * get last login error
          *
          * @access public
@@ -1030,6 +1014,24 @@ if ( ! class_exists( 'CAT_Users', false ) )
 	    {
             return self::$lastValidatedPassword;
         }   // end function getLastValidatedPassword()
+
+
+        /**
+         * set login error and increase number of login attempts
+         *
+         * @access private
+         * @param  string   $msg - error message
+         * @return void
+         **/
+        private static function setError($msg)
+        {
+            self::$loginerror = $msg;
+            if(!isset($_SESSION['ATTEMPTS']))
+                $_SESSION['ATTEMPTS'] = 0;
+            else
+                $_SESSION['ATTEMPTS'] = CAT_Helper_Validate::getInstance()->fromSession('ATTEMPTS') + 1;
+        }   // end function setError()
+
 	}
 
 }

@@ -126,22 +126,23 @@ $LANG = array(
     'Success' => 'Erfolgreich',
     'Website Under Construction' => 'Momentan in Bearbeitung.',
 // ----- error messages -----
-    'You sent an invalid value' => 'Es wurde ein ungültiger Wert angegeben',
     'Error creating access file in the pages directory, insufficient privileges'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Ungen&uuml;gende Zugangsrechte)',
     'Error creating access file in the pages directory, cannot open file'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Datei kann nicht geschrieben werden)',
     'Error creating access file in the pages directory, path not writable or forbidden file / directory name'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Verzeichnis nicht schreibbar oder verbotener Datei-/Verzeichnisname)',
-    'The template [{{ tpl }}] does not exists in one of the possible template paths!'
-        => 'Das Template [{{ tpl }}] wurde in keinem der Template-Pfade gefunden!',
-    'Searched paths' => 'Durchsuchte Pfade',
-    'Missing page_id!' => 'Keine page_id angegeben!',
-    'Username or password incorrect' => 'Der Benutzername oder das Passwort ist nicht korrekt.',
     'Invalid password chars used, valid chars are: a-z\A-Z\0-9\_\-\!\#\*\+'
         => 'Es wurden ung&uuml;ltige Zeichen f&uuml;r des Passwort verwendet, g&uuml;ltig sind: a-z\A-Z\0-9\_\-\!\#\*\+',
-    'You are not allowed to view this page!' => 'Sie besitzen nicht die erforderlichen Rechte, um diese Seite zu besuchen!',
+    'Missing page_id!' => 'Keine page_id angegeben!',
+    'Searched paths' => 'Durchsuchte Pfade',
+    "Sorry, but you don't have the permissions for this action" => 'Sie haben leider nicht die notwendigen Rechte für diese Aktion',
     'The page does not have any content!' => 'Diese Seite hat keine aktiven Inhalte!',
+    'The template [{{ tpl }}] does not exists in one of the possible template paths!'
+        => 'Das Template [{{ tpl }}] wurde in keinem der Template-Pfade gefunden!',
+    'Username or password incorrect' => 'Der Benutzername oder das Passwort ist nicht korrekt.',
+    'You are not allowed to view this page!' => 'Sie besitzen nicht die erforderlichen Rechte, um diese Seite zu besuchen!',
+    'You sent an invalid value' => 'Es wurde ein ungültiger Wert angegeben',
 // ----- MENU -----
 	'Access' => 'Benutzerverwaltung',
 	'Add-on' => 'Add-on',
@@ -168,7 +169,7 @@ $LANG = array(
     'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.'
         => 'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.',
 // ----- page -----
-    "Sorry, but you don't have the permissions for this action" => 'Sie haben leider nicht die notwendigen Rechte für diese Aktion',
+    'A page with the same or similar link exists' => 'Eine Seite mit einem &auml;hnlichen oder demselben Titel existiert bereits',
     'Add child page' => 'Unterseite hinzuf&uuml;gen',
     'Add Page' => 'Seite hinzuf&uuml;gen',
     'Administration Tools' => 'Admin Tools',
@@ -181,6 +182,7 @@ $LANG = array(
     'delete section' => 'Sektion löschen',
     'Description' => 'Beschreibung',
     'Do you really want to delete this page?' => 'Wollen Sie die Seite wirklich löschen?',
+    'Do you really want to delete this section?' => 'Wollen Sie die Sektion wirklich löschen?',
     'General Settings' => 'Allgemein',
     'Hidden' => 'Versteckt',
     'Hide all sections' => 'Alle Sektionen verstecken',
@@ -234,10 +236,15 @@ $LANG = array(
     'Title' => 'Seitentitel',
     'Top frame' => 'Top Frame',
     'Type' => 'Typ',
+    'Unable to create the page: ' => 'Seite kann nicht angelegt werden: ',
     'View page' => 'Ansicht',
     'Visibility' => 'Sichtbarkeit',
-    "You don't have the permission to add a page." => 'Sie haben nicht die notwendigen Berechtigungen zum Anlegen einer Seite.',
+    'You cannot modify sections. Please enable "Manage section".' => 'Es können keine Sektionen verwaltet werden. Bitte "Sektionen verwalten" einschalten.',
+    "You do not have the permission to add a page." => 'Sie haben nicht die notwendigen Berechtigungen zum Anlegen einer Seite.',
     'You do not have the permission add a page here.' => 'Sie haben nicht die notwendigen Berechtigungen zum Anlegen einer Seite an dieser Stelle.',
+    'You do not have the permission to delete a page.' => 'Sie haben nicht die notwendigen Berechtigungen zum Löschen einer Seite.',
+    'You do not have the permission to delete this page.' => 'Sie haben nicht die notwendigen Berechtigungen zum Löschen dieser Seite.',
+    'You do not have the permissions to modify this page.' => 'Sie haben nicht die notwendigen Berechtigungen zum Bearbeiten dieser Seite.',
 // ----- settings -----
     '0 means default, which is 7200s = 2 hours' => '0 bedeutet Standardeinstellung, diese ist 7200 Sekunden = 2 Stunden',
     'Allow mail address as login name' => 'Erlaube Mailadresse als Login-Namen',
@@ -392,6 +399,7 @@ $LANG = array(
         => 'Ungültige Installationsdatei. Keine info.php gefunden. Bitte das ZIP Format prüfen.',
     'Invalid installation file. Wrong extension. Please check the ZIP format.'
         => 'Ungültige Installationsdatei. Falsche Dateiendung. Bitte das ZIP Format prüfen.',
+    'Unable to install the module' => 'Fehler beim Installieren des Moduls',
     'Unable to install - error copying files' => 'Installation nicht möglich - Fehler beim Kopieren der Dateien',
     'Upgraded successfully' => 'Erfolgreich aktualisiert',
     'Installed successfully' => 'Erfolgreich installiert',
@@ -930,7 +938,6 @@ $MESSAGE = array(
 	'PAGES_LAST_MODIFIED' 		=> 'Die letzte &Auml;nderung wurde durchgef&uuml;hrt von',
 	'PAGES_NOT_FOUND' 			=> 'Die Seite konnte nicht gefunden werden',
 	'PAGES_NOT_SAVED' 			=> 'Beim Speichern der Seite ist ein Fehler aufgetreten',
-	'PAGES_PAGE_EXISTS' 		=> 'Eine Seite mit einem &auml;hnlichen oder demselben Titel existiert bereits',
 	'PAGES_REORDERED' 			=> 'Die Seite wurde erfolgreich neu zusammengestellt',
 	'PAGES_RESTORED' 			=> 'Die Seite wurde erfolgreich wiederhergestellt',
 	'PAGES_RETURN_TO_PAGES' 	=> 'Zur&uuml;ck zum Seitenmen&uuml;',
