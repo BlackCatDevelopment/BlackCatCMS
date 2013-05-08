@@ -1,66 +1,84 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
- * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
- 
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
-} else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
-}
-// end include class.secure.php
 
-require_once(CAT_PATH.'/framework/class.admin.php');
-$admin = new admin('Access', 'groups', false);
+if (defined('CAT_PATH')) {
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
+} else {
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+}
+
+$backend = CAT_Backend::getInstance('Access', 'groups', false);
+$users   = CAT_Users::getInstance();
 
 header('Content-type: application/json');
 
-
-if ( !$admin->get_permission('groups') )
+if ( !$users->checkPermission('Access','groups') )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You do not have the permission to view groups'),
+		'message'	=> $backend->lang()->translate('You do not have the permission to view groups'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
 
-$group_id		= $admin->get_post('id');
-if ( !is_numeric($group_id ) )
+$group_id = CAT_Helper_Validate::sanitizePost('id','numeric');
+if ( !$group_id )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You sent an invalid value'),
+		'message'	=> $backend->lang()->translate('You sent an invalid value'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
-$get_group		= $database->query("SELECT * FROM " . CAT_TABLE_PREFIX . "groups WHERE group_id = '$group_id'");
+
+$get_group	= $backend->db()->query(sprintf(
+    "SELECT * FROM `%sgroups` WHERE group_id = %d",
+    CAT_TABLE_PREFIX, $group_id
+));
+
+$members       = array();
+$group_members = $users->getMembers($group_id);
+if(count($group_members))
+{
+    foreach($group_members as $member)
+    {
+        $members[] = $member['display_name'] . ' ('. $member['username'] . ')';
+    }
+}
 
 // ==============================================
 // ! Insert admin group and current group first
@@ -77,7 +95,8 @@ if ( $group = $get_group->fetchRow( MYSQL_ASSOC ) )
 		'system_permissions'	=> $system_permissions,
 		'module_permissions'	=> $module_permissions,
 		'template_permissions'	=> $template_permissions,
-		'message'				=> $admin->lang->translate( 'Group loaded successfully' ),
+        'members'               => implode('<br />',$members),
+		'message'				=> $backend->lang()->translate( 'Group loaded successfully' ),
 		'success'				=> true
 	);
 	print json_encode( $ajax );
@@ -85,7 +104,7 @@ if ( $group = $get_group->fetchRow( MYSQL_ASSOC ) )
 }
 else {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('Group could not be found in database'),
+		'message'	=> $backend->lang()->translate('Group could not be found in database'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );

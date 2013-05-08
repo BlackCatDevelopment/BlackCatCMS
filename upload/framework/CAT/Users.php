@@ -536,7 +536,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function getExtendedOptions()
         {
             return self::$useroptions;
-        }
+        }   // end function getExtendedOptions()
 
         /**
          * save user's preferences
@@ -597,9 +597,38 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return $errors;
         }   // end function setUserOptions()
 
+        /**
+         * gets the members of a given group
+         *
+         * @access public
+         * @param  integer $group_id
+         * @param  boolean $primary  - used as primary group; default true
+         * @return array
+         **/
+        public static function getMembers($group_id,$primary=true)
+        {
+            $self    = self::getInstance();
+            $users   = array();
+            $result  = $self->db()->query(sprintf(
+                'SELECT * FROM `%susers` WHERE group_id=%d;',
+                CAT_TABLE_PREFIX, $group_id
+            ));
+            if($result->numRows())
+                while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+                    array_push($users,$row);
+            return $users;
+        }   // end function getMembers()
+        
 
 
-        /* ****************
+/*******************************************************************************
+ * MOVED METHODS
+ *
+ * These methods were moved from WB-/LEPTON-classes, so we keep their original
+ * names, though they're rewritten
+ ******************************************************************************/
+
+        /**
          * check if current user is member of at least one of given groups
          * ADMIN (uid=1) always is treated like a member of any groups
          *
@@ -616,7 +645,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return self::is_group_match($groups_list, self::get_groups_id());
         }
 
-        // Get the current users id
+        /**
+         * get the current users id
+         *
+         * @access public
+         * @return integer
+         **/
         public static function get_user_id()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('USER_ID','numeric');

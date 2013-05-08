@@ -74,12 +74,19 @@
 		{/if}
 		{foreach $addons as addon}
 		<div id="fc_list_{if $addon.directory}{$addon.directory}{else}{$addon.INSTALL.directory}{/if}" class="fc_list_forms fc_form_content">
+            {if $addon.is_removable}
 			<form name="uninstall" action="uninstall.php" method="post" class="submit_settings fc_gradient1">
 				<input type="hidden" name="file" value="{$addon.directory}" />
 				<input type="hidden" name="type" value="{$addon.type}" />
 				<strong>{translate('Module details')}: {$addon.name}</strong>
 				<input type="submit" name="uninstall_module" value="{translate('Uninstall Addon')}" class="fc_gradient_red" />
 			</form>
+            {else}
+            <div class="submit_settings">
+                <strong>{translate('Module details')}: {$addon.name}</strong>
+                <span>{translate('Marked as mandatory')}</span>
+            </div>
+            {/if}
 			<div class="clear_sp"></div>
 			{if $addon.description || $addon.type == 'languages'}
 			{if $addon.description}

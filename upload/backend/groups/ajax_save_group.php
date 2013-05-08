@@ -1,74 +1,77 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
- * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
- 
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH'))
-{
-	include(CAT_PATH.'/framework/class.secure.php'); 
+
+if (defined('CAT_PATH')) {
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
-require_once( CAT_PATH . '/framework/class.admin.php' );
+$backend = CAT_Backend::getInstance('Access', 'groups', false);
+$users   = CAT_Users::getInstance();
+$val     = CAT_Helper_Validate::getInstance();
 
-if ( isset( $_POST['addGroup'] ) ) $admin	= new admin('Access', 'groups_add', false);
-else $admin	= new admin('Access', 'groups_modify', false);
 header('Content-type: application/json');
 
-$addGroup		= trim( $admin->get_post_escaped('addGroup') );
-$saveGroup		= trim( $admin->get_post_escaped('saveGroup') );
+$addGroup  = trim( $val->sanitizePost('addGroup',NULL,true) );
+$saveGroup = trim( $val->sanitizePost('saveGroup',NULL,true) );
 
-if(	(!$admin->get_permission('groups_add') && $addGroup != '' ) ||
-	(!$admin->get_permission('groups_modify') && $saveGroup != '' ) )
-{
+if (
+       ( $addGroup  && ! $users->checkPermission('Access','groups_add')    )
+    || ( $saveGroup && ! $users->checkPermission('Access','groups_modify') )
+) {
 	$action	= $addGroup != '' ? 'add' : 'modify';
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You do not have the permission to {{action}} a group.', array( 'action' => $action ) ),
+		'message'	=> $backend->lang()->translate('You do not have the permission to {{action}} a group.', array( 'action' => $action ) ),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
-include_once( CAT_PATH . '/framework/functions.php' );
 
 // Gather details entered
-$group_name		= trim( $admin->get_post_escaped('name') );
-$group_id		= $admin->get_post_escaped('group_id');
+$group_name = trim( $val->sanitizePost('name',NULL,true) );
+$group_id   = $val->sanitizePost('group_id','numeric',true);
 
-if( ( $saveGroup &&
-		( !is_numeric($group_id) ||
-		$group_id == 1 ||
-		$group_id == '' ) ) ||
-	( $addGroup == '' && $saveGroup == '' ) || 
-	( $addGroup != '' && $saveGroup != '' ) )
-{
+if(
+       ( $saveGroup && ( !$group_id || $group_id == 1 || $group_id == '' ) )
+    || ( $addGroup == '' && $saveGroup == '' )
+    || ( $addGroup != '' && $saveGroup != '' )
+) {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You sent an invalid value'),
+		'message'	=> $backend->lang()->translate('You sent an invalid value'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -79,23 +82,26 @@ if( ( $saveGroup &&
 if( $group_name == '' )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('Group name is blank'),
+		'message'	=> $backend->lang()->translate('Group name is blank'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
 }
 
-$sql	 = "SELECT * FROM " . CAT_TABLE_PREFIX . "groups WHERE name = '$group_name'";
-$sql	.= $saveGroup != '' ? "AND group_id != '$group_id'" : "";
+$sql	 = "SELECT * FROM `%sgroups` WHERE name = '%s'";
+$sql	.= $saveGroup != '' ? "AND group_id != $group_id" : "";
 
-$results	= $database->query($sql);
+$results = $backend->db()->query(sprintf(
+    $sql,
+    CAT_TABLE_PREFIX, $group_name
+));
 
-if(	( $results->numRows() > 0 && $addGroup != '' ) || 
+if(	( $results->numRows() > 0 && $addGroup  != '' ) ||
 	( $results->numRows() > 0 && $saveGroup != ''  ) )
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('Group name already exists'),
+		'message'	=> $backend->lang()->translate('Group name already exists'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -105,28 +111,30 @@ if(	( $results->numRows() > 0 && $addGroup != '' ) ||
 // Get system and module permissions
 require( CAT_ADMIN_PATH . '/groups/get_permissions.php' );
 
-$sql	= $addGroup != '' ? 
-			"INSERT INTO " . CAT_TABLE_PREFIX . "groups (name,system_permissions,module_permissions,template_permissions) VALUES ('$group_name','$system_permissions','$module_permissions','$template_permissions')" :
-			"UPDATE " . CAT_TABLE_PREFIX . "groups SET name = '$group_name', system_permissions = '$system_permissions', module_permissions = '$module_permissions', template_permissions = '$template_permissions' WHERE group_id = '$group_id'";
+$sql = ( $addGroup != '' )
+     ? "INSERT INTO `" . CAT_TABLE_PREFIX . "groups` (name,system_permissions,module_permissions,template_permissions) VALUES ('$group_name','$system_permissions','$module_permissions','$template_permissions')" :
+			"UPDATE `" . CAT_TABLE_PREFIX . "groups` SET name = '$group_name', system_permissions = '$system_permissions', module_permissions = '$module_permissions', template_permissions = '$template_permissions' WHERE group_id = '$group_id'";
 
 // Update the database
-$database->query($sql);
+$backend->db()->query($sql);
 
-if( $database->is_error() )
+if( $backend->db()->is_error() )
 {
 	$ajax	= array(
-		'message'	=> $database->get_error(),
+		'message'	=> $backend->db()->get_error(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
 	exit();
-} else {
+}
+else
+{
 	$action	= $addGroup != '' ? 'added' : 'saved';
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('Group {{action}} successfully', array( 'action' => $action ) ),
+		'message'	=> $backend->lang()->translate('Group {{action}} successfully', array( 'action' => $action ) ),
 		'action'	=> $action,
 		'name'		=> $group_name,
-		'id'		=> $action == 'added' ? $database->get_one("SELECT LAST_INSERT_ID()") : $group_id,
+		'id'		=> $action == 'added' ? $backend->db()->get_one("SELECT LAST_INSERT_ID()") : $group_id,
 		'success'	=> true
 	);
 	print json_encode( $ajax );

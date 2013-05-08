@@ -1,71 +1,70 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
- * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
- 
-// include class.secure.php to protect this file and the whole CMS!
+
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
-require_once(CAT_PATH.'/framework/class.admin.php');
-$admin = new admin('Access', 'groups');
-
-require CAT_PATH.'/framework/CAT/Helper/Addons.php';
-$addons = new CAT_Helper_Addons();
+$backend  = CAT_Backend::getInstance('Access', 'groups');
+$users    = CAT_Users::getInstance();
+$addons   = CAT_Helper_Addons::getInstance();
+$tpl_data = array();
 
 // =========================== 
 // ! Add permissions to Dwoo   
 // =========================== 
-$data_dwoo['permissions']['GROUPS_ADD']		= $admin->get_permission('groups_add')		? true : false;
-$data_dwoo['permissions']['GROUPS_MODIFY']	= $admin->get_permission('groups_modify')	? true : false;
-$data_dwoo['permissions']['GROUPS_DELETE']	= $admin->get_permission('groups_delete')	? true : false;
-$data_dwoo['permissions']['USERS']			= $admin->get_permission('users')			? true : false;
+$tpl_data['permissions']['GROUPS_ADD']		= $users->checkPermission('Access','groups_add')	? true : false;
+$tpl_data['permissions']['GROUPS_MODIFY']	= $users->checkPermission('Access','groups_modify')	? true : false;
+$tpl_data['permissions']['GROUPS_DELETE']	= $users->checkPermission('Access','groups_delete')	? true : false;
+$tpl_data['permissions']['USERS']			= $users->checkPermission('Access','users')			? true : false;
 
-
-// =========================================================================== 
-// ! Create the controller, it is reusable and can render multiple templates 	
-// =========================================================================== 
 global $parser;
 
-// $items	= $admin->get_controller('Pages')->getLinkedByLanguage($page_id);
-
-$data_dwoo['templates']			= $addons->get_addons( DEFAULT_TEMPLATE , 'template' );
-$data_dwoo['languages']			= $addons->get_addons( DEFAULT_LANGUAGE , 'language' );
-$data_dwoo['modules']			= $addons->get_addons( -1 , 'module', 'page' );
-$data_dwoo['admintools']		= $addons->get_addons( -1 , 'module', 'tool' );
-$data_dwoo['groups']			= $admin->users->get_groups('','',false);
+$tpl_data['templates']		= $addons->get_addons( DEFAULT_TEMPLATE , 'template' );
+$tpl_data['languages']		= $addons->get_addons( DEFAULT_LANGUAGE , 'language' );
+$tpl_data['modules']		= $addons->get_addons( -1 , 'module', 'page' );
+$tpl_data['admintools']		= $addons->get_addons( -1 , 'module', 'tool' );
+$tpl_data['groups']			= $users->get_groups('','',false);
+$tpl_data['members']        = NULL;
 
 // ==================== 
 // ! Parse the site   
 // ==================== 
-$parser->output('backend_groups_index.tpl', $data_dwoo);
+$parser->output('backend_groups_index', $tpl_data);
 
 // ====================== 
 // ! Print admin footer   

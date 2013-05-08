@@ -43,9 +43,7 @@ $backend = CAT_Backend::getInstance('Access', 'users');
 $users   = CAT_Users::getInstance();
 
 // this will redirect to the login page if the permission is not set
-$user->checkPermission('Access','users',false);
-
-require_once(CAT_PATH.'/framework/functions.php');
+$users->checkPermission('Access','users');
 
 global $parser;
 

@@ -46,7 +46,7 @@
 				<input type="hidden" name="group_id" id="fc_Group_group_id" value="" />
 			</p>
 			<div class="clear_sp"></div>
-			<label for="fc_Group_name">{translate('Name of group')}:</label>
+			<label for="fc_Group_name">{translate('Group name')}:</label>
 			<input type="text" name="name" id="fc_Group_name" value="">
 			<div class="clear_sp"></div>
 			<ul class="fc_groups_tabs fc_gradient1 fc_border clearfix">
@@ -55,8 +55,9 @@
 				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_admintools"><span class="icon-wrench"></span> {translate('Admintools')}</a></li>
 				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_templates"><span class="icon-color-palette"></span> {translate('Templates')}</a></li>
 				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_media"><span class="icon-pictures"></span> {translate('Media')}</a></li>
-				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_groups"><span class="icon-users"></span> {translate('User & Groups')}</a></li>
+				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_groups"><span class="icon-users"></span> {translate('User & Group permissions')}</a></li>
 				<li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_languages"><span class="icon-comments"></span> {translate('Languages')}</a></li>
+                <li><a class="fc_gradient1 fc_gradient_hover" href="#fc_tabs_members"><span class="icon-users"></span> {translate('Members')}</a></li>
 			</ul>
 
 			<div class="fc_toggle_tabs" id="fc_tabs_system_permissions">
@@ -232,6 +233,14 @@
 					<label class="fc_settings_max" for="fc_Group_languages_uninstall">{translate('Delete')}</label>
 				</div>
 			</div>
+
+            <div class="fc_toggle_tabs" id="fc_tabs_members">
+				<div class="clear_sp"></div>
+				<div id="fc_members">
+                    {if $members}{$members}{else}{translate('No members')}{/if}
+				</div>
+			</div>
+
 
 			<div class="clear_sp"></div>
 			<p class="submit_settings fc_gradient1">

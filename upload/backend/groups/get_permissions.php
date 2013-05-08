@@ -1,39 +1,45 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
- * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
- 
-// include class.secure.php to protect this file and the whole CMS!
+
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
+
+$val     = CAT_Helper_Validate::getInstance();
 
 // ========================== 
 // ! Get system permissions   
@@ -42,18 +48,15 @@ if (defined('CAT_PATH')) {
 // ============================= 
 // ! Get permissions for pages   
 // ============================= 
-$system_permissions['pages_view']			= $admin->get_post('pages_view') == 1		? true : false;
-$system_permissions['pages_add']			= $admin->get_post('pages_add') == 1		? true : false;
-$system_permissions['pages_add_l0']			= $admin->get_post('pages_add_l0') == 1		? true : false;
+$system_permissions['pages_view']			= $val->sanitizePost('pages_view')   == 1 ? true : false;
+$system_permissions['pages_add']			= $val->sanitizePost('pages_add')    == 1 ? true : false;
+$system_permissions['pages_add_l0']			= $val->sanitizePost('pages_add_l0') == 1 ? true : false;
 if( empty($system_permissions['pages_add']) && !empty($system_permissions['pages_add_l0']) )
-{
 	$system_permissions['pages_add']		= true;
-}
-
-$system_permissions['pages_settings']		= $admin->get_post('pages_settings') == 1	? true : false;
-$system_permissions['pages_modify']			= $admin->get_post('pages_modify') == 1		? true : false;
-$system_permissions['pages_intro']			= $admin->get_post('pages_intro') == 1		? true : false;
-$system_permissions['pages_delete']			= $admin->get_post('pages_delete') == 1		? true : false;
+$system_permissions['pages_settings']		= $val->sanitizePost('pages_settings') == 1	? true : false;
+$system_permissions['pages_modify']			= $val->sanitizePost('pages_modify')   == 1	? true : false;
+$system_permissions['pages_intro']			= $val->sanitizePost('pages_intro')    == 1 ? true : false;
+$system_permissions['pages_delete']			= $val->sanitizePost('pages_delete')   == 1 ? true : false;
 
 $system_permissions['pages']				= (		!empty($system_permissions['pages_view']) ||
 													!empty($system_permissions['pages_add']) ||
@@ -67,11 +70,11 @@ $system_permissions['pages']				= (		!empty($system_permissions['pages_view']) |
 // ============================= 
 // ! Get permissions for media   
 // ============================= 
-$system_permissions['media_view']			= ( $admin->get_post('media_view') == 1 ) ? true : false;
-$system_permissions['media_upload']			= ( $admin->get_post('media_upload') == 1 ) ? true : false;
-$system_permissions['media_rename']			= ( $admin->get_post('media_rename') == 1 ) ? true : false;
-$system_permissions['media_delete']			= ( $admin->get_post('media_delete') == 1 ) ? true : false;
-$system_permissions['media_create']			= ( $admin->get_post('media_create') == 1 ) ? true : false;
+$system_permissions['media_view']			= ( $val->sanitizePost('media_view')   == 1 ) ? true : false;
+$system_permissions['media_upload']			= ( $val->sanitizePost('media_upload') == 1 ) ? true : false;
+$system_permissions['media_rename']			= ( $val->sanitizePost('media_rename') == 1 ) ? true : false;
+$system_permissions['media_delete']			= ( $val->sanitizePost('media_delete') == 1 ) ? true : false;
+$system_permissions['media_create']			= ( $val->sanitizePost('media_create') == 1 ) ? true : false;
 
 $system_permissions['media']				= (		!empty($system_permissions['media_view']) ||
 													!empty($system_permissions['media_upload']) ||
@@ -88,9 +91,9 @@ $system_permissions['media']				= (		!empty($system_permissions['media_view']) |
 // =============================== 
 // ! get permissions for modules   
 // =============================== 
-$system_permissions['modules_view']			= ( $admin->get_post('modules_view') == 1 ) ? true : false;
-$system_permissions['modules_install']		= ( $admin->get_post('modules_install') == 1 ) ? true : false;
-$system_permissions['modules_uninstall']	= ( $admin->get_post('modules_uninstall') == 1 ) ? true : false;
+$system_permissions['modules_view']			= ( $val->sanitizePost('modules_view') == 1 ) ? true : false;
+$system_permissions['modules_install']		= ( $val->sanitizePost('modules_install') == 1 ) ? true : false;
+$system_permissions['modules_uninstall']	= ( $val->sanitizePost('modules_uninstall') == 1 ) ? true : false;
 
 $system_permissions['modules']				= (		!empty($system_permissions['modules_view']) ||
 													!empty($system_permissions['modules_install']) ||
@@ -101,9 +104,9 @@ $system_permissions['modules']				= (		!empty($system_permissions['modules_view'
 // =============================== 
 // ! get permissions for templates   
 // =============================== 
-$system_permissions['templates_view']		= ( $admin->get_post('templates_view') == 1 ) ? true : false;
-$system_permissions['templates_install']	= ( $admin->get_post('templates_install') == 1 ) ? true : false;
-$system_permissions['templates_uninstall']	= ( $admin->get_post('templates_uninstall') == 1 ) ? true : false;
+$system_permissions['templates_view']		= ( $val->sanitizePost('templates_view') == 1 ) ? true : false;
+$system_permissions['templates_install']	= ( $val->sanitizePost('templates_install') == 1 ) ? true : false;
+$system_permissions['templates_uninstall']	= ( $val->sanitizePost('templates_uninstall') == 1 ) ? true : false;
 
 $system_permissions['templates']			= (		!empty($system_permissions['templates_view']) ||
 													!empty($system_permissions['templates_install']) ||
@@ -114,9 +117,9 @@ $system_permissions['templates']			= (		!empty($system_permissions['templates_vi
 // =============================== 
 // ! get permissions for languages   
 // =============================== 
-$system_permissions['languages_view']		= ( $admin->get_post('languages_view') == 1 ) ? true : false;
-$system_permissions['languages_install']	= ( $admin->get_post('languages_install') == 1 ) ? true : false;
-$system_permissions['languages_uninstall']	= ( $admin->get_post('languages_uninstall') == 1 ) ? true : false;
+$system_permissions['languages_view']		= ( $val->sanitizePost('languages_view') == 1 ) ? true : false;
+$system_permissions['languages_install']	= ( $val->sanitizePost('languages_install') == 1 ) ? true : false;
+$system_permissions['languages_uninstall']	= ( $val->sanitizePost('languages_uninstall') == 1 ) ? true : false;
 
 $system_permissions['languages']			= (		!empty($system_permissions['languages_view']) ||
 													!empty($system_permissions['languages_install']) ||
@@ -137,8 +140,8 @@ $system_permissions['addons']				= (		isset($system_permissions['modules']) ||
 // ================================ 
 // ! Get permissions for settings   
 // ================================ 
-$system_permissions['settings_basic']		= ( $admin->get_post('settings_basic') == 1 ) ? true : false;
-$system_permissions['settings_advanced']	= ( $admin->get_post('settings_advanced') == 1 ) ? true : false;
+$system_permissions['settings_basic']		= ( $val->sanitizePost('settings_basic') == 1 ) ? true : false;
+$system_permissions['settings_advanced']	= ( $val->sanitizePost('settings_advanced') == 1 ) ? true : false;
 $system_permissions['settings']				= (		!empty($system_permissions['settings_basic']) ||
 													!empty($system_permissions['settings_advanced']) )
 												? true : false;
@@ -147,10 +150,10 @@ $system_permissions['settings']				= (		!empty($system_permissions['settings_bas
 // ============================= 
 // ! Get permissions for users   
 // ============================= 
-$system_permissions['users_view']			= ( $admin->get_post('users_view') == 1 ) ? true : false;
-$system_permissions['users_add']			= ( $admin->get_post('users_add') == 1 ) ? true : false;
-$system_permissions['users_modify']			= ( $admin->get_post('users_modify') == 1 ) ? true : false;
-$system_permissions['users_delete']			= ( $admin->get_post('users_delete') == 1 ) ? true : false;
+$system_permissions['users_view']			= ( $val->sanitizePost('users_view') == 1 ) ? true : false;
+$system_permissions['users_add']			= ( $val->sanitizePost('users_add') == 1 ) ? true : false;
+$system_permissions['users_modify']			= ( $val->sanitizePost('users_modify') == 1 ) ? true : false;
+$system_permissions['users_delete']			= ( $val->sanitizePost('users_delete') == 1 ) ? true : false;
 
 $system_permissions['users']				= (		!empty($system_permissions['users_view']) ||
 													!empty($system_permissions['users_add']) ||
@@ -162,10 +165,10 @@ $system_permissions['users']				= (		!empty($system_permissions['users_view']) |
 // ============================= 
 // ! Get permissions for groups   
 // ============================= 
-$system_permissions['groups_view']			= ( $admin->get_post('groups_view') == 1 ) ? true : false;
-$system_permissions['groups_add']			= ( $admin->get_post('groups_add') == 1 ) ? true : false;
-$system_permissions['groups_modify']		= ( $admin->get_post('groups_modify') == 1 ) ? true : false;
-$system_permissions['groups_delete']		= ( $admin->get_post('groups_delete') == 1 ) ? true : false;
+$system_permissions['groups_view']			= ( $val->sanitizePost('groups_view') == 1 ) ? true : false;
+$system_permissions['groups_add']			= ( $val->sanitizePost('groups_add') == 1 ) ? true : false;
+$system_permissions['groups_modify']		= ( $val->sanitizePost('groups_modify') == 1 ) ? true : false;
+$system_permissions['groups_delete']		= ( $val->sanitizePost('groups_delete') == 1 ) ? true : false;
 
 $system_permissions['groups']				= (		!empty($system_permissions['groups_view']) ||
 													!empty($system_permissions['groups_add']) ||
@@ -182,7 +185,7 @@ $system_permissions['access']				= ( !empty($system_permissions['users']) || !em
 // ! Get permissions for admintools   
 // ================================== 
 // Has to be checked whether we need both values?
-$system_permissions['admintools']			= ( $admin->get_post('admintools') == 1 ) ? true : false;
+$system_permissions['admintools']			= ( $val->sanitizePost('admintools') == 1 ) ? true : false;
 $system_permissions['admintools_settings']	= $system_permissions['admintools'];
 
 // ============================== 
@@ -211,9 +214,9 @@ $system_permissions							= $imploded_system_permissions;
 $modules			= array();
 $module_permissions	= '';
 $dirs				= scan_current_dir( CAT_PATH . '/modules' );
-if ( is_array( $admin->get_post('module_permissions') ) )
+if ( is_array( $val->sanitizePost('module_permissions') ) )
 {
-	foreach($admin->get_post('module_permissions') AS $selected_name)
+	foreach($val->sanitizePost('module_permissions') AS $selected_name)
 	{
 		// Check, whether the activated module is also 1
 		if( in_array ($selected_name, $dirs['path']) )
@@ -231,9 +234,9 @@ $module_permissions							= implode(',', $modules);
 $templates				= array();
 $template_permissions	= '';
 $dirs					= scan_current_dir(CAT_PATH.'/templates');
-if ( is_array( $admin->get_post('template_permissions') ) )
+if ( is_array( $val->sanitizePost('template_permissions') ) )
 {
-	foreach($admin->get_post('template_permissions') AS $selected_name)
+	foreach($val->sanitizePost('template_permissions') AS $selected_name)
 	{
 		if ( in_array ($selected_name, $dirs['path']) )
 		{

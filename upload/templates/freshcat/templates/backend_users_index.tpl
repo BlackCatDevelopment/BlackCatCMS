@@ -1,5 +1,5 @@
 <div id="fc_content_header">
-	{translate('Modify users')}
+	{translate('Manage users')}
 	<div class="fc_header_buttons">
 		<a href="{$CAT_ADMIN_URL}/users/index.php" class="{if !$permissions.GROUPS}fc_br_all {else}fc_br_left {/if}fc_gradient1 fc_gradient_hover fc_active">{translate('Manage users')}</a>
 		{if $permissions.GROUPS}<a href="{$CAT_ADMIN_URL}/groups/index.php" class="fc_br_right fc_gradient1 fc_gradient_hover">{translate('Manage groups')}</a>{/if}
@@ -46,52 +46,53 @@
 			<div class="clear_sp"></div>
 
 			<div class="fc_input_description">
-				<label for="fc_User_name" class="fc_label_120">{translate('Username')}:</label>
+				<label for="fc_User_name" class="fc_label_200">{translate('Username')}:</label>
 				<input type="text" name="{$USERNAME_FIELDNAME}" id="fc_User_name" value="" />
 				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.0}</div>
 			</div>
 			<div class="clear_sp"></div>
 
-			<label for="fc_User_display_name" class="fc_label_120">{translate('Display name')}:</label>
+			<label for="fc_User_display_name" class="fc_label_200">{translate('Display name')}:</label>
 			<input type="text" name="display_name" id="fc_User_display_name" maxlength="255" value="" />
 			<div class="clear_sp"></div>
 
-			<label for="fc_User_email" class="fc_label_120">{translate('Email')}:</label>
+			<label for="fc_User_email" class="fc_label_200">{translate('Email')}:</label>
 			<input type="text" name="email" id="fc_User_email" maxlength="255" value="" />
 			<div class="clear_sp"></div>
 
-			<div class="fc_modifyUser fc_password_notification fc_br_all icon-notification fc_gradient_red fc_input_description">
-				{translate('Please note: You should only enter values in those fields if you wish to change this users password')}
-			</div>
-			<div class="clear_sp"></div>
-			<div class="fc_input_description">
-				<label for="fc_User_password" class="fc_label_120">{translate('Password')}:</label>
-				<input type="password" name="password" id="fc_User_password" value="" />
-				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.1}</div>
-			</div>
-			<div class="clear_sp"></div>
-
-			<div class="fc_input_description">
-				<label for="fc_User_password2" class="fc_label_120">{translate('Retype password')}:</label>
-				<input type="password" name="password2" id="fc_User_password2" value="" />
-				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.1}</div>
-			</div>
-
 			{if $HOME_FOLDERS}
-			<div class="clear_sp"></div>
-			<label for="fc_User_home_folder" class="fc_label_120">{translate('Home folder')}:</label>
+			
+			<label for="fc_User_home_folder" class="fc_label_200">{translate('Home folder')}:</label>
 			<select name="home_folder" id="fc_User_home_folder">
 				<option value="">{translate('None')}</option>
 				{foreach $home_folders homefolder}
 				<option value="{$homefolder.FOLDER}">{$homefolder.NAME}</option>
 				{/foreach}
 			</select>
+            <div class="clear_sp"></div>
 			{/if}
+			<div class="fc_modifyUser fc_password_notification fc_br_all icon-notification fc_gradient_red fc_input_description">
+				{translate('Please note: You should only enter values in those fields if you wish to change this users password')}
+			</div>
+			<div class="clear_sp"></div>
+			<div class="fc_input_description">
+				<label for="fc_User_password" class="fc_label_200">{translate('Password')}:</label>
+				<input type="password" name="password" id="fc_User_password" value="" />
+				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.1}</div>
+			</div>
+			<div class="clear_sp"></div>
+
+			<div class="fc_input_description">
+				<label for="fc_User_password2" class="fc_label_200">{translate('Retype password')}:</label>
+				<input type="password" name="password2" id="fc_User_password2" value="" />
+				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.1}</div>
+			</div>
+
 			<hr />
 
 			<label for="fc_User_group">{translate('Groups')}:</label>
 			<div id="fc_User_group" class="fc_settings_max">
-				<span class="fc_description">({translate('You need to choose even one group')})</span><br/>
+				<span class="fc_description">({translate('You need to choose at least one group')})</span><br/>
 				{foreach $groups.viewers group}
 				<input type="checkbox" class="fc_checkbox_jq" name="groups[]" id="fc_User_groups_{$group.VALUE}" value="{$group.VALUE}"{if $group.VALUE == 1}{if !$is_admin} disabled="disabled"{/if}{/if}/>
 				<label for="fc_User_groups_{$group.VALUE}">{$group.NAME}</label>

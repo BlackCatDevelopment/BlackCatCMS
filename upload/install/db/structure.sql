@@ -46,10 +46,10 @@ CREATE TABLE IF NOT EXISTS `cat_addons` (
   `type` varchar(128) NOT NULL DEFAULT '',
   `directory` varchar(128) NOT NULL DEFAULT '',
   `name` varchar(255) NOT NULL DEFAULT '',
-  `description` text NOT NULL,
+  `description` text NOT NULL DEFAULT '',
   `function` varchar(255) NOT NULL DEFAULT '',
   `version` varchar(255) NOT NULL DEFAULT '',
-  `guid` varchar(50) NOT NULL,
+  `guid` varchar(50) NOT NULL DEFAULT '',
   `platform` varchar(255) NOT NULL DEFAULT '',
   `author` varchar(255) NOT NULL DEFAULT '',
   `license` varchar(255) NOT NULL DEFAULT '',
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `cat_addons` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cat_groups` (
-  `group_id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `system_permissions` text NOT NULL,
   `module_permissions` text NOT NULL,
@@ -336,7 +336,7 @@ COLLATE='utf8_general_ci'
 ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `cat_users` (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL DEFAULT '0',
   `groups_id` varchar(255) NOT NULL DEFAULT '0',
   `active` int(11) NOT NULL DEFAULT '0',
@@ -385,6 +385,17 @@ CREATE TABLE IF NOT EXISTS `cat_mod_wysiwyg_admin_v2` (
 COMMENT='WYSIWYG Admin for Black Cat CMS'
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `cat_user_has_group` (
+	`user_id` INT(11) UNSIGNED NOT NULL,
+	`grou_id` INT(11) UNSIGNED NOT NULL,
+	CONSTRAINT `FK_cat_user_has_group_cat_users` FOREIGN KEY (`user_id`) REFERENCES `cat_users` (`user_id`),
+	CONSTRAINT `FK_cat_user_has_group_cat_groups` FOREIGN KEY (`grou_id`) REFERENCES `cat_groups` (`group_id`)
+)
+COMMENT='Maps users to groups'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
+
 
 /*!40014 SET FOREIGN_KEY_CHECKS=1 */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

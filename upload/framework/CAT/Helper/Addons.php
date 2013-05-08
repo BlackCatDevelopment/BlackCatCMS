@@ -142,9 +142,12 @@ if (!class_exists('CAT_Helper_Addons'))
         }   // end function getInstance()
 
         /**
+         * gets the details of an addons; uses the directory name to find the
+         * addon in the DB
          *
          * @access public
-         * @return
+         * @param  string  $directory
+         * @return mixed   array on success, NULL otherwise
          **/
         public static function getAddonDetails($directory)
         {
@@ -157,6 +160,7 @@ if (!class_exists('CAT_Helper_Addons'))
             {
                 return $addon->fetchRow(MYSQL_ASSOC);
         }
+            return NULL;
         }   // end function getAddonDetails()
         
 
@@ -242,6 +246,10 @@ if (!class_exists('CAT_Helper_Addons'))
     		return $addons_array;
     	}
 
+/*******************************************************************************
+ * The following methods are derived from DropletsExtension module
+ ******************************************************************************/
+
         /**
          * Register the Addon $module_name in  $module_directory for $page_id
          * for sending a page title to BC before displaying the page.
@@ -261,7 +269,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function register_page_title($page_id, $module_name, $module_directory)
         {
             return register_addon_header($page_id, $module_name, $module_directory, 'title');
-        } // register_page_title()
+        } // end function register_page_title()
 
         /**
          * Unregister the Addon in $module_directory for $page_id for sending
@@ -274,7 +282,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function unregister_page_title($page_id, $module_directory)
         {
             return unregister_addon_header($page_id, $module_directory, 'title');
-        }
+        }   // end function unregister_page_title()
 
         /**
          * Check if the Addon in $module_directory is registered for $page_id
@@ -287,7 +295,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function is_registered_page_title($page_id, $module_directory)
         {
             return is_registered_addon_header($page_id, $module_directory, 'title');
-        }
+        }   // end function is_registered_page_title(
 
         /**
          * Register the Addon $module_name in  $module_directory for $page_id
@@ -308,7 +316,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function register_page_description($page_id, $module_name, $module_directory)
         {
             return register_addon_header($page_id, $module_name, $module_directory, 'description');
-        } // register_page_description()
+        } // end function register_page_description()
 
         /**
          * Unregister the Addon in $module_directory for $page_id for sending
@@ -321,7 +329,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function unregister_page_description($page_id, $module_directory)
         {
             return unregister_addon_header($page_id, $module_directory, 'description');
-        }
+        }   // end function unregister_page_description()
 
         /**
          * Check if the Addon in $module_directory is registered for $page_id
@@ -334,7 +342,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function is_registered_page_description($page_id, $module_directory)
         {
             return is_registered_addon_header($page_id, $module_directory, 'description');
-        }
+        }   // end function is_registered_page_description()
 
         /**
          * Register the Addon $module_name in  $module_directory for $page_id
@@ -355,7 +363,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function register_page_keywords($page_id, $module_name, $module_directory)
         {
             return register_addon_header($page_id, $module_name, $module_directory, 'keywords');
-        } // register_page_keywords()
+        } // end function register_page_keywords()
 
         /**
          * Unregister the Addon in $module_directory for $page_id for sending
@@ -368,7 +376,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function unregister_page_keywords($page_id, $module_directory)
         {
             return unregister_addon_header($page_id, $module_directory, 'keywords');
-        }
+        }   // end function unregister_page_keywords()
 
         /**
          * Check if the Addon in $module_directory is registered for $page_id
@@ -381,7 +389,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function is_registered_page_keywords($page_id, $module_directory)
         {
             return is_registered_addon_header($page_id, $module_directory, 'keywords');
-        }
+        }   // end function is_registered_page_keywords()
 
         /**
          * Get the page title for $page_id and the registered addon
@@ -392,7 +400,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function get_page_title($page_id)
         {
             return get_addon_page_title($page_id);
-        } // get_page_title()
+        } // end function get_page_title()
 
         /**
          * Get the page description for $page_id and the registered addon
@@ -403,7 +411,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function get_page_description($page_id)
         {
             return get_addon_page_description($page_id);
-        } // get_addon_page_description()
+        } // end function get_addon_page_description()
 
         /**
          * Get the page keywords for $page_id and the registered addon
@@ -414,10 +422,14 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function get_page_keywords($page_id)
         {
             return get_addon_page_keywords($page_id);
-        } // get_addon_page_description()
+        } // end function get_addon_page_description()
+
+/*******************************************************************************
+ * End of derived methods
+ ******************************************************************************/
 
         /**
-         * This funtion performs pre-installation checks for Addon installations
+         * This function performs pre-installation checks for Addon installations
          * The requirements can be specified via the array $PRECHECK which needs to
          * be defined in the optional Add-on file precheck.php.
          *
@@ -429,19 +441,15 @@ if (!class_exists('CAT_Helper_Addons'))
          */
         public static function preCheckAddon($temp_addon_file, $temp_path = NULL, $delete_on_fail = true, $always_return_result = false)
         {
-            global $parser, $database;
+            global $parser;
 
             // path to the temporary Add-on folder
             if ($temp_path == '')
-            {
                 $temp_path = CAT_PATH . '/temp/unzip';
-            }
 
             // check if file precheck.php exists for the Add-On uploaded via WB installation routine
             if (!file_exists($temp_path . '/precheck.php'))
-            {
                 return;
-            }
 
             // unset any previous declared PRECHECK array
             unset($PRECHECK);
@@ -451,9 +459,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
             // check if there are any Add-On requirements to check for
             if (!(isset($PRECHECK) && count($PRECHECK) > 0))
-            {
                 return;
-            }
 
             // sort precheck array
             $PRECHECK      = self::sortPreCheckArray($PRECHECK);
@@ -577,9 +583,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
             // if all requirements are met und $always_return_result is false...
             if ($failed_checks == 0 && $always_return_result === false)
-            {
-                return;
-            }
+                return true;
 
             // output summary table
             $summary = array();
@@ -603,7 +607,7 @@ if (!class_exists('CAT_Helper_Addons'))
             }
 
             $parser->setPath(dirname(__FILE__) . '/templates/Addons');
-            $output = $parser->get('summary.lte', array(
+            $output = $parser->get('summary', array(
                 'heading' => ($failed_checks ? self::getInstance()->lang()->translate('Precheck failed') : self::getInstance()->lang()->translate('Precheck successful')),
                 'message' => ($failed_checks ? self::getInstance()->lang()->translate('Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.') : ''),
                 'summary' => $summary,
@@ -614,14 +618,11 @@ if (!class_exists('CAT_Helper_Addons'))
             if ($delete_on_fail)
             {
                 // delete the temp unzip directory
-                rm_full_dir($temp_path);
-
+                CAT_Helper_Directory::removeDirectory($temp_path);
                 // delete the temporary zip file of the Add-on
                 if (file_exists($temp_addon_file))
-                {
                     unlink($temp_addon_file);
                 }
-            }
 
             return $output;
 
@@ -727,6 +728,9 @@ if (!class_exists('CAT_Helper_Addons'))
          **/
         public static function checkModulePermissions($module)
         {
+//******************************************************************************
+// TODO!
+//******************************************************************************
             return false;
         }   // end function checkModulePermissions()
 
@@ -1033,6 +1037,210 @@ if (!class_exists('CAT_Helper_Addons'))
         } // end function installModule()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function uninstallModule($type,$addon_name)
+        {
+            switch ($type)
+            {
+                case 'languages':
+                    // is default or used by current user
+                    if ( $addon_name == DEFAULT_LANGUAGE || $addon_name == LANGUAGE )
+                    {
+                    	$temp	= array (
+                    		'name'	=> $addon_name,
+                    		'type'	=> $addon_name == DEFAULT_LANGUAGE
+                                    ?  self::getInstance()->lang()->translate('standard language')
+                                    :  self::getInstance()->lang()->translate('current language')
+                    	);
+                    	return
+                            self::getInstance()->lang()->translate(
+                                'Cannot uninstall this language <span class="highlight_text">{{name}}</span> because it is the {{type}}!',
+                                $temp
+                            );
+                    }
+                    // used by other users
+                    $query_users = self::getInstance()->db()->query(sprintf(
+                        "SELECT user_id FROM `%susers` WHERE language = '%s' LIMIT 1",
+                        CAT_TABLE_PREFIX, $addon_name
+                    ));
+                	if ( $query_users->numRows() > 0 )
+                	{
+                		return
+                            self::getInstance()->lang()->translate(
+                                'Cannot uninstall this language <span class="highlight_text">{{name}}</span> because it is in use!',
+                                array('name'=>$addon_name)
+                            );
+                	}
+                    break;
+
+                case 'modules':
+               	    // check if the module is still in use
+                	$info = self::getInstance()->db()->query(sprintf(
+                        "SELECT section_id, page_id FROM `%ssections` WHERE module = '%s'",
+                        CAT_TABLE_PREFIX, $addon_name
+                    ));
+                	if ( $info->numRows() > 0 )
+                	{
+                		$temp	= explode(";", self::getInstance()->lang()->translate( 'this page;these pages' ) );
+                		$add	= $info->numRows() == 1 ? $temp[0] : $temp[1];
+                		$values = array(
+                			'type'			=> self::getInstance()->lang()->translate( 'Module' ),
+                			'type_name'		=> $type,
+                			'pages_string'	=> $add,
+                            'count'         => $info->numRows(),
+                            'name'          => $addon_name,
+                		);
+                		$pages = array();
+                		while ( false != ( $data = $info->fetchRow(MYSQL_ASSOC) ) )
+                		{
+                			// skip negative page id's
+                			if ( substr( $data['page_id'], 0, 1 ) == '-' )
+                				continue;
+                			$pages[] = sprintf(
+                                '<a href="%s">%s</a>',
+                                CAT_Helper_Page::getLink($data['page_id']),
+                                CAT_Helper_Page::properties($data['page_id'],'menu_title')
+                            );
+                		}
+                        $values['pages'] = implode('<br />', $pages);
+                		return
+                            self::getInstance()->lang()->translate(
+                                'Cannot uninstall module <span class="highlight_text">{{name}}</span> because it is in use on {{pages_string}}:<br /><br />{{pages}}',
+                                $values
+                            );
+                	}
+                    //  some modules cannot be removed (used by system)
+                    if(!self::isRemovable($addon_name))
+                        return self::getInstance()->lang()->translate(
+                            'Cannot uninstall module <span class="highlight_text">{{name}}</span> because it is marked as mandatory!',
+                            array('name'=>$addon_name)
+                        );
+                    if ( (defined('WYSIWYG_EDITOR')) && ( $addon_name == WYSIWYG_EDITOR ) )
+                	{
+                		return
+                            self::getInstance()->lang()->translate(
+                                'Cannot uninstall module <span class="highlight_text">{{name}}</span> because it is the standard WYSWIWYG editor!',
+                                array('name' => $addon_name )
+                            );
+                	}
+                    break;
+
+                case 'templates':
+                    if ( $addon_name == DEFAULT_THEME || $addon_name == DEFAULT_TEMPLATE )
+                    {
+                    	$temp	= array (
+                    		'name'	=> $addon_name,
+                    		'type'	=> $addon_name == DEFAULT_TEMPLATE
+                                    ?  self::getInstance()->lang()->translate('default template')
+                                    :  self::getInstance()->lang()->translate('default backend theme')
+                    	);
+                    	return
+                            self::getInstance()->lang()->translate(
+                                'Cannot uninstall template <span class="highlight_text">{{name}}</span> because it is the {{type}}!',
+                                $temp
+                            );
+                    }
+                   	$info	= self::getInstance()->db()->query(sprintf(
+                        "SELECT page_id, page_title FROM `%spages` WHERE template='%s' order by page_title",
+                        CAT_TABLE_PREFIX, $addon_name
+                    ));
+                	if ( $info->numRows() > 0 )
+                	{
+                		$msg_template_str	= 'Cannot uninstall template <span class="highlight_text">{{name}}</span> because it is still in use on {{pages}}:';
+                		$temp				= explode( ';', self::getInstance()->lang()->translate( 'this page;these pages' ) );
+                		$add				= $info->numRows() == 1 ? $temp[0] : $temp[1];
+                		$page_template_str	= "<li><a href='../pages/settings.php?page_id={{id}}'>{{title}}</a></li>";
+
+                		$values = array (
+                			'pages'		=> $add,
+                            'name'      => $addon_name
+                		);
+                		$msg	= self::getInstance()->lang()->translate( $msg_template_str,  $values );
+
+                		$page_names			 = '<ul>';
+                		while ($data = $info->fetchRow() )
+                		{
+                			$page_info = array(
+                				'id'	=> $data['page_id'],
+                				'title'	=> $data['page_title']
+                			);
+                			$page_names		.= self::getInstance()->lang()->translate( $page_template_str, $page_info );
+                		}
+                		$page_names			.= '</ul>';
+                		return $msg_template_str . $page_names;
+                	}
+                    break;
+
+                default:
+            	    break;
+            }   // end switch
+
+            // all checks succeeded, try to uninstall
+           if (file_exists(CAT_PATH.'/'.$type.'/'.$addon_name.'/uninstall.php'))
+         		require CAT_PATH.'/'.$type.'/'.$addon_name.'/uninstall.php';
+
+           	// Remove entry from DB
+           	if ( $type != 'languages' )
+            {
+                self::getInstance()->db()->query(sprintf(
+                    "DELETE FROM `%saddons` WHERE directory = '%s' AND type = '%s'",
+                    CAT_TABLE_PREFIX, $addon_name, substr( $type, 0, -1 )
+                ));
+                if(self::getInstance()->db()->is_error())
+                    return self::getInstance()->db()->get_error();
+                $stmt = self::getInstance()->db()->query(sprintf(
+                    'SELECT * FROM `%sgroups` WHERE group_id <> 1',
+                    CAT_TABLE_PREFIX
+                ));
+            	if ($stmt->numRows() > 0)
+            	{
+            		while ( $row = $stmt->fetchRow(MYSQL_ASSOC) )
+            		{
+            			$gid		= $row['group_id'];
+            			// get current value
+            			$permissions = explode(',', $row[ substr( $type, 0, -1 ) . '_permissions']);
+            			// remove uninstalled module
+            			if (in_array($file, $permissions))
+            			{
+            				$i = array_search($file, $permissions);
+            				array_splice($permissions, $i, 1);
+            				$permissions = array_unique($permissions);
+            				asort($permissions);
+            				// Update the database
+            				$addon_permissions		= implode(',', $permissions);
+            				self::getInstance()->db()->query(sprintf(
+                                "UPDATE `%sgroups` SET %s_permissions = '%s' WHERE group_id=%d",
+                                CAT_TABLE_PREFIX, substr( $type, 0, -1 ),$addon_permissions, $gid
+                            ));
+            			}
+            		}
+            	}
+                // Try to delete the module dir
+                if ( !CAT_Helper_Directory::removeDirectory(CAT_PATH.'/'.$type.'/'.$addon_name) )
+                	return
+                        self::getInstance()->lang()->translate(
+                            'Cannot uninstall - unable to delete the directory!'
+                        );
+            }
+           	else
+            {
+                self::getInstance()->db()->query(sprintf(
+                    "DELETE FROM `%saddons` WHERE directory = '%s' AND type = '%s'",
+                    CAT_TABLE_PREFIX, $addon_name, substr( $type, 0, -1 )
+                ));
+                if(self::getInstance()->db()->is_error())
+                    return self::getInstance()->db()->get_error();
+                unlink(CAT_PATH.'/languages/'.$addon_name.'.php');
+            }
+
+            return true;
+        }   // end function uninstallModule()
+        
+
+        /**
          *  Try to get the current version of a given Modul.
          *
          *  @param  string   $modulename - module directory name
@@ -1047,7 +1255,10 @@ if (!class_exists('CAT_Helper_Addons'))
             $self    = self::getInstance();
             if ($source != true)
             {
-                $sql = "SELECT `version` FROM `" . CAT_TABLE_PREFIX . "addons` WHERE `directory`='" . $modulename . "'";
+                $sql = sprintf(
+                    "SELECT `version` FROM `%saddons` WHERE `directory`='%s'",
+                    CAT_TABLE_PREFIX,$modulename
+                );
                 $version = $self->db()->get_one($sql);
             }
             else
@@ -1106,35 +1317,63 @@ if (!class_exists('CAT_Helper_Addons'))
          * @param  string  $version - (optional) version to check (>=)
          * @return boolean
          **/
-        public static function isModuleInstalled($module,$version=NULL)
+        public static function isModuleInstalled($module,$version=NULL,$type='module')
         {
-            global $database;
             $self = self::getInstance();
-            $sql = 'SELECT * FROM `' . CAT_TABLE_PREFIX . 'addons` WHERE type="module" AND ( directory="'.$module.'" OR name="'.$module.'" )';
-            $q    = $self->db()->query($sql);
+            $q    = $self->db()->query(sprintf(
+                'SELECT * FROM `%saddons` WHERE type="%s" AND ( directory="%s" OR name="%s" )',
+                CAT_TABLE_PREFIX, $type, $module, $module
+            ));
             if (!$q->numRows())
-            {
                 return false;
-            }
+
             // note: if there's more than one, the first match will be returned!
             while ( $addon = $q->fetchRow( MYSQL_ASSOC ) )
 			{
                 if($version && self::versionCompare($addon['version'],$version))
-                {
                     return true;
-                }
+
                 // name over directory
                 if($addon['name']==$module)
-                {
                     return true;
-                }
+
                 if($addon['directory']==$module)
-                {
                     return true;
-                }
+
             }
             return false;
         }   // end function isModuleInstalled()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function isRemovable($module)
+        {
+            $self = self::getInstance();
+            $q    = $self->db()->query(sprintf(
+                'SELECT * FROM `%saddons` WHERE type="module" AND ( directory="%s" OR name="%s" ) LIMIT 1',
+                CAT_TABLE_PREFIX, $module, $module
+            ));
+            if (!$q->numRows())
+                return false;
+            $row = $q->fetchRow(MYSQL_ASSOC);
+            if ($row['removable'] != 'Y')
+                return false;
+            return true;
+        }   // end function isRemovable()
+        
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function isTemplateInstalled($module,$version=NULL) {
+            return self::isModuleInstalled($module,$version,'template');
+        }   // end function isTemplateInstalled()
+        
 
 
         /**

@@ -151,6 +151,7 @@
 									$('#fc_Group_t_' + value).prop( {checked: false});
 								});
 
+                                $('div#fc_members').html(data.members);
 								//$('input[class*=set_advanced___]').unbind().set_individual_buttons();
 							}
 							else {
@@ -434,7 +435,7 @@ jQuery(document).ready(function()
 				current.remove();
 			},
 			url		= kind == 'group' ? '/groups/ajax_delete_group.php' : '/users/ajax_delete_user.php';
-		    dialog_confirm( 'You really want to delete this ' + kind + '?', 'Removing '+kind, CAT_ADMIN_URL + url, dates, 'POST', 'JSON', false, afterSend, current_li );
+		    dialog_confirm( 'Do you really want to delete this ' + kind + '?', 'Removing '+kind, CAT_ADMIN_URL + url, dates, 'POST', 'JSON', false, afterSend, current_li );
 	});
 
 	$('ul.fc_groups_tabs').find('a').click( function(e)
