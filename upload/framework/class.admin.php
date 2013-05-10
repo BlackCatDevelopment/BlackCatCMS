@@ -58,6 +58,10 @@ class admin extends wb
     return CAT_Backend::getInstance($section_name);
     }
 
+    function get_permission($name, $type = 'system') {
+        return CAT_Users::get_permission($name,$type);
+    }
+
 }
 
 /*
@@ -66,7 +70,7 @@ class admin extends wb
 	get_link_permission($title)
 	__admin_register_backend_modfiles()
 	__admin_build_link( $aPath, $aType="css")
-	get_permission($name, $type = 'system')
+	
 	get_user_details($user_id)
 	get_page_permission($page,$action='admin')
 */

@@ -47,6 +47,7 @@ define('WBMAILER_DEFAULT_SENDERNAME', CATMAILER_DEFAULT_SENDERNAME );
 if (!defined('WB_VERSION')) define('WB_VERSION', '2.8.3');
 if (!defined('TIMEZONE'))   define('TIMEZONE',DEFAULT_TIMEZONE_STRING);
 
+global $database, $wb;
+
 require_once CAT_PATH.'/framework/class.database.php';
-global $database;
 $database = new database();

@@ -68,6 +68,7 @@ foreach( $addons as $addon )
 {
 		// check if a module description exists for the displayed backend language
 		$tool_description	= false;
+    $langfile            = false;
 		switch ($addon['type'])
 		{
 			case 'module':
@@ -86,20 +87,18 @@ foreach( $addons as $addon )
                         ${$var} = '';
                     }
                 }
-				// Insert values
-				if ( file_exists(CAT_PATH.'/languages/'.$addon['directory'].'.php'))
+            // for language files, the column 'directory' contains the lang code
+            $langfile = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/languages/'.$addon['directory'].'.php');
+            if ( file_exists($langfile))
 				{
-					require( CAT_PATH . '/languages/' . $addon['directory'] . '.php');
+                // use require as we just need the info vars, not the lang strings
+                require $langfile;
 					$addon['name']			= $language_name;
 					$addon['author']		= $addon['author'] != '' ? $addon['author'] : $language_author;
 					$addon['version']		= $language_version;
 					$addon['platform']		= $language_platform;
 					$addon['license']		= $language_license;
 				}
-// -------------------------------------------------------
-// ----- TODO: check for old fashioned language file -----
-// -------------------------------------------------------
-				require( CAT_PATH . '/languages/' . LANGUAGE . '.php');
 				break;
 			case 'template':
 				$type	= 'templates';
@@ -108,6 +107,7 @@ foreach( $addons as $addon )
 				$type	= 'modules';
 		}
 
+    // for modules, look for a language file for current language
     $langfile = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type.'/'.$addon['directory'].'/languages/'.LANGUAGE.'.php');
 		if ( $type != 'languages' && ( function_exists('file_get_contents') && file_exists($langfile) ) )
 		{
@@ -117,14 +117,10 @@ foreach( $addons as $addon )
 			$tool_description		= get_variable_content('module_description', $description, false, false);
 			// replace optional placeholder {CAT_URL} with value stored in config.php
 			if ($tool_description !== false && strlen(trim($tool_description)) != 0)
-			{
 				$tool_description	= str_replace('{CAT_URL}', CAT_URL, $tool_description);
-			}
 			else
-			{
 				$tool_description = false;
 			}
-		}		
 
 		// Set a number to dimension $addon[directory] to see
 		$modules_count[$addon['directory']] = $addon['directory'];

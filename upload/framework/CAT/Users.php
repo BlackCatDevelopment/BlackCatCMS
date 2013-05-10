@@ -132,9 +132,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     if ( ! self::$loginerror && $user == '' || $pw == '' )
                         self::setError($lang->translate('Please enter your username and password.'));
                     if ( ! self::$loginerror && strlen($user) < AUTH_MIN_LOGIN_LENGTH )
-                        self::setError($lang->translate('The password you entered was too short'));
+                        self::setError($lang->translate('Invalid credentials'));
                     if ( ! self::$loginerror && ! defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < AUTH_MIN_PASS_LENGTH )
-                        self::setError($lang->translate('The password you entered was too short'));
+                        self::setError($lang->translate('Invalid credentials'));
 
                     if ( ! self::$loginerror )
                     {
@@ -375,20 +375,15 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 {
                     // cleanup session
                     // delete most critical session variables manually
-                    $_SESSION['USER_ID'] = null;
-                    $_SESSION['GROUP_ID'] = null;
-                    $_SESSION['GROUPS_ID'] = null;
-                    $_SESSION['USERNAME'] = null;
-                    $_SESSION['PAGE_PERMISSIONS'] = null;
-                    $_SESSION['SYSTEM_PERMISSIONS'] = null;
+                    foreach(array('USER_ID','GROUP_ID','GROUPS_ID','USERNAME','PAGE_PERMISSIONS','SYSTEM_PERMISSIONS') as $key)
+                        $_SESSION[$key] = null;
 
                     // overwrite session array
                     $_SESSION = array();
 
                     // delete session cookie if set
-                    if (isset($_COOKIE[session_name()])) {
+                    if (isset($_COOKIE[session_name()]))
                         setcookie(session_name(), '', time() - 42000, '/');
-                    }
 
                     // delete the session itself
                     session_destroy();
@@ -447,11 +442,22 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return false;
         }   // end function checkUsernameExists()
 
+
+/*******************************************************************************
+ * CRUD METHODS
+ ******************************************************************************/
+
         /**
          * create a new user
          *
          * @access public
-         *
+         * @param          $groups_id
+         * @param  string  $active
+         * @param  string  $username
+         * @param  string  $md5_password
+         * @param  string  $display_name
+         * @param  string  $email
+         * @return mixed   true on success, db error message otherwise
          **/
         public static function createUser($groups_id, $active, $username, $md5_password, $display_name, $email )
         {
@@ -468,9 +474,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
         }   // end function createUser()
 
         /**
+         * delete a user
          *
          * @access public
-         * @return
+         * @param  integer $user_id
+         * @return mixed   true on success, db error string otherwise
          **/
         public static function deleteUser($user_id)
         {
@@ -485,7 +493,6 @@ if ( ! class_exists( 'CAT_Users', false ) )
          *
          * @access public
          * @return array
-         *
          **/
         public static function getDefaultUserOptions()
         {
@@ -513,7 +520,6 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @access public
          * @param  integer $user_id
          * @return array
-         *
          **/
         public static function getUserOptions($user_id)
         {
@@ -545,7 +551,6 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  integer $user_id
          * @param  array   $options
          * @return array
-         *
          **/
         public static function setUserOptions($user_id,$options)
         {
@@ -630,11 +635,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
         /**
          * check if current user is member of at least one of given groups
-         * ADMIN (uid=1) always is treated like a member of any groups
+         * ADMIN (uid=1) is always member of any groups
          *
          * @access public
          * @param  mixed  $groups_list: an array or a comma seperated list of group-ids
-         * @return bool   true if current user is member of one of this groups, otherwise false
+         * @return boolean 
          */
         public static function ami_group_member($groups_list = '')
         {
@@ -643,7 +648,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 return true;
             }
             return self::is_group_match($groups_list, self::get_groups_id());
-        }
+        }   // end function ami_group_member(
 
         /**
          * get the current users id
@@ -654,55 +659,55 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function get_user_id()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('USER_ID','numeric');
-        }
+        }   // end function get_user_id()
 
         // Get the current users group id (deprecated)
         public static function get_group_id()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('GROUP_ID','numeric');
-        }
+        }   // end function get_group_id()
 
         // Get the current users group ids
         public static function get_groups_id()
         {
             return explode(",", isset($_SESSION['GROUPS_ID']) ? $_SESSION['GROUPS_ID'] : '');
-        }
+        }   // end function get_groups_id()
 
         // Get the current users group name
         public static function get_group_name()
         {
             return implode(",", $_SESSION['GROUP_NAME']);
-        }
+        }   // end function get_group_name()
 
         // Get the current users group name
         public static function get_groups_name()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('GROUP_NAME','scalar');
-        }
+        }   // end function get_groups_name()
 
         // Get the current users username
         public static function get_username()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('USERNAME','scalar');
-        }
+        }   // end function get_username()
 
         // Get the current users display name
         public static function get_display_name()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('DISPLAY_NAME','scalar');
-        }
+        }   // end function get_display_name()
 
         // Get the current users email address
         public static function get_email()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('EMAIL');
-        }
+        }   // end function get_email()
 
         // Get the current users home folder
         public static function get_home_folder()
         {
             return CAT_Helper_Validate::getInstance()->fromSession('HOME_FOLDER');
-        }
+        }   // end function get_home_folder()
 
     	/**
     	 * get_groups function.
@@ -795,18 +800,18 @@ if ( ! class_exists( 'CAT_Users', false ) )
     	}   // end function get_groups()
 
     	/**
-    	 * Return a system permission
+         * checks if a user has a given permission by using the session data
     	 *
     	 * @access public
-    	 * @param  string  $name
-    	 * @param  string  $type
+         * @param  string  $name - name of the permission
+         * @param  string  $type - permission type (system|module|template)
     	 * @return boolean
     	 **/
         public static function get_permission($name, $type = 'system')
         {
     		// Append to permission type
     		$type .= '_permissions';
-    		// Check if we have a section to check for
+            // start is always allowed
     		if($name == 'start')
             {
     			return true;
@@ -814,14 +819,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
             else
             {
                 $val = CAT_Helper_Validate::getInstance();
-    			// Set system permissions var
+                // get user perms from the session
     			$system_permissions   = explode(',',$val->fromSession('SYSTEM_PERMISSIONS'));
-    			// Set module permissions var
     			$module_permissions   = $val->fromSession('MODULE_PERMISSIONS');
-    			// Set template permissions var
     			$template_permissions = $val->fromSession('TEMPLATE_PERMISSIONS');
     			// Return true if system perm = 1
-    			if (isset($$type) && is_array($$type) && is_numeric(array_search($name, $$type)))
+                if (isset($type) && is_array($type) && is_numeric(array_search($name, $type)))
                 {
     				if($type == 'system_permissions') return true;
                     else       					      return false;

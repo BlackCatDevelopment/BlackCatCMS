@@ -58,8 +58,10 @@ if ( trim($file) == '' || trim($type) == '' )
 $js_back	= CAT_ADMIN_URL . '/addons/index.php';
 
 // Check if the module exists
-if ( !$addons->isModuleInstalled($addon_name,NULL,preg_replace('~s$~','',$type)) || !file_exists( CAT_PATH . '/' . $type  . '/' . $file) )
-{
+if (
+       !$addons->isModuleInstalled($addon_name,NULL,preg_replace('~s$~','',$type))
+    || !file_exists( CAT_PATH . '/' . $type  . '/' . $file)
+) {
 	$backend->print_error( 'Not installed' , $js_back );
 }
 // Check if we have permissions on the directory

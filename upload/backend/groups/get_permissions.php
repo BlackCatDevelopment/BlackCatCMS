@@ -51,13 +51,16 @@ $val     = CAT_Helper_Validate::getInstance();
 $system_permissions['pages_view']			= $val->sanitizePost('pages_view')   == 1 ? true : false;
 $system_permissions['pages_add']			= $val->sanitizePost('pages_add')    == 1 ? true : false;
 $system_permissions['pages_add_l0']			= $val->sanitizePost('pages_add_l0') == 1 ? true : false;
-if( empty($system_permissions['pages_add']) && !empty($system_permissions['pages_add_l0']) )
-	$system_permissions['pages_add']		= true;
 $system_permissions['pages_settings']		= $val->sanitizePost('pages_settings') == 1	? true : false;
 $system_permissions['pages_modify']			= $val->sanitizePost('pages_modify')   == 1	? true : false;
 $system_permissions['pages_intro']			= $val->sanitizePost('pages_intro')    == 1 ? true : false;
 $system_permissions['pages_delete']			= $val->sanitizePost('pages_delete')   == 1 ? true : false;
 
+// if a user can add a level 0 page, he is allowed to add pages, also if pages_add is not set
+if( empty($system_permissions['pages_add']) && !empty($system_permissions['pages_add_l0']) )
+	$system_permissions['pages_add']		= true;
+
+// global perm
 $system_permissions['pages']				= (		!empty($system_permissions['pages_view']) ||
 													!empty($system_permissions['pages_add']) ||
 													!empty($system_permissions['pages_settings']) ||
@@ -186,7 +189,6 @@ $system_permissions['access']				= ( !empty($system_permissions['users']) || !em
 // ================================== 
 // Has to be checked whether we need both values?
 $system_permissions['admintools']			= ( $val->sanitizePost('admintools') == 1 ) ? true : false;
-$system_permissions['admintools_settings']	= $system_permissions['admintools'];
 
 // ============================== 
 // ! Implode system permissions   
@@ -213,19 +215,25 @@ $system_permissions							= $imploded_system_permissions;
 // ========================== 
 $modules			= array();
 $module_permissions	= '';
-$dirs				= scan_current_dir( CAT_PATH . '/modules' );
+$installed_mods		= CAT_Helper_Addons::get_addons(NULL,'module');
+$modlist            = array();
+
+foreach($installed_mods as $mod)
+    array_push($modlist,$mod['directory']);
+
 if ( is_array( $val->sanitizePost('module_permissions') ) )
 {
 	foreach($val->sanitizePost('module_permissions') AS $selected_name)
 	{
 		// Check, whether the activated module is also 1
-		if( in_array ($selected_name, $dirs['path']) )
+		if( in_array ($selected_name, $modlist) )
 		{
 			$modules[]						= $selected_name;
 		}
 	}
 }
-$modules									= ( sizeof($modules) > 0 ) ? array_diff($dirs['path'], $modules) : $dirs['path'];
+
+$modules			= ( sizeof($modules) > 0 ) ? $modules : $modlist;
 $module_permissions							= implode(',', $modules);
 
 // ============================ 
@@ -233,18 +241,23 @@ $module_permissions							= implode(',', $modules);
 // ============================ 
 $templates				= array();
 $template_permissions	= '';
-$dirs					= scan_current_dir(CAT_PATH.'/templates');
+$installed_mods  		= CAT_Helper_Addons::get_addons(NULL,'template');
+$modlist                = array();
+
+foreach($installed_mods as $mod)
+    array_push($modlist,$mod['directory']);
+
 if ( is_array( $val->sanitizePost('template_permissions') ) )
 {
 	foreach($val->sanitizePost('template_permissions') AS $selected_name)
 	{
-		if ( in_array ($selected_name, $dirs['path']) )
+		if ( in_array ($selected_name, $modlist) )
 		{
 			$templates[]					= $selected_name;
 		}
 	}
 }
-$templates									= (sizeof($templates) > 0) ? array_diff($dirs['path'], $templates) : $dirs['path'];
+$templates									= (sizeof($templates) > 0) ? $templates : $modlist;
 $template_permissions						= implode(',', $templates);
 
 ?>

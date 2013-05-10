@@ -64,6 +64,56 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
         }   // end function __call()
 
 	    /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function addSection($page_id,$module,$add_to_block)
+        {
+            $self = self::getInstance();
+        	require(CAT_PATH.'/framework/class.order.php');
+        	$order    = new order(CAT_TABLE_PREFIX.'sections', 'position', 'section_id', 'page_id');
+        	$position = $order->get_new($page_id);
+        	$self->db()->query(sprintf(
+                'INSERT INTO `%ssections` SET `page_id`=%d, `module`="%s", `position`=%d, `block`=%d;',
+                CAT_TABLE_PREFIX, $page_id, $module, $position, $add_to_block
+            ));
+
+        	if ( !$self->db()->is_error() )
+        		// Get the section id
+        		return $self->db()->get_one("SELECT LAST_INSERT_ID()");
+            else
+                return false;
+        }   // end function addSection()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function deleteSection($section_id,$page_id)
+        {
+            $self = self::getInstance();
+        	$q    = $self->db()->query(sprintf(
+                'DELETE FROM `%ssections` WHERE `section_id` = %d LIMIT 1',
+                CAT_TABLE_PREFIX, $section_id
+            ));
+
+        	if ( $self->db()->is_error() )
+        	{
+        		return false;
+        	}
+        	else
+        	{
+        		require CAT_PATH.'/framework/class.order.php';
+        		$order = new order(CAT_TABLE_PREFIX.'sections', 'position', 'section_id', 'page_id');
+        		$order->clean($page_id);
+                return true;
+        	}
+        }   // end function deleteSection()
+        
+
+	    /**
 	     * retrieves all active sections for a page
 	     *
 	     * @access public
@@ -127,6 +177,24 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 			return $all;
 			
 	    }   // end function getActiveSections()
+	    
+	    /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getSection($section_id)
+        {
+            $self = self::getInstance();
+        	$q = $self->db()->query(sprintf(
+                'SELECT `module` FROM `%ssections` WHERE `section_id` = %d',
+                CAT_TABLE_PREFIX, $section_id
+            ));
+        	if($q->numRows() == 0)
+                return false;
+        	return $q->fetchRow(MYSQL_ASSOC);
+        }   // end function getSection()
+        
 	    
 	    /**
 	     * checks if a page has active sections

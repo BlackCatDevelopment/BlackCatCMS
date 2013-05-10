@@ -208,6 +208,10 @@ if (!class_exists('CAT_Page', false))
          **/
         public function getPageContent($block = 1)
         {
+
+            // not needed here, but for old modules
+            global $database, $wb;
+
             // check if user is allowed to see this page
             if(!self::$helper->isVisible($this->_page_id))
                 self::$helper->printFatalError('You are not allowed to view this page!');
@@ -239,12 +243,15 @@ if (!class_exists('CAT_Page', false))
                         {
                             // load language file (if any)
                             $langfile = sanitize_path(CAT_PATH.'/modules/'.$module.'/languages/'.LANGUAGE.'.php');
+                            if ( file_exists($langfile) )
+                            {
                             if ( ! $this->lang()->checkFile($langfile, '$LANG', true ))
                                 // old fashioned language file
                                 require $langfile;
                             else
                                 // modern language file
                             $this->lang()->addFile(LANGUAGE . '.php', sanitize_path(CAT_PATH . '/modules/' . $module . '/languages'));
+                            }
                             // set template path
                             if (file_exists(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates')))
                                 $parser->setPath(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates'));

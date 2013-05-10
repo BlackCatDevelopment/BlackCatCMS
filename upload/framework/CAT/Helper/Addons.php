@@ -882,67 +882,14 @@ if (!class_exists('CAT_Helper_Addons'))
             if ( file_exists( $addon_dir . '/' . $action . '.php') )
                 require( $addon_dir . '/' . $action . '.php' );
 
-            // load info.php again to have current values
-            if ( file_exists($addon_dir . '/info.php') )
-                require( $addon_dir . '/info.php' );
-
-            if ( $action == 'install' )
-            {
-                // Load module info into DB
-                if ( $addon_info['addon_function'] == 'language' )
+            if ( $action == 'install' && $addon_info['addon_function'] == 'language' )
         {
                     rename($temp_file, $addon_dir);
                     change_mode( $addon_dir , 'file');
                 }
-                if (isset($module_name))
-            {
-                    $module_function = strtolower($module_function);
-                    $do              = 'insert';
-                // Check that it doesn't already exist
-                    $sql = sprintf(
-                        "SELECT COUNT(*) FROM `%saddons` WHERE `type`='module' AND `directory`='%s'",
-                        CAT_TABLE_PREFIX, $module_directory
-                    );
-                    if ($self->db()->get_one($sql))
-                {
-                        $sql = "UPDATE `%saddons` SET ";
-                        $do  = 'update';
-                    }
-                    else
-                    {
-                        $sql = "INSERT INTO `%saddons` SET ";
-                    }
 
-                    $options = array(
-                        mysql_real_escape_string($module_directory),
-                        mysql_real_escape_string($module_name),
-                        mysql_real_escape_string($module_description),
-                        mysql_real_escape_string(strtolower($module_function)),
-                        mysql_real_escape_string($module_version),
-                        mysql_real_escape_string($module_platform),
-                        mysql_real_escape_string($module_author),
-                        mysql_real_escape_string($module_license),
-                    );
-
-                    $sql .= "`directory`='%s', `name`='%s', `description`='%s', "
-                         .  "`type`='module', `function`='%s', `version`='%s', "
-                         .  "`platform`='%s', `author`='%s', `license`='%s'";
-
-                    if (isset($module_guid))
-                    {
-                        $sql .= ", `guid`='%s'";
-                        array_push($options,mysql_real_escape_string($module_guid));
-                    }
-                    if ($do == 'update')
-                    {
-                        $sql .= "WHERE `type`='module' AND `directory`='%s'";
-                        array_push($options, $module_directory );
-                    }
-
-                    $self = self::getInstance();
-                    $self->db()->query(vsprintf($sql,$options));
-
-                    if ($self->db()->is_error())
+            // load the module info into the database
+            if ( !self::loadModuleIntoDB($addon_dir,$action,$addon_info))
                     {
                         // recovery
                         if ( file_exists($addon_dir.'/uninstall.php') )
@@ -953,69 +900,18 @@ if (!class_exists('CAT_Helper_Addons'))
                         self::printError($self->db()->get_error());
                         return false;
                     }
+
+            // set module permissions
+            if (
+                   (
+                          $addon_info['addon_function'] == 'module'
+                       && ( $module_function == 'page' || $module_function == 'tool' )
+                   )
+                || $addon_info['addon_function'] == 'template'
+            ) {
+                self::setModulePermissions($addon_info);
                 }
 
-                // let admin set access permissions for modules of type 'page' and 'tool'
-                if ( ( $addon_info['addon_function'] == 'module' && ( $module_function == 'page' || $module_function == 'tool' ) )
-                    || $addon_info['addon_function'] == 'template' )
-                {
-                    $check_permission    = $addon_info['addon_function'] . '_permissions';
-
-                    // get groups
-                    $stmt = $self->db()->query(sprintf(
-                        'SELECT * FROM `%sgroups` WHERE group_id <> 1',
-                        CAT_TABLE_PREFIX
-                    ));
-                    if ( $stmt->numRows() > 0 )
-                    {
-                        $group_ids    = CAT_Helper_Validate::sanitizePost('group_id');
-                        // get marked groups
-                        if ( is_array($group_ids) )
-                            foreach ( $group_ids as $gid )
-                                $allowed_groups[$gid]    = $gid;
-                else
-                            $allowed_groups    = array();
-
-                        // get all known groups
-                        $groups    = array();
-                        while( $row = $stmt->fetchRow(MYSQL_ASSOC) )
-                        {
-                            $groups[ $row['group_id'] ] = $row;
-                            $gid                        = $row['group_id'];
-                            // add newly installed module to any group that's NOT in the $allowed_groups array
-                            if ( ! array_key_exists( $gid, $allowed_groups ) )
-                            {
-                                // get current value
-                                $addons   = explode(',', $groups[$gid][$check_permission] );
-                                // add newly installed module
-                                $addons[] = $addon_directory;
-                                $addons   = array_unique($addons);
-                                asort( $addons );
-                                // Update the database
-                                $addon_permissions = implode(',', $addons);
-                                $self->db()->query(sprintf(
-                                    'UPDATE `%sgroups` SET `%s`="%s" WHERE `group_id`=%d',
-                                    CAT_TABLE_PREFIX, $check_permission, $addon_permissions, $gid
-                                ));
-                                if ( $self->db()->is_error() )
-                {
-                                    self::printError($self->db()->get_error());
-                                    return false;
-                }
-            }
-                    }
-                        return true;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                    }
-                else
-                    {
-                    return true;
-                    }
-                }
 #            elseif ( $addon_info['addon_function'] == 'module' && $action == 'upgrade' )
 #            {
 #                $addon_helper->upgradeModule( $addon_directory, false );
@@ -1238,6 +1134,145 @@ if (!class_exists('CAT_Helper_Addons'))
 
             return true;
         }   // end function uninstallModule()
+        
+        /**
+         * loads the module data into the database
+         *
+         * @access public
+         * @return
+         **/
+        public static function loadModuleIntoDB($addon_dir,$action,$addon_info)
+        {
+
+            $self = self::getInstance();
+
+            // load info.php again to have current values
+            if ( file_exists($addon_dir.'/info.php') )
+                require( $addon_dir.'/info.php' );
+
+            if ( $action == 'install' )
+            {
+                if (isset($module_name))
+                {
+                    $module_function = strtolower($module_function);
+                    $do              = 'insert';
+                    // Check that it doesn't already exist
+                    $sql = sprintf(
+                        "SELECT COUNT(*) FROM `%saddons` WHERE `type`='module' AND `directory`='%s'",
+                        CAT_TABLE_PREFIX, $module_directory
+                    );
+                    if ($self->db()->get_one($sql))
+                    {
+                        $sql = "UPDATE `%saddons` SET ";
+                        $do  = 'update';
+                    }
+                    else
+                    {
+                        $sql = "INSERT INTO `%saddons` SET ";
+                    }
+
+                    $options = array(
+                        CAT_TABLE_PREFIX,
+                        mysql_real_escape_string($module_directory),
+                        mysql_real_escape_string($module_name),
+                        mysql_real_escape_string($module_description),
+                        mysql_real_escape_string(strtolower($module_function)),
+                        mysql_real_escape_string($module_version),
+                        mysql_real_escape_string($module_platform),
+                        mysql_real_escape_string($module_author),
+                        mysql_real_escape_string($module_license),
+                    );
+
+                    $sql .= "`directory`='%s', `name`='%s', `description`='%s', "
+                         .  "`type`='module', `function`='%s', `version`='%s', "
+                         .  "`platform`='%s', `author`='%s', `license`='%s', `guid`='%s'";
+
+                    if (isset($module_guid))
+                        array_push($options,mysql_real_escape_string($module_guid));
+                    else
+                        array_push($options,'');
+
+                    if ($do == 'update')
+                    {
+                        $sql .= "WHERE `type`='module' AND `directory`='%s'";
+                        array_push($options, $module_directory );
+                    }
+
+                    $self->db()->query(vsprintf($sql,$options));
+
+                    if ($self->db()->is_error())
+                        return false;
+                }
+            }
+            return true;
+        }   // end function loadModuleIntoDB()
+
+        /**
+         * let admin set access permissions for modules of type 'page' and 'tool'
+         *
+         * @access public
+         * @return
+         **/
+        public static function setModulePermissions($addon_info)
+        {
+
+            $self = self::getInstance();
+            
+            $check_permission = $addon_info['addon_function'] . '_permissions';
+
+            // get groups
+            $stmt = $self->db()->query(sprintf(
+                'SELECT * FROM `%sgroups` WHERE group_id <> 1',
+                CAT_TABLE_PREFIX
+            ));
+
+            if ( $stmt->numRows() > 0 )
+            {
+
+                $group_ids = CAT_Helper_Validate::sanitizePost('group_id');
+                $allowed_groups = array();
+
+                // get marked groups
+                if ( is_array($group_ids) )
+                    foreach ( $group_ids as $gid )
+                        $allowed_groups[$gid]    = $gid;
+
+                // get all known groups
+                $groups  = array();
+                while( $row = $stmt->fetchRow(MYSQL_ASSOC) )
+                {
+                    $groups[ $row['group_id'] ] = $row;
+                    $gid                        = $row['group_id'];
+                    // add newly installed module to any group that's NOT in the $allowed_groups array
+                    if ( ! array_key_exists( $gid, $allowed_groups ) )
+                    {
+                        // get current value
+                        $addons   = explode(',', $groups[$gid][$check_permission] );
+                        // add newly installed module
+                        $addons[] = $addon_directory;
+                        $addons   = array_unique($addons);
+                        asort( $addons );
+                        // Update the database
+                        $addon_permissions = implode(',', $addons);
+                        $self->db()->query(sprintf(
+                            'UPDATE `%sgroups` SET `%s`="%s" WHERE `group_id`=%d',
+                            CAT_TABLE_PREFIX, $check_permission, $addon_permissions, $gid
+                        ));
+                        if ( $self->db()->is_error() )
+                        {
+                            self::printError($self->db()->get_error());
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                return true;
+            }
+
+        }   // end function setModulePermissions()
         
 
         /**

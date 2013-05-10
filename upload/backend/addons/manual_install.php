@@ -39,17 +39,8 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-// ==================================== 
-// ! check if there is anything to do   
-// ==================================== 
 $backend = CAT_Backend::getInstance('Addons', 'modules_install');
 $user    = CAT_Users::getInstance();
-
-if ($user->get_permission('admintools') == false)
-{
-	die(header('Location: ../../index.php'));
-}
-
 $val = CAT_Helper_Validate::getInstance();
 
 $action		= $val->sanitizePost('action');
@@ -64,40 +55,46 @@ if ( $file == '' || !( strpos($file, '..') === false ) )
 	die(header('Location: ' . CAT_ADMIN_URL));
 }
 
-// include WB functions file
-require_once(CAT_PATH . '/framework/functions.php');
-
 $js_back	= CAT_ADMIN_URL . '/addons/index.php';
 
-/**
- * Manually execute the specified module file (install.php, upgrade.php or uninstall.php)
- */
- 
 // check if specified module folder exists
-$mod_path		= CAT_PATH . '/modules/' . basename(CAT_PATH . '/' . $file);
+$mod_path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.basename(CAT_PATH.'/'.$file));
 
-// let the old variablename if module use it
+// set the old variablename in case the module uses it
 $module_dir		= $mod_path;
-if ( !file_exists( $mod_path . '/' . $action . '.php') )
+$mod_file   = $mod_path.'/'.$action.'.php';
+
+if ( !file_exists($mod_file) )
 {
-	$backend->print_error($backend->lang()->translate( 'Not found' ) . ': <tt>"' . htmlentities(basename($mod_path)) . '/' . $action . '.php"</tt> ', $js_back);
+	$backend->print_error(
+          $backend->lang()->translate('Not found')
+        . ': <tt>"'
+        . htmlentities(basename($mod_path)).'/'.$action.'.php"</tt> ',
+        $js_back
+    );
 }
 
+// this prints an error page if prerequisites are not met
 CAT_Helper_Addons::preCheckAddon( NULL, $mod_path, false );
 
-// include modules install.php script
-require ( $mod_path . '/' . $action . '.php' );
+// include modules install.php/upgrade.php script
+require $mod_file;
 
 // load module info into database and output status message
-require( $mod_path . '/info.php' );
-load_module($mod_path, false);
-$msg		= $backend->lang()->translate( 'Execute' ) . ': <tt>"' . htmlentities(basename($mod_path)) . '/' . $action . '.php"</tt>';
+if ( !CAT_Helper_Addons::loadModuleIntoDB($mod_path,$action,CAT_Helper_Addons::checkInfo($mod_path)))
+{
+    $backend->print_error(
+        $backend->lang()->translate(
+            'Unable to add the addon to the database!<br />{{error}}',
+            array('error'=>$backend->db()->get_error())
+        ), $js_back );
+}
 
 switch ($action)
 {
 	case 'install':
 	case 'upgrade':
-		$backend->print_success($msg, $js_back);
+		$backend->print_success( 'Done', $js_back);
 		break;
 	default:
 		$backend->print_error( 'Action not supported', $js_back );

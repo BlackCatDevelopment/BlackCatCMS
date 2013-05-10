@@ -292,7 +292,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                     = isset( $caller[0]['class'] )
                     ? $caller[0]['class']
                     : NULL;
-    			if ($caller_class && method_exists($caller_class, "print_footer"))
+    			if ($caller_class && is_object($caller_class) && method_exists($caller_class, "print_footer"))
                 {
     				$caller_class->print_footer();
                 }
