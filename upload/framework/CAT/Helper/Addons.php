@@ -173,11 +173,10 @@ if (!class_exists('CAT_Helper_Addons'))
     	 * @param int    $selected    (default: 1)      - name or directory of the the addon to be selected in a dropdown
     	 * @param string $type        (default: '')     - type of addon - can be an array
     	 * @param string $function    (default: '')     - function of addon- can be an array
-    	 * @param string $permissions (default: '')     - array(!) of directories to check permissions
     	 * @param string $order       (default: 'name') - value to handle "ORDER BY" for database request of addons
     	 * @return array
     	 */
-    	public static function get_addons( $selected = 1 , $type = '', $function = '' , $permissions = '' , $order = 'name' )
+    	public static function get_addons( $selected = 1 , $type = '', $function = '' , $order = 'name' )
     	{
             $self = self::getInstance();
 
@@ -222,15 +221,16 @@ if (!class_exists('CAT_Helper_Addons'))
     		// ! Get all addons
     		// ==================
     		$addons_array = array();
-
-    		$addons = $self->db()->query("SELECT * FROM " . CAT_TABLE_PREFIX . "addons ".$where.$get_type.$get_function." ORDER BY ".htmlspecialchars( $order ) );
+    		$addons = $self->db()->query(sprintf(
+                "SELECT * FROM `%saddons` %s%s%s ORDER BY %s",
+                CAT_TABLE_PREFIX, $where, $get_type, $get_function, htmlspecialchars( $order )
+            ));
     		if ( $addons->numRows() > 0 )
     		{
     			$counter = 1;
     			while ( $addon = $addons->fetchRow( MYSQL_ASSOC ) )
     			{
-    				if ( ( is_array( $permissions ) && !is_numeric( array_search($addon['directory'], $permissions) ) ) || !is_array( $permissions ) )
-    				{
+    				if (CAT_Users::get_permission($addon['directory'],'module')) {
     					$addons_array[$counter]	= array_merge(
                             $addon,
                             array(
@@ -244,7 +244,7 @@ if (!class_exists('CAT_Helper_Addons'))
     			}
     		}
     		return $addons_array;
-    	}
+    	}   // end function get_addons()
 
 /*******************************************************************************
  * The following methods are derived from DropletsExtension module

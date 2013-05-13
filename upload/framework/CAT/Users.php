@@ -328,7 +328,18 @@ if ( ! class_exists( 'CAT_Users', false ) )
         }   // end function disableAccount()
 
         /**
+         * checks if the current user has the given permission; uses db table
+         * "system_permissions"
          *
+         * if $redirect is set to true and the permission check fails, the
+         * session is cleared, and the user gets logged out!
+         *
+         * @access public
+         * @param  string  $group     - permission group
+         * @param  string  $perm      - required permission
+         * @param  boolean $redirect  - redirect to login page; default false
+         * @param  string  $for       - BE|FE|<MODULE>; default BE
+         * @return mixed              - boolean or redirect
          **/
         public static function checkPermission( $group, $perm, $redirect = false, $for = 'BE' )
         {
@@ -336,10 +347,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
             if ( self::is_root() ) return true;
             // all authenticated users are allowed to see the dashboard
             if ( $perm == 'start' && self::is_authenticated() ) return true;
+            $self = self::getInstance();
             // fill permissions cache on first call
             if ( ! count(self::$permissions) )
             {
-                $self = self::getInstance();
                 $res  = $self->db()->query(sprintf(
                     'SELECT perm_name, perm_group, perm_bit FROM `%ssystem_permissions` WHERE perm_for=\'%s\';',
                     CAT_TABLE_PREFIX, $for
@@ -364,7 +375,27 @@ if ( ! class_exists( 'CAT_Users', false ) )
             if ( $bit == 0 ) return true;
 
             // get user perms from session
-            $has = CAT_Helper_Validate::getInstance()->fromSession('SYSTEM_PERMISSIONS','numeric');
+            $has = CAT_Helper_Validate::getInstance()->fromSession('SYSTEM_PERMISSIONS');
+
+            //
+            if ( $has == '' )
+                return false;
+
+            // backward compatibility; for now, we keep the old method, which
+            // means storing a list of strings
+            if ( ! is_numeric($has) )
+            {
+                $temp    = explode(',',$has);
+                $has_bit = 0;
+                foreach( $temp as $name )
+                {
+                    $name = trim($name);
+                    if ( isset(self::$permissions[$group][$name]) )
+                        $has_bit += self::$permissions[$group][$name];
+                }
+                $has = $has_bit;
+            }
+#echo "group -$group- NEEDED BIT -$bit- USER HAS HAS_BIT -$has_bit- HAS -$has- INT -", (int)$has,"-<br />";
             if ( (int)$has & (int)$bit )
             {
                 return true;
@@ -800,7 +831,14 @@ if ( ! class_exists( 'CAT_Users', false ) )
     	}   // end function get_groups()
 
     	/**
-         * checks if a user has a given permission by using the session data
+         * Checks if the user has a given permission by using the session data.
+         *
+         * Despite checkPermission, this does not use the "system_permissions'
+         * table to check the permission. Instead, it just checks if perm
+         * $name is set in group $type, where group is one of 'system',
+         * 'module' or 'template'.
+         *
+         * This methods needs to be rewritten later
     	 *
     	 * @access public
          * @param  string  $name - name of the permission
@@ -811,8 +849,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
         {
     		// Append to permission type
     		$type .= '_permissions';
-            // start is always allowed
-    		if($name == 'start')
+            // start is always allowed; root user is always allowed
+            if($name == 'start' || CAT_Users::is_root())
             {
     			return true;
     		}
@@ -820,20 +858,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
             {
                 $val = CAT_Helper_Validate::getInstance();
                 // get user perms from the session
+                $language_permissions = array();
     			$system_permissions   = explode(',',$val->fromSession('SYSTEM_PERMISSIONS'));
     			$module_permissions   = $val->fromSession('MODULE_PERMISSIONS');
     			$template_permissions = $val->fromSession('TEMPLATE_PERMISSIONS');
-    			// Return true if system perm = 1
-                if (isset($type) && is_array($type) && is_numeric(array_search($name, $type)))
-                {
-    				if($type == 'system_permissions') return true;
-                    else       					      return false;
-    			}
-                else
-                {
-    				if($type == 'system_permissions') return false;
-    				else                              return true;
-    			}
+                return in_array($name,$$type);
     		}
     	}   // end function get_permission()
 

@@ -50,7 +50,7 @@ global $parser;
 
 // get tools
 // ----- TODO: PERMISSIONS -----
-$tools = CAT_Helper_Addons::getInstance()->get_addons(0,'module','tool');
+$tools = CAT_Helper_Addons::get_addons(0,'module','tool');
 
 if(count($tools))
 {

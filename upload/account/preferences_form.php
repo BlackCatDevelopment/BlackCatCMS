@@ -174,7 +174,7 @@ if (true === $submit_ok)
 unset($submit_ok);
 
 // get available languages, mark currently used
-$languages = CAT_Helper_Addons::getInstance()->get_addons(((isset($language)&&$language!==LANGUAGE)?$language:LANGUAGE),'language');
+$languages = CAT_Helper_Addons::get_addons(((isset($language)&&$language!==LANGUAGE)?$language:LANGUAGE),'language');
 
 global $parser;
 $parser->setPath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/'); // if there's a template for this in the current frontend template

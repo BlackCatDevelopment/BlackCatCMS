@@ -107,23 +107,19 @@ $tpl_data['PAGE_HEADER']               = $backend->lang()->translate('Modify pag
 // ========================================================= 
 // ! Work-out if we should show the "manage sections" link   
 // ========================================================= 
-$query_sections = $database->query('SELECT `section_id` FROM `'.CAT_TABLE_PREFIX.'sections` WHERE `page_id` = '.(int)$page_id.' AND `module` = "menu_link"');
-
-$tpl_data['MANAGE_SECTIONS']		   = ( $query_sections->numRows() > 0 || MANAGE_SECTIONS != 'enabled' ) ? false : true;
+$section_id = CAT_Helper_Section::getSectionForPage($page_id);
+$tpl_data['MANAGE_SECTIONS'] = ( $section_id || MANAGE_SECTIONS != 'enabled' ) ? false : true;
 
 // =========================================================================== 
 // ! get template used for the displayed page (for displaying block details)   
 // =========================================================================== 
-$get_template		= $database->query("SELECT `template` from `" . CAT_TABLE_PREFIX . "pages` WHERE `page_id` = '$page_id' ");
-$template_row		= $get_template->fetchRow( MYSQL_ASSOC );
-$current_template	= ( $template_row['template'] != '' ) ? $template_row['template'] : DEFAULT_TEMPLATE;
+$current_template	= CAT_Helper_Page::getPageTemplate($page_id);
 
 // ============================== 
 // ! Get sections for this page   
 // ============================== 
-$module_permissions							= $_SESSION['MODULE_PERMISSIONS'];
+$tpl_data['modules'] = $addons->get_addons( 1, 'module', 'page' );
 
-$tpl_data['modules']				        = $addons->get_addons( 1, 'module', 'page', $module_permissions );
 
 // Remove menu_link from list
 foreach ( $tpl_data['modules'] as $index => $module )
@@ -135,6 +131,7 @@ foreach ( $tpl_data['modules'] as $index => $module )
 }
 
 $sections = $page->getSections();
+$module_permissions = $val->fromSession('MODULE_PERMISSIONS');
 $tpl_data['blocks_counter']	= 0;
 
 foreach( $sections as $section )
@@ -143,7 +140,7 @@ foreach( $sections as $section )
 		// ==================== 
 		// ! Have permission?   
 		// ==================== 
-		if ( !is_numeric( array_search($module, $module_permissions) ) )
+	if ( array_search($module, $module_permissions) >= 0 )
 		{
 			// =================================================== 
 			// ! Include the modules editing script if it exists   

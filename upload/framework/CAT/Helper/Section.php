@@ -115,6 +115,42 @@ if (!class_exists('CAT_Helper_Section'))
         }   // end function getSection()
 
         /**
+         * 
+         *
+         * @access public
+         * @param  integer  $section_id
+         * @return
+         **/
+        public static function hasType($section_id,$type)
+        {
+            $opt = array( CAT_TABLE_PREFIX, $section_id, $type );
+            $sql = 'SELECT * FROM `%ssections` WHERE `section_id`=%d AND `module`="%s"';
+            $sec = self::getInstance()->db()->query(vsprintf($sql,$opt));
+            if($sec->numRows())
+                return true;
+            return false;
+        }   // end function hasType()
+
+        /**
+         * gets the first section for given $page_id that has a module of type $type
+         *
+         * @access public
+         * @param  integer  $page_id
+         * @param  string   $type
+         * @return mixed    result array containing the section_id on success,
+         *                  false otherwise (no such section)
+         **/
+        public static function getSectionForPage($page_id,$type=NULL)
+        {
+            $opt = array( CAT_TABLE_PREFIX, $page_id, $type );
+            $sql = 'SELECT `section_id` FROM `%ssections` WHERE `page_id`=%d AND `module`="%s"';
+            $sec = self::getInstance()->db()->query(vsprintf($sql,$opt));
+            if($sec->numRows())
+                return $sec->fetchRow(MYSQL_ASSOC);
+            return false;
+        }   // end function getSectionForPage()
+
+        /**
          * gets the page_id for a given section
          *
          * @access public

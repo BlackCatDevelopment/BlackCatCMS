@@ -113,6 +113,9 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         private static function init($force=false)
         {
+            if(CAT_Registry::exists('CAT_HELPER_PAGE_INITIALIZED') && !$force)
+                return;
+
             if(!self::$instance) self::getInstance(true);
             // add configurable dirs to forbidden array (level 0)
             foreach( array(PAGES_DIRECTORY,MEDIA_DIRECTORY,CAT_BACKEND_FOLDER) as $dir )
@@ -164,6 +167,7 @@ if (!class_exists('CAT_Helper_Page'))
                     }   // end while()
                 }       // end if($result)
             }
+            CAT_Registry::register('CAT_HELPER_PAGE_INITIALIZED',true);
         }   // end function init()
 
         /**
@@ -1021,6 +1025,18 @@ if (!class_exists('CAT_Helper_Page'))
         }
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getPageTemplate($page_id)
+        {
+            $tpl = self::properties($page_id,'template');
+            return ( $tpl != '' ) ? $tpl : DEFAULT_TEMPLATE;
+        }   // end function getPageTemplate()
+        
+
+        /**
          * returns complete pages array
          *
          * @access public
@@ -1087,9 +1103,11 @@ if (!class_exists('CAT_Helper_Page'))
          * @access public
          * @return
          **/
-        public static function getPageTrail($page_id)
+        public static function getPageTrail($page_id,$skip_zero=false)
         {
-            return implode(',', array_reverse(self::getParentIDs($page_id)));
+            $ids = array_reverse(self::getParentIDs($page_id));
+            if($skip_zero) array_shift($ids);
+            return implode(',',$ids);
         }   // end function getPageTrail()
         
         /**
@@ -1255,7 +1273,8 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function properties($page_id,$key=NULL)
         {
-            if(!count(self::$pages)) self::init();
+            if(!count(self::$pages)&&!CAT_Registry::exists('CAT_HELPER_PAGE_INITIALIZED'))
+                self::init();
             // get page data
             $page = isset(self::$pages_by_id[$page_id])
                   ? self::$pages[self::$pages_by_id[$page_id]]
@@ -1333,15 +1352,18 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function updatePageTrail($parent,$root_parent)
         {
+#echo "updatePageTrail($parent,$root_parent)\n";
             $page_id = self::properties($parent,'page_id');
+#echo "page_id $page_id\n";
             if($page_id)
             {
                 self::$instance->db()->query(sprintf(
                     'UPDATE `%spages` SET root_parent=%d, page_trail="%s" WHERE page_id=%d',
-                    CAT_TABLE_PREFIX, $root_parent, self::getPageTrail($page_id), $page_id
+                    CAT_TABLE_PREFIX, $root_parent, self::getPageTrail($page_id,true), $page_id
                 ));
+                if( $page_id !== $parent )
                 // recurse
-        		self::updatePageTrail( $page_id, $root_parent );
+        		    self::updatePageTrail($page_id,$root_parent);
         	}
         }   // end function updatePageTrail()
 

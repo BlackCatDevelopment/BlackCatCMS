@@ -117,7 +117,6 @@ if (!class_exists('CAT_Backend', false))
 
             if ($tpl_data['permission']['pages'] == true)
             {
-                #$this->pg->setPerms($tpl_data['permission']);
 
                 $tpl_data['DISPLAY_MENU_LIST']     = CAT_Registry::get('MULTIPLE_MENUS') != false ? true : false;
                 $tpl_data['DISPLAY_LANGUAGE_LIST'] = CAT_Registry::get('PAGE_LANGUAGES') != false ? true : false;
@@ -161,7 +160,7 @@ if (!class_exists('CAT_Backend', false))
                 // ==========================================
                 $tpl_data['templates'] = $addons->get_addons(CAT_Registry::get('DEFAULT_TEMPLATE'), 'template', 'template');
                 $tpl_data['languages'] = $addons->get_addons(CAT_Registry::get('DEFAULT_LANGUAGE'), 'language');
-                $tpl_data['modules']   = $addons->get_addons('wysiwyg', 'module', 'page', CAT_Helper_Validate::fromSession('MODULE_PERMISSIONS'));
+                $tpl_data['modules']   = $addons->get_addons('wysiwyg', 'module', 'page');
                 $tpl_data['groups']    = $user->get_groups();
 
                 // list of all parent pages for dropdown parent
@@ -324,7 +323,7 @@ if (!class_exists('CAT_Backend', false))
 
             $data['CAT_VERSION']                = CAT_Registry::get('CAT_VERSION');
             $data['CAT_CORE']                   = CAT_Registry::get('CAT_CORE');
-            $data['permissions']['pages']       = CAT_Users::getInstance()->get_permission('pages','') ? true : false;
+            $data['permissions']['pages']       = CAT_Users::checkPermission('pages','pages') ? true : false;
 
             // ========================================================================
             // ! Try to get the actual version of the backend-theme from the database
