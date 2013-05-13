@@ -149,7 +149,7 @@ if (!class_exists('CAT_Helper_Page'))
                         // mark editable pages by checking user perms and page
                         // visibility
 // --------------------- NOT READY YET! ----------------------------------------
-        				if ( CAT_Users::getInstance()->ami_group_member($row['admin_groups']) )
+        				if ( CAT_Users::ami_group_member($row['admin_groups']) )
         				{
                             if ( CAT_Registry::get('PAGE_TRASH') != 'inline' || $row['visibility'] != 'deleted' )
                             {
@@ -541,7 +541,7 @@ if (!class_exists('CAT_Helper_Page'))
                 if (
                        $page['level'] == 0
                     && $page['visibility'] == 'public'
-                    && self::$pages_sections[$page['page_id']] > 0
+                    && self::isActive($page['page_id'])
                 ) {
                     if(!PAGE_LANGUAGES || $page['language'] == LANGUAGE)
                     {
@@ -1377,6 +1377,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function isActive($page_id)
         {
+            self::getSections($page_id);
             if(count(self::$pages_sections[$page_id]))
                 return true;
             return false;

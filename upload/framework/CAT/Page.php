@@ -144,8 +144,8 @@ if (!class_exists('CAT_Page', false))
                 ob_start();
                     require(CAT_PATH.'/templates/'.TEMPLATE.'/index.php');
                     $output = ob_get_clean();
-                if(ob_get_length() > 0)
-                    ob_end_clean();
+                #if(ob_get_length() > 0)
+                #    ob_end_clean();
                 if ( $do_filter )
                     executeFilters($output);
                 // use HTMLPurifier to clean up the output

@@ -79,6 +79,7 @@ $LANG = array(
     'Password cannot be reset more than once per hour' => 'Das Passwort kann nur einmal pro Stunde zur&uuml;ckgesetzt werden',
     'Please enter your email address' => 'Bitte geben Sie Ihre Mailadresse an',
     'Please enter your email address below' => 'Bitte geben Sie nachfolgend Ihre E-Mail Adresse an',
+    'Please enter your CURRENT password to confirm your changes!' => 'Bitte geben Sie Ihr AKTUELLES Kennwort ein, um die Änderungen zu bestätigen!',
     'Re-Type new password' => 'Neues Kennwort wiederholen',
     'Send details' => 'Kennwort anfordern',
     'Sign-up' => 'Registrieren',

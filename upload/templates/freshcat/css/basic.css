@@ -192,6 +192,9 @@ label {
 	.warning > a {
 		text-decoration: underline;
 	}
+.highlight_text{
+    font-size:1.2em;
+}
 
 .fc_loader, .loader {
 	z-index: 0;

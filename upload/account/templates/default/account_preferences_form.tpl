@@ -60,6 +60,9 @@
 
 	<fieldset class="account_form">
 		<legend>{translate('Password')}</legend>
+        <div class="icon-notification account_message">
+            {translate('Please note: You should only enter values in those fields if you wish to change this users password')}
+        </div><br /><br />
 		<div class="account_label">{translate('New password')}:</div>
 		<div class="account_value"><input type="password" name="new_password" /></div>
 		<div class="account_label">{translate('Re-Type new password')}:</div>
@@ -68,6 +71,9 @@
 
 	<fieldset class="account_form">
 		<legend>{translate('Confirm')}</legend>
+        <div class="icon-notification account_message">
+			{translate('Please enter your CURRENT password to confirm your changes!')}
+		</div><br /><br />
 		<div class="account_label">{translate('Confirm with current password')}:</div>
 		<div class="account_value"><input type="password" name="current_password" id="current_password" onkeyup="check_input(this);"/></div>
 	</fieldset>

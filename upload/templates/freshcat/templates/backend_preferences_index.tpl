@@ -63,6 +63,10 @@
 			<input type="text" id="fc_email" name="email" value="{$EMAIL}" />
 			<div class="clear_sp"></div>
 
+            <div class="fc_modifyUser fc_password_notification fc_br_all icon-notification fc_gradient_red fc_input_description">
+				{translate('Please note: You should only enter values in those fields if you wish to change this users password')}
+			</div><div class="clear_sp"></div>
+
 			<label for="fc_new_password_1" class="fc_label_300">{translate('New password')}:</label>
 			<input type="password" id="fc_new_password_1" name="new_password_1" value="" />
 			<div class="clear_sp"></div>
@@ -71,6 +75,9 @@
 			<input type="password" id="fc_new_password_2" name="new_password_2" value="" />
 			<div class="clear_sp"></div>
 		
+            <div class="fc_modifyUser fc_password_notification fc_br_all icon-notification fc_gradient_red fc_input_description">
+				{translate('Please enter your CURRENT password to confirm your changes!')}
+			</div><div class="clear_sp"></div>
 			<label for="fc_current_password" class="fc_label_300">{translate('Confirm with current password')}:</label>
 			<input type="password" id="fc_current_password" name="current_password" value="" />
 			<div class="clear_sp"></div>

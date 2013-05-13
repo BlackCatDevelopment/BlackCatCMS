@@ -65,5 +65,11 @@ $page_id = CAT_Helper_Page::selectPage() or die();
 // this will show the Intro- or Default-Page if no PAGE_ID is available
 $page    = CAT_Page::getInstance($page_id);
 
+// -----------------------------------------------------------------------------
+// keep SM2 happy
+$wb->page = CAT_Helper_Page::properties($page_id);
+$wb->default_link = CAT_Helper_Page::properties($page_id,'link');
+// -----------------------------------------------------------------------------
+
 // hand over to page handler
 $page->show();

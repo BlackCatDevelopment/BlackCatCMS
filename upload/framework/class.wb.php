@@ -50,8 +50,7 @@ class wb
     public  $password_chars      = 'a-zA-Z0-9\_\-\!\#\*\+';
     private $_handles            = NULL;
     public  $lang                = NULL;
-    public  $users               = NULL;
-    public  $pg                  = NULL;
+    public  $page                = array(); // keep SM2 happy
     
     private static $depre_func   = array(
         'bind_jquery' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers()</a>',
@@ -71,16 +70,8 @@ class wb
 
     public function __construct()
     {
-        global $TEXT,$HEADING,$MESSAGE,$OVERVIEW;
-		// create accessor/to language helper
   		$this->lang  = CAT_Helper_I18n::getInstance(LANGUAGE);
-  		// load globals from old language files
-		foreach( array( 'MENU', 'TEXT', 'HEADING', 'MESSAGE', 'OVERVIEW' ) as $var )
-		{
-		    $this->lang->addFile( LANGUAGE.'.php', NULL, $var );
-		}
 
-        $this->users = CAT_Users::getInstance();
         set_error_handler( array('wb','cat_error_handler') );
     }   // end constructor
 
@@ -106,7 +97,7 @@ class wb
             return;
         }
         // check for AJAX call
-        if ( CAT_Helper_Validate::getInstance()->get('_REQUEST','_cat_ajax') )
+        if ( CAT_Helper_Validate::get('_REQUEST','_cat_ajax') )
         {
             return;
         }
@@ -240,33 +231,33 @@ class wb
     }
 
     /* moved to CAT_Helper_Page */
-    public function page_is_visible($page) { return CAT_Helper_Page::getInstance()->isVisible($page['page_id']); }
-    public function page_is_active($page)  { return CAT_Helper_Page::getInstance()->isActive($page['page_id']);  }
-    public function page_link($link)       { return CAT_Helper_Page::getInstance()->getLink($link);   }
-    public function show_page($page)       { return CAT_Helper_Page::getInstance()->show_page($page); }
+    public function page_is_visible($page) { return CAT_Helper_Page::isVisible($page['page_id']); }
+    public function page_is_active($page)  { return CAT_Helper_Page::isActive($page['page_id']);  }
+    public function page_link($link)       { return CAT_Helper_Page::getLink($link);   }
+    public function show_page($page)       { return CAT_Helper_Page::show_page($page); }
 
     /* moved to CAT_Sections */
-    public function section_is_active($section_id) { return CAT_Sections::getInstance()->section_is_active($section_id); }
+    public function section_is_active($section_id) { return CAT_Sections::section_is_active($section_id); }
 
     /* moved to CAT_Users */
-    public function get_user_id()          { return CAT_Users::getInstance()->get_user_id();      }
-    public function get_group_id()         { return CAT_Users::getInstance()->get_group_id();     }
-    public function get_groups_id()        { return CAT_Users::getInstance()->get_groups_id();    }
-    public function get_group_name()       { return CAT_Users::getInstance()->get_group_name();   }
-    public function get_groups_name()      { return CAT_Users::getInstance()->get_groups_name();  }
-    public function get_username()         { return CAT_Users::getInstance()->get_username();     }
-    public function get_display_name()     { return CAT_Users::getInstance()->get_display_name(); }
-    public function get_email()            { return CAT_Users::getInstance()->get_email();        }
-    public function get_home_folder()      { return CAT_Users::getInstance()->get_home_folder();  }
-    public function is_authenticated()     { return CAT_Users::getInstance()->is_authenticated(); }
+    public function get_user_id()          { return CAT_Users::get_user_id();      }
+    public function get_group_id()         { return CAT_Users::get_group_id();     }
+    public function get_groups_id()        { return CAT_Users::get_groups_id();    }
+    public function get_group_name()       { return CAT_Users::get_group_name();   }
+    public function get_groups_name()      { return CAT_Users::get_groups_name();  }
+    public function get_username()         { return CAT_Users::get_username();     }
+    public function get_display_name()     { return CAT_Users::get_display_name(); }
+    public function get_email()            { return CAT_Users::get_email();        }
+    public function get_home_folder()      { return CAT_Users::get_home_folder();  }
+    public function is_authenticated()     { return CAT_Users::is_authenticated(); }
 
     public function is_group_match($groups_list1 = '', $groups_list2 = '')
     {
-        return CAT_Users::getInstance()->is_group_match($groups_list1,$groups_list2);
+        return CAT_Users::is_group_match($groups_list1,$groups_list2);
     }
     public function get_groups($viewing_groups = array() , $admin_groups = array(), $insert_admin = true)
     {
-         return CAT_Users::getInstance()->get_groups($viewing_groups,$admin_groups,$insert_admin);
+         return CAT_Users::get_groups($viewing_groups,$admin_groups,$insert_admin);
     }
     // Get the current users timezone
     public function get_timezone_string()
@@ -275,15 +266,15 @@ class wb
     }   // end function get_timezone_string()
 
     /* moved to CAT_Helper_Validate */
-    public function add_slashes($input)  { return CAT_Helper_Validate::getInstance()->add_slashes($input);    }
-    public function strip_slashes($input){ return CAT_Helper_Validate::getInstance()->strip_slashes($input);  }
-    public function get_post($field)     { return CAT_Helper_Validate::getInstance()->sanitizePost($field);   }
-    public function get_get($field)      { return CAT_Helper_Validate::getInstance()->sanitizeGet($field);    }
-    public function get_session($field)  { return CAT_Helper_Validate::getInstance()->fromSession($field);    }
-    public function get_server($field)   { return CAT_Helper_Validate::getInstance()->sanitizeServer($field); }
-    public function get_post_escaped($field){ return CAT_Helper_Validate::getInstance()->sanitizePost($field,NULL,true); }
-    public function validate_email($email)  { return CAT_Helper_Validate::getInstance()->validate_email($email); }
-
+    public function add_slashes($input)     { return CAT_Helper_Validate::add_slashes($input);    }
+    public function strip_slashes($input)   { return CAT_Helper_Validate::strip_slashes($input);  }
+    public function get_post($field)        { return CAT_Helper_Validate::sanitizePost($field);   }
+    public function get_get($field)         { return CAT_Helper_Validate::sanitizeGet($field);    }
+    public function get_session($field)     { return CAT_Helper_Validate::fromSession($field);    }
+    public function get_server($field)      { return CAT_Helper_Validate::sanitizeServer($field); }
+    public function get_post_escaped($field){ return CAT_Helper_Validate::sanitizePost($field,NULL,true); }
+    public function validate_email($email)  { return CAT_Helper_Validate::validate_email($email); }
 
 }
+
 ?>

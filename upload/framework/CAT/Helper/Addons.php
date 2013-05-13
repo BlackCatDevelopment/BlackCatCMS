@@ -174,9 +174,10 @@ if (!class_exists('CAT_Helper_Addons'))
     	 * @param string $type        (default: '')     - type of addon - can be an array
     	 * @param string $function    (default: '')     - function of addon- can be an array
     	 * @param string $order       (default: 'name') - value to handle "ORDER BY" for database request of addons
+    	 * @param boolean $check_permission (default: false) - wether to check module permissions (BE call) or not
     	 * @return array
     	 */
-    	public static function get_addons( $selected = 1 , $type = '', $function = '' , $order = 'name' )
+    	public static function get_addons($selected=1,$type='',$function='',$order='name',$check_permission=false)
     	{
             $self = self::getInstance();
 
@@ -222,7 +223,7 @@ if (!class_exists('CAT_Helper_Addons'))
     		// ==================
     		$addons_array = array();
     		$addons = $self->db()->query(sprintf(
-                "SELECT * FROM `%saddons` %s%s%s ORDER BY %s",
+                "SELECT * FROM `%saddons` %s%s%s ORDER BY '%s'",
                 CAT_TABLE_PREFIX, $where, $get_type, $get_function, htmlspecialchars( $order )
             ));
     		if ( $addons->numRows() > 0 )
@@ -230,7 +231,12 @@ if (!class_exists('CAT_Helper_Addons'))
     			$counter = 1;
     			while ( $addon = $addons->fetchRow( MYSQL_ASSOC ) )
     			{
-    				if (CAT_Users::get_permission($addon['directory'],'module')) {
+    				if (
+                          ! $check_permission
+                       || ( $addon['type']=='module'   && CAT_Users::get_permission($addon['directory'],'module') )
+                       || ( $addon['type']=='template' && CAT_Users::get_permission($addon['directory'],'template') )
+                       ||   $addon['type']=='language'
+                ) {
     					$addons_array[$counter]	= array_merge(
                             $addon,
                             array(

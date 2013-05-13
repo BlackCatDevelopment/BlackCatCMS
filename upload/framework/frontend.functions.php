@@ -46,7 +46,7 @@ if (defined('CAT_PATH')) {
 // 
 // include snippets
 //
-$snippets = CAT_Helper_Addons::getInstance()->get_addons(0,'module','snippet');
+$snippets = CAT_Helper_Addons::get_addons(0,'module','snippet');
 foreach($snippets as $s)
 {
     $file = sanitize_path(CAT_PATH.'/modules/'.$s['VALUE'].'/include.php');
