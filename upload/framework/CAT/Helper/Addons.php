@@ -181,6 +181,8 @@ if (!class_exists('CAT_Helper_Addons'))
     	{
             $self = self::getInstance();
 
+            if(CAT_Backend::isBackend())
+                $check_permission = true;
     		$and				= '';
     		$get_type			= '';
     		$get_function		= '';
@@ -233,8 +235,7 @@ if (!class_exists('CAT_Helper_Addons'))
     			{
     				if (
                           ! $check_permission
-                       || ( $addon['type']=='module'   && CAT_Users::get_permission($addon['directory'],'module') )
-                       || ( $addon['type']=='template' && CAT_Users::get_permission($addon['directory'],'template') )
+                       || ( $addon['type']!='language' && CAT_Users::get_permission($addon['directory'],$addon['type']) )
                        ||   $addon['type']=='language'
                 ) {
     					$addons_array[$counter]	= array_merge(

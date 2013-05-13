@@ -862,6 +862,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
     			$system_permissions   = explode(',',$val->fromSession('SYSTEM_PERMISSIONS'));
     			$module_permissions   = $val->fromSession('MODULE_PERMISSIONS');
     			$template_permissions = $val->fromSession('TEMPLATE_PERMISSIONS');
+                if(!isset($$type)) return false;
                 return in_array($name,$$type);
     		}
     	}   // end function get_permission()

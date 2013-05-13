@@ -131,7 +131,7 @@
 							options.modifyOnly.show();
 							var checkboxes	= $('#fc_Group_form, #fc_User_form').find('input:checkbox');
 							checkboxes.not('[id*=fc_Group_m_], [id*=fc_Group_t_]').prop( 'checked', false );
-							checkboxes.filter('[id*=fc_Group_m_], [id*=fc_Group_t_]').prop( 'checked', true );
+							checkboxes.filter('[id*=fc_Group_m_], [id*=fc_Group_t_]').prop( 'checked', false );
 
 							if ( options.get_id == 'group_id' )
 							{
@@ -144,11 +144,11 @@
 								});
 								$.each(data.module_permissions, function(index, value)
 								{
-									$('#fc_Group_m_' + value).prop( {checked: false});
+									$('#fc_Group_m_' + value).prop( {checked: true});
 								});
 								$.each(data.template_permissions, function(index, value)
 								{
-									$('#fc_Group_t_' + value).prop( {checked: false});
+									$('#fc_Group_t_' + value).prop( {checked: true});
 								});
 
                                 $('div#fc_members').html(data.members);
