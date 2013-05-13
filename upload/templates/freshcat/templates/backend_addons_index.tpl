@@ -74,7 +74,7 @@
 		{/if}
 		{foreach $addons as addon}
 		<div id="fc_list_{if $addon.directory}{$addon.directory}{else}{$addon.INSTALL.directory}{/if}" class="fc_list_forms fc_form_content">
-            {if $addon.is_removable}
+            {if $addon.is_removable && $permissions.MODULES_UNINSTALL}
 			<form name="uninstall" action="uninstall.php" method="post" class="submit_settings fc_gradient1">
 				<input type="hidden" name="file" value="{$addon.directory}" />
 				<input type="hidden" name="type" value="{$addon.type}" />
@@ -84,7 +84,9 @@
             {else}
             <div class="submit_settings">
                 <strong>{translate('Module details')}: {$addon.name}</strong>
+                {if ! $addon.is_removable}
                 <span>{translate('Marked as mandatory')}</span>
+                {/if}
             </div>
             {/if}
 			<div class="clear_sp"></div>

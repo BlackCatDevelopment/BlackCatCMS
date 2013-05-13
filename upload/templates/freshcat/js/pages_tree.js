@@ -164,7 +164,7 @@
 								var current		= $(this),
 									currenVal	= current.val(),
 									groups		= data.admin_groups;
-								if ( $.inArray( currenVal, groups ) )
+								if ( $.inArray( currenVal, groups ) == -1 )
 								{
 									current.attr('checked',false);
 								}
@@ -177,7 +177,7 @@
 								var current		= $(this),
 									currenVal	= current.val(),
 									groups		= data.viewing_groups;
-								if ( $.inArray( currenVal, groups ) )
+								if ( $.inArray( currenVal, groups ) == -1 )
 								{
 									current.attr('checked',false);
 								}
