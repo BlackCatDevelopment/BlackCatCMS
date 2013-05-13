@@ -40,7 +40,7 @@ if (defined('CAT_PATH')) {
 }
 
 $backend = CAT_Backend::getInstance('Addons', 'addons');
-$user  = CAT_Users::getInstance();
+$users    = CAT_Users::getInstance();
 $date  = CAT_Helper_DateTime::getInstance();
 
 global $parser;
@@ -48,16 +48,15 @@ $tpl_data = array();
 
 $tpl_data['URL'] = array(
 	'addons'		=> CAT_ADMIN_URL . '/modules/index.php',
-    'TEMPLATES'    => $user->checkPermission('addons', 'templates') ? CAT_ADMIN_URL . '/templates/index.php' : false,
-    'LANGUAGES'    => $user->checkPermission('addons', 'languages') ? CAT_ADMIN_URL . '/languages/index.php' : false,
+    'TEMPLATES'    => $users->checkPermission('addons', 'templates') ? CAT_ADMIN_URL . '/templates/index.php' : false,
+    'LANGUAGES'    => $users->checkPermission('addons', 'languages') ? CAT_ADMIN_URL . '/languages/index.php' : false,
 );
 
 // Insert permissions values
-$tpl_data['permissions']['ADVANCED']          = $user->checkPermission('addons', 'admintools')        ? true : false;
-$tpl_data['permissions']['MODULES_VIEW']      = $user->checkPermission('addons', 'modules_view')      ? true : false;
-$tpl_data['permissions']['MODULES_INSTALL']   = $user->checkPermission('addons', 'modules_install')   ? true : false;
-$tpl_data['permissions']['MODULES_UNINSTALL'] = $user->checkPermission('addons', 'modules_uninstall') ? true : false;
-
+$tpl_data['permissions']['ADVANCED']          = $users->checkPermission('addons', 'admintools')        ? true : false;
+$tpl_data['permissions']['MODULES_VIEW']      = $users->checkPermission('addons', 'modules_view')      ? true : false;
+$tpl_data['permissions']['MODULES_INSTALL']   = $users->checkPermission('addons', 'modules_install')   ? true : false;
+$tpl_data['permissions']['MODULES_UNINSTALL'] = $users->checkPermission('addons', 'modules_uninstall') ? true : false;
 
 $counter	= 0;
 $seen_dirs  = array();
@@ -66,6 +65,14 @@ $addons = CAT_Helper_Addons::get_addons();
 
 foreach( $addons as $addon )
 {
+
+    // check if the user is allowed to see this item
+    if(!$users->get_permission($addon['directory'],$addon['type']))
+    {
+        $seen_dirs[] = $addon['directory'];
+        continue;
+    }
+
 		// check if a module description exists for the displayed backend language
 		$tool_description	= false;
     $langfile            = false;
@@ -73,8 +80,7 @@ foreach( $addons as $addon )
 		{
 			case 'module':
 				$type	= 'modules';
-                // for later use
-                $seen_dirs[] = $addon['directory'];
+            $seen_dirs[] = $addon['directory']; // for later use
 				break;
 			case 'language':
 				$type				= 'languages';
@@ -199,16 +205,19 @@ foreach( $addons as $addon )
 		$counter++;
 }
 
-$tpl_data['groups']	= $user->get_groups('' , '', false);
 
-// scan modules path for modules not seen yet
-$new = CAT_Helper_Directory::getInstance()
+$tpl_data['groups']    = $users->get_groups('' , '', false);
+
+if( $users->checkPermission('addons','modules_install') )
+{
+    // scan modules path for modules not seen yet
+    $new = CAT_Helper_Directory::getInstance()
            ->maxRecursionDepth(0)
            ->setSkipDirs($seen_dirs)
            ->getDirectories( CAT_PATH.'/modules', CAT_PATH.'/modules/' );
 
-if ( count($new) )
-{
+    if ( count($new) )
+    {
     $addon = CAT_Helper_Addons::getInstance();
     foreach( $new as $dir )
     {
@@ -225,7 +234,7 @@ if ( count($new) )
                 $tpl_data['addons'][$counter][str_ireplace('module_','',$key)] = $value;
 		}
 		$counter++;
-
+            }
 	}
 	}
 }

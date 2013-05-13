@@ -56,6 +56,10 @@ if(count($tools))
 {
     foreach($tools as $tool)
 	{
+        // check if the user is allowed to see this item
+        if(!$user->get_permission($tool['directory'],$tool['type']))
+            continue;
+
 		// check if a module description exists for the displayed backend language
 		$module_description		= false;
         $icon               = false;

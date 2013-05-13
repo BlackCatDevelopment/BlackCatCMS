@@ -326,8 +326,8 @@ CREATE TABLE IF NOT EXISTS `cat_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cat_system_permissions` (
-	`perm_name` VARCHAR(50) NOT NULL,
 	`perm_group` VARCHAR(50) NOT NULL,
+	`perm_name` VARCHAR(50) NOT NULL,
 	`perm_bit` INT(11) NOT NULL,
 	`perm_for` ENUM('FE','BE') NOT NULL DEFAULT 'BE',
 	`perm_comment` VARCHAR(50) NULL DEFAULT NULL
