@@ -66,8 +66,12 @@
 					<span class="fc_file_label">{translate('Created at')}:</span><span class="fc_file_date"></span> {translate('at')} <span class="fc_file_time"></span>
 				</div>
 				<div class="fc_file_options">
+                    {if $permissions.media_rename}
 					<button type="submit" class="left fc_rename_file">{translate('Rename')}</button>
+                    {/if}
+                    {if $permissoins.media_delete}
 					<button type="submit" class="right fc_delete_file fc_gradient_red">{translate('Delete')}</button>
+                    {/if}
 					<div class="clear"></div>
 				</div>
 			</div>
