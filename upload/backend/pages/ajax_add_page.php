@@ -232,7 +232,7 @@ $get_same_page = $backend->db()->query(sprintf(
 if ( $get_same_page->numRows() > 0 || file_exists(CAT_PATH . PAGES_DIRECTORY.$options['link'].PAGE_EXTENSION) || file_exists(CAT_PATH . PAGES_DIRECTORY.$options['link'].'/') )
 {
 	$ajax	= array(
-		'message'	=>$backend->lang()->translate( 'A page with the same or similar link exists' ),
+		'message'	=> $backend->lang()->translate( 'A page with the same or similar link exists' ),
 		'success'	=> false
 	);
 	print json_encode( $ajax );

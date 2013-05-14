@@ -75,7 +75,12 @@ if ( !file_exists($mod_file) )
 }
 
 // this prints an error page if prerequisites are not met
-CAT_Helper_Addons::preCheckAddon( NULL, $mod_path, false );
+$precheck_errors = CAT_Helper_Addons::preCheckAddon( NULL, $mod_path, false );
+if ( $precheck_errors != '' && ! is_bool($precheck_errors) )
+{
+    $backend->print_error( 'Invalid installation file. {{error}}', array('error'=>$precheck_errors) );
+    return false;
+}
 
 // include modules install.php/upgrade.php script
 require $mod_file;

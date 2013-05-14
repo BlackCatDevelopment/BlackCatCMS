@@ -493,7 +493,9 @@ if (!class_exists('CAT_Helper_Addons'))
                     // check prerequisite modules
                     case 'CAT_ADDONS':
                     case 'WB_ADDONS':
-                        list($status,$msg[]) = self::checkAddons($PRECHECK[$key]);
+                        list($status,$add_to_msg) = self::checkAddons($PRECHECK[$key]);
+                        if(count($add_to_msg))
+                            $msg = array_merge($msg,$add_to_msg);
                                 if (!$status)
                                     $failed_checks++;
                         break;
@@ -546,14 +548,14 @@ if (!class_exists('CAT_Helper_Addons'))
                     case 'PHP_SETTINGS':
                         if (is_array($PRECHECK['PHP_SETTINGS']))
                         {
-                            foreach ($PRECHECK['PHP_SETTINGS'] as $setting => $value)
+                            foreach ($PRECHECK['PHP_SETTINGS'] as $setting => $values)
                             {
                                 $actual_setting = ($temp = ini_get($setting)) ? $temp : 0;
-                                $status         = ($actual_setting == $value);
+                                $status         = ($actual_setting == $values);
                                 $msg[]          = array(
                                     'key' => 'PHP_SETTINGS',
                                     'check' => '&nbsp;&nbsp; ' . ($setting),
-                                    'required' => $value,
+                                    'required' => $values,
                                     'actual' => $actual_setting,
                                     'status' => $status
                                 );
@@ -569,11 +571,11 @@ if (!class_exists('CAT_Helper_Addons'))
                     case 'CUSTOM_CHECKS':
                         if (is_array($PRECHECK['CUSTOM_CHECKS']))
                         {
-                            foreach ($PRECHECK['CUSTOM_CHECKS'] as $key => $values)
+                            foreach ($PRECHECK['CUSTOM_CHECKS'] as $custom_key => $values)
                             {
                                 $status = (true === array_key_exists('STATUS', $values)) ? $values['STATUS'] : false;
                                 $msg[]  = array(
-                                    'check' => $key,
+                                    'check' => $custom_key,
                                     'required' => $values['REQUIRED'],
                                     'actual' => $values['ACTUAL'],
                                     'status' => $status
@@ -585,6 +587,10 @@ if (!class_exists('CAT_Helper_Addons'))
                                 $failed_checks++;
                         }
                         break;
+
+                    default:
+                        break;
+
                 }
             }
 
@@ -594,6 +600,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
             // output summary table
             $summary = array();
+            $addons_header = false;
             foreach ($msg as $check)
             {
                 $style = $check['status'] ? 'color: #46882B;' : 'color: #C00;';
@@ -613,10 +620,21 @@ if (!class_exists('CAT_Helper_Addons'))
                 ), $line);
             }
 
-            $parser->setPath(dirname(__FILE__) . '/templates/Addons');
+            $self = self::getInstance();
+
+            $parser->setPath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/');
+            $parser->setFallbackPath(dirname(__FILE__) . '/templates/Addons');
             $output = $parser->get('summary', array(
-                'heading' => ($failed_checks ? self::getInstance()->lang()->translate('Precheck failed') : self::getInstance()->lang()->translate('Precheck successful')),
-                'message' => ($failed_checks ? self::getInstance()->lang()->translate('Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.') : ''),
+                'heading' => (
+                      $failed_checks
+                    ? $self->lang()->translate('Pre installation check failed')
+                    : $self->lang()->translate('Pre installation check successful')
+                ),
+                'message' => (
+                      $failed_checks
+                    ? $self->lang()->translate('Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.')
+                    : ''
+                ),
                 'summary' => $summary,
                 'fail' => ($failed_checks ? true : false)
             ));
@@ -752,6 +770,9 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function installModule($tmpfile, $name)
         {
 
+            // keep old modules happy
+            global $wb, $admin, $database;
+
             // Set temp vars
             $temp_dir     = CAT_PATH . '/temp/';
             $temp_unzip   = CAT_PATH . '/temp/unzip_'.basename($tmpfile).'/';
@@ -827,12 +848,12 @@ if (!class_exists('CAT_Helper_Addons'))
             else {
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
                 CAT_Helper_Directory::removeDirectory($temp_file);
-                self::printError( 'Invalid installation file. {{error}}', array('error'=>self::getError()) );
+                self::printError( 'Invalid installation file. {{error}}', array('error'=>'Unable to find info.php') );
                 return false;
             }
-            if ( $precheck_errors )
+            if ( $precheck_errors != '' && ! is_bool($precheck_errors) )
                     {
-                self::printError( 'Invalid installation file. {{error}}', array('error'=>$precheck_errors) );
+                self::printError( $precheck_errors );
                 return false;
                     }
 
@@ -946,6 +967,9 @@ if (!class_exists('CAT_Helper_Addons'))
          **/
         public static function uninstallModule($type,$addon_name)
         {
+            // keep old modules happy
+            global $wb, $admin, $database;
+
             switch ($type)
             {
                 case 'languages':
@@ -1103,6 +1127,7 @@ if (!class_exists('CAT_Helper_Addons'))
             		while ( $row = $stmt->fetchRow(MYSQL_ASSOC) )
             		{
             			$gid		= $row['group_id'];
+                        $file       = $addon_name;
             			// get current value
             			$permissions = explode(',', $row[ substr( $type, 0, -1 ) . '_permissions']);
             			// remove uninstalled module
@@ -1611,6 +1636,7 @@ if (!class_exists('CAT_Helper_Addons'))
         private static function checkAddons($addons) {
             if (is_array($addons))
             {
+                $self = self::getInstance();
                 foreach ($addons as $addon => $values)
                 {
                     if (is_array($values))
@@ -1630,14 +1656,14 @@ if (!class_exists('CAT_Helper_Addons'))
                     // defaults
                     $inst_version = NULL;
                     $status       = false;
-                    $addon_status = self::getInstance()->lang()->translate('Not installed');
+                    $addon_status = $self->lang()->translate('Not installed');
 
                     // check if addon is installed
                     if(self::isModuleInstalled($addon))
                     {
                         $inst_version = self::getModuleVersion($addon);
                         $status       = true;
-                        $addon_status = self::getInstance()->lang()->translate('Installed');
+                        $addon_status = $self->lang()->translate('Installed');
                         // compare version if required
                         if ($version != '')
                         {
@@ -1647,9 +1673,12 @@ if (!class_exists('CAT_Helper_Addons'))
                     }
 
                     // provide addon status
-                    $msg = array(
-                        'check'    => '&nbsp; ' . self::getInstance()->lang()->translate('Addon') . ': ' . htmlentities($addon),
-                        'required' => ($version != '') ? $operator . '&nbsp;' . $version : self::getInstance()->lang()->translate('installed'),
+                    $msg[] = array(
+                        'key'      => 'ADDONS',
+                        'check'    => '&nbsp;&nbsp;&nbsp; ' . htmlentities($addon),
+                        'required' => ($version != '')
+                                   ? $operator . '&nbsp;' . $version
+                                   : $self->lang()->translate('installed'),
                         'actual'   => $addon_status,
                         'status'   => $status
                     );
@@ -1710,8 +1739,10 @@ if (!class_exists('CAT_Helper_Addons'))
             // define desired precheck order
             $key_order = array(
                 'CAT_VERSION',
-                'CAT_VERSION',
+                'LEPTON_VERSION',
+                'WB_VERSION',
                 'CAT_ADDONS',
+                'WB_ADDONS',
                 'PHP_VERSION',
                 'PHP_EXTENSIONS',
                 'PHP_SETTINGS',

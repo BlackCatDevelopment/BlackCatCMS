@@ -1,13 +1,13 @@
 	<h2{if $fail} style="color:#c00;"{/if}>{$heading}</h2>
 	<p>{$message}</p>
 
-	<table>
+	<table style="width:80%">
 	<thead>
 	  <tr>
 		<th>&nbsp;</th>
-		<th class="col1">{translate('Requirement')}</th>
-		<th class="col2">{translate('Required')}</th>
-		<th class="col3">{translate('Current')}</th>
+		<th class="col1" style="text-align:left;">{translate('Requirement')}</th>
+		<th class="col2" style="text-align:left;">{translate('Required')}</th>
+		<th class="col3" style="text-align:left;">{translate('Current')}</th>
 	  </tr>
 	</thead>
 	<tbody>
@@ -17,6 +17,13 @@
 	<tr>
       <td>&nbsp;</td>
       <td style="{$line.style}" colspan="3">{translate('PHP Settings')}</td>
+	</tr>
+	{/if}
+    {if $line.key && $line.key == 'ADDONS' && $addonsseen == false}
+	{$addonsseen=true}
+	<tr>
+      <td>&nbsp;</td>
+      <td style="{$line.style}" colspan="3">{translate('Required Addons')}</td>
 	</tr>
 	{/if}
  	<tr>

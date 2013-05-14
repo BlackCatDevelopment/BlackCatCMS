@@ -332,6 +332,7 @@ $LANG = array(
     'File deleted successfully' => 'Datei erfolgreich gelöscht',
     'Rename successful' => 'Umbenennen erfolgreich',
     'All files have been uploaded successfully.' => 'Alle Dateien erfolgreich übertragen',
+    'You don\'t have the permission to delete this file.' => 'Sie haben nicht die notwendigen Berechtigungen, um diese Datei zu löschen.',
 // ----- users/groups -----
     'Activate user' => 'Benutzer aktivieren',
     'Add user' => 'Benutzer anlegen',
@@ -427,15 +428,23 @@ $LANG = array(
 // ----- addons - install.php -----
     'Unable to extract the file. Please check the ZIP format.'
         => 'Kann die Datei nicht entpacken. Bitte das ZIP Format prüfen.',
+    'Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.'
+        => 'Installation fehlgeschlagen. Das System erfüllt nicht die notwendigen Voraussetzungen. Bitte die untenstehenden Voraussetzungen prüfen und erneut probieren.',
     'Invalid installation file. No info.php found. Please check the ZIP format.'
         => 'Ungültige Installationsdatei. Keine info.php gefunden. Bitte das ZIP Format prüfen.',
     'Invalid installation file. Wrong extension. Please check the ZIP format.'
         => 'Ungültige Installationsdatei. Falsche Dateiendung. Bitte das ZIP Format prüfen.',
+    'Pre installation check failed' => 'Prüfung der Installationsvoraussetzungen fehlgeschlagen',
+    'Pre installation check successful' => 'Prüfung der Installationsvoraussetzungen erfolgreich',
     'Unable to install the module' => 'Fehler beim Installieren des Moduls',
     'Unable to install - error copying files' => 'Installation nicht möglich - Fehler beim Kopieren der Dateien',
     'Upgraded successfully' => 'Erfolgreich aktualisiert',
     'Installed successfully' => 'Erfolgreich installiert',
     'Install/Upgrade of add-on failed' => 'Installation/Update fehlgeschlagen',
+    'Required Addons' => 'Erforderliche Addons',
+    'Requirement' => 'Anforderung',
+    'Required' => 'Gefordert',
+    'Current' => 'Vorhanden',
 // ----- addons - CAT_Helper_Addons -----
     'Marked as mandatory' => 'Als erforderlich markiert',
     'this page;these pages' => 'dieser Seite;diesen Seiten',

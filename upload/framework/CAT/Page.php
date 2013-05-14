@@ -209,8 +209,11 @@ if (!class_exists('CAT_Page', false))
         public function getPageContent($block = 1)
         {
 
-            // not needed here, but for old modules
-            global $database, $wb;
+            // keep old modules happy
+            global $wb, $admin, $database, $page_id, $section_id;
+            $admin =& $wb;
+            if ( $page_id == '' )
+                $page_id = $this->_page_id;
 
             // check if user is allowed to see this page
             if(!self::$helper->isVisible($this->_page_id))

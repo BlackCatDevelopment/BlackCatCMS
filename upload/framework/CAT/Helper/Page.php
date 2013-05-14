@@ -179,20 +179,41 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function addPage($options)
         {
-            if(!self::$instance) self::getInstance();
+            $self = self::getInstance();
+            // get mandatory fields
+            $res = $self->db()->query(sprintf(
+                'DESCRIBE `%spages`',CAT_TABLE_PREFIX
+            ));
+            $mandatory = array();
+            while(false!==($row=$res->fetchRow(MYSQL_ASSOC)))
+                if($row['Null']=='NO'&&$row['Key']!='PRI')
+                    $mandatory[$row['Field']] = $row['Type'];
+            // fill options
             $sql	 = 'INSERT INTO `%spages` SET ';
             foreach($options as $key => $value)
             {
                 $sql .= '`'.$key.'` = \''.$value.'\', ';
+                if(array_key_exists($key,$mandatory))
+                    unset($mandatory[$key]);
             }
+            // all mandatory fields filled?
+            if(count($mandatory))
+                foreach($mandatory as $key=>$type)
+                    $sql .= '`'.$key.'`='
+                         .  (
+                              preg_match('~^int~i',$type)
+                              ?  '0, '
+                              :  '\'\', '
+                            );
+
             $sql = preg_replace('~,\s*$~','',$sql);
-            self::$instance->db()->query(sprintf($sql,CAT_TABLE_PREFIX));
+            $self->db()->query(sprintf($sql,CAT_TABLE_PREFIX));
             // reload pages list
-            if(!self::$instance->db()->is_error()) self::init(1);
+            if(!$self->db()->is_error()) self::init(1);
             return
-                  self::$instance->db()->is_error()
+                  $self->db()->is_error()
                 ? false
-                : self::$instance->db()->get_one("SELECT LAST_INSERT_ID()");
+                : $self->db()->get_one("SELECT LAST_INSERT_ID()");
         }   // end function addPage()
         
         /**
