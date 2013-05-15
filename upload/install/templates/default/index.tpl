@@ -1,4 +1,4 @@
-{include header.lte}
+{include header.tpl}
 {$output}
 
 {if $debug}
@@ -9,4 +9,4 @@ Dumping vars: $this_step (0), $_REQUEST (1), $prevstep (2), $nextstep (3), $curr
 </textarea>
 {/if}
 
-{include footer.lte}
+{include footer.tpl}

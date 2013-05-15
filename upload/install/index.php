@@ -280,16 +280,16 @@ if ( false !== ( $fh = fopen( dirname(__FILE__).'/steps.tmp', 'w' ) ) )
 // print the page
 if ( ! $output ) {
 	// default page = step 0
-	$tpl = 'welcome.lte';
-	if ( file_exists( dirname(__FILE__).'/templates/default/welcome_'.$lang->getLang().'.lte' ) )
+	$tpl = 'welcome.tpl';
+	if ( file_exists( dirname(__FILE__).'/templates/default/welcome_'.$lang->getLang().'.tpl' ) )
 	{
-	    $tpl = 'welcome_'.$lang->getLang().'.lte';
+	    $tpl = 'welcome_'.$lang->getLang().'.tpl';
 	}
 	$output = $parser->get( $tpl,array());
 }
 
 $parser->output(
-	'index.lte',
+	'index.tpl',
 	array(
 	    'debug'             => CAT_DEBUG,
 	    'steps'             => $steps,
@@ -313,11 +313,11 @@ function show_step_precheck() {
 
 	// precheck.php
 	include dirname(__FILE__).'/../framework/CAT/Helper/Addons.php';
-	$addons = new CAT_Helper_Addons();
+	$addons = CAT_Helper_Addons::getInstance();
 	$result = $addons->preCheckAddon( NULL, dirname(__FILE__), false, true );
 	$parser->setPath( dirname(__FILE__).'/templates/default' );
 	$result = $parser->get(
-	    'precheck.lte',
+	    'precheck.tpl',
 	    array( 'output' => $result )
 	);
 
@@ -361,7 +361,7 @@ function show_step_precheck() {
 	$dirs[] = array( 'name' => $lang->translate('CMS installation directory') . ' (<tt>' . $install_dir . '</tt>)', 'ok' => $inst_is_writable );
 
 	$output = $parser->get(
-		'fperms.lte',
+		'fperms.tpl',
 		array(
 		    'dirs'   => $dirs,
 		    'ok'     => $ok,
@@ -438,7 +438,7 @@ function show_step_globals( $step ) {
 	// <-- FrankH: Detect OS
 
     $output = $parser->get(
-        'globals.lte',
+        'globals.tpl',
         array(
 			'installer_cat_url' 				=> dirname( $installer_uri ).'/',
             'installer_guid_prefix'             => $config['installer_guid_prefix'],
@@ -478,7 +478,7 @@ function check_step_globals() {
 function show_step_db( $step ) {
     global $parser, $config;
     $output = $parser->get(
-        'db.lte',
+        'db.tpl',
         array(
             'installer_database_host'     => ( isset($config['database_host'])     ? $config['database_host']     : 'localhost'    ),
             'installer_database_port'     => ( isset($config['database_port'])     ? $config['database_port']     : '3306'         ),
@@ -515,7 +515,7 @@ function check_step_db() {
 function show_step_site( $step ) {
 	global $lang, $config, $parser;
 	$output = $parser->get(
-        'site.lte',
+        'site.tpl',
         array(
             'installer_website_title'    => ( isset($config['website_title'])    ? $config['website_title']    : 'Black Cat CMS' ),
             'installer_admin_username'   => ( isset($config['admin_username'])   ? $config['admin_username']   : ''    		  ),
@@ -613,7 +613,7 @@ function show_step_postcheck() {
         }
 	}
 	$output = $parser->get(
-        'postcheck.lte',
+        'postcheck.tpl',
         array( 'config' => $config )
 	);
 	return array( true, $output );
@@ -628,10 +628,10 @@ function show_step_finish() {
 	if ( ! $result ) {
 	    return array( true, $output );
 	}
-	$tpl = 'finish.lte';
-	if ( file_exists( dirname(__FILE__).'/templates/default/finish_'.$lang->getLang().'.lte' ) )
+	$tpl = 'finish.tpl';
+	if ( file_exists( dirname(__FILE__).'/templates/default/finish_'.$lang->getLang().'.tpl' ) )
 	{
-	    $tpl = 'finish_'.$lang->getLang().'.lte';
+	    $tpl = 'finish_'.$lang->getLang().'.tpl';
 	}
 	// fix globals
 	$parser->setGlobals(
@@ -838,51 +838,18 @@ function install_modules ($cat_path) {
 			}
 			natsort($temp_list);
 
-			foreach($temp_list as $file) {
+			foreach($temp_list as $module) {
 			    $admin->error = NULL;
-				// Get addon type
-				if($type == 'modules' && file_exists($dir.'/'.$file.'/info.php')) {
-					require ($dir.'/'.$file.'/info.php');
-					fwrite( $logh, 'installing module ['.$file.']'."\n" );
-					load_module($dir.'/'.$file, true);
-					foreach(
-						array(
-							'module_license', 'module_author'  , 'module_name', 'module_directory',
-							'module_version', 'module_function', 'module_description',
-							'module_platform', 'module_guid'
-						) as $varname
-					) {
-						if (isset(  ${$varname} ) ) unset( ${$varname} );
-					}
-					if ($admin->error!='') {
-						$errors[$file] = $admin->error;
-						fwrite( $logh, 'error installing module ['.$file.']: '.$admin->error ."\n" );
-					}
-				} elseif($type == 'templates') {
-					require ($dir.'/'.$file.'/info.php');
-					fwrite( $logh, 'installing template ['.$file.']' ."\n" );
-					load_template($dir.'/'.$file);
-					foreach(
-						array(
-							'template_license', 'template_author'  , 'template_name', 'template_directory',
-							'template_version', 'template_function', 'template_description',
-							'template_platform', 'template_guid'
-						) as $varname
-					) {
-						if (isset(  ${$varname} ) ) unset( ${$varname} );
-					}
-                    if ($admin->error!='') {
-						$errors[$file] = $admin->error;
-						fwrite( $logh, 'error installing template ['.$file.']: '.$admin->error ."\n" );
-					}
-				} elseif($type == 'languages') {
-				    fwrite( $logh, 'installing language ['.$file.']'."\n" );
-					load_language($dir.'/'.$file);
-					if ($admin->error!='') {
-						$errors[$file] = $admin->error;
-						fwrite( $logh, 'error installing language ['.$file.']: '.$admin->error ."\n" );
-					}
-				}
+                #$dir.'/'.$file.'/info.php'
+                $addon_info = CAT_Helper_Addons::checkInfo($dir.'/'.$module);
+                // Run the install script if there is one
+                if ( file_exists($dir.'/'.$module.'/install.php') )
+                    require $dir.'/'.$module.'/install.php';
+                // load the module info into the database
+                if ( !CAT_Helper_Addons::loadModuleIntoDB($dir.'/'.$module,'install',$addon_info))
+                {
+                    $errors[$dir] = sprintf('Unable to add module [%s] to database!',$module);
+                }
 			}
 			closedir($handle);
 			unset($temp_list);
@@ -912,7 +879,7 @@ function check_tables($database) {
 
 	$table_prefix = $config['table_prefix'];
 
-	$requested_tables = array("class_secure","pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_dropleps_settings","mod_dropleps_permissions","mod_wysiwyg","mod_wysiwyg_admin_v2");
+	$requested_tables = array("class_secure","pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_droplets_settings","mod_droplets_permissions","mod_wysiwyg","mod_wysiwyg_admin_v2");
 	for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
 
 	$result = mysql_query("SHOW TABLES FROM ".CAT_DB_NAME);
@@ -988,30 +955,6 @@ function check_tables($database) {
 
 }   // end function check_tables()
 
-function create_default_page($database) {
-
-    $errors = __cat_installer_import_sql(dirname(__FILE__).'/db/default_page.sql',$database);
-
-    $pg_content = "<?php
-/**
- *	This file is autogenerated by the Black Cat CMS Installer
- *	Do not modify this file!
- */
-	\$page_id = %%id%%;
-	require('../index.php');
-?>
-";
-
-    $fh = fopen(CAT_PATH.'/page/welcome.php','w');
-    fwrite($fh,str_replace('%%id%%',1,$pg_content));
-    fclose($fh);
-
-    $fh = fopen(CAT_PATH.'/page/willkommen.php','w');
-    fwrite($fh,str_replace('%%id%%',2,$pg_content));
-    fclose($fh);
-
-}   // end function create_default_page()
-
 function pre_installation_error( $msg ) {
 	global $installer_uri;
 	echo '<?xml version="1.0" encoding="UTF-8"?>
@@ -1073,6 +1016,31 @@ function findWYSIWYG()
     return $editors;
 }   // end function findWYSIWYG()
 
+function create_default_page($database) {
+
+    $errors = __cat_installer_import_sql(dirname(__FILE__).'/db/default_page.sql',$database);
+
+    $pg_content = '<'.'?'."php
+/**
+ *	This file is autogenerated by the Black Cat CMS Installer
+ *	Do not modify this file!
+ */
+".'$page_id = %%id%%;'."
+	require('../index.php');
+?>
+";
+
+    $fh = fopen(CAT_PATH.'/page/welcome.php','w');
+    fwrite($fh,str_replace('%%id%%',1,$pg_content));
+    fclose($fh);
+
+    $fh = fopen(CAT_PATH.'/page/willkommen.php','w');
+    fwrite($fh,str_replace('%%id%%',2,$pg_content));
+    fclose($fh);
+
+}   // end function create_default_page()
+
+
 /**
  * parse SQL file and execute the statements
  * $file     is the name of the file
@@ -1096,7 +1064,6 @@ function __cat_installer_import_sql($file,$database) {
             }
         }
     }
-
     return $errors;
 
 }   // end function __cat_installer_import_sql()
@@ -1218,7 +1185,8 @@ function __do_install() {
 	$database = new database();
 
 	// remove old inst.log
-	@unlink( CAT_LOGFILE );
+    if(file_exists(CAT_LOGFILE))
+	    @unlink( CAT_LOGFILE );
 
 	// ---- install tables -----
 	if ( $install_tables ) {
@@ -1262,7 +1230,7 @@ function __do_install() {
 	{
         $parser->setPath( dirname(__FILE__).'/templates/default' );
 		$output = $parser->get(
-	        'install_errors.lte',
+	        'install_errors.tpl',
 	        array( 'errors' => $errors )
 		);
 		return array(

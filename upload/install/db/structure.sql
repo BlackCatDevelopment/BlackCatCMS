@@ -11,10 +11,11 @@
 
 
 DROP TABLE IF EXISTS `cat_addons`;
+DROP TABLE IF EXISTS `cat_user_has_group`;
 DROP TABLE IF EXISTS `cat_groups`;
 DROP TABLE IF EXISTS `cat_mod_captcha_control`;
-DROP TABLE IF EXISTS `cat_mod_dropleps_permissions`;
-DROP TABLE IF EXISTS `cat_mod_dropleps_settings`;
+DROP TABLE IF EXISTS `cat_mod_droplets_permissions`;
+DROP TABLE IF EXISTS `cat_mod_droplets_settings`;
 DROP TABLE IF EXISTS `cat_mod_droplets`;
 DROP TABLE IF EXISTS `cat_mod_form_fields`;
 DROP TABLE IF EXISTS `cat_mod_form_settings`;
@@ -46,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `cat_addons` (
   `type` varchar(128) NOT NULL DEFAULT '',
   `directory` varchar(128) NOT NULL DEFAULT '',
   `name` varchar(255) NOT NULL DEFAULT '',
-  `description` text NOT NULL DEFAULT '',
+  `description` text NULL,
   `function` varchar(255) NOT NULL DEFAULT '',
   `version` varchar(255) NOT NULL DEFAULT '',
   `guid` varchar(50) NOT NULL DEFAULT '',
@@ -79,14 +80,14 @@ CREATE TABLE IF NOT EXISTS `cat_mod_captcha_control` (
   `ct_text` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `cat_mod_dropleps_permissions` (
+CREATE TABLE IF NOT EXISTS `cat_mod_droplets_permissions` (
   `id` int(10) unsigned NOT NULL,
   `edit_groups` varchar(50) NOT NULL,
   `view_groups` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `cat_mod_dropleps_settings` (
+CREATE TABLE IF NOT EXISTS `cat_mod_droplets_settings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `attribute` varchar(50) NOT NULL DEFAULT '0',
   `value` varchar(50) NOT NULL DEFAULT '0',
@@ -280,7 +281,7 @@ CREATE TABLE IF NOT EXISTS `cat_pages` (
 CREATE TABLE IF NOT EXISTS `cat_pages_load` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `register_name` varchar(255) NOT NULL DEFAULT '',
-  `register_type` varchar(64) NOT NULL DEFAULT 'droplep',
+  `register_type` varchar(64) NOT NULL DEFAULT 'droplet',
   `page_id` int(11) NOT NULL DEFAULT '0',
   `module_directory` varchar(255) NOT NULL DEFAULT '',
   `file_type` varchar(128) NOT NULL DEFAULT '',
@@ -347,7 +348,7 @@ CREATE TABLE IF NOT EXISTS `cat_users` (
   `display_name` varchar(255) NOT NULL DEFAULT '',
   `email` text NOT NULL,
   `language` varchar(5) NOT NULL DEFAULT 'DE',
-  `home_folder` text NOT NULL,
+  `home_folder` varchar(255) NOT NULL DEFAULT '',
   `login_when` int(11) NOT NULL DEFAULT '0',
   `login_ip` varchar(15) NOT NULL DEFAULT '',
   PRIMARY KEY (`user_id`)
