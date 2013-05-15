@@ -192,6 +192,8 @@ class database {
 	 */
 	public function query($SQL) {
 		if (!isset($_SESSION['LEPTON_SESSION']) && !$this->override_session_check) $this->__initSession();
+        // reset error
+        $this->set_error(NULL);
 		$query = new queryMySQL();
 		if (false !== $query->query($SQL, $this->get_db_handle())) {
 			// proper execution of the query
@@ -199,8 +201,10 @@ class database {
 		}
 		else {
 			$caller  = debug_backtrace();
+            $errfile = $caller[0]['file'];
+            $errfile = str_ireplace( array(CAT_PATH,'\\'), array('/abs/path/to','/'), $errfile );
 			$this->set_error(sprintf(	'MySQL Query executed from file <b>%s</b> in line <b>%s</b>:<br />[MySQL Error #%d] %s<br /><b>Executed Query:</b><br /><i>%s</i><br />', 
-										$caller[0]['file'], 
+										$errfile,
 										$caller[0]['line'], 
 										mysql_errno($this->get_db_handle()), 
 										mysql_error($this->get_db_handle()), 

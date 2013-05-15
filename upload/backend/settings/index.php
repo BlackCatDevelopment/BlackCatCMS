@@ -46,14 +46,16 @@ global $parser;
 $tpl_data = array();
 
 // Include the WB functions file
-#require_once(CAT_PATH.'/framework/functions.php');
 require_once(CAT_PATH.'/framework/functions-utf8.php');
 
 // ===========================================================================
 // ! Query current settings in the db
 // =========================================================================== 
-if ( $res_settings = $backend->db()->query('SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'settings` ORDER BY `name`'))
-{
+if ( $res_settings = $backend->db()->query(sprintf(
+    'SELECT `name`, `value` FROM `%ssettings` ORDER BY `name`',
+    CAT_TABLE_PREFIX
+))
+) {
     while ( $row = $res_settings->fetchRow(MYSQL_ASSOC) )
     {
         $tpl_data['values'][$row['name']]
@@ -66,13 +68,21 @@ if ( $res_settings = $backend->db()->query('SELECT `name`, `value` FROM `'.CAT_T
 // =========================================================================== 
 // ! Query current search settings in the db
 // =========================================================================== 
-if ( ($res_search = $backend->db()->query('SELECT * FROM `'.CAT_TABLE_PREFIX.'search` WHERE `extra` = \'\' ')) && ($res_search->numRows() > 0) )
-{
+if (
+    (
+         ($res_search = $backend->db()->query(sprintf('SELECT * FROM `%ssearch` WHERE `extra` = \'\' ',CAT_TABLE_PREFIX)))
+      && ($res_search->numRows() > 0)
+    )
+) {
     while ( $row = $res_search->fetchRow() )
     {
         $tpl_data['search'][$row['name']]
             = htmlspecialchars(($row['value']));
     }
+}
+else
+{
+    $tpl_data['search'] = array();
 }
 
 // ============================= 

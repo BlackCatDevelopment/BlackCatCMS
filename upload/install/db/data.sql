@@ -126,7 +126,8 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/search/index.php' ),
     ( 0, '/modules/edit_module_files.php' ),
     ( 0, '/modules/edit_modules_files.php' ),
-    ( 0, '/modules/lib_jquery/plugins/catranslate/cattranslate.php' )
+    ( 0, '/modules/lib_jquery/plugins/catranslate/cattranslate.php' ),
+    ( 0, '/modules/wysiwyg/save.php' )
 ;
 
 INSERT INTO `cat_system_permissions` (`perm_name`, `perm_group`, `perm_bit`, `perm_for`, `perm_comment`) VALUES

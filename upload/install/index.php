@@ -840,7 +840,9 @@ function install_modules ($cat_path) {
 
 			foreach($temp_list as $module) {
 			    $admin->error = NULL;
-                #$dir.'/'.$file.'/info.php'
+                if($type=='modules' || $type="templates")
+                {
+                    fwrite( $logh, 'installing module/template ['.$module.']'."\n" );
                 $addon_info = CAT_Helper_Addons::checkInfo($dir.'/'.$module);
                 // Run the install script if there is one
                 if ( file_exists($dir.'/'.$module.'/install.php') )
@@ -849,7 +851,28 @@ function install_modules ($cat_path) {
                 if ( !CAT_Helper_Addons::loadModuleIntoDB($dir.'/'.$module,'install',$addon_info))
                 {
                     $errors[$dir] = sprintf('Unable to add module [%s] to database!',$module);
+                        fwrite( $logh, sprintf('Unable to add module [%s] to database!',$module) );
                 }
+                    else
+                    {
+                        fwrite( $logh, 'Sucessfully installed' );
+                    }
+                }
+                elseif($type == 'languages')
+                {
+    			    fwrite( $logh, 'installing language ['.$module.']'."\n" );
+                    $info = CAT_Helper_Addons::checkInfo($dir.'/'.$module);
+                    if ( !CAT_Helper_Addons::loadModuleIntoDB($dir.'/'.$module,'install',$info))
+                    {
+                        $errors[$dir] = sprintf('Unable to add module [%s] to database!',$module);
+                        fwrite( $logh, sprintf('Unable to add module [%s] to database!',$module) );
+                    }
+                    else
+                    {
+                        fwrite( $logh, 'Sucessfully installed' );
+			}
+                }
+    				
 			}
 			closedir($handle);
 			unset($temp_list);

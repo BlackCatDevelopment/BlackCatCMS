@@ -1997,8 +1997,11 @@ if (!class_exists('CAT_Helper_Page'))
                         }
                         if ( $module == 'wysiwyg' && ! $wysiwyg_seen )
                         {
-                            self::$instance->log()->logDebug('adding headers.inc.php for wysiwyg');
-                            self::_load_headers_inc(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php'), $for, 'modules/' . $module, $section);
+                            if ( file_exists(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php') )
+                            {
+                                self::$instance->log()->logDebug('adding headers.inc.php for wysiwyg');
+                                self::_load_headers_inc(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php'), $for, 'modules/' . $module, $section);
+                            }
                             $wysiwyg_seen = true;
                         }
                         array_push(CAT_Helper_Page::$css_search_path, '/modules/' . $module, '/modules/' . $module . '/css');
