@@ -54,13 +54,13 @@ $settings = array (
     'type' => 'text',
   ),
   array (
-    'value' => 'proxy.materna.de',
+    'value' => '',
     'name' => 'proxy_host',
     'label' => 'Proxy host (leave empty if you don\'t have one)',
     'type' => 'text',
   ),
   array (
-    'value' => '8080',
+    'value' => '',
     'name' => 'proxy_port',
     'label' => 'Proxy port (leave empty if you don\'t need a proxy)',
     'type' => 'text',

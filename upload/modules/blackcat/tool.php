@@ -40,6 +40,7 @@ if (defined('CAT_PATH')) {
 }
 
 include dirname(__FILE__).'/data/config.inc.php';
+$info = NULL;
 
 if(CAT_Helper_Validate::getInstance()->sanitizePost('submit'))
 {
@@ -62,11 +63,17 @@ if(CAT_Helper_Validate::getInstance()->sanitizePost('submit'))
         $ainc = preg_split( '~// --- do not change this manually, use the Admin Tool! ---~', $inc, NULL, PREG_SPLIT_DELIM_CAPTURE);
         $fh   = fopen(dirname(__FILE__).'/data/config.inc.php','w');
         fwrite($fh,$ainc[0]);
-        fwrite($fh,"// --- do not change this manually, use the Admin Tool! ---\n\$settings = ");
-        fwrite($fh,var_export($settings,1).";\n");
+        fwrite($fh,"// --- do not change this manually, use the Admin Tool! ---\n\$current = array(\n");
+        foreach($settings as $i => $set) {
+            fwrite($fh,"    '".$set['name'].'\' => \''.$set['value'].'\','."\n");
+        }
+        fwrite($fh,');');
         fclose($fh);
+        $info = CAT_Helper_Validate::getInstance()->lang()->translate(
+            'Settings saved'
+        );
     }
 }
 
 $parser->setPath(dirname(__FILE__).'/templates/default');
-$parser->output('tool.tpl',array('settings'=>$settings));
+$parser->output('tool.tpl',array('settings'=>$settings,'current'=>$current,'info'=>$info));
