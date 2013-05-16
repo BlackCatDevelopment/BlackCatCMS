@@ -848,7 +848,12 @@ if (!class_exists('CAT_Helper_Addons'))
             else {
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
                 CAT_Helper_Directory::removeDirectory($temp_file);
-                self::printError( 'Invalid installation file. {{error}}', array('error'=>'Unable to find info.php') );
+                self::printError(
+                    self::getInstance()->lang()->translate(
+                        'Invalid installation file. {{error}}',
+                        array('error'=>'Unable to find info.php')
+                    )
+                );
                 return false;
             }
             if ( $precheck_errors != '' && ! is_bool($precheck_errors) )
@@ -1205,6 +1210,9 @@ if (!class_exists('CAT_Helper_Addons'))
                         $sql = "INSERT INTO `%saddons` SET ";
                     }
 
+                    if(!isset($addon_info['module_function']))
+                        $addon_info['module_function'] = $addon_info['addon_function'];
+
                     $options = array(
                         CAT_TABLE_PREFIX,
                         mysql_real_escape_string($addon_info['module_directory']),
@@ -1547,6 +1555,16 @@ if (!class_exists('CAT_Helper_Addons'))
                         $return_values[$key] = ${$varname};
                     }
                 }
+                // add empty keys
+                foreach(self::$info_vars_full[$return_values['addon_function']] as $varname)
+                {
+                    if(!isset($returnvalues[$varname]))
+                    {
+                        // rename keys
+                        $key = str_ireplace(array('template_'),array('module_'),$varname);
+                        $return_values[$key] = ${$varname};
+                    }
+                }
                 return $return_values;
             }
             elseif (file_exists($directory) && pathinfo($directory, PATHINFO_EXTENSION) == 'php')
@@ -1713,6 +1731,9 @@ if (!class_exists('CAT_Helper_Addons'))
                     break;
                 default:
                     $this_version = CAT_VERSION;
+                    // ----- UNTIL RELEASE: ACCEPT v0.x AS v1.x -----
+                    if (preg_match('~^v?0\.~i',$this_version))
+                        $this_version = '1.0.0';
                     break;
             }
             // obtain operator for string comparison if exist

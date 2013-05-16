@@ -37,7 +37,7 @@ if ( ! class_exists( 'CAT_Helper_Zip', false ) )
 	{
 	
         private static $_drivers = array();
-        private static $instance;
+        private static $instances = array();
         private static $zip;
 	    
 	    /**
@@ -64,13 +64,13 @@ if ( ! class_exists( 'CAT_Helper_Zip', false ) )
          *
 		 *
 		 **/
-        public static function getInstance( $zipfile )
+        public static function getInstance( $zipfile = NULL )
 		{
-            if ( ! is_object(self::$instance) )
+            if (!isset(self::$instances[$zipfile]) || !is_object(self::$instances[$zipfile]) )
 			{
-                self::$instance = new self($zipfile);
+                self::$instances[$zipfile] = new self($zipfile);
 			}
-            return self::$instance;
+            return self::$instances[$zipfile];
         }   // end function getInstance()
 		
 		/**

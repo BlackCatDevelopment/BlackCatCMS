@@ -94,7 +94,7 @@ function droplets_import( $temp_file, $temp_unzip ) {
     $list = CAT_Helper_Zip::getInstance($temp_file)->config( 'Path', $temp_unzip )->extract();
     
     // get .php files
-    $files = CAT_Helper_Directory::getPHPFiles($temp_unzip,$temp_unzip);
+    $files = CAT_Helper_Directory::getPHPFiles($temp_unzip,$temp_unzip.'/');
 
     // now, open all *.php files and search for the header;
     // an exported droplet starts with "//:"
@@ -164,7 +164,7 @@ function droplets_import( $temp_file, $temp_unzip ) {
             CAT_Helper_Directory::copyRecursive( $temp_unzip.'/data', dirname(__FILE__).'/data/' );
 	                	}
 
-        // cleanup
+        // cleanup; ignore errors here
         CAT_Helper_Directory::removeDirectory($temp_unzip);
     }
 

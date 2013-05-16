@@ -44,6 +44,14 @@ if (!class_exists('CAT_Helper_Droplet')) {
             return self::$instance;
         }
 	
+        public function __call($method, $args)
+        {
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
+        }
+
 		/**
 		 * Install a Droplet from a ZIP file (the ZIP may contain more than one
 		 * Droplet)
@@ -53,9 +61,9 @@ if (!class_exists('CAT_Helper_Droplet')) {
 		 * @return array   see droplets_import() method
 		 *
 		 **/
-		public function installDroplet( $temp_file )
+		public static function installDroplet( $temp_file )
 		{
-		    if ( ! method_exists( 'droplets_import' ) )
+		    if ( ! function_exists( 'droplets_import' ) )
 			{
 			    require_once CAT_PATH.'/modules/droplets/include.php';
 			}
@@ -78,7 +86,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
 	     * @param string $file_path - relative to the root
 	     * @return boolean on success
 	     */	    	  
-	    public function register_css($page_id, $droplet_name, $module_directory, $file_name, $file_path='') {
+	    public static function register_css($page_id, $droplet_name, $module_directory, $file_name, $file_path='') {
 	        return register_droplet($page_id, $droplet_name, $module_directory, 'css', $file_name, $file_path);
 	    }
 	    
@@ -91,7 +99,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          * @param sring $module_directory
          * @param string $file_name
          */
-	    public function unregister_css($page_id, $droplet_name, $module_directory, $file_name) {
+	    public static function unregister_css($page_id, $droplet_name, $module_directory, $file_name) {
 	        return unregister_droplet($page_id, $droplet_name, $module_directory, 'css', $file_name);
 	    }
 	    
@@ -103,7 +111,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          * @param string $module_directory
          * @return boolean true if the Droplet is registered
          */
-	    public function is_registered_css($page_id, $droplet_name, $module_directory) {
+	    public static function is_registered_css($page_id, $droplet_name, $module_directory) {
 	        return is_registered_droplet($page_id, $droplet_name, $module_directory, 'css');
 	    }
 
@@ -122,7 +130,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
 	     * @param string $file_path - relative to the root
 	     * @return boolean on success
 	     */	    	  
-	    public function register_js($page_id, $droplet_name, $module_directory, $file_name, $file_path='') {
+	    public static function register_js($page_id, $droplet_name, $module_directory, $file_name, $file_path='') {
 	        return register_droplet($page_id, $droplet_name, $module_directory, 'js', $file_name, $file_path);
 	    }
 	     
@@ -135,7 +143,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          * @param sring $module_directory
          * @param string $file_name
          */
-	    public function unregister_js($page_id, $droplet_name, $module_directory, $file_name) {
+	    public static function unregister_js($page_id, $droplet_name, $module_directory, $file_name) {
 	        return unregister_droplet($page_id, $droplet_name, $module_directory, 'js', $file_name);
 	    }
 	     
@@ -147,7 +155,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          * @param string $module_directory
          * @return boolean true if the Droplet is registered
          */
-	    public function is_registered_js($page_id, $droplet_name, $module_directory) {
+	    public static function is_registered_js($page_id, $droplet_name, $module_directory) {
 	        return is_registered_droplet($page_id, $droplet_name, $module_directory, 'js');
 	    }
 	     
@@ -159,7 +167,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          * @param integer $page_id
          * @return boolean true on success
          */
-	    public function get_headers($page_id) {
+	    public static function get_headers($page_id) {
 	        return get_droplet_headers($page_id);
 	    } // get_headers()
 	    
@@ -172,7 +180,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
 	     * @param string $module_directory
 	     * @return boolean true on success
 	     */
-	    public function register_for_search($page_id, $droplet_name, $module_directory) {
+	    public static function register_for_search($page_id, $droplet_name, $module_directory) {
 	        return register_droplet_for_search($droplet_name, $page_id, $module_directory);
 	    }
 	    
@@ -184,7 +192,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
 	     * @param string $droplet_name
 	     * @return boolean true on success
 	     */
-	    public function unregister_for_search($page_id, $droplet_name) {
+	    public static function unregister_for_search($page_id, $droplet_name) {
 	        return unregister_droplet_for_search($droplet_name, $page_id);
 	    }
 	    
@@ -194,7 +202,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
 	     * @param string $droplet_name
 	     * @return boolean true on success
 	     */
-	    public function is_registered_for_search($droplet_name) {
+	    public static function is_registered_for_search($droplet_name) {
 	        return is_droplet_registered_for_search($droplet_name);
 	    }
 	    

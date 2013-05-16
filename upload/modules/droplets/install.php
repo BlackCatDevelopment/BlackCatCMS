@@ -43,6 +43,8 @@ if (defined('CAT_PATH')) {
 
 $is_upgrade = false;
 
+global $database;
+
 // check if we already have a droplets table; leave it if yes
 $result = $database->query("SHOW TABLES LIKE '".CAT_TABLE_PREFIX ."mod_droplets';");
 if ( $result->numRows() == 0 ) {
@@ -72,47 +74,52 @@ if ( $result->numRows() == 0 ) {
 }
 
 // create the new permissions table
-$table = CAT_TABLE_PREFIX .'mod_droplets_permissions';
-$database->query("DROP TABLE IF EXISTS `$table`");
-$database->query("CREATE TABLE `$table` (
+// check if we already have a permissions table; leave it if yes
+$result = $database->query("SHOW TABLES LIKE '".CAT_TABLE_PREFIX ."mod_droplets_permissions';");
+if ( $result->numRows() == 0 ) {
+    $table = CAT_TABLE_PREFIX .'mod_droplets_permissions';
+    $database->query("DROP TABLE IF EXISTS `$table`");
+    $database->query("CREATE TABLE `$table` (
 	`id` INT(10) UNSIGNED NOT NULL,
 	`edit_groups` VARCHAR(50) NOT NULL,
 	`view_groups` VARCHAR(50) NOT NULL,
 	PRIMARY KEY ( `id` )
 	) COLLATE='utf8_general_ci' ENGINE=InnoDB;"
-);
-
-// check for errors
-if( $database->is_error() ) {
+    );
+    // check for errors
+    if( $database->is_error() ) {
     $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->get_error() ) ) );
+    }
 }
 
 // create the settings table
-$table = CAT_TABLE_PREFIX .'mod_droplets_settings';
-$database->query("DROP TABLE IF EXISTS `$table`");
-$database->query("CREATE TABLE `$table` (
+// check if we already have a settings table; leave it if yes
+$result = $database->query("SHOW TABLES LIKE '".CAT_TABLE_PREFIX ."mod_droplets_settings';");
+if ( $result->numRows() == 0 ) {
+    $table = CAT_TABLE_PREFIX .'mod_droplets_settings';
+    $database->query("DROP TABLE IF EXISTS `$table`");
+    $database->query("CREATE TABLE `$table` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`attribute` VARCHAR(50) NOT NULL DEFAULT '0',
 	`value` VARCHAR(50) NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`)
 	) COLLATE='utf8_general_ci' ENGINE=InnoDB;"
-);
-
-// check for errors
-if( $database->is_error() ) {
+    );
+    // check for errors
+    if( $database->is_error() ) {
     $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->get_error() ) ) );
+    }
+    // insert settings
+    $database->query("INSERT INTO `".CAT_TABLE_PREFIX ."mod_droplets_settings` (`id`, `attribute`, `value`) VALUES
+        (1, 'manage_backups', '1'),
+        (2, 'import_droplets', '1'),
+        (3, 'delete_droplets', '1'),
+        (4, 'add_droplets', '1'),
+        (5, 'export_droplets', '1'),
+        (6, 'modify_droplets', '1'),
+        (7, 'manage_perms', '1');
+    ");
 }
-
-// insert settings
-$database->query("INSERT INTO `".CAT_TABLE_PREFIX ."mod_droplets_settings` (`id`, `attribute`, `value`) VALUES
-(1, 'manage_backups', '1'),
-(2, 'import_droplets', '1'),
-(3, 'delete_droplets', '1'),
-(4, 'add_droplets', '1'),
-(5, 'export_droplets', '1'),
-(6, 'modify_droplets', '1'),
-(7, 'manage_perms', '1');
-");
 
 // import default droplets
 if ( ! class_exists( 'CAT_Helper_Directory' ) ) {
@@ -123,8 +130,8 @@ if ( ! function_exists( 'droplets_import' ) ) {
 }
 $inst_dir   = sanitize_path( dirname(__FILE__).'/install' );
 $temp_unzip = sanitize_path( CAT_PATH.'/temp/unzip/' );
-$dirh       = new CAT_Helper_Directory();
-$files      = $dirh->getFiles( $inst_dir, $inst_dir.'/' );
+$dirh       = CAT_Helper_Directory::getInstance();
+$files      = $dirh->scanDirectory( $inst_dir, true, true, $inst_dir.'/', array('zip') );
 
 if ( is_array($files) && count($files) ) {
 	foreach( $files as $file ) {

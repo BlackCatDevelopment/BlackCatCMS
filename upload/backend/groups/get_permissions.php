@@ -223,7 +223,7 @@ foreach($installed_mods as $mod)
 
 if ( is_array( $val->sanitizePost('module_permissions') ) )
 {
-	foreach($val->sanitizePost('module_permissions') AS $selected_name)
+	foreach($val->sanitizePost('module_permissions') as $selected_name)
 	{
 		// Check, whether the activated module is also 1
 		if( in_array ($selected_name, $modlist) )

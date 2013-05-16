@@ -78,7 +78,10 @@ if ( !file_exists($mod_file) )
 $precheck_errors = CAT_Helper_Addons::preCheckAddon( NULL, $mod_path, false );
 if ( $precheck_errors != '' && ! is_bool($precheck_errors) )
 {
-    $backend->print_error( 'Invalid installation file. {{error}}', array('error'=>$precheck_errors) );
+    $backend->print_error($backend->lang()->translate(
+        'Invalid installation file. {{error}}',
+        array('error'=>$precheck_errors)
+    ));
     return false;
 }
 

@@ -33,7 +33,8 @@ if ( ! class_exists( 'CAT_Helper_Zip_PclZipDriver', false ) )
 	class CAT_Helper_Zip_PclZipDriver extends CAT_Object
 	{
 
-        private static $instance;
+        // one instance per file
+        private   static $instances = array();
 	    // holds the PclZip object
 	    private   $zip;
 	    // holds the Directory helper object
@@ -118,11 +119,11 @@ if ( ! class_exists( 'CAT_Helper_Zip_PclZipDriver', false ) )
          **/
         public static function getInstance( $zipfile = NULL )
         {
-            if ( ! is_object(self::$instance) )
+            if (!isset(self::$instances[$zipfile]) || !is_object(self::$instances[$zipfile]) )
             {
-                self::$instance = new self($zipfile);
+                self::$instances[$zipfile] = new self($zipfile);
             }
-            return self::$instance;
+            return self::$instances[$zipfile];
         }   // end function getInstance()
 
         /**

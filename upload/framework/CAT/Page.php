@@ -125,6 +125,13 @@ if (!class_exists('CAT_Page', false))
          **/
         public function show()
         {
+
+            // keep old modules happy
+            global $wb, $admin, $database, $page_id, $section_id, $parser;
+            $admin =& $wb;
+            if ( $page_id == '' )
+                $page_id = $this->_page_id;
+
             // page of type menu_link
             if(CAT_Sections::isMenuLink($this->_page_id))
             {
@@ -210,7 +217,7 @@ if (!class_exists('CAT_Page', false))
         {
 
             // keep old modules happy
-            global $wb, $admin, $database, $page_id, $section_id;
+            global $wb, $admin, $database, $page_id, $section_id, $parser;
             $admin =& $wb;
             if ( $page_id == '' )
                 $page_id = $this->_page_id;
@@ -388,7 +395,7 @@ if (!class_exists('CAT_Page', false))
         			$target_page_link = ( isset($target_page['link']) )
                                       ? $target_page['link']
                                       : NULL;
-        			if($target_page_link != null)
+        			if($target_page_link != NULL)
         			{
         				$target_url = CAT_URL.PAGES_DIRECTORY.$target_page_link.PAGE_EXTENSION.$anchor;
         				header('Location: '.$target_url);
