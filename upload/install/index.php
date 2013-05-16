@@ -839,7 +839,6 @@ function install_modules ($cat_path) {
         natsort($subs);
         foreach( $subs as $item )
         {
-echo "---$item<br />";
             if(in_array($item,$ignore_files)) continue;
             if($type == 'languages')
             {
