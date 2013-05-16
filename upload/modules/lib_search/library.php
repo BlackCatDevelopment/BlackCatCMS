@@ -51,7 +51,7 @@ require_once CAT_PATH. '/framework/functions.php';
 require_once CAT_PATH. '/modules/lib_search/search.constants.php';
 require_once CAT_PATH. '/modules/lib_search/search.module.php';
 
-class LEPTON_Search {
+class CATSearch {
     
     private $error = '';
     private $message = '';
@@ -101,7 +101,7 @@ class LEPTON_Search {
     protected $search_result = array();
     
     /**
-     * Constructor for LEPTON_Search
+     * Constructor for CATSearch
      * 
      * @access public
      */
@@ -1025,4 +1025,4 @@ class LEPTON_Search {
         } 
         return ($this->isPrompt()) ? print($result) : $result;
     }
-} // class LEPTON_Search
+} // class CATSearch

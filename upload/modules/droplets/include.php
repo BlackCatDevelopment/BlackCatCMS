@@ -46,8 +46,6 @@ if (defined('CAT_PATH')) {
  **/
 function droplets_upload( $input ) {
 
-    global $database, $admin;
-    
 	if ( ! function_exists('sanitize_path') ) {
 	    @require CAT_PATH.'/framework/functions.php';
 	}
@@ -61,7 +59,7 @@ function droplets_upload( $input ) {
     // Try to upload the file to the temp dir
     if( ! move_uploaded_file( $_FILES[$input]['tmp_name'], $temp_file ) )
     {
-   	    return array( 'error', $admin->lang->translate( 'Upload failed' ) );
+   	    return array( 'error', CAT_Helper_Directory::getInstance()->lang()->translate( 'Upload failed' ) );
     }
 
     $result = droplets_import( $temp_file, $temp_unzip );
@@ -71,7 +69,7 @@ function droplets_upload( $input ) {
     {
         unlink( $temp_file );
     }
-    CAT_Helper_Directory::getInstance()->removeDirectory($temp_unzip);
+    CAT_Helper_Directory::removeDirectory($temp_unzip);
 
     // show errors
     if ( isset( $result['errors'] ) && is_array( $result['errors'] ) && count( $result['errors'] ) > 0 ) {
@@ -88,8 +86,6 @@ function droplets_upload( $input ) {
  **/
 function droplets_import( $temp_file, $temp_unzip ) {
 
-    global $admin, $database;
-
     $errors  = array();
     $imports = array();
     $count   = 0;
@@ -97,78 +93,79 @@ function droplets_import( $temp_file, $temp_unzip ) {
     // extract file
     $list = CAT_Helper_Zip::getInstance($temp_file)->config( 'Path', $temp_unzip )->extract();
     
+    // get .php files
+    $files = CAT_Helper_Directory::getPHPFiles($temp_unzip,$temp_unzip);
+
     // now, open all *.php files and search for the header;
     // an exported droplet starts with "//:"
-    if ( $dh = @opendir($temp_unzip) ) {
-        while ( false !== ( $file = readdir($dh) ) )
-        {
-            if ( $file != "." && $file != ".." )
-            {
-                if ( preg_match( '/^(.*)\.php$/i', $file, $name_match ) ) {
+    foreach( $files as $file ) {
+        if ( pathinfo($file,PATHINFO_EXTENSION) == 'php' ) {
                     $description = NULL;
                     $usage       = NULL;
                     $code        = NULL;
                     // Name of the Droplet = Filename
-                    $name        = $name_match[1];
+                    $name        = pathinfo($file,PATHINFO_FILENAME);
                     // Slurp file contents
                     $lines       = file( $temp_unzip.'/'.$file );
                     // First line: Description
                     if ( preg_match( '#^//\:(.*)$#', $lines[0], $match ) ) {
                         $description = addslashes( $match[1] );
+                        array_shift($lines);
                     }
                     // Second line: Usage instructions
-                    if ( preg_match( '#^//\:(.*)$#', $lines[1], $match ) ) {
+            if ( preg_match( '#^//\:(.*)$#', $lines[0], $match ) ) {
                         $usage       = addslashes( $match[1] );
+                array_shift($lines);
+            }
+            // there may be more comment lines; they will be added to the usage instructions
+            while(preg_match('#^//(.*)$#', $lines[0], $match ) ) {
+                $usage       .= addslashes(trim($match[1]));
+                array_shift($lines);
                     }
                     if ( ! $description && ! $usage ) {
                         // invalid file
-                        $errors[$file] = $admin->lang->translate( 'No valid Droplet file (missing description and/or usage instructions)' );
+                        $errors[$file] = CAT_Helper_Directory::getInstance()->lang()->translate( 'No valid Droplet file (missing description and/or usage instructions)' );
                         continue;
                     }
                     // Remaining: Droplet code
-                    $code = implode( '', array_slice( $lines, 2 ) );
+            $code = implode( '', $lines );
                     // replace 'evil' chars in code
                     $tags = array('<?php', '?>' , '<?');
                     $code = addslashes(str_replace($tags, '', $code));
                     // Already in the DB?
                     $stmt  = 'INSERT';
                     $id    = NULL;
-                    $found = $database->get_one("SELECT * FROM ".CAT_TABLE_PREFIX."mod_droplets WHERE name='$name'");
+            $found = CAT_Helper_Directory::getInstance()->db()->get_one("SELECT * FROM ".CAT_TABLE_PREFIX."mod_droplets WHERE name='$name'");
                     if ( $found && $found > 0 ) {
                         $stmt = 'REPLACE';
                         $id   = $found;
                     }
                     // execute
-                    $result = $database->query("$stmt INTO ".CAT_TABLE_PREFIX."mod_droplets VALUES('$id','$name','$code','$description','".time()."','".$admin->get_user_id()."',1,1,0,1,'$usage')");
-                    if( ! $database->is_error() ) {
+            $result = CAT_Helper_Directory::getInstance()->db()->query(sprintf(
+                "$stmt INTO `%smod_droplets` SET "
+                . ( ($id) ? 'id='.$id.', ' : '' )
+                . '`name`=\'%s\', `code`=\'%s\', `description`=\'%s\', '
+                . '`modified_when`=%d, `modified_by`=\'%s\', '
+                . '`comments`=\'%s\'',
+                CAT_TABLE_PREFIX, $name, $code, $description, time(), CAT_Users::get_user_id(), $usage
+            ));
+            if( ! CAT_Helper_Directory::getInstance()->db()->is_error() ) {
                         $count++;
                         $imports[$name] = 1;
                     }
                     else {
-                        $errors[$name] = $database->get_error();
+                $errors[$name] = CAT_Helper_Directory::getInstance()->db()->get_error();
                     }
                 }
-            }
-        }
-        closedir($dh);
+
         // check for data directory
         if ( file_exists( $temp_unzip.'/data' ) ) {
             // copy all files
-            $dh = @opendir($temp_unzip.'/data');
-            if ( is_resource($dh) ) {
-                while ( false !== ( $file = readdir($dh) ) )
-        		{
-                	if ( $file != "." && $file != ".." )
-	            	{
-	                	if ( preg_match( '/^(.*)\.txt/i', $file ) ) {
-	                	    copy( $temp_unzip.'/data/'.$file, dirname(__FILE__).'/data/'.$file );
+            CAT_Helper_Directory::copyRecursive( $temp_unzip.'/data', dirname(__FILE__).'/data/' );
 	                	}
-					}
-				}
-                closedir($dh);
-            }
-        }
-        CAT_Helper_Directory::getInstance()->removeDirectory($temp_unzip);
+
+        // cleanup
+        CAT_Helper_Directory::removeDirectory($temp_unzip);
     }
 
     return array( 'count' => $count, 'errors' => $errors, 'imported' => $imports );

@@ -1,4 +1,4 @@
-{include file="header.lte"}
+{include file="header.tpl"}
   {if $info}<div class="info ui-corner-all">{$info}</div><br />{/if}
   <form method="post" action="{$action}">
   <input type="hidden" name="tool" value="droplets" />
@@ -80,4 +80,4 @@
   {/if}
   </form>
   {/if}
-{include file="footer.lte"}
+{include file="footer.tpl"}

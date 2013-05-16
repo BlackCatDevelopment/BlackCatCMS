@@ -16,14 +16,13 @@
  *
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
- *   @link            http://www.blackcat-cms.org
+ *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         lib_dwoo
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
 	include(CAT_PATH.'/framework/class.secure.php');
 } else {
@@ -40,13 +39,8 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
-require_once CAT_PATH.'/framework/functions.php';
-
-require CAT_PATH.'/framework/CAT/Helper/I18n.php';
 global $__dwoo_plugin_lang;
-$__dwoo_plugin_lang = new CAT_Helper_I18n();
 
 function Dwoo_Plugin_translate( Dwoo $dwoo, $msg, $args = array() ) {
 	global $__dwoo_plugin_lang;
@@ -55,7 +49,7 @@ function Dwoo_Plugin_translate( Dwoo $dwoo, $msg, $args = array() ) {
         if ( ! class_exists('CAT_Helper_I18n',false) ) {
             require dirname(__FILE__).'/../../../../../framework/CAT/Helper/I18n.php';
         }
-        $__dwoo_plugin_lang = new CAT_Helper_I18n();
+        $__dwoo_plugin_lang = CAT_Helper_I18n::getInstance();
     }
 	return $__dwoo_plugin_lang->translate($msg, $args);
 }

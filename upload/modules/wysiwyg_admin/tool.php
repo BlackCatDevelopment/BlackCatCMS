@@ -46,9 +46,12 @@ if (true === $debug) {
 }
 
 // backend only
-if (!isset($admin) || !is_object($admin)) die();
+$backend = CAT_Backend::getInstance('admintools');
+$user    = CAT_Users::getInstance();
+$val     = CAT_Helper_Validate::getInstance();
 
-$val =  CAT_Helper_Validate::getInstance();
+// this will redirect to the login page if the permission is not set
+$user->checkPermission('admintools','admintools');
 
 // check for config driver
 $cfg_file = sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
@@ -67,7 +70,7 @@ else {
 // check for language file
 if (file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages/'.LANGUAGE.'.php')))
 {
-    $admin->lang->addFile(LANGUAGE.'.php',sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages'));
+    $backend->lang()->addFile(LANGUAGE.'.php',sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages'));
 }
 
 $config       = wysiwyg_admin_config();
@@ -123,19 +126,19 @@ if ($job && $job=="save") {
         {
             if ( ! is_numeric($val->sanitizePost($key)) )
             {
-                $errors[$key] = $admin->lang->translate('Not numeric!');
+                $errors[$key] = $backend->lang()->translate('Not numeric!');
                 continue;
             }
             if ( $val->sanitizePost($key.'_unit') && in_array($val->sanitizePost($key.'_unit'),array('em','px','%')) )
             {
                 if ( $val->sanitizePost($key.'_unit') == '%' && $val->sanitizePost($key) > 100 )
                 {
-                    $errors[$key] = $admin->lang->translate('Invalid '.$key.': {{width}}% > 100%!', array('width'=>$val->sanitizePost($key)));
+                    $errors[$key] = $backend->lang()->translate('Invalid '.$key.': {{width}}% > 100%!', array('width'=>$val->sanitizePost($key)));
                     continue;
                 }
                 if ( $val->sanitizePost($key) > 10000 )
                 {
-                    $errors[$key] = $admin->lang->translate('Invalid '.$key.': Too large! (>10000)');
+                    $errors[$key] = $backend->lang()->translate('Invalid '.$key.': Too large! (>10000)');
                     continue;
                 }
             }
@@ -148,7 +151,7 @@ if ($job && $job=="save") {
     {
         if ( ! in_array($val->sanitizePost('skin'),$skins) )
     {
-        $errors[$key] = $admin->lang->translate('Invalid skin!');
+            $errors[$key] = $backend->lang()->translate('Invalid skin!');
         continue;
     }
         else
@@ -172,7 +175,7 @@ if ($job && $job=="save") {
     {
         if ( ! in_array($val->sanitizePost('toolbar'),$toolbars) )
         {
-            $errors[$key] = $admin->lang->translate('Invalid toolbar!');
+            $errors[$key] = $backend->lang()->translate('Invalid toolbar!');
             continue;
         }
         else
@@ -189,7 +192,7 @@ if ($job && $job=="save") {
             if ( ! isset($_POST[$item['name']]) ) $_POST[$item['name']] = $item['default'];
             if ( $item['type'] == 'boolean' && ( $_POST[$item['name']] != 'true' && $_POST[$item['name']] != 'false' ) )
             {
-                $errors[$item['name']] = $admin->lang->translate('Invalid boolean value!');
+                $errors[$item['name']] = $backend->lang()->translate('Invalid boolean value!');
                 continue;
             }
             
@@ -202,7 +205,7 @@ if ($job && $job=="save") {
         $unknown = array_diff($_POST['plugins'],$plugins);
         if(count($unknown))
         {
-            $errors['plugins'] = $admin->lang->translate('Invalid plugin(s) encountered!');
+            $errors['plugins'] = $backend->lang()->translate('Invalid plugin(s) encountered!');
         }
         else
         {
@@ -216,7 +219,7 @@ if ($job && $job=="save") {
         $known = array_keys($filemanager);
         if(! in_array($fm,$known) )
         {
-            $errors['filemanager'] = $admin->lang->translate('Invalid filemanager!');
+            $errors['filemanager'] = $backend->lang()->translate('Invalid filemanager!');
         }
         else
         {
@@ -227,9 +230,9 @@ if ($job && $job=="save") {
     // only save changes if there were no errors
     if ( ! count($errors) )
     {
-        $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'width\', \''.$width.$width_unit.'\' )' );
-        $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'height\', \''.$height.$height_unit.'\' )' );
-        $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'enable_htmlpurifier\', \''.$enable_htmlpurifier.'\' )' );
+        $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'width\', \''.$width.$width_unit.'\' )' );
+        $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'height\', \''.$height.$height_unit.'\' )' );
+        $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'enable_htmlpurifier\', \''.$enable_htmlpurifier.'\' )' );
         // save additionals
         if(count($settings))
         {
@@ -247,25 +250,25 @@ if ($job && $job=="save") {
                 {
                     $value = $_POST[$item['name']];
                 }
-                $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \''.$item['name'].'\', \''.$value.'\' )' );
+                $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \''.$item['name'].'\', \''.$value.'\' )' );
             }
         }
         // save plugins
         if($new_plugins)
         {
-            $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'plugins\', \''.$new_plugins.'\' )' );
+            $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'plugins\', \''.$new_plugins.'\' )' );
         }
         if($new_fm)
         {
-            $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'filemanager\', \''.$new_fm.'\' )' );
+            $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'filemanager\', \''.$new_fm.'\' )' );
         }
         if($new_toolbar)
         {
-            $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'toolbar\', \''.$new_toolbar.'\' )' );
+            $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'toolbar\', \''.$new_toolbar.'\' )' );
         }
         if($new_skin)
         {
-            $database->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'skin\', \''.$new_skin.'\' )' );
+            $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'skin\', \''.$new_skin.'\' )' );
         }
         // reload settings
         $config       = wysiwyg_admin_config();
@@ -287,7 +290,7 @@ if ( ( isset($config['filemanager']) && $config['filemanager'] != '' ) )
 }
 
 $parser->setPath(dirname(__FILE__)."/templates/default");
-echo $parser->get(
+$parser->output(
     'tool',
     array(
         'width_unit_em'    => '',
@@ -312,7 +315,7 @@ echo $parser->get(
         'filemanager'      => $filemanager,
         'plugins_checked'  => $plugins_checked,
         'filemanager_checked' => $filemanager_checked,
-        'htmlpurifier'     => $admin->get_helper('Addons')->isModuleInstalled('lib_htmlpurifier'),
+        'htmlpurifier'        => CAT_Helper_Addons::isModuleInstalled('lib_htmlpurifier'),
         'enable_htmlpurifier' => $enable_htmlpurifier,
         'width_unit_'.($width_unit=='%'?'proz':$width_unit) => 'checked="checked"',
         'height_unit_'.($height_unit=='%'?'proz':$height_unit) => 'checked="checked"',
@@ -328,9 +331,9 @@ function wysiwyg_admin_escape($item) {
 
 // get current settings
 function wysiwyg_admin_config() {
-    global $database;
+    global $backend;
     $query  = "SELECT * from `".CAT_TABLE_PREFIX."mod_wysiwyg_admin_v2` where `editor`='".WYSIWYG_EDITOR."'";
-    $result = $database->query ($query );
+    $result = $backend->db()->query ($query );
     $config = array();
     if($result->numRows())
     {

@@ -1,4 +1,4 @@
-{include file="header.lte"}
+{include file="header.tpl"}
   <h2>{translate('Manage Droplet permissions')}</h2>
   
   <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=droplets">&laquo; {translate('Back to overview')} &laquo;</a><br /><br />
@@ -36,4 +36,4 @@
     <input type="submit" name="cancel" value="{translate('Cancel')}" />
   </form>
   {/if}
-{include file="footer.lte"}
+{include file="footer.tpl"}

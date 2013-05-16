@@ -38,5 +38,5 @@ if (defined('CAT_PATH')) {
 require_once CAT_PATH.'/modules/'.basename(dirname(__FILE__)).'/library.php';
 
 // init & execute the LEPTON Search
-$search = new LEPTON_Search();
+$search = new CATSearch();
 $search->exec();

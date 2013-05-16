@@ -82,7 +82,7 @@ if(count($tools))
 			'TOOL_NAME'		=> $tool['NAME'],
 			'TOOL_DIR'		=> $tool['VALUE'],
             'ICON'          => $icon,
-            'TOOL_DESCRIPTION' => (!$module_description?$tool['DESCRIPTION']:$module_description),
+            'TOOL_DESCRIPTION' => (!$module_description?$tool['description']:$module_description),
 		);
 	}
 }

@@ -58,6 +58,7 @@ set_include_path (
         PATH_SEPARATOR,
         array(
             realpath(dirname(__FILE__).'/../framework'),
+            realpath(dirname(__FILE__).'/../modules/lib_dwoo/dwoo'),
             get_include_path(),
         )
     )
@@ -101,6 +102,7 @@ if ( count($pre_inst_err) )
 // language helper
 include dirname(__FILE__).'/../framework/CAT/Helper/I18n.php';
 $lang = CAT_Helper_I18n::getInstance();
+$lang->addFile( $lang->getLang().'.php', dirname(__FILE__).'/languages' );
 
 // the admin dummy defines some methods needed for module installation and error handling
 include dirname(__FILE__).'/admin_dummy.inc.php';
@@ -828,66 +830,56 @@ function install_modules ($cat_path) {
 
 	$logh = fopen( CAT_LOGFILE, 'a' );
 
-	foreach($dirs AS $type => $dir) {
-		if(false !== ($handle = opendir($dir))) {
-			$temp_list = array();
-			while(false !== ($file = readdir($handle))) {
-				if(($file != '') && (substr($file, 0, 1) != '.') && (!in_array($file, $ignore_files))) {
-					$temp_list[] = $file;
-				}
-			}
-			natsort($temp_list);
-
-			foreach($temp_list as $module) {
-			    $admin->error = NULL;
-                if($type=='modules' || $type="templates")
+    foreach($dirs AS $type => $dir)
                 {
-                    fwrite( $logh, 'installing module/template ['.$module.']'."\n" );
-                $addon_info = CAT_Helper_Addons::checkInfo($dir.'/'.$module);
+        $subs = ( $type == 'languages' )
+              ? CAT_Helper_Directory::getFiles($dir,$dir)
+              : CAT_Helper_Directory::getDirectories($dir,$dir)
+              ;
+        natsort($subs);
+        foreach( $subs as $item )
+        {
+            if($type == 'languages')
+            {
+                fwrite( $logh, 'installing language ['.$item.']'."\n" );
+                $info = CAT_Helper_Addons::checkInfo($dir.'/'.$item);
+                if ( !CAT_Helper_Addons::loadModuleIntoDB($dir.'/'.$item,'install',$info))
+                {
+                    $errors[$dir] = sprintf('Unable to add language [%s] to database!',$item);
+                    fwrite( $logh, sprintf('Unable to add language [%s] to database!',$item)."\n" );
+                }
+                else
+                {
+                    fwrite( $logh, sprintf('%s [%s] sucessfully installed',ucfirst(substr($type,0,-1)),$item)."\n" );
+                }
+            }
+            else
+            {
+                fwrite( $logh, 'installing module/template ['.$item.']'."\n" );
+                $addon_info = CAT_Helper_Addons::checkInfo($dir.'/'.$item);
                 // Run the install script if there is one
-                if ( file_exists($dir.'/'.$module.'/install.php') )
-                    require $dir.'/'.$module.'/install.php';
+                if ( file_exists($dir.'/'.$item.'/install.php') )
+                    require $dir.'/'.$item.'/install.php';
                 // load the module info into the database
-                if ( !CAT_Helper_Addons::loadModuleIntoDB($dir.'/'.$module,'install',$addon_info))
+                if ( !CAT_Helper_Addons::loadModuleIntoDB($dir.'/'.$item,'install',$addon_info))
                 {
-                    $errors[$dir] = sprintf('Unable to add module [%s] to database!',$module);
-                        fwrite( $logh, sprintf('Unable to add module [%s] to database!',$module) );
+                    $errors[$dir] = sprintf('Unable to add %s [%s] to database!',$type,$item);
+                    fwrite( $logh, sprintf('Unable to add %s [%s] to database!',$type,$item)."\n" );
                 }
-                    else
-                    {
-                        fwrite( $logh, 'Sucessfully installed' );
-                    }
-                }
-                elseif($type == 'languages')
+                else
                 {
-    			    fwrite( $logh, 'installing language ['.$module.']'."\n" );
-                    $info = CAT_Helper_Addons::checkInfo($dir.'/'.$module);
-                    if ( !CAT_Helper_Addons::loadModuleIntoDB($dir.'/'.$module,'install',$info))
-                    {
-                        $errors[$dir] = sprintf('Unable to add module [%s] to database!',$module);
-                        fwrite( $logh, sprintf('Unable to add module [%s] to database!',$module) );
-                    }
-                    else
-                    {
-                        fwrite( $logh, 'Sucessfully installed' );
-			}
+                    fwrite( $logh, sprintf('%s [%s] sucessfully installed',ucfirst(substr($type,0,-1)),$item)."\n" );
                 }
-    				
-			}
-			closedir($handle);
-			unset($temp_list);
-		}
-		else {
-			$errors[$dir] = $dir;
-		}
-	}
+            }
+        }
+    }
 
-	fclose($logh);
+    fclose($logh);
 
-	return array(
-		( count($errors) ? false : true ),
-		$errors
-	);
+    return array(
+        ( count($errors) ? false : true ),
+        $errors
+    );
 }   // end function install_modules ()
 
 /**
@@ -895,110 +887,110 @@ function install_modules ($cat_path) {
  **/
 function check_tables($database) {
 
-	global $config;
-	$errors = array();
-	$all_tables = array();
-	$missing_tables = array();
+    global $config;
+    $errors = array();
+    $all_tables = array();
+    $missing_tables = array();
 
-	$table_prefix = $config['table_prefix'];
+    $table_prefix = $config['table_prefix'];
 
-	$requested_tables = array("class_secure","pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_droplets_settings","mod_droplets_permissions","mod_wysiwyg","mod_wysiwyg_admin_v2");
-	for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
+    $requested_tables = array("class_secure","pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_droplets_settings","mod_droplets_permissions","mod_wysiwyg","mod_wysiwyg_admin_v2");
+    for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
 
-	$result = mysql_query("SHOW TABLES FROM ".CAT_DB_NAME);
+    $result = mysql_query("SHOW TABLES FROM ".CAT_DB_NAME);
 
     if(!is_resource($result)) {
         $errors['tables'] = 'Unable to check tables - no result from SHOW TABLES!';
     }
     else {
-	    for($i=0; $i < mysql_num_rows($result); $i++) $all_tables[] = mysql_table_name($result, $i);
-    	foreach($requested_tables as $temp_table) {
-    		if (!in_array($temp_table, $all_tables)) {
-    			$missing_tables[] = $temp_table;
-    		}
-    	}
+        for($i=0; $i < mysql_num_rows($result); $i++) $all_tables[] = mysql_table_name($result, $i);
+        foreach($requested_tables as $temp_table) {
+            if (!in_array($temp_table, $all_tables)) {
+                $missing_tables[] = $temp_table;
+            }
+        }
     }
 
-	/**
-	 *	If one or more needed tables are missing, so
-	 *	we can't go on and have to display an error
-	 */
-	if ( count($missing_tables) > 0 ) {
-		$errors['missing'] = $missing_tables;
-	}
+    /**
+     *    If one or more needed tables are missing, so
+     *    we can't go on and have to display an error
+     */
+    if ( count($missing_tables) > 0 ) {
+        $errors['missing'] = $missing_tables;
+    }
 
-	/**
-	 *	Try to get some default settings ...
-	 *	Keep in Mind, that the values are only used as default, if an entry isn't found.
-	 */
-	$vars = array(
-		'DEFAULT_THEME'	=> "freshcat",
-		'CAT_THEME_URL'		=> CAT_URL."/templates/freshcat",
-		'CAT_THEME_PATH'	=> CAT_PATH."/templates/freshcat",
-		'LANGUAGE'		=> $_POST['default_language'],
-		'SERVER_EMAIL'	=> "admin@yourdomain.tld",
-		'PAGES_DIRECTORY' => '/page',
-		'ENABLE_OLD_LANGUAGE_DEFINITIONS' => true
-	);
-	foreach($vars as $k => $v) {
-		if (!defined($k)) {
-			$temp_val = $database->get_one("SELECT `value` from `".$table_prefix."settings` where `name`='".strtolower($k)."'");
-			if ( $temp_val ) $v = $temp_val;
-			define($k, $v);
-		}
-	}
+    /**
+     *    Try to get some default settings ...
+     *    Keep in Mind, that the values are only used as default, if an entry isn't found.
+     */
+    $vars = array(
+        'DEFAULT_THEME'    => "freshcat",
+        'CAT_THEME_URL'        => CAT_URL."/templates/freshcat",
+        'CAT_THEME_PATH'    => CAT_PATH."/templates/freshcat",
+        'LANGUAGE'        => $_POST['default_language'],
+        'SERVER_EMAIL'    => "admin@yourdomain.tld",
+        'PAGES_DIRECTORY' => '/page',
+        'ENABLE_OLD_LANGUAGE_DEFINITIONS' => true
+    );
+    foreach($vars as $k => $v) {
+        if (!defined($k)) {
+            $temp_val = $database->get_one("SELECT `value` from `".$table_prefix."settings` where `name`='".strtolower($k)."'");
+            if ( $temp_val ) $v = $temp_val;
+            define($k, $v);
+        }
+    }
 
-	if (!isset($MESSAGE)) include (CAT_PATH."/languages/".LANGUAGE.".php");
+    if (!isset($MESSAGE)) include (CAT_PATH."/languages/".LANGUAGE.".php");
 
-	/**
-	 *	The important part ...
-	 *	Is there an valid user?
-	 */
-	$result = $database->query("SELECT * from `".$table_prefix."users` where `username`='".$config['admin_username']."'");
-	if ( $database->is_error() ) {
-		$errors['adminuser'] = $database->get_error();
-	}
+    /**
+     *    The important part ...
+     *    Is there an valid user?
+     */
+    $result = $database->query("SELECT * from `".$table_prefix."users` where `username`='".$config['admin_username']."'");
+    if ( $database->is_error() ) {
+        $errors['adminuser'] = $database->get_error();
+    }
 
-	if ($result->numRows() == 0) {
-		$errors['adminuser'] = false;
-	} else {
-		$data = $result->fetchRow( MYSQL_ASSOC );
-	 	/**
-	 	 *	Does the password match
-	 	 */
-	 	if ( md5($config['admin_password']) != $data['password']) {
-	 		$errors['password'] = false;
-	 	}
-	}
+    if ($result->numRows() == 0) {
+        $errors['adminuser'] = false;
+    } else {
+        $data = $result->fetchRow( MYSQL_ASSOC );
+         /**
+          *    Does the password match
+          */
+         if ( md5($config['admin_password']) != $data['password']) {
+             $errors['password'] = false;
+         }
+    }
 
-	return array(
-		( count($errors) ? false : true ),
-		$errors
-	);
+    return array(
+        ( count($errors) ? false : true ),
+        $errors
+    );
 
 }   // end function check_tables()
 
 function pre_installation_error( $msg ) {
-	global $installer_uri;
-	echo '<?xml version="1.0" encoding="UTF-8"?>
+    global $installer_uri;
+    echo '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
   <head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
     <title>Black Cat CMS Installation Prerequistes Error</title>
- 	<link rel="stylesheet" href="'.$installer_uri.'/templates/default/index.css" type="text/css" />
+     <link rel="stylesheet" href="'.$installer_uri.'/templates/default/index.css" type="text/css" />
    </head>
   <body>
   <div style="width:800px;min-width:500px;margin-left:auto;margin-right:auto;margin-top:100px;text-align:center;">
     <div style="float:left">
-	  <img src="templates/default/images/fail.png" alt="Fail" title="Fail" />
+      <img src="templates/default/images/fail.png" alt="Fail" title="Fail" />
     </div>
     <div style="float:left">
-  	  <h1>Black Cat CMS Installation Prerequistes Error</h1>
-  	  <h2>Sorry, the Black Cat CMS Installation prerequisites check failed.</h2>
-  	  <span style="color:#fff;">'.$msg.'</span><br /><br />
-  	  <h2>You will need to fix the errors quoted above to start the installation.</h2>
+        <h1>Black Cat CMS Installation Prerequistes Error</h1>
+        <h2>Sorry, the Black Cat CMS Installation prerequisites check failed.</h2>
+        <span style="color:#fff;">'.$msg.'</span><br /><br />
+        <h2>You will need to fix the errors quoted above to start the installation.</h2>
     </div>
   </div>
   <div id="header">
@@ -1045,11 +1037,11 @@ function create_default_page($database) {
 
     $pg_content = '<'.'?'."php
 /**
- *	This file is autogenerated by the Black Cat CMS Installer
- *	Do not modify this file!
+ *    This file is autogenerated by the Black Cat CMS Installer
+ *    Do not modify this file!
  */
 ".'$page_id = %%id%%;'."
-	require('../index.php');
+    require('../index.php');
 ?>
 ";
 
@@ -1096,29 +1088,29 @@ function __cat_installer_import_sql($file,$database) {
  **/
 function __do_install() {
 
-	global $config, $parser, $dirh;
+    global $config, $parser, $dirh;
 
-	include dirname(__FILE__).'/../framework/functions.php';
-	$cat_path  = sanitize_path( dirname(__FILE__).'/..' );
-	$inst_path = sanitize_path( $cat_path.'/'.pathinfo( dirname(__FILE__), PATHINFO_BASENAME ) );
+    include dirname(__FILE__).'/../framework/functions.php';
+    $cat_path  = sanitize_path( dirname(__FILE__).'/..' );
+    $inst_path = sanitize_path( $cat_path.'/'.pathinfo( dirname(__FILE__), PATHINFO_BASENAME ) );
 
-	if( isset($config['install_tables']) && $config['install_tables'] == 'true' ) {
-		$install_tables = true;
-	} else {
-		$install_tables = false;
-	}
+    if( isset($config['install_tables']) && $config['install_tables'] == 'true' ) {
+        $install_tables = true;
+    } else {
+        $install_tables = false;
+    }
 
-	// get server IP
+    // get server IP
     if (array_key_exists('SERVER_ADDR', $_SERVER)) {
-	    $server_addr = $_SERVER['SERVER_ADDR'];
-	} else {
-	    $server_addr = '127.0.0.1';
-	}
+        $server_addr = $_SERVER['SERVER_ADDR'];
+    } else {
+        $server_addr = '127.0.0.1';
+    }
 
-	// remove trailing /
-	$config_cat_url = rtrim( $config['cat_url'], '/' );
+    // remove trailing /
+    $config_cat_url = rtrim( $config['cat_url'], '/' );
 
-	$config_content = "" .
+    $config_content = "" .
 "<?php\n".
 "\n".
 "if(defined('CAT_PATH')) {\n".
@@ -1155,239 +1147,239 @@ function __do_install() {
 "\n".
 "?>";
 
-	$config_filename = $cat_path.'/config.php';
+    $config_filename = $cat_path.'/config.php';
 
-	// Check if the file exists and is writable first.
-	if(($handle = @fopen($config_filename, 'w')) === false) {
-		return array(
-			false,
-			$lang->translate(
-				"Cannot open the configuration file ({{ file }})",
-				array( 'file' => $config_filename )
-			)
-		);
-	} else {
-		if (fwrite($handle, $config_content, strlen($config_content) ) === FALSE) {
-			fclose($handle);
-			return array(
-			    false,
-				$lang->translate(
-					"Cannot write to the configuration file ({{ file }})",
-					array( 'file' => $config_filename )
-				)
-			);
-		}
-		// Close file
-		fclose($handle);
-	}
+    // Check if the file exists and is writable first.
+    if(($handle = @fopen($config_filename, 'w')) === false) {
+        return array(
+            false,
+            $lang->translate(
+                "Cannot open the configuration file ({{ file }})",
+                array( 'file' => $config_filename )
+            )
+        );
+    } else {
+        if (fwrite($handle, $config_content, strlen($config_content) ) === FALSE) {
+            fclose($handle);
+            return array(
+                false,
+                $lang->translate(
+                    "Cannot write to the configuration file ({{ file }})",
+                    array( 'file' => $config_filename )
+                )
+            );
+        }
+        // Close file
+        fclose($handle);
+    }
 
-	// avoid to load config.php here
-	if ( ! defined('CAT_PATH') ) 		   { define('CAT_PATH',$cat_path);                     }
-	if ( ! defined('CAT_ADMINS_FOLDER') )  { define('CAT_ADMINS_FOLDER', '/admins');           }
-	if ( ! defined('CAT_BACKEND_FOLDER') ) { define('CAT_BACKEND_FOLDER', '/backend');         }
-	if ( ! defined('CAT_BACKEND_PATH') )   { define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );  }
-	if ( ! defined('CAT_ADMIN_PATH') )     { define('CAT_ADMIN_PATH', CAT_PATH.CAT_BACKEND_PATH);  }
-	if ( ! defined('CAT_ADMIN_URL') )      { define('CAT_ADMIN_URL', CAT_URL.CAT_BACKEND_PATH);    }
+    // avoid to load config.php here
+    if ( ! defined('CAT_PATH') )            { define('CAT_PATH',$cat_path);                     }
+    if ( ! defined('CAT_ADMINS_FOLDER') )  { define('CAT_ADMINS_FOLDER', '/admins');           }
+    if ( ! defined('CAT_BACKEND_FOLDER') ) { define('CAT_BACKEND_FOLDER', '/backend');         }
+    if ( ! defined('CAT_BACKEND_PATH') )   { define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );  }
+    if ( ! defined('CAT_ADMIN_PATH') )     { define('CAT_ADMIN_PATH', CAT_PATH.CAT_BACKEND_PATH);  }
+    if ( ! defined('CAT_ADMIN_URL') )      { define('CAT_ADMIN_URL', CAT_URL.CAT_BACKEND_PATH);    }
 
-	foreach( $config as $key => $value ) {
-		if ( ! defined( strtoupper($key) ) )
-		{
-			define( str_replace( 'DATABASE_', 'CAT_DB_', strtoupper($key) ),$value);
-		}
-	}
+    foreach( $config as $key => $value ) {
+        if ( ! defined( strtoupper($key) ) )
+        {
+            define( str_replace( 'DATABASE_', 'CAT_DB_', strtoupper($key) ),$value);
+        }
+    }
     if ( ! defined('CAT_TABLE_PREFIX') )   { define('CAT_TABLE_PREFIX',TABLE_PREFIX);              }
 
-	// WB compatibility
-	if ( ! defined('WB_URL') 	  ) { define('WB_URL',$config['cat_url']); 	   }
-	if ( ! defined('WB_PATH')     ) { define('WB_PATH',$cat_path); 			   }
+    // WB compatibility
+    if ( ! defined('WB_URL')       ) { define('WB_URL',$config['cat_url']);        }
+    if ( ! defined('WB_PATH')     ) { define('WB_PATH',$cat_path);                }
     // LEPTON compatibility
-	if ( ! defined('LEPTON_URL')  ) { define('LEPTON_URL',$config['cat_url']); }
-	if ( ! defined('LEPTON_PATH') ) { define('LEPTON_PATH',$cat_path); 		   }
+    if ( ! defined('LEPTON_URL')  ) { define('LEPTON_URL',$config['cat_url']); }
+    if ( ! defined('LEPTON_PATH') ) { define('LEPTON_PATH',$cat_path);            }
 
- 	require $cat_path.'/framework/class.login.php';
-	$database = new database();
+     require $cat_path.'/framework/class.login.php';
+    $database = new database();
 
-	// remove old inst.log
+    // remove old inst.log
     if(file_exists(CAT_LOGFILE))
-	    @unlink( CAT_LOGFILE );
+        @unlink( CAT_LOGFILE );
 
-	// ---- install tables -----
-	if ( $install_tables ) {
-		list ( $result, $errors ) = install_tables($database);
-		// only try to fill tables if the creation succeeded
-		if ( $result && ! count($errors) ) {
-			// ----- fill tables -----
-			list ( $result, $fillerrors ) = fill_tables($database);
-			if ( ! $result || count($fillerrors) ) {
-				$errors['populate tables'] = $fillerrors;
-			}
-			// only try to install modules if fill tables succeeded
-			else {
-				// ----- install addons -----
-				list ( $result, $insterrors ) = install_modules($cat_path);
-				if ( ! $result || count($insterrors) ) {
-					$errors['install modules'] = $insterrors;
-				}
-				// only check if all above succeeded
-				else {
-				    // ----- check tables ----
-					list ( $result, $checkerrors ) = check_tables($database);
-					if ( ! $result || count($checkerrors) ) {
-						$errors['check tables'] = $checkerrors;
-					}
-					else {
-						create_default_page($database);
-					}
-				}
-			}
-		}
-	}
+    // ---- install tables -----
+    if ( $install_tables ) {
+        list ( $result, $errors ) = install_tables($database);
+        // only try to fill tables if the creation succeeded
+        if ( $result && ! count($errors) ) {
+            // ----- fill tables -----
+            list ( $result, $fillerrors ) = fill_tables($database);
+            if ( ! $result || count($fillerrors) ) {
+                $errors['populate tables'] = $fillerrors;
+            }
+            // only try to install modules if fill tables succeeded
+            else {
+                // ----- install addons -----
+                list ( $result, $insterrors ) = install_modules($cat_path);
+                if ( ! $result || count($insterrors) ) {
+                    $errors['install modules'] = $insterrors;
+                }
+                // only check if all above succeeded
+                else {
+                    // ----- check tables ----
+                    list ( $result, $checkerrors ) = check_tables($database);
+                    if ( ! $result || count($checkerrors) ) {
+                        $errors['check tables'] = $checkerrors;
+                    }
+                    else {
+                        create_default_page($database);
+                    }
+                }
+            }
+        }
+    }
 
-	// ---- set index.php to read only ----
-	$dirh->setReadOnly( $cat_path.'/index.php' );
+    // ---- set index.php to read only ----
+    $dirh->setReadOnly( $cat_path.'/index.php' );
 
-	// ---- make sure we have an index.php everywhere ----
-	$dirh->recursiveCreateIndex( $cat_path );
+    // ---- make sure we have an index.php everywhere ----
+    $dirh->recursiveCreateIndex( $cat_path );
 
-	if ( count($errors) )
-	{
+    if ( count($errors) )
+    {
         $parser->setPath( dirname(__FILE__).'/templates/default' );
-		$output = $parser->get(
-	        'install_errors.tpl',
-	        array( 'errors' => $errors )
-		);
-		return array(
-			( count($errors) ? false : true ),
-			$output
-		);
-	}
-	else {
-	    return array ( true, '' );
-	}
+        $output = $parser->get(
+            'install_errors.tpl',
+            array( 'errors' => $errors )
+        );
+        return array(
+            ( count($errors) ? false : true ),
+            $output
+        );
+    }
+    else {
+        return array ( true, '' );
+    }
 
 }   // end function __do_install()
 
 function __cat_check_db_config() {
 
-	global $lang, $users, $config;
+    global $lang, $users, $config;
 
-	$errors = array();
-	$regexp = '/^[^\x-\x1F]+$/D';
+    $errors = array();
+    $regexp = '/^[^\x-\x1F]+$/D';
 
-	// Check if user has entered a database host
-	if ( ! isset( $config['database_host'] ) || $config['database_host'] == '' )
-	{
-		$errors['installer_database_host'] = $lang->translate('Please enter a database host name');
-	}
-	else
-	{
-		if ( preg_match( $regexp, $config['database_host'], $match ) )
-		{
-			$database_host = $match[0];
-		}
-		else
-		{
-			$errors['installer_database_host'] = $lang->translate('Invalid database hostname!');
-		}
-	}
+    // Check if user has entered a database host
+    if ( ! isset( $config['database_host'] ) || $config['database_host'] == '' )
+    {
+        $errors['installer_database_host'] = $lang->translate('Please enter a database host name');
+    }
+    else
+    {
+        if ( preg_match( $regexp, $config['database_host'], $match ) )
+        {
+            $database_host = $match[0];
+        }
+        else
+        {
+            $errors['installer_database_host'] = $lang->translate('Invalid database hostname!');
+        }
+    }
 
-	// check for valid port number
-	if ( !isset( $config['database_port'] ) || $config['database_port'] == '' )
-	{
-		$errors['installer_database_port'] = $lang->translate('Please enter a database port');
-	}
-	else
-	{
-		if ( is_numeric( $config['database_port'] ) )
-		{
-			$database_port = $config['database_port'];
-		}
-		else
-		{
-			$errors['installer_database_port'] = $lang->translate('Invalid port number!');
-		}
-	}
-	// Check if user has entered a database username
-	if ( !isset( $config['database_username'] ) || $config['database_username'] == '' )
-	{
-		$errors['installer_database_username'] = $lang->translate('Please enter a database username');
-	}
-	else
-	{
-		if ( preg_match( $regexp, $config['database_username'], $match ) )
-		{
-			$database_username = $match[0];
-		}
-		else
-		{
-			$errors['installer_database_username'] = $lang->translate('Invalid database username!');
-		}
-	}
-	// Check if user has entered a database password
-	if ( !isset( $config['database_password'] ) || $config['database_password'] == '' )
-	{
-		$database_password = '';
-		if ( ! isset($config['no_validate_db_password']) )
-		{
-            $errors['installer_database_password_empty'] = true;
-		}
-	}
-	else
-	{
+    // check for valid port number
+    if ( !isset( $config['database_port'] ) || $config['database_port'] == '' )
+    {
+        $errors['installer_database_port'] = $lang->translate('Please enter a database port');
+    }
+    else
+    {
+        if ( is_numeric( $config['database_port'] ) )
+        {
+            $database_port = $config['database_port'];
+        }
+        else
+        {
+            $errors['installer_database_port'] = $lang->translate('Invalid port number!');
+        }
+    }
+    // Check if user has entered a database username
+    if ( !isset( $config['database_username'] ) || $config['database_username'] == '' )
+    {
+        $errors['installer_database_username'] = $lang->translate('Please enter a database username');
+    }
+    else
+    {
+        if ( preg_match( $regexp, $config['database_username'], $match ) )
+        {
+            $database_username = $match[0];
+        }
+        else
+        {
+            $errors['installer_database_username'] = $lang->translate('Invalid database username!');
+        }
+    }
+    // Check if user has entered a database password
+    if ( !isset( $config['database_password'] ) || $config['database_password'] == '' )
+    {
+        $database_password = '';
         if ( ! isset($config['no_validate_db_password']) )
         {
-	    if ( ! $users->validatePassword($config['database_password']) )
-	    {
-			$errors['installer_database_password'] = $lang->translate('Invalid database password!')
-												   . ' ' . $users->getPasswordError();
-		}
-		else
-		{
-		    $database_password = $users->getLastValidatedPassword();
-		}
-	}
+            $errors['installer_database_password_empty'] = true;
+        }
+    }
+    else
+    {
+        if ( ! isset($config['no_validate_db_password']) )
+        {
+        if ( ! $users->validatePassword($config['database_password']) )
+        {
+            $errors['installer_database_password'] = $lang->translate('Invalid database password!')
+                                                   . ' ' . $users->getPasswordError();
+        }
+        else
+        {
+            $database_password = $users->getLastValidatedPassword();
+        }
+    }
         else
         {
             $database_password = $config['database_password'];
         }
-	}
+    }
 
-	// Check if user has entered a database name
-	if ( !isset( $config['database_name'] ) || $config['database_name'] == '' )
-	{
-		$errors['installer_database_name'] = $lang->translate('Please enter a database name');
-	}
-	else
-	{
-		// make sure only allowed characters are specified; it is not allowed to
-		// have a DB name with digits only!
-		if ( preg_match( '/^[a-z0-9][a-z0-9_-]+$/i', $config['database_name'] ) && ! is_numeric($config['database_name']) )
-		{
-			$database_name = $config['database_name'];
-		}
-		else
-		{
-			// contains invalid characters (only a-z, A-Z, 0-9 and _ allowed to avoid problems with table/field names)
-			$errors['installer_database_name'] = $lang->translate('Only characters a-z, A-Z, 0-9, - and _ allowed in database name. Please note that a database name must not be composed of digits only.');
-		}
-	}
-	// table prefix
-	if ( isset($config['table_prefix']) && $config['table_prefix'] != '' && ! preg_match('/^[a-z0-9_]+$/i', $config['table_prefix']) ) {
-	    $errors['installer_table_prefix'] = $lang->translate('Only characters a-z, A-Z, 0-9 and _ allowed in table_prefix.');
-	}
+    // Check if user has entered a database name
+    if ( !isset( $config['database_name'] ) || $config['database_name'] == '' )
+    {
+        $errors['installer_database_name'] = $lang->translate('Please enter a database name');
+    }
+    else
+    {
+        // make sure only allowed characters are specified; it is not allowed to
+        // have a DB name with digits only!
+        if ( preg_match( '/^[a-z0-9][a-z0-9_-]+$/i', $config['database_name'] ) && ! is_numeric($config['database_name']) )
+        {
+            $database_name = $config['database_name'];
+        }
+        else
+        {
+            // contains invalid characters (only a-z, A-Z, 0-9 and _ allowed to avoid problems with table/field names)
+            $errors['installer_database_name'] = $lang->translate('Only characters a-z, A-Z, 0-9, - and _ allowed in database name. Please note that a database name must not be composed of digits only.');
+        }
+    }
+    // table prefix
+    if ( isset($config['table_prefix']) && $config['table_prefix'] != '' && ! preg_match('/^[a-z0-9_]+$/i', $config['table_prefix']) ) {
+        $errors['installer_table_prefix'] = $lang->translate('Only characters a-z, A-Z, 0-9 and _ allowed in table_prefix.');
+    }
 
-	if ( !count( $errors ) )
-	{
-		// check database connection
-		$host = ( $database_port !== '3306' ) ? $database_host . ':' . $database_port : $database_host;
-		$ret  = @mysql_connect( $host, $database_username, $database_password );
-		if ( ! is_resource($ret) )
-		{
-			$errors['global'] = $lang->translate('Unable to connect to the database! Please check your settings!');
-		}
-	}
+    if ( !count( $errors ) )
+    {
+        // check database connection
+        $host = ( $database_port !== '3306' ) ? $database_host . ':' . $database_port : $database_host;
+        $ret  = @mysql_connect( $host, $database_username, $database_password );
+        if ( ! is_resource($ret) )
+        {
+            $errors['global'] = $lang->translate('Unable to connect to the database! Please check your settings!');
+        }
+    }
 
-	return $errors;
+    return $errors;
 
 }   // end function __cat_check_db_config()
 

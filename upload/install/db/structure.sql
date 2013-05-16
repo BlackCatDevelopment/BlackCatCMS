@@ -94,19 +94,19 @@ CREATE TABLE IF NOT EXISTS `cat_mod_droplets_settings` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `cat_mod_droplets` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) NOT NULL,
-  `code` longtext NOT NULL,
-  `description` text NOT NULL,
-  `modified_when` int(11) NOT NULL DEFAULT '0',
-  `modified_by` int(11) NOT NULL DEFAULT '0',
-  `active` int(11) NOT NULL DEFAULT '0',
-  `admin_edit` int(11) NOT NULL DEFAULT '0',
-  `admin_view` int(11) NOT NULL DEFAULT '0',
-  `show_wysiwyg` int(11) NOT NULL DEFAULT '0',
-  `comments` text NOT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `cat_mod_droplets` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(32) NOT NULL,
+	`code` LONGTEXT NOT NULL,
+	`description` TEXT NOT NULL,
+	`modified_when` INT(11) NOT NULL DEFAULT '0',
+	`modified_by` INT(11) NOT NULL DEFAULT '0',
+	`active` INT(11) NOT NULL DEFAULT '1',
+	`admin_edit` INT(11) NOT NULL DEFAULT '1',
+	`admin_view` INT(11) NOT NULL DEFAULT '1',
+	`show_wysiwyg` INT(11) NOT NULL DEFAULT '1',
+	`comments` TEXT NOT NULL,
+	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cat_mod_form_fields` (

@@ -1,4 +1,4 @@
-{include file="header.lte"}
+{include file="header.tpl"}
   <a href="">{translate('Back to overview')}</a><br />
   {if $problem}<div class="problem ui-corner-all">{$problem}</div>{/if}
   {if $info}<div class="info ui-corner-all">{$info}</div>{/if}
@@ -14,4 +14,4 @@
         <input type="submit" name="cancel" value="{translate('Cancel')}" />
     </fieldset>
   </form>
-{include file="footer.lte"}
+{include file="footer.tpl"}
