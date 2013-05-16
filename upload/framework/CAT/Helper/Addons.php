@@ -1562,7 +1562,10 @@ if (!class_exists('CAT_Helper_Addons'))
                     {
                         // rename keys
                         $key = str_ireplace(array('template_'),array('module_'),$varname);
-                        $return_values[$key] = ${$varname};
+                        $return_values[$key] = isset(${$varname})
+                                             ? ${$varname}
+                                             : ''
+                                             ;
                     }
                 }
                 return $return_values;

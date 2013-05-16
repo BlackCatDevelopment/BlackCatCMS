@@ -113,6 +113,9 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         private static function init($force=false)
         {
+
+            global $page_id;
+
             if(CAT_Registry::exists('CAT_HELPER_PAGE_INITIALIZED') && !$force)
                 return;
 
@@ -158,6 +161,21 @@ if (!class_exists('CAT_Helper_Page'))
                             }
         				}
 // --------------------- NOT READY YET! ----------------------------------------
+
+                        // mark current page
+                        if (isset($page_id) && $row['page_id'] == $page_id )
+                        {
+                            $row['is_current'] = true;
+                            $direct_parent = $row['parent'];
+                        }
+
+                        // count children; this lets us mark pages that have
+                        // children later
+                        if(!isset($children_count[$row['parent']]))
+                            $children_count[$row['parent']] = 1;
+                        else
+                            $children_count[$row['parent']]++;
+
                         self::$pages[] = $row;
 
                         end(self::$pages);
@@ -165,6 +183,31 @@ if (!class_exists('CAT_Helper_Page'))
                         reset(self::$pages);
 
                     }   // end while()
+
+                    // mark pages that have children
+                    foreach(self::$pages as $i => $page)
+                    {
+                        if(isset($children_count[$page['page_id']]))
+                        {
+                            self::$pages[$i]['children']  = $children_count[$page['page_id']];
+                            self::$pages[$i]['is_parent'] = true;
+                            self::$pages[$i]['has_children'] = true;
+                        }
+                        // mark pages in current trail
+                        #if(isset($page_id) && in_array($page['page_id'],$trail))
+                        #    self::$pages[$i]['is_in_trail'] = true;
+                        if($direct_parent && $page['page_id'] == $direct_parent)
+                            self::$pages[$i]['is_direct_parent'] = true;
+                    }
+
+                    // resolve the trail
+                    $trail = array();
+                    if(isset($page_id) && isset(self::$pages_by_id[$page_id]))
+                    {
+                        // mark parents
+                        $trail = explode(",", '0,'.self::$pages[self::$pages_by_id[$page_id]]['page_trail']);
+                        array_pop($trail); // remove the current page
+                    }
                 }       // end if($result)
             }
             CAT_Registry::register('CAT_HELPER_PAGE_INITIALIZED',true);

@@ -1,104 +1,72 @@
 <?php
 
 /**
- * This file is part of an ADDON for use with Black Cat CMS Core.
- * This ADDON is released under the GNU GPL.
- * Additional license terms can be seen in the info.php of this module.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @module          menu-link
- * @author          WebsiteBaker Project, LEPTON Project
- * @copyright       2004-2010, WebsiteBaker Project
- * @copyright       2010-2011, LEPTON Project 
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see info.php of this module
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Modules
+ *   @package         menu_link
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 
+global $MOD_MENU_LINK, $TEXT;
 
-// check if module language file exists for the language set by the user (e.g. DE, EN)
-if(!file_exists(CAT_PATH .'/modules/menu_link/languages/'.LANGUAGE .'.php')) {
-	// no module language file exists for the language set by the user, include default module language file EN.php
-	require_once(CAT_PATH .'/modules/menu_link/languages/EN.php');
-} else {
-	// a module language file exists for the language defined by the user, load it
-	require_once(CAT_PATH .'/modules/menu_link/languages/'.LANGUAGE .'.php');
-}
+$backend        = CAT_Backend::getInstance('pages','pages_modify');
 
 // get target page_id
-$table = CAT_TABLE_PREFIX.'mod_menu_link';
-$sql_result = $database->query("SELECT * FROM $table WHERE section_id = '$section_id'");
-$sql_row = $sql_result->fetchRow();
+$table          = CAT_TABLE_PREFIX.'mod_menu_link';
+$sql_result     = $backend->db()->query("SELECT * FROM $table WHERE section_id = '$section_id'");
+$sql_row        = $sql_result->fetchRow(MYSQL_ASSOC);
 $target_page_id = $sql_row['target_page_id'];
-$r_type = $sql_row['redirect_type'];
-$extern = $sql_row['extern'];
-$anchor = $sql_row['anchor'];
-$sel = ' selected="selected"';
-
-// Get list of all visible pages and build a page-tree
-
-// this function will fetch the page_tree, recursive
-if(!function_exists('menulink_make_tree')) {
-function menulink_make_tree($parent, $link_pid, $tree) {
-	global $database, $admin, $menulink_titles;
-	$table_p = CAT_TABLE_PREFIX."pages";
-	// get list of page-trails, recursive
-	if($query_page = $database->query("SELECT * FROM `$table_p` WHERE `parent`=$parent ORDER BY `position`")) {
-		while($page = $query_page->fetchRow()) {
-			if($admin->page_is_visible($page) ) {
-				$pids = explode(',', $page['page_trail']);
-				$entry = '';
-				foreach($pids as $pid)
-					$entry .= $menulink_titles[$pid].' / ';
-				$tree[$page['page_id']] = rtrim($entry, '/ ');
-				$tree = menulink_make_tree($page['page_id'], $link_pid, $tree);
-			}
-		}
-	}
-	return($tree);
-}
-}
-
-// get list of all page_ids and page_titles
-global $menulink_titles;
-$menulink_titles = array();
-$table_p = CAT_TABLE_PREFIX."pages";
-if($query_page = $database->query("SELECT `page_id`,`menu_title` FROM `$table_p`")) {
-	while($page = $query_page->fetchRow())
-		$menulink_titles[$page['page_id']] = $page['menu_title'];
-}
-// now get the tree
-$links = array();
-$links = menulink_make_tree(0, $page_id, $links);
+$r_type         = $sql_row['redirect_type'];
+$extern         = $sql_row['extern'];
+$anchor         = $sql_row['anchor'];
+$sel            = ' selected="selected"';
 
 // Get list of targets (id=... or <a name ...>) from pages in $links
-$targets = array();
+$targets  = array();
 $table_mw = CAT_TABLE_PREFIX."mod_wysiwyg";
-$table_s = CAT_TABLE_PREFIX."sections";
+$table_s  = CAT_TABLE_PREFIX."sections";
+
+$pages    = CAT_Helper_Page::getPages();
+$links    = array();
+foreach($pages as $page)
+    $links[$page['page_id']] = $page['link'];
+
 foreach($links as $pid=>$l) {
-	if($query_section = $database->query("SELECT section_id, module FROM $table_s WHERE page_id = '$pid' ORDER BY position")) {
-		while($section = $query_section->fetchRow()) {
+	if($query_section = $backend->db()->query("SELECT section_id, module FROM $table_s WHERE page_id = '$pid' ORDER BY position")) {
+		while($section = $query_section->fetchRow(MYSQL_ASSOC)) {
 			// get section-anchor
 			if(defined('SEC_ANCHOR') && SEC_ANCHOR!='') {
 				$targets[$pid][] = SEC_ANCHOR.$section['section_id'];
@@ -106,8 +74,8 @@ foreach($links as $pid=>$l) {
 				$targets[$pid] = array();
 			}
 			if($section['module'] == 'wysiwyg') {
-				if($query_page = $database->query("SELECT content FROM $table_mw WHERE section_id = '{$section['section_id']}' LIMIT 1")) {
-					$page = $query_page->fetchRow();
+				if($query_page = $backend->db()->query("SELECT content FROM $table_mw WHERE section_id = '{$section['section_id']}' LIMIT 1")) {
+					$page = $query_page->fetchRow(MYSQL_ASSOC);
 					if(preg_match_all('/<(?:a[^>]+name|[^>]+id)\s*=\s*"([^"]+)"/i',$page['content'], $match)) {
 						foreach($match[1] AS $t) {
 							$targets[$pid][$t] = $t;
@@ -118,12 +86,12 @@ foreach($links as $pid=>$l) {
 		}
 	}
 }
-// get target-window for actual page
-$table = CAT_TABLE_PREFIX."pages";
-$query_page = $database->query("SELECT target FROM $table WHERE page_id = '$page_id'");
-$page = $query_page->fetchRow();
-$target = $page['target'];
 
+// get target-window for actual page
+$table      = CAT_TABLE_PREFIX."pages";
+$query_page = $backend->db()->query("SELECT target FROM $table WHERE page_id = '$page_id'");
+$page       = $query_page->fetchRow(MYSQL_ASSOC);
+$target     = $page['target'];
 
 // script for target-select-box
 ?>

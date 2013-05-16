@@ -169,6 +169,19 @@ foreach( $sections as $section )
 					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_year_to']		= $section['publ_start'] > 0 ? date('Y', $section['publ_end'] ) : '';
 					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_hour_to']		= $section['publ_start'] > 0 ? date('H', $section['publ_end'] ) : '';
 					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_minute_to']		= $section['publ_start'] > 0 ? date('i', $section['publ_end'] ) : '';
+
+                // load language file (if any)
+                $langfile = sanitize_path(CAT_PATH.'/modules/'.$module.'/languages/'.LANGUAGE.'.php');
+                if ( file_exists($langfile) )
+                {
+                    if ( ! $backend->lang()->checkFile($langfile, '$LANG', true ))
+                        // old fashioned language file
+                        require $langfile;
+                    else
+                        // modern language file
+                        $backend->lang()->addFile(LANGUAGE . '.php', sanitize_path(CAT_PATH . '/modules/' . $module . '/languages'));
+                }
+
 					// ====================================================== 
 					// ! Include the module and add it to the output buffer   
 					// ====================================================== 
