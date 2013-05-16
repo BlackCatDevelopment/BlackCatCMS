@@ -39,7 +39,7 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$backend = CAT_Backend::getInstance('Addons','module_install');
+$backend = CAT_Backend::getInstance('Addons','module_install',false,false);
 $errors  = array();
 
 $SQL = 'CREATE TABLE IF NOT EXISTS `%ssearch` ('

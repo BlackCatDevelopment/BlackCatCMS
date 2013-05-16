@@ -831,14 +831,16 @@ function install_modules ($cat_path) {
 	$logh = fopen( CAT_LOGFILE, 'a' );
 
     foreach($dirs AS $type => $dir)
-                {
+    {
         $subs = ( $type == 'languages' )
-              ? CAT_Helper_Directory::getFiles($dir,$dir)
-              : CAT_Helper_Directory::getDirectories($dir,$dir)
+              ? CAT_Helper_Directory::getInstance()->setRecursion(false)->getPHPFiles($dir,$dir.'/')
+              : CAT_Helper_Directory::getInstance()->setRecursion(false)->getDirectories($dir,$dir.'/')
               ;
         natsort($subs);
         foreach( $subs as $item )
         {
+echo "---$item<br />";
+            if(in_array($item,$ignore_files)) continue;
             if($type == 'languages')
             {
                 fwrite( $logh, 'installing language ['.$item.']'."\n" );
@@ -925,11 +927,11 @@ function check_tables($database) {
      */
     $vars = array(
         'DEFAULT_THEME'    => "freshcat",
-        'CAT_THEME_URL'        => CAT_URL."/templates/freshcat",
-        'CAT_THEME_PATH'    => CAT_PATH."/templates/freshcat",
-        'LANGUAGE'        => $_POST['default_language'],
-        'SERVER_EMAIL'    => "admin@yourdomain.tld",
-        'PAGES_DIRECTORY' => '/page',
+        'CAT_THEME_URL'    => CAT_URL."/templates/freshcat",
+        'CAT_THEME_PATH'   => CAT_PATH."/templates/freshcat",
+        'LANGUAGE'         => $_POST['default_language'],
+        'SERVER_EMAIL'     => "admin@yourdomain.tld",
+        'PAGES_DIRECTORY'  => '/page',
         'ENABLE_OLD_LANGUAGE_DEFINITIONS' => true
     );
     foreach($vars as $k => $v) {
@@ -1174,7 +1176,8 @@ function __do_install() {
     }
 
     // avoid to load config.php here
-    if ( ! defined('CAT_PATH') )            { define('CAT_PATH',$cat_path);                     }
+    if ( ! defined('CAT_PATH') )           { define('CAT_PATH',$cat_path);                     }
+    if ( ! defined('CAT_URL') )            { define('CAT_URL',$config['cat_url']);             }
     if ( ! defined('CAT_ADMINS_FOLDER') )  { define('CAT_ADMINS_FOLDER', '/admins');           }
     if ( ! defined('CAT_BACKEND_FOLDER') ) { define('CAT_BACKEND_FOLDER', '/backend');         }
     if ( ! defined('CAT_BACKEND_PATH') )   { define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );  }
@@ -1191,10 +1194,10 @@ function __do_install() {
 
     // WB compatibility
     if ( ! defined('WB_URL')       ) { define('WB_URL',$config['cat_url']);        }
-    if ( ! defined('WB_PATH')     ) { define('WB_PATH',$cat_path);                }
+    if ( ! defined('WB_PATH')      ) { define('WB_PATH',$cat_path);                }
     // LEPTON compatibility
-    if ( ! defined('LEPTON_URL')  ) { define('LEPTON_URL',$config['cat_url']); }
-    if ( ! defined('LEPTON_PATH') ) { define('LEPTON_PATH',$cat_path);            }
+    if ( ! defined('LEPTON_URL')   ) { define('LEPTON_URL',$config['cat_url']); }
+    if ( ! defined('LEPTON_PATH')  ) { define('LEPTON_PATH',$cat_path);            }
 
      require $cat_path.'/framework/class.login.php';
     $database = new database();
