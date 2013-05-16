@@ -2038,7 +2038,13 @@ if (!class_exists('CAT_Helper_Page'))
                             $current_section = $section['section_id'];
                             self::_load_headers_inc($file, $for, 'modules/' . $module, $section);
                         }
-                        if ( $module == 'wysiwyg' && ! $wysiwyg_seen )
+                        array_push(CAT_Helper_Page::$css_search_path, '/modules/' . $module, '/modules/' . $module . '/css');
+                        array_push(CAT_Helper_Page::$js_search_path, '/modules/' . $module, '/modules/' . $module . '/js');
+                    } // foreach ($sections as $section)
+                } // if (count($sections))
+
+                // always add WYSIWYG headers for some modules may use show_wysiwyg_editor() later on
+                if ( ! $wysiwyg_seen )
                         {
                             if ( file_exists(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php') )
                             {
@@ -2047,10 +2053,7 @@ if (!class_exists('CAT_Helper_Page'))
                             }
                             $wysiwyg_seen = true;
                         }
-                        array_push(CAT_Helper_Page::$css_search_path, '/modules/' . $module, '/modules/' . $module . '/css');
-                        array_push(CAT_Helper_Page::$js_search_path, '/modules/' . $module, '/modules/' . $module . '/js');
-                    } // foreach ($sections as $section)
-                } // if (count($sections))
+
             }
         }   // end function _load_sections()
 

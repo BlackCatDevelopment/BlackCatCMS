@@ -62,11 +62,15 @@ class admin extends wb
         return CAT_Users::get_permission($name,$type);
     }
 
+    function print_footer() {
+        return CAT_Backend::getInstance('')->print_footer();
+    }
+
 }
 
 /*
 	print_header()
-	print_footer()
+	
 	get_link_permission($title)
 	__admin_register_backend_modfiles()
 	__admin_build_link( $aPath, $aType="css")

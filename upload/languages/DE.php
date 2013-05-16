@@ -687,6 +687,7 @@ $TEXT = array(
 	'NO' 					=> 'Nein',
 	'NO_LEPTON_ADDON'		=> 'Dieses Addon ist nicht f&uuml;r LEPTON geeignet',
 	'NO_PREVIEW'			=> 'Keine Vorschau verfügbar',
+    'NONE'                  => 'Keine',
 	'NONE_FOUND' 			=> 'Keine gefunden',
 	'NOT_FOUND' 			=> 'Nicht gefunden',
 	'NOT_INSTALLED' 		=> 'nicht installiert',
