@@ -93,7 +93,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
     // ============================================================================ 
     // ! Create an array to check whether uploaded file is allowed to be uploaded   
     // ============================================================================ 
-    $allowed_file_types        = explode(',', RENAME_FILES_ON_UPLOAD);
+    $allowed_file_types        = explode(',', UPLOAD_ALLOWED);
     foreach ( $upload_counter as $file_id )
     {
         $field_name    = 'upload_' . $file_id;

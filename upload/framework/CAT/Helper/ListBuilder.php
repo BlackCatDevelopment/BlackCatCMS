@@ -232,7 +232,8 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                     {
                         // HTML for menu item containing children (open)
                         $output[] = $tab.$self->startLI($option['value'][$id_key],$level,true,$is_first,$is_last)
-                               . "<span>$text</span>";
+                               //. "<span>$text</span>";
+                                  . $text;
                         // open sub list
                         $output[] = $tab . "\t" . $self->startUL( $space, '', $option['value'][$level_key] );
                         #$output[] = '-'.$option['value'][$id_key].'-';

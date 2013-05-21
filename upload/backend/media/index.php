@@ -62,7 +62,7 @@ $allowed_img_types = array('jpg','jpeg','png','gif','tif');
 // ************ TODO: Move this to DB ************
 
 $tpl_data['maxUploadFiles']     = 12;
-$tpl_data['allowed_file_types'] = str_replace(',','|',RENAME_FILES_ON_UPLOAD);
+$tpl_data['allowed_file_types'] = str_replace(',','|',UPLOAD_ALLOWED);
 $tpl_data['MEDIA_DIRECTORY']    = MEDIA_DIRECTORY;
 
 // ==================================================================================================================================== 
