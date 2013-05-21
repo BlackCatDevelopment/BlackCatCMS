@@ -142,6 +142,7 @@ function reload_folder( current_ul, folder_path, load_url )
 			{
 				//var current_ul	= $('ul.fc_media_folder:last');
 				current_ul.append('<input type="hidden" name="folder_path" value="' + data.initial_folder + '">');
+                $('#fc_media_index_upload input[name=folder_path]').val( data.initial_folder );
 				
 				if( typeof data.folders == 'undefined' && typeof data.files == 'undefined' )
 				{

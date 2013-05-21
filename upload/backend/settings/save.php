@@ -68,7 +68,7 @@ $backend->print_footer();
 function save_settings(&$admin)
 {
 	
-	global $old_settings, $settings;
+    global $old_settings, $settings, $backend;
 	$settings = array();
 	$old_settings = array();
     $val          = CAT_Helper_Validate::getInstance();
@@ -85,7 +85,7 @@ function save_settings(&$admin)
 	}
 	else
 	{
-		$err_msg[] = $admin->lang->translate('Unable to load old settings');
+         $err_msg[] = $backend->lang()->translate('Unable to load old settings');
 	}
 
 	$allow_tags_in_fields = array('website_header', 'website_footer');
@@ -95,7 +95,7 @@ function save_settings(&$admin)
 	// language must be 2 upercase letters only
 	$default_language = strtoupper($val->sanitizePost('default_language'));
 	$settings['default_language']
-        = $admin->lang->checkLang($default_language)
+       = $backend->lang()->checkLang($default_language)
         ? $default_language
         : $old_settings['default_language'];
 
@@ -112,7 +112,8 @@ function save_settings(&$admin)
         : $old_settings['default_date_format'];
 
 	// charsets must be a key from /interface/charsets
-    $CHARSETS = $admin->lang->getCharsets();
+    $CHARSETS = $backend->lang()->getCharsets();
+    $char_set = $val->sanitizePost('default_charset');
 	$settings['default_charset']
         = (array_key_exists($char_set,$CHARSETS)
         ? $char_set
@@ -184,7 +185,7 @@ function save_settings(&$admin)
 		$pattern = '/^[a-z][a-z_0-9]*$/i';
 		if(!preg_match($pattern, $settings['sec_anchor'], $array))
 		{
-			$err_msg[] = $admin->lang->translate('Section-Anchor text').' '.$admin->lang->translate('must begin with a letter or has invalid signs');
+              $err_msg[] = $backend->lang()->translate('Section-Anchor text').' '.$backend->lang()->translate('must begin with a letter or has invalid signs');
 		}
 	}
 
@@ -217,7 +218,7 @@ function save_settings(&$admin)
 	// Work-out which wbmailer routine should be checked
 	if ((isset ($settings['server_email'])) && (!$val->validate_email($settings['server_email'])))
 	{
-		$err_msg[] = $admin->lang->translate('Default Sender Name');
+         $err_msg[] = $backend->lang()->translate('Default Sender Name');
 	}
 	$catmailer_default_sendername = (isset ($settings['catmailer_default_sendername'])) ? $settings['catmailer_default_sendername'] : $old_settings['catmailer_default_sendername'];
 	if (($catmailer_default_sendername <> ''))
@@ -226,7 +227,7 @@ function save_settings(&$admin)
 	}
 	else
 	{
-		$err_msg[] = $MESSAGE['MOD_FORM_REQUIRED_FIELDS'].': '.$admin->lang->translate('Default Sender Name');
+         $err_msg[] = $MESSAGE['MOD_FORM_REQUIRED_FIELDS'].': '.$backend->lang()->translate('Default Sender Name');
 	}
 	$catmailer_routine = isset ($settings['catmailer_routine']) ? $settings['catmailer_routine'] : $old_settings['catmailer_routine'];
 	if (($catmailer_routine == 'smtp'))
@@ -246,7 +247,7 @@ function save_settings(&$admin)
 			}
 			else
 			{
-				$err_msg[] = $admin->lang->translate('You must enter details for the following fields').': '.$admin->lang->translate('SMTP Host');
+                   $err_msg[] = $backend->lang()->translate('You must enter details for the following fields').': '.$backend->lang()->translate('SMTP Host');
 			}
 		}
 		// Work-out if SMTP authentification should be checked
@@ -258,7 +259,7 @@ function save_settings(&$admin)
 			$catmailer_smtp_username = (isset ($settings['catmailer_smtp_username'])) ? $settings['catmailer_smtp_username'] : $old_settings['catmailer_smtp_username'];
 			if (($catmailer_smtp_username == '') && !preg_match($pattern, $catmailer_smtp_username))
 			{
-				$err_msg[] = $admin->lang->translate('SMTP').': '.$admin->lang->translate('Username or password incorrect');
+                   $err_msg[] = $backend->lang()->translate('SMTP').': '.$backend->lang()->translate('Username or password incorrect');
 			}
 			else
 			{
@@ -270,11 +271,11 @@ function save_settings(&$admin)
 			$current_password = ($current_password == null ? '' : $current_password);
 			if (($current_password == ''))
 			{
-				$err_msg[] = $admin->lang->translate('SMTP').': '.$admin->lang->translate('Username or password incorrect');
+                   $err_msg[] = $backend->lang()->translate('SMTP').': '.$backend->lang()->translate('Username or password incorrect');
 			}
 			elseif (preg_match($pattern, $current_password))
 			{
-				$err_msg[] = $admin->lang->translate('Invalid password chars used, valid chars are: a-z\A-Z\0-9\_\-\!\#\*\+');
+                   $err_msg[] = $backend->lang()->translate('Invalid password chars used, valid chars are: a-z\A-Z\0-9\_\-\!\#\*\+');
 			}
 		}
 		// If SMTP-Authentification is disabled delete USER and PASSWORD for securityreasons
@@ -348,7 +349,7 @@ function save_settings(&$admin)
 					if (preg_match('/matched: *([1-9][0-9]*)/i', $sql_info) != 1)
 					{
 					// if the user_id and password dosn't match
-						$err_msg[] = $admin->lang->translate('Search settings').': '.$admin->lang->translate('Error saving page');
+                             $err_msg[] = $backend->lang()->translate('Search settings').': '.$backend->lang()->translate('Error saving page');
 					}
 				}
 			}

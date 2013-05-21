@@ -152,6 +152,24 @@ if (!class_exists('CAT_Helper_Validate'))
         }   // end function createFieldname()
 
         /**
+         * dump all items; you should NEVER use this method in production code!
+         *
+         *
+         *
+         **/
+        public function dump() {
+
+            echo "<h2>CAT_Helper_Validate DUMP</h2>",
+                 "<h3>\$_GET Array</h3>";
+            var_dump($_GET);
+            echo "<h3>\$_POST Array</h3>";
+            var_dump($_POST);
+            echo "<h3>\$_SERVER Array</h3>";
+            var_dump($_SERVER);
+
+        }   // end function dump()
+
+        /**
          * Get POST data
          *
          * TODO: add sanitize/validate

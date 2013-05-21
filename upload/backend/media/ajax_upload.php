@@ -55,7 +55,7 @@ header('Content-type: application/json');
 if ( $user->checkPermission('media','media_upload',false) !== true )
 {
     $ajax    = array(
-        'message'    => 'You don\'t have the permission to upload a file. Check your system settings.',
+        'message'    => $backend->lang()->translate('You don\'t have the permission to upload a file. Check your system settings.'),
         'success'    => false
     );
     print json_encode( $ajax );
@@ -70,7 +70,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
     else
     {
         $ajax    = array(
-            'message'    => 'No directory was selected',
+            'message'    => $backend->lang()->translate('No directory was selected'),
             'success'    => false
         );
         print json_encode( $ajax );
@@ -80,7 +80,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
     if ( !is_writeable($file_path) )
     {
         $ajax    = array(
-            'message'    => 'Directory is not writeable.',
+            'message'    => $backend->lang()->translate('Directory is not writeable.'),
             'success'    => false
         );
         print json_encode( $ajax );
@@ -118,7 +118,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
                 if ( ! is_array($_FILES) || ! count($_FILES) )
                 {
                     $ajax    = array(
-                        'message'    => 'No files!',
+                        'message'    => $backend->lang()->translate('No files!'),
                         'success'    => false
                     );
                     print json_encode( $ajax );
@@ -154,7 +154,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
                                 if ( $archive->errorInfo() != 0 )
                                 {
                                     $ajax	= array(
-                                		'message'	=> 'The ZIP couldn\'t be unpacked.' . $archive->errorInfo(),
+                                		'message'	=> $backend->lang()->translate('The ZIP couldn\'t be unpacked.') . $archive->errorInfo(),
                                 		'success'	=> false
                                 	);
                                 	print json_encode( $ajax );
@@ -176,7 +176,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
                         else
                         {
                             $ajax	= array(
-                        		'message'	=> 'An error occurred (processed false): ' . $current->error,
+                        		'message'	=> $backend->lang()->translate('An error occurred (processed false): ') . $current->error,
                         		'success'	=> false
                         	);
                         	print json_encode( $ajax );
@@ -186,7 +186,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
                     else
                     {
                             $ajax	= array(
-                        		'message'	=> 'An error occurred (uploaded false): ' . $current->error,
+                        		'message'	=> $backend->lang()->translate('An error occurred (uploaded false): ') . $current->error,
                         		'success'	=> false
                         	);
                         	print json_encode( $ajax );
@@ -197,7 +197,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
             else
             {
                 $ajax	= array(
-            		'message'	=> 'No file extension were found.',
+            		'message'	=> $backend->lang()->translate('No file extension found.'),
             		'success'	=> false
             	);
             	print json_encode( $ajax );
@@ -206,7 +206,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
         }
     }
     $ajax	= array(
-		'message'	=> 'All files have been uploaded successfully.',
+		'message'	=> $backend->lang()->translate('All files have been uploaded successfully.'),
 		'success'	=> true
 	);
 	print json_encode( $ajax );
@@ -215,7 +215,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
 else
 {
     $ajax	= array(
-		'message'	=> 'File could not be uploaded. Maybe it is too big?',
+		'message'	=> $backend->lang()->translate('File could not be uploaded. Maybe it is too big?'),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
