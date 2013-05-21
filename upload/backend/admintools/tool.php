@@ -44,8 +44,14 @@ $admin    =& $backend;
 $val      = CAT_Helper_Validate::getInstance();
 $get_tool = $val->sanitizeGet('tool',NULL,true);
 
-
 if ( $get_tool == '' )
+{
+	header("Location: index.php");
+	exit(0);
+}
+
+// check tool permission
+if(!CAT_Users::get_permission($get_tool,'module'))
 {
 	header("Location: index.php");
 	exit(0);
