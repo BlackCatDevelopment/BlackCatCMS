@@ -77,9 +77,6 @@ $results_array							= CAT_Helper_Page::properties($page_id);
 // ========================================================= 
 $user									= CAT_Users::getInstance()->get_user_details( $results_array['modified_by'] );
 
-// =========================================================================== 
-// ! Create the controller, it is reusable and can render multiple templates 	
-// =========================================================================== 
 global $parser;
 $tpl_data = array();
 
@@ -132,7 +129,7 @@ foreach ( $tpl_data['modules'] as $index => $module )
 
 $sections = $page->getSections();
 $module_permissions = $val->fromSession('MODULE_PERMISSIONS');
-$tpl_data['blocks_counter']	= 0;
+$bcnt	= 0;
 
 foreach( $sections as $section )
 {
@@ -153,22 +150,22 @@ foreach( $sections as $section )
 			if ( CAT_Registry::get('SECTION_BLOCKS') )
 				{
 					$section_id		= $section['section_id'];
-				$tpl_data['blocks'][$tpl_data['blocks_counter']]['template_blocks']		= $parser->get_template_blocks( $current_template, $section['block'] );
-				$tpl_data['blocks'][$tpl_data['blocks_counter']]['current_block_id']	= $section['block'];
-				$tpl_data['blocks'][$tpl_data['blocks_counter']]['current_block_name']	= $section['name'];
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['section_id']			= $section['section_id'];
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['module']				= $section['module'];
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['name']				= $section['name'];
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_day_from']		= $section['publ_start'] > 0 ? date('d', $section['publ_start'] ) : '';
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_month_from']		= $section['publ_start'] > 0 ? date('m', $section['publ_start'] ) : '';
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_year_from']		= $section['publ_start'] > 0 ? date('Y', $section['publ_start'] ) : '';
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_hour_from']		= $section['publ_start'] > 0 ? date('H', $section['publ_start'] ) : '';
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_minute_from']	= $section['publ_start'] > 0 ? date('i', $section['publ_start'] ) : '';
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_day_to']			= $section['publ_start'] > 0 ? date('d', $section['publ_end'] ) : '';
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_month_to']		= $section['publ_start'] > 0 ? date('m', $section['publ_end'] ) : '';
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_year_to']		= $section['publ_start'] > 0 ? date('Y', $section['publ_end'] ) : '';
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_hour_to']		= $section['publ_start'] > 0 ? date('H', $section['publ_end'] ) : '';
-					$tpl_data['blocks'][$tpl_data['blocks_counter']]['date_minute_to']		= $section['publ_start'] > 0 ? date('i', $section['publ_end'] ) : '';
+				$tpl_data['blocks'][$bcnt]['template_blocks']		= $parser->get_template_blocks( $current_template, $section['block'] );
+				$tpl_data['blocks'][$bcnt]['current_block_id']	= $section['block'];
+				$tpl_data['blocks'][$bcnt]['current_block_name']	= $section['name'];
+				$tpl_data['blocks'][$bcnt]['section_id']			= $section['section_id'];
+				$tpl_data['blocks'][$bcnt]['module']				= $section['module'];
+				$tpl_data['blocks'][$bcnt]['name']				= $section['name'];
+				$tpl_data['blocks'][$bcnt]['date_day_from']		= $section['publ_start'] > 0 ? date('d', $section['publ_start'] ) : '';
+				$tpl_data['blocks'][$bcnt]['date_month_from']		= $section['publ_start'] > 0 ? date('m', $section['publ_start'] ) : '';
+				$tpl_data['blocks'][$bcnt]['date_year_from']		= $section['publ_start'] > 0 ? date('Y', $section['publ_start'] ) : '';
+				$tpl_data['blocks'][$bcnt]['date_hour_from']		= $section['publ_start'] > 0 ? date('H', $section['publ_start'] ) : '';
+				$tpl_data['blocks'][$bcnt]['date_minute_from']	= $section['publ_start'] > 0 ? date('i', $section['publ_start'] ) : '';
+				$tpl_data['blocks'][$bcnt]['date_day_to']			= $section['publ_start'] > 0 ? date('d', $section['publ_end'] ) : '';
+				$tpl_data['blocks'][$bcnt]['date_month_to']		= $section['publ_start'] > 0 ? date('m', $section['publ_end'] ) : '';
+				$tpl_data['blocks'][$bcnt]['date_year_to']		= $section['publ_start'] > 0 ? date('Y', $section['publ_end'] ) : '';
+				$tpl_data['blocks'][$bcnt]['date_hour_to']		= $section['publ_start'] > 0 ? date('H', $section['publ_end'] ) : '';
+				$tpl_data['blocks'][$bcnt]['date_minute_to']		= $section['publ_start'] > 0 ? date('i', $section['publ_end'] ) : '';
 
                 // load language file (if any)
                 $langfile = sanitize_path(CAT_PATH.'/modules/'.$module.'/languages/'.LANGUAGE.'.php');
@@ -176,7 +173,7 @@ foreach( $sections as $section )
                 {
                     if ( ! $backend->lang()->checkFile($langfile, '$LANG', true ))
                         // old fashioned language file
-                        require $langfile;
+                        include $langfile;
                     else
                         // modern language file
                         $backend->lang()->addFile(LANGUAGE . '.php', sanitize_path(CAT_PATH . '/modules/' . $module . '/languages'));
@@ -187,15 +184,17 @@ foreach( $sections as $section )
 					// ====================================================== 
 					ob_start();
 						require(CAT_PATH.'/modules/'.$module.'/modify.php');
-						$tpl_data['blocks'][$tpl_data['blocks_counter']]['content']			= ob_get_contents();
+					    $tpl_data['blocks'][$bcnt]['content'] = ob_get_contents();
 					//ob_end_clean();
                     ob_clean(); // allow multiple buffering for csrf-magic
 
-					$tpl_data['blocks_counter']++;
+				$bcnt++;
 				}
 			}
 		}
 }
+
+$tpl_data['blocks_counter']	= $bcnt;
 
 // ==================== 
 // ! Parse the site   

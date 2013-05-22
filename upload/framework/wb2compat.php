@@ -46,8 +46,10 @@ define('WBMAILER_DEFAULT_SENDERNAME', CATMAILER_DEFAULT_SENDERNAME );
 // define WB_VERSION for backward compatibility
 if (!defined('WB_VERSION')) define('WB_VERSION', '2.8.3');
 if (!defined('TIMEZONE'))   define('TIMEZONE',DEFAULT_TIMEZONE_STRING);
+//
+if(!defined('ENABLE_OLD_LANGUAGE_DEFINITIONS')) define('ENABLE_OLD_LANGUAGE_DEFINITIONS',false);
 
-global $database, $wb;
+global $database, $wb, $admin;
 
 require_once CAT_PATH.'/framework/class.database.php';
 $database = new database();

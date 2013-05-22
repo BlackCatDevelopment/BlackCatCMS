@@ -135,6 +135,7 @@ $LANG = array(
 	'cat_url' => 'Black Cat CMS URL',
 	'default_timezone_string' => 'Standard Zeitzone',
 	'default_language' => 'Standardsprache',
+    'default_wysiwyg' => 'Standard WYSIWYG Editor',
 	'database_host' => 'Datenbank Servername',
 	'database_port' => 'Datenbank Port',
 	'database_name' => 'Name der Datenbank',

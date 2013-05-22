@@ -58,23 +58,17 @@ class admin extends wb
     return CAT_Backend::getInstance($section_name);
     }
 
-    function get_permission($name, $type = 'system') {
-        return CAT_Users::get_permission($name,$type);
-    }
-
-    function print_footer() {
-        return CAT_Backend::getInstance('')->print_footer();
-    }
+    function get_permission($name, $type = 'system') { return CAT_Users::get_permission($name,$type); }
+    function get_user_details($user_id)              { return CAT_Users::get_user_details($user_id);  }
+    function print_banner()                          { return CAT_Backend::getInstance('')->print_banner(); }
+    function print_header()                          { return CAT_Backend::getInstance('')->print_header(); }
+    function print_footer()                          { return CAT_Backend::getInstance('')->print_footer(); }
 
 }
 
 /*
-	print_header()
-	
 	get_link_permission($title)
 	__admin_register_backend_modfiles()
 	__admin_build_link( $aPath, $aType="css")
-	
-	get_user_details($user_id)
 	get_page_permission($page,$action='admin')
 */

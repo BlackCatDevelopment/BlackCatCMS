@@ -91,11 +91,15 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 // current item has children
                 elseif ( ! empty( $children[ $option['value'][$id_key] ] ) )
                 {
+                    if(!isset($option['value']['__children']))
+                        $option['value']['__children'] = count($children[ $option['value'][$id_key] ]);
                     $return[] = $option['value'];
                     array_push( $parent_stack, $option['value'][$p_key] );
                     $parent = $option['value'][$id_key];
                 }
                 else {
+                    if(!isset($option['value']['__children']))
+                        $option['value']['__children'] = 0;
                     $return[] = $option['value'];
                 }
             }

@@ -78,6 +78,32 @@ if (!class_exists('CAT_Backend', false))
     	}
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function print_banner()
+        {
+            global $page_id, $parser;
+            $results_array = CAT_Helper_Page::properties($page_id);
+            $user          = CAT_Users::get_user_details( $results_array['modified_by'] );
+            $tpl_data      = array();
+            foreach($results_array as $key => $value)
+                $tpl_data[strtoupper($key)] = $value;
+            $tpl_data['MODIFIED_BY']				= $user['display_name'];
+            $tpl_data['MODIFIED_BY_USERNAME']		= $user['username'];
+            $tpl_data['MODIFIED_WHEN']		        = ($results_array['modified_when'] != 0)
+                                                    ? $modified_ts = CAT_Helper_DateTime::getDateTime($results_array['modified_when'])
+                                                    : false;
+            $tpl_data['PAGE_HEADER']                = self::getInstance('')->lang()->translate('Modify page');
+            $tpl_data['CUR_TAB']                    = 'modify';
+            $tpl_data['PAGE_LINK']					= CAT_Helper_Page::getLink($results_array['page_id']);
+            $parser->output('backend_pages_header',$tpl_data);
+            $parser->output('backend_pages_banner',$tpl_data);
+        }   // end function print_banner()()
+        
+
+        /**
          *  Print the admin header
          *
          *  @access public

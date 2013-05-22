@@ -77,6 +77,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 	function get_page_headers( $for = 'frontend', $print_output = true, $individual = false )
 	{
         if ( defined('CAT_HEADERS_SENT') ) return false;
+        global $page_id;
 	    $output = CAT_Helper_Page::getInstance()->getHeaders( $for, $individual );
 		if ( $print_output )
 		{

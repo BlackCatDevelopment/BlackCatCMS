@@ -605,7 +605,7 @@ jQuery(document).ready(function()
 
 			media_upload.children('.fc_upload_fields:first').nextAll('.fc_upload_fields').remove();
 			media_upload.find('.fc_upload_field').removeClass('fc_inactive');
-			media_upload.find( '.fc_toggle_element' ).attr( 'checked', false ).click();
+			media_upload.find('.fc_toggle_element').attr( 'checked', false ).click();
 			media_upload.find('.fc_upload_zip').addClass('hidden');
 
 			$('#fc_media_index_upload').find('input[type="reset"]').click();

@@ -2018,6 +2018,9 @@ if (!class_exists('CAT_Helper_Page'))
         private static function _load_sections($for = 'frontend')
         {
             global $page_id;
+            // make sure we have a page_id
+            if(!$page_id)
+                $page_id = CAT_Helper_Validate::get('_REQUEST','page_id','numeric');
             if ($page_id && is_numeric($page_id))
             {
                 $sections     = self::getSections($page_id);
@@ -2043,7 +2046,7 @@ if (!class_exists('CAT_Helper_Page'))
                     } // foreach ($sections as $section)
                 } // if (count($sections))
 
-                // always add WYSIWYG headers for some modules may use show_wysiwyg_editor() later on
+                // always add WYSIWYG headers, some modules may use show_wysiwyg_editor() later on
                 if ( ! $wysiwyg_seen )
                         {
                             if ( file_exists(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php') )
