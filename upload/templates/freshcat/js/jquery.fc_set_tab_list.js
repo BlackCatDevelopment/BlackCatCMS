@@ -49,7 +49,7 @@
 				});
 			}
 
-			element.click( function()
+			element.not('.fc_type_heading').click( function()
 			{
 				all_items.removeClass( 'fc_active' );
 				element.addClass( 'fc_active' );

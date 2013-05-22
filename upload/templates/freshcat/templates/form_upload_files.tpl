@@ -13,7 +13,7 @@
 			<hr/>
 			<div class="fc_upload_fields">
 				<div class="fc_upload_field fc_gradient4 fc_br_all">
-					<input type="file" size="33" name="upload_0" maxlength="{$maxUploadFiles}" accept="{$allowed_file_types}" />
+					<input type="file" name="upload_0" maxlength="{$maxUploadFiles}" accept="{$allowed_file_types}" />
 					<input type="text" name="test" value="{translate('Choose a file...')}" />
 					<span class="fc_upload_close icon-cancel fc_gradient1 fc_gradient_hover fc_br_right fc_border_all_light"></span>
 				</div>
@@ -39,7 +39,7 @@
 		<div id="fc_upload_field_add" class="hidden">
 			<div class="fc_upload_fields">
 				<div class="fc_upload_field fc_gradient4 fc_br_all">
-					<input type="file" size="33" name="upload_" maxlength="{$maxUploadFiles}" accept="{$allowed_file_types}" />
+					<input type="file" name="upload_" maxlength="{$maxUploadFiles}" accept="{$allowed_file_types}" />
 					<input type="text" name="test" value="{translate('Choose a file...')}" />
 					<span class="fc_upload_close icon-cancel fc_gradient1 fc_gradient_hover fc_br_right fc_border_all_light"></span>
 				</div>

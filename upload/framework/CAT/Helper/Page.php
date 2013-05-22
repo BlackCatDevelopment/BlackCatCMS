@@ -2049,7 +2049,7 @@ if (!class_exists('CAT_Helper_Page'))
                             if ( file_exists(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php') )
                             {
                                 self::$instance->log()->logDebug('adding headers.inc.php for wysiwyg');
-                                self::_load_headers_inc(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php'), $for, 'modules/' . $module, $section);
+                        self::_load_headers_inc(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php'), $for, CAT_PATH.'/modules/'.WYSIWYG_EDITOR);
                             }
                             $wysiwyg_seen = true;
                         }

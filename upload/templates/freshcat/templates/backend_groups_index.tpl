@@ -69,29 +69,29 @@
 					<input type="checkbox" class="fc_checkbox_jq" name="pages_view" id="fc_Group_pages_view" value="1" />
 					<label class="fc_settings_max" for="fc_Group_pages_view">{translate('View')}</label>
 					<input type="checkbox" class="fc_checkbox_jq" name="pages_add" id="fc_Group_pages_add" value="1" />
-					<label class="fc_settings_max "for="fc_Group_pages_add">{translate('Add')}</label>
+					<label class="fc_settings_max" for="fc_Group_pages_add">{translate('Add')}</label>
 					<input type="checkbox" class="fc_checkbox_jq" name="pages_add_l0" id="fc_Group_pages_add_l0" value="1" />
-					<label class="fc_settings_max "for="fc_Group_pages_add_l0">{translate('Level')} 0</label>
+					<label class="fc_settings_max" for="fc_Group_pages_add_l0">{translate('Level')} 0</label>
 					<input type="checkbox" class="fc_checkbox_jq" name="pages_settings" id="fc_Group_pages_settings" value="1" />
-					<label class="fc_settings_max "for="fc_Group_pages_settings">{translate('Modify settings')}</label>
+					<label class="fc_settings_max" for="fc_Group_pages_settings">{translate('Modify settings')}</label>
 					<input type="checkbox" class="fc_checkbox_jq" name="pages_modify" id="fc_Group_pages_modify" value="1" />
-					<label class="fc_settings_max "for="fc_Group_pages_modify">{translate('Modify content')}</label>
+					<label class="fc_settings_max" for="fc_Group_pages_modify">{translate('Modify content')}</label>
 					<input type="checkbox" class="fc_checkbox_jq" name="pages_intro" id="fc_Group_pages_intro" value="1" />
-					<label class="fc_settings_max "for="fc_Group_pages_intro">{translate('Modify intro page')}</label>
+					<label class="fc_settings_max" for="fc_Group_pages_intro">{translate('Modify intro page')}</label>
 					<input type="checkbox" class="fc_checkbox_jq" name="pages_delete" id="fc_Group_pages_delete" value="1" />
-					<label class="fc_settings_max "for="fc_Group_pages_delete">{translate('Delete')}</label>
+					<label class="fc_settings_max" for="fc_Group_pages_delete">{translate('Delete')}</label>
 				</div>
-				<hr/>
+				<hr />
 				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_settings" name="settings" id="fc_Group_settings" value="1" />
 				<label class="fc_settings_max" for="fc_Group_settings">{translate('Settings')}</label>
 				<div id="fc_settings">
 					<div class="clear_sp"></div>
 
 					<input type="checkbox" class="fc_checkbox_jq" name="settings_basic" id="fc_Group_settings_basic" value="1" />
-					<label class="fc_settings_max "for="fc_Group_settings_basic">{translate('Basic')}</label>
+					<label class="fc_settings_max" for="fc_Group_settings_basic">{translate('Basic')}</label>
 
 					<input type="checkbox" class="fc_checkbox_jq" name="settings_advanced" id="fc_Group_settings_advanced" value="1" />
-					<label class="fc_settings_max "for="fc_Group_settings_advanced">{translate('Advanced')}</label>
+					<label class="fc_settings_max" for="fc_Group_settings_advanced">{translate('Advanced')}</label>
 				</div>
 			</div>
 
@@ -108,7 +108,7 @@
 					<input type="checkbox" class="fc_checkbox_jq" name="modules_uninstall" id="fc_Group_modules_uninstall" value="1" />
 					<label class="fc_settings_max" for="fc_Group_modules_uninstall">{translate('Delete')}</label>
 				</div>
-				<hr/>
+				<hr />
 				<strong>{translate('Installed modules')}</strong>
 				<div class="clear_sp"></div>
 				<ul>
@@ -130,7 +130,7 @@
 					<input type="checkbox" class="fc_checkbox_jq" name="admintools_settings" id="fc_Group_admintools_settings" value="1" />
 					<label class="fc_settings_max" for="fc_Group_admintools_settings">{translate('Modify settings')}</label>
 				</div>
-				<hr/>
+				<hr />
 				<strong>{translate('Installed admintools')}</strong>
 				<div class="clear_sp"></div>
 				<ul>
@@ -156,7 +156,7 @@
 					<input type="checkbox" class="fc_checkbox_jq" name="templates_uninstall" id="fc_Group_templates_uninstall" value="1" />
 					<label class="fc_settings_max" for="fc_Group_templates_uninstall">{translate('Delete')}</label>
 				</div>
-				<hr/>
+				<hr />
 				<strong>{translate('Installed templates')}</strong>
 				<div class="clear_sp"></div>
 				<ul>
@@ -203,7 +203,7 @@
 					<input type="checkbox" class="fc_checkbox_jq" name="users_delete" id="fc_Group_users_delete" value="1" />
 					<label class="fc_settings_max" for="fc_Group_users_delete">{translate('Delete')}</label>
 				</div>
-				<hr/>
+				<hr />
 				<input type="checkbox" class="fc_advanced_groups fc_checkbox_jq set_advanced___fc_groups" name="groups" id="fc_Group_groups" value="1" />
 				<label class="fc_settings_max" for="fc_Group_groups">{translate('Groups')}</label>
 				<div id="fc_groups">

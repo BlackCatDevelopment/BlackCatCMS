@@ -60,6 +60,8 @@ $tpl_data['permissions']['MODULES_UNINSTALL'] = $users->checkPermission('addons'
 
 $counter	= 0;
 $seen_dirs  = array();
+$tpl_data['addons'] = array();
+$tpl_data['not_installed_addons'] = array();
 
 $addons = CAT_Helper_Addons::get_addons();
 
@@ -208,9 +210,9 @@ foreach( $addons as $addon )
 
 $tpl_data['groups']    = $users->get_groups('' , '', false);
 
+// scan modules path for modules not seen yet
 if( $users->checkPermission('addons','modules_install') )
 {
-    // scan modules path for modules not seen yet
     $new = CAT_Helper_Directory::getInstance()
            ->maxRecursionDepth(0)
            ->setSkipDirs($seen_dirs)
@@ -224,18 +226,19 @@ if( $users->checkPermission('addons','modules_install') )
         $info = $addon->checkInfo(CAT_PATH.'/modules/'.$dir);
         if ( $info )
 	{
-            $tpl_data['addons'][$counter] = array(
+                $tpl_data['not_installed_addons'][$counter] = array(
                 'is_installed'  => false,
     			'type'			=> 'modules',
                 'INSTALL'       => file_exists(CAT_PATH.'/modules/'.$dir.'/install.php') ? true : false
             );
             foreach( $info as $key => $value )
 		{
-                $tpl_data['addons'][$counter][str_ireplace('module_','',$key)] = $value;
+                    $tpl_data['not_installed_addons'][$counter][str_ireplace('module_','',$key)] = $value;
 		}
 		$counter++;
             }
 	}
+        $tpl_data['not_installed_addons'] = CAT_Helper_Array::ArraySort($tpl_data['not_installed_addons'],'name','asc',true);
 	}
 }
 

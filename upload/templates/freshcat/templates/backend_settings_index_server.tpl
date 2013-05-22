@@ -32,8 +32,8 @@
 			<input type="text" name="page_spacer" id="fc_page_spacer" value="{$values.page_spacer}" />
 			<div class="clear"></div>
 			<hr />
-			<label class="fc_label_200" for="fc_rename_files_on_upload">{translate('Allowed filetypes on upload')}:</label>
-			<input type="text" name="rename_files_on_upload" id="fc_rename_files_on_upload" value="{$values.rename_files_on_upload}" />
+			<label class="fc_label_200" for="fc_upload_allowed">{translate('Allowed filetypes on upload')}:</label>
+			<input type="text" name="upload_allowed" id="fc_upload_allowed" value="{$values.upload_allowed}" />
 			<div class="clear"></div>
 			<hr />
 			<label class="fc_label_200" for="fc_app_name">{translate('Session identifier')}:</label>

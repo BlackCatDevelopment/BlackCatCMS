@@ -38,6 +38,14 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
         protected      $_config = array( 'loglevel' => 8 );
         private static $instance;
 
+        public function __call($method, $args)
+        {
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
+        }
+
         public static function getInstance()
         {
             if (!self::$instance)
@@ -60,7 +68,7 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
          * @param  array  $Haystack
          * @param  mixed  $NeedleKey
          **/
-        public function ArrayRemove( $Needle, &$Haystack, $NeedleKey="" )
+        public static function ArrayRemove( $Needle, &$Haystack, $NeedleKey="" )
         {
             if( ! is_array( $Haystack ) ) {
                 return false;
@@ -82,9 +90,10 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
          * @param  boolean $case_sensitive - sort case sensitive; default: false
          *
          **/
-        public function ArraySort ( $array, $index, $order='asc', $natsort=FALSE, $case_sensitive=FALSE )
+        public static function ArraySort ( $array, $index, $order='asc', $natsort=FALSE, $case_sensitive=FALSE )
         {
-            if( is_array($array) && count($array)>0 ) {
+            if( is_array($array) && count($array)>0 )
+        {
                  foreach(array_keys($array) as $key)
                  {
                      $temp[$key]=$array[$key][$index];
@@ -108,15 +117,16 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
                  return $sorted;
             }
             return $array;
-        }   // function ArraySort
+        }   // end function ArraySort()
         
         /**
+         * make multidimensional array unique
          *
-         *
-         *
-         *
+         * @access public
+         * @param  array
+         * @return array
          **/
-        public function ArrayUniqueRecursive($array) {
+        public static function ArrayUniqueRecursive($array) {
     		$set = array();
     		$out = array();
     		foreach ( $array as $key => $val ) {

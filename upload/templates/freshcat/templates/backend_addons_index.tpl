@@ -31,6 +31,26 @@
 			</li>
 			{/if}
 			{/foreach}
+
+            {if $not_installed_addons}
+            <li class="fc_type_heading fc_border fc_gradient4">
+				<span class="fc_groups_name">{translate('Not installed yet')}</span>
+			</li>
+            {foreach $not_installed_addons as addon}
+			{if $addon.name}
+			<li class="fc_module_item fc_type_{$addon.type} fc_border fc_gradient1 fc_gradient_hover{if $addon.is_installed === false} fc_not_installed{/if}">
+				{if $addon.icon}<img src="{$addon.icon}" alt="{$addon.directory}" />
+				{elseif $addon.type == 'templates'}<span class="icon-color-palette"></span>{elseif $addon.type == 'languages'}<span class="icon-comments"></span>{else}<span class="icon-puzzle"></span>{/if}
+				<span class="fc_groups_name"> {$addon.name}</span>
+				<input type="hidden" name="addon_directory" value="{$addon.directory}" />
+			</li>
+			{else}
+			<li class="fc_uninstalled_addon">
+				<span class="fc_groups_name">{$addon.INSTALL.name}</span>
+			</li>
+			{/if}
+			{/foreach}
+{/if}
 		</ul>
 	</div>
 	<div class="fc_all_forms">

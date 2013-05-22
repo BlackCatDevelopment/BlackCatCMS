@@ -12,9 +12,7 @@
 				<span class="fc_close"></span>
 				<div class="fc_starter ui-corner-all fc_start_{$widget.module_name}">
 					<p class="fc_start_title ui-corner-top">{$widget.module_name}</p>
-						<p>
 						{$widget.content}
-					</p>
 					<div class="clear"></div>
 				</div>
 			</div>

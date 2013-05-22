@@ -30,7 +30,7 @@ jQuery(document).ready(function(){
 		}
 	});
 	
-	$('#fc_list_overview').children('li').not('.fc_type_modules').addClass('fc_no_search').slideUp(0);
+	$('#fc_list_overview').children('li').not('.fc_type_modules').not('.fc_type_heading').addClass('fc_no_search').slideUp(0);
 	$('#fc_list_search_input').blur();
 	$('#fc_lists_overview button').not('#fc_list_add').click( function()
 	{

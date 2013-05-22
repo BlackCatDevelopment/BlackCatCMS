@@ -225,7 +225,7 @@ if (!class_exists('CAT_Helper_Addons'))
     		// ==================
     		$addons_array = array();
     		$addons = $self->db()->query(sprintf(
-                "SELECT * FROM `%saddons` %s%s%s ORDER BY '%s'",
+                "SELECT * FROM `%saddons` %s%s%s ORDER BY 'type' ASC, '%s' ASC",
                 CAT_TABLE_PREFIX, $where, $get_type, $get_function, htmlspecialchars( $order )
             ));
     		if ( $addons->numRows() > 0 )
@@ -250,6 +250,9 @@ if (!class_exists('CAT_Helper_Addons'))
     				}
     			}
     		}
+            // reorder array
+            $addons_array = CAT_Helper_Array::ArraySort( $addons_array, $order, 'asc', true );
+
     		return $addons_array;
     	}   // end function get_addons()
 
@@ -922,7 +925,7 @@ if (!class_exists('CAT_Helper_Addons'))
                 }
 
             // load the module info into the database
-            if ( !self::loadModuleIntoDB($addon_dir,$action,$addon_info))
+            if ( !self::loadModuleIntoDB($addon_dir,$action,self::checkInfo($addon_dir)) )
                     {
                         // recovery
                         if ( file_exists($addon_dir.'/uninstall.php') )
@@ -1184,10 +1187,13 @@ if (!class_exists('CAT_Helper_Addons'))
         {
 
             $self = self::getInstance();
+            $self->log()->logDebug(sprintf('addon dir [%s], action [%s]',$addon_dir,$action));
 
             // load info.php again to have current values
             if ( !count($addon_info) && file_exists($addon_dir.'/info.php') )
                 $addon_info = self::checkInfo($addondir);
+
+            $self->log()->logDebug('addon info:',$addon_info);
 
             if ( $action == 'install' )
             {
@@ -1245,6 +1251,13 @@ if (!class_exists('CAT_Helper_Addons'))
 
                     if ($self->db()->is_error())
                         return false;
+                }
+                else
+                {
+                    $self->log()->logWarn(sprintf(
+                        'Unable to add module in dir [%s] to database, missing attr module_name!',
+                        $addon_dir
+                    ));
                 }
             }
             return true;

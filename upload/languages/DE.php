@@ -14,35 +14,30 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
+ *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
- *   @link            http://www.blackcat-cms.org
+ *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+	    }
 	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 // Define that this file is loaded
 if(!defined('LANGUAGE_LOADED')) {
@@ -305,33 +300,34 @@ $LANG = array(
     'Defer executing csrf_check() until manual call' => 'csrf_check() bis zur manuellen Ausführung aussetzen',
 
 // ----- media -----
+    'All files have been uploaded successfully.' => 'Alle Dateien erfolgreich übertragen',
+    'Are you sure you want to delete the directory {name}' => 'Wollen Sie das Verzeichnis {name} wirklich löschen?',
+    'at' => 'um',
+    'Change settings' => 'Einstellungen ändern',
+    'Choose a file...' => 'Datei wählen...',
+    'Create new folder' => 'Neues Verzeichnis',
+    'Created at' => 'Angelegt am',
+    'Delete folder/file' => 'Verzeichnis/Datei löschen',
+    'Delete zip archive after unpacking' => 'ZIP Archiv nach dem Entpacken löschen',
+    'Do you really want to delete this file?' => 'Soll die Datei wirklich gelöscht werden?',
+    'Duplicate folder/file' => 'Verzeichnis/Datei duplizieren',
+    'File deleted successfully' => 'Datei erfolgreich gelöscht',
+    'File size' => 'Dateigröße',
+    'File type' => 'Dateityp',
+    'Folder created successfully' => 'Verzeichnis erfolgreich angelegt',
     'Media' => 'Medien',
     'New folder' => 'Neues Verzeichnis',
-    'Folder created successfully' => 'Verzeichnis erfolgreich angelegt',
-    'Unable to write to the target directory' => 'Kann nicht in das Zielverzeichnis schreiben',
-    'No files available' => 'Keine Dateien vorhanden',
-    'File type' => 'Dateityp',
-    'File size' => 'Dateigröße',
-    'Created at' => 'Angelegt am',
-    'at' => 'um',
-    'No preview available' => 'Keine Vorschau vorhanden',
-    'Rename' => 'Umbenennen',
-    'Create new folder' => 'Neues Verzeichnis',
-    'Rename folder/file' => 'Verzeichnis/Datei umbenennen',
-    'Duplicate folder/file' => 'Verzeichnis/Datei duplizieren',
-    'Delete folder/file' => 'Verzeichnis/Datei löschen',
-    'Change settings' => 'Einstellungen ändern',
-    'Upload File(s)' => 'Datei(en) hochladen',
-    'Overwrite existing files' => 'Vorhandene Dateien überschreiben',
-    'Choose a file...' => 'Datei wählen...',
+    'No file extension found.' => 'Keine Dateiendung gefunden.',
     'No file selected...' => 'Keine Datei ausgewählt...',
-    'Unpack zip archive' => 'ZIP Archiv entpacken',
-    'Delete zip archive after unpacking' => 'ZIP Archiv nach dem Entpacken löschen',
-    'Are you sure you want to delete the directory {name}' => 'Wollen Sie das Verzeichnis {name} wirklich löschen?',
-    'Do you really want to delete this file?' => 'Soll die Datei wirklich gelöscht werden?',
-    'File deleted successfully' => 'Datei erfolgreich gelöscht',
+    'No files available' => 'Keine Dateien vorhanden',
+    'No preview available' => 'Keine Vorschau vorhanden',
+    'Overwrite existing files' => 'Vorhandene Dateien überschreiben',
+    'Rename' => 'Umbenennen',
+    'Rename folder/file' => 'Verzeichnis/Datei umbenennen',
     'Rename successful' => 'Umbenennen erfolgreich',
-    'All files have been uploaded successfully.' => 'Alle Dateien erfolgreich übertragen',
+    'Unable to write to the target directory' => 'Kann nicht in das Zielverzeichnis schreiben',
+    'Unpack zip archive' => 'ZIP Archiv entpacken',
+    'Upload File(s)' => 'Datei(en) hochladen',
     'You don\'t have the permission to delete this file.' => 'Sie haben nicht die notwendigen Berechtigungen, um diese Datei zu löschen.',
 // ----- users/groups -----
     'Activate user' => 'Benutzer aktivieren',
@@ -434,6 +430,7 @@ $LANG = array(
         => 'Ungültige Installationsdatei. Keine info.php gefunden. Bitte das ZIP Format prüfen.',
     'Invalid installation file. Wrong extension. Please check the ZIP format.'
         => 'Ungültige Installationsdatei. Falsche Dateiendung. Bitte das ZIP Format prüfen.',
+    'Not installed yet' => 'Noch nicht installiert',
     'Pre installation check failed' => 'Prüfung der Installationsvoraussetzungen fehlgeschlagen',
     'Pre installation check successful' => 'Prüfung der Installationsvoraussetzungen erfolgreich',
     'Unable to install the module' => 'Fehler beim Installieren des Moduls',
@@ -739,7 +736,6 @@ $TEXT = array(
 	'RELOAD' 				=> 'Neu laden',
 	'REMEMBER_ME' 			=> 'Passwort speichern',
 	'RENAME' 				=> 'Umbenennen',
-	'RENAME_FILES_ON_UPLOAD' => 'Datei nach Hochladen umbenennen',
 	'REQUIRED' 				=> 'Erforderlich',
 	'REQUIREMENT' 			=> 'Voraussetzung',
 	'RESET' 				=> 'Zur&uuml;cksetzen',

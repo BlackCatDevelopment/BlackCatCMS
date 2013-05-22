@@ -294,7 +294,6 @@ $TEXT = array(
 	'REMEMBER_ME' 			=> 'Remember Me',
 	'RENAME' 				=> 'Rename',
 	'DUPLICATE' 			=> 'Duplicate',
-	'RENAME_FILES_ON_UPLOAD' => 'Rename Files On Upload',
 	'REQUIRED' 				=> 'Required',
 	'REQUIREMENT' 			=> 'Requirement',
 	'RESET' 				=> 'Reset',
