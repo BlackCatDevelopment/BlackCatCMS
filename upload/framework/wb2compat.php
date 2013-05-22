@@ -44,7 +44,7 @@ define('DB_NAME', CAT_DB_NAME);
 define('WB_PREPROCESS_PREG', '/\[wblink([0-9]+)\]/isU' );
 define('WBMAILER_DEFAULT_SENDERNAME', CATMAILER_DEFAULT_SENDERNAME );
 // define WB_VERSION for backward compatibility
-if (!defined('WB_VERSION')) define('WB_VERSION', '2.8.3');
+if (!defined('WB_VERSION')) define('WB_VERSION', '2.8.2');
 if (!defined('TIMEZONE'))   define('TIMEZONE',DEFAULT_TIMEZONE_STRING);
 //
 if(!defined('ENABLE_OLD_LANGUAGE_DEFINITIONS')) define('ENABLE_OLD_LANGUAGE_DEFINITIONS',false);

@@ -371,6 +371,16 @@ if (!class_exists('CAT_Backend', false))
             // ====================
             $parser->output('footer', $data);
 
+            // ======================================
+            // ! make sure to flush the output buffer
+            // ======================================
+            if(ob_get_level()>1)
+            {
+                while (ob_get_level() > 0) {
+                    ob_end_flush();
+                }
+            }
+
             // ===================
             // ! Droplet support
             // ===================

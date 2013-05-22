@@ -49,12 +49,20 @@ $val     = CAT_Helper_Validate::getInstance();
 $page_id = $val->get('_REQUEST','page_id','numeric');
 
 // for backward compatibility
-$admin   =& $backend;
+include CAT_PATH.'/framework/class.admin.php';
+$admin = new admin('Pages', 'pages_modify');
 
 if ( ! $page_id )
 {
 	header("Location: index.php");
 	exit(0);
+}
+
+// always enable CSRF protection in backend; does not work with
+// AJAX so scripts called via AJAX should set this constant
+if (!defined('CAT_AJAX_CALL'))
+{
+    CAT_Helper_Protect::getInstance()->enableCSRFMagic();
 }
 
 $section_id = $val->get('_REQUEST','section_id','numeric');

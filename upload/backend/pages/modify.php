@@ -56,6 +56,10 @@ $backend = CAT_Backend::getInstance('Pages', 'pages_modify');
 $page    = CAT_Page::getInstance($page_id);
 $addons = CAT_Helper_Addons::getInstance();
 
+// for old modules
+include CAT_PATH.'/framework/class.admin.php';
+$admin = new admin('Pages', 'pages_modify');
+
 // ============= 
 // ! Get perms   
 // ============= 

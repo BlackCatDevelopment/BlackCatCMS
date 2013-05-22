@@ -48,13 +48,6 @@ class admin extends wb
 
     function __construct($section_name, $section_permission = 'start', $auto_header = true, $auto_auth = true)
     {
-        if(defined('WB2COMPAT'))
-        {
-            global $admin;
-            require_once CAT_PATH.'/framework/class.admin.php';
-            $admin = CAT_Backend::getInstance($section_name);
-            return $admin;
-        }
     return CAT_Backend::getInstance($section_name);
     }
 
@@ -63,12 +56,11 @@ class admin extends wb
     function print_banner()                          { return CAT_Backend::getInstance('')->print_banner(); }
     function print_header()                          { return CAT_Backend::getInstance('')->print_header(); }
     function print_footer()                          { return CAT_Backend::getInstance('')->print_footer(); }
+    function getFTAN()                               { return NULL;                                         }
 
 }
 
 /*
 	get_link_permission($title)
-	__admin_register_backend_modfiles()
-	__admin_build_link( $aPath, $aType="css")
 	get_page_permission($page,$action='admin')
 */
