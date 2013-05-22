@@ -6,7 +6,7 @@
             <div class="fc_settings_max">
                 <strong>{translate('Maintenance mode')}</strong><br /><strong></strong>
                 <div class="fc_settings_label" id="fc_page_down">
-                    <input type="checkbox" class="fc_checkbox_jq" name="maintenance_mode" id="fc_maintenance_mode" value="on" />
+                    <input type="checkbox" class="fc_checkbox_jq" name="maintenance_mode" id="fc_maintenance_mode" value="on" {if $MAINTENANCE_MODE == 'on'} checked="checked"{/if} />
                     <label for="fc_maintenance_mode">{translate('Maintenance mode')}</label>
                 </div>
             </div>

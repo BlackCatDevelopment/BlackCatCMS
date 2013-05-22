@@ -2,7 +2,7 @@
 	{translate('Settings')}
 </div>
 <div id="fc_main_content">
-	<form name="settings" action="{$CAT_ADMIN_URL}/settings/save.php" method="post" class="ajaxForm">
+	<form name="settings" action="{$CAT_ADMIN_URL}/settings/save.php" method="post">
 	<div id="fc_lists_overview">
 		<div id="fc_list_search" class="fc_gradient1">
 			<div class="fc_input_fake">

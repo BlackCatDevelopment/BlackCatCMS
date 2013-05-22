@@ -128,6 +128,8 @@ $tpl_data['MANAGE_SECTIONS']                   = CAT_Registry::get('MANAGE_SECTI
 $tpl_data['INTRO_PAGE']                        = CAT_Registry::get('INTRO_PAGE')      ? true : false;
 $tpl_data['FRONTEND_LOGIN']                    = CAT_Registry::get('FRONTEND_LOGIN')  ? true : false;
 
+$tpl_data['MAINTENANCE_MODE']                  = CAT_Registry::get('MAINTENANCE_MODE');
+
 $tpl_data['GD_EXTENSION']                      = (extension_loaded('gd') && function_exists('imageCreateFromJpeg')) ? true : false;
 
 

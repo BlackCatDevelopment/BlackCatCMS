@@ -72,6 +72,7 @@ function save_settings(&$admin)
 	$settings = array();
 	$old_settings = array();
     $val          = CAT_Helper_Validate::getInstance();
+    $err_msg      = array();
 	
 	/**
      * load current settings
@@ -147,7 +148,7 @@ function save_settings(&$admin)
         'multiple_menus', 'page_languages'      , 'section_blocks', 'page_trash',
         'users_allow_mailaddress' ) as $key )
     {
-	    $settings[$key] = ( $settings[$key] == '' ) ? 'false' : 'true';
+        $settings[$key] = ( !isset($settings[$key]) || $settings[$key] == '' ) ? 'false' : 'true';
     }
 	$settings['page_trash'] = isset ($settings['page_trash']) ? ($settings['page_trash']) : $old_settings['page_trash'];
 
@@ -286,7 +287,7 @@ function save_settings(&$admin)
 	}
 
 	// if no validation errors, try to update the database, otherwise return errormessages
-	if (sizeof($err_msg) == 0)
+    if (!count($err_msg))
 	{
 	// Query current settings in the db, then loop through them and update the db with the new value
 		$sql = 'SELECT `name` FROM `'.CAT_TABLE_PREFIX.'settings` ';
@@ -296,6 +297,8 @@ function save_settings(&$admin)
 		{
 		// get fieldname from table and store it
 			$setting_name = $row['name'];
+              if ( $setting_name == 'cat_version' )
+                  continue;
 			// set saved POST value from stored fieldname
 			$value = $settings[$row['name']];
 			if (!in_array($setting_name, $allow_tags_in_fields))
@@ -308,12 +311,11 @@ function save_settings(&$admin)
 			if ((trim($value) <> '') || $passed == true )
 			{
 				$value = trim($val->add_slashes($value));
-				$sql = 'UPDATE `'.CAT_TABLE_PREFIX.'settings` ';
-				$sql .= 'SET `value` = \''.$value.'\' ';
-				$sql .= 'WHERE `name` <> \'cat_version\' ';
-				$sql .= 'AND `name` = \''.$setting_name.'\' ';
+                   $sql  = 'UPDATE `%ssettings` ';
+                   $sql .= 'SET `value` = \'%s\' ';
+                   $sql .= 'WHERE `name` = \'%s\' ';
 
-				if ($val->db()->query($sql))
+                   if ($val->db()->query(sprintf($sql,CAT_TABLE_PREFIX,$value,$setting_name)))
 				{
 					$sql_info = mysql_info();
 					if (preg_match('/matched: *([1-9][0-9]*)/i', $sql_info) != 1)
