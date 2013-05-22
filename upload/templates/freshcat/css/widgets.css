@@ -89,5 +89,12 @@
 	display: none;
 }
 
-.widget_error{color: #CC0000;font-weight: bold;}
+.widget_error{
+    background-color: #F3D8D8;
+    border: 1px solid #FF0000;
+    color: #CC0000;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
 .widget_info{color: #3366CC;font-weight: bold;}

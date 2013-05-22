@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 include dirname(__FILE__).'/data/config.inc.php';
 
 $error = $version = $newer = $last = $last_version = NULL;
-$debug = true;
+$debug = false;
 $doit  = true;
 
 if(!CAT_Helper_Validate::getInstance()->sanitizeGet('blackcat_refresh'))
@@ -96,18 +96,23 @@ if ( $doit ) {
                    . ( ( $debug ) ? "<br />".var_dump($client->getLastRequest()) : NULL )
                    . "<br />"
                    ;
+            $version = 'unknown';
         }
-        $version = $response->getRawBody();
+        else
+        {
+            $version = $response->getRawBody();
+        }
     } catch ( Zend_HTTP_Client_Adapter_Exception $e) {
     $error = "Unable to load source:<br />"
                . "(Using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
            . $e->getMessage()
            . "<br />"
            ;
+        $version = 'unknown';
     }
 }
 else {
-    $version = $last_version;
+    #$version = $last_version;
 }
 
 if ( $version )
