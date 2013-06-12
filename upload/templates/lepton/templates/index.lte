@@ -32,9 +32,9 @@
 		<p><input type="hidden" name="referrer" value="<?php
 			echo defined('REFERRER_ID') ? REFERRER_ID : PAGE_ID; ?>" /></p>
 		<fieldset>
-			<legend>{$TEXT.SEARCH}:</legend>
+			<legend>{translate('Search')}:</legend>
 			<input type="text" name="string" class="search_string" />
-			<input type="submit" name="wb_search" id="wb_search" value="{$TEXT.SEARCH}" />
+			<input type="submit" name="wb_search" id="wb_search" value="{translate('Search')}" />
 		</fieldset>
 	</form>
 	{/if}
@@ -50,22 +50,22 @@ if (FRONTEND_LOGIN == 'enabled' && VISIBILITY != 'private' ) { ?>
 	<form name="login" id="login1" action="<?php 
 		echo LOGIN_URL; ?>" method="post">
 		<fieldset>
-			<legend>{$TEXT.LOGIN}:</legend>
+			<legend>{translate('Login')}:</legend>
 			<label for="username" accesskey="1">
-			{$TEXT.USERNAME}:</label>
+			{translate('Username')}:</label>
 			<input type="text" name="username" id="username" 
 				style="text-transform: lowercase;" /><br />
-			<label for="password" accesskey="2">{$TEXT.PASSWORD}:</label>
+			<label for="password" accesskey="2">{translate('Password')}:</label>
 			<input type="password" name="password" id="password" /><br />
 			<input type="submit" name="wb_login" id="wb_login" value="{translate('Login')}"/><br />
 	
 			<!-- forgotten details link -->
-			<a href="<?php echo FORGOT_URL; ?>">{$TEXT.FORGOT_DETAILS}</a>
+			<a href="<?php echo FORGOT_URL; ?>">{translate('Forgot Details?')}</a>
 
 			<!-- frontend signup -->
 			<?php
 if (is_numeric(FRONTEND_SIGNUP) && (FRONTEND_SIGNUP != 0 )) { ?>
-			<a href="<?php echo SIGNUP_URL; ?>">{$TEXT.SIGNUP}</a>
+			<a href="<?php echo SIGNUP_URL; ?>">{translate('Signup')}</a>
 			<?php } ?>
 		</fieldset>
 	</form>
@@ -75,8 +75,8 @@ if (is_numeric(FRONTEND_SIGNUP) && (FRONTEND_SIGNUP != 0 )) { ?>
 	<!-- logout form -->
 	<form name="logout" id="logout1" action="<?php echo LOGOUT_URL; ?>" method="post">
 		<fieldset>
-			<legend>{$TEXT.LOGGED_IN}:</legend>
-			<p>{$TEXT.WELCOME_BACK}, <?php echo $wb->get_display_name(); ?></p>
+			<legend>{translate('Logged-In')}:</legend>
+			<p>{translate('Welcome back')}, <?php echo $wb->get_display_name(); ?></p>
 			<input type="submit" name="wb_login" id="wb_login" value="{translate('Logout')}" />
 			<!-- edit user preferences -->
 			<p><a href="<?php echo PREFERENCES_URL; ?>">{translate('Preferences')}</a></p>
