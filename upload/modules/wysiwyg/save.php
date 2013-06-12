@@ -41,57 +41,76 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-global $database;
+$val     = CAT_Helper_Validate::getInstance();
+$user    = CAT_Users::getInstance();
+$backend = CAT_Backend::getInstance('Pages', 'pages_modify');
 
-// Include WB admin wrapper script
-$update_when_modified = true; // Tells script to update when this page was last updated
-require(CAT_PATH.'/modules/admin.php');
+// ===============
+// ! Get page id
+// ===============
+$page_id    = $val->get('_REQUEST','page_id','numeric');
+$section_id = $val->get('_REQUEST','section_id','numeric');
 
-// Include the WB functions file
-require_once(CAT_PATH.'/framework/functions.php');
+if ( !$page_id )
+{
+	header("Location: index.php");
+	exit(0);
+}
 
-/**
- *	Update the mod_wysiwygs table with the contents
- *	
- *	M.f.i	- The database-test for errors should be inside the condition block.
- *			- Additional tests for possible cross-attacks.
- *			- Additional test for the user CAN modify a) this modul conten and b) this section!
- */
-if(isset($_POST['content'.$section_id])) {
+// =============
+// ! Get perms
+// =============
+if ( CAT_Helper_Page::getPagePermission($page_id,'admin') !== true )
+{
+	$backend->print_error( 'You do not have permissions to modify this page!' );
+}
+
+// =================
+// ! Get new content
+// =================
+$content = $val->sanitizePost('content'.$section_id);
+if (!$content)
+{
+    $backend->print_error( 'Nothing to save!' );
+}
+else
+{
     // for non-admins only
     if(!CAT_Users::getInstance()->ami_group_member(1))
     {
         // if HTMLPurifier is enabled...
-        $r = $database->get_one('SELECT * FROM `'.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2` WHERE set_name="enable_htmlpurifier" AND set_value="1"');
+        $r = $backend->db()->get_one('SELECT * FROM `'.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2` WHERE set_name="enable_htmlpurifier" AND set_value="1"');
         if($r) {
             // use HTMLPurifier to clean up the output
-            $content = CAT_Helper_Protect::getInstance()->purify($_POST['content'.$section_id],array('Core.CollectErrors'=>true));
+            $content = CAT_Helper_Protect::getInstance()->purify($content,array('Core.CollectErrors'=>true));
         }
     }
     else {
-        $content = $admin->add_slashes($_POST['content'.$section_id]);
+        $content = $val->add_slashes($content);
     }
 	/**
 	 *	searching in $text will be much easier this way
-	 *
 	 */
 	$text = umlauts_to_entities(strip_tags($content), strtoupper(DEFAULT_CHARSET), 0);
 
+    /**
+     *  save
+     **/
 	$query = "REPLACE INTO `".CAT_TABLE_PREFIX."mod_wysiwyg` VALUES ( '$section_id', $page_id, '$content', '$text' );";
-	$database->query($query);
-	if ($database->is_error()) trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);	
+	$backend->db()->query($query);
+	if ($backend->db()->is_error()) trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $backend->db()->get_error()), E_USER_ERROR);	
 }
 
 $edit_page = CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id.'#'.SEC_ANCHOR.$section_id;
 
 // Check if there is a database error, otherwise say successful
-if($database->is_error()) {
-	$admin->print_error($database->get_error(), $js_back);
+if($backend->db()->is_error()) {
+	$backend->print_error($backend->db()->get_error(), $js_back);
 } else {
-	$admin->print_success('Page saved successfully', $edit_page );
+	$backend->print_success('Page saved successfully', $edit_page );
 }
 
 // Print admin footer
-$admin->print_footer();
+$backend->print_footer();
 
 ?>

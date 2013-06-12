@@ -114,6 +114,6 @@ $parser->output(
         'section_id' => $section_id,
         'page_id'    => $page_id,
         'action'     => CAT_URL.'/modules/wysiwyg/save.php',
-        'WYSIWYG'    => show_wysiwyg_editor('content'.$section_id,'content'.$section_id,$content,$config['width'],$config['height'])
+        'WYSIWYG'    => show_wysiwyg_editor('content'.$section_id,'content'.$section_id,$content,$config['width'],$config['height'],false)
     )
 );

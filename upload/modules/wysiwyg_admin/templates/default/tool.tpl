@@ -96,7 +96,7 @@
     <br clear="all" />
 
     <div class="buttons">
-        <input type="submit" value="{$TEXT.SAVE}" />
-        <input type="button" value="{$TEXT.CANCEL}" onclick="document.location='{$CAT_ADMIN_URL}/admintools/index.php';" />
+        <input type="submit" value="{translate('Save')}" />
+        <input type="button" value="{translate('Cancel')}" onclick="document.location='{$CAT_ADMIN_URL}/admintools/index.php';" />
     </div>
 </form>

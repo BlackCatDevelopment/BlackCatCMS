@@ -39,11 +39,6 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$debug = false;
-if (true === $debug) {
-	ini_set('display_errors', 1);
-	error_reporting(E_ALL|E_STRICT);
-}
 
 // backend only
 $backend = CAT_Backend::getInstance('admintools');

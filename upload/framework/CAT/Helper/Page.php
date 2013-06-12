@@ -1047,8 +1047,8 @@ if (!class_exists('CAT_Helper_Page'))
     		$action_groups = $action.'_groups';
     		$action_users  = $action.'_users';
             $page          = self::properties($page_id);
-
-    		if (is_array($page)) {
+    		if (is_array($page))
+            {
 				$groups = ( isset($page[$action_groups]) )
                         ? explode(',',$page[$action_groups])
                         : array();
@@ -1059,12 +1059,15 @@ if (!class_exists('CAT_Helper_Page'))
 
             // check if user is in any admin group
     		$in_group = FALSE;
-    		foreach(CAT_Users::getInstance()->get_groups_id() as $cur_gid){
-    		    if (in_array($cur_gid, $groups)) {
+    		foreach(CAT_Users::getInstance()->get_groups_id() as $cur_gid)
+            {
+    		    if (in_array($cur_gid, $groups))
+                {
     		        $in_group = true;
     		    }
     		}
-    		if((!$in_group) && !is_numeric(array_search(CAT_Users::getInstance()->get_user_id(), $users))) {
+    		if((!$in_group) && !is_numeric(array_search(CAT_Users::getInstance()->get_user_id(), $users)))
+            {
     			return false;
     		}
     		return true;
