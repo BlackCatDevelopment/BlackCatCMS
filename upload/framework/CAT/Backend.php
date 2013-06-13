@@ -175,6 +175,8 @@ if (!class_exists('CAT_Backend', false))
                     '__li_id_prefix'       => 'pageid_',
                     '__li_css_prefix'      => 'fc_page_',
                     '__li_has_child_class' => 'fc_expandable',
+                    '__li_is_open_class'   => 'fc_tree_open',
+                    '__li_is_closed_class' => 'fc_tree_close',
                     '__title_key'          => 'text',
                 ))->tree( $pages, 0 );
 

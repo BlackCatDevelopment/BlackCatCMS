@@ -183,9 +183,11 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             $id_key    = $self->_config['__id_key'];
             $title_key = $self->_config['__title_key'];
             $level_key = $self->_config['__level_key'];
+            $isopen_key = $self->_config['__is_open_key'];
             $space     = $self->_config['space'];
             $is_first  = true;
             $is_last   = false;
+            $is_open   = false;
 
             // create a list of children for each item
             foreach ( $list as $item ) {
@@ -223,6 +225,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                             : 0;
                     $tab    = str_repeat( $space, $level );
                     $text   = $option['value'][$title_key];
+                    $is_open = $option['value'][$isopen_key];
                     // mark selected
                     if($type=='select')
                     {
@@ -235,7 +238,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                     else
                     {
                         // HTML for menu item containing children (open)
-                        $output[] = $tab.$self->startLI($option['value'][$id_key],$level,true,$is_first,$is_last)
+                        $output[] = $tab.$self->startLI($option['value'][$id_key],$level,true,$is_first,$is_last,$is_open)
                                //. "<span>$text</span>";
                                   . $text;
                         // open sub list
@@ -402,7 +405,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          *
          *
          **/
-        function startLI($id,$level,$has_children=false,$is_first=false,$is_last=false)
+        function startLI($id,$level,$has_children=false,$is_first=false,$is_last=false,$is_open=false)
         {
             $self  = self::getInstance();
             $id    = ( isset($self->_config['__li_id_prefix']) )
@@ -416,6 +419,9 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             $class .= ( $is_first )
                    ?  ' '.$self->_config['__li_first_item_class']
                    : '';
+            $class .= ( $is_open )
+                   ?  ' '.$self->_config['__li_is_open_class']
+                   :  ' '.$self->_config['__li_is_closed_class'];
             $start = str_replace(
                 array( '%%id%%', '%%class%%' ),
                 array( $id     , $class ),
@@ -454,6 +460,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
 	            '__current_key'         => 'current',
 	            '__hidden_key'          => 'hidden',
                 '__editable_key'        => 'editable',
+                '__is_open_key'         => 'is_open',
                 '__select_class'        => '',
                 '__list_open'           => '<ul id="%%id%%" class="%%class%%">',
                 '__list_close'          => '</ul>',
@@ -469,7 +476,8 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 '__li_first_item_class' => 'first_item',
                 '__li_last_item_class'  => 'last_item',
                 '__li_has_child_class'  => 'has_child',
-                '__li_is_open_class'    => 'is_open',
+                '__li_is_open_class'    => 'item_open',
+                '__li_is_closed_class'  => 'item_closed',
                 '__no_html'             => false,
 			    'space'                 => '    ',
 			);
