@@ -38,18 +38,16 @@ else
 {
 	/**
 	 *	File isn't there, so we try to run the installer
-	 *
-	 *	Anmerkung:  HTTP/1.1 verlangt einen absoluten URI inklusive dem Schema,
-	 *	Hostnamen und absoluten Pfad als Argument von Location:, manche, aber nicht alle
-	 *	Clients akzeptieren jedoch auch relative URIs.
 	 */
 	$host       = $_SERVER['HTTP_HOST'];
 	$uri        = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
 	$file       = 'install/index.php';
 	$target_url = 'http://'.$host.$uri.'/'.$file;
 	header('Location: '.$target_url);
-	die();	// make sure that the code below will not be executed
+	exit(); // make sure that the code below will not be executed
 }
+
+global $wb, $admin;
 
 // -----------------------------------------------------------------------------
 // Create new frontend object; this is for backward compatibility only!
@@ -60,6 +58,7 @@ $wb->extra_where_sql = "visibility != 'none' AND visibility != 'hidden' AND visi
 include CAT_PATH.'/framework/frontend.functions.php';
 // -----------------------------------------------------------------------------
 
+// get page to show
 $page_id = CAT_Helper_Page::selectPage() or die();
 
 // this will show the Intro- or Default-Page if no PAGE_ID is available
@@ -71,5 +70,12 @@ $wb->page = CAT_Helper_Page::properties($page_id);
 $wb->default_link = CAT_Helper_Page::properties($page_id,'link');
 // -----------------------------------------------------------------------------
 
+// -----------------------------------------------------------------------------
+// needed at least for droplets
+$admin =& $wb;
+// -----------------------------------------------------------------------------
+
 // hand over to page handler
 $page->show();
+
+exit();

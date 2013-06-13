@@ -531,6 +531,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      **/
     function is_parent($id)         { return CAT_Helper_Page::properties($id,'parent'); }
 
+    function change_mode($name)     { return CAT_Helper_Directory::setPerms($name); }
     function delete_page($id)       { return CAT_Helper_Page::deletePage($id); }
     function get_page_title($id)    { return CAT_Helper_Page::properties($id,'page_title'); }
     function get_parent_titles($id) { return CAT_Helper_Page::getParentTitles($id); }

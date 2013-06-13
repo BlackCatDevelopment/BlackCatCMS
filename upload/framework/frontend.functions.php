@@ -60,7 +60,11 @@ function get_page_link($page_id)  { return CAT_Helper_Page::properties($page_id,
 function language_menu()          { global $page_id; return CAT_Page::getInstance($page_id)->getLanguageMenu(); }
 function page_content($block=1)   { global $page_id; return CAT_Page::getInstance($page_id)->getPageContent($block); }
 function page_header($mode=false) { if($mode) return WEBSITE_HEADER; echo WEBSITE_HEADER; }
-function page_link($link)         { return CAT_Helper_Page::getLink($link); }
+
+if(!function_exists('page_link'))
+{
+    function page_link($link)         { return CAT_Helper_Page::getLink($link); }
+}
 
 function page_description($mode=false)
 {

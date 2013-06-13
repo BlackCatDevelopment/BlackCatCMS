@@ -314,10 +314,12 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          *
          **/
 		public function debug( $bool ) {
-		    if ( $bool === true ) {
+            if ( $bool === true )
+            {
                	$this->debugLevel = 7; // 7 = Debug
 			}
-			else {
+            else
+            {
 			    $this->debugLevel = 8; // 8 = OFF
 			}
         }   // end function debug()
@@ -352,7 +354,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
       	public function log () {
             if ( $this->debugLevel < 8 ) { // 8 = OFF
                 if ( ! is_object( $this->logObj ) ) {
-                    $debug_dir = CAT_PATH.'/temp/logs';
+                    $debug_dir = CAT_PATH.'/temp/logs'
+                               . ( $this->debugLevel == 7 ? '/debug_'.get_class($this) : '' );
                     if ( ! file_exists( $debug_dir ) ) {
                         mkdir( $debug_dir, 0777 );
                     }

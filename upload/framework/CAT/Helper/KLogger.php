@@ -182,9 +182,21 @@ class CAT_Helper_KLogger
 
         $this->_logFilePath = $logDirectory
             . DIRECTORY_SEPARATOR
-            . 'log_'
+            . (( $severity == self::DEBUG ) ? 'debug_' : 'log_')
             . date('Y-m-d')
             . '.txt';
+
+        if ( $severity == self::DEBUG ) {
+            $trace  = debug_backtrace();
+            $caller = $trace[0];
+            if(isset($caller['class']) && !preg_match('/klogger/i',$caller['class']))
+                $this->_logFilePath = $logDirectory
+                    . DIRECTORY_SEPARATOR
+                    . 'debug_'
+                    . $caller['class'].'_'
+                    . date('Y-m-d')
+                    . '.txt';
+        }
 
         $this->_severityThreshold = $severity;
         if (!file_exists($logDirectory)) {
@@ -197,9 +209,11 @@ class CAT_Helper_KLogger
             return;
         }
 
-        if (false !== ($this->_fileHandle = fopen($this->_logFilePath, 'a'))) {
+        $filemode = ( $severity == self::DEBUG ) ? 'w' : 'a';
+
+        if (false !== ($this->_fileHandle = fopen($this->_logFilePath, $filemode))) {
             $this->_logStatus = self::STATUS_LOG_OPEN;
-            $this->_messageQueue[] = $this->_messages['opensuccess'];
+            $this->_messageQueue[] = $this->_messages['opensuccess'] . ' ('.$filemode.')';
         } else {
             $this->_logStatus = self::STATUS_OPEN_FAILED;
             $this->_messageQueue[] = $this->_messages['openfail'];
@@ -378,7 +392,7 @@ class CAT_Helper_KLogger
 	        $class     = isset( $info['class'] )    ? $info['class']    : NULL;
 	        $function  = isset( $info['function'] ) ? $info['function'] : NULL;
 	        $file      = basename($info['file']);
-	        $code_line = $last['line'];
+	        $code_line = $info['line'].'--'.$last['line'];#isset( $info['line'] )     ? $info['line']     : $last['line'];
 	        $line      = "[$function()] $line [ $file:$code_line ]";
             $this->writeFreeFormLine("$status $line \n");
             if ( $args ) {

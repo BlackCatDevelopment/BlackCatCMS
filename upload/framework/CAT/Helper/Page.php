@@ -1734,6 +1734,10 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         private static function _deletePage($page_id)
         {
+
+            global $wb, $admin, $backend, $database;
+            $admin =& $backend;
+
             $self   = self::getInstance();
             $errors = array();
             // delete sections (call delete.php for each)

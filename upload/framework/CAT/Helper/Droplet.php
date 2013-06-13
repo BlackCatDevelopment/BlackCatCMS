@@ -33,6 +33,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
 	
 	class CAT_Helper_Droplet extends CAT_Object	{
 
+        protected      $_config         = array( 'loglevel' => 8 );
         private static $instance = NULL;
 
         public static function getInstance()
@@ -206,6 +207,162 @@ if (!class_exists('CAT_Helper_Droplet')) {
 	        return is_droplet_registered_for_search($droplet_name);
 	    }
 	    
+        /**
+         * this method takes the output and processes the included droplets;
+         * as droplet code may contain other droplets, the max. loop depth is
+         * restricted to avoid endless loops
+         *
+         * @access public
+         * @param  string  $content
+         * @param  integer $max_loops - default 3
+         * @return string
+         **/
+        public static function process( &$content, $max_loops = 3 )
+        {
+            $max_loops = ( (int) $max_loops = 0 ? 3 : (int) $max_loops );
+            while ( ( self::evaluate($content) === true ) && ( $max_loops > 0 ) )
+            {
+                $max_loops--;
+            }
+            return $content;
+        }   // end function process()
+
+        /**
+         * evaluates the droplet code
+         *
+         * @access private
+         * @param  string   $_x_codedata
+         * @param  string   $_x_varlist
+         * @param  string   $content
+         * @return eval result
+         **/
+        private static function do_eval( $_x_codedata, $_x_varlist, &$content )
+        {
+            self::getInstance()->log()->LogDebug('evaluating: '.$_x_codedata);
+            extract( $_x_varlist, EXTR_SKIP );
+            return ( eval( $_x_codedata ) );
+        }   // end function do_eval()
+
+        /**
+         * evaluates the droplets contained in $content
+         *
+         * @access public
+         * @param  string $content
+         * @return string
+         **/
+        private static function evaluate(&$content)
+        {
+
+            $self = self::getInstance();
+
+            $self->log()->LogDebug('processing content:');
+            $self->log()->LogDebug($content);
+
+            // collect all droplets from document
+            $droplet_tags         = array();
+            $droplet_replacements = array();
+
+            if ( preg_match_all( '/\[\[(.*?)\]\]/', $content, $found_droplets ) )
+            {
+                foreach ( $found_droplets[1] as $droplet )
+                {
+                    if ( array_key_exists('[['.$droplet.']]', $droplet_tags ) === false )
+                    {
+                        // go in if same droplet with same arguments is not processed already
+                        $varlist = array();
+                        // split each droplet command into droplet_name and request_string
+                        $tmp            = preg_split( '/\?/', $droplet, 2 );
+                        $droplet_name   = $tmp[0];
+                        $request_string = ( isset($tmp[1]) ? $tmp[1] : '' );
+                        if ( $request_string != '' )
+                        {
+                            // make sure we can parse the arguments correctly
+                            $request_string = html_entity_decode( $request_string, ENT_COMPAT, DEFAULT_CHARSET );
+                            // create array of arguments from query_string
+                            $argv = preg_split( '/&(?!amp;)/', $request_string );
+                            foreach ( $argv as $argument )
+                            {
+                                // split argument in pair of varname, value
+                                list( $variable, $value ) = explode( '=', $argument, 2 );
+                                if ( !empty( $value ) )
+                                {
+                                    // re-encode the value and push the var into varlist
+                                    $varlist[$variable] = htmlentities( $value, ENT_COMPAT, DEFAULT_CHARSET );
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // no arguments given, so
+                            $droplet_name = $droplet;
+                        }
+
+                        $self->log()->LogDebug('doing request: '.sprintf(
+                            'SELECT `code` FROM `%smod_droplets` WHERE `name` LIKE "%s" AND `active` = 1',
+                            CAT_TABLE_PREFIX, $droplet_name
+                        ));
+
+                        // request the droplet code from database
+                        $codedata = $self->db()->get_one(sprintf(
+                            'SELECT `code` FROM `%smod_droplets` WHERE `name` LIKE "%s" AND `active` = 1',
+                            CAT_TABLE_PREFIX, $droplet_name
+                        ));
+
+                        $self->log()->LogDebug('code: '.$codedata);
+
+                        if ( !is_null($codedata) )
+                        {
+                            $newvalue = self::do_eval( $codedata, $varlist, $content );
+                            $self->log()->LogDebug('eval result: '.$newvalue);
+
+                            // check returnvalue (must be a string of 1 char at least or (bool)true
+                            if ( $newvalue == '' && $newvalue !== true )
+                            {
+                                if ( $self->_config['loglevel'] == 7 )
+                                {
+                                    $newvalue = sprintf(
+                                        '<span class="mod_droplets_err">Error evaluating droplet [[%s]]: no valid returnvalue.</span>',
+                                        $droplet
+                                    );
+                                }
+                                else
+                                {
+                                    $newvalue = true;
+                                }
+                            }
+                            if ( $newvalue === true )
+                            {
+                                $newvalue = "";
+                            }
+                            // remove any defined CSS section from code. For valid XHTML a CSS-section is allowed inside <head>...</head> only!
+                            $newvalue = preg_replace( '/<style.*>.*<\/style>/siU', '', $newvalue );
+                        }
+                        else
+                        {
+                            // just remove droplet placeholder if no code was found
+                            if ( $self->_config['loglevel'] == 7 )
+                            {
+                                $newvalue = '<span class="mod_droplets_err">No such droplet: ' . $droplet . '</span>';
+                            }
+                            else
+                            {
+                                $newvalue = true;
+                            }
+                        }
+                        $droplet_tags[]         = '[[' . $droplet . ']]';
+                        $droplet_replacements[] = $newvalue;
+                    }
+                }    // End foreach( $found_droplets[1] as $droplet )
+                // replace each Droplet-Tag with coresponding $newvalue
+                $content = str_replace( $droplet_tags, $droplet_replacements, $content );
+            }
+
+            $self->log()->LogDebug('returning:');
+            $self->log()->LogDebug($content);
+
+            return $content;
+        }   // end function evaluate()
+
 	} // class CAT_Helper_Droplet
 	
 } // if class_exists()	

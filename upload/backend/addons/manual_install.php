@@ -86,6 +86,8 @@ if ( $precheck_errors != '' && ! is_bool($precheck_errors) )
 }
 
 // include modules install.php/upgrade.php script
+global $admin;
+$admin =& $backend;
 require $mod_file;
 
 // load module info into database and output status message

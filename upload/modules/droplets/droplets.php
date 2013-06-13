@@ -43,108 +43,12 @@ if (defined('CAT_PATH')) {
 
 function do_eval( $_x_codedata, $_x_varlist, &$content )
 {
-    extract( $_x_varlist, EXTR_SKIP );
-    return ( eval( $_x_codedata ) );
+    return CAT_Helper_Droplet::do_eval( $_x_codedata, $_x_varlist, $content );
 }
-
-function processDroplets( &$content )
-{
-    // collect all droplets from document
-    $droplet_tags = array();
-    $droplet_replacements = array();
-    if ( preg_match_all( '/\[\[(.*?)\]\]/', $content, $found_droplets ) )
-    {
-        foreach ( $found_droplets[ 1 ] as $droplet )
-        {
-            if ( array_key_exists( '[[' . $droplet . ']]', $droplet_tags ) == false )
-            {
-                // go in if same droplet with same arguments is not processed already
-                $varlist = array();
-                // split each droplet command into droplet_name and request_string
-                $tmp            = preg_split( '/\?/', $droplet, 2 );
-                $droplet_name   = $tmp[ 0 ];
-                $request_string = ( isset( $tmp[ 1 ] ) ? $tmp[ 1 ] : '' );
-                if ( $request_string != '' )
-                {
-                    // make sure we can parse the arguments correctly
-                    $request_string = html_entity_decode( $request_string, ENT_COMPAT, DEFAULT_CHARSET );
-                    // create array of arguments from query_string
-                    $argv = preg_split( '/&(?!amp;)/', $request_string );
-                    foreach ( $argv as $argument )
-                    {
-                        // split argument in pair of varname, value
-                        list( $variable, $value ) = explode( '=', $argument, 2 );
-                        if ( !empty( $value ) )
-                        {
-                            // re-encode the value and push the var into varlist
-                            $varlist[ $variable ] = htmlentities( $value, ENT_COMPAT, DEFAULT_CHARSET );
-                        }
-                    }
-                }
-                else
-                {
-                    // no arguments given, so
-                    $droplet_name = $droplet;
-                }
-                // request the droplet code from database
-                $sql      = 'SELECT `code` FROM `' . CAT_TABLE_PREFIX . 'mod_droplets` WHERE `name` LIKE "' . $droplet_name . '" AND `active` = 1';
-// ----- ARGH!!! -----
-                $codedata = $GLOBALS[ 'database' ]->get_one( $sql );
-// ----- ARGH!!! -----
-                if ( !is_null( $codedata ) )
-                {
-                    $newvalue = do_eval( $codedata, $varlist, $content );
-                    // check returnvalue (must be a string of 1 char at least or (bool)true
-                    if ( $newvalue == '' && $newvalue !== true )
-                    {
-                        if ( DEBUG === true )
-                        {
-                            $newvalue = '<span class="mod_droplets_err">Error in: ' . $droplet . ', no valid returnvalue.</span>';
-                        }
-                        else
-                        {
-                            $newvalue = true;
-                        }
-                    }
-                    if ( $newvalue === true )
-                    {
-                        $newvalue = "";
-                    }
-                    // remove any defined CSS section from code. For valid XHTML a CSS-section is allowed inside <head>...</head> only!
-                    $newvalue = preg_replace( '/<style.*>.*<\/style>/siU', '', $newvalue );
-                    // push droplet-tag and it's replacement into Search/Replace array after executing only
-                }
-                else
-                {
-                    // just remove droplet placeholder if no code was found
-                    if ( DEBUG === true )
-                    {
-                        $newvalue = '<span class="mod_droplets_err">No such droplet: ' . $droplet . '</span>';
-                    }
-                    else
-                    {
-                        $newvalue = true;
-                    }
-                }
-                $droplet_tags[]         = '[[' . $droplet . ']]';
-                $droplet_replacements[] = $newvalue;
-            }
-        }    // End foreach( $found_droplets[1] as $droplet )
-        // replace each Droplet-Tag with coresponding $newvalue
-        $content = str_replace( $droplet_tags, $droplet_replacements, $content );
-    }
-    // returns TRUE if droplets found in content, FALSE if not
-    return ( count( $droplet_tags ) != 0 );
-}   // end function processDroplets()
 
 function evalDroplets( &$content, $max_loops = 3 )
 {
-    $max_loops = ( (int) $max_loops = 0 ? 3 : (int) $max_loops );
-    while ( ( processDroplets( $content ) == true ) && ( $max_loops > 0 ) )
-    { 
-        $max_loops--;
-    }
-    return $content;
+    return CAT_Helper_Droplet::process($content,$max_loops);
 }   // end function evalDroplets()
 
 ?>

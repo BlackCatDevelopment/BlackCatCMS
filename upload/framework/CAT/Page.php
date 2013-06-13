@@ -127,10 +127,17 @@ if (!class_exists('CAT_Page', false))
         {
 
             // keep old modules happy
-            global $wb, $admin, $database, $page_id, $section_id, $parser;
+            global $wb, $admin, $database, $page_id, $section_id;
             $admin =& $wb;
             if ( $page_id == '' )
+            {
                 $page_id = $this->_page_id;
+            }
+
+            $this->log()->LogDebug(sprintf('showing page with ID [%s]',$page_id));
+
+            // template engine
+            global $parser;
 
             // page of type menu_link
             if(CAT_Sections::isMenuLink($this->_page_id))
@@ -145,21 +152,39 @@ if (!class_exists('CAT_Page', false))
                 {
                     include_once sanitize_path(CAT_PATH.'/modules/blackcatFilter/filter.php');
                     if(function_exists('executeFilters'))
+                    {
+                        $this->log()->LogDebug('enabling output filters');
                         $do_filter = true;
                 }
+                }
                 $this->setTemplate();
+
+                // including the template; it may calls different functions
+                // like page_content() etc.
                 ob_start();
-                    require(CAT_PATH.'/templates/'.TEMPLATE.'/index.php');
-                    $output = ob_get_clean();
-                #if(ob_get_length() > 0)
-                #    ob_end_clean();
+                    require CAT_PATH.'/templates/'.TEMPLATE.'/index.php';
+                    $output = ob_get_contents();
+                ob_clean();
+
+                // droplets
+                CAT_Helper_Droplet::process($output);
+
+                // output filtering
                 if ( $do_filter )
+                {
+                    $this->log()->LogDebug('executing output filters');
                     executeFilters($output);
+                }
+
                 // use HTMLPurifier to clean up the output
                 if( defined('ENABLE_HTMLPURIFIER') && true === ENABLE_HTMLPURIFIER )
                 {
+                    $this->log()->LogDebug('executing HTML Purifier');
                     $output = CAT_Helper_Protect::purify($output);
                 }
+
+                $this->log()->LogDebug('print output');
+
                 echo $output;
             }
         }   // end function show()
@@ -273,10 +298,16 @@ if (!class_exists('CAT_Page', false))
                                 $parser->setPath(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates/' . DEFAULT_TEMPLATE));
                             }
                             // fetch original content
+$this->log()->LogDebug('output buffer level before ob_start(): '.ob_get_level());
                             ob_start();
+$this->log()->LogDebug('output buffer status: ', ob_get_status(1));
                                 require(CAT_PATH . '/modules/' . $module . '/view.php');
-                                $content = ob_get_contents();
-                            ob_clean();
+                                $content = ob_get_clean();
+
+$this->log()->LogDebug('output buffer level after ob_get_clean() - should be the same as before: '.ob_get_level());
+$this->log()->LogDebug('output buffer content for '.CAT_PATH . '/modules/' . $module . '/view.php'.': ', $content);
+$this->log()->LogDebug('output buffer status: ', ob_get_status(1));
+
                             echo $content;
                         }
                         else
