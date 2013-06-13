@@ -176,7 +176,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
                         else
                         {
                             $ajax	= array(
-                        		'message'	=> $backend->lang()->translate('An error occurred (processed false): ') . $current->error,
+                        		'message'	=> $backend->lang()->translate('File upload error: {{error}}',array('error'=>$current->error)),
                         		'success'	=> false
                         	);
                         	print json_encode( $ajax );
@@ -186,7 +186,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
                     else
                     {
                             $ajax	= array(
-                        		'message'	=> $backend->lang()->translate('An error occurred (uploaded false): ') . $current->error,
+                        		'message'	=> $backend->lang()->translate('File upload error: {{error}}',array('error'=>$current->error)),
                         		'success'	=> false
                         	);
                         	print json_encode( $ajax );

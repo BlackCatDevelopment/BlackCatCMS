@@ -284,15 +284,24 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
         * Set this variable to false in the init() function if you don't want to check the MIME 
         * with the magic.mime file
         *
-        * The function mime_content_type() will be deprecated,
-        * and this variable will be set to false in a future release
-        *
-        * This variable is set to true by default for security reason
+        * The function mime_content_type() is deprecated and not secure, so
+        * this variable is set to false by default for security reasons
         *
         * @access public
         * @var boolean
         */
         var $mime_magic;
+    
+        /**
+         * This variable is used as default if no mime type can be detected.
+         *
+         * Defaults to 'application/octet-stream' as this is deactivated in
+         * most cases
+         *
+         * @access public
+         * @var string
+         **/
+        var $mime_default_type;
     
         /**
         * Set this variable to false if you don't want to turn dangerous scripts into simple text files
@@ -448,185 +457,51 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
             // system, you can deactivate it here; just set it to false
             $this->mime_fileinfo            = true;            // MIME detection with Fileinfo PECL extension
             $this->mime_file                 = true;            // MIME detection with UNIX file() command
-            $this->mime_magic                = true;            // MIME detection with mime_magic (mime_content_type())
+            $this->mime_magic                = false;           // MIME detection with mime_magic (mime_content_type())
 
             // get the default max size from php.ini
             $this->file_max_size_raw        = trim(ini_get('upload_max_filesize'));
             $this->file_max_size            = $this->getsize($this->file_max_size_raw);
     
             $this->forbidden                = array();
-            $this->allowed                    = array(
-                'application/arj',
-                'application/excel',
-                'application/gnutar',
-                'application/mspowerpoint',
-                'application/msword',
-                'application/octet-stream',
-                'application/onenote',
-                'application/pdf',
-                'application/plain',
-                'application/postscript',
-                'application/powerpoint',
-                'application/rar',
-                'application/rtf',
-                'application/vnd.ms-excel',
-                'application/vnd.ms-excel.addin.macroEnabled.12',
-                'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
-                'application/vnd.ms-excel.sheet.macroEnabled.12',
-                'application/vnd.ms-excel.template.macroEnabled.12',
-                'application/vnd.ms-office',
-                'application/vnd.ms-officetheme',
-                'application/vnd.ms-powerpoint',
-                'application/vnd.ms-powerpoint.addin.macroEnabled.12',
-                'application/vnd.ms-powerpoint.presentation.macroEnabled.12',
-                'application/vnd.ms-powerpoint.slide.macroEnabled.12',
-                'application/vnd.ms-powerpoint.slideshow.macroEnabled.12',
-                'application/vnd.ms-powerpoint.template.macroEnabled.12',
-                'application/vnd.ms-word',
-                'application/vnd.ms-word.document.macroEnabled.12',
-                'application/vnd.ms-word.template.macroEnabled.12',
-                'application/vnd.oasis.opendocument.chart',
-                'application/vnd.oasis.opendocument.database',
-                'application/vnd.oasis.opendocument.formula',
-                'application/vnd.oasis.opendocument.graphics',
-                'application/vnd.oasis.opendocument.graphics-template',
-                'application/vnd.oasis.opendocument.image',
-                'application/vnd.oasis.opendocument.presentation',
-                'application/vnd.oasis.opendocument.presentation-template',
-                'application/vnd.oasis.opendocument.spreadsheet',
-                'application/vnd.oasis.opendocument.spreadsheet-template',
-                'application/vnd.oasis.opendocument.text',
-                'application/vnd.oasis.opendocument.text-master',
-                'application/vnd.oasis.opendocument.text-template',
-                'application/vnd.oasis.opendocument.text-web',
-                'application/vnd.openofficeorg.extension',
-                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                'application/vnd.openxmlformats-officedocument.presentationml.slide',
-                'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-                'application/vnd.openxmlformats-officedocument.presentationml.template',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
-                'application/vocaltec-media-file',
-                'application/wordperfect',
-                'application/x-bittorrent',
-                'application/x-bzip',
-                'application/x-bzip2',
-                'application/x-compressed',
-                'application/x-excel',
-                'application/x-gzip',
-                'application/x-latex',
-                'application/x-midi',
-                'application/xml',
-                'application/x-msexcel',
-                'application/x-rar',
-                'application/x-rar-compressed',
-                'application/x-rtf',
-                'application/x-shockwave-flash',
-                'application/x-sit',
-                'application/x-stuffit',
-                'application/x-troff-msvideo',
-                'application/x-zip',
-                'application/x-zip-compressed',
-                'application/zip',
-                'audio/*',
-                'image/*',
-                'multipart/x-gzip',
-                'multipart/x-zip',
-                'text/plain',
-                'text/rtf',
-                'text/richtext',
-                'text/xml',
-                'video/*'
-            );
-    
-            $this->mime_types                = array(
-                'jpg' => 'image/jpeg',
-                'jpeg' => 'image/jpeg',
-                'jpe' => 'image/jpeg',
-                'gif' => 'image/gif',
-                'png' => 'image/png',
-                'bmp' => 'image/bmp',
-                'flv' => 'video/x-flv',
-                'js' => 'application/x-javascript',
-                'json' => 'application/json',
-                'tiff' => 'image/tiff',
-                'css' => 'text/css',
-                'xml' => 'application/xml',
-                'doc' => 'application/msword',
-                'docx' => 'application/msword',
-                'xls' => 'application/vnd.ms-excel',
-                'xlt' => 'application/vnd.ms-excel',
-                'xlm' => 'application/vnd.ms-excel',
-                'xld' => 'application/vnd.ms-excel',
-                'xla' => 'application/vnd.ms-excel',
-                'xlc' => 'application/vnd.ms-excel',
-                'xlw' => 'application/vnd.ms-excel',
-                'xll' => 'application/vnd.ms-excel',
-                'ppt' => 'application/vnd.ms-powerpoint',
-                'pps' => 'application/vnd.ms-powerpoint',
-                'rtf' => 'application/rtf',
-                'pdf' => 'application/pdf',
-                'html' => 'text/html',
-                'htm' => 'text/html',
-                'php' => 'text/html',
-                'txt' => 'text/plain',
-                'mpeg' => 'video/mpeg',
-                'mpg' => 'video/mpeg',
-                'mpe' => 'video/mpeg',
-                'mp3' => 'audio/mpeg3',
-                'wav' => 'audio/wav',
-                'aiff' => 'audio/aiff',
-                'aif' => 'audio/aiff',
-                'avi' => 'video/msvideo',
-                'wmv' => 'video/x-ms-wmv',
-                'mov' => 'video/quicktime',
-                'zip' => 'application/zip',
-                'tar' => 'application/x-tar',
-                'swf' => 'application/x-shockwave-flash',
-                'odt' => 'application/vnd.oasis.opendocument.text',
-                'ott' => 'application/vnd.oasis.opendocument.text-template',
-                'oth' => 'application/vnd.oasis.opendocument.text-web',
-                'odm' => 'application/vnd.oasis.opendocument.text-master',
-                'odg' => 'application/vnd.oasis.opendocument.graphics',
-                'otg' => 'application/vnd.oasis.opendocument.graphics-template',
-                'odp' => 'application/vnd.oasis.opendocument.presentation',
-                'otp' => 'application/vnd.oasis.opendocument.presentation-template',
-                'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-                'ots' => 'application/vnd.oasis.opendocument.spreadsheet-template',
-                'odc' => 'application/vnd.oasis.opendocument.chart',
-                'odf' => 'application/vnd.oasis.opendocument.formula',
-                'odb' => 'application/vnd.oasis.opendocument.database',
-                'odi' => 'application/vnd.oasis.opendocument.image',
-                'oxt' => 'application/vnd.openofficeorg.extension',
-                'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'docm' => 'application/vnd.ms-word.document.macroEnabled.12',
-                'dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
-                'dotm' => 'application/vnd.ms-word.template.macroEnabled.12',
-                'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'xlsm' => 'application/vnd.ms-excel.sheet.macroEnabled.12',
-                'xltx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
-                'xltm' => 'application/vnd.ms-excel.template.macroEnabled.12',
-                'xlsb' => 'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
-                'xlam' => 'application/vnd.ms-excel.addin.macroEnabled.12',
-                'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                'pptm' => 'application/vnd.ms-powerpoint.presentation.macroEnabled.12',
-                'ppsx' => 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-                'ppsm' => 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12',
-                'potx' => 'application/vnd.openxmlformats-officedocument.presentationml.template',
-                'potm' => 'application/vnd.ms-powerpoint.template.macroEnabled.12',
-                'ppam' => 'application/vnd.ms-powerpoint.addin.macroEnabled.12',
-                'sldx' => 'application/vnd.openxmlformats-officedocument.presentationml.slide',
-                'sldm' => 'application/vnd.ms-powerpoint.slide.macroEnabled.12',
-                'thmx' => 'application/vnd.ms-officetheme',
-                'onetoc' => 'application/onenote',
-                'onetoc2' => 'application/onenote',
-                'onetmp' => 'application/onenote',
-                'onepkg' => 'application/onenote',
-            );
+            $this->allowed                   = array();
+            $this->mime_types                = array();
+            $this->mime_default_type         = 'application/octet-stream';
+
+            // get mime types from DB
+            $this->log()->LogDebug('getting known mimetypes from DB');
+            $res = $this->db()->query(sprintf(
+                'SELECT * FROM %smimetypes WHERE mime_suffixes IS NOT NULL AND mime_label IS NOT NULL',
+                CAT_TABLE_PREFIX
+            ));
+            if($res)
+            {
+                while(false!==($row=$res->fetchRow(MYSQL_ASSOC)))
+                {
+                    $suffixes = explode('|',$row['mime_suffixes']);
+                    foreach($suffixes as $suffix)
+                    {
+                        if ( $suffix == '' ) continue;
+                        $this->mime_types[$suffix] = $row['mime_type'];
+                    }
+                }
         }
+    
+            // get allowed upload mime types from settings
+            $this->log()->LogDebug('getting allowed upload mimetypes from settings');
+            if(CAT_Registry::exists('UPLOAD_ALLOWED'))
+            {
+                $allowed = explode(',', CAT_Registry::get('UPLOAD_ALLOWED'));
+                foreach($allowed as $suffix)
+                {
+                    if ( isset($this->mime_types[$suffix]) && ! in_array($this->mime_types[$suffix],$this->allowed) )
+                    {
+                        $this->allowed[] = $this->mime_types[$suffix];
+                    }
+                }
+            }
+
+        }   // end function init()
     
         /**
         * Constructor. Checks if the file has been uploaded
@@ -827,214 +702,9 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                 $this->log()->logDebug( 'determining MIME type' );
                 $this->file_src_mime = null;
     
-                // checks MIME type with Fileinfo PECL extension
-                if (!$this->file_src_mime || !is_string($this->file_src_mime) || empty($this->file_src_mime) || strpos($this->file_src_mime, '/') === FALSE)
-                {
-                    if ($this->mime_fileinfo)
-                    {
-                        $this->log()->logDebug( '- Checking MIME type with Fileinfo PECL extension' );
-                        if (function_exists('finfo_open'))
-                        {
-                            if ($this->mime_fileinfo !== '')
-                            {
-                                if ($this->mime_fileinfo === true)
-                                {
-                                    if (getenv('MAGIC') === FALSE)
-                                    {
-                                        if (substr(PHP_OS, 0, 3) == 'WIN')
-                                        {
-                                            $path = realpath(ini_get('extension_dir') . '/../') . 'extras/magic';
-                                        }
-                                        else
-                                        {
-                                            $path = '/usr/share/file/magic';
-                                        }
-                                        $this->log()->logDebug( 'MAGIC path defaults to ' . $path );
-                                    }
-                                    else
-                                    {
-                                        $path = getenv('MAGIC');
-                                        $this->log()->logDebug( 'MAGIC path is set to ' . $path . ' from MAGIC variable' );
-                                    }
-                                }
-                                else
-                                {
-                                    $path = $this->mime_fileinfo;
-                                    $this->log()->logDebug( 'MAGIC path is set to ' . $path );
-                                }
-                                $f = @finfo_open(FILEINFO_MIME, $path);
-                            }
-                            else
-                            {
-                                $this->log()->logDebug( 'MAGIC path will not be used' );
-                                $f = @finfo_open(FILEINFO_MIME);
-                            }
-                            if (is_resource($f))
-                            {
-                                $mime = finfo_file($f, realpath($this->file_src_pathname));
-                                finfo_close($f);
-                                $this->file_src_mime = $mime;
-                                $this->log()->logDebug( 'MIME type detected as ' . $this->file_src_mime . ' by Fileinfo PECL extension' );
-                                if (preg_match("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", $this->file_src_mime))
-                                {
-                                    $this->file_src_mime = preg_replace("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", '$1/$2', $this->file_src_mime);
-                                    $this->log()->logDebug( 'MIME validated as ' . $this->file_src_mime );
-                                }
-                                else
-                                {
-                                    $this->file_src_mime = null;
-                                }
-                            }
-                            else
-                            {
-                                $this->log()->logDebug( 'Fileinfo PECL extension failed (finfo_open)' );
-                            }
-                        }
-                        elseif (@class_exists('finfo'))
-                        {
-                            $f = new finfo( FILEINFO_MIME );
-                            if ($f)
-                            {
-                                $this->file_src_mime = $f->file(realpath($this->file_src_pathname));
-                                $this->log()->logDebug( 'MIME type detected as ' . $this->file_src_mime . ' by Fileinfo PECL extension' );
-                                if (preg_match("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", $this->file_src_mime))
-                                {
-                                    $this->file_src_mime = preg_replace("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", '$1/$2', $this->file_src_mime);
-                                    $this->log()->logDebug( 'MIME validated as ' . $this->file_src_mime );
-                                }
-                                else
-                                {
-                                    $this->file_src_mime = null;
-                                }
-                            }
-                            else
-                            {
-                                $this->log()->logDebug( 'Fileinfo PECL extension failed (finfo)' );
-                            }
-                        }
-                        else
-                        {
-                            $this->log()->logDebug( 'Fileinfo PECL extension not available' );
-                        }
-                    }
-                    else
-                    {
-                        $this->log()->logDebug( 'Fileinfo PECL extension deactivated' );
-                    }
-                }
-    
-                // checks MIME type with shell if unix access is authorized
-                if (!$this->file_src_mime || !is_string($this->file_src_mime) || empty($this->file_src_mime) || strpos($this->file_src_mime, '/') === FALSE)
-                {
-                    if ($this->mime_file)
-                    {
-                        $this->log()->logDebug( 'Checking MIME type with UNIX file() command' );
-                        if (substr(PHP_OS, 0, 3) != 'WIN')
-                        {
-                            if (function_exists('exec'))
-                            {
-                                if (strlen($mime = @exec("file -bi ".escapeshellarg($this->file_src_pathname))) != 0)
-                                {
-                                    $this->file_src_mime = trim($mime);
-                                    $this->log()->logDebug( 'MIME type detected as ' . $this->file_src_mime . ' by UNIX file() command' );
-                                    if (preg_match("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", $this->file_src_mime))
-                                    {
-                                        $this->file_src_mime = preg_replace("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", '$1/$2', $this->file_src_mime);
-                                        $this->log()->logDebug( 'MIME validated as ' . $this->file_src_mime );
-                                    }
-                                    else
-                                    {
-                                        $this->file_src_mime = null;
-                                    }
-                                }
-                                else
-                                {
-                                    $this->log()->logDebug( 'UNIX file() command failed' );
-                                }
-                            }
-                            else
-                            {
-                                $this->log()->logDebug( 'PHP exec() function is disabled' );
-                            }
-                        }
-                        else
-                        {
-                            $this->log()->logDebug( 'UNIX file() command not availabled' );
-                        }
-                    }
-                    else
-                    {
-                        $this->log()->logDebug( 'UNIX file() command is deactivated' );
-                    }
-                }
-
-                // checks MIME type with mime_magic
-                if (!$this->file_src_mime || !is_string($this->file_src_mime) || empty($this->file_src_mime) || strpos($this->file_src_mime, '/') === FALSE)
-                {
-                    if ($this->mime_magic)
-                    {
-                        $this->log()->logDebug( 'Checking MIME type with mime.magic file (mime_content_type())' );
-                        if (function_exists('mime_content_type'))
-                        {
-                            $this->file_src_mime = mime_content_type($this->file_src_pathname);
-                            $this->log()->logDebug( 'MIME type detected as ' . $this->file_src_mime . ' by mime_content_type()' );
-                            if (preg_match("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", $this->file_src_mime))
-                            {
-                                $this->file_src_mime = preg_replace("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", '$1/$2', $this->file_src_mime);
-                                $this->log()->logDebug( 'MIME validated as ' . $this->file_src_mime );
-                            }
-                            else
-                            {
-                                $this->file_src_mime = null;
-                            }
-                        }
-                        else
-                        {
-                            $this->log()->logDebug( 'mime_content_type() is not available' );
-                        }
-                    }
-                    else
-                    {
-                        $this->log()->logDebug( 'mime.magic file (mime_content_type()) is deactivated' );
-                    }
-                }
-
-                // default to MIME from browser (or Flash)
-                if (!empty($mime_from_browser) && !$this->file_src_mime || !is_string($this->file_src_mime) || empty($this->file_src_mime))
-                {
-                    $this->file_src_mime =$mime_from_browser;
-                    $this->log()->logDebug( 'MIME type detected as ' . $this->file_src_mime . ' by browser' );
-                    if (preg_match("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", $this->file_src_mime))
-                    {
-                        $this->file_src_mime = preg_replace("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", '$1/$2', $this->file_src_mime);
-                        $this->log()->logDebug( 'MIME validated as ' . $this->file_src_mime );
-                    }
-                    else
-                    {
-                        $this->file_src_mime = null;
-                    }
-                }
-
-                // we need to work some magic if we upload via Flash
-                if ($this->file_src_mime == 'application/octet-stream' || !$this->file_src_mime || !is_string($this->file_src_mime) || empty($this->file_src_mime) || strpos($this->file_src_mime, '/') === FALSE)
-                {
-                    if ($this->file_src_mime == 'application/octet-stream') $this->log .= '- Flash may be rewriting MIME as application/octet-stream<br />';
-                    $this->log()->logDebug( 'Try to guess MIME type from file extension (' . $this->file_src_name_ext . '): ' );
-                    if (array_key_exists($this->file_src_name_ext, $this->mime_types)) $this->file_src_mime = $this->mime_types[$this->file_src_name_ext];
-                    if ($this->file_src_mime == 'application/octet-stream')
-                    {
-                        $this->log()->logDebug( 'doesn\'t look like anything known' );
-                    }
-                    else
-                    {
-                        $this->log()->logDebug( 'MIME type set to ' . $this->file_src_mime );
-                    }
-                }
-
-                if (!$this->file_src_mime || !is_string($this->file_src_mime) || empty($this->file_src_mime) || strpos($this->file_src_mime, '/') === FALSE)
-                {
-                    $this->log()->logDebug( 'MIME type couldn\'t be detected! (' . (string) $this->file_src_mime . ')' );
-                }
+                // we try to determine the mime type using different methods, from most secure to very unsecure
+                // we NEVER use the mime type sent by the browser as this only uses the suffix which can be spoofed
+                $this->getMimeType();
 
                 $this->log()->logDebug( 'file_src_name      : ' . $this->file_src_name  );
                 $this->log()->logDebug( 'file_src_name_body : ' . $this->file_src_name_body  );
@@ -1045,35 +715,6 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                 $this->log()->logDebug( 'file_src_error     : ' . $this->file_src_error  );
             }
         }   // end function __construct()
-
-        /**
-        * Creates directories recursively
-        *
-        * @access private
-        * @param  string  $path Path to create
-        * @param  integer $mode Optional permissions
-        * @return boolean Success
-        */
-        function rmkdir($path, $mode = 0777)
-        {
-            return is_dir($path) || ( $this->rmkdir(dirname($path), $mode) && $this->_mkdir($path, $mode) );
-        }
-
-        /**
-        * Creates directory
-        *
-        * @access private
-        * @param  string  $path Path to create
-        * @param  integer $mode Optional permissions
-        * @return boolean Success
-        */
-        function _mkdir($path, $mode = 0777)
-        {
-            $old = umask(0);
-            $res = @mkdir($path, $mode);
-            umask($old);
-            return $res;
-        }
 
         /**
         * Decodes sizes
@@ -1526,6 +1167,275 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
         {
             @unlink($this->file_src_pathname);
         }
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getError() {
+            return $this->error;
+        }   // end function getError()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function getMimeType()
+        {
+            // most secure method, uses file header
+            // see http://getid3.sourceforge.net/ for a list of supported file types
+            if (file_exists(CAT_PATH.'/modules/lib_getid3/getid3/getid3.php'))
+            {
+                $this->log()->logDebug( '- Checking MIME type with getID3 library' );
+                $mime = $this->getID3Mime();
+            }
+            // quite secure on *NIX systems
+            elseif ($this->mime_file && substr(PHP_OS, 0, 3) != 'WIN')
+            {
+                $this->log()->logDebug( 'Checking MIME type with UNIX file() command' );
+                $mime = $this->getUNIXMime();
+            }
+            // still quite secure...
+            elseif ($this->mime_fileinfo)
+            {
+                $this->log()->logDebug( '- Checking MIME type with PECL extension' );
+                $mime = $this->getPECLMime();
+            }
+            // NOT secure! Uses suffix only!
+            elseif ($this->mime_magic)
+            {
+                $this->log()->logDebug( '- Checking MIME type with mime.magic file (mime_content_type())' );
+                $mime = $this->getMagicMime();
+            }
+            if($mime)
+                $this->file_src_mime = $mime;
+            else
+                $this->file_src_mime = $this->mime_default_type;
+        }   // end function getMimeType()
+        
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function getID3Mime()
+        {
+
+            $mime     = NULL;
+        	$filename = realpath($this->file_src_pathname);
+
+        	if (!file_exists($filename))
+            {
+        		$this->error = 'File does not exist: "'.htmlentities($filename);
+        		return false;
+        	}
+            elseif (!is_readable($filename))
+            {
+        		$this->error = 'File is not readable: "'.htmlentities($filename);
+        		return false;
+        	}
+
+        	require_once CAT_PATH.'/modules/lib_getid3/getid3/getid3.php';
+
+        	$getID3 = new getID3;
+
+        	if ($fp = fopen($filename, 'rb'))
+            {
+        		$getID3->openfile($filename);
+        		if (empty($getID3->info['error']))
+                {
+
+        			// ID3v2 is the only tag format that might be prepended in front of files, and it's non-trivial to skip, easier just to parse it and know where to skip to
+        			getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.tag.id3v2.php', __FILE__, true);
+        			$getid3_id3v2 = new getid3_id3v2($getID3);
+        			$getid3_id3v2->Analyze();
+
+        			fseek($fp, $getID3->info['avdataoffset'], SEEK_SET);
+        			$formattest = fread($fp, 16);  // 16 bytes is sufficient for any format except ISO CD-image
+        			fclose($fp);
+
+        			$DeterminedFormatInfo = $getID3->GetFileFormat($formattest);
+        			$mime = $DeterminedFormatInfo['mime_type'];
+
+        		}
+                else
+                {
+        			$this->error = 'Failed to getID3->openfile "'.htmlentities($filename);
+        		}
+        	}
+            else
+            {
+        		$this->error = 'Failed to fopen "'.htmlentities($filename);
+        	}
+            $this->log()->logDebug( 'MIME type detected as [' . $mime . '] by getID3 library' );
+        	return $mime;
+        }   // end function getID3Mime()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function getPECLMime()
+        {
+            $this->log()->logDebug( '- Checking MIME type with Fileinfo PECL extension' );
+            $mime = NULL;
+
+            if (function_exists('finfo_open'))
+            {
+                if ($this->mime_fileinfo !== '')
+                {
+                    if ($this->mime_fileinfo === true)
+                    {
+                        if (getenv('MAGIC') === FALSE)
+                        {
+                            if (substr(PHP_OS, 0, 3) == 'WIN')
+                            {
+                                $path = realpath(ini_get('extension_dir') . '/../') . 'extras/magic';
+                            }
+                            else
+                            {
+                                $path = '/usr/share/file/magic';
+                            }
+                            $this->log()->logDebug( 'MAGIC path defaults to ' . $path );
+                        }
+                        else
+                        {
+                            $path = getenv('MAGIC');
+                            $this->log()->logDebug( 'MAGIC path is set to ' . $path . ' from MAGIC variable' );
+                        }
+                    }
+                    else
+                    {
+                        $path = $this->mime_fileinfo;
+                        $this->log()->logDebug( 'MAGIC path is set to ' . $path );
+                    }
+                    $f = @finfo_open(FILEINFO_MIME, $path);
+                }
+                else
+                {
+                    $this->log()->logDebug( 'MAGIC path will not be used' );
+                    $f = @finfo_open(FILEINFO_MIME);
+                }
+                if (is_resource($f))
+                {
+                    $mime = finfo_file($f, realpath($this->file_src_pathname));
+                    finfo_close($f);
+                    $this->log()->logDebug( 'MIME type detected as ' . $mime . ' by Fileinfo PECL extension' );
+                    if (preg_match("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", $mime))
+                    {
+                        $mime = preg_replace("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", '$1/$2', $mime);
+                        $this->log()->logDebug( 'MIME validated as ' . $mime );
+                    }
+                }
+                else
+                {
+                    $this->log()->logDebug( 'Fileinfo PECL extension failed (finfo_open)' );
+                }
+            }   // end if (function_exists('finfo_open'))
+            elseif (@class_exists('finfo'))
+            {
+                $f = new finfo( FILEINFO_MIME );
+                if ($f)
+                {
+                    $mime = $f->file(realpath($this->file_src_pathname));
+                    $this->log()->logDebug( 'MIME type detected as ' . $mime . ' by Fileinfo PECL extension' );
+                    if (preg_match("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", $mime))
+                    {
+                        $mime = preg_replace("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", '$1/$2', $mime);
+                        $this->log()->logDebug( 'MIME validated as ' . $mime );
+                    }
+                }
+                else
+                {
+                    $this->log()->logDebug( 'Fileinfo PECL extension failed (finfo)' );
+                }
+            }
+            else
+            {
+                $this->log()->logDebug( 'Fileinfo PECL extension not available' );
+            }
+
+            return $mime;
+
+        }   // end function getPECLMime()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function getUNIXMime()
+        {
+            $mime = NULL;
+
+            // we've already checked this above, but the method may be called
+            // from outside
+            if (substr(PHP_OS, 0, 3) != 'WIN')
+            {
+                if (function_exists('exec'))
+                {
+                    if (strlen($mime = @exec("file -bi ".escapeshellarg($this->file_src_pathname))) != 0)
+                    {
+                        $mime = trim($mime);
+                        $this->log()->logDebug( 'MIME type detected as ' . $mime . ' by UNIX file() command' );
+                        if (preg_match("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", $mime))
+                        {
+                            $mime = preg_replace("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", '$1/$2', $mime);
+                            $this->log()->logDebug( 'MIME validated as ' . $mime );
+                        }
+                    }
+                    else
+                    {
+                        $this->log()->logDebug( 'UNIX file() command failed' );
+                    }
+                }
+                else
+                {
+                    $this->log()->logDebug( 'PHP exec() function is disabled' );
+                }
+            }
+            else
+            {
+                $this->log()->logDebug( 'UNIX file() command not availabled' );
+            }
+
+            return $mime;
+
+        }   // end function getUNIXMime()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function getMagicMime()
+        {
+            $mime = NULL;
+
+            if (function_exists('mime_content_type'))
+            {
+                $mime = mime_content_type($this->file_src_pathname);
+                $this->log()->logDebug( 'MIME type detected as ' . $mime . ' by mime_content_type()' );
+                if (preg_match("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", $mime))
+                {
+                    $mime = preg_replace("/^([\.-\w]+)\/([\.-\w]+)(.*)$/i", '$1/$2', $mime);
+                    $this->log()->logDebug( 'MIME validated as ' . $mime );
+                }
+            }
+            else
+            {
+                $this->log()->logDebug( 'mime_content_type() is not available' );
+            }
+
+            return $mime;
+
+        }   // end function getMagicMime()
+        
+
     }
 }
 
