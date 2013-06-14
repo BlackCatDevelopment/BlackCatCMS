@@ -311,6 +311,110 @@ if ( ! class_exists( 'CAT_Users', false ) )
         }   // end function loginError()
 
         /**
+         * handles forgot user details:
+         * + generate new password
+         * + send user a mail with his login details
+         *
+         * @access public
+         * @param  string  $email - email address
+         * @return
+         **/
+        public static function handleForgot($email)
+        {
+
+            global $parser;
+
+        	$email   = strip_tags($email);
+            $self    = self::getInstance();
+            $val     = CAT_Helper_Validate::getInstance();
+            $message = '';
+            $result  = false;
+
+        	// Check if the email exists in the database
+        	$results = $self->db()->query(sprintf(
+                "SELECT user_id,username,display_name,email,last_reset,password FROM "
+                . "`%susers` WHERE email = '%s'",
+                CAT_TABLE_PREFIX, $email
+            ));
+
+        	if ( $results->numRows() > 0 )
+        	{
+        		// Get the id, username, email, and last_reset from the above db query
+        		$results_array = $results->fetchRow( MYSQL_ASSOC );
+
+        		// Check if the password has been reset in the last hour
+        		$last_reset = $results_array['last_reset'];
+        		$time_diff  = time() - $last_reset; // Time since last reset in seconds
+        		$time_diff  = $time_diff / 60 / 60; // Time since last reset in hours
+        		if ( $time_diff < 1 )
+        		{
+        			// Tell the user that their password cannot be reset more than once per hour
+        			$message = $self->lang()->translate('Password cannot be reset more than once per hour');
+        		}
+        		else
+        		{
+        			$old_pass = $results_array['password'];
+
+        			/**
+        			 *	Generate a random password then update the database with it
+        			 */
+        			$new_pass = self::generateRandomString(AUTH_MIN_PASS_LENGTH);
+
+        			$self->db()->query(sprintf(
+                        "UPDATE `%susers` SET password = '%s', last_reset = '%s' WHERE user_id = '%d'",
+                        CAT_TABLE_PREFIX, md5($new_pass), time(), $results_array['user_id']
+                    ));
+
+        			if ( $self->db()->is_error() )
+        			{
+        				// Error updating database
+        				$message = $self->db()->get_error();
+        			}
+        			else
+        			{
+        				// Setup email to send
+        				$mail_to      = $email;
+        				$mail_subject = $self->lang()->translate('Your login details...');
+                        $mail_message = $parser->get('account_forgotpw_mail_body', array(
+                            'LOGIN_DISPLAY_NAME'  => $results_array['display_name'],
+                            'LOGIN_WEBSITE_TITLE' => WEBSITE_TITLE,
+                            'LOGIN_NAME'          => $results_array['username'],
+                            'LOGIN_PASSWORD'      => $new_pass,
+                        ));
+
+        				// Try sending the email
+        				if ( CAT_Helper_Mail::getInstance('PHPMailer')->sendMail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message, CATMAILER_DEFAULT_SENDERNAME ) )
+        				{
+        					$message      = $self->lang()->translate('Your username and password have been sent to your email address');
+        					$display_form = false;
+                            $result       = true;
+        				}
+        				else
+        				{
+                            // reset PW if sending mail failed
+        					$self->db()->query(sprintf(
+                                "UPDATE `%susers` SET password = '%s' WHERE user_id = '%d'",
+                                CAT_TABLE_PREFIX, $old_pass, $results_array['user_id']
+                            ));
+        					$message = $self->lang()->translate('Unable to email password, please contact system administrator');
+                            $message .= '<br />'.CAT_Helper_Mail::getInstance('PHPMailer')->getError();
+        				}
+        			}
+
+        		}
+        	}
+        	else
+        	{
+        		// given eMail address not found
+        		$message = $val->lang()->translate('The email that you entered cannot be found in the database');
+        	}
+
+            return array( $result, $message );
+
+        }   // end function handleForgot()
+        
+
+        /**
          * disable user account; if $user_id is not an int, it is used as name
          *
          * @access public

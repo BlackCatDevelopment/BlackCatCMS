@@ -71,7 +71,7 @@ $LANG = array(
     'My settings' => 'Profil / Benutzereinstellungen',
     'New password' => 'Neues Kennwort',
     'No group was selected' => 'Es wurde keine Gruppe ausgew&auml;hlt',
-    'Password cannot be reset more than once per hour' => 'Das Passwort kann nur einmal pro Stunde zur&uuml;ckgesetzt werden',
+    'Password cannot be reset more than once per hour' => 'Das Passwort kann nur einmal pro Stunde zurückgesetzt werden',
     'Please enter your email address' => 'Bitte geben Sie Ihre Mailadresse an',
     'Please enter your email address below' => 'Bitte geben Sie nachfolgend Ihre E-Mail Adresse an',
     'Please enter your CURRENT password to confirm your changes!' => 'Bitte geben Sie Ihr AKTUELLES Kennwort ein, um die Änderungen zu bestätigen!',
@@ -105,7 +105,9 @@ $LANG = array(
     'Close' => 'Schließen',
     'Close & Reset' => 'Schließen & Zurücksetzen',
     'General Settings' => 'Allgemeine Optionen',
+    'Logged-In' => 'Angemeldet',
     'Modify' => 'Bearbeiten',
+    'Need to log-in?' => 'Wollen Sie sich anmelden?',
     'Notification' => 'Hinweis',
     'Options' => 'Optionen',
     'or' => 'oder',
@@ -123,6 +125,7 @@ $LANG = array(
     'Success' => 'Erfolgreich',
     'View' => 'Ansicht',
     'Website Under Construction' => 'Momentan in Bearbeitung.',
+    'Welcome back' => 'Willkommen',
 // ----- error messages -----
     'Error creating access file in the pages directory, insufficient privileges'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Ungen&uuml;gende Zugangsrechte)',
@@ -130,6 +133,7 @@ $LANG = array(
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Datei kann nicht geschrieben werden)',
     'Error creating access file in the pages directory, path not writable or forbidden file / directory name'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Verzeichnis nicht schreibbar oder verbotener Datei-/Verzeichnisname)',
+    'File upload error: {{error}}' => 'Datei Upload Fehler: {{error}}',
     'Invalid password chars used, valid chars are: a-z\A-Z\0-9\_\-\!\#\*\+'
         => 'Es wurden ung&uuml;ltige Zeichen f&uuml;r des Passwort verwendet, g&uuml;ltig sind: a-z\A-Z\0-9\_\-\!\#\*\+',
     'Missing page_id!' => 'Keine page_id angegeben!',

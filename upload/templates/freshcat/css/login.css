@@ -108,7 +108,7 @@ input[type=text],input[type=password] {
 
 #fc_login_form,
 #fc_login_forgot_form {
-	padding:	2em 0px 0px 0px;
+	padding:	2em 0px 2em 0px;
 }
 #fc_login_form {
 	padding-bottom:	1em;

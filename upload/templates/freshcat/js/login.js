@@ -143,7 +143,7 @@ jQuery(document).ready(function(){
 			$.ajax(
 			{
 				type:		'POST',
-				url:		CAT_ADMIN_URL + '/login/forgot/index.php',
+				url:		CAT_ADMIN_URL + '/login/forgot/ajax_forgot.php',
 				dataType:	'json',
 				data:		dates,
 				cache:		false,

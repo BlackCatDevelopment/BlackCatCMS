@@ -1,60 +1,68 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
- * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
- 
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
-} else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
-}
-// end include class.secure.php
 
-// Include the database class file and initiate an object
-require( CAT_PATH . '/framework/class.admin.php' );
-$admin		= new admin('Start', 'start', false, false);
-$database	= new database();
+if (defined('CAT_PATH')) {
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
+} else {
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
+    }
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+}
+
+$backend = CAT_Backend::getInstance('Start', 'start');
+$val     = CAT_Helper_Validate::getInstance();
 
 header('Content-type: application/json');
 
-$ajax		= array();
+$ajax	 = array();
 
 // Check if the user has already submitted the form, otherwise show it
-if ( $admin->get_post('email') != '' )
+$email = htmlspecialchars($val->sanitizePost('email',null,true), ENT_QUOTES );
+if ( $email )
 {
-	$email			= htmlspecialchars( $admin->get_post('email'), ENT_QUOTES );
-
 	// Check if the email exists in the database
-	$results		= $database->query( "SELECT user_id,username,display_name,email,last_reset,password FROM " . CAT_TABLE_PREFIX . "users WHERE email = '" . $admin->add_slashes( $admin->get_post('email') ) . "'" );
+	$results = $backend->db()->query(sprintf(
+        "SELECT user_id,username,display_name,email,last_reset,password FROM `%susers` WHERE email = '%s'",
+        CAT_TABLE_PREFIX,$email
+    ));
 	if ( $results->numRows() > 0 )
 	{
 		// Get the id, username, email, and last_reset from the above db query
-		$results_array		= $results->fetchRow();
+		$results_array		= $results->fetchRow(MYSQL_ASSOC);
 
+/*
 		// Check if the password has been reset in the last 2 hours
 		$last_reset			= $results_array['last_reset'];
 		$time_diff			= time() - $last_reset; // Time since last reset in seconds
@@ -72,6 +80,7 @@ if ( $admin->get_post('email') != '' )
 		}
 		else
 		{
+*/
 			$old_pass		= $results_array['password'];
 
 			// Generate a random password then update the database
@@ -85,11 +94,17 @@ if ( $admin->get_post('email') != '' )
 				$new_pass	.= $tmp;
 			}
 
-			$database->query("UPDATE " . CAT_TABLE_PREFIX . "users SET password = '".md5($new_pass)."', last_reset = '".time()."' WHERE user_id = '" . $results_array['user_id'] . "'");
-			if ( $database->is_error() )
+			$backend->db()->query(sprintf(
+                "UPDATE `%susers` SET password = '%s', last_reset = '%s' WHERE user_id = '%d'",
+                CAT_TABLE_PREFIX, md5($new_pass), time(), $results_array['user_id']
+            ));
+			if ( $backend->db()->is_error() )
 			{
 				// Error updating database
-				$database->query("UPDATE " . CAT_TABLE_PREFIX . "users SET password = '" . $old_pass . "' WHERE user_id = '" . $results_array['user_id'] . "'");
+				$backend->db()->query(sprintf(
+                    "UPDATE `%susers` SET password = '%s' WHERE user_id = '%d'",
+                    CAT_TABLE_PREFIX, $old_pass, $results_array['user_id']
+                ));
 				$ajax	= array(
 					'message'	=> $database->get_error(),
 					'success'	=> false
@@ -99,9 +114,15 @@ if ( $admin->get_post('email') != '' )
 			}
 			else
 			{
+$ajax	= array(
+	'message'	=> $new_pass,
+	'success'	=> false
+);
+print json_encode( $ajax );
+exit();
 				// Setup email to send
 				$mail_to		= $email;
-				$mail_subject	= $admin->lang->translate('Your LEPTON login details...');
+				$mail_subject	= $backend->lang()->translate('Your login details...');
 				// Replace placeholders from language variable with values
 				$values	= array(
 					'LOGIN_DISPLAY_NAME'		=> $results_array['display_name'],
@@ -109,7 +130,7 @@ if ( $admin->get_post('email') != '' )
 					'LOGIN_NAME'				=> $results_array['username'],
 					'LOGIN_PASSWORD'			=> $new_pass
 				);
-				$mail_message	= $admin->lang->translate('
+				$mail_message	= $backend->lang()->translate('
 Hello {{LOGIN_DISPLAY_NAME}},
 
 This mail was sent because the \'forgot password\' function has been applied to your account.
@@ -153,7 +174,9 @@ This message was automatic generated
 					exit();
 				}
 			}
+/*
 		}
+*/
 	}
 	else
 	{

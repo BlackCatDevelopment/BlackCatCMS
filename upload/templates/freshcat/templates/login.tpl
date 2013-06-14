@@ -66,7 +66,7 @@
 			<p class="fc_loader"></p>
 			<p id="fc_message_login"></p>
 		</form>
-		<form name="forgot_pass" action="{$CAT_ADMIN_URL}/login/forgot/index.php" method="post" id="fc_login_forgot_form" class="fc_gradient1 fc_br_bottom fc_border">
+		<form name="forgot_pass" action="{$CAT_ADMIN_URL}/login/forgot/ajax_forgot.php" method="post" id="fc_login_forgot_form" class="fc_gradient1 fc_br_bottom fc_border">
 			<p>
 				<label for="fc_forgot">{translate('Email')}</label>
 				<input type="text" maxlength="255" name="email" value="{if $EMAIL}{$EMAIL}{/if}" id="fc_forgot" />

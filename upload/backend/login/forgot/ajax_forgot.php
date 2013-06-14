@@ -14,7 +14,9 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Black Cat Development
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
+ *   @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
@@ -22,6 +24,8 @@
  *   @package         CAT_Core
  *
  */
+
+define('CAT_LOGIN_PHASE',true);
 
 if (defined('CAT_PATH')) {
     if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
@@ -39,37 +43,28 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$val = CAT_Helper_Validate::getInstance();
-
-global $parser;
-$parser->setPath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/'); // if there's a template for this in the current frontend template
-$parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to default dir
-
+$val   = CAT_Helper_Validate::getInstance();
 $email = $val->sanitizePost('email',NULL,true);
-$display_form = true;
-$bgcol        = 'e24756';
+$ajax  = array();
+
+header('Content-type: application/json');
 
 // Check if the user has already submitted the form, otherwise show it
 if ( $email && $val->sanitize_email($email) )
 {
     list($result,$message) = CAT_Users::handleForgot($email);
-    if($result===true) $bgcol = '006600';
+    $ajax	= array(
+		'message'	=> $message,
+		'success'	=> $result
+	);
 }
 else
 {
-	$email = '';
+	$ajax	= array(
+		'message'	=> $admin->lang->translate('You must enter an email address'),
+		'success'	=> false
+	);
 }
 
-if ( !isset( $message ) )
-{
-	$message       = $val->lang()->translate('Please enter your email address below');
-}
-
-$parser->output('account_forgot_form',
-    array(
-        'message_color' => $bgcol,
-        'email'         => $email,
-        'display_form'  => $display_form,
-        'message'       => $message,
-    )
-);
+print json_encode( $ajax );
+exit();
