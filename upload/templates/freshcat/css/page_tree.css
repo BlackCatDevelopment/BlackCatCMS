@@ -1,18 +1,25 @@
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author          LEPTON Project
- * @copyright       2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
-  *
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Template
+ *   @package         freshcat
+ *
  */
-
 
 #fc_pages {
 	margin:			0px;
@@ -365,4 +372,20 @@ span.fc_page_tree_restore_page {
 	padding-left: 10px;
 	color: white;
 	font-weight: bold;
+}
+
+/**
+ * This is for showing flags on hover in the page tree; you may remove this if
+ * you don't want this feature.
+ **/
+.flag-DE {
+    background: transparent url(../../../languages/de.png) left center no-repeat !important;
+}
+.flag-EN {
+    background: transparent url(../../../languages/en.png) left center no-repeat !important;
+}
+.fc_pages_tree_options_button {
+    width: 40px;
+    text-align:right;
+    padding-right:5px;
 }
