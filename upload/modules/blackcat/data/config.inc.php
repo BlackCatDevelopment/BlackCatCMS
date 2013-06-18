@@ -66,12 +66,3 @@ $settings = array (
     'type' => 'text',
   ),
 );
-
-// --- do not change this manually, use the Admin Tool! ---
-$current = array(
-    'source' => 'http://blackcat-cms.org/media/_internal_/version.txt',
-    'timeout' => '30',
-    'proxy_host' => 'proxy.materna.de',
-    'proxy_port' => '8080',
-);
-

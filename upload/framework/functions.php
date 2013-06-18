@@ -115,7 +115,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         if ( $print_output )
                     {
 			echo $output;
-			define('CAt_FOOTERS_SENT', true);
+			define('CAT_FOOTERS_SENT', true);
                     }
 		else
                         {

@@ -662,7 +662,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             {
                 if ( file_exists($directory) )
                 {
-                    chmod($name, $mode);
+                    chmod($directory, $mode);
                     umask($umask);
                 }
             }

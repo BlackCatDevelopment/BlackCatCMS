@@ -806,7 +806,7 @@ if (!class_exists('CAT_Helper_Addons'))
                 CAT_Helper_Directory::createDirectory( $temp_subdir );
 
                 // Setup the PclZip object and unzip the files to the temp unzip folder
-                $list    = Cat_Helper_Zip::getInstance( $temp_file )->config( 'Path', sanitize_path( $temp_subdir ) )->extract();
+                $list    = CAT_Helper_Zip::getInstance( $temp_file )->config( 'Path', sanitize_path( $temp_subdir ) )->extract();
 
                 // check if anything was extracted
                 if ( ! $list )
@@ -869,7 +869,7 @@ if (!class_exists('CAT_Helper_Addons'))
             $addon_directory
                 = $addon_info['addon_function'] == 'language'
                 ? $addon_info[$addon_info['addon_function'] . '_code'] . '.php'
-                : $addon_info[$addon_info['addon_function'] . '_directory'];
+                : $addon_info['module_directory'];
 
             // Set module directory
             $addon_dir         = CAT_PATH.'/'.$addon_info['addon_function'].'s/'.$addon_directory;
@@ -887,7 +887,7 @@ if (!class_exists('CAT_Helper_Addons'))
                     /**
                     *    Version to be installed is older than currently installed version
                      */
-                    if ( self::versionCompare ($previous_info[$addon_info['addon_function'] . '_version'], $addon_info[$addon_info['addon_function'] . '_version'], '>=' ) )
+                    if ( self::versionCompare ($previous_info['module_version'], $addon_info['module_version'], '>=' ) )
                     {
                         CAT_Helper_Directory::removeDirectory($temp_unzip);
                         CAT_Helper_Directory::removeDirectory($temp_file);
