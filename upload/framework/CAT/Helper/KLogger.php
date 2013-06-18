@@ -383,6 +383,7 @@ class CAT_Helper_KLogger
         if ($this->_severityThreshold >= $severity) {
             $status = $this->_getTimeLine($severity);
             $bt 	= debug_backtrace();
+            $info   = array();
             while ( isset($bt[0]['class']) && $bt[0]['class'] == 'CAT_Helper_KLogger' ) {
                 $last  = array_shift($bt);
 			}

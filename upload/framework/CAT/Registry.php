@@ -88,7 +88,7 @@ if (!class_exists('CAT_Registry', false))
          **/
         public static function exists($key)
             {
-            if(isset(self::$REGISTRY[$key]))
+            if(isset(self::$REGISTRY[$key])||defined($key))
                 {
                 return true;
                 }

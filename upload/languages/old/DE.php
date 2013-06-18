@@ -586,7 +586,7 @@ $MESSAGE = array(
 	'MEDIA_UPLOADED' 			=> 'Dateien wurden erfolgreich &uuml;bertragen',
 	'MOD_MISSING_PARTS_NOTICE'	=> 'Installation vom Modul "%s" fehlgeschlagen, eine oder mehrere der folgenden Variablen fehlen:<br />module_directory<br />module_name<br />module_version<br />module_author<br />module_license<br />module_guid<br />module_function',
 	'MOD_FORM_EXCESS_SUBMISSIONS' => 'Dieses Formular wurde zu oft aufgerufen. Bitte versuchen Sie es in einer Stunde noch einmal.',
-'MOD_FORM_INCORRECT_CAPTCHA' => 'Die eingegebene Pr&uuml;fziffer stimmt nicht &uuml;berein. Wenn Sie Probleme mit dem Lesen der Pr&uuml;fziffer haben, bitte schreiben Sie eine E-Mail an uns: <a href="mailto:'.SERVER_EMAIL.'">'.SERVER_EMAIL.'</a>',
+    'MOD_FORM_INCORRECT_CAPTCHA' => 'Die eingegebene Pr&uuml;fziffer stimmt nicht &uuml;berein. Wenn Sie Probleme mit dem Lesen der Pr&uuml;fziffer haben, bitte schreiben Sie eine E-Mail an uns: <a href="mailto:'.SERVER_EMAIL.'">'.SERVER_EMAIL.'</a>',
 	'MOD_FORM_REQUIRED_FIELDS' 	=> 'Bitte folgende Angaben erg&auml;nzen',
 	'PAGES_ADDED' 				=> 'Die Seite wurde erfolgreich hinzugef&uuml;gt',
 	'PAGES_ADDED_HEADING' 		=> 'Seitenkopf erfolgreich hinzugef&uuml;gt',

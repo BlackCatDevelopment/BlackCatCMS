@@ -42,9 +42,6 @@ if (defined('CAT_PATH')) {
 
 require_once(CAT_PATH . '/framework/class.database.php');
 
-// Include new wbmailer class (subclass of PHPmailer)
-#require_once(CAT_PATH . "/framework/class.wbmailer.php");
-
 class wb
 {
     public  $password_chars      = 'a-zA-Z0-9\_\-\!\#\*\+';
@@ -75,17 +72,20 @@ class wb
         set_error_handler( array('wb','cat_error_handler') );
     }   // end constructor
 
-    public function __call($name, $arguments)
-    {
-        if (array_key_exists($name,self::$depre_func))
+    public function __call($method, $arguments)
         {
-            trigger_error('Method ## '.$name.'() ## is deprecated, use ## '.self::$depre_func[$name].' ## instead!',E_USER_ERROR);
-        }
-        else
-        {
-            trigger_error('Unknown method '.$name, E_USER_ERROR);
+        if (array_key_exists($method,self::$depre_func)) {
+            trigger_error('Method ## '.$method.'() ## is deprecated, use ## '.self::$depre_func[$method].' ## instead!',E_USER_ERROR);
+        } else {
+            trigger_error('Unknown method '.$method, E_USER_ERROR);
         }
     }   // end function __call()
+
+    public function lang() {
+        if(!is_object($this->lang))
+            $this->lang  = CAT_Helper_I18n::getInstance(LANGUAGE);
+        return $this->lang;
+        }
 
     /**
      * custom error handler

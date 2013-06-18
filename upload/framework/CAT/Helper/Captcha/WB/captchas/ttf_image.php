@@ -36,7 +36,7 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-require_once(CAT_PATH.'/include/captcha/captcha.php');
+require_once(CAT_PATH.'/framework/CAT/Helper/Captcha/WB/captcha.php');
 
 if(!isset($_SESSION['captcha_time']))
 	exit;
@@ -44,8 +44,8 @@ if(!isset($_SESSION['captcha_time']))
 
 // get lists of fonts and backgrounds
 require_once(CAT_PATH.'/framework/functions.php');
-$t_fonts = file_list(CAT_PATH.'/include/captcha/fonts');
-$t_bgs = file_list(CAT_PATH.'/include/captcha/backgrounds');
+$t_fonts = file_list(CAT_PATH.'/framework/CAT/Helper/Captcha/WB/fonts');
+$t_bgs = file_list(CAT_PATH.'/framework/CAT/Helper/Captcha/WB/backgrounds');
 $fonts = array();
 $bgs = array();
 foreach($t_fonts as $file) if(eregi('\.ttf$',$file)) $fonts[]=$file;
@@ -78,7 +78,7 @@ $bg = $bgs[array_rand($bgs)];
 list($width, $height, $type, $attr) = getimagesize($bg);
 
 // create reload-image
-$reload = ImageCreateFromPNG(CAT_PATH.'/include/captcha/reload_140_40.png'); // reload-overlay
+$reload = ImageCreateFromPNG(CAT_PATH.'/framework/CAT/Helper/Captcha/WB/reload_140_40.png'); // reload-overlay
 
 if(mt_rand(0,2)==0) { // 1 out of 3
 

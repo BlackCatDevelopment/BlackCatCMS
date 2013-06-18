@@ -39,6 +39,79 @@ if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 			    include dirname(__FILE__).'/../../../config.php';
 			}
 	    }
+
+        /**
+         * check if GD is available
+         *
+         * @access public
+         * @return boolean
+         **/
+        public static function check_gd() {
+            $gd_support = extension_loaded('gd');
+            if ($gd_support) return true;
+            return false;
+        }   // end function check_gd()
+
+        /**
+         * checks for imageftbbox GD function
+         *
+         * @access public
+         * @return boolean
+         **/
+        public static function check_imageftbbox() {
+            return function_exists('imageftbbox');
+        }   // end function check_imageftbbox()
+        
+        /**
+         * checks for TTF support in GD
+         *
+         * @access public
+         * @return boolean
+         **/
+        public static function check_ttf() {
+            if(!self::check_gd()) return false;
+            $gd_info = gd_info();
+            return $gd_info['FreeType Support'];
+        }   // end function check_ttf()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function check_jpg() {
+            if(!self::check_gd()) return false;
+            $gd_info = gd_info();
+            return
+                  (isset($gd_info['JPG Support']) || isset($gd_info['JPEG Support']))
+                ? true
+                : false;
+        }   // end function check_jpg()
+        
+        /**
+         * checks for PNG support in GD
+         *
+         * @access public
+         * @return boolean
+         **/
+        public static function check_png() {
+            if(!self::check_gd()) return false;
+            $gd_info = gd_info();
+            return $gd_info['PNG Support'];
+        }   // end function check_png()
+
+        /**
+         * checks for GIF (create) support in GD
+         *
+         * @access public
+         * @return boolean
+         **/
+        public static function check_gif() {
+            if(!self::check_gd()) return false;
+            $gd_info = gd_info();
+            return $gd_info['GIF Create Support'];
+        }   // end function check_gif()
+        
 	    
 	    /**
 	     * creates a thumbnail by resizing the original image and storing a copy

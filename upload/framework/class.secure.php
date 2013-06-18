@@ -171,7 +171,7 @@ if (!function_exists('csrf_startup'))
         csrf_conf('rewrite-js', CAT_URL . '/modules/lib_csrfmagic/csrf-magic.js');
         // This makes csrf-magic call my_csrf_callback() before exiting when
         // there is a bad csrf token. This lets me customize the error page.
-        //csrf_conf('callback', 'my_csrf_callback');
+        csrf_conf('callback', 'cat_csrf_callback');
         // While this is enabled by default to boost backwards compatibility,
         // for security purposes it should ideally be off. Some users can be
         // NATted or have dialup addresses which rotate frequently. Cookies
@@ -182,6 +182,24 @@ if (!function_exists('csrf_startup'))
         {
             csrf_conf('expires', TOKEN_LIFETIME);
         }
+    }
+}
+
+if (!function_exists('cat_csrf_callback'))
+{
+    function cat_csrf_callback($tokens)
+    {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+        echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+    <html>
+      <head>
+      <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+      <title>Black Cat CMS Error Message</title>
+      </head>
+      <body>
+      <strong>Black Cat CMS NOTICE</strong><br />
+      CSRF check failed. Please enable cookies.<br /><br />
+      Debug: '.$tokens.'</body></html>';
     }
 }
 

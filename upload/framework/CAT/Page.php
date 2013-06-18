@@ -79,7 +79,8 @@ if (!class_exists('CAT_Page', false))
             foreach ( $prop as $key => $value )
             {
                 if(!$value) continue;
-                CAT_Registry::register($key,$value,true);
+                if(CAT_Registry::exists(strtoupper($key))) continue;
+                CAT_Registry::register(strtoupper($key),$value,true);
             }
     		// Work-out if any possible in-line search boxes should be shown
     		if(SEARCH == 'public') {
@@ -243,6 +244,9 @@ if (!class_exists('CAT_Page', false))
 
             // keep old modules happy
             global $wb, $admin, $database, $page_id, $section_id, $parser;
+            // old style language files
+            global $TEXT, $HEADING, $MESSAGE;
+
             $admin =& $wb;
             if ( $page_id == '' )
                 $page_id = $this->_page_id;

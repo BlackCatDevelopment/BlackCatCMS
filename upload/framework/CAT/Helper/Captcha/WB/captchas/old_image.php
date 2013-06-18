@@ -36,63 +36,43 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-require_once(CAT_PATH.'/include/captcha/captcha.php');
+require_once(CAT_PATH.'/framework/CAT/Helper/Captcha/WB/captcha.php');
 
 if(!isset($_SESSION['captcha_time']))
 	exit;
 //unset($_SESSION['captcha_time']);
 
 // Captcha
+srand((double)microtime()*100000);
 $sec_id = '';
 if(isset($_GET['s'])) $sec_id = $_GET['s'];
-$_SESSION['captcha'.$sec_id] = '';
-mt_srand((double)microtime()*1000000);
-$n = mt_rand(1,3);
-switch ($n) {
-	case 1:
-		$x = mt_rand(1,9);
-		$y = mt_rand(1,9);
-		$_SESSION['captcha'.$sec_id] = $x + $y;
-		$cap = "$x+$y"; 
-		break; 
-	case 2:
-		$x = mt_rand(10,20);
-		$y = mt_rand(1,9);
-		$_SESSION['captcha'.$sec_id] = $x - $y; 
-		$cap = "$x-$y"; 
-		break;
-	case 3:
-		$x = mt_rand(2,10);
-		$y = mt_rand(2,5);
-		$_SESSION['captcha'.$sec_id] = $x * $y; 
-		$cap = "$x*$y"; 
-		break;
-}
+$_SESSION['captcha'.$sec_id] = rand(10000,99999);
 
 // create reload-image
-$reload = ImageCreateFromPNG(CAT_PATH.'/include/captcha/reload_120_30.png'); // reload-overlay
+$reload = ImageCreateFromPNG(CAT_PATH.'/framework/CAT/Helper/Captcha/WB/reload_120_30.png'); // reload-overlay
 
-$image = imagecreate(120, 30);
-
+$w=120;
+$h=30;
+$image = imagecreate($w, $h);
 $white = imagecolorallocate($image, 0xFF, 0xFF, 0xFF);
 $gray = imagecolorallocate($image, 0xC0, 0xC0, 0xC0);
-$darkgray = imagecolorallocate($image, 0x30, 0x30, 0x30);
+$darkgray = imagecolorallocate($image, 0x50, 0x50, 0x50);
 
+srand((double)microtime()*1000000);
 for($i = 0; $i < 30; $i++) {
-	$x1 = mt_rand(0,120);
-	$y1 = mt_rand(0,30);
-	$x2 = mt_rand(0,120);
-	$y2 = mt_rand(0,30);
+	$x1 = rand(0,$w);
+	$y1 = rand(0,$h);
+	$x2 = rand(0,$w);
+	$y2 = rand(0,$h);
 	imageline($image, $x1, $y1, $x2, $y2 , $gray);  
 }
 
-$x = 10;
-$l = strlen($cap);
-for($i = 0; $i < $l; $i++) {
-	$fnt = mt_rand(3,5);
-	$x = $x + mt_rand(12 , 20);
-	$y = mt_rand(7 , 12); 
-	imagestring($image, $fnt, $x, $y, substr($cap, $i, 1), $darkgray); 
+$x = 0;
+for($i = 0; $i < 5; $i++) {
+	$fnt = rand(3,5);
+	$x = $x + rand(12 , 20);
+	$y = rand(7 , 12); 
+	imagestring($image, $fnt, $x, $y, substr($_SESSION['captcha'.$sec_id], $i, 1), $darkgray); 
 }
 
 imagealphablending($reload, TRUE);
@@ -104,7 +84,10 @@ imagedestroy($image);
 $image = $reload;
 
 captcha_header();
+ob_start();
 imagepng($image);
+header("Content-Length: ".ob_get_length()); 
+ob_end_flush();
 imagedestroy($image);
 
 ?>
