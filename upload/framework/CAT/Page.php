@@ -225,9 +225,9 @@ if (!class_exists('CAT_Page', false))
                 // initialize template search path
                 $parser->setPath(CAT_PATH.'/templates/'.TEMPLATE.'/templates');
                 $parser->setFallbackPath(CAT_THEME_PATH.'/templates');
-                if($parser->hasTemplate('languages.lte'))
+                if($parser->hasTemplate('languages'))
                 {
-                    $parser->output('languages.lte', array('items'=>$items));
+                    $parser->output('languages', array('items'=>$items));
                 }
             }
         }   // end function getLanguageMenu()

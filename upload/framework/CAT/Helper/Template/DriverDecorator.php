@@ -136,21 +136,22 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
     {
         // scan search paths (if any)
         $paths = array();
-        if ( $this->path ) {
-            $paths[] = $this->path;
+            if ( $this->te->path ) {
+                $paths[] = $this->te->path;
         }
-        if ( $this->fallback_path ) {
-            $paths[] = $this->fallback_path;
+            if ( $this->te->fallback_path ) {
+                $paths[] = $this->te->fallback_path;
         }
-        $paths[] = $this->workdir;
+            $paths[] = $this->te->workdir;
         // remove doubles
         $paths = array_unique($paths);
+            $dirh  = CAT_Helper_Directory::getInstance();
+            $dirh->setSuffixFilter(array('tpl','htt','lte'));
         foreach ( $paths as $dir ) {
-            if ( file_exists( $dir.'/'.$name ) ) {
-                return true;
-            }
+                $file = $dirh->findFile($name,$dir,true);
+                if ( $file ) { return true; }
         }
         return false;
-        }
+        }   // end function hasTemplate()
     }
 }

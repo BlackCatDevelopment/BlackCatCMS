@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS `cat_addons` (
   `installed` VARCHAR(255) NOT NULL DEFAULT '',
   `upgraded` VARCHAR(255) NOT NULL DEFAULT '',
   `removable` ENUM('Y','N') NOT NULL DEFAULT 'Y',
+  `bundled` ENUM('Y','N') NOT NULL DEFAULT 'N',
   PRIMARY KEY (`addon_id`),
   UNIQUE KEY `type` (`type`,`directory`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

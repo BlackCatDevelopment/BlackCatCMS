@@ -711,7 +711,7 @@ function fill_tables($database) {
 
 	global $config, $admin;
 
-	$errors = array();
+    $errors = array();
 
 	// create a random session name
 	list($usec,$sec) = explode(' ',microtime());
@@ -808,7 +808,7 @@ function fill_tables($database) {
 /**
  * installs all modules, templates, and languages
  **/
-function install_modules ($cat_path) {
+function install_modules ($cat_path,$database) {
 
 	global $admin;
 
@@ -827,6 +827,9 @@ function install_modules ($cat_path) {
 		'index.php',
 		'edit_module_files.php'
 	);
+
+    // bundled modules
+    $bundled = array( 'captcha_control', 'droplets', 'edit_area', 'form ', 'initial_page', 'lib_dwoo', 'lib_images', 'lib_jquery', 'lib_pclzip', 'lib_phpmailer', 'lib_search', 'menu_link', 'news', 'show_menu2', 'wrapper', 'wysiwyg', 'wysiwyg_admin', 'blank, Blan', 'freshcat', 'DE', 'EN', 'blackcat' );
 
 	$logh = fopen( CAT_LOGFILE, 'a' );
 
@@ -876,6 +879,14 @@ function install_modules ($cat_path) {
     }
 
     fclose($logh);
+
+    // mark bundled modules
+    foreach($bundled as $module) {
+        $database->query(sprintf(
+            'UPDATE `%saddons` SET bundled="Y" WHERE directory="%s"',
+            CAT_TABLE_PREFIX,$module
+        ));
+    }
 
     return array(
         ( count($errors) ? false : true ),
@@ -1198,7 +1209,8 @@ function __do_install() {
     if ( ! defined('LEPTON_URL')   ) { define('LEPTON_URL',$config['cat_url']); }
     if ( ! defined('LEPTON_PATH')  ) { define('LEPTON_PATH',$cat_path);            }
 
-     require $cat_path.'/framework/class.login.php';
+#    require $cat_path.'/framework/class.login.php';
+    include $cat_path.'/framework/class.database.php';
     $database = new database();
 
     // remove old inst.log
@@ -1218,7 +1230,7 @@ function __do_install() {
             // only try to install modules if fill tables succeeded
             else {
                 // ----- install addons -----
-                list ( $result, $insterrors ) = install_modules($cat_path);
+                list ( $result, $insterrors ) = install_modules($cat_path,$database);
                 if ( ! $result || count($insterrors) ) {
                     $errors['install modules'] = $insterrors;
                 }
