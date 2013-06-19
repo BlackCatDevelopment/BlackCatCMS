@@ -4,6 +4,14 @@
 				<option value="{$backend.VALUE}"{if $backend.SELECTED} selected="selected"{/if}>{$backend.NAME}</option>
 				{/foreach}
 			</select>
+            <div id="div_theme_variants" style="display:{if $variants}inline-block{else}none{/if}">
+            <label class="fc_label_120" for="fc_default_theme_variant">{translate('Variant')}:</label>
+            <select name="default_theme_variant" id="fc_default_theme_variant">
+				{foreach $variants variant}
+				<option value="{$variant}">{$variant}</option>
+				{/foreach}
+			</select>
+            </div>
 			<hr />
 
 			<label class="fc_label_300" for="fc_wysiwyg_editor">{translate('WYSIWYG Editor')}:</label>

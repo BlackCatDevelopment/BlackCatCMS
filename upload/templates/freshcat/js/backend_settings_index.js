@@ -53,6 +53,42 @@ jQuery(document).ready(function(){
 	$('select[name=default_theme]').change( function()
 	{
 		$(this).closest('form').removeClass('ajaxForm').unbind();
+        var dates	= {
+			'_cat_ajax': 1,
+            'template':  $('#fc_default_theme').val()
+		};
+		$.ajax(
+		{
+			context:	form,
+			type:		'POST',
+			url:		CAT_ADMIN_URL + '/settings/ajax_get_template_variants.php',
+			dataType:	'json',
+			data:		dates,
+			cache:		false,
+			success:	function( data, textStatus, jqXHR )
+			{
+				if ( data.success === true )
+				{
+					var form	= $(this);
+                    // remove old options
+                    $("#fc_default_theme_variant").empty();
+                    if( $(data.variants).size() > 0 )
+                    {
+    					$.each(data.variants, function(index, value)
+    					{
+                            $("<option/>").val(value).text(value).appendTo("#fc_default_theme_variant");
+					    });
+                        $('#div_theme_variants').show();
+                    }
+                    else {
+                        $('#div_theme_variants').hide();
+                    }
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			},
+		});
 	});
     $('#fc_createguid').click(function()
     {

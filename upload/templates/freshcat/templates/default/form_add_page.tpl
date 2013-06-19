@@ -45,7 +45,6 @@
 				{/foreach}
 			</select>
 			{/if}
-
 			<label for="fc_addPage_target">{translate('Target')}:</label>
 			<select name="target" id="fc_addPage_target">
 				<option value="_blank">{translate('New window')}</option>

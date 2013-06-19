@@ -71,6 +71,7 @@
 			</select>
             <div class="clear_sp"></div>
 			{/if}
+
 			<div class="fc_modifyUser fc_password_notification fc_br_all icon-notification fc_gradient_red fc_input_description">
 				{translate('Please note: You should only enter values in those fields if you wish to change this users password')}
 			</div>

@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 $template_directory			= 'freshcat';
 $template_name				= 'FreshCat Backend Theme';
 $template_function			= 'theme';
-$template_version			= '0.7.5';
+$template_version			= '0.7.6';
 $template_platform			= '1.x';
 $template_author			= 'Matthias Glienke, creativecat';
 $template_license			= '<a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>';
@@ -50,6 +50,7 @@ $template_license_terms		= '-';
 $template_description		= 'Introduced with Black Cat CMS in 2013.<br/><br/>Done by Matthias Glienke, <a class="icon-creativecat" href="http://creativecat.de"> creativecat</a>';
 $template_engine			= 'dwoo';
 $template_guid				= 'AD6296ED-31BD-49EB-AE23-4DD76B7ED776';
+$template_variants          = array( 'default', 'blue' );
 
 
 ?>
