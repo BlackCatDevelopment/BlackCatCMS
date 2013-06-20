@@ -49,11 +49,13 @@
 											<div class="fc_arrow_up"></div>
 											<form method="post" action="{$CAT_ADMIN_URL}/pages/ajax_sections_save.php" name="modify_section" class="fc_modify_section ajaxForm">
 												<div>
+                                                    <input type="hidden" name="_cat_ajax" value="1" />
 													<input type="hidden" name="update_section_id" value="{$block.section_id}" />
 													<span class="fc_section_modify_label">{translate('Name')}:</span>
 													<input type="text" name="blockname" value="{$block.name}" />
 													<div class="clear"></div>
 													<hr />
+                                                    {if $block.template_blocks > 0}
 													<span class="fc_section_modify_label left">{translate('Block')}:</span>
 													<select name="set_block" class="left">
 													{foreach $block.template_blocks as template_block}
@@ -62,6 +64,7 @@
 													</select>
 													<div class="clear"></div>
 													<hr />
+                                                    {/if}
 													<span class="fc_section_modify_label">{translate('From')}:</span>
 													<input type="text" name="day_from" value="{$block.date_day_from}" class="fc_date_two" maxlength="2" title="{translate('Day')}" /> . 
 													<input type="text" name="month_from" value="{$block.date_month_from}" class="fc_date_two" maxlength="2" title="{translate('Month')}" /> . 

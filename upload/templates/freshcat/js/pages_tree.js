@@ -201,7 +201,7 @@
 							});
 						}
 						form.animate({width: 'toggle'});
-					},
+					}
 				});
 			});
 
@@ -271,7 +271,7 @@
 					});
 					options.options_ul.find('li').smartTruncation();
 
-					switch( parseInt(searchOption) )
+					switch( parseInt(searchOption,10) )
 					{
 						case 0:
 							$('dd:containsi(' + searchTerm + ')')
@@ -737,7 +737,7 @@ jQuery(document).ready(function()
                     var toggle = current.parent().parent().find('.fc_page_link').find('.fc_toggle_tree');
                     var tparent = current.parent().parent();
 					current.remove();
-                    if ( tparent.find('ul.ui-sortable').children("li").length == 0 ) {
+                    if ( tparent.find('ul.ui-sortable').children("li").length === 0 ) {
                         toggle.remove();
                     }
 				}

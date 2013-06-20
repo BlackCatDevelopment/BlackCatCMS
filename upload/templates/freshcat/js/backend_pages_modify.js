@@ -145,7 +145,7 @@ jQuery(document).ready(function()
 				{
 					$.ajax(
 					{
-						type:		'GET',
+						type:		'POST',
 						context:	current.closest('.fc_module_block'),
 						url:		CAT_ADMIN_URL + '/pages/ajax_sections_save.php',
 						dataType:	'json',
@@ -236,7 +236,7 @@ jQuery(document).ready(function()
 			};
 		$.ajax(
 		{
-			type:		'GET',
+			type:		'POST',
 			context:	current,
 			url:		CAT_ADMIN_URL + '/pages/ajax_sections_save.php',
 			dataType:	'json',

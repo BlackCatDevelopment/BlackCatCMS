@@ -541,19 +541,6 @@ jQuery(document).ready( function()
 	// Bind buttons to show popups
 	//$('.show_popup').fc_show_popup();
 
-	// Bind navigation of AddPage-Form
-	$('#fc_add_page_nav').find('a').click( function()
-	{
-		var current		= $(this);
-		if ( !current.hasClass('fc_active') )
-		{
-			$('#fc_add_page').find('.fc_active').removeClass('fc_active');
-			current.addClass('fc_active');
-			var target	= current.prop('href');
-			$(target).addClass('fc_active');
-		}
-		return false;
-	});
 
 	// Make the sidebar resizeable
 	$('#fc_sidebar_footer, #fc_sidebar').resizable({
@@ -579,5 +566,18 @@ jQuery(document).ready( function()
 		}
 	});
 
+	// Bind navigation of AddPage-Form
+	$('#fc_add_page_nav').find('a').click( function()
+	{
+		var current		= $(this);
+		if ( !current.hasClass('fc_active') )
+		{
+			$('#fc_add_page').find('.fc_active').removeClass('fc_active');
+			current.addClass('fc_active');
+			var target	= current.attr('href');
+			$(target).addClass('fc_active');
+		}
+		return false;
+	});
 
 });
