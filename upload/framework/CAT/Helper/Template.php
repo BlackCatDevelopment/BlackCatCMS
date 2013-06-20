@@ -137,6 +137,31 @@ if (!class_exists('CAT_Helper_Template'))
         }   // end function getInstance()
 
     	/**
+         *
+         * @access public
+         * @return
+         **/
+        public static function get_template_block_name($template = DEFAULT_TEMPLATE, $selected = 1)
+        {
+            if ( SECTION_BLOCKS != false )
+    		{
+    			$template_location = ( $template != '' ) ?
+    				CAT_PATH . '/templates/' . $template . '/info.php' :
+    				CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/info.php';
+
+    			if ( file_exists($template_location) )
+    			{
+    				require($template_location);
+    			}
+
+                $driver = self::getInstance(self::$_driver);
+
+    			return ( isset($block[$selected]) ? $block[$selected] : $driver->lang()->translate('Main') );
+    			}
+        }   // end function get_template_block_name()
+        
+
+    	/**
     	 * get_template_blocks function.
     	 *
     	 * Function to get all blocks of an template
@@ -162,20 +187,22 @@ if (!class_exists('CAT_Helper_Template'))
     				require($template_location);
     			}
 
+                $driver = self::getInstance(self::$_driver);
+
     			// =========================
     			// ! Check if $block is set
     			// =========================
     			if ( !isset($block[1]) || $block[1] == '' )
     			{
-    				$block[1]	= self::getInstance(self::$_driver)->lang()->translate('Main');
+    				$block[1]	= $driver->lang()->translate('Main');
     			}
 
     			// ================================
     			// ! Add block options to the list
     			// ================================
-    			foreach ( $block AS $number => $name )
+    			foreach ( $block as $number => $name )
     			{
-    				self::getInstance(self::$_driver)->template_block[$number] = array(
+    				$driver->template_block[$number] = array(
     					'NAME'			=> $name,
     					'VALUE'			=> $number,
     					'SELECTED'		=> ( $selected == $number || $selected == $name ) ? true : false
@@ -188,7 +215,7 @@ if (!class_exists('CAT_Helper_Template'))
     					);
     				}
     			}
-    			return self::getInstance(self::$_driver)->template_block;
+    			return $driver->template_block;
     		}
     		else return false;
     	}   // end function get_template_blocks()

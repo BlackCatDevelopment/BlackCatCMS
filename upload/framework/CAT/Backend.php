@@ -116,19 +116,20 @@ if (!class_exists('CAT_Backend', false))
             $user     = CAT_Users::getInstance();
 
             // Connect to database and get website title
+            if(!CAT_Registry::exists('WEBSITE_TITLE'))
+            {
             $title = $this->db()->get_one(sprintf(
                 "SELECT `value` FROM `%ssettings` WHERE `name`='website_title'",
                 CAT_TABLE_PREFIX
             ));
+                CAT_Registry::define('WEBSITE_TITLE',$title,true);
+            }
 
             // check current URL for page tree
             $uri = CAT_Helper_Validate::get('_SERVER','SCRIPT_NAME');
 
-            // ===================================
-            // ! initialize template search path
-            // ===================================
-            $parser->setPath(CAT_THEME_PATH . '/templates');
-            $parser->setFallbackPath(CAT_THEME_PATH . '/templates');
+            // init template search paths
+            self::initPaths();
 
             // =================================
             // ! Add permissions to $tpl_data
@@ -210,7 +211,7 @@ if (!class_exists('CAT_Backend', false))
             // =========================
             $tpl_data['META']['CHARSET']       = (true === defined('DEFAULT_CHARSET')) ? DEFAULT_CHARSET : 'utf-8';
             $tpl_data['META']['LANGUAGE']      = strtolower(CAT_Registry::get('LANGUAGE'));
-            $tpl_data['META']['WEBSITE_TITLE'] = $title;
+            $tpl_data['META']['WEBSITE_TITLE'] = WEBSITE_TITLE;
             $tpl_data['CAT_VERSION']           = CAT_Registry::get('CAT_VERSION');
             $tpl_data['CAT_CORE']              = CAT_Registry::get('CAT_CORE');
             $tpl_data['PAGE_EXTENSION']        = CAT_Registry::get('PAGE_EXTENSION');
@@ -345,9 +346,8 @@ if (!class_exists('CAT_Backend', false))
             global $parser;
             $tpl_data = array();
 
-            // initialize template search path
-            $parser->setPath(CAT_THEME_PATH . '/templates');
-            $parser->setFallbackPath(CAT_THEME_PATH . '/templates');
+            // init template search paths
+            self::initPaths();
 
             $data['CAT_VERSION']                = CAT_Registry::get('CAT_VERSION');
             $data['CAT_CORE']                   = CAT_Registry::get('CAT_CORE');
@@ -423,6 +423,30 @@ if (!class_exists('CAT_Backend', false))
                 return false;
         }   // end function isBackend()
         
+        /**
+         * initializes template search paths for backend
+         *
+         * @access public
+         * @return
+         **/
+        public static function initPaths()
+        {
+            global $parser;
+            // ===================================
+            // ! initialize template search path
+            // ===================================
+            $parser->setPath(CAT_THEME_PATH.'/templates');
+            $parser->setFallbackPath(CAT_THEME_PATH.'/templates');
+
+            if(file_exists(CAT_THEME_PATH.'/templates/default'))
+            {
+                $parser->setPath(CAT_THEME_PATH.'/templates/default');
+            }
+            if(CAT_Registry::get('DEFAULT_THEME_VARIANT') != '' && file_exists(CAT_THEME_PATH.'/templates/'.CAT_Registry::get('DEFAULT_THEME_VARIANT')))
+            {
+                $parser->setPath(CAT_THEME_PATH.'/templates/'.CAT_Registry::get('DEFAULT_THEME_VARIANT'));
+            }
+        }   // end function initPaths()
 
 
     }

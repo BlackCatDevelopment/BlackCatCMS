@@ -4,7 +4,7 @@
     <input type="hidden" name="id" value="{$id}" />
     <fieldset>
         <legend>{translate('Common options')}</legend>
-        <label for="editor_skin">{translate('Skin')}</label>
+        <label for="skin">{translate('Skin')}</label>
         {if is_array($skins)}
               <select name="skin" id="skin">
             {foreach $skins as skin}

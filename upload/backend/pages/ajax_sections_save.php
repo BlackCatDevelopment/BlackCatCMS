@@ -207,11 +207,11 @@ elseif ( $delete_section_id )
 	}
 }
 // ===================================================== 
-// ! If delete_section_id is send, delete this section   
+// ! If update_section_id is send, update this section
 // ===================================================== 
 elseif ( $update_section_id )
 {
-	$block			= $val->sanitizePost('block');
+	$block			= $val->sanitizePost('set_block');
 	$name			= $val->sanitizePost('blockname');
 
 	$day_from		= is_numeric( $val->sanitizePost('day_from') )	? $val->sanitizePost('day_from')   : 0;

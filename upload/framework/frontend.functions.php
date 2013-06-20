@@ -88,7 +88,7 @@ function page_footer( $date_format = 'Y', $mode = false )
         else
         {
             echo $temp;
-            return true;
+        #return true;
         }
 }   // end function page_footer()
 

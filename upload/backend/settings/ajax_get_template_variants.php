@@ -18,8 +18,8 @@
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Modules
- *   @package         wysiwyg_admin
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
@@ -34,11 +34,43 @@ if (defined('CAT_PATH')) {
         if (empty($sub)) continue; $dir .= '/'.$sub;
         if (file_exists($dir.'/framework/class.secure.php')) {
             include($dir.'/framework/class.secure.php'); $inc = true;    break;
-	}
-	}
+        }
+    }
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$LANG = array(
-    'autoParagraph' => 'Whether automatically create wrapping blocks around inline contents inside document body, this helps to ensure the integrality of the block enter mode.',
+$backend = CAT_Backend::getInstance('Settings', 'settings', false);
+$users   = CAT_Users::getInstance();
+
+header('Content-type: application/json');
+
+if ( !$users->checkPermission('Settings','settings') )
+{
+	$ajax	= array(
+		'message'	=> $backend->lang()->translate("Sorry, but you don't have the permissions for this action"),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
+}
+
+$tpl = CAT_Helper_Validate::get('_REQUEST','template');
+
+// get template info
+$info = CAT_Helper_Addons::checkInfo(CAT_PATH.'/templates/'.$tpl);
+if(!$info || !count($info)) {
+	$ajax	= array(
+		'message'	=> CAT_Helper_Addons::getError(),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
+}
+
+$ajax	= array(
+	'message'	=> NULL,
+    'variants'  => ( isset($info['module_variants']) ? $info['module_variants'] : array() ),
+	'success'	=> true
 );
+print json_encode( $ajax );
+exit();

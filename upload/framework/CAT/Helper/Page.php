@@ -1025,8 +1025,8 @@ if (!class_exists('CAT_Helper_Page'))
         public static function getParentTitles($page_id)
         {
             $page     = self::properties($page_id);
-            $titles[] = $page['menu_title'];
-            if ($page['is_parent'])
+            $titles[] = ( isset($page['menu_title']) ? $page['menu_title'] : $page['page_title'] );
+            if ($page['level']>0)
             {
                 $parent_titles = self::getParentTitles($page['parent']);
                 $titles = array_merge($titles, $parent_titles);

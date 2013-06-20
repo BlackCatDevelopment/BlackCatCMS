@@ -286,6 +286,14 @@ $tpl_data['backends']         = $addons->get_addons( CAT_Registry::get('DEFAULT_
 $tpl_data['wysiwyg']          = $addons->get_addons( CAT_Registry::get('WYSIWYG_EDITOR'), 'module', 'wysiwyg' );
 $tpl_data['search_templates'] = $addons->get_addons( $tpl_data['search']['template'] , 'template', 'template' );
 
+// ============================
+// ! Backend theme variants
+// ============================
+$info = CAT_Helper_Addons::checkInfo(CAT_PATH.'/templates/'.CAT_Registry::get('DEFAULT_THEME'));
+if(isset($info['module_variants']) && is_array($info['module_variants']) && count($info['module_variants'])) {
+    $tpl_data['variants'] = $info['module_variants'];
+}
+
 array_unshift (
     $tpl_data['wysiwyg'],
     array(

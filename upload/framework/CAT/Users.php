@@ -106,8 +106,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
             {
                 $parser = CAT_Helper_Template::getInstance('Dwoo');
             }
-            $parser->setPath(CAT_THEME_PATH . '/templates');
-            $parser->setFallbackPath(CAT_THEME_PATH . '/templates');
+            CAT_Backend::initPaths();
 
             $val   = CAT_Helper_Validate::getInstance();
             $lang  = CAT_Helper_I18n::getInstance();
@@ -289,7 +288,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
 				$tpl_data['meta']['LANGUAGE']	= strtolower(LANGUAGE);
 				$tpl_data['meta']['CHARSET']	= (defined('DEFAULT_CHARSET')) ? DEFAULT_CHARSET : "utf-8";
 
-                $parser->output('login.lte',$tpl_data);
+                $parser->output('login',$tpl_data);
 
             }
             else

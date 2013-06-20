@@ -37,7 +37,7 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	class CAT_Helper_I18n extends CAT_Object
 	{
 	    protected      $_config
-            = array( 'defaultlang' => 'EN', 'langPath' => '/languages', 'loglevel' => 8 );
+            = array( 'defaultlang' => 'EN', 'langPath' => '/languages', 'loglevel' => 0 );
 	    // array to store language strings
 	    private static $_lang               = array();
 	    // default language
@@ -185,15 +185,24 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	     **/
 		public function checkFile( $file, $check_var, $check_only = false )
 		{
+
+            $this->log()->logDebug(sprintf(
+                'checking file [%s] for var [%s], check_only [%s]',
+                $file, $check_var, $check_only
+            ));
+
 			{
 				// require the language file
-			    @require( $file );
+			    require $file ;
+
 				// check if the var is defined now
 			    if ( isset( ${$check_var} ) )
 			    {
+                    $this->log()->logDebug('found $check_var');
                     $isIndexed = array_values( ${$check_var} ) === ${$check_var};
                     if ( $isIndexed )
                     {
+                        $this->log()->logDebug('indexed, returning false');
                         return false;
                     }
 			        if ( $check_only )
@@ -214,7 +223,10 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	            }
 	            else
 	            {
-	                $this->log()->logInfo( 'invalid lang file: ', $file );
+	                $this->log()->logInfo(sprintf(
+                        'invalid lang file [%s], var [%s] is not set',
+                        $file, $check_var
+                    ));
 	                return false;
 	            }
 			}

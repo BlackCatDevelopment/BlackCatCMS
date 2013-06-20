@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `cat_addons` (
   `removable` ENUM('Y','N') NOT NULL DEFAULT 'Y',
   `bundled` ENUM('Y','N') NOT NULL DEFAULT 'N',
   PRIMARY KEY (`addon_id`),
-  UNIQUE KEY `type` (`type`,`directory`)
+  UNIQUE INDEX `type_directory` (`type`,`directory`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cat_groups` (

@@ -69,7 +69,7 @@ abstract class c_editor_base
         if(isset($config[$name]))
         {
             $val = $config[$name];
-            unset($config[$name]);
+#            unset($config[$name]);
             return $val;
         }
     }

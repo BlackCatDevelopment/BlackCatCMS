@@ -69,7 +69,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 'template_function',
                 'template_description',
                 'template_platform',
-                'template_guid'
+                'template_guid',
+                'template_variants',
                 //'theme_directory'
             ),
             'language' => array(
@@ -1571,10 +1572,9 @@ if (!class_exists('CAT_Helper_Addons'))
                 // add empty keys
                 foreach(self::$info_vars_full[$return_values['addon_function']] as $varname)
                 {
-                    if(!isset($returnvalues[$varname]))
+                    $key = str_ireplace(array('template_'),array('module_'),$varname);
+                    if(!isset($returnvalues[$key]))
                     {
-                        // rename keys
-                        $key = str_ireplace(array('template_'),array('module_'),$varname);
                         $return_values[$key] = isset(${$varname})
                                              ? ${$varname}
                                              : ''

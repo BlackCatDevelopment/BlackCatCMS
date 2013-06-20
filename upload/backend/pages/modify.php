@@ -156,7 +156,8 @@ foreach( $sections as $section )
 					$section_id		= $section['section_id'];
 				$tpl_data['blocks'][$bcnt]['template_blocks']		= $parser->get_template_blocks( $current_template, $section['block'] );
 				$tpl_data['blocks'][$bcnt]['current_block_id']	= $section['block'];
-				$tpl_data['blocks'][$bcnt]['current_block_name']	= $section['name'];
+				$tpl_data['blocks'][$bcnt]['current_block_name']	= $parser->get_template_block_name($current_template, $section['block'])
+                                                                    . ' ('.$backend->lang()->translate('Block number').': '.$section['block'].')';
 				$tpl_data['blocks'][$bcnt]['section_id']			= $section['section_id'];
 				$tpl_data['blocks'][$bcnt]['module']				= $section['module'];
 				$tpl_data['blocks'][$bcnt]['name']				= $section['name'];
@@ -175,7 +176,7 @@ foreach( $sections as $section )
                 $langfile = sanitize_path(CAT_PATH.'/modules/'.$module.'/languages/'.LANGUAGE.'.php');
                 if ( file_exists($langfile) )
                 {
-                    if ( ! $backend->lang()->checkFile($langfile, '$LANG', true ))
+                    if ( ! $backend->lang()->checkFile($langfile, 'LANG', true ))
                         // old fashioned language file
                         include $langfile;
                     else

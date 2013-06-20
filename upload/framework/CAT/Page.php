@@ -284,7 +284,7 @@ if (!class_exists('CAT_Page', false))
                             $langfile = sanitize_path(CAT_PATH.'/modules/'.$module.'/languages/'.LANGUAGE.'.php');
                             if ( file_exists($langfile) )
                             {
-                            if ( ! $this->lang()->checkFile($langfile, '$LANG', true ))
+                                if ( ! $this->lang()->checkFile($langfile, 'LANG', true ))
                                 // old fashioned language file
                                 require $langfile;
                             else
@@ -302,16 +302,9 @@ if (!class_exists('CAT_Page', false))
                                 $parser->setPath(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates/' . DEFAULT_TEMPLATE));
                             }
                             // fetch original content
-$this->log()->LogDebug('output buffer level before ob_start(): '.ob_get_level());
                             ob_start();
-$this->log()->LogDebug('output buffer status: ', ob_get_status(1));
                                 require(CAT_PATH . '/modules/' . $module . '/view.php');
                                 $content = ob_get_clean();
-
-$this->log()->LogDebug('output buffer level after ob_get_clean() - should be the same as before: '.ob_get_level());
-$this->log()->LogDebug('output buffer content for '.CAT_PATH . '/modules/' . $module . '/view.php'.': ', $content);
-$this->log()->LogDebug('output buffer status: ', ob_get_status(1));
-
                             echo $content;
                         }
                         else
@@ -325,6 +318,7 @@ $this->log()->LogDebug('output buffer status: ', ob_get_status(1));
             {
                 require(PAGE_CONTENT);
             }
+            if (!CAT_Registry::exists('CAT_PAGE_CONTENT_DONE'))
             CAT_Registry::register('CAT_PAGE_CONTENT_DONE',true,true);
         }
 

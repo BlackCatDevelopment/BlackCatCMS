@@ -77,17 +77,17 @@ $parser->setGlobals('TOOL_URL',CAT_ADMIN_URL.'/admintools/tool.php?tool='.$tool[
 // Check if folder of tool exists
 if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php') )
 {
-	if (
-		  file_exists( CAT_PATH.'/modules/'.$tool['directory'].'/languages/'.$backend->lang()->getLang().'.php' )
-	) {
+
         // load language file (if any)
-        $langfile = sanitize_path(CAT_PATH.'/modules/'.$tool['directory'].'/languages/'.$backend->lang()->getLang().'.php');
-        if ( ! $backend->lang()->checkFile($langfile, '$LANG', true ))
+    $langfile = sanitize_path(CAT_PATH.'/modules/'.$tool['directory'].'/languages/'.LANGUAGE.'.php');
+    if ( file_exists($langfile) )
+    {
+        if ( ! $backend->lang()->checkFile($langfile, 'LANG', true ))
             // old fashioned language file
             require $langfile;
         else
             // modern language file
-		    $backend->lang()->addFile( $backend->lang()->getLang().'.php', CAT_PATH.'/modules/'.$tool['directory'].'/languages' );
+            $backend->lang()->addFile(LANGUAGE . '.php', sanitize_path(CAT_PATH . '/modules/' . $tool['directory'] . '/languages'));
 	}
 	// Cache the tool and add it to dwoo
 	ob_start();
