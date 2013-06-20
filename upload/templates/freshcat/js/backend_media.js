@@ -1,10 +1,10 @@
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * 
+ *   This file is part of Black Cat CMS Core, released under the GNU GPL
+ *
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- *   @license			http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
@@ -306,7 +306,7 @@ function copy_upload_field( upload_field )
 			// Remove field if there are still more than one left
 			$('.fc_upload_field:last').removeClass('fc_inactive');
 		}
-		else
+        else
 		{
 			add_new_upload_field();
 			$('.fc_upload_field:first').addClass('fc_inactive');
@@ -319,7 +319,7 @@ function copy_upload_field( upload_field )
 		var file			= current_field.val(),
 			filename		= file.substr( (file.lastIndexOf('\\') + 1) ),
 			extension		= file.substr( (file.lastIndexOf('.') + 1) ).toLowerCase(),
-			allowed_ext		= current_field.attr('accept').split('\|');
+			allowed_ext		= current_field.prop('accept').split('\|');
 
 		if ( jQuery.inArray( extension, allowed_ext ) > -1 )
 		{
@@ -361,14 +361,14 @@ function copy_upload_field( upload_field )
  **/
 function add_new_upload_field ()
 {
-	var field_size		= parseInt( $('#fc_media_index_upload .fc_upload_fields:last').children('input[name^=upload_counter]').val() ) + 1,
+	var field_size		= parseInt( $('#fc_media_index_upload .fc_upload_fields:last').children('input[name^=upload_counter]').val(), 10 ) + 1,
 		new_field		= $('#fc_upload_field_add > div').clone().removeClass('hidden').insertAfter('#fc_media_index_upload .fc_upload_fields:last');
 
 	new_field.children('input[name^=upload_counter]').val( field_size );
-	new_field.find( 'input[type=file]' ).attr( 'name', 'upload_' + field_size );
+	new_field.find( 'input[type=file]' ).prop( 'name', 'upload_' + field_size );
 
-	new_field.find( 'input[name=unzip_]' ).attr( 'name', 'unzip_' + field_size ).attr( 'id', 'unzip_' + field_size ).addClass( 'show___fc_delete_zip_div_' + field_size ).next('label').attr( 'for', 'unzip_' + field_size );
-	new_field.find( 'input[name=delete_zip_]' ).attr( 'name', 'delete_zip_' + field_size ).attr( 'id', 'delete_zip_' + field_size ).next('label').attr( 'for', 'delete_zip_' + field_size ).closest('div').attr( 'id', 'fc_delete_zip_div_' + field_size );
+	new_field.find( 'input[name=unzip_]' ).prop( 'name', 'unzip_' + field_size ).prop( 'id', 'unzip_' + field_size ).addClass( 'show___fc_delete_zip_div_' + field_size ).next('label').prop( 'for', 'unzip_' + field_size );
+	new_field.find( 'input[name=delete_zip_]' ).prop( 'name', 'delete_zip_' + field_size ).prop( 'id', 'delete_zip_' + field_size ).next('label').prop( 'for', 'delete_zip_' + field_size ).closest('div').prop( 'id', 'fc_delete_zip_div_' + field_size );
 
 	// Set function for new added field
 	new_field.find( '.fc_toggle_element' ).fc_toggle_element();
@@ -402,7 +402,7 @@ jQuery(document).ready(function()
 		var media_upload	= $('#fc_media_index_upload');
 		media_upload.children('.fc_upload_fields:first').nextAll('.fc_upload_fields').remove();
 		media_upload.find('.fc_upload_field').removeClass('fc_inactive');
-		media_upload.find( '.fc_toggle_element' ).attr( 'checked', false ).click();
+		media_upload.find( '.fc_toggle_element' ).prop( 'checked', false ).click();
 		media_upload.find('.fc_upload_zip').addClass('hidden');
 		$('#fc_header_button_dropdown_toggle a').click();
 	});
@@ -591,7 +591,7 @@ jQuery(document).ready(function()
 		$('#fc_media_index_upload'), function( data )
 		{
 			var current_ul		= get_active_media(),
-				folder_path		= current_ul.find('input[name=folder_path]').val(); 
+				folder_path		= current_ul.find('input[name=folder_path]').val();
 
 			$('#fc_media_index_upload input[name=folder_path]').val( folder_path );
 		}, function( data, textStatus, jqXHR )
@@ -605,7 +605,7 @@ jQuery(document).ready(function()
 
 			media_upload.children('.fc_upload_fields:first').nextAll('.fc_upload_fields').remove();
 			media_upload.find('.fc_upload_field').removeClass('fc_inactive');
-			media_upload.find('.fc_toggle_element').attr( 'checked', false ).click();
+			media_upload.find('.fc_toggle_element').prop( 'checked', false ).click();
 			media_upload.find('.fc_upload_zip').addClass('hidden');
 
 			$('#fc_media_index_upload').find('input[type="reset"]').click();

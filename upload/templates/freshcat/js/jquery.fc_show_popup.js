@@ -50,7 +50,7 @@
 								buttonClass		= 'hidden';
 						}
 						// bind reset buttons
-						else if ( input.attr('type') == 'reset' )
+						else if ( input.prop('type') == 'reset' )
 						{
 							var action			= function()
 							{
@@ -61,7 +61,7 @@
 								buttonClass		= 'reset';
 						}
 						// else bind submit buttons
-						else //if ( $(this).attr('type')=='submit' )
+						else //if ( $(this).prop('type')=='submit' )
 						{
 							var action			= function(){
 								current_item.submit();

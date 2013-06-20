@@ -2,10 +2,10 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license			http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         freshcat
-  *
+ *
  **/
 
 jQuery(document).ready(function()
@@ -62,7 +62,7 @@ jQuery(document).ready(function()
 									var i = 0;
 									$('.mceEditor').each(function()
 									{
-										var id = $(this).prev('textarea').attr('id');
+										var id = $(this).prev('textarea').prop('id');
 										tinyids[i] = id;
 										tinyMCE.execCommand('mceRemoveControl', false, id);
 										i++;

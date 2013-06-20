@@ -16,7 +16,7 @@
 
 <meta name="author" content="Black Cat CMS" />
 
-<link href="{$CAT_THEME_URL}/css/login.css" rel="stylesheet" type="text/css" />
+<link href="{$CAT_THEME_URL}/css/{$DEFAULT_THEME_VARIANT}/login.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript">
 	var CAT_URL								= '{$CAT_URL}';

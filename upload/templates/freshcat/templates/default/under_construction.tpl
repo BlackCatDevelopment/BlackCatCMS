@@ -8,8 +8,8 @@
 <meta http-equiv="content-language" content="{LANGUAGE}" />
 <meta name="robots" content="noindex, nofollow" />
 
-<link href="{CAT_THEME_URL}/css/basic.css" rel="stylesheet" type="text/css" />
-<link href="{CAT_THEME_URL}/css/login.css" rel="stylesheet" type="text/css" />
+<link href="{CAT_THEME_URL}/css/{$DEFAULT_THEME_VARIANT}/basic.css" rel="stylesheet" type="text/css" />
+<link href="{CAT_THEME_URL}/css/{$DEFAULT_THEME_VARIANT}/login.css" rel="stylesheet" type="text/css" />
 
 </head>
 <body class="fc_gradient3">

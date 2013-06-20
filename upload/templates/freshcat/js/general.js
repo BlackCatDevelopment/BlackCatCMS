@@ -15,10 +15,10 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         freshcat
-  *
+ *
  **/
 
 if ( typeof jQuery != 'undefined' )
@@ -46,11 +46,36 @@ if ( typeof jQuery != 'undefined' )
     });
 }
 
+// Avoid `console` errors in browsers that lack a console.
+// Source: https://github.com/h5bp/html5-boilerplate/blob/master/js/plugins.js
+(function() {
+    var method;
+    var noop = function () {};
+    var methods = [
+        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+        'timeStamp', 'trace', 'warn'
+    ];
+    var length = methods.length;
+    var console = (window.console = window.console || {});
+
+    while (length--) {
+        method = methods[length];
+
+        // Only stub undefined methods.
+        if (!console[method]) {
+            console[method] = noop;
+        }
+    }
+}());
+
 $.expr[":"].containsi = $.expr.createPseudo(function (selector, context, isXml) {
     return function (elem) {
         return (elem.textContent || elem.innerText || $.text(elem)).toLowerCase().indexOf(selector.toLowerCase()) > -1;
     };
 });
+
 
 // Plugin to validate email
 function isValidEmailAddress(emailAddress) {
@@ -59,9 +84,9 @@ function isValidEmailAddress(emailAddress) {
 }
 
 
-// ===================== 
-// ! BACKEND FUNCTIONS   
-// ===================== 
+// =====================
+// ! BACKEND FUNCTIONS
+// =====================
 
 function getThemeName()
 {
@@ -71,7 +96,7 @@ function getThemeName()
 // match css class with given prefix
 function match_class_prefix(prefix,elem)
 {
-	var classes = elem.attr('class').split(' ');
+	var classes = elem.prop('class').split(' ');
 	var regex   = new RegExp('^'+prefix+'(.+)',"g");
 	for (var i = 0; i < classes.length; i++)
 	{
@@ -130,7 +155,7 @@ function return_error( process_div, message )
 				'text':		'Ok',
 				'click':	function()
 				{
-					$('.fc_popup').dialog('destroy'); 
+					$('.fc_popup').dialog('destroy');
 				},
 				'class':	'submit'
 			}
@@ -383,7 +408,7 @@ function dialog_form( currentForm, beforeSend, afterSend )
 				// Set activity and store in a variable to use it later
 				data.process	= set_activity( title );
 
-				// Destroy dialog to hide the 
+				// Destroy dialog to hide the
 				if ( currentForm.is(':data(dialog)') ) {
 					currentForm.dialog('destroy');
 				}
@@ -440,7 +465,7 @@ function searchUsers( searchTerm )
 		{
 			$('.fc_list_forms:containsi(' + searchTerm + ')').each( function()
 			{
-				var id	= $(this).attr('id');
+				var id	= $(this).prop('id');
 				$('input[value*=' + id.substr(8) + ']').closest('li').addClass('fc_activeSearch');
 			});
 		}
@@ -464,19 +489,17 @@ function confirm_link ( message, url )
 	{
 		location.reload(true);
 	};
-	dialog_confirm( message, false, url, false, 'GET', 'HTML', false, afterSend );
-
+    dialog_confirm( message, false, url, false, 'GET', 'HTML', false, afterSend );
 }
-
 
 jQuery(document).ready( function()
 {
 	// Check if a cookie for sidebar is defined
-	if ( typeof $.cookie('sidebar') != 'undefined' )
+	if ( typeof $.cookie('sidebar') !== 'undefined' )
 	{
 		// Get current width of browser and cookie for width of the sidebar
-		var window_width = parseInt( $(window).width() ),
-			width	= $.cookie('sidebar');
+		var window_width = parseInt( $(window).width(), 10 ),
+			width	     = $.cookie('sidebar');
 		// Some resizes of elements
 		$('#fc_content_container, #fc_content_footer').css(
 		{
@@ -491,31 +514,6 @@ jQuery(document).ready( function()
 	// Add resize to window
 	$(window).resize_elements();
 
-	// Make the sidebar resizeable
-	$('#fc_sidebar_footer, #fc_sidebar').resizable(
-	{
-		handles: 'e',
-		minWidth: 100,
-
-		start: function(event, ui)
-		{
-			// store width of browser
-			window_width = parseInt( $(window).width() );
-		},
-		resize: function(event, ui)
-		{
-			// resize also some elements
-			$('#fc_content_container, #fc_content_footer').css({width: ( window_width - ui.size.width )+'px'});
-			$('#fc_sidebar_footer, #fc_sidebar, #fc_activity, #fc_sidebar_content').css({width: ui.size.width+'px'});
-			$('#fc_add_page').css({left: ui.size.width+'px'});
-		},
-		stop: function(event, ui)
-		{
-			// Save new width of sidebar in a cookie
-			$.cookie('sidebar', ui.size.width, {path: '/'});
-		}
-	});
-
 	// Initial activation of click events
 	set_buttons($('body'));
 
@@ -529,7 +527,7 @@ jQuery(document).ready( function()
 
 	$('.fc_input_fake label').click( function()
 	{
-		var input	= $(this).attr('for');
+		var input	= $(this).prop('for');
 		$('#' + input).val('');
 		searchUsers('');
 	});
@@ -551,9 +549,35 @@ jQuery(document).ready( function()
 		{
 			$('#fc_add_page').find('.fc_active').removeClass('fc_active');
 			current.addClass('fc_active');
-			var target	= current.attr('href');
+			var target	= current.prop('href');
 			$(target).addClass('fc_active');
 		}
 		return false;
 	});
+
+	// Make the sidebar resizeable
+	$('#fc_sidebar_footer, #fc_sidebar').resizable({
+		handles: 'e',
+		minWidth: 100,
+
+		start: function(event, ui)
+		{
+			// store width of browser
+			window_width = parseInt( $(window).width(), 10 );
+		},
+		resize: function(event, ui)
+		{
+			// resize also some elements
+			$('#fc_content_container, #fc_content_footer').css({width: ( window_width - ui.size.width )+'px'});
+			$('#fc_sidebar_footer, #fc_sidebar, #fc_activity, #fc_sidebar_content').css({width: ui.size.width+'px'});
+			$('#fc_add_page').css({left: ui.size.width+'px'});
+		},
+		stop: function(event, ui)
+		{
+			// Save new width of sidebar in a cookie
+			$.cookie('sidebar', ui.size.width, {path: '/'});
+		}
+	});
+
+
 });

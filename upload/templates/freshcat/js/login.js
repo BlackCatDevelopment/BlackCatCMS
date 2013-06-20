@@ -14,20 +14,19 @@
  *
  */
 
-
 /*
- In-Field Label jQuery Plugin
- http://fuelyourcoding.com/scripts/infield.html
-
- Copyright (c) 2009 Doug Neiner
- Dual licensed under the MIT and GPL licenses.
- Uses the same license as jQuery, see:
- http://docs.jquery.com/License
-
-*/
-(function(d){d.InFieldLabels=function(e,b,f){var a=this;a.$label=d(e);a.label=e;a.$field=d(b);a.field=b;a.$label.data("InFieldLabels",a);a.showing=true;a.init=function(){a.options=d.extend({},d.InFieldLabels.defaultOptions,f);if(a.$field.val()!==""){a.$label.hide();a.showing=false}a.$field.focus(function(){a.fadeOnFocus()}).blur(function(){a.checkForEmpty(true)}).bind("keydown.infieldlabel",function(c){a.hideOnChange(c)}).bind("paste",function(){a.setOpacity(0)}).change(function(){a.checkForEmpty()}).bind("onPropertyChange",
-function(){a.checkForEmpty()})};a.fadeOnFocus=function(){a.showing&&a.setOpacity(a.options.fadeOpacity)};a.setOpacity=function(c){a.$label.stop().animate({opacity:c},a.options.fadeDuration);a.showing=c>0};a.checkForEmpty=function(c){if(a.$field.val()===""){a.prepForShow();a.setOpacity(c?1:a.options.fadeOpacity)}else a.setOpacity(0)};a.prepForShow=function(){if(!a.showing){a.$label.css({opacity:0}).show();a.$field.bind("keydown.infieldlabel",function(c){a.hideOnChange(c)})}};a.hideOnChange=function(c){if(!(c.keyCode===
-16||c.keyCode===9)){if(a.showing){a.$label.hide();a.showing=false}a.$field.unbind("keydown.infieldlabel")}};a.init()};d.InFieldLabels.defaultOptions={fadeOpacity:0.5,fadeDuration:300};d.fn.inFieldLabels=function(e){return this.each(function(){var b=d(this).attr("for");if(b){b=d("input#"+b+"[type='text'],input#"+b+"[type='search'],input#"+b+"[type='tel'],input#"+b+"[type='url'],input#"+b+"[type='email'],input#"+b+"[type='password'],textarea#"+b);b.length!==0&&new d.InFieldLabels(this,b[0],e)}})}})(jQuery);
+ * jquery.infieldlabel
+ * A simple jQuery plugin for adding labels that sit over a form field and fade away when the fields are populated.
+ *
+ * Copyright (c) 2009 - 2013 Doug Neiner <doug@dougneiner.com> (http://code.dougneiner.com)
+ * Source: https://github.com/dcneiner/In-Field-Labels-jQuery-Plugin
+ * Dual licensed MIT or GPL
+ *   MIT (http://www.opensource.org/licenses/mit-license)
+ *   GPL (http://www.opensource.org/licenses/gpl-license)
+ *
+ * @version 0.1.3
+ */
+(function(e){e.InFieldLabels=function(n,i,t){var o=this;o.$label=e(n),o.label=n,o.$field=e(i),o.field=i,o.$label.data("InFieldLabels",o),o.showing=!0,o.init=function(){var n;o.options=e.extend({},e.InFieldLabels.defaultOptions,t),setTimeout(function(){""!==o.$field.val()?(o.$label.hide(),o.showing=!1):(o.$label.show(),o.showing=!0)},200),o.$field.focus(function(){o.fadeOnFocus()}).blur(function(){o.checkForEmpty(!0)}).bind("keydown.infieldlabel",function(e){o.hideOnChange(e)}).bind("paste",function(){o.setOpacity(0)}).change(function(){o.checkForEmpty()}).bind("onPropertyChange",function(){o.checkForEmpty()}).bind("keyup.infieldlabel",function(){o.checkForEmpty()}),o.options.pollDuration>0&&(n=setInterval(function(){""!==o.$field.val()&&(o.$label.hide(),o.showing=!1,clearInterval(n))},o.options.pollDuration))},o.fadeOnFocus=function(){o.showing&&o.setOpacity(o.options.fadeOpacity)},o.setOpacity=function(e){o.$label.stop().animate({opacity:e},o.options.fadeDuration),o.showing=e>0},o.checkForEmpty=function(e){""===o.$field.val()?(o.prepForShow(),o.setOpacity(e?1:o.options.fadeOpacity)):o.setOpacity(0)},o.prepForShow=function(){o.showing||(o.$label.css({opacity:0}).show(),o.$field.bind("keydown.infieldlabel",function(e){o.hideOnChange(e)}))},o.hideOnChange=function(e){16!==e.keyCode&&9!==e.keyCode&&(o.showing&&(o.$label.hide(),o.showing=!1),o.$field.unbind("keydown.infieldlabel"))},o.init()},e.InFieldLabels.defaultOptions={fadeOpacity:.5,fadeDuration:300,pollDuration:0,enabledInputTypes:["text","search","tel","url","email","password","number","textarea"]},e.fn.inFieldLabels=function(n){var i=n&&n.enabledInputTypes||e.InFieldLabels.defaultOptions.enabledInputTypes;return this.each(function(){var t,o,a=e(this).attr("for");a&&(t=document.getElementById(a),t&&(o=e.inArray(t.type,i),(-1!==o||"TEXTAREA"===t.nodeName)&&new e.InFieldLabels(this,t,n)))})}})(jQuery);
 
 jQuery(document).ready(function(){
 
@@ -63,7 +62,7 @@ jQuery(document).ready(function(){
 		$('#fc_login_forgot_form').slideUp(300);
 		$('#fc_login_form').slideDown(300);
 		$('#fc_login_password').val('');
-		if ( $('#fc_login_username').val() != '' )
+		if ( $('#fc_login_username').val() !== '' )
 		{
 			$('#fc_login_password').inFieldLabels().focus();
 		}
@@ -89,7 +88,7 @@ jQuery(document).ready(function(){
 			};
 			dates[username_fieldname]	= current_form.find('input[name=' + username_fieldname + ']').val();
 			dates[password_fieldname]	= current_form.find('input[name=' + password_fieldname + ']').val();
-		if ( dates.password != '' &&  dates.user != '' )
+		if ( dates.password !== '' &&  dates.user !== '' )
 		{
 			$.ajax(
 			{
@@ -138,7 +137,7 @@ jQuery(document).ready(function(){
 			'email':		$('#fc_forgot').val(),
             '_cat_ajax':    1
 		};
-		if ( dates.email != '' )
+		if ( dates.email !== '' )
 		{
 			$.ajax(
 			{

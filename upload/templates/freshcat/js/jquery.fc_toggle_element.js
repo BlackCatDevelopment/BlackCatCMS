@@ -1,18 +1,25 @@
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author		  LEPTON Project
- * @copyright	   2012, LEPTON Project
- * @link			http://www.LEPTON-cms.org
- * @license		 http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- */
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         freshcat
+ *
+ **/
 
 (function ($) {
 	$.fn.fc_toggle_element = function (options)
@@ -33,7 +40,7 @@
 
 			if ( current.is('select') )
 			{
-				//var according_div = $('#' + current.attr('rel') );
+				//var according_div = $('#' + current.prop('rel') );
 				var current_option	= current.children('option:selected'),
 					div_id			= match_class_prefix( 'show___', current_option ),
 					action			= 'show';
@@ -58,7 +65,7 @@
 				// Bind element with change event to toggle/hide according to the rel-tag
 				current.change( function()
 				{
-					//var according_div = $('#' + current.attr('rel') );
+					//var according_div = $('#' + current.prop('rel') );
 					var current_option	= current.children('option:selected'),
 						div_id			= match_class_prefix( 'show___', current_option ),
 						action			= 'show';
@@ -91,7 +98,7 @@
 			else if ( current.is('input:checkbox') || current.is('input:radio') )
 			{
 
-				var according_div = $('#' + current.attr('rel') );
+				var according_div = $('#' + current.prop('rel') );
 			
 				// if multiple elements control an ID (the class-tag must provide action___id)
 				var div_id		= match_class_prefix('show___',current);
@@ -123,7 +130,7 @@
 					}
 				}
 
-				//console.log(according_div + current.attr('rel') + ': ' + show_on_start);
+				//console.log(according_div + current.prop('rel') + ': ' + show_on_start);
 				// if no value for show_on_start is given or if it is set to false hide the according div
 				if ( options.show_on_start === false )
 				{

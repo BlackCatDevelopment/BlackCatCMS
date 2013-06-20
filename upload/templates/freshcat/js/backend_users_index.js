@@ -1,15 +1,25 @@
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license		 http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         freshcat
-  *
- */
+ *
+ **/
 
 /**
  * check the checkboxes in an according div (given by class set_advanced___) and set an indivdual class if they are not equal. if equal according input gets same value
@@ -155,7 +165,7 @@
 								//$('input[class*=set_advanced___]').unbind().set_individual_buttons();
 							}
 							else {
-								$('#fc_User_name').val( data.username ).attr( 'name', data.username_fieldname );
+								$('#fc_User_name').val( data.username ).prop( 'name', data.username_fieldname );
 								$('#fc_User_user_id').val( data.user_id );
 								$('input[name=username_fieldname]').val( data.username_fieldname );
 								$('#fc_User_display_name').val( data.display_name );
@@ -198,7 +208,7 @@ function validateUserAdd(element)
 	element.find('input:text').each(function()
 	{
 		var name = $(this).val();
-		var rel = $(this).attr('rel');
+		var rel = $(this).prop('rel');
 		if( rel!='email' && name.length > rel )
 		{
 			$(this).removeClass('fc_invalid').addClass('fc_valid');
@@ -290,10 +300,10 @@ jQuery(document).ready(function()
 			};
 			templates				= new Array();
 			modules					= new Array();
-		dates[current.attr('name')]	= current.val();
+		dates[current.prop('name')]	= current.val();
 		currentForm.find('input[type=checkbox]:checked, input[type=text], #fc_Group_group_id').map( function()
 		{
-			var fieldname	= $(this).attr('name'),
+			var fieldname	= $(this).prop('name'),
 				value		= $(this).val();
 			if ( fieldname == 'module_permissions[]' )
 			{
@@ -356,11 +366,11 @@ jQuery(document).ready(function()
 			},
 			groups					= new Array();
 
-		dates[current.attr('name')]	= current.val();
+		dates[current.prop('name')]	= current.val();
 		currentForm.find('input[type=checkbox]:checked, input:text, input:password, #fc_User_user_id, #fc_User_fieldname').map( function()
 		{
-			var fieldname	= $(this).attr('name') == 'groups[]' ? 'groups' : $(this).attr('name');
-			return dates[fieldname]	= $(this).attr('name') == 'groups[]' ? groups.push( $(this).val() ) : $(this).val();
+			var fieldname	= $(this).prop('name') == 'groups[]' ? 'groups' : $(this).prop('name');
+			return dates[fieldname]	= $(this).prop('name') == 'groups[]' ? groups.push( $(this).val() ) : $(this).val();
 		});
 		dates['groups']		= groups;
 		$.ajax(
@@ -384,7 +394,7 @@ jQuery(document).ready(function()
 					if ( data.action == 'saved' )
 					{
 						$('#fc_User_fieldname').val(data.username_fieldname);
-						$('#fc_User_name').attr('name',data.username_fieldname);
+						$('#fc_User_name').prop('name',data.username_fieldname);
 						$('#fc_list_overview').children('.fc_active').children('.fc_display_name').text(data.display_name);
 						$('#fc_list_overview').children('.fc_active').children('.fc_list_name').text(data.user_name);
 					}
@@ -414,7 +424,7 @@ jQuery(document).ready(function()
 	{
 		e.preventDefault();
 		var current		= $(this),
-			kind		= current.attr('id') == 'fc_removeUser' ? 'user' : 'group',
+			kind		= current.prop('id') == 'fc_removeUser' ? 'user' : 'group',
 			dates		= {
 				'id':			kind == 'group' ? $('#fc_Group_group_id').val() : $('#fc_User_user_id').val()
 			},
@@ -443,7 +453,7 @@ jQuery(document).ready(function()
 		e.preventDefault();
 		var current	= $(this),
 			buttons	= current.closest('ul').find('a').not(current),
-			rel		= current.attr('href'),
+			rel		= current.prop('href'),
 			tabs	= $('.fc_toggle_tabs');
 
 		buttons.removeClass('fc_active');

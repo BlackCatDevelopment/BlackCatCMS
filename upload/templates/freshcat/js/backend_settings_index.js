@@ -18,7 +18,7 @@
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         freshcat
-  *
+ *
  */
 
 function send_testmail(URL) {
@@ -87,7 +87,7 @@ jQuery(document).ready(function(){
 				else {
 					return_error( jqXHR.process , data.message);
 				}
-			},
+			}
 		});
 	});
     $('#fc_createguid').click(function()

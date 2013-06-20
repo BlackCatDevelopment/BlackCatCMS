@@ -7,8 +7,8 @@
 <meta name="description" content="Retrieve Login Details" />
 <meta name="keywords" content="Retrieve Login Details" />
 
-<link href="../css/basic.css" rel="stylesheet" type="text/css" />
-<link href="../css/login.css" rel="stylesheet" type="text/css" />
+<link href="../../css/default/basic.css" rel="stylesheet" type="text/css" />
+<link href="../../css/default/login.css" rel="stylesheet" type="text/css" />
 
 </head>
 

@@ -2,7 +2,7 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         freshcat
   *
@@ -18,13 +18,13 @@ jQuery(document).ready(function(){
 		current.toggleClass( 'fc_marked' );
 		if ( current.hasClass( 'fc_marked' ) )
 		{
-			input_div.children( 'input' ).attr( 'checked', true).change();
+			input_div.children( 'input' ).prop( 'checked', true).change();
 			current.children( '.fc_mark' ).addClass('hidden');
 			current.children( '.fc_unmark' ).removeClass('hidden');
 		}
 		else
 		{
-			input_div.children( 'input' ).attr( 'checked', false).change();
+			input_div.children( 'input' ).prop( 'checked', false).change();
 			current.children( '.fc_unmark' ).addClass('hidden');
 			current.children( '.fc_mark' ).removeClass('hidden');
 		}

@@ -72,7 +72,7 @@
 
 {*if user is allowed to see pages, sidebar will be shown - I will have to think about that, as the activity-bar is inside this div, so it is also needed for users, who can't see pages*}
 {if $permission.pages}
-<aside id="fc_sidebar" class="fc_gradient3">
+<div id="fc_sidebar" class="fc_gradient3">
 	<div id="fc_sidebar_header" class="fc_gradient1 fc_border">
 		{translate('Pages')}
         <span class="icon-home fc_gradient1 fc_gradient_hover fc_side_home" title="{translate('Open frontend')}" style="right:24px;"></span>
@@ -82,7 +82,7 @@
 		{include('backend_pageTree.tpl')}
 	</div>
 	<div id="fc_activity"></div>
-</aside>
+</div>
 	{if $permission.pages_add}
 	{include('form_add_page.tpl')}
 	{/if}

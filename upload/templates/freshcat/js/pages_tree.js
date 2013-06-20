@@ -2,10 +2,10 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license			http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         freshcat
-  *
+ *
  **/
 
 (function ($) {
@@ -81,6 +81,7 @@
 										'_cat_ajax': 1
 									},
 					link			= CAT_ADMIN_URL + '/pages/ajax_page_settings.php';
+
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
 				current_button.closest('li').addClass('page_tree_open_options');
 				$('#fc_addPage_keywords_ul').remove();
@@ -158,7 +159,7 @@
 							$('#fc_addPage_visibility option[value=' + data.visibility + ']').prop('selected', true);
 							
 							// Set checkboxesfields
-							$('#fc_addPage_Searching').attr('checked', data.searching);
+							$('#fc_addPage_Searching').prop('checked', data.searching);
 							$('#fc_addPage_admin_groups input').each( function()
 							{
 								var current		= $(this),
@@ -166,10 +167,10 @@
 									groups		= data.admin_groups;
 								if ( $.inArray( currenVal, groups ) == -1 )
 								{
-									current.attr('checked',false);
+									current.prop('checked',false);
 								}
 								else {
-									current.attr('checked',true);
+									current.prop('checked',true);
 								}
 							});
 							$('#fc_addPage_allowed_viewers input').each( function()
@@ -179,10 +180,10 @@
 									groups		= data.viewing_groups;
 								if ( $.inArray( currenVal, groups ) == -1 )
 								{
-									current.attr('checked',false);
+									current.prop('checked',false);
 								}
 								else {
-									current.attr('checked',true);
+									current.prop('checked',true);
 								}
 							});
 							// Activate tagit for Keywords in the adding
@@ -208,7 +209,7 @@
 			element.find('.fc_toggle_tree').on( 'click',  function()
 			{
 				var clicked_element		= $(this).closest('li'),
-					set_cookie			= clicked_element.attr('id');
+					set_cookie			= clicked_element.prop('id');
 			
 				if ( clicked_element.hasClass('fc_tree_open') )
 				{
@@ -266,7 +267,7 @@
 					options.options_ul.find('li').each( function()
 					{
 						var current		= $(this);
-						current.text( current.attr('title') + ' ' + searchTerm );
+						current.text( current.prop('title') + ' ' + searchTerm );
 					});
 					options.options_ul.find('li').smartTruncation();
 
@@ -331,7 +332,7 @@
 
 			function setSearchTreeOption()
 			{
-				var option			= options.options_ul.find('.fc_activeSearchOption').attr('id'),
+				var option			= options.options_ul.find('.fc_activeSearchOption').prop('id'),
 					searchTerm		= element.val();
 
 				search_page_tree( searchTerm );
@@ -486,7 +487,7 @@ jQuery(document).ready(function()
 								? option + ' disabled="disabled">'
                                 : option + '>'
                                 ;
-						for ( var i = 0; i < value.level; i++ )
+                        for ( var i = 0; i < value.level; i++ )
 						{
 							option	= option + '|-- ';
 						}
@@ -708,7 +709,7 @@ jQuery(document).ready(function()
 					current.children('dl').children('.fc_search_MenuTitle').text( data.menu_title );
 					current.children('dl').children('.fc_search_PageTitle').text( data.page_title );
 					current.children('.fc_page_link').children('a').children('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title ' + newIcon).text( ' ' + data.menu_title );
-					current.children('.fc_page_link > a:first').attr( 'title', 'Page title: ' + data.page_title );
+					current.children('.fc_page_link > a:first').prop( 'title', 'Page title: ' + data.page_title );
 				}
 				else {
 					return_error( jqXHR.process , data.message);
@@ -740,7 +741,7 @@ jQuery(document).ready(function()
 				}
 			};
 
-		dialog_confirm( 'Do you really want to delete this page?', 'Removing page', CAT_ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
+        dialog_confirm( 'Do you really want to delete this page?', 'Removing page', CAT_ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
 
 	$('#fc_restorePageSubmit').click( function (e)

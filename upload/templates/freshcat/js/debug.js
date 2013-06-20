@@ -51,12 +51,10 @@ function getMethods(obj) {
  */
 function dump(arr,level) {
     var dumped_text = "";
-    if(!level) level = 0;
-
+    if(!level) { level = 0; }
     //The padding given at the beginning of the line.
     var level_padding = "";
-    for(var j=0;j<level+1;j++) level_padding += " ";
-
+    for(var j=0;j<level+1;j++) { level_padding += " "; }
     if(typeof(arr) == 'object') { //Array/Hashes/Objects
         for(var item in arr) {
             var value = arr[item];
@@ -72,3 +70,4 @@ function dump(arr,level) {
     }
     return dumped_text;
 }
+
