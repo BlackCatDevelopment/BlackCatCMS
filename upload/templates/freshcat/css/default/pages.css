@@ -138,7 +138,7 @@
 	z-index:			9;
 	width:				22px;
 	height:				13px;
-	background-image:	url(images/arrow_up.png);
+	background-image:	url(../images/arrow_up.png);
 	background-repeat:	no-repeat;
 }
 .fc_save_section {

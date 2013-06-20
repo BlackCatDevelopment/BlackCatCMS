@@ -734,7 +734,12 @@ jQuery(document).ready(function()
 				var current		= $(this);
 				if ( data.success === true && data.status === 0 )
 				{
+                    var toggle = current.parent().parent().find('.fc_page_link').find('.fc_toggle_tree');
+                    var tparent = current.parent().parent();
 					current.remove();
+                    if ( tparent.find('ul.ui-sortable').children("li").length == 0 ) {
+                        toggle.remove();
+                    }
 				}
 				else {
 					current.find('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove');

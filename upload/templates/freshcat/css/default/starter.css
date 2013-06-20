@@ -39,7 +39,7 @@
 	float: right;
 }
 .fc_start_title_old {
-	background-image: url(images/header/header_back.png);
+	background-image: url(../images/header/header_back.png);
 	background-repeat: repeat-x;
 	height: 2.5em;
 	line-height: 2.5em;

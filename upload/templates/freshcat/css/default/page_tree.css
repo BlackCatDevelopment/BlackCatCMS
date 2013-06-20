@@ -68,7 +68,7 @@
 	padding: 0px;
 	width: 26px;
 	height: 26px;
-	background-image: url(images/page_tree/page_tree_arrows_white.png);
+	background-image: url(../images/page_tree/page_tree_arrows_white.png);
 	background-position: 0 0px;
 	background-repeat: no-repeat;
 	text-align: center;
@@ -76,10 +76,10 @@
 	cursor: pointer;
 }
 .fc_page_link:hover > .fc_toggle_tree {
-	background-image: url(images/page_tree/page_tree_arrows_black.png);
+	background-image: url(../images/page_tree/page_tree_arrows_black.png);
 }
 .fc_page_tree_item:hover > .fc_toggle_tree:hover {
-	background-image: url(images/page_tree/page_tree_arrows_white.png);
+	background-image: url(../images/page_tree/page_tree_arrows_white.png);
 }
 .fc_toggle_tree:active {
 	background-position: 0 -26px;
@@ -360,7 +360,7 @@ span.fc_page_tree_restore_page {
 	display: inline-block;
 	width: 14px;
 	height: 25px;
-	background-image: url(images/arrow_left.png);
+	background-image: url(../images/arrow_left.png);
 	background-position: right center;
 	background-repeat: no-repeat;
 }

@@ -126,7 +126,7 @@ input[type=reset]:active, .reset:active{
 	background-position: left top;
 	padding-right: 15px;
 	padding-left: 23px;
-	background-image: url(images/button_back_left.png);
+	background-image: url(../images/button_back_left.png);
 	display: inline-block;
 	background-repeat: no-repeat;
 	height: 28px;
@@ -157,7 +157,7 @@ input[type=radio].fc_radio_jq {
 
 
 input[type=checkbox].fc_checkbox_jq + label {
-	background-image: url(images/check_off.png);
+	background-image: url(../images/check_off.png);
 	background-repeat: no-repeat;
 	background-position: right center;
 	min-height: 22px;
@@ -166,7 +166,7 @@ input[type=checkbox].fc_checkbox_jq + label {
 	cursor: pointer;
 }
 input[type=checkbox].fc_checkbox_jq:checked + label {
-	background-image:		url(images/check_on.png);
+	background-image:		url(../images/check_on.png);
 	background-repeat:		no-repeat;
 	background-position:	right center;
 	color:					#3f7bb3;
@@ -185,7 +185,7 @@ input[disabled=disabled].fc_checkbox_jq:checked + label {
  */
  
 input[type=checkbox].fc_checkbox_ind + label {
-	background-image: url(images/check_off.png);
+	background-image: url(../images/check_off.png);
 	background-repeat: no-repeat;
 	background-position: right center;
 	min-height: 22px;
@@ -194,7 +194,7 @@ input[type=checkbox].fc_checkbox_ind + label {
 	cursor: pointer;
 }
 input[type=checkbox].fc_checkbox_ind:checked + label {
-	background-image:		url(images/check_ind.png);
+	background-image:		url(../images/check_ind.png);
 	background-repeat:		no-repeat;
 	background-position:	right center;
 	color:					#3f7bb3;
@@ -213,7 +213,7 @@ input[disabled=disabled].fc_checkbox_ind:checked + label {
  */
 
 input[type=radio].fc_radio_jq + label {
-	background-image: url(images/radio_off.png);
+	background-image: url(../images/radio_off.png);
 	background-repeat: no-repeat;
 	background-position: right center;
 	min-height: 22px;
@@ -223,7 +223,7 @@ input[type=radio].fc_radio_jq + label {
 }
 
 input[type=radio].fc_radio_jq:checked + label {
-	background-image:		url(images/radio_on.png);
+	background-image:		url(../images/radio_on.png);
 	color:					#3f7bb3;
 	background-repeat:		no-repeat;
 	background-position:	right center;
