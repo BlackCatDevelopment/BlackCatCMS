@@ -8,9 +8,9 @@
 
 $module_directory = 'lib_jquery';
 $module_name = 'jQuery / jQuery UI JavaScript Library';
-$module_function = 'tool';
-$module_version = '1.32';
-$module_platform = '2.8.x';
+$module_function = 'library';
+$module_version = '2.0';
+$module_platform = '1.x';
 $module_author = 'BlackBird';
 $module_license = 'GNU General Public License';
 $module_description = 'This module installs the jQuery JavaScript Library and the jQuery UI Library. You may use it as a lib for your own JavaScripts.';

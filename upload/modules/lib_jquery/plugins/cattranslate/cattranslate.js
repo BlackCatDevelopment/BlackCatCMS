@@ -8,13 +8,14 @@
  *
  */
 
-var url = CAT_URL + '/modules/lib_jquery/plugins/leptranslate/leptranslate.php';
+var url = CAT_URL + '/modules/lib_jquery/plugins/cattranslate/cattranslate.php';
 var translated;
 
 if ( typeof jQuery == 'undefined' ) {
   alert( 'FATAL ERROR! jQuery not available!' );
 }
-else {  // ----- AJAX Setup -----
+else
+{  // ----- AJAX Setup -----
   jQuery.ajaxSetup({
         error: function( x, e )
         {
@@ -26,10 +27,9 @@ else {  // ----- AJAX Setup -----
       else                          { alert('Unknown Error.\n'+x.responseText);                }
     }
   });
-	function leptranslate( string, elem, attributes, module ) {
+	function cattranslate( string, elem, attributes, module ) {
         translated = '';
-        $.ajax(
-		{
+        $.ajax({
 					type:		'post',
 					url:		url,
 					data:		{
