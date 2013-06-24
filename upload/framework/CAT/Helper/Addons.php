@@ -774,6 +774,9 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function installUploaded($tmpfile, $name)
         {
 
+            $self = self::getInstance();
+            $self->log()->LogDebug(sprintf('handle upload, file [%s], name [%s]',$tmpfile,$name));
+
             // Set temp vars
             $temp_dir     = CAT_PATH . '/temp/';
             $temp_unzip   = $temp_dir   . '/unzip_'.basename($tmpfile).'/';
@@ -792,7 +795,9 @@ if (!class_exists('CAT_Helper_Addons'))
                 return false;
             }
 
-            return installModule($temp_file);
+            $self->log()->LogDebug(sprintf('uploaded file was moved to [%s], call installModule()',$temp_file));
+
+            return self::installModule($temp_file);
 
         }   // end function installUploaded()
         
