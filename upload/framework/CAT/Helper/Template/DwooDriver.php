@@ -33,7 +33,7 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
     class CAT_Helper_Template_DwooDriver extends Dwoo {
 
     protected $debuglevel      = CAT_Helper_KLogger::CRIT;
-    protected $_config         = array( 'loglevel' => CAT_Helper_KLogger::CRIT, 'show_paths_on_error' => true );
+    public    $_config         = array( 'loglevel' => CAT_Helper_KLogger::DEBUG, 'show_paths_on_error' => true );
     public    $workdir         = NULL;
     public    $path            = NULL;
     public    $fallback_path   = NULL;
@@ -68,40 +68,14 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
             $data = array_merge( self::$_globals, $data );
         }
         if ( ! is_object ( $_tpl ) ) {
-            if ( ! file_exists( $_tpl ) )
+            if ( !file_exists($_tpl) )
             {
-                $dirh  = CAT_Helper_Directory::getInstance();
-                $dirh->setSuffixFilter(array('tpl','htt','lte'));
-                // scan search paths (if any)
-                $paths = array();
-                if ( $this->path ) {
-                    $paths[] = $this->path;
+                global $parser;
+                $file = $parser->findTemplate($_tpl);
+                if($file)
+                {
+                    return parent::get( realpath($file), $data, $_compiler, $_output );
                 }
-                if ( $this->fallback_path ) {
-                    $paths[] = $this->fallback_path;
-                }
-                $paths[] = $this->workdir;
-                // remove doubles
-                $paths = array_unique($paths);
-                foreach ( $paths as $dir ) {
-                    $file = $dirh->findFile($_tpl,$dir,true);
-                    if ( $file ) {
-                        return parent::get( realpath($file), $data, $_compiler, $_output );
-                    }
-                }
-                $this->logger->logCrit( "The template [$_tpl] does not exists in one of the possible template paths!", $paths );
-                // the template does not exists, so at least prompt an error
-                trigger_error(
-                    CAT_Helper_I18n::getInstance()->translate(
-                        "The template [{{ tpl }}] does not exists in one of the possible template paths!{{ paths }}",
-                        array(
-                            'tpl'   => $_tpl,
-                            'paths' => ( $this->_config['show_paths_on_error']
-                                    ? '<br /><br />'.CAT_Helper_I18n::getInstance()->translate('Searched paths').':<br />&nbsp;&nbsp;&nbsp;'.implode('<br />&nbsp;&nbsp;&nbsp;',$paths).'<br />'
-                                    : NULL )
-                        )
-                    ), E_USER_ERROR
-                );
             } else {
             	return parent::get( $_tpl, $data, $_compiler, $_output );
             }

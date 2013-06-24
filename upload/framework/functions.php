@@ -427,7 +427,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     // Generate a thumbnail from an image
     function make_thumb($source, $destination, $size)
     {
-        return $this->get_helper('Image')->make_thumb( $source, $destination, $size );
+        return CAT_Helper_Image::getInstance()->make_thumb( $source, $destination, $size );
     }   // end make_thumb()
 
     /**

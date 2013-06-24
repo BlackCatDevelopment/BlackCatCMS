@@ -68,7 +68,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
 			{
 			    require_once CAT_PATH.'/modules/droplets/include.php';
 			}
-			$temp_unzip = CAT_PATH.'/temp/unzip/';
+			$temp_unzip = CAT_PATH.'/temp/droplets_unzip/';
+            CAT_Helper_Directory::createDirectory( $temp_unzip );
 			return droplets_import( $temp_file, $temp_unzip );
 		}   // end function installDroplet()
 

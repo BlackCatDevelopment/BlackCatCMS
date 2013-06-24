@@ -121,7 +121,7 @@ if (!class_exists('CAT_Helper_Addons'))
         public function __construct()
         {
             // we need our own instance here, because this helper is used by
-            // the installer, which does not have a get_helper() method
+            // the installer
             self::$dirh = new CAT_Helper_Directory();
         }
 
@@ -764,22 +764,19 @@ if (!class_exists('CAT_Helper_Addons'))
         }   // end function checkModulePermissions()
 
         /**
-         * This function is used to install a module (addon); function was moved
-         * from functions.php
+         * This function is used to install an uploaded module
          *
          * @access public
-         * @param  string  Any valid directory(-path)
-         * @param  boolean Call the install-script of the module? Default: false
+         * @param  string  $tmpfile - name of the uploaded file
+         * @param  string  $name    - name
+         * @return
          **/
-        public static function installModule($tmpfile, $name)
+        public static function installUploaded($tmpfile, $name)
         {
-
-            // keep old modules happy
-            global $wb, $admin, $database;
 
             // Set temp vars
             $temp_dir     = CAT_PATH . '/temp/';
-            $temp_unzip   = CAT_PATH . '/temp/unzip_'.basename($tmpfile).'/';
+            $temp_unzip   = $temp_dir   . '/unzip_'.basename($tmpfile).'/';
             $temp_file    = $temp_unzip . $name;
 
             // make sure the temp directory exists, is writable and is empty
@@ -795,11 +792,34 @@ if (!class_exists('CAT_Helper_Addons'))
                 return false;
             }
 
+            return installModule($temp_file);
+
+        }   // end function installUploaded()
+        
+
+        /**
+         * This function is used to install a module (addon); requires an
+         * already existing ZIP file. Use installUploaded() to handle uploads.
+         *
+         * @access public
+         * @param
+         **/
+        public static function installModule( $zipfile, $silent = false )
+        {
+            // keep old modules happy
+            global $wb, $admin, $database;
+
+            $extension = pathinfo( $zipfile, PATHINFO_EXTENSION );
+            $sourcedir = pathinfo( $zipfile, PATHINFO_DIRNAME   );
+
+            // Set temp vars
+            $temp_dir     = CAT_PATH  . '/temp/';
+            $temp_unzip   = $temp_dir . '/unzip_'.basename($zipfile).'/';
+
             // Check for language or template/module
-            $extension = pathinfo( $temp_file, PATHINFO_EXTENSION );
             if ( $extension == 'php' )
             {
-                $temp_subdir = $temp_file;
+                $temp_subdir = $zipfile;
             }
             elseif ( $extension == 'zip' )
             {
@@ -807,13 +827,14 @@ if (!class_exists('CAT_Helper_Addons'))
                 CAT_Helper_Directory::createDirectory( $temp_subdir );
 
                 // Setup the PclZip object and unzip the files to the temp unzip folder
-                $list    = CAT_Helper_Zip::getInstance( $temp_file )->config( 'Path', sanitize_path( $temp_subdir ) )->extract();
+                $list    = CAT_Helper_Zip::getInstance( $zipfile )->config( 'Path', sanitize_path( $temp_subdir ) )->extract();
 
                 // check if anything was extracted
                 if ( ! $list )
                 {
                     CAT_Helper_Directory::removeDirectory($temp_unzip);
-                    CAT_Helper_Directory::removeDirectory($temp_file);
+                    CAT_Helper_Directory::removeDirectory($zipfile);
+                    if(!$silent)
                     self::printError( 'Unable to extract the file. Please check the ZIP format.' );
                     return false;
                 }
@@ -825,7 +846,8 @@ if (!class_exists('CAT_Helper_Addons'))
                     if ( ! $info )
                 {
                         CAT_Helper_Directory::removeDirectory($temp_unzip);
-                        CAT_Helper_Directory::removeDirectory($temp_file);
+                        CAT_Helper_Directory::removeDirectory($zipfile);
+                        if(!$silent)
                         self::printError( 'Invalid installation file. No info.php found. Please check the ZIP format.' );
                         return false;
                     }
@@ -838,7 +860,8 @@ if (!class_exists('CAT_Helper_Addons'))
                     else
                     {
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
-                CAT_Helper_Directory::removeDirectory($temp_file);
+                CAT_Helper_Directory::removeDirectory($zipfile);
+                if(!$silent)
                 self::printError( 'Invalid installation file. Wrong extension. Please check the ZIP format.' );
                 return false;
                     }
@@ -847,21 +870,26 @@ if (!class_exists('CAT_Helper_Addons'))
             $precheck_errors = NULL;
             if ( $addon_info = self::checkInfo( $temp_subdir ) )
                     {
-                $precheck_errors = self::preCheckAddon( $temp_file, $temp_subdir, false );
+                $precheck_errors = self::preCheckAddon( $zipfile, $temp_subdir, false );
                     }
-            else {
+            else
+            {
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
-                CAT_Helper_Directory::removeDirectory($temp_file);
+                CAT_Helper_Directory::removeDirectory($zipfile);
+                if(!$silent)
+                {
                 self::printError(
                     self::getInstance()->lang()->translate(
                         'Invalid installation file. {{error}}',
                         array('error'=>'Unable to find info.php')
                     )
                 );
+                }
                 return false;
             }
             if ( $precheck_errors != '' && ! is_bool($precheck_errors) )
                     {
+                if(!$silent)
                 self::printError( $precheck_errors );
                 return false;
                     }
@@ -891,7 +919,8 @@ if (!class_exists('CAT_Helper_Addons'))
                     if ( self::versionCompare ($previous_info['module_version'], $addon_info['module_version'], '>=' ) )
                     {
                         CAT_Helper_Directory::removeDirectory($temp_unzip);
-                        CAT_Helper_Directory::removeDirectory($temp_file);
+                        CAT_Helper_Directory::removeDirectory($zipfile);
+                        if(!$silent)
                         self::printError( 'Already installed' );
                         return false;
                         }
@@ -906,13 +935,13 @@ if (!class_exists('CAT_Helper_Addons'))
                 if ( CAT_Helper_Directory::copyRecursive( $temp_subdir, $addon_dir ) !== true )
                 {
                     CAT_Helper_Directory::removeDirectory($temp_unzip);
-                    CAT_Helper_Directory::removeDirectory($temp_file);
+                    CAT_Helper_Directory::removeDirectory($zipfile);
                     self::printError( 'Unable to install - error copying files' );
                     return false;
                 }
                 // remove temp
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
-                CAT_Helper_Directory::removeDirectory($temp_file);
+                CAT_Helper_Directory::removeDirectory($zipfile);
             }
 
             // Run the modules install // upgrade script if there is one
@@ -921,7 +950,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
             if ( $action == 'install' && $addon_info['addon_function'] == 'language' )
         {
-                    rename($temp_file, $addon_dir);
+                rename($zipfile, $addon_dir);
                     change_mode( $addon_dir , 'file');
                 }
 
@@ -932,7 +961,7 @@ if (!class_exists('CAT_Helper_Addons'))
                         if ( file_exists($addon_dir.'/uninstall.php') )
                             require $addon_dir.'/uninstall.php';
                         CAT_Helper_Directory::removeDirectory($temp_unzip);
-                        CAT_Helper_Directory::removeDirectory($temp_file);
+                CAT_Helper_Directory::removeDirectory($zipfile);
                         CAT_Helper_Directory::removeDirectory($addon_dir);
                         self::printError($self->db()->get_error());
                         return false;
@@ -963,7 +992,7 @@ if (!class_exists('CAT_Helper_Addons'))
 #            }
 #            elseif ( $addon_info['addon_function'] == 'language' && $action == 'upgrade' )
 #            {
-#                rename( $temp_file, $addon_dir );
+#                rename( $zipfile, $addon_dir );
 #                // Chmod the file
 #                change_mode( $addon_dir , 'file');
 #                $addon_helper->installLanguage( $addon_dir );
@@ -1195,11 +1224,18 @@ if (!class_exists('CAT_Helper_Addons'))
                 $addon_info = self::checkInfo($addondir);
 
             $self->log()->logDebug('addon info:',$addon_info);
+echo "<pre>";
+print_r($addon_info);
+echo "</pre>";
 
             if ( $action == 'install' )
             {
                 if (isset($addon_info['module_name']))
                 {
+
+                    if(!isset($addon_info['module_function']))
+                        $addon_info['module_function'] = $addon_info['addon_function'];
+
                     $module_function = strtolower($addon_info['module_function']);
                     $do              = 'insert';
                     // Check that it doesn't already exist
@@ -1217,9 +1253,6 @@ if (!class_exists('CAT_Helper_Addons'))
                         $sql = "INSERT INTO `%saddons` SET ";
                     }
 
-                    if(!isset($addon_info['module_function']))
-                        $addon_info['module_function'] = $addon_info['addon_function'];
-
                     $options = array(
                         CAT_TABLE_PREFIX,
                         mysql_real_escape_string($addon_info['module_directory']),
@@ -1228,9 +1261,9 @@ if (!class_exists('CAT_Helper_Addons'))
                         $addon_info['addon_function'],
                         mysql_real_escape_string(strtolower($addon_info['module_function'])),
                         mysql_real_escape_string($addon_info['module_version']),
-                        mysql_real_escape_string($addon_info['module_platform']),
-                        mysql_real_escape_string($addon_info['module_author']),
-                        mysql_real_escape_string($addon_info['module_license']),
+                        ( isset($addon_info['module_platform']) ? mysql_real_escape_string($addon_info['module_platform']) : '' ),
+                        ( isset($addon_info['module_author'])   ? mysql_real_escape_string($addon_info['module_author'])   : '' ),
+                        ( isset($addon_info['module_license'])  ? mysql_real_escape_string($addon_info['module_license'])  : '' ),
                     );
 
                     $sql .= "`directory`='%s', `name`='%s', `description`='%s', "

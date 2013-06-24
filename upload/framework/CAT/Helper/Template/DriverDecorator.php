@@ -28,9 +28,10 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
     class CAT_Helper_Template_DriverDecorator extends CAT_Helper_Template {
 
     private $te;
-    public  $path;
-    public  $fallback_path;
+        private $paths = array( 'current' => NULL, 'frontend' => NULL, 'frontend_fallback' => NULL, 'backend' => NULL, 'backend_fallback' => NULL, 'workdir' => NULL );
+        private $search_order = array( 'current', 'frontend', 'frontend_fallback', 'backend', 'backend_fallback', 'workdir' );
     public  $template_block;
+        protected $_config         = array( 'loglevel' => 7 );
 
     public function __construct( $obj )
     {
@@ -38,16 +39,17 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
         $this->te = $obj;
                 // get current working directory
         $callstack = debug_backtrace();
-        $this->te->workdir
+            $this->te->paths['workdir']
             = ( isset( $callstack[0] ) && isset( $callstack[0]['file'] ) )
-            ? realpath( dirname( $callstack[0]['file'] ) )
-            : realpath( dirname(__FILE__) );
+                ? CAT_Helper_Directory::sanitizePath(realpath(dirname($callstack[0]['file'])))
+                : CAT_Helper_Directory::sanitizePath(realpath(dirname(__FILE__)));
 
         if (
-             file_exists( $this->te->workdir.'/templates' )
+                 file_exists( $this->te->paths['workdir'].'/templates' )
         ) {
-            $this->setPath( $this->te->workdir.'/templates' );
+                $this->te->paths['workdir'] .= '/templates';
         }
+            $this->te->paths['current'] = $this->te->paths['workdir'];
     }
 
     public function __call($method, $args)
@@ -60,17 +62,23 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
     }
 
     /**
-     * set default template search path
+         * set current template search path
      *
      * @access public
      * @param  string  $path
+         * @param  string  $context - frontend (default) or backend
      * @return boolean
      *
      **/
-    public function setPath ( $path ) {
+        public function setPath ( $path, $context = 'frontend' )
+        {
+            $path = CAT_Helper_Directory::sanitizePath($path);
+            $this->logger->logDebug(sprintf('context [%s] path [%s]', $context, $path ));
         if ( file_exists( $path ) ) {
-            $this->logger->logDebug( 'setting path:', $path );
-            $this->te->path = realpath($path);
+                $this->te->paths[$context]  = $path;
+                $this->te->paths['current'] = $path;
+                if(!isset($this->te->paths[$context.'_fallback']))
+                    $this->te->paths[$context.'_fallback'] = $path;
             return true;
         }
         else {
@@ -84,13 +92,16 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
      *
      * @access public
      * @param  string  $path
+         * @param  string  $context - frontend (default) or backend
      * @return boolean
      *
      **/
-    public function setFallbackPath ( $path ) {
+        public function setFallbackPath ( $path, $context = 'frontend' )
+        {
+            $path = CAT_Helper_Directory::sanitizePath($path);
+            $this->logger->logDebug(sprintf('context [%s] fallback path [%s]', $context, $path ));
         if ( file_exists( $path ) ) {
-            $this->logger->logDebug( 'setting fallback path:', $path );
-            $this->te->fallback_path = realpath($path);
+                $this->te->paths[$context.'_fallback'] = $path;
             return true;
         }
         else {
@@ -153,5 +164,47 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
         }
         return false;
         }   // end function hasTemplate()
+
+        /**
+         *
+         * @access private
+         * @return
+         **/
+        public function findTemplate($_tpl)
+        {
+            $dirh  = CAT_Helper_Directory::getInstance();
+            $dirh->setSuffixFilter(array('tpl','htt','lte'));
+            // scan search paths (if any)
+            $paths = array();
+            foreach($this->te->paths as $key => $value)
+            {
+                if(isset($this->te->paths[$key]) && file_exists($this->te->paths[$key]))
+                {
+                    $paths[] = $value;
+                }
+            }
+            // remove doubles
+            $paths = array_unique($paths);
+            foreach ( $paths as $dir ) {
+                $file = $dirh->findFile($_tpl,$dir,true);
+                if ( $file ) {
+                    return $file;
+                }
+            }
+            $this->logger->logCrit( "The template [$_tpl] does not exists in one of the possible template paths!", $paths );
+            // the template does not exists, so at least prompt an error
+            trigger_error(
+                CAT_Helper_I18n::getInstance()->translate(
+                    "The template [{{ tpl }}] does not exists in one of the possible template paths!{{ paths }}",
+                    array(
+                        'tpl'   => $_tpl,
+                        'paths' => ( $this->te->_config['show_paths_on_error']
+                                ? '<br /><br />'.CAT_Helper_I18n::getInstance()->translate('Searched paths').':<br />&nbsp;&nbsp;&nbsp;'.implode('<br />&nbsp;&nbsp;&nbsp;',$paths).'<br />'
+                                : NULL )
+                    )
+                ), E_USER_ERROR
+            );
+        }   // end function findTemplate()
+
     }
 }

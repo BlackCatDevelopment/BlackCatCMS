@@ -30,6 +30,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 	class CAT_Helper_Image extends CAT_Object
 	{
+        private static $instance = array();
 
 		public function __construct() {
 	        if ( ! class_exists( 'Image', false ) ) {
@@ -39,6 +40,29 @@ if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 			    include dirname(__FILE__).'/../../../config.php';
 			}
 	    }
+
+        public function __call($method, $args)
+        {
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
+        }
+
+        /**
+         * get instance; forwards to login page if the user is not logged in
+         *
+         * @access public
+         * @return object
+         **/
+        public static function getInstance()
+        {
+            if (!self::$instance)
+            {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }   // end function getInstance()
 
         /**
          * check if GD is available

@@ -56,6 +56,7 @@ if (!class_exists('CAT_Backend', false))
     			}
                 self::$instance->section_name = $section_name;
                 global $parser;
+                self::initPaths();
                 $parser->setGlobals('TEMPLATE_MENU', CAT_Helper_Template::get_template_menus());
                 // Auto header code
         		if($auto_header == true) {
@@ -435,16 +436,16 @@ if (!class_exists('CAT_Backend', false))
             // ===================================
             // ! initialize template search path
             // ===================================
-            $parser->setPath(CAT_THEME_PATH.'/templates');
-            $parser->setFallbackPath(CAT_THEME_PATH.'/templates');
+            $parser->setPath(CAT_THEME_PATH.'/templates','backend');
+            $parser->setFallbackPath(CAT_THEME_PATH.'/templates','backend');
 
             if(file_exists(CAT_THEME_PATH.'/templates/default'))
             {
-                $parser->setPath(CAT_THEME_PATH.'/templates/default');
+                $parser->setPath(CAT_THEME_PATH.'/templates/default','backend');
             }
             if(CAT_Registry::get('DEFAULT_THEME_VARIANT') != '' && file_exists(CAT_THEME_PATH.'/templates/'.CAT_Registry::get('DEFAULT_THEME_VARIANT')))
             {
-                $parser->setPath(CAT_THEME_PATH.'/templates/'.CAT_Registry::get('DEFAULT_THEME_VARIANT'));
+                $parser->setPath(CAT_THEME_PATH.'/templates/'.CAT_Registry::get('DEFAULT_THEME_VARIANT'),'backend');
             }
         }   // end function initPaths()
 
