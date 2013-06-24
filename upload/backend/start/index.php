@@ -44,6 +44,8 @@ if(file_exists(CAT_PATH .'/modules/initial_page/classes/c_init_page.php') && iss
 	$ins = new c_init_page($database, $_SESSION['USER_ID'], $_SERVER['SCRIPT_NAME']);
 }
 
+global $parser;
+
 $backend = CAT_Backend::getInstance('start');
 $user  = CAT_Users::getInstance();
 $lang  = CAT_Helper_I18n::getInstance();
@@ -68,8 +70,6 @@ if( file_exists(CAT_PATH.'/install/') ) {
 		}
 	}
 }
-
-global $parser;
 
 $tpl_data = array();
 

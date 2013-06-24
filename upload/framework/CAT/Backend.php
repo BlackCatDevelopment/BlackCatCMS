@@ -442,6 +442,11 @@ if (!class_exists('CAT_Backend', false))
             if(file_exists(CAT_THEME_PATH.'/templates/default'))
             {
                 $parser->setPath(CAT_THEME_PATH.'/templates/default','backend');
+                if(!CAT_Registry::exists('DEFAULT_THEME_VARIANT') || CAT_Registry::get('DEFAULT_THEME_VARIANT') == '')
+                {
+                    CAT_Registry::set('DEFAULT_THEME_VARIANT','default');
+                    $parser->setGlobals('DEFAULT_THEME_VARIANT','default');
+                }
             }
             if(CAT_Registry::get('DEFAULT_THEME_VARIANT') != '' && file_exists(CAT_THEME_PATH.'/templates/'.CAT_Registry::get('DEFAULT_THEME_VARIANT')))
             {

@@ -66,3 +66,10 @@ $settings = array (
     'type' => 'text',
   ),
 );
+
+$current = array(
+    'source' => 'http://blackcat-cms.org/media/_internal_/version.txt',
+    'timeout' => 30,
+    'proxy_host' => '',
+    'proxy_port' => '',
+);

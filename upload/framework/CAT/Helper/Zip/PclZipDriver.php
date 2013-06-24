@@ -136,7 +136,7 @@ if ( ! class_exists( 'CAT_Helper_Zip_PclZipDriver', false ) )
 
 			if ( is_scalar($p_filelist) )
 			{
-			    $p_filelist = $this->dirh->sanitizePath($p_filelist);
+			    #$p_filelist = $this->dirh->sanitizePath($p_filelist);
 			}
 
 			$code = '$ret = $this->zip->add( $p_filelist'
@@ -239,11 +239,11 @@ if ( ! class_exists( 'CAT_Helper_Zip_PclZipDriver', false ) )
             $options = array();
             if ( isset($this->_config['addPath']) && $this->_config['addPath'] != '' )
 			{
-			    $options[] = 'PCLZIP_OPT_ADD_PATH, "'.$this->dirh->sanitizePath($this->_config['addPath']).'"';
+			    $options[] = 'PCLZIP_OPT_ADD_PATH, "'.$this->_config['addPath'].'"';
 			}
 			if ( isset($this->_config['removePath']) && $this->_config['removePath'] != '' )
 			{
-			    $options[] = 'PCLZIP_OPT_REMOVE_PATH, "'.$this->dirh->sanitizePath($this->_config['removePath']).'"';
+			    $options[] = 'PCLZIP_OPT_REMOVE_PATH, "'.$this->_config['removePath'].'"';
 			}
 			if ( isset($this->_config['setComment']) && $this->_config['setComment'] != '' )
 			{

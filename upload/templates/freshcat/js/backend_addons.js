@@ -5,7 +5,7 @@
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         freshcat
-  *
+ *
  */
 
 jQuery(document).ready(function(){

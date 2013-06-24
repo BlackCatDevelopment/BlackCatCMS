@@ -56,7 +56,6 @@ class admin extends wb
     function print_banner()                          { return CAT_Backend::getInstance('')->print_banner(); }
     function print_header()                          { return CAT_Backend::getInstance('')->print_header(); }
     function print_footer()                          { return CAT_Backend::getInstance('')->print_footer(); }
-    function getFTAN()                               { return NULL;                                         }
 
 }
 

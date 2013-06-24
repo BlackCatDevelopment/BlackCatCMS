@@ -275,6 +275,13 @@ class wb
     public function get_post_escaped($field){ return CAT_Helper_Validate::sanitizePost($field,NULL,true); }
     public function validate_email($email)  { return CAT_Helper_Validate::validate_email($email); }
 
+    /* empty methods for compatibility with WB 2.8.3 and above */
+   	public function createFTAN() {}
+	public function getFTAN( $mode = 'POST') {}
+	public function checkFTAN( $mode = 'POST') {}
+	public function getIDKEY($value) {}
+	public function checkIDKEY( $fieldname, $default = 0, $request = 'POST' ) {}
+	public function clearIDKEY() {}
 }
 
 ?>

@@ -1224,9 +1224,6 @@ if (!class_exists('CAT_Helper_Addons'))
                 $addon_info = self::checkInfo($addondir);
 
             $self->log()->logDebug('addon info:',$addon_info);
-echo "<pre>";
-print_r($addon_info);
-echo "</pre>";
 
             if ( $action == 'install' )
             {

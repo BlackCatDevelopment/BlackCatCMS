@@ -161,6 +161,30 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 
         /**
          *
+         * @access public
+         * @return
+         **/
+        public static function getFilesOlderThan( $time, $dir, $remove_dir = false )
+        {
+            $list  = self::scanDirectory( $dir, true, true ); // get all files
+            $files = array();
+            // sort list
+            sort($list);
+            foreach($list as $entry)
+            {
+                $stat = stat($entry);
+                if( $stat['mtime'] < $time )
+                {
+                    $files[] = $remove_dir
+                             ? str_ireplace( $dir, '', $entry )
+                             : $entry;
+                }
+            }
+            return $files;
+        }   // end function getFilesOlderThan()
+
+        /**
+         *
          **/
         public static function getMode($for='file')
         {

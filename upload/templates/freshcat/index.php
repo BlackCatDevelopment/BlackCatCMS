@@ -17,10 +17,10 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
- *   @package         CAT_Core
-  *
+ *   @package         freshcat
+ *
  */
 
 if (defined('CAT_PATH')) {
