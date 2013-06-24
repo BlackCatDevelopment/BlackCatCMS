@@ -820,7 +820,8 @@ function install_modules ($cat_path,$database) {
 	$dirs = array(
 		'modules'	=> $cat_path.'/modules/',
 		'templates'	=> $cat_path.'/templates/',
-		'languages'	=> $cat_path.'/languages/'
+		'languages'	=> $cat_path.'/languages/',
+        'optional'  => dirname(__FILE__).'/optional',
 	);
 	$ignore_files= array(
 		'admin.php',
@@ -829,7 +830,7 @@ function install_modules ($cat_path,$database) {
 	);
 
     // bundled modules
-    $bundled = array( 'captcha_control', 'droplets', 'edit_area', 'form ', 'initial_page', 'lib_dwoo', 'lib_images', 'lib_jquery', 'lib_pclzip', 'lib_phpmailer', 'lib_search', 'menu_link', 'news', 'show_menu2', 'wrapper', 'wysiwyg', 'wysiwyg_admin', 'blank, Blan', 'freshcat', 'DE', 'EN', 'blackcat' );
+    $bundled = array( 'captcha_control', 'droplets', 'edit_area', 'form ', 'initial_page', 'lib_dwoo', 'lib_images', 'lib_jquery', 'lib_pclzip', 'lib_search', 'menu_link', 'show_menu2', 'wrapper', 'wysiwyg', 'wysiwyg_admin', 'blank', 'freshcat', 'DE', 'EN', 'blackcat' );
 
 	$logh = fopen( CAT_LOGFILE, 'a' );
 
@@ -837,7 +838,11 @@ function install_modules ($cat_path,$database) {
     {
         $subs = ( $type == 'languages' )
               ? CAT_Helper_Directory::getInstance()->setRecursion(false)->getPHPFiles($dir,$dir.'/')
-              : CAT_Helper_Directory::getInstance()->setRecursion(false)->getDirectories($dir,$dir.'/')
+              : (
+                    ( $type == 'optional' )
+                  ? CAT_Helper_Directory::getInstance()->setRecursion(false)->setSuffixFilter(array('zip'))->getFiles($dir)
+                  : CAT_Helper_Directory::getInstance()->setRecursion(false)->getDirectories($dir,$dir.'/')
+                )
               ;
         natsort($subs);
         foreach( $subs as $item )
@@ -856,6 +861,11 @@ function install_modules ($cat_path,$database) {
                 {
                     fwrite( $logh, sprintf('%s [%s] sucessfully installed',ucfirst(substr($type,0,-1)),$item)."\n" );
                 }
+            }
+            elseif ( $type == 'optional' )
+            {
+                fwrite( $logh, 'installing additional (optional) addon ['.$item.']'."\n" );
+                CAT_Helper_Addons::installModule($item,pathinfo($item,PATHINFO_BASENAME));
             }
             else
             {
@@ -939,7 +949,7 @@ function check_tables($database) {
         'DEFAULT_THEME'    => "freshcat",
         'CAT_THEME_URL'    => CAT_URL."/templates/freshcat",
         'CAT_THEME_PATH'   => CAT_PATH."/templates/freshcat",
-        'LANGUAGE'         => $_POST['default_language'],
+        'LANGUAGE'         => $config['default_language'],
         'SERVER_EMAIL'     => "admin@yourdomain.tld",
         'PAGES_DIRECTORY'  => '/page',
         'ENABLE_OLD_LANGUAGE_DEFINITIONS' => true
@@ -1488,7 +1498,7 @@ function split_sql_file($sql, $delimiter)
    // remove empty
    for ( $i = count($output)+1; $i>=0; $i-- )
    {
-       if ( trim($output[$i]) == '' )
+       if ( isset($output[$i]) && trim($output[$i]) == '' )
        {
            array_splice($output, $i, 1);
        }
