@@ -57,7 +57,11 @@ if ( !(is_writable( CAT_PATH .  '/modules/') && is_writable( CAT_PATH . '/templa
     $backend->print_error( 'Unable to write to the target directory' );
 }
 
-if(CAT_Helper_Addons::installModule($_FILES['userfile']['tmp_name'],$_FILES['userfile']['name']))
+if(CAT_Helper_Addons::installUploaded($_FILES['userfile']['tmp_name'],$_FILES['userfile']['name']))
+{
     $backend->print_success( 'Installed successfully' );
+}
 else
+{
     $backend->print_error( 'Unable to install the module' );
+}
