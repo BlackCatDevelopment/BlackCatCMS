@@ -414,6 +414,7 @@ if (!class_exists('CAT_Helper_Page'))
         {
                 if (!is_writable(CAT_PATH . PAGES_DIRECTORY . '/'))
         {
+                    $self     = self::getInstance(true);
                     $errors[] = $self->lang()->translate('Cannot delete access file!');
             }
             else
@@ -776,6 +777,34 @@ if (!class_exists('CAT_Helper_Page'))
             // -----------------------------------------------------------------
             self::_load_js('frontend');
 
+
+            // called from backend?
+            if(CAT_Helper_Validate::get('_REQUEST','preview') && CAT_Users::is_authenticated())
+            {
+                $file = CAT_PATH.'/templates/'.DEFAULT_THEME.'/css/visibility.css';
+                if(file_exists($file))
+                {
+                    global $page_id;
+                    CAT_Helper_Page::$css[] = array(
+                        'media' => 'screen,projection',
+                        'file' => '/templates/'.DEFAULT_THEME.'/css/visibility.css'
+                    );
+                }
+                $file = CAT_PATH.'/templates/'.DEFAULT_THEME.'/js/visibility.js';
+                if(file_exists($file))
+                {
+                    global $page_id;
+                    CAT_Helper_Page::$js[] = '<script type="text/javascript">'."\n"
+                                           . '    var visibility = \''.self::getInstance(1)->lang()->translate(self::properties($page_id,'visibility')).'\';'."\n"
+                                           . '    var visibility_text = \''.self::getInstance(1)->lang()->translate('Visibility of this page').'\';'."\n"
+                                           . '    var visibility_title = \''.self::getInstance(1)->lang()->translate('Black Cat CMS Page Preview').'\';'."\n"
+                                           . '</script>' . "\n"
+                                           . '<script type="text/javascript" src="' . CAT_Helper_Validate::sanitize_url(CAT_URL.'/templates/'.DEFAULT_THEME.'/js/visibility.js') . '"></script>' . "\n"
+                                           ;
+
+                }
+            }
+
             // return the results
             return self::getMeta() . self::getCSS() . self::getJQuery('header') . self::getJavaScripts('header');
 
@@ -807,6 +836,18 @@ if (!class_exists('CAT_Helper_Page'))
                 $for = 'frontend';
             }
             self::$instance->log()->logDebug('creating headers for ['.$for.'], page id: ['.$page_id.']');
+
+            // add default
+            $default = "
+		var WB_URL							  = '".CAT_URL."',
+			LEPTON_URL						  = '".CAT_URL."',
+            CAT_URL                           = '".CAT_URL."',
+            THEME_URL						  = '".CAT_THEME_URL."',
+			CAT_THEME_URL					  = '".CAT_THEME_URL."',
+            ADMIN_URL						  = '".CAT_ADMIN_URL."',
+			CAT_ADMIN_URL					  = '".CAT_ADMIN_URL."';
+            ";
+            CAT_Helper_Page::$js[] = '<script type="text/javascript">'.$default.'</script>';
 
             if ($for == 'backend')
             {
@@ -1452,6 +1493,21 @@ if (!class_exists('CAT_Helper_Page'))
         } // end function isActive()
 
         /**
+         * checks if page is deleted
+         *
+         * @access public
+         * @param  integer $page_id
+         * @return boolean
+         **/
+        public static function isDeleted($page_id)
+        {
+            $page    = self::properties($page_id);
+            if($page['visibility']=='deleted')
+                return true;
+            return false;
+        } // end function isDeleted()
+
+        /**
          * check if system is in maintenance mode
          *
          * @access public
@@ -1506,7 +1562,7 @@ if (!class_exists('CAT_Helper_Page'))
                     {
                         $show_it = ($u->is_group_match($u->get_groups_id(), $page['viewing_groups']) || $u->is_group_match($u->get_user_id(), $page['viewing_users']));
                     }
-                    #$show_it = true;
+                    $show_it = true;
                     break;
             }
             return $show_it;

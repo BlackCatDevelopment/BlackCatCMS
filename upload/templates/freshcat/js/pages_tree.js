@@ -54,7 +54,7 @@
 								element.children('span').removeClass('fc_page_loader');
 								if ( data.success === true )
 								{
-									return_success( jqXHR.process , data.message );
+									return_success( '#fc_activity', data.message );
 									current.slideUp(300, function() { current.remove(); });
 								}
 								else {
@@ -745,7 +745,6 @@ jQuery(document).ready(function()
 					current.find('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove');
 				}
 			};
-
         dialog_confirm( 'Do you really want to delete this page?', 'Removing page', CAT_ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
 

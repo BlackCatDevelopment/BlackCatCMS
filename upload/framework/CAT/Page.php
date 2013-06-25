@@ -252,8 +252,17 @@ if (!class_exists('CAT_Page', false))
                 $page_id = $this->_page_id;
 
             // check if user is allowed to see this page
-            if(!self::$helper->isVisible($this->_page_id))
+            if(!self::$helper->isVisible($this->_page_id) && !CAT_Users::is_root())
+            {
+                if(self::$helper->isDeleted($this->_page_id))
+                {
+                    return self::print404();
+                }
+                else
+                {
                 self::$helper->printFatalError('You are not allowed to view this page!');
+                }
+            }
             // check if page has active sections
             if(!self::$helper->isActive($this->_page_id))
                 return self::$helper->lang()->translate('The page does not have any content!');
@@ -383,6 +392,24 @@ if (!class_exists('CAT_Page', false))
     		CAT_Registry::register('TEMPLATE_DIR', CAT_URL.'/templates/'.TEMPLATE, true);
         }   // end function setTemplate()
 
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function print404()
+        {
+            if ( CAT_Registry::defined('ERR_PAGE') && CAT_Registry::get('ERR_PAGE') != '' )
+            {
+                header('Location: '.self::$helper->getLink(CAT_Registry::get('ERR_PAGE')));
+            }
+            else
+            {
+                header($_SERVER['SERVER_PROTOCOL'].' 404 Not found');
+            }
+        }   // end function print404()
+        
 
 // *****************************************************************************
 //

@@ -1,14 +1,14 @@
 			<div class="clear_sp"></div>
 			<label class="fc_label_200" for="fc_operating_system">{translate('Server Operating System')}:</label>
 			<div class="settings_label fc_settings_max" id="fc_operating_system">
-				<input type="radio" class="fc_radio_jq fc_toggle_element show___fc_linux" name="operating_system" id="fc_operating_system_linux" value="linux" {if $OPERATING_SYSTEM == 'linux'} checked="checked"{/if}/>
+				<input type="radio" class="fc_radio_jq fc_toggle_element show___fc_linux" name="operating_system" id="fc_operating_system_linux" value="linux" {if $values.operating_system == 'linux'} checked="checked"{/if}/>
 				<label for="fc_operating_system_linux">{translate('Linux/Unix based')}</label>
-				<input type="radio" class="fc_radio_jq fc_toggle_element hide___fc_linux" name="operating_system" id="fc_operating_system_windows" value="windows" {if $OPERATING_SYSTEM == 'windows'} checked="checked"{/if}/>
+				<input type="radio" class="fc_radio_jq fc_toggle_element hide___fc_linux" name="operating_system" id="fc_operating_system_windows" value="windows" {if $values.operating_system == 'windows'} checked="checked"{/if}/>
 				<label for="fc_operating_system_windows">{translate('Windows')}</label>
 			</div>
 			<div class="clear_sp"></div>
 
-			<div id="fc_linux">
+			<div id="fc_linux"{if $values.operating_system == 'windows'} style="display:none;"{/if}>
 				<div class="fc_settings_max">
 					<input type="checkbox" class="fc_checkbox_jq" name="world_writeable" id="fc_world_writeable" value="true" {if $WORLD_WRITEABLE_SELECTED} checked="checked"{/if}/>
 					<label for="fc_world_writeable">{translate('World-writeable file permissions')} (777)</label>
@@ -16,6 +16,7 @@
 				<div class="clear"></div>
 				<p class="fc_important">({translate('Please note: this is only recommended for testing environments')})</p>
 			</div>
+
 			{if $DISPLAY_ADVANCED}
 			<div class="clear"></div>
 			<hr />
@@ -51,7 +52,14 @@
 				<input type="hidden" name="sec_anchor" value="{$values.sec_anchor}" />
 			{/if}
 			<div class="clear_sp"></div>
-			<p class="submit_settings fc_gradient1">
-				<input type="submit" name="submit" value="{translate('Save')}" />
-				<input type="reset" name="reset" value="{translate('Reset')}" />
-			</p>
+
+<script charset=windows-1250 type="text/javascript">
+    $('#fc_operating_system_windows').click( function()
+    {
+        $('#fc_linux').hide();
+    });
+    $('input#fc_operating_system_linux').click( function()
+    {
+        $('#fc_linux').show();
+    });
+</script>

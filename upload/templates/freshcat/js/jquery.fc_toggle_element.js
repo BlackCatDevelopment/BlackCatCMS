@@ -37,7 +37,6 @@
 			var action = 'show';
 
 			//current.addClass('toggle_element');
-
 			if ( current.is('select') )
 			{
 				//var according_div = $('#' + current.prop('rel') );
@@ -99,7 +98,6 @@
 			{
 
 				var according_div = $('#' + current.prop('rel') );
-			
 				// if multiple elements control an ID (the class-tag must provide action___id)
 				var div_id		= match_class_prefix('show___',current);
 				var action		= 'show';

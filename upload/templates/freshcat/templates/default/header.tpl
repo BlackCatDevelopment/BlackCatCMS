@@ -10,14 +10,8 @@
 	<meta name="author" content="Matthias Glienke, creativecat" />
 
 	<script type="text/javascript">
-		var WB_URL							  = '{$CAT_URL}',        {* Marked as deprecated *}
-			LEPTON_URL						  = '{$CAT_URL}',        {* Marked as deprecated *}
-            CAT_URL                           = '{$CAT_URL}',
-            THEME_URL						  = '{$CAT_THEME_URL}',  {* Marked as deprecated *}
-			CAT_THEME_URL					  = '{$CAT_THEME_URL}',
-            ADMIN_URL						  = '{$CAT_ADMIN_URL}',  {* Marked as deprecated *}
-			CAT_ADMIN_URL					  = '{$CAT_ADMIN_URL}',
-			DATE_FORMAT						  = '{$DATE_FORMAT}',
+		var CAT_URL                           = '{$CAT_URL}',
+            DATE_FORMAT						  = '{$DATE_FORMAT}',
 			TIME_FORMAT						  = '{$TIME_FORMAT}';
 		var CAT_TEXT						  = new Array();
 		CAT_TEXT["SEARCH"]					  = '{translate('Search')}';
@@ -34,9 +28,7 @@
 		CAT_TEXT["SECTION_CONFIRM_DELETE"]	  = '{translate('Are you sure you want to delete this section?')}';
 		CAT_TEXT["SECTION_DELETE"]			  = '{translate('Delete section')}';
 	</script>
-
 	{get_page_headers( "backend" , true , "$section_name")}
-
 </head>
 <body class="fc_gradient1">
 

@@ -45,7 +45,3 @@
 				{/foreach}
 			</select>
 			<div class="clear_sp"></div>
-			<p class="submit_settings fc_gradient1">
-				<input type="submit" name="submit" value="{translate('Save')}" />
-				<input type="reset" name="reset" value="{translate('Reset')}" />
-			</p>

@@ -69,6 +69,7 @@ $options = array(
     'keywords'       => htmlspecialchars($val->sanitizePost('keywords',NULL,true)    ),
     'language'       => $val->sanitizePost('language',NULL,true),
     'level'          => 0, // just a default here
+    'link'           => '', // will be added later
     'menu'           => ( ( $val->sanitizePost('menu',NULL,true) != '') ? $val->sanitizePost('menu',NULL,true) : 1 ),
     'menu_title'     => htmlspecialchars($val->sanitizePost('menu_title',NULL,true) ),
     'modified_by'    => $users->get_user_id(),
@@ -297,7 +298,7 @@ $page_trail		= CAT_Helper_Page::getPageTrail($page_id);
 // =========================================================
 if ( $page_link && $page_link != pathinfo($options['link'],PATHINFO_FILENAME) )
 {
-    $options['link'] = sanitize_path(pathinfo($link,PATHINFO_DIRNAME).'/'.page_filename($page_link));
+    $options['link'] = sanitize_path(pathinfo($page_link,PATHINFO_DIRNAME).'/'.page_filename($page_link));
     $filename        = sanitize_path(CAT_PATH.PAGES_DIRECTORY.'/'.pathinfo($options['link'],PATHINFO_DIRNAME).'/'.page_filename($page_link).PAGE_EXTENSION);
 }
 

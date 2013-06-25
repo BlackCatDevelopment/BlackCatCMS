@@ -102,7 +102,7 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
                 $value = $row['value'];
             }
             $temp_name = strtoupper($row['name']);
-            CAT_Registry::register($temp_name, $value, true);
+            CAT_Registry::register($temp_name, $value, true, true);
         }
         unset($row);
         }

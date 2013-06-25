@@ -3,9 +3,10 @@
 				{foreach $backends backend}
 				<option value="{$backend.VALUE}"{if $backend.SELECTED} selected="selected"{/if}>{$backend.NAME}</option>
 				{/foreach}
-			</select>
+			</select><br />
+
             <div id="div_theme_variants" style="display:{if $variants}inline-block{else}none{/if}">
-            <label class="fc_label_120" for="fc_default_theme_variant">{translate('Variant')}:</label>
+            <label class="fc_label_300" for="fc_default_theme_variant">{translate('Variant')}:</label>
             <select name="default_theme_variant" id="fc_default_theme_variant">
 				{foreach $variants variant}
 				<option value="{$variant}">{$variant}</option>
@@ -50,13 +51,52 @@
 			</p>
 			<div class="clear_sp"></div>
 			{else}
-			<input type="hidden" name="er_level" value="{$ER_LEVEL}" />
+			<input type="hidden" name="er_level" value="{$values.er_level}" />
 			<input type="hidden" name="redirect_timer" value="{$values.redirect_timer}" />
 			<input type="hidden" name="token_lifetime" value="{$values.token_lifetime}" />
 			<input type="hidden" name="max_attempts" value="{$values.max_attempts}" />
 			{/if}
 			<div class="clear_sp"></div>
-			<p class="submit_settings fc_gradient1">
-				<input type="submit" name="submit" value="{translate('Save')}" />
-				<input type="reset" name="reset" value="{translate('Reset')}" />
-			</p>
+
+<script charset=windows-1250 type="text/javascript">
+	$('select[name=default_theme]').change( function()
+	{
+		$(this).closest('form').removeClass('ajaxForm').unbind();
+        var dates	= {
+			'_cat_ajax': 1,
+            'template':  $('#fc_default_theme').val()
+		};
+		$.ajax(
+		{
+			context:	form,
+			type:		'POST',
+			url:		CAT_ADMIN_URL + '/settings/ajax_get_template_variants.php',
+			dataType:	'json',
+			data:		dates,
+			cache:		false,
+			success:	function( data, textStatus, jqXHR )
+			{
+				if ( data.success === true )
+				{
+					var form	= $(this);
+                    // remove old options
+                    $("#fc_default_theme_variant").empty();
+                    if( $(data.variants).size() > 0 )
+                    {
+    					$.each(data.variants, function(index, value)
+    					{
+                            $("<option/>").val(value).text(value).appendTo("#fc_default_theme_variant");
+					    });
+                        $('#div_theme_variants').show();
+                    }
+                    else {
+                        $('#div_theme_variants').hide();
+                    }
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			}
+		});
+	});
+</script>

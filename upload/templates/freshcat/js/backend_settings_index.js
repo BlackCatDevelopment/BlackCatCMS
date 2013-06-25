@@ -50,18 +50,18 @@ function create_guid(URL) {
 
 jQuery(document).ready(function(){
 	$('#fc_list_overview li').fc_set_tab_list();
-	$('select[name=default_theme]').change( function()
-	{
-		$(this).closest('form').removeClass('ajaxForm').unbind();
+    $('#fc_list_overview li').click( function()
+    {
+        var current	= $(this);
         var dates	= {
 			'_cat_ajax': 1,
-            'template':  $('#fc_default_theme').val()
+            'template': current.find('input').val()
 		};
 		$.ajax(
 		{
 			context:	form,
 			type:		'POST',
-			url:		CAT_ADMIN_URL + '/settings/ajax_get_template_variants.php',
+			url:		CAT_ADMIN_URL + '/settings/ajax_get_settings.php',
 			dataType:	'json',
 			data:		dates,
 			cache:		false,
@@ -69,29 +69,42 @@ jQuery(document).ready(function(){
 			{
 				if ( data.success === true )
 				{
-					var form	= $(this);
-                    // remove old options
-                    $("#fc_default_theme_variant").empty();
-                    if( $(data.variants).size() > 0 )
-                    {
-    					$.each(data.variants, function(index, value)
-    					{
-                            $("<option/>").val(value).text(value).appendTo("#fc_default_theme_variant");
-					    });
-                        $('#div_theme_variants').show();
-                    }
-                    else {
-                        $('#div_theme_variants').hide();
-                    }
+					$('div#fc_set_form_content').html(data.settings);
+                    $('input#current_page').val(current.find('input').val());
 				}
 				else {
 					return_error( jqXHR.process , data.message);
 				}
 			}
 		});
-	});
+    });
     $('#fc_createguid').click(function()
     {
         create_guid(CAT_ADMIN_URL+'/settings/ajax_guid.php');
+    });
+    $('form#settings').submit(function(event) {
+        var form = $(this);
+        $.ajax({
+            type:       'POST',
+            url:        form.prop('action'),
+            data:       form.serialize(),
+            dataType:	'json',
+            beforeSend:	function( data )
+    		{
+    			data.process	= set_activity( 'Save name' );
+    		},
+            success:	function( data, textStatus, jqXHR )
+			{
+				if ( data.success === true )
+				{
+                    return_success( jqXHR.process , data.message );
+					current.slideUp(300, function() { current.remove(); });
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			}
+        });
+		event.preventDefault();
     });
 });

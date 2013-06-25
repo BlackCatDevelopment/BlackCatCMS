@@ -21,7 +21,7 @@
 			<div class="clear_sp"></div>
 
 			<label class="fc_label_300" for="fc_search_cfg_search_use_page_id">{translate('Individual page: PAGE_ID for search result')}:</label>
-			<input type="text" name="search_cfg_search_use_page_id" id="fc_search_cfg_search_use_page_id" value="{$search.cfg_search_use_page_id}" />
+			{$PAGES_LIST}
 			<div class="clear_sp"></div>
 
 			<label class="fc_label_300" for="fc_search_cfg_search_droplet">{translate('Individual page: Droplet for search result')}:</label>
@@ -49,25 +49,25 @@
 
             <div class="fc_settings_max_large">
               <input type="checkbox" class="fc_checkbox_jq" name="search_cfg_search_description" id="fc_search_cfg_search_description" value="true" {if $search.cfg_search_description == 'true'} checked="checked"{/if}/>
-			  <label class="fc_label_300" for="fc_search_cfg_search_description">{translate('Search for page descriptions')}:</label>
+			  <label for="fc_search_cfg_search_description">{translate('Search for page descriptions')}:</label>
             </div>
 			<div class="clear_sp"></div>
 
             <div class="fc_settings_max_large">
               <input type="checkbox" class="fc_checkbox_jq" name="search_cfg_show_description" id="fc_search_cfg_show_description" value="true" {if $search.cfg_show_description == 'true'} checked="checked"{/if}/>
-			  <label class="fc_label_300" for="fc_search_cfg_show_description">{translate('Show page description in search result')}:</label>
+			  <label for="fc_search_cfg_show_description">{translate('Show page description in search result')}:</label>
             </div>
 			<div class="clear_sp"></div>
 
             <div class="fc_settings_max_large">
               <input type="checkbox" class="fc_checkbox_jq" name="search_cfg_search_keywords" id="fc_search_cfg_search_keywords" value="true" {if $search.cfg_search_keywords == 'true'} checked="checked"{/if}/>
-			  <label class="fc_label_300" for="fc_search_cfg_search_keywords">{translate('Search for page keywords')}:</label>
+			  <label for="fc_search_cfg_search_keywords">{translate('Search for page keywords')}:</label>
             </div>
 			<div class="clear_sp"></div>
 
             <div class="fc_settings_max_large">
               <input type="checkbox" class="fc_checkbox_jq" name="search_cfg_search_non_public_content" id="fc_search_cfg_search_non_public_content" value="true" {if $search.cfg_search_non_public_content == 'true'} checked="checked"{/if}/>
-			  <label class="fc_label_300" for="fc_search_cfg_search_non_public_content">{translate('Search in non-public content')}:</label>
+			  <label for="fc_search_cfg_search_non_public_content">{translate('Search in non-public content')}:</label>
             </div>
 			<div class="clear_sp"></div>
 
@@ -103,7 +103,3 @@
 			<input type="hidden" name="search_time_limit" value="{$search.time_limit}" />
 			{/if}
 			<div class="clear_sp"></div>
-			<p class="submit_settings fc_gradient1">
-				<input type="submit" name="submit" value="{translate('Save')}" />
-				<input type="reset" name="reset" value="{translate('Reset')}" />
-			</p>

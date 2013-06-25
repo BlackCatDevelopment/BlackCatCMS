@@ -31,33 +31,73 @@ if (defined('CAT_PATH')) {
     $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
     $inc = false;
     foreach ($subs as $sub) {
-        if (empty($sub)) continue; $dir .= '/'.$sub;
-        if (file_exists($dir.'/framework/class.secure.php')) {
-            include($dir.'/framework/class.secure.php'); $inc = true;    break;
-        }
+       if (empty($sub)) continue; $dir .= '/'.$sub;
+       if (file_exists($dir.'/framework/class.secure.php')) {
+           include($dir.'/framework/class.secure.php'); $inc = true;    break;
+       }
     }
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$user    = CAT_Users::getInstance();
-$backend = CAT_Backend::getInstance('Settings', 'settings_advanced');
+$backend = CAT_Backend::getInstance('Settings', 'settings', false);
+$users   = CAT_Users::getInstance();
+$val     = CAT_Helper_Validate::getInstance();
 
-global $parser;
-$tpl_data = array();
+header('Content-type: application/json');
 
-// include local functions file
+if ( !$users->checkPermission('Settings','settings') )
+{
+	$ajax	= array(
+		'message'	=> $backend->lang()->translate("Sorry, but you don't have the permissions for this action"),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
+}
+
+global $err_msg;
+$err_msg = array();
+
 require_once dirname(__FILE__).'/functions.php';
-// template for default tab (SEO settings)
-$tpl      = 'backend_settings_index_seo';
-// add default form
-$tpl_data['INDEX'] = $parser->get($tpl, array( 'values' => getSettingsTable() ) );
 
-// ==================== 
-// ! Parse the site   
-// ==================== 
-$parser->output('backend_settings_index', $tpl_data);
+$region = $val->sanitizePost('current_page');
+switch($region)
+{
+    case 'sysinfo':
+        // nothing to save here
+        break;
+    case 'datetime':
+        saveDatetime($backend);
+        break;
+    case 'server':
+        saveServer($backend);
+        break;
+    case 'seo':
+    case 'frontend':
+    case 'backend':
+    case 'users':
+        saveGroup($backend,$region);
+        break;
+    case 'mail':
+        saveMail($backend);
+        break;
+    case 'search':
+        saveSearch();
+        break;
+}
 
-// ====================== 
-// ! Print admin footer   
-// ====================== 
-$backend->print_footer();
+if(count($err_msg)) {
+    $ajax	= array(
+		'message'	=> implode('<br />',$err_msg),
+		'success'	=> false
+	);
+}
+else {
+	$ajax	= array(
+		'message'	=> $backend->lang()->translate("Settings saved"),
+		'success'	=> true
+	);
+
+}
+print json_encode( $ajax );
+exit();

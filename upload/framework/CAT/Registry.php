@@ -38,7 +38,8 @@ if (!class_exists('CAT_Registry', false))
         // singleton
         private static $instance        = NULL;
 
-        private static $REGISTRY;
+        private static $REGISTRY        = array();
+        private static $GLOBALS         = array();
 
         /**
          * get singleton
@@ -138,22 +139,20 @@ if (!class_exists('CAT_Registry', false))
          * @param  mixed   $value
          * @param  boolean $as_const - use define() to set as constant; this is for backward compatibility as WB works with global constants very much
          *                             default: false
+         * @param  boolean $is_set   - from settings table
+         *                             default: false
          **/
-        public static function register( $key, $value=NULL, $as_const=false )
+        public static function register( $key, $value=NULL, $as_const=false, $is_set=false )
         {
             if ( ! is_array($key) )
             {
-                self::$REGISTRY[$key] = $value;
-                // we deliberately do not catch errors here!
-                if($as_const) define($key,$value);
+                $key = array( $key => $value );
             }
-            else
-        {
                 foreach ( $key as $name => $value )
             {
                     self::$REGISTRY[$name] = $value;
-                    if($as_const) define($name,$value);
-                }
+                if ( $as_const && ! defined($name) ) define($name,$value);
+                if ( $is_set ) self::$GLOBALS[$name] = $value;
             }
         }   // end function register()
 
@@ -164,5 +163,16 @@ if (!class_exists('CAT_Registry', false))
         {
             return self::register($key,$value,$as_const);
         }   // end function set()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getSettings()
+        {
+            return self::$GLOBALS;
+        }   // end function getSettings()
+        
     }
 }
