@@ -81,7 +81,7 @@ switch($region)
         break;
     case 'system':
         $tpl_data['PAGES_LIST'] = getPagesList('maintenance_page', CAT_Registry::get('MAINTENANCE_PAGE'));
-        $tpl_data['ERR_PAGES_LIST'] = getPagesList('err_page', CAT_Registry::get('ERR_PAGE'));
+        $tpl_data['ERR_PAGES_LIST'] = getPagesList('err_page_404', CAT_Registry::get('ERR_PAGE_404'));
         break;
     case 'users':
         $tpl_data['groups']     = $users->get_groups(CAT_Registry::get('FRONTEND_SIGNUP'), '', false);

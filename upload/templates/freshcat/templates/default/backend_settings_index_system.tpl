@@ -24,7 +24,7 @@
 				{/for}
 			</select><br />
 
-            <label class="fc_label_250" for="fc_err_page">{translate('Page to show on 404 "Not found" error')}</label>
+            <label class="fc_label_250" for="fc_err_page_404">{translate('Page to show on 404 "Not found" error')}</label>
             {$ERR_PAGES_LIST}
             <div class="clear_sp"></div>
 			<hr />

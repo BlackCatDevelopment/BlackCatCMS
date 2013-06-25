@@ -46,7 +46,7 @@ $groups = array(
     'seo' => array('website_title','website_description','website_keywords'),
     'frontend' => array('default_template','website_header','website_footer'),
     'backend' => array('default_theme','default_theme_variant','wysiwyg_editor','er_level','redirect_timer','token_lifetime','max_attempts'),
-    'system' => array('maintenance_mode','maintenance_page','err_page','page_level_limit','page_trash','manage_sections','section_blocks','multiple_menus'),
+    'system' => array('maintenance_mode','maintenance_page','err_page_404','page_level_limit','page_trash','manage_sections','section_blocks','multiple_menus'),
     'users' => array('frontend_signup','frontend_login','home_folders'),
     'server' => array('operating_system','pages_directory','page_extension','media_directory','page_spacer','upload_allowed','app_name','sec_anchor'),
     'mail' => array('server_email','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_username','catmailer_smtp_password'),
@@ -54,7 +54,7 @@ $groups = array(
 $allow_tags_in_fields = array('website_header', 'website_footer');
 $allow_empty_values   = array('website_header', 'website_footer', 'sec_anchor', 'pages_directory','catmailer_smtp_host','catmailer_smtp_username','catmailer_smtp_password');
 $boolean              = array('auto_disable_users','frontend_login','home_folders','manage_sections','multiple_menus','page_trash','prompt_mysql_errors','section_blocks','maintenance_mode','homepage_redirection','intro_page','page_languages','users_allow_mailaddress');
-$numeric              = array('redirect_timer','frontend_signup','maintenance_page','err_page','page_level_limit','token_lifetime','max_attempts');
+$numeric              = array('redirect_timer','frontend_signup','maintenance_page','err_page_404','page_level_limit','token_lifetime','max_attempts');
 
 /**
  * get data from settings table
