@@ -138,7 +138,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
         public static function dropdown ( $name, $list, $root_id, $selected = NULL, $options_only = false )
         {
 
-            $output = self::listbuilder($list,$root_id,'select');
+            $output = self::listbuilder($list,$root_id,'select',$selected);
 
             if ( $options_only )
                 return join( "\n\t", $output )."\n";
@@ -165,7 +165,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          * @access public
          * @return
          **/
-        private static function listbuilder($list,$root_id=0,$type='ul')
+        private static function listbuilder($list,$root_id=0,$type='ul',$selected)
         {
             if (empty($list) || !is_array($list) || !count($list))
             {

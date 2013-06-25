@@ -1075,6 +1075,15 @@ function create_default_page($database) {
     fwrite($fh,str_replace('%%id%%',2,$pg_content));
     fclose($fh);
 
+    $fh = fopen(CAT_PATH.'/page/maintenance.php','w');
+    fwrite($fh,str_replace('%%id%%',3,$pg_content));
+    fclose($fh);
+
+    $fh = fopen(CAT_PATH.'/page/404.php','w');
+    fwrite($fh,str_replace('%%id%%',4,$pg_content));
+    fclose($fh);
+
+
 }   // end function create_default_page()
 
 

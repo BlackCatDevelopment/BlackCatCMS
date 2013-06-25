@@ -22,7 +22,11 @@
 				{for count 0 10 1}
 				<option value="{$count}"{if $count == $values.page_level_limit} selected="selected"{/if}>{$count}</option>
 				{/for}
-			</select>
+			</select><br />
+
+            <label class="fc_label_250" for="fc_err_page">{translate('Page to show on 404 "Not found" error')}</label>
+            {$ERR_PAGES_LIST}
+            <div class="clear_sp"></div>
 			<hr />
 
 			<div class="fc_settings_max">
