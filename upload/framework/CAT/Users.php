@@ -1094,13 +1094,19 @@ if ( ! class_exists( 'CAT_Users', false ) )
 		 */
         public static function validatePassword( $password, $allow_quotes = true, $strict = false )
 	    {
+            $min_length = CAT_Registry::exists('AUTH_MIN_PASS_LENGTH')
+                        ? CAT_Registry::get('AUTH_MIN_PASS_LENGTH')
+                        : 5;
+            $max_length = CAT_Registry::exists('AUTH_MAX_PASS_LENGTH')
+                        ? CAT_Registry::get('AUTH_MAX_PASS_LENGTH')
+                        : 20;
 	        // check length
-	        if ( strlen($password) < AUTH_MIN_PASS_LENGTH )
+	        if ( strlen($password) < $min_length )
 			{
                 self::$validatePasswordError = self::lang()->translate('The password is too short.');
 	            return false;
 	        }
-	        elseif ( strlen($password) > AUTH_MAX_PASS_LENGTH )
+	        elseif ( strlen($password) > $max_length )
 			{
                 self::$validatePasswordError = self::lang()->translate('The password is too long.');
 				return false;
@@ -1168,6 +1174,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 }
                 return false;
             }
+            $min_length = CAT_Registry::exists('AUTH_MIN_LOGIN_LENGTH')
+                        ? CAT_Registry::get('AUTH_MIN_LOGIN_LENGTH')
+                        : 5;
+            $max_length = CAT_Registry::exists('AUTH_MAX_LOGIN_LENGTH')
+                        ? CAT_Registry::get('AUTH_MAX_LOGIN_LENGTH')
+                        : 50;
             if ( strlen($username ) < AUTH_MIN_LOGIN_LENGTH )
                 return false;
             if ( strlen($username) > AUTH_MAX_LOGIN_LENGTH )

@@ -84,13 +84,28 @@ if (!class_exists('CAT_Registry', false))
          *
          * @access public
          * @param  string  $key
+         * @param  boolean $empty_allowed
          * @return boolean
          *
          **/
-        public static function exists($key)
+        public static function exists($key,$empty_allowed=true)
             {
-            if(isset(self::$REGISTRY[$key])||defined($key))
+            if(isset(self::$REGISTRY[$key]) || defined($key))
                 {
+                if(
+                       ! $empty_allowed
+                    && (
+                            (
+                              isset(self::$REGISTRY[$key]) && self::$REGISTRY[$key] == ''
+                            )
+                         ||
+                            (
+                              defined($key) && constant($key) == ''
+                            )
+                       )
+                ) {
+                    return false;
+                }
                 return true;
                 }
             return false;
@@ -130,6 +145,15 @@ if (!class_exists('CAT_Registry', false))
             }
             return $return_value;
         }   // end function get()
+
+        /**
+         * this acts like PHP define(), but calls self::register() to set
+         * internal registry key, too
+         **/
+        public static function define($key, $value=NULL)
+        {
+            return self::register($key,$value,true,true);
+        }
 
         /**
          * register globally stored data

@@ -82,7 +82,7 @@ if (!class_exists('CAT_Helper_Validate'))
          **/
         public static function get( $global, $key, $require = NULL, $escape = false )
         {
-            self::$instance->log()->logDebug(sprintf('Get key [%s] from global var [%s] validate as [%s]',$key,$global,$require));
+            self::getInstance()->log()->logDebug(sprintf('Get key [%s] from global var [%s] validate as [%s]',$key,$global,$require));
             $glob = array();
             if ( isset($GLOBALS[$global]) )
             {

@@ -193,11 +193,16 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             {
                 if ($for=='directory')
                 {
-                    $mode = OCTAL_DIR_MODE;
+                    $mode = CAT_Registry::exists('OCTAL_DIR_MODE')
+                          ? CAT_Registry::get('OCTAL_DIR_MODE')
+                          : self::defaultDirMode()
+                          ;
                 }
                 else
                 {
-                    $mode = OCTAL_FILE_MODE;
+                    $mode = CAT_Registry::exists('OCTAL_FILE_MODE')
+                          ? CAT_Registry::get('OCTAL_FILE_MODE')
+                          : self::defaultFileMode();
                 }
             }
             return $mode;
@@ -413,6 +418,8 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                             	$dirs[]  = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
 							}
                         }
+#                        else {
+#                        }
                     }
                 }
             }
@@ -609,9 +616,14 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		 *
 		 * @todo ---check for valid dir name---
 		 **/
-		public static function createDirectory( $dir_name, $dir_mode = OCTAL_DIR_MODE, $createIndex = false )
+		public static function createDirectory( $dir_name, $dir_mode = NULL, $createIndex = false )
 		{
-             if ( ! $dir_mode ) $dir_mode = OCTAL_DIR_MODE;
+             if ( ! $dir_mode )
+             {
+                 $dir_mode = CAT_Registry::exists('OCTAL_DIR_MODE')
+                           ? CAT_Registry::get('OCTAL_DIR_MODE')
+                           : (int) octdec(self::defaultDirMode());
+             }
 		     if ( $dir_name != '' && !is_dir($dir_name) )
 		     {
 		         $umask = umask(0);
@@ -725,6 +737,40 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		    return ( substr(sprintf('%o', fileperms($directory)), -1) == 7 ? true : false );
 		}   // end function is_world_writable()
 		
+		/**
+		 *
+         * @access public
+         * @return
+         **/
+        public static function defaultDirMode() {
+            $temp_dir = dirname(__FILE__).'/../../../temp';
+            if(is_writable($temp_dir)) {
+                $dirname = $temp_dir.'/test_permissions/';
+                mkdir($dirname);
+                $default_dir_mode = '0'.substr(sprintf('%o', fileperms($dirname)), -3);
+                rmdir($dirname);
+            } else {
+                $default_dir_mode = '0777';
+            }
+            return $default_dir_mode;
+        }   // end function defaultDirMode()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function defaultFileMode() {
+            // we've already created some new files, so just check the perms they've got
+            $check_for = dirname(__FILE__).'/../../../temp/logs/index.php';
+            if ( file_exists($check_for) ) {
+                $default_file_mode = '0'.substr(sprintf('%o', fileperms($check_for)), -3);
+            } else {
+                $default_file_mode = '0777';
+            }
+            return $default_file_mode;
+        }   // end function defaultFileMode()
+        
 		/**
 		 *
 		 *

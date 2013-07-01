@@ -337,8 +337,10 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
         {
             if ( ! $this->db || ! is_object($this->db) )
             {
-                if ( ! class_exists('database') )
-                    @include CAT_PATH.'/framework/class.database.php';
+                if ( ! CAT_Registry::exists('CAT_PATH',false) )
+                    CAT_Registry::define('CAT_PATH',dirname(__FILE__).'/../..');
+                if ( ! class_exists('database',false) )
+                    @include_once CAT_Registry::get('CAT_PATH').'/framework/class.database.php';
                 $this->db = new database();
             }
             return $this->db;
@@ -354,6 +356,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
       	public function log () {
             if ( $this->debugLevel < 8 ) { // 8 = OFF
                 if ( ! is_object( $this->logObj ) ) {
+                    if ( ! CAT_Registry::exists('CAT_PATH',false) )
+                        CAT_Registry::define('CAT_PATH',dirname(__FILE__).'/../..');
                     $debug_dir = CAT_PATH.'/temp/logs'
                                . ( $this->debugLevel == 7 ? '/debug_'.get_class($this) : '' );
                     if ( ! file_exists( $debug_dir ) ) {

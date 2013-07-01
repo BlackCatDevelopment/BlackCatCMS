@@ -105,11 +105,13 @@ if ( ! class_exists( 'CAT_Helper_Zip_PclZipDriver', false ) )
 
   		/**
 		 * accessor to PclZip->errorInfo()
+		 * this also strips full path names for security
 		 **/
   		public function errorInfo($p_full=false)
   		{
-  		    return $this->zip->errorInfo($p_full);
-  		}
+  		    return
+                str_ireplace( array(CAT_PATH,'\\'), array('/abs/path/to','/'), $this->zip->errorInfo($p_full) );
+  		}   // function errorInfo()
 
         /**
          *
@@ -145,7 +147,7 @@ if ( ! class_exists( 'CAT_Helper_Zip_PclZipDriver', false ) )
 
 			eval ( $code );
 			return $ret;
-        }
+        }   // end function add()
 
 		/**
 		 * accessor to create() method; only argument is the file list (or a

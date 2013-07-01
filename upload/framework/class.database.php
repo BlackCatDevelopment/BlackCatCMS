@@ -42,7 +42,9 @@ require_once(CAT_PATH.'/framework/functions.php');
 
 global $database;
 	
-class database {
+if ( ! class_exists('database', false ) )
+{
+    class database {
 	
 	private $error = '';
 	private $connected = false;     
@@ -259,9 +261,12 @@ class database {
 		}
 	} // __initSession()
 	
-} // class database
+    } // class database
+}
 
-final class queryMySQL {
+if ( ! class_exists('queryMySQL', false ) )
+{
+    final class queryMySQL {
 	
 	private $query_result = false;
 	
@@ -298,5 +303,5 @@ final class queryMySQL {
 		return mysql_fetch_array($this->query_result, $array_type);
 	} // fetchRow()
 	
-} // class queryMySQL
-?>
+    } // class queryMySQL
+}

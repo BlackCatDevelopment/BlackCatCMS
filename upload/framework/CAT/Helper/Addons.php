@@ -832,13 +832,13 @@ if (!class_exists('CAT_Helper_Addons'))
                 CAT_Helper_Directory::createDirectory( $temp_subdir );
 
                 // Setup the PclZip object and unzip the files to the temp unzip folder
-                $list    = CAT_Helper_Zip::getInstance( $zipfile )->config( 'Path', sanitize_path( $temp_subdir ) )->extract();
+                $list    = CAT_Helper_Zip::getInstance( $zipfile )->config( 'Path', CAT_Helper_Directory::sanitizePath( $temp_subdir ) )->extract();
 
                 // check if anything was extracted
                 if ( ! $list )
                 {
                     CAT_Helper_Directory::removeDirectory($temp_unzip);
-                    CAT_Helper_Directory::removeDirectory($zipfile);
+                    //CAT_Helper_Directory::removeDirectory($zipfile);
                     if(!$silent)
                     self::printError( 'Unable to extract the file. Please check the ZIP format.' );
                     return false;
@@ -851,7 +851,7 @@ if (!class_exists('CAT_Helper_Addons'))
                     if ( ! $info )
                 {
                         CAT_Helper_Directory::removeDirectory($temp_unzip);
-                        CAT_Helper_Directory::removeDirectory($zipfile);
+                        //CAT_Helper_Directory::removeDirectory($zipfile);
                         if(!$silent)
                         self::printError( 'Invalid installation file. No info.php found. Please check the ZIP format.' );
                         return false;
@@ -865,7 +865,7 @@ if (!class_exists('CAT_Helper_Addons'))
                     else
                     {
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
-                CAT_Helper_Directory::removeDirectory($zipfile);
+                //CAT_Helper_Directory::removeDirectory($zipfile);
                 if(!$silent)
                 self::printError( 'Invalid installation file. Wrong extension. Please check the ZIP format.' );
                 return false;
@@ -880,7 +880,7 @@ if (!class_exists('CAT_Helper_Addons'))
             else
             {
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
-                CAT_Helper_Directory::removeDirectory($zipfile);
+                //CAT_Helper_Directory::removeDirectory($zipfile);
                 if(!$silent)
                 {
                 self::printError(
@@ -924,7 +924,7 @@ if (!class_exists('CAT_Helper_Addons'))
                     if ( self::versionCompare ($previous_info['module_version'], $addon_info['module_version'], '>=' ) )
                     {
                         CAT_Helper_Directory::removeDirectory($temp_unzip);
-                        CAT_Helper_Directory::removeDirectory($zipfile);
+                        //CAT_Helper_Directory::removeDirectory($zipfile);
                         if(!$silent)
                         self::printError( 'Already installed' );
                         return false;
@@ -940,13 +940,24 @@ if (!class_exists('CAT_Helper_Addons'))
                 if ( CAT_Helper_Directory::copyRecursive( $temp_subdir, $addon_dir ) !== true )
                 {
                     CAT_Helper_Directory::removeDirectory($temp_unzip);
-                    CAT_Helper_Directory::removeDirectory($zipfile);
+                    //CAT_Helper_Directory::removeDirectory($zipfile);
+                    if(!$silent)
                     self::printError( 'Unable to install - error copying files' );
                     return false;
                 }
                 // remove temp
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
-                CAT_Helper_Directory::removeDirectory($zipfile);
+                //CAT_Helper_Directory::removeDirectory($zipfile);
+            }
+
+            // load the module info into the database
+            if ( !self::loadModuleIntoDB($addon_dir,$action,self::checkInfo($addon_dir)) )
+            {
+                CAT_Helper_Directory::removeDirectory($temp_unzip);
+                CAT_Helper_Directory::removeDirectory($addon_dir);
+                if(!$silent)
+                self::printError($self->db()->get_error());
+                return false;
             }
 
             // Run the modules install // upgrade script if there is one
@@ -956,20 +967,7 @@ if (!class_exists('CAT_Helper_Addons'))
             if ( $action == 'install' && $addon_info['addon_function'] == 'language' )
         {
                 rename($zipfile, $addon_dir);
-                    change_mode( $addon_dir , 'file');
-                }
-
-            // load the module info into the database
-            if ( !self::loadModuleIntoDB($addon_dir,$action,self::checkInfo($addon_dir)) )
-                    {
-                        // recovery
-                        if ( file_exists($addon_dir.'/uninstall.php') )
-                            require $addon_dir.'/uninstall.php';
-                        CAT_Helper_Directory::removeDirectory($temp_unzip);
-                CAT_Helper_Directory::removeDirectory($zipfile);
-                        CAT_Helper_Directory::removeDirectory($addon_dir);
-                        self::printError($self->db()->get_error());
-                        return false;
+                CAT_Helper_Directory::setPerms($addon_dir);
                     }
 
             // set module permissions
@@ -985,24 +983,6 @@ if (!class_exists('CAT_Helper_Addons'))
 
             return true;
 
-#            elseif ( $addon_info['addon_function'] == 'module' && $action == 'upgrade' )
-#            {
-#                $addon_helper->upgradeModule( $addon_directory, false );
-#                $backend->print_success( 'Upgraded successfully' );
-#            }
-#            elseif ( $addon_info['addon_function'] == 'template' && $action == 'upgrade' )
-#            {
-#                $addon_helper->installTemplate( $addon_dir );
-#                $backend->print_success( 'Upgraded successfully' );
-#            }
-#            elseif ( $addon_info['addon_function'] == 'language' && $action == 'upgrade' )
-#            {
-#                rename( $zipfile, $addon_dir );
-#                // Chmod the file
-#                change_mode( $addon_dir , 'file');
-#                $addon_helper->installLanguage( $addon_dir );
-#                $backend->print_success( 'Upgraded successfully' );
-#            }
         } // end function installModule()
 
         /**
@@ -1516,44 +1496,53 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function sec_register_file($module, $filepath)
         {
             global $admin;
-            if (!CAT_Backend::isBackend() && !is_object($admin))
+            if (!CAT_Backend::isBackend() && !is_object($admin) && !defined('CAT_INSTALL'))
             {
-                error_log("sec_register_file() called outside admin context!", 0);
+                self::getInstance()->log()->logCrit("sec_register_file() called outside admin context!");
                 return false; 
             }
             // check permissions
-            if (!CAT_Users::checkPermission('Addons','modules_install'))
+            if (!CAT_Users::checkPermission('Addons','modules_install') && !defined('CAT_INSTALL'))
             {
-                error_log("sec_register_file() called without modules_install perms!", 0);
+                self::getInstance()->log()->logCrit("sec_register_file() called without modules_install perms!");
                 return false;
             }
             // this will remove ../.. from $filepath
             $filepath = self::$dirh->sanitizePath($filepath);
             if (!is_dir(CAT_PATH . '/modules/' . $module))
             {
-                error_log("sec_register_file() called for non existing module [$module] (path: [$filepath])", 0);
+                self::getInstance()->log()->logCrit("sec_register_file() called for non existing module [$module] (path: [$filepath])");
                 return false;
             }
             if (!file_exists(self::$dirh->sanitizePath(CAT_PATH . '/modules/' . $module . '/' . $filepath)))
             {
-                error_log("sec_register_file() called for non existing file [$filepath] (module: [$module])", 0);
+                self::getInstance()->log()->logCrit("sec_register_file() called for non existing file [$filepath] (module: [$module])");
                 return false;
             }
             $self = self::getInstance();
             $q = $self->db()->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'addons WHERE directory = "' . $module . '"');
             if (!$q->numRows())
             {
-                error_log("sec_register_file() called for non existing module [$module] (path: [$filepath]) - not found in addons table!", 0);
+                self::getInstance()->log()->logCrit("sec_register_file() called for non existing module [$module] (path: [$filepath]) - not found in addons table!");
                 return false;
             }
             $row = $q->fetchRow();
             // remove trailing / from $filepath
             $filepath = preg_replace( '~^/~', '', $filepath );
-            $q   = $self->db()->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'class_secure WHERE module="' . $row['addon_id'] . '" AND filepath="/modules/' . $module . '/' . $filepath . '"');
+            $sql = sprintf(
+                'SELECT * FROM `%sclass_secure` WHERE module="%s" AND filepath="%s"',
+                CAT_TABLE_PREFIX, $row['addon_id'], '/modules/'.$module.'/'.$filepath
+            );
+            $q   = $self->db()->query($sql);
             if (!$q->numRows())
             {
-                $self->db()->query('REPLACE INTO ' . CAT_TABLE_PREFIX . 'class_secure VALUES ( "' . $row['addon_id'] . '", "/modules/' . $module . '/' . $filepath . '" )');
+                $self->db()->query(sprintf(
+                    'REPLACE INTO `%sclass_secure` VALUES ( "%d", "%s" )',
+                    CAT_TABLE_PREFIX, $row['addon_id'], '/modules/'.$module.'/'.$filepath
+                ));
+                return $self->db()->is_error();
             }
+            return true;
         } // end function sec_register_file()
 
         /**
@@ -1781,7 +1770,7 @@ if (!class_exists('CAT_Helper_Addons'))
                     $this_version = '1.2';
                     break;
                 default:
-                    $this_version = CAT_VERSION;
+                    $this_version = CAT_Registry::get('CAT_VERSION');
                     // ----- UNTIL RELEASE: ACCEPT v0.x AS v1.x -----
                     if (preg_match('~^v?0\.~i',$this_version))
                         $this_version = '1.0.0';
