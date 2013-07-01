@@ -188,6 +188,15 @@ $parser->setGlobals(
 	)
 );
 
+if($this_step == 'intro') {
+    // check for optional modules
+    $zip_files = $dirh->scanDirectory( dirname(__FILE__).'/optional', true, true, dirname(__FILE__).'/optional/', array('zip') );
+    if(!count($zip_files) && $steps[6]['id'] == 'optional') {
+        // remove step 'optional'
+        array_splice($steps,6,1);
+    }
+}
+
 // let's see if we have some stored data from previous steps or installations
 if ( file_exists( dirname(__FILE__).'/instdata.tmp' ) )
 {
@@ -268,47 +277,7 @@ if ( isset($_REQUEST['laststep']) )
 	}
 }
 
-// reset the 'current' marker for all steps
-foreach( $steps as $i => $step ) {
-	$steps[$i]['current'] = false;
-}
-
-foreach( $steps as $i => $step ) {
-	// set the 'done' marker for all steps < current
-	$steps[$i]['done']    = true;
-	// for current step...
-	if ( $step['id'] == $this_step ) {
-	    // reset errors for this step
-	    $steps[$i]['errors']     = NULL;
-	    // do we have a presentation method for this step?
-	    $callback = 'show_step_'.$step['id'];
-	    if ( function_exists($callback) ) {
-	        list( $result, $output ) = $callback( $step );
-    		$steps[$i]['success']    = $result;
-	    }
-	    // set 'current' marker for this step
-    	$steps[$i]['current'] = true;
-    	// reset 'done' marker for this step
-    	$steps[$i]['done']    = false;
-    	// find next and previous steps
-    	if ( $i < count($steps)-1 ) {
-    		$nextstep    =& $steps[$i+1];
-		}
-		if ( $i > 0 ) {
-    		$prevstep    =& $steps[$i-1];
-		}
-    	$currentstep =& $steps[$i];
-    	// leave the rest as-is
-    	break;
-	}
-}
-
-// save the current state to temp. file
-if ( false !== ( $fh = fopen( dirname(__FILE__).'/steps.tmp', 'w' ) ) )
-{
-    fwrite( $fh, serialize($steps) );
-    fclose( $fh );
-}
+list( $result, $output ) = do_step($this_step);
 
 // print the page
 if ( ! $output ) {
@@ -641,6 +610,12 @@ function show_step_postcheck() {
         if ( preg_match( '~no_validate_admin_password~i', $key ) ) {
             unset($config[$key]);
         }
+        if ( preg_match( '~installed_version~i', $key ) ) {
+            unset($config[$key]);
+        }
+        if ( preg_match( '~optional_addon~i', $key ) ) {
+            $config[$key] = count($config[$key]);
+        }
 	}
 	$output = $parser->get(
         'postcheck.tpl',
@@ -676,24 +651,18 @@ function show_step_optional() {
         );
         return array( true, $output );
     }
-    else
-    {
-        return show_step_finish();
-    }
 }   // end function show_step_optional()
 
 /**
  * install optional addons (located in ./optional subfolder)
  **/
 function check_step_optional() {
-    install_optional_modules();
+    list( $ok, $errors ) = install_optional_modules();
     return array(
-#        ( count($errors) ? false : true ),
-true,
-#        $errors
-array()
+        ( count($errors) ? false : true ),
+        $errors
     );
-}
+}   // end function check_step_optional()
 
 /**
  *
@@ -717,7 +686,7 @@ function show_step_finish() {
 		$tpl,
 		array(
 			'backend_path'  => 'backend',
-			'cat_url'       => CAT_URL,
+//            'cat_url'       => CAT_URL,
 			'installer_uri' => $installer_uri,
 		)
 	);
@@ -1236,6 +1205,61 @@ function create_default_page($database) {
 
 
 }   // end function create_default_page()
+
+/**
+ *
+ **/
+function do_step($this_step,$skip=false) {
+
+    global $steps, $nextstep, $prevstep, $currentstep;
+
+    // reset the 'current' marker for all steps
+    foreach( $steps as $i => $step ) {
+        $steps[$i]['current'] = false;
+    }
+
+    foreach( $steps as $i => $step ) {
+        // set the 'done' marker for all steps < current
+        $steps[$i]['done']    = true;
+        // for current step...
+        if ( $step['id'] == $this_step ) {
+            // reset errors for this step
+            $steps[$i]['errors']     = NULL;
+            // do we have a presentation method for this step?
+            $callback = 'show_step_'.$step['id'];
+            if ( function_exists($callback) ) {
+                list( $result, $output ) = $callback( $step );
+                $steps[$i]['success']    = $result;
+            }
+            // set 'current' marker for this step
+            $steps[$i]['current'] = true;
+            // reset 'done' marker for this step
+            $steps[$i]['done']    = false;
+            // find next and previous steps
+            if ( $i < count($steps)-1 ) {
+                $nextstep    = $steps[$i+1];
+            }
+            if ( $i > 0 ) {
+                $prevstep    = $steps[$i-1];
+            }
+            $currentstep = $steps[$i];
+            if(!$skip) {
+                // leave the rest as-is
+                break;
+            }
+        }
+    }
+
+    // save the current state to temp. file
+    if ( false !== ( $fh = fopen( dirname(__FILE__).'/steps.tmp', 'w' ) ) )
+    {
+        fwrite( $fh, serialize($steps) );
+        fclose( $fh );
+    }
+
+    return array( $result, $output );
+
+}   // end function do_step()
 
 
 /**

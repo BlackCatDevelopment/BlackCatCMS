@@ -161,6 +161,7 @@ $LANG = array(
     'create_guid' => 'GUID erzeugen',
     'guid_prefix' => 'GUID Präfix',
     'no_validate_db_password' => 'Datenbankkennwort nicht prüfen',
+    'optional_addon' => 'Optionale Add-Ons',
 
 );
 
