@@ -24,6 +24,15 @@ if( typeof jQuery != 'undefined' ) {
 			jQuery('#preview_link').attr('href',jQuery('#preview_image').attr('src').replace('tn_','') );
 		});
 		
+        jQuery('#installer_default_wysiwyg').change( function() {
+            if(jQuery('#installer_default_wysiwyg option:selected').val().indexOf('opt_') !== -1) {
+                jQuery('#installer_default_wysiwyg_optional_info').fadeIn();
+            }
+            else {
+                jQuery('#installer_default_wysiwyg_optional_info').fadeOut();
+            }
+        });
+		
 	    var animation = true;
 	    if ( $.cookie('lep_animate') == 'no' ) {
 	        animation = false;

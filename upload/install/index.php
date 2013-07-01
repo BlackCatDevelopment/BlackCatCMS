@@ -116,6 +116,19 @@ $users  = new CAT_Users();
 include dirname(__FILE__).'/../framework/CAT/Helper/Directory.php';
 $dirh   = new CAT_Helper_Directory();
 
+// bundled modules
+$bundled = array(
+// ----- widgets -----
+    'blackcat',
+// ----- modules -----
+    'captcha_control', 'droplets'  , 'edit_area' , 'form '     , 'initial_page',
+    'lib_dwoo'       , 'lib_images', 'lib_jquery', 'lib_pclzip', 'lib_search'  ,
+    'menu_link'      , 'show_menu2', 'wrapper'   , 'wysiwyg'   , 'wysiwyg_admin',
+// ----- templates -----
+    'blank'          , 'freshcat'  ,
+// ----- languages -----
+    'DE'             , 'EN'
+);
 
 // *****************************************************************************
 // define the steps we are going through
@@ -126,6 +139,7 @@ $steps = array(
 	array( 'id' => 'db',       'text' => $lang->translate('Database settings'),'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
 	array( 'id' => 'site',     'text' => $lang->translate('Site settings'),    'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
 	array( 'id' => 'postcheck','text' => $lang->translate('Postcheck'),        'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
+    array( 'id' => 'optional', 'text' => $lang->translate('Optional'),         'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
 	array( 'id' => 'finish',   'text' => $lang->translate('Finish'),           'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
 );
 // *****************************************************************************
@@ -206,6 +220,23 @@ if ( isset($config['cat_url']) && $config['cat_url'] != '' )
 		    'cat_url' => $config['cat_url'],
 		)
 	);
+}
+
+if ( ! isset($config['installed_version']) )
+{
+    // get current version
+    if ( file_exists(dirname(__FILE__).'/tag.txt') )
+    {
+        $tag = fopen( dirname(__FILE__).'/tag.txt', 'r' );
+        list ( $current_version, $current_build ) = explode( '#', fgets($tag) );
+        fclose($tag);
+    }
+    else
+    {
+        $current_version = '0.0.0';
+        $current_build   = 'unknown';
+    }
+    $config['installed_version'] = $current_version;
 }
 
 // call the check-method for last step (if any)
@@ -384,7 +415,7 @@ function show_step_precheck() {
  **/
 function show_step_globals( $step ) {
 
-    global $lang, $parser, $installer_uri, $config;
+    global $lang, $parser, $installer_uri, $config, $dirh;
     global $timezone_table;
 
     // get timezones
@@ -392,12 +423,11 @@ function show_step_globals( $step ) {
     $timezone_table = CAT_Helper_DateTime::getInstance()->getTimezones();
 
 	$lang_dir = "../languages/";
-	$dir      = dir( $lang_dir );
-	$langs    = array();
+    $lang_files = $dirh->setRecursion(false)->setSkipFiles(array('index'))->getPHPFiles($lang_dir,$lang_dir);
+    $dirh->setRecursion(true); // reset
 
-	while( $temp_file = $dir->read() ) {
-		if ($temp_file[0] == ".") continue;
-		if ($temp_file == "index.php" ) continue;
+    // get language name
+    foreach($lang_files as $temp_file) {
 		$str = file( $lang_dir.$temp_file );
 		$language_name = "";
 		foreach($str as $line) {
@@ -411,7 +441,6 @@ function show_step_globals( $step ) {
 
 	}
 
-	$dir->close();
 	ksort($langs);
 
 	if ( !isset( $config['default_language' ] ) ) {
@@ -574,8 +603,7 @@ function check_step_site() {
 	    $errors['installer_admin_password']   = $lang->translate( 'The admin passwords you have given do not match!' );
 	    $errors['installer_admin_repassword'] = $lang->translate( 'The admin passwords you have given do not match!' );
 	}
-
-    if ( ! $users->validatePassword($config['admin_password']) )
+        if ( ! $users->validatePassword($config['admin_password'],false,true) )
     {
 		$errors['installer_admin_password'] = $lang->translate('Invalid password!')
 											. ' (' . $users->getPasswordError() . ')';
@@ -622,14 +650,56 @@ function show_step_postcheck() {
 }   // end function show_step_postcheck()
 
 /**
- *
+ * install optional addons (located in ./optional subfolder)
  **/
-function show_step_finish() {
-	global $lang, $parser, $installer_uri, $config;
+function show_step_optional() {
+    global $dirh, $parser, $config, $installer_uri;
+    // do base installation first
 	list( $result, $output ) = __do_install();
 	if ( ! $result ) {
 	    return array( true, $output );
 	}
+    // list of optional modules
+    $zip_files = $dirh->scanDirectory( dirname(__FILE__).'/optional', true, true, dirname(__FILE__).'/optional/', array('zip') );
+    if(count($zip_files)) {
+        // fix path (some modules may change it)
+        $parser->setPath( dirname(__FILE__).'/templates/default' );
+        $output = $parser->get(
+            'optional.tpl',
+            array(
+                'backend_path'  => 'backend',
+                'cat_url'       => CAT_URL,
+                'installer_uri' => $installer_uri,
+                'zip_files'     => $zip_files,
+                'config'        => $config,
+            )
+        );
+        return array( true, $output );
+    }
+    else
+    {
+        return show_step_finish();
+    }
+}   // end function show_step_optional()
+
+/**
+ * install optional addons (located in ./optional subfolder)
+ **/
+function check_step_optional() {
+    install_optional_modules();
+    return array(
+#        ( count($errors) ? false : true ),
+true,
+#        $errors
+array()
+    );
+}
+
+/**
+ *
+ **/
+function show_step_finish() {
+    global $lang, $parser, $installer_uri, $config;
 	$tpl = 'finish.tpl';
 	if ( file_exists( dirname(__FILE__).'/templates/default/finish_'.$lang->getLang().'.tpl' ) )
 	{
@@ -733,18 +803,7 @@ function fill_tables($database) {
     // fill 'hardcoded' settings and class.secure config
     __cat_installer_import_sql(dirname(__FILE__).'/db/data.sql',$database);
 
-    // get current version
-    if ( file_exists(dirname(__FILE__).'/tag.txt') )
-    {
-        $tag = fopen( dirname(__FILE__).'/tag.txt', 'r' );
-        list ( $current_version, $current_build ) = explode( '#', fgets($tag) );
-        fclose($tag);
-    }
-    else
-    {
-        $current_version = '0.0.0';
-        $current_build   = 'unknown';
-    }
+    $current_version = $config['installed_version'];
 
     // fill settings configured by installer
 	$settings_rows = "INSERT INTO `".CAT_TABLE_PREFIX."settings` "
@@ -810,7 +869,7 @@ function fill_tables($database) {
  **/
 function install_modules ($cat_path,$database) {
 
-	global $admin;
+    global $admin, $bundled;
 
 	$errors = array();
 
@@ -821,7 +880,6 @@ function install_modules ($cat_path,$database) {
 		'modules'	=> $cat_path.'/modules/',
 		'templates'	=> $cat_path.'/templates/',
 		'languages'	=> $cat_path.'/languages/',
-        'optional'  => dirname(__FILE__).'/optional',
 	);
 	$ignore_files= array(
 		'admin.php',
@@ -829,20 +887,13 @@ function install_modules ($cat_path,$database) {
 		'edit_module_files.php'
 	);
 
-    // bundled modules
-    $bundled = array( 'captcha_control', 'droplets', 'edit_area', 'form ', 'initial_page', 'lib_dwoo', 'lib_images', 'lib_jquery', 'lib_pclzip', 'lib_search', 'menu_link', 'show_menu2', 'wrapper', 'wysiwyg', 'wysiwyg_admin', 'blank', 'freshcat', 'DE', 'EN', 'blackcat' );
-
 	$logh = fopen( CAT_LOGFILE, 'a' );
 
     foreach($dirs AS $type => $dir)
     {
         $subs = ( $type == 'languages' )
               ? CAT_Helper_Directory::getInstance()->setRecursion(false)->getPHPFiles($dir,$dir.'/')
-              : (
-                    ( $type == 'optional' )
-                  ? CAT_Helper_Directory::getInstance()->setRecursion(false)->setSuffixFilter(array('zip'))->getFiles($dir)
                   : CAT_Helper_Directory::getInstance()->setRecursion(false)->getDirectories($dir,$dir.'/')
-                )
               ;
         natsort($subs);
         foreach( $subs as $item )
@@ -861,11 +912,6 @@ function install_modules ($cat_path,$database) {
                 {
                     fwrite( $logh, sprintf('%s [%s] sucessfully installed',ucfirst(substr($type,0,-1)),$item)."\n" );
                 }
-            }
-            elseif ( $type == 'optional' )
-            {
-                fwrite( $logh, 'installing additional (optional) addon ['.$item.']'."\n" );
-                CAT_Helper_Addons::installModule($item,pathinfo($item,PATHINFO_BASENAME));
             }
             else
             {
@@ -903,6 +949,62 @@ function install_modules ($cat_path,$database) {
         $errors
     );
 }   // end function install_modules ()
+
+/**
+ * installs additional modules (located in ./optional subfolder)
+ **/
+function install_optional_modules () {
+
+    global $admin, $bundled, $config, $lang, $dirh;
+
+    $logh     = fopen( CAT_LOGFILE, 'a' );
+
+    if(!isset($config['optional_addon']) || !is_array($config['optional_addon']) || !count($config['optional_addon']))
+    {
+        fwrite( $logh, 'no additional addons to install' );
+        fclose($logh);
+        return array( true, array() );
+    }
+
+    $cat_path = $dirh->sanitizePath( dirname(__FILE__).'/..' );
+    $errors   = array();
+
+    // set installed CMS version for precheck.php
+    CAT_Registry::set( 'CAT_VERSION', $config['installed_version'], true );
+    // set other constants
+    init_constants($cat_path);
+
+    foreach($config['optional_addon'] as $file) {
+        if(!file_exists($dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file))) {
+            fwrite( $logh, 'file not found: '.$dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file));
+            $errors[] = $lang->translate('No such file: [{{file}}]',array('file'=>$file));
+        }
+        else {
+            fwrite( $logh, 'installing optional addon ['.$file.']'."\n" );
+            if(
+                ! CAT_Helper_Addons::installModule(
+                      $dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file)
+                  )
+            ) {
+                fwrite( $logh, '-> installation failed! '.CAT_Helper_Addons::getError()."\n" );
+                $errors[] = $lang->translate(
+                    '-> Unable to install {{module}}! {{error}}',
+                    array( 'module' => $file, 'error' => CAT_Helper_Addons::getError() )
+                );
+            }
+            else {
+                fwrite( $logh, '-> installation succeeded'."\n" );
+            }
+        }
+    }
+
+    fclose($logh);
+
+    return array(
+        ( count($errors) ? false : true ),
+        $errors
+    );
+}
 
 /**
  * checks important tables for existance
@@ -1034,11 +1136,47 @@ function pre_installation_error( $msg ) {
 }   // end function pre_installation_error()
 
 /**
+ * init constants needed for module installations etc.
+ **/
+function init_constants($cat_path)
+{
+
+    global $config;
+
+    // avoid to load config.php here
+    if ( ! defined('CAT_PATH') )           { define('CAT_PATH',$cat_path);                     }
+    if ( ! defined('CAT_URL') )            { define('CAT_URL',$config['cat_url']);             }
+    if ( ! defined('CAT_ADMINS_FOLDER') )  { define('CAT_ADMINS_FOLDER', '/admins');           }
+    if ( ! defined('CAT_BACKEND_FOLDER') ) { define('CAT_BACKEND_FOLDER', '/backend');         }
+    if ( ! defined('CAT_BACKEND_PATH') )   { define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );  }
+    if ( ! defined('CAT_ADMIN_PATH') )     { define('CAT_ADMIN_PATH', CAT_PATH.CAT_BACKEND_PATH);  }
+    if ( ! defined('CAT_ADMIN_URL') )      { define('CAT_ADMIN_URL', CAT_URL.CAT_BACKEND_PATH);    }
+
+    foreach( $config as $key => $value ) {
+        if ( ! defined( strtoupper($key) ) )
+        {
+            if ( ! is_scalar($value) ) { continue; }
+            define( str_replace( 'DATABASE_', 'CAT_DB_', strtoupper($key) ),$value);
+        }
+    }
+    if ( ! defined('CAT_TABLE_PREFIX') )   { define('CAT_TABLE_PREFIX',TABLE_PREFIX);              }
+
+    // WB compatibility
+    if ( ! defined('WB_URL')       ) { define('WB_URL',$config['cat_url']);        }
+    if ( ! defined('WB_PATH')      ) { define('WB_PATH',$cat_path);                }
+    // LEPTON compatibility
+    if ( ! defined('LEPTON_URL')   ) { define('LEPTON_URL',$config['cat_url']); }
+    if ( ! defined('LEPTON_PATH')  ) { define('LEPTON_PATH',$cat_path);            }
+
+}   // end function init_constants()
+
+/**
  * scan for WYSIWYG-Editors
  **/
 function findWYSIWYG()
 {
-    global $dirh;
+    global $dirh,$lang;
+
     $info_files = $dirh->findFiles('info.php',CAT_PATH.'/modules',CAT_PATH);
     $editors    = array();
     foreach ( $info_files as $file )
@@ -1048,6 +1186,19 @@ function findWYSIWYG()
         if ( $module_function == 'WYSIWYG' )
         {
             $editors[str_replace('/','',pathinfo($file,PATHINFO_DIRNAME))] = $module_name;
+        }
+    }
+    // optional
+    $zip_files = $dirh->scanDirectory( dirname(__FILE__).'/optional', true, true, true, array('zip') );
+    if(count($zip_files)) {
+        foreach($zip_files as $file) {
+            // not very elegant, but good enough for now...
+            if(preg_match('/ckeditor/i',$file)) {
+                $editors['opt_'.str_replace('/','',pathinfo($file,PATHINFO_FILENAME))]
+                    = pathinfo($file,PATHINFO_FILENAME)
+                    . ' ('.$lang->translate('optional Add-On!').')'
+                    ;
+            }
         }
     }
     return $editors;
@@ -1204,29 +1355,7 @@ function __do_install() {
         fclose($handle);
     }
 
-    // avoid to load config.php here
-    if ( ! defined('CAT_PATH') )           { define('CAT_PATH',$cat_path);                     }
-    if ( ! defined('CAT_URL') )            { define('CAT_URL',$config['cat_url']);             }
-    if ( ! defined('CAT_ADMINS_FOLDER') )  { define('CAT_ADMINS_FOLDER', '/admins');           }
-    if ( ! defined('CAT_BACKEND_FOLDER') ) { define('CAT_BACKEND_FOLDER', '/backend');         }
-    if ( ! defined('CAT_BACKEND_PATH') )   { define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );  }
-    if ( ! defined('CAT_ADMIN_PATH') )     { define('CAT_ADMIN_PATH', CAT_PATH.CAT_BACKEND_PATH);  }
-    if ( ! defined('CAT_ADMIN_URL') )      { define('CAT_ADMIN_URL', CAT_URL.CAT_BACKEND_PATH);    }
-
-    foreach( $config as $key => $value ) {
-        if ( ! defined( strtoupper($key) ) )
-        {
-            define( str_replace( 'DATABASE_', 'CAT_DB_', strtoupper($key) ),$value);
-        }
-    }
-    if ( ! defined('CAT_TABLE_PREFIX') )   { define('CAT_TABLE_PREFIX',TABLE_PREFIX);              }
-
-    // WB compatibility
-    if ( ! defined('WB_URL')       ) { define('WB_URL',$config['cat_url']);        }
-    if ( ! defined('WB_PATH')      ) { define('WB_PATH',$cat_path);                }
-    // LEPTON compatibility
-    if ( ! defined('LEPTON_URL')   ) { define('LEPTON_URL',$config['cat_url']); }
-    if ( ! defined('LEPTON_PATH')  ) { define('LEPTON_PATH',$cat_path);            }
+    init_constants($cat_path);
 
 #    require $cat_path.'/framework/class.login.php';
     include $cat_path.'/framework/class.database.php';
@@ -1361,7 +1490,7 @@ function __cat_check_db_config() {
     {
         if ( ! isset($config['no_validate_db_password']) )
         {
-        if ( ! $users->validatePassword($config['database_password']) )
+            if ( ! $users->validatePassword($config['database_password'],false,true) )
         {
             $errors['installer_database_password'] = $lang->translate('Invalid database password!')
                                                    . ' ' . $users->getPasswordError();

@@ -63,6 +63,7 @@
 		  <option value="{$dir}"{if $dir == $installer_default_wysiwyg} selected="selected"{/if}>{$name}</option>
 		  {/foreach}
         </select>
+        <span style="width:55%;float:right;display:none;" id="installer_default_wysiwyg_optional_info">{translate('Please do not forget to check this Add-On at the [Optional] step! The WYSIWYG Editor will not work otherwise!')}</span>
 	  </td>
 	</tr>
    	<tr>

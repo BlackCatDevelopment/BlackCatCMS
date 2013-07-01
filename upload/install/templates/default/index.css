@@ -114,8 +114,8 @@ div#buttons input{margin-left:15px;margin-right:15px;}
 
 /* other */
 h1,h2,h3{color: #871A03;}
-a{text-decoration: none;color: #F7C729;}
-a:hover{color:#871A03;}
+a{text-decoration:none;color:#871A03;font-weight:bold;}
+a:hover{color:#F7C729;}
 table{width:100%;border-collapse:collapse;border:0 none;}
 th{text-align:left;padding:5px;background-color:#252c36;color:white;}
 td{padding:5px;vertical-align: top;}

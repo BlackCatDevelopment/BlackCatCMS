@@ -68,6 +68,9 @@ $LANG = array(
     'Create GUID' => 'GUID erzeugen',
     "The GUID allows to identify an installation while being completely anonymous as it contains no information about you, the CMS contents or anything else. You may use it to distinguish different installations, for example. If you don't wish to create one now, you may make it up later from the backend."
         => 'Die GUID erlaubt es einerseits, eine Installation zu identifizieren, ist aber andererseits völlig anonym, da keinerlei Informationen über den Eigentümer oder die Inhalte des CMS enthalten sind. Zudem können Sie sie nutzen, um mehrere Installationen voneinander zu unterscheiden. Wenn Sie jetzt keine GUID erzeugen möchten, können Sie das später über das Backend nachholen.',
+    'optional Add-On!' => 'optionales Add-On!',
+    'Please do not forget to check this Add-On at the [Optional] step! The WYSIWYG Editor will not work otherwise!'
+        => 'Vergessen Sie nicht, dieses Add-On im Schritt [Optional] zu installieren! Der WYSIWYG Editor wird sonst nicht funktionieren!',
 // ----- db -----
     'Please enter your MySQL database server details below'
         => 'Bitte geben Sie Ihre Datenbankeinstellungen ein',
@@ -93,6 +96,8 @@ $LANG = array(
     'Please check the database password!' => 'Bitte das Datenbankkennwort prüfen',
     "If you don't have a database password, or a password that doesn't meet common security constraints, please check this checkbox. Please note that this is a security risk in public environments! Use empty and/or short passwords in (local) testing environments only."
 		=> 'Wenn das Datenbankkennwort leer bleiben soll, oder nicht den üblichen Sicherheitskriterien entspricht, bitte nebenstehende Checkbox anhaken. Hinweis: Dies ist ein Sicherheitsrisiko! Leere und/oder sehr kurze Kennworte sollten nur in (lokalen) Testumgebungen verwendet werden.',
+    'The required password complexity is not met'
+        => 'Die erforderliche Kennwort-Komplexität ist nicht erfüllt',
 // ----- site -----
 	'Site settings' => 'Site Einstellungen',
 	'Website title' => 'Webseitentitel',
@@ -122,6 +127,10 @@ $LANG = array(
 // ----- postcheck -----
     'Please check your settings before finishing the installation process.'
         => 'Bitte überprüfen Sie nochmals Ihre Einstellungen, bevor Sie fortfahren',
+// ----- optional addons -----
+    'Optional addons' => 'Optionale Add-Ons',
+    'The following optional addons were found in the <i>./optional</i> subfolder. Please check the ones you wish to install. (Default: all)'
+        => 'Folgende optionale Add-Ons wurden im Verzeichnis <i>./optional</i> gefunden. Bitte markieren Sie diejenigen, die installiert werden sollen. (Standard: alle)',
 // ----- install -----
 	'check tables' => 'Überprüfung der Tabellen',
 	'missing' => 'fehlt',
