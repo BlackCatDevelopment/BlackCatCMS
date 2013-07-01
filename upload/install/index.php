@@ -24,7 +24,7 @@
  */
 
 define('CAT_DEBUG',false);
-define('CAT_PATH',dirname(__file__).'/..');
+//define('CAT_PATH',dirname(__file__).'/..');
 
 // -----------------------------------------------------------------------------
 // NO UPDATE AT THE MOMENT!
@@ -943,6 +943,8 @@ function install_optional_modules () {
     // set other constants
     init_constants($cat_path);
 
+    include $cat_path.'/framework/class.database.php';
+    $database = new database();
     foreach($config['optional_addon'] as $file) {
         if(!file_exists($dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file))) {
             fwrite( $logh, 'file not found: '.$dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file));
@@ -1113,29 +1115,29 @@ function init_constants($cat_path)
     global $config;
 
     // avoid to load config.php here
-    if ( ! defined('CAT_PATH') )           { define('CAT_PATH',$cat_path);                     }
-    if ( ! defined('CAT_URL') )            { define('CAT_URL',$config['cat_url']);             }
-    if ( ! defined('CAT_ADMINS_FOLDER') )  { define('CAT_ADMINS_FOLDER', '/admins');           }
-    if ( ! defined('CAT_BACKEND_FOLDER') ) { define('CAT_BACKEND_FOLDER', '/backend');         }
-    if ( ! defined('CAT_BACKEND_PATH') )   { define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );  }
-    if ( ! defined('CAT_ADMIN_PATH') )     { define('CAT_ADMIN_PATH', CAT_PATH.CAT_BACKEND_PATH);  }
-    if ( ! defined('CAT_ADMIN_URL') )      { define('CAT_ADMIN_URL', CAT_URL.CAT_BACKEND_PATH);    }
+    if ( ! CAT_Registry::exists('CAT_PATH') )           { CAT_Registry::define('CAT_PATH',$cat_path);                     }
+    if ( ! CAT_Registry::exists('CAT_URL') )            { CAT_Registry::define('CAT_URL',$config['cat_url']);             }
+    if ( ! CAT_Registry::exists('CAT_ADMINS_FOLDER') )  { CAT_Registry::define('CAT_ADMINS_FOLDER', '/admins');           }
+    if ( ! CAT_Registry::exists('CAT_BACKEND_FOLDER') ) { CAT_Registry::define('CAT_BACKEND_FOLDER', '/backend');         }
+    if ( ! CAT_Registry::exists('CAT_BACKEND_PATH') )   { CAT_Registry::define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );  }
+    if ( ! CAT_Registry::exists('CAT_ADMIN_PATH') )     { CAT_Registry::define('CAT_ADMIN_PATH', CAT_PATH.CAT_BACKEND_PATH);  }
+    if ( ! CAT_Registry::exists('CAT_ADMIN_URL') )      { CAT_Registry::define('CAT_ADMIN_URL', CAT_URL.CAT_BACKEND_PATH);    }
 
     foreach( $config as $key => $value ) {
-        if ( ! defined( strtoupper($key) ) )
+        if ( ! CAT_Registry::exists( strtoupper($key) ) )
         {
             if ( ! is_scalar($value) ) { continue; }
-            define( str_replace( 'DATABASE_', 'CAT_DB_', strtoupper($key) ),$value);
+            CAT_Registry::define( str_replace( 'DATABASE_', 'CAT_DB_', strtoupper($key) ),$value);
         }
     }
-    if ( ! defined('CAT_TABLE_PREFIX') )   { define('CAT_TABLE_PREFIX',TABLE_PREFIX);              }
+    if ( ! CAT_Registry::exists('CAT_TABLE_PREFIX') )   { CAT_Registry::define('CAT_TABLE_PREFIX',TABLE_PREFIX);              }
 
     // WB compatibility
-    if ( ! defined('WB_URL')       ) { define('WB_URL',$config['cat_url']);        }
-    if ( ! defined('WB_PATH')      ) { define('WB_PATH',$cat_path);                }
+    if ( ! CAT_Registry::exists('WB_URL')       ) { CAT_Registry::define('WB_URL',$config['cat_url']);        }
+    if ( ! CAT_Registry::exists('WB_PATH')      ) { CAT_Registry::define('WB_PATH',$cat_path);                }
     // LEPTON compatibility
-    if ( ! defined('LEPTON_URL')   ) { define('LEPTON_URL',$config['cat_url']); }
-    if ( ! defined('LEPTON_PATH')  ) { define('LEPTON_PATH',$cat_path);            }
+    if ( ! CAT_Registry::exists('LEPTON_URL')   ) { CAT_Registry::define('LEPTON_URL',$config['cat_url']); }
+    if ( ! CAT_Registry::exists('LEPTON_PATH')  ) { CAT_Registry::define('LEPTON_PATH',$cat_path);            }
 
 }   // end function init_constants()
 

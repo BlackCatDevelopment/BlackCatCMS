@@ -131,6 +131,8 @@ $LANG = array(
     'Optional addons' => 'Optionale Add-Ons',
     'The following optional addons were found in the <i>./optional</i> subfolder. Please check the ones you wish to install. (Default: all)'
         => 'Folgende optionale Add-Ons wurden im Verzeichnis <i>./optional</i> gefunden. Bitte markieren Sie diejenigen, die installiert werden sollen. (Standard: alle)',
+    "This one can't be unchecked because you chose to use it!"
+        => 'Kann nicht deaktiviert werden, da Sie es zur Verwendung ausgewählt haben!',
 // ----- install -----
 	'check tables' => 'Überprüfung der Tabellen',
 	'missing' => 'fehlt',
