@@ -45,7 +45,7 @@ $error = $version = $newer = $last = $last_version = NULL;
 $debug = false;
 $doit  = true;
 
-if(!CAT_Helper_Validate::getInstance()->sanitizeGet('blackcat_refresh'))
+if(!CAT_Helper_Validate::sanitizeGet('blackcat_refresh'))
 {
     $file = sanitize_path(dirname(__FILE__).'/data/.last');
     if ( file_exists($file) )
@@ -68,7 +68,7 @@ if(!CAT_Helper_Validate::getInstance()->sanitizeGet('blackcat_refresh'))
 
 if ( $doit ) {
 
-    ini_set('include_path', CAT_PATH.'/modules/blackcat/inc');
+    ini_set('include_path', CAT_PATH.'/modules/lib_zendlite');
     include 'Zend/Http/Client.php';
     $client = new Zend_Http_Client(
         $current['source'],
