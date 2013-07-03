@@ -213,3 +213,7 @@
 #fc_list_overview .fc_activeSearch {
 	color: #1d2023;
 }
+
+.fc_modifyUser {
+    width: 80%;
+}

@@ -50,7 +50,8 @@ input.fc_input_normal {
 	}
 
 .fc_list_forms > *,
-#fc_set_form_content {
+#fc_set_form_content,
+.fc_label_300 {
 	margin-right:	1em;
 	margin-left:	1em;
 }

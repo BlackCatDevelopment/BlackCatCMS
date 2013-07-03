@@ -40,11 +40,10 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-require_once(CAT_PATH . '/framework/class.admin.php');
-$admin = new admin('Preferences');
+$backend    = CAT_Backend::getInstance('preferences','start');
+$user       = CAT_Users::getInstance();
+$val        = CAT_Helper_Validate::getInstance();
 
-$val      = CAT_Helper_Validate::getInstance();
-$user     = CAT_Users::getInstance();
 $user_id  = $val->fromSession('USER_ID','numeric');
 $group_id = $val->fromSession('GROUP_ID','numeric');
 
@@ -57,7 +56,7 @@ include_once(CAT_PATH . '/framework/functions-utf8.php');
 // ! Initial page addition   
 // ========================= 
 require_once( CAT_PATH . '/modules/initial_page/classes/c_init_page.php' );
-$ref		= new c_init_page( $database );
+$ref		= new c_init_page( $backend->db() );
 $info		= $ref->get_user_info( $user_id );
 
 $options	= array(
@@ -75,7 +74,7 @@ $tpl_data['INIT_PAGE_LABEL']  = $ref->get_language();
 // ============================================================= 
 $sql  = 'SELECT `display_name`, `username`, `email`, `statusflags` FROM `'.CAT_TABLE_PREFIX.'users` WHERE `user_id` = '.(int)$user->get_user_id();
 
-$res_user	= $database->query($sql);
+$res_user	= $backend->db()->query($sql);
 if ($res_user->numRows() > 0)
 {
 	if( ($rec_user = $res_user->fetchRow()) )
@@ -92,7 +91,7 @@ if ($res_user->numRows() > 0)
 // =============================== 
 $tpl_data['USER_ID']	= $user->get_user_id();
 
-if ( $admin->bit_isset($rec_user['statusflags'], USERS_PROFILE_ALLOWED) )
+if ( $backend->bit_isset($rec_user['statusflags'], USERS_PROFILE_ALLOWED) )
 {
 	$tpl_data['PROFILE_ACTION_URL']			    = CAT_ADMIN_URL.'/profiles/index.php';
 	$tpl_data['show_cmd_profile_edit']			= true;
@@ -115,10 +114,11 @@ $tpl_data['languages'] = $addons->get_addons( LANGUAGE , 'language', false, 'dir
 // ================================== 
 $counter	= 0;
 $timezone_table = CAT_Helper_DateTime::getTimezones();
+$user_timezone  = ( isset($_SESSION['TIMEZONE_STRING']) ? $_SESSION['TIMEZONE_STRING'] : CAT_Registry::get('DEFAULT_TIMEZONE_STRING') );
 foreach ($timezone_table as $title)
 {
 	$tpl_data['timezones'][$counter]['NAME']		= $title;
-	$tpl_data['timezones'][$counter]['SELECTED']	= $admin->get_timezone_string() == $title	? true : false;
+	$tpl_data['timezones'][$counter]['SELECTED']	= ( $user_timezone == $title ) ? true : false;
 	$counter++;
 }
 

@@ -1101,8 +1101,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         ? CAT_Registry::get('AUTH_MAX_PASS_LENGTH')
                         : 20;
 	        // check length
-	        if ( strlen($password) < $min_length )
-			{
+	        if (
+                   strlen($password) < $min_length
+                && (
+                       ! CAT_Registry::exists('ALLOW_SHORT_PASSWORDS')
+                    ||   CAT_Registry::get('ALLOW_SHORT_PASSWORDS') !== true
+                   )
+            ) {
                 self::$validatePasswordError = self::lang()->translate('The password is too short.');
 	            return false;
 	        }

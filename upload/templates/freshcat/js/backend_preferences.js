@@ -23,19 +23,40 @@
 
 jQuery(document).ready(function()
 {
-	$('#fc_preferences_submit').click( function()
+    var fields = new Array( 'fc_pref_display_name', 'fc_language', 'fc_timezone_string', 'fc_date_format', 'fc_email' );
+    for( i=0; i<=fields.length; i++ )
 	{
+        $('#'+fields[i]).change( function() {
+            $('#fc_modifyUser_currentpw').show('slide');
+        });
+    }
+    $('#fc_change_pw').click( function(e) {
+        e.preventDefault();
+        $('#fc_modifyUser_setnewpw').show('slide');
+        $('#fc_modifyUser_currentpw').show('slide');
+        $(this).hide();
+    });
+    $('.fc_modifyUser_reset').click( function() {
+        $('#fc_modifyUser_setnewpw').hide('slide');
+        $('#fc_modifyUser_currentpw').hide('slide');
+        $('#fc_change_pw').show();
+    });
+	$('.fc_preferences_submit').click( function(e)
+	{
+        if ( !$('#fc_current_password').val() )
+		{
+            e.preventDefault();
 		if ( $('.popup').size() === 0 )
 		{
 			$('<div class="popup" />').appendTo('body');
 		}
-		$('.popup').html('<div class="c_16">Confirm with current password</div>');
+    		$('.popup').html('<div class="c_16">'+cattranslate('Confirm with current password')+'</div>');
 		var button		= CAT_TEXT["BACK"];
 		if ( !$('#fc_current_password').val() )
 		{
 			$('.popup').dialog(
 			{
-				title: 'Confirm with current password',
+    				title: cattranslate('Confirm with current password'),
 				modal: true,
 				buttons: [
 				{
@@ -43,6 +64,7 @@ jQuery(document).ready(function()
 					click: function()
 					{
 						$(this).dialog("close");
+                            $('#fc_modifyUser_currentpw').show('slide');
 						$('.popup').remove();
 					}
 				}
@@ -50,5 +72,10 @@ jQuery(document).ready(function()
 			});
 			return false;
 		}
+		}
+        else
+        {
+            $('.fc_modifyUser_reset').click();
+        }
 	});
 });
