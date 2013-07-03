@@ -50,7 +50,7 @@ $template_license_terms		= '-';
 $template_description		= 'Introduced with Black Cat CMS in 2013.<br/><br/>Done by Matthias Glienke, <a class="icon-creativecat" href="http://creativecat.de"> creativecat</a>';
 $template_engine			= 'dwoo';
 $template_guid				= 'AD6296ED-31BD-49EB-AE23-4DD76B7ED776';
-$template_variants          = array( 'default', 'blue' );
+$template_variants          = array( 'default', 'custom' );
 
 
 ?>

@@ -927,6 +927,8 @@ if (!class_exists('CAT_Helper_Addons'))
                         //CAT_Helper_Directory::removeDirectory($zipfile);
                         if(!$silent)
                         self::printError( 'Already installed' );
+                        else
+                            self::$error = 'already installed';
                         return false;
                         }
                     }

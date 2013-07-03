@@ -93,6 +93,7 @@ if (!$page)
 }
 
 $visibility		= $page['visibility'];
+$use_trash      = false;
 
 // Check if we should delete it or just set the visibility to 'deleted'
 if ( CAT_Registry::get('PAGE_TRASH') != 'disabled' && $visibility != 'deleted' )
@@ -100,6 +101,7 @@ if ( CAT_Registry::get('PAGE_TRASH') != 'disabled' && $visibility != 'deleted' )
 	$ajax_status	= 1;
 	// Page trash is enabled and page has not yet been deleted
     $result         = CAT_Helper_Page::deletePage($page_id,true);
+    $use_trash      = true;
 } else {
 	$ajax_status	= 0;
     $result         = CAT_Helper_Page::deletePage($page_id);
@@ -109,7 +111,12 @@ if ( CAT_Registry::get('PAGE_TRASH') != 'disabled' && $visibility != 'deleted' )
 if (!$result)
 {
 	$ajax	= array(
-		'message'	=> $backend->db()->get_error(),
+		'message'	=> $backend->lang()->translate(
+                           'An error occured (using trash: {{trash}})',
+                           array( 'trash' => $use_trash ? $backend->lang()->translate('Yes') : $backend->lang()->translate('No') )
+                       )
+                    .  ( ( $backend->db()->is_error() ) ? ' (DB error: '.$backend->db()->get_error().')' : '' )
+                       ,
 		'success'	=> false
 	);
 	print json_encode( $ajax );

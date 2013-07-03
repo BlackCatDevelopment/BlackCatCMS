@@ -21,6 +21,11 @@
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
+ *   Please note: This class is based on class.upload.php by verot.net and uses
+ *   some of the great work of Colin Verot. We removed all the image
+ *   manipulation stuff as we wanted to have an "upload only" class, and added
+ *   some more security features using the (external) getID3 library.
+ *
  */
 
 if ( ! class_exists( 'CAT_Helper_Upload' ) )
@@ -492,6 +497,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
             if(CAT_Registry::exists('UPLOAD_ALLOWED'))
             {
                 $allowed = explode(',', CAT_Registry::get('UPLOAD_ALLOWED'));
+                $this->log()->logDebug(CAT_Registry::get('UPLOAD_ALLOWED'));
                 foreach($allowed as $suffix)
                 {
                     if ( isset($this->mime_types[$suffix]) && ! in_array($this->mime_types[$suffix],$this->allowed) )
@@ -558,7 +564,8 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                     $inis            = ini_get_all();
                     $open_basedir    = (    array_key_exists('open_basedir', $inis) 
                                         && array_key_exists('local_value', $inis['open_basedir'])
-                                        && !empty($inis['open_basedir']['local_value']) )
+                                      && !empty($inis['open_basedir']['local_value'])
+                                    )
                                     ? $inis['open_basedir']['local_value']
                                     : false;
                 }
@@ -569,7 +576,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                 $this->log()->logDebug( 'operating system       : ' . PHP_OS );
                 $this->log()->logDebug( 'PHP version               : ' . PHP_VERSION );
                 $this->log()->logDebug( 'open_basedir              : ' . (!empty($open_basedir) ? $open_basedir : 'no restriction') );
-                $this->log()->logDebug( 'upload_max_filesize    : ' . $this->file_max_size_raw . ' (' . $this->file_max_size . ' bytes)' );
+                $this->log()->logDebug( 'upload_max_filesize: ' . $this->file_max_size_raw . ' (' . $this->file_max_size . ' bytes)' );
             }
 
             // check if we sent a local filename rather than a $_FILE element

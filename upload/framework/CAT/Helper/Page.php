@@ -1859,11 +1859,13 @@ if (!class_exists('CAT_Helper_Page'))
                         CAT_TABLE_PREFIX, $page['page_id']
                     ));
     				// Run this function again for all sub-pages
-    				self::_trashPages( $page['page_id'] );
-                    if(self::getInstance()->db()->is_error()) return false;
-                    return true;
+    				if( !self::_trashPages( $page['page_id'] ) )
+                        return false;
+                    if(self::getInstance()->db()->is_error())
+                        return false;
                 }
             }
+            return true;
     	}   // end function _trashPages()
 
         /**

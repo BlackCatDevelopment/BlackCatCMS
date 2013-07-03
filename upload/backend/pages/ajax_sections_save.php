@@ -46,7 +46,7 @@ $users   = CAT_Users::getInstance();
 header('Content-type: application/json');
 
 // Make sure people are allowed to access this page
-if ( MANAGE_SECTIONS != 'enabled' )
+if ( ! CAT_Registry::exists('MANAGE_SECTIONS') || CAT_Registry::get('MANAGE_SECTIONS') != 'enabled' )
 {
 	$ajax	= array(
 		'message'	=> $backend->lang()->translate('You cannot modify sections. Please enable "Manage section".'),
@@ -56,7 +56,7 @@ if ( MANAGE_SECTIONS != 'enabled' )
 	exit();
 }
 
-$delete_section_id		= $val->sanitizeGet('delete_section_id','numeric');
+$delete_section_id		= $val->sanitizePost('delete_section_id','numeric');
 $update_section_id		= $val->sanitizePost('update_section_id','numeric');
 $section_id             = ( $delete_section_id )
                         ? $delete_section_id

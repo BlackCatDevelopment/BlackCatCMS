@@ -165,7 +165,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          * @access public
          * @return
          **/
-        private static function listbuilder($list,$root_id=0,$type='ul',$selected)
+        private static function listbuilder($list,$root_id=0,$type='ul',$selected=NULL)
         {
             if (empty($list) || !is_array($list) || !count($list))
             {
