@@ -64,13 +64,97 @@ if (!class_exists('CAT_Helper_Droplet')) {
 		 **/
 		public static function installDroplet( $temp_file )
 		{
-		    if ( ! function_exists( 'droplets_import' ) )
-			{
-			    require_once CAT_PATH.'/modules/droplets/include.php';
-			}
 			$temp_unzip = CAT_PATH.'/temp/droplets_unzip/';
             CAT_Helper_Directory::createDirectory( $temp_unzip );
-			return droplets_import( $temp_file, $temp_unzip );
+
+            $errors  = array();
+            $imports = array();
+            $count   = 0;
+
+            // extract file
+            $list = CAT_Helper_Zip::getInstance($temp_file)->config( 'Path', $temp_unzip )->extract();
+
+            // get .php files
+            $files = CAT_Helper_Directory::getPHPFiles($temp_unzip,$temp_unzip.'/');
+
+            // now, open all *.php files and search for the header;
+            // an exported droplet starts with "//:"
+            foreach( $files as $file )
+			{
+                if ( pathinfo($file,PATHINFO_FILENAME) !== 'index' && pathinfo($file,PATHINFO_EXTENSION) == 'php' )
+                {
+                    $description = NULL;
+                    $usage       = NULL;
+                    $code        = NULL;
+                    // Name of the Droplet = Filename
+                    $name        = pathinfo($file,PATHINFO_FILENAME);
+                    // Slurp file contents
+                    $lines       = file( $temp_unzip.'/'.$file );
+                    // First line: Description
+                    if ( preg_match( '#^//\:(.*)$#', $lines[0], $match ) ) {
+                        $description = addslashes( $match[1] );
+                        array_shift($lines);
+                    }
+                    // Second line: Usage instructions
+                    if ( preg_match( '#^//\:(.*)$#', $lines[0], $match ) ) {
+                        $usage       = addslashes( $match[1] );
+                        array_shift($lines);
+                    }
+                    // there may be more comment lines; they will be added to the usage instructions
+                    while(preg_match('#^//(.*)$#', $lines[0], $match ) ) {
+                        $usage       .= addslashes(trim($match[1]));
+                        array_shift($lines);
+                    }
+
+                    if ( ! $description && ! $usage ) {
+                        // invalid file
+                        $errors[$file] = CAT_Helper_Directory::getInstance()->lang()->translate( 'No valid Droplet file (missing description and/or usage instructions)' );
+                        continue;
+                    }
+                    // Remaining: Droplet code
+                    $code = implode( '', $lines );
+                            // replace 'evil' chars in code
+                            $tags = array('<?php', '?>' , '<?');
+                            $code = addslashes(str_replace($tags, '', $code));
+                            // Already in the DB?
+                            $stmt  = 'INSERT';
+                            $id    = NULL;
+                    $found = CAT_Helper_Directory::getInstance()->db()->get_one("SELECT * FROM ".CAT_TABLE_PREFIX."mod_droplets WHERE name='$name'");
+                    if ( $found && $found > 0 ) {
+                        $stmt = 'REPLACE';
+                        $id   = $found;
+                    }
+                    // execute
+                    $result = CAT_Helper_Directory::getInstance()->db()->query(sprintf(
+                        "$stmt INTO `%smod_droplets` SET "
+                        . ( ($id) ? 'id='.$id.', ' : '' )
+                        . '`name`=\'%s\', `code`=\'%s\', `description`=\'%s\', '
+                        . '`modified_when`=%d, `modified_by`=\'%s\', '
+                        . '`comments`=\'%s\'',
+                        CAT_TABLE_PREFIX, $name, $code, $description, time(), CAT_Users::get_user_id(), $usage
+                    ));
+                    if( ! CAT_Helper_Directory::getInstance()->db()->is_error() ) {
+                        $count++;
+                        $imports[$name] = 1;
+                    }
+                    else {
+                        $errors[$name] = CAT_Helper_Directory::getInstance()->db()->get_error();
+                    }
+                }
+
+                // check for data directory
+                if ( file_exists( $temp_unzip.'/data' ) ) {
+                    // copy all files
+                    CAT_Helper_Directory::copyRecursive( $temp_unzip.'/data', dirname(__FILE__).'/data/' );
+               	}
+
+			}
+
+            // cleanup; ignore errors here
+            CAT_Helper_Directory::removeDirectory($temp_unzip);
+
+            return array( 'count' => $count, 'errors' => $errors, 'imported' => $imports );
+
 		}   // end function installDroplet()
 
 	    /**
@@ -239,6 +323,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         private static function do_eval( $_x_codedata, $_x_varlist, &$content )
         {
+            global $wb, $admin, $wb_page_data;
             self::getInstance()->log()->LogDebug('evaluating: '.$_x_codedata);
             extract( $_x_varlist, EXTR_SKIP );
             return ( eval( $_x_codedata ) );
