@@ -13,6 +13,7 @@
 DROP TABLE IF EXISTS `cat_addons`;
 DROP TABLE IF EXISTS `cat_user_has_group`;
 DROP TABLE IF EXISTS `cat_groups`;
+DROP TABLE IF EXISTS `cat_mimetypes`;
 DROP TABLE IF EXISTS `cat_mod_captcha_control`;
 DROP TABLE IF EXISTS `cat_mod_droplets_permissions`;
 DROP TABLE IF EXISTS `cat_mod_droplets_settings`;
@@ -69,6 +70,17 @@ CREATE TABLE IF NOT EXISTS `cat_groups` (
   `module_permissions` text NOT NULL,
   `template_permissions` text NOT NULL,
   PRIMARY KEY (`group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `cat_mimetypes` (
+  `mime_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `mime_type` varchar(50) NOT NULL,
+  `mime_suffixes` text,
+  `mime_label` varchar(50) DEFAULT NULL,
+  `mime_icon` varchar(50) DEFAULT NULL,
+  `mime_allowed_for` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`mime_id`),
+  KEY `mime_id` (`mime_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cat_mod_captcha_control` (
