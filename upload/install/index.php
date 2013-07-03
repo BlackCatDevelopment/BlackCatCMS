@@ -24,7 +24,6 @@
  */
 
 define('CAT_DEBUG',false);
-//define('CAT_PATH',dirname(__file__).'/..');
 
 // -----------------------------------------------------------------------------
 // NO UPDATE AT THE MOMENT!
@@ -40,12 +39,13 @@ define('CAT_DEBUG',false);
 
 define('CAT_INSTALL',true);
 define('CAT_LOGFILE',dirname(__FILE__).'/../temp/inst.log');
+define('CAT_INST_EXEC_TIME',240);
 
 // Start a session
 if ( !defined( 'SESSION_STARTED' ) ) {
-	session_name( 'cat_session_id' );
-	session_start();
-	define( 'SESSION_STARTED', true );
+    session_name( 'cat_session_id' );
+    session_start();
+    define( 'SESSION_STARTED', true );
 }
 //unset($_SESSION);
 error_reporting(E_ALL^E_NOTICE);
@@ -64,7 +64,7 @@ set_include_path (
     )
 );
 function catcmsinstall_autoload($class) {
-	@include str_replace( '_', '/', $class ) . '.php';
+    @include str_replace( '_', '/', $class ) . '.php';
 }
 spl_autoload_register('catcmsinstall_autoload',false,false);
 
@@ -75,8 +75,8 @@ $installer_uri = dirname( $installer_uri );
 // *****************************************************************************
 // pre installation check: global file system permissions
 $dirs = array(
-	'temp',
-	'install'
+    'temp',
+    'install'
 );
 $pre_inst_err   = array();
 // check root folder; needed for config.php
@@ -88,14 +88,14 @@ foreach( $dirs as $i => $dir )
 {
     $path = dirname(__FILE__).'/../'.$dir;
     if ( ! is_writable($path) )
-	{
-	    $pre_inst_err[] = 'The ['.$dir.'] subfolder must be writable!<br />Das Verzeichnis ['.$dir.'] muss schreibbar sein!';
-	}
+    {
+        $pre_inst_err[] = 'The ['.$dir.'] subfolder must be writable!<br />Das Verzeichnis ['.$dir.'] muss schreibbar sein!';
+    }
 }
 if ( count($pre_inst_err) )
 {
-	pre_installation_error( implode( '<br /><br />', $pre_inst_err ) );
-	exit;
+    pre_installation_error( implode( '<br /><br />', $pre_inst_err ) );
+    exit;
 }
 // *****************************************************************************
 
@@ -133,14 +133,14 @@ $bundled = array(
 // *****************************************************************************
 // define the steps we are going through
 $steps = array(
-	array( 'id' => 'intro',    'text' => $lang->translate('Welcome'),          'done' => false, 'success' => true , 'current' => true,  'errors' => NULL ),
-	array( 'id' => 'precheck', 'text' => $lang->translate('Precheck'),         'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
-	array( 'id' => 'globals',  'text' => $lang->translate('Global settings'),  'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
-	array( 'id' => 'db',       'text' => $lang->translate('Database settings'),'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
-	array( 'id' => 'site',     'text' => $lang->translate('Site settings'),    'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
-	array( 'id' => 'postcheck','text' => $lang->translate('Postcheck'),        'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
+    array( 'id' => 'intro',    'text' => $lang->translate('Welcome'),          'done' => false, 'success' => true , 'current' => true,  'errors' => NULL ),
+    array( 'id' => 'precheck', 'text' => $lang->translate('Precheck'),         'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
+    array( 'id' => 'globals',  'text' => $lang->translate('Global settings'),  'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
+    array( 'id' => 'db',       'text' => $lang->translate('Database settings'),'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
+    array( 'id' => 'site',     'text' => $lang->translate('Site settings'),    'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
+    array( 'id' => 'postcheck','text' => $lang->translate('Postcheck'),        'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
     array( 'id' => 'optional', 'text' => $lang->translate('Optional'),         'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
-	array( 'id' => 'finish',   'text' => $lang->translate('Finish'),           'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
+    array( 'id' => 'finish',   'text' => $lang->translate('Finish'),           'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
 );
 // *****************************************************************************
 
@@ -164,28 +164,28 @@ $parser->setPath( dirname(__FILE__).'/templates/default' );
 
 // set some globals
 $parser->setGlobals(
-	array(
-	    'installer_uri' => $installer_uri,
-	)
+    array(
+        'installer_uri' => $installer_uri,
+    )
 );
 
 // get the current step
 $this_step = 'intro';
 if ( isset($_REQUEST['btn_back']) )
 {
-	$this_step = $_REQUEST['prevstep'];
+    $this_step = $_REQUEST['prevstep'];
 }
 elseif ( isset($_REQUEST['btn_next']) )
 {
-	$this_step = $_REQUEST['nextstep'];
+    $this_step = $_REQUEST['nextstep'];
 }
 elseif ( isset($_REQUEST['goto']) ) {
     $this_step = $_REQUEST['goto'];
 }
 $parser->setGlobals(
-	array(
-	    'this_step' => $this_step,
-	)
+    array(
+        'this_step' => $this_step,
+    )
 );
 
 if($this_step == 'intro') {
@@ -210,14 +210,14 @@ else {
 // set timezone default
 if ( !isset( $config['default_timezone_string' ] ) ) {
     if (date_default_timezone_get()) {
-	    $config['default_timezone_string'] = date_default_timezone_get();
-	}
-	elseif ( ini_get('date.timezone') ) {
-	    $config['default_timezone_string'] = ini_get('date.timezone');
-	}
-	else {
-		$config['default_timezone_string'] = "Europe/Berlin";
-	}
+        $config['default_timezone_string'] = date_default_timezone_get();
+    }
+    elseif ( ini_get('date.timezone') ) {
+        $config['default_timezone_string'] = ini_get('date.timezone');
+    }
+    else {
+        $config['default_timezone_string'] = "Europe/Berlin";
+    }
 }
 
 date_default_timezone_set($config['default_timezone_string']);
@@ -225,10 +225,10 @@ date_default_timezone_set($config['default_timezone_string']);
 if ( isset($config['cat_url']) && $config['cat_url'] != '' )
 {
     $parser->setGlobals(
-		array(
-		    'cat_url' => $config['cat_url'],
-		)
-	);
+        array(
+            'cat_url' => $config['cat_url'],
+        )
+    );
 }
 
 if ( ! isset($config['installed_version']) )
@@ -251,57 +251,57 @@ if ( ! isset($config['installed_version']) )
 // call the check-method for last step (if any)
 if ( isset($_REQUEST['laststep']) )
 {
-	// save the form data into temp file
-	foreach( $_REQUEST as $key => $value )
-	{
-	    if ( preg_match( '~^installer_(.*)$~i', $key, $match ) )
-	    {
-	        $_SESSION[$key] = $value;
-	        $key            = $match[1];
-	        $config[$key]   = $value;
-	    }
-	}
-	if ( function_exists( 'check_step_'.$_REQUEST['laststep'] ) )
-	{
-		$callback = 'check_step_'.$_REQUEST['laststep'];
-		list( $ok, $errors ) = $callback();
-		if ( ! $ok ) {
-		    $this_step = $_REQUEST['laststep'];
-			$steps[$id_to_step_index[$this_step]]['errors'] = $errors;
-		}
-	}
-	if ( false !== ( $fh = fopen( dirname(__FILE__).'/instdata.tmp', 'w' ) ) )
-	{
-	    fwrite( $fh, serialize($config) );
-	    fclose( $fh );
-	}
+    // save the form data into temp file
+    foreach( $_REQUEST as $key => $value )
+    {
+        if ( preg_match( '~^installer_(.*)$~i', $key, $match ) )
+        {
+            $_SESSION[$key] = $value;
+            $key            = $match[1];
+            $config[$key]   = $value;
+        }
+    }
+    if ( function_exists( 'check_step_'.$_REQUEST['laststep'] ) )
+    {
+        $callback = 'check_step_'.$_REQUEST['laststep'];
+        list( $ok, $errors ) = $callback();
+        if ( ! $ok ) {
+            $this_step = $_REQUEST['laststep'];
+            $steps[$id_to_step_index[$this_step]]['errors'] = $errors;
+        }
+    }
+    if ( false !== ( $fh = fopen( dirname(__FILE__).'/instdata.tmp', 'w' ) ) )
+    {
+        fwrite( $fh, serialize($config) );
+        fclose( $fh );
+    }
 }
 
 list( $result, $output ) = do_step($this_step);
 
 // print the page
 if ( ! $output ) {
-	// default page = step 0
-	$tpl = 'welcome.tpl';
-	if ( file_exists( dirname(__FILE__).'/templates/default/welcome_'.$lang->getLang().'.tpl' ) )
-	{
-	    $tpl = 'welcome_'.$lang->getLang().'.tpl';
-	}
-	$output = $parser->get( $tpl,array());
+    // default page = step 0
+    $tpl = 'welcome.tpl';
+    if ( file_exists( dirname(__FILE__).'/templates/default/welcome_'.$lang->getLang().'.tpl' ) )
+    {
+        $tpl = 'welcome_'.$lang->getLang().'.tpl';
+    }
+    $output = $parser->get( $tpl,array());
 }
 
 $parser->output(
-	'index.tpl',
-	array(
-	    'debug'             => CAT_DEBUG,
-	    'steps'             => $steps,
-	    'nextstep'          => $nextstep['id'],
-	    'prevstep'          => $prevstep['id'],
-	    'status'            => ( $currentstep['success'] ? true : false ),
-	    'output'            => $output,
-	    'this_step'         => $this_step,
-	    'dump'              => print_r( array( $this_step, $_REQUEST, $prevstep, $nextstep, $currentstep, $steps ), 1 ),
-	)
+    'index.tpl',
+    array(
+        'debug'             => CAT_DEBUG,
+        'steps'             => $steps,
+        'nextstep'          => $nextstep['id'],
+        'prevstep'          => $prevstep['id'],
+        'status'            => ( $currentstep['success'] ? true : false ),
+        'output'            => $output,
+        'this_step'         => $this_step,
+        'dump'              => print_r( array( $this_step, $_REQUEST, $prevstep, $nextstep, $currentstep, $steps ), 1 ),
+    )
 );
 
 /**
@@ -310,72 +310,72 @@ $parser->output(
  **/
 function show_step_precheck() {
 
-	global $lang, $parser, $installer_uri;
-	$ok   = true;
+    global $lang, $parser, $installer_uri;
+    $ok   = true;
 
-	// precheck.php
-	include dirname(__FILE__).'/../framework/CAT/Helper/Addons.php';
-	$addons = CAT_Helper_Addons::getInstance();
-	$result = $addons->preCheckAddon( NULL, dirname(__FILE__), false, true );
-	$parser->setPath( dirname(__FILE__).'/templates/default' );
-	$result = $parser->get(
-	    'precheck.tpl',
-	    array( 'output' => $result )
-	);
+    // precheck.php
+    include dirname(__FILE__).'/../framework/CAT/Helper/Addons.php';
+    $addons = CAT_Helper_Addons::getInstance();
+    $result = $addons->preCheckAddon( NULL, dirname(__FILE__), false, true );
+    $parser->setPath( dirname(__FILE__).'/templates/default' );
+    $result = $parser->get(
+        'precheck.tpl',
+        array( 'output' => $result )
+    );
 
-	// scan the HTML for errors; this is easier than to extend the methods in
-	// the Addons helper
-	if ( preg_match( '~class=\"fail~i', $result, $match ) ) {
-		$ok = false;
-	}
+    // scan the HTML for errors; this is easier than to extend the methods in
+    // the Addons helper
+    if ( preg_match( '~class=\"fail~i', $result, $match ) ) {
+        $ok = false;
+    }
 
-	$install_dir = pathinfo( dirname(__FILE__), PATHINFO_BASENAME );
+    $install_dir = pathinfo( dirname(__FILE__), PATHINFO_BASENAME );
 
-	// file permissions check
-	$dirs = array(
-	    array( 'name' => '', 'ok' => false ),
-		array( 'name' => 'page', 'ok' => false ),
-		array( 'name' => 'media', 'ok' => false ),
-		array( 'name' => 'templates', 'ok' => false ),
-		array( 'name' => 'modules', 'ok' => false ),
-		array( 'name' => 'languages', 'ok' => false ),
-		array( 'name' => 'temp', 'ok' => false ),
-	);
-	foreach( $dirs as $i => $dir ) {
-	    $path           = dirname(__FILE__).'/../'.$dir['name'];
+    // file permissions check
+    $dirs = array(
+        array( 'name' => '', 'ok' => false ),
+        array( 'name' => 'page', 'ok' => false ),
+        array( 'name' => 'media', 'ok' => false ),
+        array( 'name' => 'templates', 'ok' => false ),
+        array( 'name' => 'modules', 'ok' => false ),
+        array( 'name' => 'languages', 'ok' => false ),
+        array( 'name' => 'temp', 'ok' => false ),
+    );
+    foreach( $dirs as $i => $dir ) {
+        $path           = dirname(__FILE__).'/../'.$dir['name'];
         $dirs[$i]['ok'] = is_writable($path);
-	    if ( $dir['name'] == '' ) {
-	        $dirs[$i]['name'] = $lang->translate('CMS root directory');
-	    }
-		else {
-		    $dirs[$i]['name'] = '/'.$dirs[$i]['name'].'/';
-		}
-		if ( $dirs[$i]['ok'] === false ) {
-		    $ok = false;
-		}
-	}
+        if ( $dir['name'] == '' ) {
+            $dirs[$i]['name'] = $lang->translate('CMS root directory');
+        }
+        else {
+            $dirs[$i]['name'] = '/'.$dirs[$i]['name'].'/';
+        }
+        if ( $dirs[$i]['ok'] === false ) {
+            $ok = false;
+        }
+    }
 
-	// special check for install dir (must be world writable)
-	$inst_is_writable = is_writable(dirname(__FILE__)); //( substr(sprintf('%o', fileperms(dirname(__FILE__))), -1) == 7 ? true : false );
-	if ( ! $inst_is_writable ) {
-	    $ok = false;
-	};
-	$dirs[] = array( 'name' => $lang->translate('CMS installation directory') . ' (<tt>' . $install_dir . '</tt>)', 'ok' => $inst_is_writable );
+    // special check for install dir (must be world writable)
+    $inst_is_writable = is_writable(dirname(__FILE__)); //( substr(sprintf('%o', fileperms(dirname(__FILE__))), -1) == 7 ? true : false );
+    if ( ! $inst_is_writable ) {
+        $ok = false;
+    };
+    $dirs[] = array( 'name' => $lang->translate('CMS installation directory') . ' (<tt>' . $install_dir . '</tt>)', 'ok' => $inst_is_writable );
 
-	$output = $parser->get(
-		'fperms.tpl',
-		array(
-		    'dirs'   => $dirs,
-		    'ok'     => $ok,
-		    'result' => (
-				$ok
-				? $lang->translate('All checks succeeded!')
-				: $lang->translate('Sorry, we encountered some issue(s) that will inhibit the installation. Please check the results above and fix the issue(s) listed there.')
-			)
-		)
-	);
+    $output = $parser->get(
+        'fperms.tpl',
+        array(
+            'dirs'   => $dirs,
+            'ok'     => $ok,
+            'result' => (
+                $ok
+                ? $lang->translate('All checks succeeded!')
+                : $lang->translate('Sorry, we encountered some issue(s) that will inhibit the installation. Please check the results above and fix the issue(s) listed there.')
+            )
+        )
+    );
 
-	return array( $ok, $result.$output );
+    return array( $ok, $result.$output );
 
 }   // end function show_step_precheck()
 
@@ -391,85 +391,85 @@ function show_step_globals( $step ) {
     include dirname(__FILE__).'/../framework/CAT/Helper/DateTime.php';
     $timezone_table = CAT_Helper_DateTime::getInstance()->getTimezones();
 
-	$lang_dir = "../languages/";
+    $lang_dir = "../languages/";
     $lang_files = $dirh->setRecursion(false)->setSkipFiles(array('index'))->getPHPFiles($lang_dir,$lang_dir);
     $dirh->setRecursion(true); // reset
 
     // get language name
     foreach($lang_files as $temp_file) {
-		$str = file( $lang_dir.$temp_file );
-		$language_name = "";
-		foreach($str as $line) {
-			if (strpos( $line, "language_name") != false) {
-				eval ($line);
-				break;
-			}
-		}
-		$lang_short = pathinfo( $temp_file, PATHINFO_FILENAME );
-		$langs[$lang_short] = $language_name;
+        $str = file( $lang_dir.$temp_file );
+        $language_name = "";
+        foreach($str as $line) {
+            if (strpos( $line, "language_name") != false) {
+                eval ($line);
+                break;
+            }
+        }
+        $lang_short = pathinfo( $temp_file, PATHINFO_FILENAME );
+        $langs[$lang_short] = $language_name;
 
-	}
+    }
 
-	ksort($langs);
+    ksort($langs);
 
-	if ( !isset( $config['default_language' ] ) ) {
-	    $config['default_language' ] = $lang->getLang();
-	}
+    if ( !isset( $config['default_language' ] ) ) {
+        $config['default_language' ] = $lang->getLang();
+    }
 
     // generate a GUID prefix
     if ( !isset( $config['installer_guid_prefix' ] ) ) {
         // VERY simple algorithm, no need for something more creative
-	    $config['installer_guid_prefix'] = implode('',array_rand(array_flip(array_merge(range('a','z'),range('A','Z'),range('0','9'))),4));
+        $config['installer_guid_prefix'] = implode('',array_rand(array_flip(array_merge(range('a','z'),range('A','Z'),range('0','9'))),4));
     }
 
-	// operating system
-	// --> FrankH: Detect OS
-	$ctrue  = " checked='checked'";
-	$cfalse = "";
-	if ( substr( php_uname( 's' ), 0, 7 ) == "Windows" ) {
-		$osw        = $ctrue;
-		$osl        = $cfalse;
-		$startstyle = "none";
-	} else {
-		$osw        = $cfalse;
-		$osl        = $ctrue;
-		$startstyle = "block";
-	}
-	// <-- FrankH: Detect OS
+    // operating system
+    // --> FrankH: Detect OS
+    $ctrue  = " checked='checked'";
+    $cfalse = "";
+    if ( substr( php_uname( 's' ), 0, 7 ) == "Windows" ) {
+        $osw        = $ctrue;
+        $osl        = $cfalse;
+        $startstyle = "none";
+    } else {
+        $osw        = $cfalse;
+        $osl        = $ctrue;
+        $startstyle = "block";
+    }
+    // <-- FrankH: Detect OS
 
     $output = $parser->get(
         'globals.tpl',
         array(
-			'installer_cat_url' 				=> dirname( $installer_uri ).'/',
+            'installer_cat_url'                 => dirname( $installer_uri ).'/',
             'installer_guid_prefix'             => $config['installer_guid_prefix'],
-			'timezones'  						=> $timezone_table,
-			'installer_default_timezone_string' => $config['default_timezone_string'],
-			'languages' 						=> $langs,
-			'installer_default_language'		=> $config['default_language'],
+            'timezones'                          => $timezone_table,
+            'installer_default_timezone_string' => $config['default_timezone_string'],
+            'languages'                         => $langs,
+            'installer_default_language'        => $config['default_language'],
             'editors'                           => findWYSIWYG(),
             'installer_default_wysiwyg'         => $config['default_wysiwyg'],
-			'is_linux'   						=> $osl,
-            'is_windows' 						=> $osw,
-            'errors'            				=> $step['errors'],
-		)
-	);
-	return array( true, $output );
+            'is_linux'                           => $osl,
+            'is_windows'                         => $osw,
+            'errors'                            => $step['errors'],
+        )
+    );
+    return array( true, $output );
 }   // end function show_step_globals()
 
 /**
  *
  **/
 function check_step_globals() {
-	global $config, $lang;
-	$errors = array();
-	if ( ! isset($config['cat_url']) || $config['cat_url'] == '' )
-	{
-	    $errors['installer_cat_url'] = $lang->translate('Please insert the base URL!');
-	}
-	return array(
-		( count($errors) ? false : true ),
-		$errors
-	);
+    global $config, $lang;
+    $errors = array();
+    if ( ! isset($config['cat_url']) || $config['cat_url'] == '' )
+    {
+        $errors['installer_cat_url'] = $lang->translate('Please insert the base URL!');
+    }
+    return array(
+        ( count($errors) ? false : true ),
+        $errors
+    );
 }   // end function check_step_globals()
 
 /**
@@ -484,129 +484,129 @@ function show_step_db( $step ) {
             'installer_database_port'     => ( isset($config['database_port'])     ? $config['database_port']     : '3306'         ),
             'installer_database_username' => ( isset($config['database_username']) ? $config['database_username'] : 'my-user-name' ),
             'installer_database_password' => ( isset($config['database_password']) ? $config['database_password'] : ''             ),
-            'installer_database_name' 	  => ( isset($config['database_name'])     ? $config['database_name'] 	  : 'my-db-name'   ),
+            'installer_database_name'       => ( isset($config['database_name'])     ? $config['database_name']       : 'my-db-name'   ),
             'installer_table_prefix'      => ( isset($config['table_prefix'])      ? $config['table_prefix']      : 'cat_'         ),
             'installer_install_tables'    => ( isset($config['install_tables'])    ? $config['install_tables']    : 'y'            ),
             'installer_no_validate_db_password' => ( isset($config['no_validate_db_password']) ? $config['no_validate_db_password'] : ''             ),
-            'errors'            		  => $step['errors']
-		)
-	);
-	return array( true, $output );
+            'errors'                      => $step['errors']
+        )
+    );
+    return array( true, $output );
 }   // end function show_step_db()
 
 /**
  * check the db connection
  **/
 function check_step_db() {
-	// do not check if back button was clicked
-	if ( isset($_REQUEST['btn_back']) ) {
-	    return array( true, array() );
-	}
-	$errors = __cat_check_db_config();
-	return array(
-		( count($errors) ? false : true ),
-		$errors
-	);
+    // do not check if back button was clicked
+    if ( isset($_REQUEST['btn_back']) ) {
+        return array( true, array() );
+    }
+    $errors = __cat_check_db_config();
+    return array(
+        ( count($errors) ? false : true ),
+        $errors
+    );
 }   // end function check_step_db()
 
 /**
  *
  **/
 function show_step_site( $step ) {
-	global $lang, $config, $parser;
-	$output = $parser->get(
+    global $lang, $config, $parser;
+    $output = $parser->get(
         'site.tpl',
         array(
             'installer_website_title'    => ( isset($config['website_title'])    ? $config['website_title']    : 'Black Cat CMS' ),
-            'installer_admin_username'   => ( isset($config['admin_username'])   ? $config['admin_username']   : ''    		  ),
-            'installer_admin_password'   => ( isset($config['admin_password'])   ? $config['admin_password']   : ''    		  ),
-            'installer_admin_repassword' => ( isset($config['admin_repassword']) ? $config['admin_repassword'] : ''    		  ),
-            'installer_admin_email' 	 => ( isset($config['admin_email'])  	 ? $config['admin_email']      : ''    		  ),
-			'errors' => $step['errors']
-		)
-	);
-	return array( true, $output );
+            'installer_admin_username'   => ( isset($config['admin_username'])   ? $config['admin_username']   : ''              ),
+            'installer_admin_password'   => ( isset($config['admin_password'])   ? $config['admin_password']   : ''              ),
+            'installer_admin_repassword' => ( isset($config['admin_repassword']) ? $config['admin_repassword'] : ''              ),
+            'installer_admin_email'      => ( isset($config['admin_email'])       ? $config['admin_email']      : ''              ),
+            'errors' => $step['errors']
+        )
+    );
+    return array( true, $output );
 }   // end function show_step_site()
 
 /**
  *
  **/
 function check_step_site() {
-	global $lang, $config, $users, $parser;
-	// do not check if back button was clicked
-	if ( isset($_REQUEST['btn_back']) ) {
-	    return array( true, array() );
-	}
-	$errors = array();
-	if ( ! isset($config['website_title']) || $config['website_title'] == '' ) {
-	    $errors['installer_website_title'] = $lang->translate( 'Please enter a website title!' );
-	}
-
-	// check admin user name
-	if ( ! isset($config['admin_username']) || $config['admin_username'] == '' ) {
-	    $errors['installer_admin_username'] = $lang->translate( 'Please enter an admin username (choose "admin", for example)!' );
-	}
-	else {
-	    if ( strlen($config['admin_username']) < 3 ) {
-	        $errors['installer_admin_username'] = $lang->translate('Name too short! The admin username should be at least 3 chars long.');
-	    }
-	    elseif ( ! preg_match( '/^[a-z0-9][a-z0-9_-]+$/i', $config['admin_username'] ) ) {
-	        $errors['installer_admin_username'] = $lang->translate('Only characters a-z, A-Z, 0-9 and _ allowed in admin username');
-	    }
-	}
-
-	// check admin password
-    if ( ! isset($config['no_validate_admin_password']) )
-    {
-	if ( ! isset($config['admin_password']) || $config['admin_password'] == '' ) {
-	    $errors['installer_admin_password'] = $lang->translate( 'Please enter an admin password!' );
-	}
-	if ( ! isset($config['admin_repassword']) || $config['admin_repassword'] == '' ) {
-	    $errors['installer_admin_repassword'] = $lang->translate( 'Please retype the admin password!' );
-	}
-	if (
-		   isset($config['admin_password']) && isset($config['admin_repassword'])
-        && $config['admin_password'] != ''  && $config['admin_repassword'] != ''
-		&& strcmp( $config['admin_password'], $config['admin_repassword'] )
-	) {
-	    $errors['installer_admin_password']   = $lang->translate( 'The admin passwords you have given do not match!' );
-	    $errors['installer_admin_repassword'] = $lang->translate( 'The admin passwords you have given do not match!' );
-	}
-        if ( ! $users->validatePassword($config['admin_password'],false,true) )
-    {
-		$errors['installer_admin_password'] = $lang->translate('Invalid password!')
-											. ' (' . $users->getPasswordError() . ')';
-	}
+    global $lang, $config, $users, $parser;
+    // do not check if back button was clicked
+    if ( isset($_REQUEST['btn_back']) ) {
+        return array( true, array() );
+    }
+    $errors = array();
+    if ( ! isset($config['website_title']) || $config['website_title'] == '' ) {
+        $errors['installer_website_title'] = $lang->translate( 'Please enter a website title!' );
     }
 
-	// check admin email address
-	if ( ! isset($config['admin_email']) || $config['admin_email'] == '' ) {
-	    $errors['installer_admin_email'] = $lang->translate( 'Please enter an email address!' );
-	}
-	else {
-		if ( ! preg_match('/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,6})$/i', $config['admin_email'] ) ) {
-			$errors['installer_admin_email'] = $lang->translate('Please enter a valid email address for the Administrator account');
-		}
-	}
+    // check admin user name
+    if ( ! isset($config['admin_username']) || $config['admin_username'] == '' ) {
+        $errors['installer_admin_username'] = $lang->translate( 'Please enter an admin username (choose "admin", for example)!' );
+    }
+    else {
+        if ( strlen($config['admin_username']) < 3 ) {
+            $errors['installer_admin_username'] = $lang->translate('Name too short! The admin username should be at least 3 chars long.');
+        }
+        elseif ( ! preg_match( '/^[a-z0-9][a-z0-9_-]+$/i', $config['admin_username'] ) ) {
+            $errors['installer_admin_username'] = $lang->translate('Only characters a-z, A-Z, 0-9 and _ allowed in admin username');
+        }
+    }
 
-	return array(
-		( count($errors) ? false : true ),
-		$errors
-	);
+    // check admin password
+    if ( ! isset($config['no_validate_admin_password']) )
+    {
+    if ( ! isset($config['admin_password']) || $config['admin_password'] == '' ) {
+        $errors['installer_admin_password'] = $lang->translate( 'Please enter an admin password!' );
+    }
+    if ( ! isset($config['admin_repassword']) || $config['admin_repassword'] == '' ) {
+        $errors['installer_admin_repassword'] = $lang->translate( 'Please retype the admin password!' );
+    }
+    if (
+           isset($config['admin_password']) && isset($config['admin_repassword'])
+        && $config['admin_password'] != ''  && $config['admin_repassword'] != ''
+        && strcmp( $config['admin_password'], $config['admin_repassword'] )
+    ) {
+        $errors['installer_admin_password']   = $lang->translate( 'The admin passwords you have given do not match!' );
+        $errors['installer_admin_repassword'] = $lang->translate( 'The admin passwords you have given do not match!' );
+    }
+        if ( ! $users->validatePassword($config['admin_password'],false,true) )
+    {
+        $errors['installer_admin_password'] = $lang->translate('Invalid password!')
+                                            . ' (' . $users->getPasswordError() . ')';
+    }
+    }
+
+    // check admin email address
+    if ( ! isset($config['admin_email']) || $config['admin_email'] == '' ) {
+        $errors['installer_admin_email'] = $lang->translate( 'Please enter an email address!' );
+    }
+    else {
+        if ( ! preg_match('/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,6})$/i', $config['admin_email'] ) ) {
+            $errors['installer_admin_email'] = $lang->translate('Please enter a valid email address for the Administrator account');
+        }
+    }
+
+    return array(
+        ( count($errors) ? false : true ),
+        $errors
+    );
 }   // end function check_step_site()
 
 /**
  *
  **/
 function show_step_postcheck() {
-	global $lang, $config, $parser;
-	foreach ( $config as $key => $value ) {
-	    if ( preg_match( '~password~i', $key ) ) {
-	        $config[$key] = '********';
-		}
-		if ( preg_match( '~repassword~i', $key ) ) {
-		    unset($config[$key]);
-		}
+    global $lang, $config, $parser;
+    foreach ( $config as $key => $value ) {
+        if ( preg_match( '~password~i', $key ) ) {
+            $config[$key] = '********';
+        }
+        if ( preg_match( '~repassword~i', $key ) ) {
+            unset($config[$key]);
+        }
         if ( preg_match( '~no_validate_admin_password~i', $key ) ) {
             unset($config[$key]);
         }
@@ -616,27 +616,38 @@ function show_step_postcheck() {
         if ( preg_match( '~optional_addon~i', $key ) ) {
             $config[$key] = count($config[$key]);
         }
-	}
-	$output = $parser->get(
+    }
+    $output = $parser->get(
         'postcheck.tpl',
         array( 'config' => $config )
-	);
-	return array( true, $output );
+    );
+    return array( true, $output );
 }   // end function show_step_postcheck()
 
 /**
  * install optional addons (located in ./optional subfolder)
  **/
 function show_step_optional() {
-    global $dirh, $parser, $config, $installer_uri;
+    global $dirh, $parser, $config, $installer_uri, $lang;
     // do base installation first
-	list( $result, $output ) = __do_install();
-	if ( ! $result ) {
-	    return array( true, $output );
-	}
+    list( $result, $output ) = __do_install();
+    if ( ! $result ) {
+        return array( true, $output );
+    }
     // list of optional modules
     $zip_files = $dirh->scanDirectory( dirname(__FILE__).'/optional', true, true, dirname(__FILE__).'/optional/', array('zip') );
     if(count($zip_files)) {
+        // try to set max_execution_time
+        $info = NULL;
+        // test only
+        if (false === ini_set('max_execution_time',CAT_INST_EXEC_TIME))
+        {
+            $info = $lang->translate('Unable to set max_execution_time; there may be problems installation big optional modules!');
+        }
+        else
+        {
+            $info = $lang->translate('Set max_execution_time to {{ sec }} seconds',array('sec'=>ini_get('max_execution_time')));
+        }
         // fix path (some modules may change it)
         $parser->setPath( dirname(__FILE__).'/templates/default' );
         $output = $parser->get(
@@ -647,6 +658,7 @@ function show_step_optional() {
                 'installer_uri' => $installer_uri,
                 'zip_files'     => $zip_files,
                 'config'        => $config,
+                'info'          => $info
             )
         );
         return array( true, $output );
@@ -657,6 +669,7 @@ function show_step_optional() {
  * install optional addons (located in ./optional subfolder)
  **/
 function check_step_optional() {
+    if(!isset($_REQUEST['installer_optional_addon'])) return array(true,array());
     list( $ok, $errors ) = install_optional_modules();
     return array(
         ( count($errors) ? false : true ),
@@ -669,28 +682,28 @@ function check_step_optional() {
  **/
 function show_step_finish() {
     global $lang, $parser, $installer_uri, $config;
-	$tpl = 'finish.tpl';
-	if ( file_exists( dirname(__FILE__).'/templates/default/finish_'.$lang->getLang().'.tpl' ) )
-	{
-	    $tpl = 'finish_'.$lang->getLang().'.tpl';
-	}
-	// fix globals
-	$parser->setGlobals(
-    	array(
-    	    'installer_uri' => $installer_uri,
-    	)
+    $tpl = 'finish.tpl';
+    if ( file_exists( dirname(__FILE__).'/templates/default/finish_'.$lang->getLang().'.tpl' ) )
+    {
+        $tpl = 'finish_'.$lang->getLang().'.tpl';
+    }
+    // fix globals
+    $parser->setGlobals(
+        array(
+            'installer_uri' => $installer_uri,
+        )
     );
-	// fix path (some modules may change it)
-	$parser->setPath( dirname(__FILE__).'/templates/default' );
-	$output = $parser->get(
-		$tpl,
-		array(
-			'backend_path'  => 'backend',
+    // fix path (some modules may change it)
+    $parser->setPath( dirname(__FILE__).'/templates/default' );
+    $output = $parser->get(
+        $tpl,
+        array(
+            'backend_path'  => 'backend',
 //            'cat_url'       => CAT_URL,
-			'installer_uri' => $installer_uri,
-		)
-	);
-	return array( true, $output );
+            'installer_uri' => $installer_uri,
+        )
+    );
+    return array( true, $output );
 }   // function show_step_finish()
 
 
@@ -702,44 +715,44 @@ function show_step_finish() {
  * find the default permissions for new files
  **/
 function default_file_mode() {
-	// we've already created some new files, so just check the perms they've got
-	if ( file_exists( dirname(__FILE__).'/steps.tmp' ) ) {
-	    $filename = dirname(__FILE__).'/steps.tmp';
-		$default_file_mode = '0'.substr(sprintf('%o', fileperms($filename)), -3);
-	} else {
-		$default_file_mode = '0777';
-	}
-	return $default_file_mode;
+    // we've already created some new files, so just check the perms they've got
+    if ( file_exists( dirname(__FILE__).'/steps.tmp' ) ) {
+        $filename = dirname(__FILE__).'/steps.tmp';
+        $default_file_mode = '0'.substr(sprintf('%o', fileperms($filename)), -3);
+    } else {
+        $default_file_mode = '0777';
+    }
+    return $default_file_mode;
 }   // end function default_file_mode()
 
 /**
  * find the default permissions for new directories by creating a test dir
  **/
 function default_dir_mode($temp_dir) {
-	if(is_writable($temp_dir)) {
-		$dirname = $temp_dir.'/test_permissions/';
-		mkdir($dirname);
-		$default_dir_mode = '0'.substr(sprintf('%o', fileperms($dirname)), -3);
-		rmdir($dirname);
-	} else {
-		$default_dir_mode = '0777';
-	}
-	return $default_dir_mode;
+    if(is_writable($temp_dir)) {
+        $dirname = $temp_dir.'/test_permissions/';
+        mkdir($dirname);
+        $default_dir_mode = '0'.substr(sprintf('%o', fileperms($dirname)), -3);
+        rmdir($dirname);
+    } else {
+        $default_dir_mode = '0777';
+    }
+    return $default_dir_mode;
 }   // end function default_dir_mode()
 
 /**
  * install tables
  **/
 function install_tables ($database) {
-	global $config ;
-	if (!defined('CAT_INSTALL_PROCESS')) define ('CAT_INSTALL_PROCESS', true);
+    global $config ;
+    if (!defined('CAT_INSTALL_PROCESS')) define ('CAT_INSTALL_PROCESS', true);
     // import structure
     $errors = __cat_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
 
-	return array(
-		( count($errors) ? false : true ),
-		$errors
-	);
+    return array(
+        ( count($errors) ? false : true ),
+        $errors
+    );
 
 }   // end function install_tables()
 
@@ -748,89 +761,98 @@ function install_tables ($database) {
  **/
 function fill_tables($database) {
 
-	global $config, $admin;
+    global $config, $admin;
 
     $errors = array();
 
-	// create a random session name
-	list($usec,$sec) = explode(' ',microtime());
-	srand((float)$sec+((float)$usec*100000));
-	$session_rand = rand(1000,9999);
+    // create a random session name
+    list($usec,$sec) = explode(' ',microtime());
+    srand((float)$sec+((float)$usec*100000));
+    $session_rand = rand(1000,9999);
 
-	// Work-out file permissions
-	if( $config['operating_system'] == 'windows') {
-		$file_mode = '0644';
-		$dir_mode = '0755';
-	} elseif( isset($config['world_writeable']) && $config['world_writeable'] == 'true' ) {
-		$file_mode = '0666';
-		$dir_mode = '0777';
-	} else {
-		$file_mode = default_file_mode();
-		$dir_mode = default_dir_mode('../temp');
-	}
+    // Work-out file permissions
+    if( $config['operating_system'] == 'windows') {
+        $file_mode = '0644';
+        $dir_mode = '0755';
+    } elseif( isset($config['world_writeable']) && $config['world_writeable'] == 'true' ) {
+        $file_mode = '0666';
+        $dir_mode = '0777';
+    } else {
+        $file_mode = default_file_mode();
+        $dir_mode = default_dir_mode('../temp');
+    }
 
     // fill 'hardcoded' settings and class.secure config
     __cat_installer_import_sql(dirname(__FILE__).'/db/data.sql',$database);
 
     $current_version = $config['installed_version'];
 
+    // for optional wysiwyg editors; requires name to be something like
+    // <editorname>_xxx.zip, which will be prefixed with 'opt_' by the wizard,
+    // so second part is the name of the editor
+    if ( $config['default_wysiwyg'] !== 'edit_area' )
+    {
+        list( $ignore, $config['default_wysiwyg'], $ignore )
+            = explode('_', $config['default_wysiwyg'], 3);
+    }
+
     // fill settings configured by installer
-	$settings_rows = "INSERT INTO `".CAT_TABLE_PREFIX."settings` "
-		." (name, value) VALUES "
+    $settings_rows = "INSERT INTO `".CAT_TABLE_PREFIX."settings` "
+        ." (name, value) VALUES "
         ." ('guid', '" . ( ( isset($config['create_guid']) && $config['create_guid'] == 'true' ) ? $admin->createGUID($config['guid_prefix']) : '' ) . "'),"
-		." ('app_name', 'cat$session_rand'),"
-		." ('cat_build', '$current_build'),"
-		." ('cat_version', '$current_version'),"
-		." ('default_language', '".$config['default_language']."'),"
-		." ('default_timezone_string', '".$config['default_timezone_string']."'),"
+        ." ('app_name', 'cat$session_rand'),"
+        ." ('cat_build', '$current_build'),"
+        ." ('cat_version', '$current_version'),"
+        ." ('default_language', '".$config['default_language']."'),"
+        ." ('default_timezone_string', '".$config['default_timezone_string']."'),"
         ." ('installation_time', '".time()."'),"
-		." ('operating_system', '".$config['operating_system']."'),"
-		." ('string_dir_mode', '$dir_mode'),"
-		." ('string_file_mode', '$file_mode'),"
-		." ('website_title', '".$config['website_title']."'),"
-		." ('wysiwyg_editor', '".$config['default_wysiwyg']."')"
-		;
+        ." ('operating_system', '".$config['operating_system']."'),"
+        ." ('string_dir_mode', '$dir_mode'),"
+        ." ('string_file_mode', '$file_mode'),"
+        ." ('website_title', '".$config['website_title']."'),"
+        ." ('wysiwyg_editor', '".$config['default_wysiwyg']."')"
+        ;
 
     $logh = fopen( CAT_LOGFILE, 'a' );
 
-	$database->query($settings_rows);
-	if ( $database->is_error() ) {
-		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
-		$errors['settings'] = $database->get_error();
-	}
-	else {
-	    fwrite( $logh, 'filled table [settings]'."\n" );
-	}
+    $database->query($settings_rows);
+    if ( $database->is_error() ) {
+        trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
+        $errors['settings'] = $database->get_error();
+    }
+    else {
+        fwrite( $logh, 'filled table [settings]'."\n" );
+    }
 
-	// Admin group
-	$full_system_permissions = 'pages,pages_view,pages_add,pages_add_l0,pages_settings,pages_modify,pages_intro,pages_delete,media,media_view,media_upload,media_rename,media_delete,media_create,addons,modules,modules_view,modules_install,modules_uninstall,templates,templates_view,templates_install,templates_uninstall,languages,languages_view,languages_install,languages_uninstall,settings,settings_basic,settings_advanced,access,users,users_view,users_add,users_modify,users_delete,groups,groups_view,groups_add,groups_modify,groups_delete,admintools,service';
-	$insert_admin_group = "INSERT INTO `".CAT_TABLE_PREFIX."groups` VALUES ('1', 'Administrators', '$full_system_permissions', '', '')";
-	$database->query($insert_admin_group);
-	if ( $database->is_error() ) {
-		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
-		$errors['groups'] = $database->get_error();
-	}
-	else {
-	    fwrite( $logh, 'filled table [group]'."\n" );
-	}
+    // Admin group
+    $full_system_permissions = 'pages,pages_view,pages_add,pages_add_l0,pages_settings,pages_modify,pages_intro,pages_delete,media,media_view,media_upload,media_rename,media_delete,media_create,addons,modules,modules_view,modules_install,modules_uninstall,templates,templates_view,templates_install,templates_uninstall,languages,languages_view,languages_install,languages_uninstall,settings,settings_basic,settings_advanced,access,users,users_view,users_add,users_modify,users_delete,groups,groups_view,groups_add,groups_modify,groups_delete,admintools,service';
+    $insert_admin_group = "INSERT INTO `".CAT_TABLE_PREFIX."groups` VALUES ('1', 'Administrators', '$full_system_permissions', '', '')";
+    $database->query($insert_admin_group);
+    if ( $database->is_error() ) {
+        trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
+        $errors['groups'] = $database->get_error();
+    }
+    else {
+        fwrite( $logh, 'filled table [group]'."\n" );
+    }
 
-	// Admin user
-	$insert_admin_user = "INSERT INTO `".CAT_TABLE_PREFIX."users` (user_id,group_id,groups_id,active,username,password,email,display_name) VALUES ('1','1','1','1','".$config['admin_username']."','".md5($config['admin_password'])."','".$config['admin_email']."','Administrator')";
-	$database->query($insert_admin_user);
-	if ( $database->is_error() ) {
-		trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
-		$errors['users'] = $database->get_error();
-	}
-	else {
-	    fwrite( $logh, 'filled table [users]'."\n" );
-	}
+    // Admin user
+    $insert_admin_user = "INSERT INTO `".CAT_TABLE_PREFIX."users` (user_id,group_id,groups_id,active,username,password,email,display_name) VALUES ('1','1','1','1','".$config['admin_username']."','".md5($config['admin_password'])."','".$config['admin_email']."','Administrator')";
+    $database->query($insert_admin_user);
+    if ( $database->is_error() ) {
+        trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
+        $errors['users'] = $database->get_error();
+    }
+    else {
+        fwrite( $logh, 'filled table [users]'."\n" );
+    }
 
-	fclose($logh);
+    fclose($logh);
 
-	return array(
-		( count($errors) ? false : true ),
-		$errors
-	);
+    return array(
+        ( count($errors) ? false : true ),
+        $errors
+    );
 }   // end function fill_tables()
 
 /**
@@ -840,23 +862,23 @@ function install_modules ($cat_path,$database) {
 
     global $admin, $bundled;
 
-	$errors = array();
+    $errors = array();
 
-	require $cat_path.'/framework/initialize.php';
+    require $cat_path.'/framework/initialize.php';
 
-	// Load addons into DB
-	$dirs = array(
-		'modules'	=> $cat_path.'/modules/',
-		'templates'	=> $cat_path.'/templates/',
-		'languages'	=> $cat_path.'/languages/',
-	);
-	$ignore_files= array(
-		'admin.php',
-		'index.php',
-		'edit_module_files.php'
-	);
+    // Load addons into DB
+    $dirs = array(
+        'modules'    => $cat_path.'/modules/',
+        'templates'    => $cat_path.'/templates/',
+        'languages'    => $cat_path.'/languages/',
+    );
+    $ignore_files= array(
+        'admin.php',
+        'index.php',
+        'edit_module_files.php'
+    );
 
-	$logh = fopen( CAT_LOGFILE, 'a' );
+    $logh = fopen( CAT_LOGFILE, 'a' );
 
     foreach($dirs AS $type => $dir)
     {
@@ -928,15 +950,25 @@ function install_optional_modules () {
 
     $logh     = fopen( CAT_LOGFILE, 'a' );
 
-    if(!isset($config['optional_addon']) || !is_array($config['optional_addon']) || !count($config['optional_addon']))
+    if(!isset($_REQUEST['installer_optional_addon']) || !is_array($_REQUEST['installer_optional_addon']) || !count($_REQUEST['installer_optional_addon']))
     {
         fwrite( $logh, 'no additional addons to install' );
         fclose($logh);
         return array( true, array() );
     }
+    else
+    {
+        $config['optional_addon'] == $_REQUEST['installer_optional_addon'];
+    }
+
+    fwrite($logh,'installing optional addons:');
+    fwrite($logh,print_r($config['optional_addon'],1));
 
     $cat_path = $dirh->sanitizePath( dirname(__FILE__).'/..' );
     $errors   = array();
+
+    // try to set max_execution_time
+    ini_set('max_execution_time',CAT_INST_EXEC_TIME);
 
     // set installed CMS version for precheck.php
     CAT_Registry::set( 'CAT_VERSION', $config['installed_version'], true );
@@ -950,18 +982,23 @@ function install_optional_modules () {
             fwrite( $logh, 'file not found: '.$dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file));
             $errors[] = $lang->translate('No such file: [{{file}}]',array('file'=>$file));
         }
-        else {
+        else
+        {
             fwrite( $logh, 'installing optional addon ['.$file.']'."\n" );
             if(
                 ! CAT_Helper_Addons::installModule(
-                      $dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file)
+                      $dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file),
+                      true // silent
                   )
             ) {
                 fwrite( $logh, '-> installation failed! '.CAT_Helper_Addons::getError()."\n" );
-                $errors[] = $lang->translate(
-                    '-> Unable to install {{module}}! {{error}}',
-                    array( 'module' => $file, 'error' => CAT_Helper_Addons::getError() )
-                );
+                if( CAT_Helper_Addons::getError() != 'already installed' )
+                {
+                    $errors[] = $lang->translate(
+                        '-> Unable to install {{module}}! {{error}}',
+                        array( 'module' => $file, 'error' => CAT_Helper_Addons::getError() )
+                    );
+                }
             }
             else {
                 fwrite( $logh, '-> installation succeeded'."\n" );
@@ -1287,6 +1324,7 @@ function __cat_installer_import_sql($file,$database) {
             }
         }
     }
+
     return $errors;
 
 }   // end function __cat_installer_import_sql()
@@ -1579,7 +1617,7 @@ function split_sql_file($sql, $delimiter)
    // Split up our string into "possible" SQL statements.
    $tokens = explode($delimiter, $sql);
 
-   // try to save mem.
+  // try to save mem.
    $sql = "";
    $output = array();
 

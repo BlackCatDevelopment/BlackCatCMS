@@ -32,6 +32,7 @@ $LANG = array(
 	'Precheck' => 'Checks',
 	'OS settings' => 'OS Einstellungen',
 	'Database settings' => 'Datenbank Einstellungen',
+    'Optional' => 'Optionale Add-Ons',
 // ----- Welcome page -----
     'Welcome to your Black Cat CMS Installation' => 'Willkommen zu Ihrer Black Cat CMS Installation',
     'This wizard will help you to install and configure Black Cat CMS on your server. But first, please read the license agreement below.'
@@ -133,6 +134,7 @@ $LANG = array(
         => 'Folgende optionale Add-Ons wurden im Verzeichnis <i>./optional</i> gefunden. Bitte markieren Sie diejenigen, die installiert werden sollen. (Standard: alle)',
     "This one can't be unchecked because you chose to use it!"
         => 'Kann nicht deaktiviert werden, da Sie es zur Verwendung ausgewählt haben!',
+    'Set max_execution_time to {{ sec }} seconds' => 'Einstellung max_execution_time auf {{ sec }} Sekunden gesetzt',
 // ----- install -----
 	'check tables' => 'Überprüfung der Tabellen',
 	'missing' => 'fehlt',

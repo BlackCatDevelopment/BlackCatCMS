@@ -1,5 +1,6 @@
 <div class="info">
 {translate('Optional addons')}
+{if $info}<br />{$info}<br />{/if}
 </div>
 
 {translate('The following optional addons were found in the <i>./optional</i> subfolder. Please check the ones you wish to install. (Default: all)')}<br /><br />
