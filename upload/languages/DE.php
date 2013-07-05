@@ -60,6 +60,7 @@ $language_time_string = 'Uhr';
 $LANG = array(
 // ----- ./account folder -----
     'Captcha verification' => 'Captcha',
+    'Change password' => 'Kennwort ändern',
     'Confirm' => 'Bestätigen',
     'Confirm with current password' => 'Mit aktuellem Kennwort bestätigen',
     'Date format' => 'Datumsformat',

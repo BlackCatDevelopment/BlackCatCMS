@@ -38,12 +38,6 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-// exec initial_page
-if(file_exists(CAT_PATH .'/modules/initial_page/classes/c_init_page.php') && isset($_SESSION['USER_ID'])) {
-	require_once (CAT_PATH .'/modules/initial_page/classes/c_init_page.php');
-	$ins = new c_init_page($database, $_SESSION['USER_ID'], $_SERVER['SCRIPT_NAME']);
-}
-
 global $parser;
 
 $backend = CAT_Backend::getInstance('start');
@@ -69,6 +63,15 @@ if( file_exists(CAT_PATH.'/install/') ) {
 			rm_full_dir(CAT_PATH.'/install/');
 		}
 	}
+}
+
+// exec initial_page
+if($val->sanitizeGet('initial'))
+{
+    if(file_exists(CAT_PATH .'/modules/initial_page/classes/c_init_page.php') && isset($_SESSION['USER_ID'])) {
+        require_once (CAT_PATH .'/modules/initial_page/classes/c_init_page.php');
+        $ins = new c_init_page($backend->db(), $_SESSION['USER_ID'], $_SERVER['SCRIPT_NAME']);
+    }
 }
 
 $tpl_data = array();

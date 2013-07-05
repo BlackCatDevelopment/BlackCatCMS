@@ -10,6 +10,10 @@
 /*!40014 SET FOREIGN_KEY_CHECKS=0 */;
 
 INSERT INTO `cat_settings` (name, value) VALUES
+    ('auth_min_pass_length', 5),
+    ('auth_max_pass_length', 128),
+    ('auth_min_login_length', 5),
+    ('auth_max_login_length', 128),
     ('auto_disable_users', 'true' ),
     ('catmailer_default_sendername', 'Black Cat CMS Mailer'),
     ('catmailer_routine', 'phpmail'),

@@ -75,10 +75,6 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 self::$instance = new self();
                 CAT_Registry::register(
                     array(
-                        'AUTH_MIN_PASS_LENGTH'  =>   6,	// minimum length of a password
-                    	'AUTH_MAX_PASS_LENGTH'  => 128, // maximum length of a password
-                    	'AUTH_MIN_LOGIN_LENGTH' =>   3, // minimum length of a login name
-                    	'AUTH_MAX_LOGIN_LENGTH' => 128, // maximum length of a login name
                         'USERS_PROFILE_ALLOWED' =>  16, // bit to check if user can edit his profile
                     ),
                     NULL,
@@ -124,21 +120,28 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     $pw   = $val->sanitizePost($val->sanitizePost('password_fieldname'));
                     $name = ( preg_match('/[\;\=\&\|\<\> ]/',$user) ? '' : $user );
 
+                    $min_length      = CAT_Registry::exists('AUTH_MIN_LOGIN_LENGTH',false)
+                                     ? CAT_Registry::get('AUTH_MIN_LOGIN_LENGTH')
+                                     : 5;
+                    $min_pass_length = CAT_Registry::exists('AUTH_MIN_PASS_LENGTH',false)
+                                     ? CAT_Registry::get('AUTH_MIN_PASS_LENGTH')
+                                     : 5;
+
                     // check common issues
                     // we do not check for too long and don't give too much hints!
                     if ( ! $name )
                         self::setError($lang->translate('Invalid credentials'));
                     if ( ! self::$loginerror && $user == '' || $pw == '' )
                         self::setError($lang->translate('Please enter your username and password.'));
-                    if ( ! self::$loginerror && strlen($user) < AUTH_MIN_LOGIN_LENGTH )
+                    if ( ! self::$loginerror && strlen($user) < $min_length )
                         self::setError($lang->translate('Invalid credentials'));
-                    if ( ! self::$loginerror && ! defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < AUTH_MIN_PASS_LENGTH )
+                    if ( ! self::$loginerror && ! CAT_Registry::defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < $min_pass_length )
                         self::setError($lang->translate('Invalid credentials'));
 
                     if ( ! self::$loginerror )
                     {
-                        $query	= 'SELECT * FROM `'.CAT_TABLE_PREFIX.'users` WHERE `username` = "'.$name.'" AND `password` = "'.md5($pw).'" AND `active` = 1';
-                        $result    = $self->db()->query($query);
+                        $query    = 'SELECT * FROM `%susers` WHERE `username` = "%s" AND `password` = "%s" AND `active` = 1';
+                        $result    = $self->db()->query(sprintf($query,CAT_TABLE_PREFIX,$name,md5($pw)));
                 		if ( $result->numRows() == 1 )
                         {
 
@@ -167,19 +170,19 @@ if ( ! class_exists( 'CAT_Users', false ) )
                             $_SESSION['TIMEZONE_STRING']
                                 = ( isset($prefs['timezone_string']) && $prefs['timezone_string'] != '' )
                                 ? $prefs['timezone_string']
-                                : DEFAULT_TIMEZONE_STRING
+                                : CAT_Registry::get('DEFAULT_TIMEZONE_STRING')
                                 ;
 
                             $_SESSION['DATE_FORMAT']
                                 = ( isset($prefs['date_format']) && $prefs['date_format'] != '' )
                                 ? $prefs['date_format']
-                                : DEFAULT_DATE_FORMAT
+                                : CAT_Registry::get('DEFAULT_DATE_FORMAT')
                                 ;
 
                             $_SESSION['TIME_FORMAT']
                                 = ( isset($prefs['time_format']) && $prefs['time_format'] != '' )
                                 ? $prefs['time_format']
-                                : DEFAULT_TIME_FORMAT
+                                : CAT_Registry::get('DEFAULT_TIME_FORMAT')
                                 ;
 
                 			date_default_timezone_set($_SESSION['TIMEZONE_STRING']);
@@ -193,8 +196,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
                 			foreach ( explode(",",$user['groups_id']) as $cur_group_id )
                 			{
-                				$query	 = "SELECT * FROM `".CAT_TABLE_PREFIX."groups` WHERE group_id = '".$cur_group_id."'";
-                                $result     = $self->db()->query($query);
+                                $query   = "SELECT * FROM `%sgroups` WHERE group_id = '%d'";
+                                $result  = $self->db()->query(sprintf($query,CAT_TABLE_PREFIX,$cur_group_id));
                 				$results = $result->fetchRow( MYSQL_ASSOC );
 
                 				$_SESSION['GROUP_NAME'][$cur_group_id] = $results['name'];
@@ -236,9 +239,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 			// Update the users table with current ip and timestamp
                 			$get_ts		= time();
                 			$get_ip		= $_SERVER['REMOTE_ADDR'];
-                			$query		= "UPDATE `".CAT_TABLE_PREFIX."users` SET login_when = '$get_ts', login_ip = '$get_ip' WHERE user_id = '".$user['user_id']."'";
-                            $self->db()->query($query);
-                            return CAT_ADMIN_URL.'/start/index.php';
+                            $query  = "UPDATE `%susers` SET login_when = '%s', login_ip = '%s' WHERE user_id = '%d'";
+                            $self->db()->query(sprintf($query,CAT_TABLE_PREFIX,$get_ts,$get_ip,$user['user_id']));
+                            return CAT_ADMIN_URL.'/start/index.php?initial=true';
                         }
                         else
                         {
@@ -246,8 +249,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         }
                     }
 
-                    if ( $val->fromSession('ATTEMPTS') > MAX_ATTEMPTS && AUTO_DISABLE_USERS )
-                    {
+                    if (
+                           $val->fromSession('ATTEMPTS') > CAT_Registry::get('MAX_ATTEMPTS')
+                        && CAT_Registry::exists('AUTO_DISABLE_USERS')
+                        && CAT_Registry::get('AUTO_DISABLE_USERS') === true
+                    ) {
                         // if we have a user name
                         if ( $name )
                         {

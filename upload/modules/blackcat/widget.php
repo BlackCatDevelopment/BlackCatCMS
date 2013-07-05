@@ -110,22 +110,25 @@ if ( $doit ) {
            ;
         $version = 'unknown';
     }
-}
-else {
-    #$version = $last_version;
-}
 
-if ( $version )
-{
+    if ( $version && $version != 'unknown' )
+    {
     if ( CAT_Helper_Addons::getInstance()->versionCompare($version,CAT_VERSION,'>' ) ) {
         $newer = true;
     }
-}
+    }
 
-$fh   = @fopen(sanitize_path(dirname(__FILE__).'/data/.last'),'w');
-if ( is_resource($fh) ) {
+    $fh   = @fopen(sanitize_path(dirname(__FILE__).'/data/.last'),'w');
+    if ( is_resource($fh) ) {
     fputs($fh,time().'|'.$version);
     fclose($fh);
+    }
+
+}
+else {
+    $version = ( isset($last_version) && $last_version != '' )
+             ? $last_version
+             : $version;
 }
 
 $parser->setPath(dirname(__FILE__).'/templates/default');
