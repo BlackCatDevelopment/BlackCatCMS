@@ -129,6 +129,9 @@ $bundled = array(
 // ----- languages -----
     'DE'             , 'EN'
 );
+$mandatory = array(
+    'droplets', 'lib_dwoo', 'lib_jquery', 'show_menu2', 'wysiwyg', 'wysiwyg_admin'
+);
 
 // *****************************************************************************
 // define the steps we are going through
@@ -860,7 +863,7 @@ function fill_tables($database) {
  **/
 function install_modules ($cat_path,$database) {
 
-    global $admin, $bundled;
+    global $admin, $bundled, $mandatory;
 
     $errors = array();
 
@@ -931,6 +934,13 @@ function install_modules ($cat_path,$database) {
     foreach($bundled as $module) {
         $database->query(sprintf(
             'UPDATE `%saddons` SET bundled="Y" WHERE directory="%s"',
+            CAT_TABLE_PREFIX,$module
+        ));
+    }
+    // mark mandatory modules
+    foreach($mandatory as $module) {
+        $database->query(sprintf(
+            'UPDATE `%saddons` SET removable="N" WHERE directory="%s"',
             CAT_TABLE_PREFIX,$module
         ));
     }
