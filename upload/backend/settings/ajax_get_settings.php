@@ -54,11 +54,12 @@ if ( !$users->checkPermission('Settings','settings') )
 	exit();
 }
 
+require_once dirname(__FILE__).'/../../config.php';
 require_once dirname(__FILE__).'/functions.php';
 
 $settings = CAT_Registry::getSettings();
 $region   = CAT_Helper_Validate::get('_REQUEST','template');
-$tpl      = 'backend_settings_index_'.$region;
+$tpl      = 'backend_settings_index_'.$region.'.tpl';
 $data     = getSettingsTable();
 $tpl_data = array( 'values' => $data );
 
@@ -121,10 +122,18 @@ switch($region)
         break;
 }
 
+$result  = true;
+$message = NULL;
+$output  = $parser->get($tpl, $tpl_data);
+if ( !$output || $output == '' ) {
+    $result = false;
+    $message = 'Unable to load settings sub page';
+}
+
 $ajax = array(
-	'message'	=> NULL,
-	'success'	=> true,
-    'settings'  => $parser->get($tpl, $tpl_data ),
+	'message'	=> $message,
+	'success'	=> $result,
+    'settings'  => $output,
 );
 print json_encode( $ajax );
 exit();

@@ -76,6 +76,7 @@ switch($region)
     case 'frontend':
     case 'backend':
     case 'users':
+    case 'system':
         saveGroup($backend,$region);
         break;
     case 'mail':

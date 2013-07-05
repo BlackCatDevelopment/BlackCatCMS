@@ -1658,7 +1658,13 @@ if (!class_exists('CAT_Helper_Page'))
                                 }
                             }
                         }
-                        $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $item) . '"></script>';
+                        if ( $item !== '' )
+                        {
+                            $static[] = CAT_Helper_Page::$space
+                                      . '<script type="text/javascript" src="'
+                                      . $val->sanitize_url(CAT_URL . $item)
+                                      . '"></script>';
+                        }
                     }
                     unset($arr['all']);
                 }
@@ -1764,8 +1770,10 @@ if (!class_exists('CAT_Helper_Page'))
                 foreach ($arr['all'] as $item)
                 {
                     $resolved = self::_find_item($item);
+                    if($resolved) {
                     $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $resolved ) . '"></script>' . "\n";
                 }
+            }
             }
 
             // components to load on individual pages only (backend only)

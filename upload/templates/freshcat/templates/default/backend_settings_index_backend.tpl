@@ -9,7 +9,7 @@
             <label class="fc_label_300" for="fc_default_theme_variant">{translate('Variant')}:</label>
             <select name="default_theme_variant" id="fc_default_theme_variant">
 				{foreach $variants variant}
-				<option value="{$variant}">{$variant}</option>
+				<option value="{$variant}"{if $variant == $values.default_theme_variant} selected="selected"{/if}>{$variant}</option>
 				{/foreach}
 			</select>
             </div>
@@ -34,21 +34,18 @@
 			<div class="clear_sp"></div>
 
 			<label class="fc_label_300" for="fc_redirect_timer">{translate('Redirect after')}:</label>
-			<input type="text" name="redirect_timer" id="fc_redirect_timer"  value="{$values.redirect_timer}" />ms
+			<input type="text" name="redirect_timer" id="fc_redirect_timer" value="{$values.redirect_timer}" /> ms
+            <p>{translate('allowed values')}: 0 - 10000</p>
 			<div class="clear_sp"></div>
 
 			<label class="fc_label_300" for="fc_token_lifetime">{translate('Token lifetime')}:</label>
 			<input type="text" name="token_lifetime" id="fc_token_lifetime"  value="{$values.token_lifetime}" /> s
-			<p>
-				{translate('0 means default, which is 7200s = 2 hours')}
-			</p>
+			<p>{translate('0 means default, which is 7200s = 2 hours; allowed values')}: 0 - 10000</p>
 			<div class="clear_sp"></div>
 
 			<label class="fc_label_300" for="fc_max_attempts">{translate('Allowed wrong login attempts')}:</label>
 			<input type="text" name="max_attempts" id="fc_max_attempts"  value="{$values.max_attempts}" />
-			<p>
-				{translate('When reaching this number, more login attempts are not possible for this session.')}
-			</p>
+			<p>{translate('When reaching this number, more login attempts are not possible for this session.')} ({translate('allowed values')}: 1 - 10)</p>
 			<div class="clear_sp"></div>
 			{else}
 			<input type="hidden" name="er_level" value="{$values.er_level}" />

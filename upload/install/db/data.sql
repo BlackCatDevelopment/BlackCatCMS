@@ -117,6 +117,7 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/backend/profiles/index.php' ),
     ( 0, '/backend/settings/ajax_get_settings.php' ),
     ( 0, '/backend/settings/ajax_guid.php' ),
+    ( 0, '/backend/settings/ajax_save_settings.php' ),
     ( 0, '/backend/settings/ajax_testmail.php' ),
     ( 0, '/backend/settings/ajax_get_template_variants.php' ),
     ( 0, '/backend/settings/index.php' ),

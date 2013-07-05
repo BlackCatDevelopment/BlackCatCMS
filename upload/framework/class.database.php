@@ -1,41 +1,45 @@
 <?php
 
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author          Website Baker Project, LEPTON Project
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ * 
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Website Baker Project, LEPTON Project, Black Cat Development
  * @copyright       2004-2010, Website Baker Project
+ *   @copyright       2011-2012, LEPTON Project
  * @copyright       2013, Black Cat Development
  * @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- *
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
+    $inc = false;
+    foreach ($subs as $sub) {
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
+    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
-// end include class.secure.php
 
 require_once(CAT_PATH.'/framework/functions.php');
 
@@ -141,12 +145,13 @@ if ( ! class_exists('database', false ) )
 			// database connection is established
 			$this->set_db_handle($db_handle);
 			if (!mysql_select_db(CAT_DB_NAME, $this->get_db_handle())) {
-				// error, can't select the Lepton DB
+				// error, can't select the DB
 				$this->set_error(sprintf("[MySQL Error] Retrieved a valid handle (<b>%s</b>) but can't select the database (<b>%s</b>)!", $this->get_db_handle(), CAT_DB_NAME));
 				trigger_error($this->get_error(), E_USER_ERROR);
 			}
 			else {
 				$this->set_connected(true);
+                mysql_query('SET CHARACTER SET utf8');
 			}
 		}
 		else {
@@ -193,7 +198,7 @@ if ( ! class_exists('database', false ) )
 	 * @return RESOURCE or NULL for error
 	 */
 	public function query($SQL) {
-		if (!isset($_SESSION['LEPTON_SESSION']) && !$this->override_session_check) $this->__initSession();
+		if (!isset($_SESSION['CAT_SESSION']) && !$this->override_session_check) $this->__initSession();
         // reset error
         $this->set_error(NULL);
 		$query = new queryMySQL();
@@ -255,9 +260,9 @@ if ( ! class_exists('database', false ) )
 	} // get_one()
 	
 	private function __initSession() {
-		if (defined('SESSION_STARTED') && !isset($_SESSION['LEPTON_SESSION'])) {
+		if (defined('SESSION_STARTED') && !isset($_SESSION['CAT_SESSION'])) {
 			// $_SESSION for class.database.php
-			$_SESSION['LEPTON_SESSION'] = true;
+			$_SESSION['CAT_SESSION'] = true;
 		}
 	} // __initSession()
 	

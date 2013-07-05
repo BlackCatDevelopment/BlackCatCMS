@@ -64,7 +64,7 @@
 			<input type="text" id="fc_email" name="email" value="{$EMAIL}" />
 			<div class="clear_sp"></div>
 
-            <div id="fc_modifyUser_currentpw" style="display:none;">
+            <div id="fc_modifyUser_currentpw" class="fc_modifyUser" style="display:none;">
                 <div class="fc_modifyUser fc_password_notification fc_br_all icon-notification fc_gradient_red fc_input_description">
     				{translate('Please enter your CURRENT password to confirm your changes!')}
     			</div>
@@ -79,7 +79,7 @@
                  {translate('Change password')}
                 </button>
             </div><div class="clear_sp"></div>
-            <div id="fc_modifyUser_setnewpw" style="display:none;">
+            <div id="fc_modifyUser_setnewpw" class="fc_modifyUser" style="display:none;">
             <div class="fc_modifyUser fc_password_notification fc_br_all icon-notification fc_gradient_red fc_input_description">
 				{translate('Please note: You should only enter values in those fields if you wish to change this users password')}
 			</div><div class="clear_sp"></div>

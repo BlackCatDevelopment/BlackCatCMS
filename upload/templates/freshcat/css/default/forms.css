@@ -50,8 +50,7 @@ input.fc_input_normal {
 	}
 
 .fc_list_forms > *,
-#fc_set_form_content,
-.fc_label_300 {
+#fc_set_form_content {
 	margin-right:	1em;
 	margin-left:	1em;
 }
@@ -75,3 +74,10 @@ input.fc_input_normal {
 .fc_label_300 {
 	min-width:		300px;
 }
+div#fc_set_form_content.fc_gradient1 p {
+    font-size:      0.9em;
+    font-style:     italic;
+}
+.fc_modifyUser input {
+    margin-left: 2em;
+    }
