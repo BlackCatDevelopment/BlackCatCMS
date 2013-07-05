@@ -98,7 +98,10 @@ jQuery(document).ready(function(){
 				if ( data.success === true )
 				{
                     return_success( jqXHR.process , data.message );
+                    if ( typeof current !== 'undefined' )
+                    {
 					current.slideUp(300, function() { current.remove(); });
+                    }
 				}
 				else {
 					return_error( jqXHR.process , data.message);

@@ -54,7 +54,7 @@ $groups = array(
 $allow_tags_in_fields = array('website_header', 'website_footer');
 $allow_empty_values   = array('website_header', 'website_footer', 'sec_anchor', 'pages_directory','catmailer_smtp_host','catmailer_smtp_username','catmailer_smtp_password');
 $boolean              = array('auto_disable_users','frontend_login','home_folders','manage_sections','multiple_menus','page_trash','prompt_mysql_errors','section_blocks','maintenance_mode','homepage_redirection','intro_page','page_languages','users_allow_mailaddress');
-$numeric              = array('redirect_timer','frontend_signup','maintenance_page','err_page_404','page_level_limit','token_lifetime','max_attempts');
+$numeric              = array('redirect_timer','maintenance_page','err_page_404','page_level_limit','token_lifetime','max_attempts');
 
 /**
  * get data from settings table
@@ -546,6 +546,7 @@ function check_er_level($value,$oldvalue) {
  *
  **/
 function check_frontend_signup($value,$oldvalue) {
+    if ( is_bool($value) || $value == 'false' ) return 'false';
     global $database;
     if (($result = $database->query(sprintf('SELECT count(*) AS `tcount` FROM `%sgroups`',CAT_TABLE_PREFIX))) && ($result->numRows() > 0))
     {
