@@ -57,6 +57,10 @@ if ( !(is_writable( CAT_PATH .  '/modules/') && is_writable( CAT_PATH . '/templa
     $backend->print_error( 'Unable to write to the target directory' );
 }
 
+// keep old modules happy
+require_once CAT_PATH.'/framework/class.admin.php';
+$admin = new admin('Addons','addons');
+
 if(CAT_Helper_Addons::installUploaded($_FILES['userfile']['tmp_name'],$_FILES['userfile']['name']))
 {
     $backend->print_success( 'Installed successfully' );

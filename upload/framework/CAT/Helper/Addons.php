@@ -779,8 +779,8 @@ if (!class_exists('CAT_Helper_Addons'))
 
             // Set temp vars
             $temp_dir     = CAT_PATH . '/temp/';
-            $temp_unzip   = $temp_dir   . '/unzip_'.basename($tmpfile).'/';
-            $temp_file    = $temp_unzip . $name;
+            $temp_unzip   = $temp_dir . '/unzip_'.pathinfo($tmpfile,PATHINFO_FILENAME).'/';
+            $temp_file    = $temp_dir . $name;
 
             // make sure the temp directory exists, is writable and is empty
             CAT_Helper_Directory::removeDirectory( $temp_unzip );
@@ -812,27 +812,37 @@ if (!class_exists('CAT_Helper_Addons'))
         public static function installModule( $zipfile, $silent = false )
         {
             // keep old modules happy
-            global $wb, $admin, $database;
+            global $wb, $admin, $database, $backend;
+            if ( ! is_object($admin) && is_object($backend) )
+                $admin =& $backend;
+            // keep old modules happy
 
+            $self      = self::getInstance();
             $extension = pathinfo( $zipfile, PATHINFO_EXTENSION );
             $sourcedir = pathinfo( $zipfile, PATHINFO_DIRNAME   );
 
+            $self->log()->LogDebug(sprintf('file extension [%s], source dir [%s]',$extension,$sourcedir));
+
             // Set temp vars
             $temp_dir     = CAT_PATH  . '/temp/';
-            $temp_unzip   = $temp_dir . '/unzip_'.basename($zipfile).'/';
+            $temp_unzip   = $temp_dir . '/unzip_'.pathinfo($zipfile,PATHINFO_FILENAME).'/';
+
+            $self->log()->LogDebug(sprintf('temp dir [%s], unzip dir [%s]',$temp_dir,$temp_unzip));
 
             // Check for language or template/module
             if ( $extension == 'php' )
             {
-                $temp_subdir = $zipfile;
+                $temp_unzip = $zipfile;
             }
             elseif ( $extension == 'zip' )
             {
-                $temp_subdir = $temp_unzip . 'unzip/';
-                CAT_Helper_Directory::createDirectory( $temp_subdir );
+                $self->log()->LogDebug(sprintf('creatung temp. unzip dir [%s]', $temp_unzip));
+                CAT_Helper_Directory::createDirectory( $temp_unzip );
+
+                $self->log()->LogDebug(sprintf('zip file [%s], output dir [%s]',$zipfile,$temp_unzip));
 
                 // Setup the PclZip object and unzip the files to the temp unzip folder
-                $list    = CAT_Helper_Zip::getInstance( $zipfile )->config( 'Path', CAT_Helper_Directory::sanitizePath( $temp_subdir ) )->extract();
+                $list = CAT_Helper_Zip::getInstance($zipfile)->config( 'Path', CAT_Helper_Directory::sanitizePath($temp_unzip) )->extract();
 
                 // check if anything was extracted
                 if ( ! $list )
@@ -844,10 +854,10 @@ if (!class_exists('CAT_Helper_Addons'))
                     return false;
                 }
                 // check for info.php
-                if ( ! file_exists( $temp_subdir . '/info.php' ) )
+                if ( ! file_exists( $temp_unzip . '/info.php' ) )
                 {
                     // check subfolders for info.php
-                    $info = CAT_Helper_Directory::maxRecursionDepth(2)->findFile('info.php',$temp_subdir);
+                    $info = CAT_Helper_Directory::getInstance()->maxRecursionDepth(3)->findFile('info.php',$temp_unzip);
                     if ( ! $info )
                 {
                         CAT_Helper_Directory::removeDirectory($temp_unzip);
@@ -858,7 +868,7 @@ if (!class_exists('CAT_Helper_Addons'))
                     }
                     else
                     {
-                        $temp_subdir = pathinfo($info,PATHINFO_DIRNAME);
+                        $temp_unzip = pathinfo($info,PATHINFO_DIRNAME);
                     }
                 }
                     }
@@ -873,9 +883,9 @@ if (!class_exists('CAT_Helper_Addons'))
 
             // Check the info.php file / language file
             $precheck_errors = NULL;
-            if ( $addon_info = self::checkInfo( $temp_subdir ) )
+            if ( $addon_info = self::checkInfo( $temp_unzip ) )
                     {
-                $precheck_errors = self::preCheckAddon( $zipfile, $temp_subdir, false );
+                $precheck_errors = self::preCheckAddon( $zipfile, $temp_unzip, false );
                     }
             else
             {
@@ -939,7 +949,7 @@ if (!class_exists('CAT_Helper_Addons'))
             {
                 CAT_Helper_Directory::createDirectory( $addon_dir );
                 // copy files from temp folder
-                if ( CAT_Helper_Directory::copyRecursive( $temp_subdir, $addon_dir ) !== true )
+                if ( CAT_Helper_Directory::copyRecursive( $temp_unzip, $addon_dir ) !== true )
                 {
                     CAT_Helper_Directory::removeDirectory($temp_unzip);
                     //CAT_Helper_Directory::removeDirectory($zipfile);

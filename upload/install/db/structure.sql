@@ -400,16 +400,17 @@ COMMENT='WYSIWYG Admin for Black Cat CMS'
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `cat_user_has_group` (
+CREATE TABLE `cat_user_has_group` (
 	`user_id` INT(11) UNSIGNED NOT NULL,
-	`grou_id` INT(11) UNSIGNED NOT NULL,
-	CONSTRAINT `FK_cat_user_has_group_cat_users` FOREIGN KEY (`user_id`) REFERENCES `cat_users` (`user_id`),
-	CONSTRAINT `FK_cat_user_has_group_cat_groups` FOREIGN KEY (`grou_id`) REFERENCES `cat_groups` (`group_id`)
+	`group_id` INT(11) UNSIGNED NOT NULL,
+	INDEX `FK_cat_user_has_group_cat_users` (`user_id`),
+	INDEX `FK_cat_user_has_group_cat_groups` (`group_id`),
+	CONSTRAINT `FK_cat_user_has_group_cat_groups` FOREIGN KEY (`group_id`) REFERENCES `cat_groups` (`group_id`),
+	CONSTRAINT `FK_cat_user_has_group_cat_users` FOREIGN KEY (`user_id`) REFERENCES `cat_users` (`user_id`)
 )
 COMMENT='Maps users to groups'
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB;
-
 
 /*!40014 SET FOREIGN_KEY_CHECKS=1 */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
