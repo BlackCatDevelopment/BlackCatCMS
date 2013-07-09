@@ -48,7 +48,7 @@ class admin extends wb
 
     function __construct($section_name, $section_permission = 'start', $auto_header = true, $auto_auth = true)
     {
-    return CAT_Backend::getInstance($section_name);
+        return CAT_Backend::getInstance($section_name,$section_permission,$auto_header,$auto_auth);
     }
 
     function get_permission($name, $type = 'system') { return CAT_Users::get_permission($name,$type); }

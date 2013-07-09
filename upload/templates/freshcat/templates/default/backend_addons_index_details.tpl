@@ -28,6 +28,7 @@
 			<p>
 			<span class="fc_label_200">{translate('Version')}:</span>{$addon.version}<br />
 			<span class="fc_label_200">{translate('Author')}:</span>{$addon.author}<br />
+            {if $addon.link}<span class="fc_label_200">{translate('Link')}:</span><a href="{$addon.link}" target="_blank">{$addon.link}</a><br />{/if}
 			{if $addon.function}<span class="fc_label_200">{translate('Function')}:</span>{$addon.function}<br />{/if}
 			<span class="fc_label_200">{translate('Designed for')}:</span>Black Cat CMS {$addon.platform}<br />
 			<span class="fc_label_200">{translate('License')}:</span>{$addon.license}<br />
@@ -42,7 +43,7 @@
 			{else}
 			<h2>{translate('Module seems to be not installed yet.')}</h2>
 			{/if}
-			{if $permissions.MODULES_INSTALL}
+			{if $permissions.MODULES_INSTALL && $addon.type !== 'language' }
               <p class="fc_gradient_red">{translate('DANGER ZONE! This may delete your current data!')}</p>
 			  <p>{translate('When modules are uploaded via FTP (not recommended), the module installation functions install, upgrade or uninstall will not be executed automatically. Those modules may not work correct or do not uninstall properly.')}<br />
               {translate('You can execute the module functions manually for modules uploaded via FTP below.')}

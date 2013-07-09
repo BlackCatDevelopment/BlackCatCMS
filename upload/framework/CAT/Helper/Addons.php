@@ -57,7 +57,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 'module_function',
                 'module_description',
                 'module_platform',
-                'module_guid'
+                'module_guid',
+                'module_link',
             ),
             'template' => array(
                 'template_license',
@@ -1239,12 +1240,12 @@ if (!class_exists('CAT_Helper_Addons'))
                     );
                     if ($self->db()->get_one($sql))
                     {
-                        $sql = "UPDATE `%saddons` SET ";
+                        $sql = "UPDATE `%saddons` SET `upgraded`='".time()."', ";
                         $do  = 'update';
                     }
                     else
                     {
-                        $sql = "INSERT INTO `%saddons` SET ";
+                        $sql = "INSERT INTO `%saddons` SET `installed`='".time()."', ";
                     }
 
                     $options = array(
@@ -1569,6 +1570,20 @@ if (!class_exists('CAT_Helper_Addons'))
             if (is_dir($directory) && file_exists($directory . '/info.php'))
             {
 
+                // get header info
+                $link = NULL;
+                ini_set('auto_detect_line_endings',true);
+                $file = fopen($directory.'/info.php', 'r');
+                if ($file) {
+                    while ($line = fgets($file)) {
+                        if (preg_match('/\@link\s+(.*)/i', $line, $matches)) {
+                            $link = trim($matches[1]);
+                            break;
+                        }
+                    }
+                    fclose($file);
+                }
+
                 require($directory . '/info.php');
 
                 if (isset($module_function) && in_array(strtolower($module_function), self::$module_functions))
@@ -1617,6 +1632,8 @@ if (!class_exists('CAT_Helper_Addons'))
                                              ;
                     }
                 }
+                if($link)
+                    $return_values['module_link'] = $link;
                 return $return_values;
             }
             elseif (file_exists($directory) && pathinfo($directory, PATHINFO_EXTENSION) == 'php')

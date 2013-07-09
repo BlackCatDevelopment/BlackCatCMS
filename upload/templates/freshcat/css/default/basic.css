@@ -204,7 +204,7 @@ label {
 	top: 51px;
 	right: 0px;
 	z-index: 1;
-	overflow: scroll;
+	overflow: hidden;
 	width: 80%;
 	height: 400px;
 }

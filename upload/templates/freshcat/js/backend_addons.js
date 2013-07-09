@@ -5,7 +5,7 @@
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         freshcat
- *
+  *
  */
 
 jQuery(document).ready(function(){
@@ -62,4 +62,30 @@ jQuery(document).ready(function(){
 			slide.addClass('fc_no_search').stop().slideUp(300);
 		}
 	});
+    $('.fc_module_item').not('.fc_type_heading').click( function(e) {
+        var current	= $(this);
+        var dates	= {
+			'_cat_ajax': 1,
+            'module': current.find('input').val()
+		};
+		$.ajax(
+		{
+			context:	form,
+			type:		'POST',
+			url:		CAT_ADMIN_URL + '/addons/ajax_get_details.php',
+			dataType:	'json',
+			data:		dates,
+			cache:		false,
+			success:	function( data, textStatus, jqXHR )
+			{
+				if ( data.success === true )
+				{
+                    $('div#addon_details').html(data.content);
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			}
+		});
+    });
 });
