@@ -77,6 +77,8 @@
 			{if $addon.UPGRADE}
 			<form name="upgrade" action="manual_install.php" method="post">
 				<input type="hidden" name="action" value="upgrade" />
+                <input type="hidden" name="type" value="{$addon.type}" />
+                <input type="hidden" name="{$csrfname}" value="{$csrftoken}" />
 				<input type="hidden" name="file" value="{if $addon.directory}{$addon.directory}{else}{$addon.INSTALL.directory}{/if}" />
 				<input type="submit" name="upgrade_module" class="fc_gradient_red" value="{translate('Execute upgrade.php manually')}" />
 			</form>
