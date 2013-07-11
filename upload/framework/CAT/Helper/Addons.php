@@ -913,22 +913,19 @@ if (!class_exists('CAT_Helper_Addons'))
             // So, now we have done all preinstall checks, lets see what to do next
             $addon_directory
                 = $addon_info['addon_function'] == 'language'
-                ? $addon_info[$addon_info['addon_function'] . '_code'] . '.php'
+                ? $addon_info['module_code'] . '.php'
                 : $addon_info['module_directory'];
 
             // Set module directory
             $addon_dir         = CAT_PATH.'/'.$addon_info['addon_function'].'s/'.$addon_directory;
             $action            = 'install';
 
-            if ( file_exists( $addon_dir ) )
+            if ( file_exists( $addon_dir ) && $addon_info['addon_function'] != 'language' )
             {
                 $action        = 'upgrade';
                 // look for old info.php
                 $previous_info = self::checkInfo( $addon_dir );
-                if (
-                       $previous_info
-                    || $addon_info['addon_function'] == 'language'
-                ) {
+                if ( $previous_info ) {
                     /**
                     *    Version to be installed is older than currently installed version
                      */
@@ -979,8 +976,12 @@ if (!class_exists('CAT_Helper_Addons'))
 
             if ( $action == 'install' && $addon_info['addon_function'] == 'language' )
         {
-                rename($zipfile, $addon_dir);
-                CAT_Helper_Directory::setPerms($addon_dir);
+                $target = CAT_Helper_Directory::sanitizePath($addon_dir);
+                // for manual install...
+                if ( $zipfile !== $target ) {
+                    rename($zipfile, $addon_directory);
+                    CAT_Helper_Directory::setPerms($addon_directory);
+                }
                     }
 
             // set module permissions

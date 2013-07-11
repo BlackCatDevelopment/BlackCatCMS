@@ -41,63 +41,64 @@ if (defined('CAT_PATH')) {
 
 $backend = CAT_Backend::getInstance('Addons', 'modules_install');
 $user    = CAT_Users::getInstance();
-$val = CAT_Helper_Validate::getInstance();
+$val     = CAT_Helper_Validate::getInstance();
 
-$action		= $val->sanitizePost('action');
-$file		= $val->sanitizePost('file');
+$action	 = $val->sanitizePost('action');
+$module	 = $val->sanitizePost('file');
+$type    = $val->sanitizePost('type').'s';
+
+$js_back = CAT_ADMIN_URL . '/addons/index.php';
 
 if ( !in_array( $action, array('install', 'upgrade') ) )
 {
-	die(header('Location: ' . CAT_ADMIN_URL));
+	die(header('Location: '.CAT_ADMIN_URL.'/'.CAT_BACKEND_PATH.'/addons/index.php'));
 }
-if ( $file == '' || !( strpos($file, '..') === false ) )
+if ( $module == '' || !( strpos($module, '..') === false ) )
 {
-	die(header('Location: ' . CAT_ADMIN_URL));
+	die(header('Location: '.CAT_ADMIN_URL.'/'.CAT_BACKEND_PATH.'/addons/index.php'));
 }
 
-$js_back	= CAT_ADMIN_URL . '/addons/index.php';
+// validate
+$path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type.'/'.$module.(($type=='languages')?'.php':''));
+$info = CAT_Helper_Addons::checkInfo($path);
 
-// check if specified module folder exists
-$mod_path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.basename(CAT_PATH.'/'.$file));
-
-// set the old variablename in case the module uses it
-$module_dir		= $mod_path;
-$mod_file   = $mod_path.'/'.$action.'.php';
-
-if ( !file_exists($mod_file) )
+if ( ! is_array($info) || ! count($info) )
 {
-	$backend->print_error(
-          $backend->lang()->translate('Not found')
+    $backend->print_error(
+          $backend->lang()->translate(
+              'Unable to {{ action }} {{ type }} {{ module }}!',
+              array('action'=>$action,'type'=>substr( $type, 0, -1 ),'module'=>$path)
+          )
         . ': <tt>"'
-        . htmlentities(basename($mod_path)).'/'.$action.'.php"</tt> ',
+        . htmlentities(basename($path)).'/'.$action.'.php"</tt> does not exist',
         $js_back
     );
 }
 
-// this prints an error page if prerequisites are not met
-$precheck_errors = CAT_Helper_Addons::preCheckAddon( NULL, $mod_path, false );
-if ( $precheck_errors != '' && ! is_bool($precheck_errors) )
+if ( $type != 'languages' )
 {
-    $backend->print_error($backend->lang()->translate(
-        'Invalid installation file. {{error}}',
-        array('error'=>$precheck_errors)
-    ));
-    return false;
+    // this prints an error page if prerequisites are not met
+    $precheck_errors = CAT_Helper_Addons::preCheckAddon( NULL, $path, false );
+    if ( $precheck_errors != '' && ! is_bool($precheck_errors) )
+    {
+        $backend->print_error($backend->lang()->translate(
+            'Invalid installation file. {{error}}',
+            array('error'=>$precheck_errors)
+        ));
+        return false;
+    }
 }
 
-// include modules install.php/upgrade.php script
-global $admin;
-$admin =& $backend;
-require $mod_file;
-
-// load module info into database and output status message
-if ( !CAT_Helper_Addons::loadModuleIntoDB($mod_path,$action,CAT_Helper_Addons::checkInfo($mod_path)))
+if ( ! CAT_Helper_Addons::installModule($path) )
 {
+    // the method will print the error, but to be sure...
     $backend->print_error(
-        $backend->lang()->translate(
-            'Unable to add the addon to the database!<br />{{error}}',
-            array('error'=>$backend->db()->get_error())
-        ), $js_back );
+          $backend->lang()->translate(
+              'Unable to {{ action }} {{ type }} {{ module }}!',
+              array('action'=>$action,'type'=>substr( $type, 0, -1 ),'module'=>$info['module_name'])
+          ),
+        $js_back
+    );
 }
 
 switch ($action)
@@ -109,5 +110,8 @@ switch ($action)
 	default:
 		$backend->print_error( 'Action not supported', $js_back );
 }
+
+// Print admin footer
+$backend->print_footer();
 
 ?>

@@ -1,8 +1,9 @@
 		<div id="fc_list_{if $addon.directory}{$addon.directory}{else}{$addon.INSTALL.directory}{/if}" class="fc_list_forms fc_form_content">
-            {if $addon.is_removable && $permissions.MODULES_UNINSTALL}
+            {if $addon.is_removable && $addon.is_installed && $permissions.MODULES_UNINSTALL}
 			<form name="uninstall" action="uninstall.php" method="post" class="submit_settings fc_gradient1">
 				<input type="hidden" name="file" value="{$addon.directory}" />
 				<input type="hidden" name="type" value="{$addon.type}" />
+                <input type="hidden" name="{$csrfname}" value="{$csrftoken}" />
 				<strong>{translate('Module details')}: {$addon.name}</strong>
 				<input type="submit" name="uninstall_module" value="{translate('Uninstall Addon')}" class="fc_gradient_red" />
 			</form>
@@ -15,7 +16,7 @@
             </div>
             {/if}
 			<div class="clear_sp"></div>
-			{if $addon.description || $addon.type == 'languages'}
+{if $addon.description || $addon.type == 'languages'}
 			{if $addon.description}
 			<div>
 				{if $addon.icon}<img class="right" src="{$addon.icon}" alt="{$addon.name}" />{/if}
@@ -40,10 +41,11 @@
 			<hr />
 			<div class="clear_sp"></div>
 			{/if}
-			{else}
+{else}
 			<h2>{translate('Module seems to be not installed yet.')}</h2>
 			{/if}
-			{if $permissions.MODULES_INSTALL && $addon.type !== 'language' }
+			{if $permissions.MODULES_INSTALL }
+              {if $addon.type !== 'language'}
               <p class="fc_gradient_red">{translate('DANGER ZONE! This may delete your current data!')}</p>
 			  <p>{translate('When modules are uploaded via FTP (not recommended), the module installation functions install, upgrade or uninstall will not be executed automatically. Those modules may not work correct or do not uninstall properly.')}<br />
               {translate('You can execute the module functions manually for modules uploaded via FTP below.')}
@@ -52,11 +54,26 @@
 			  <form name="install" action="manual_install.php" method="post" style="float:left;">
 				<input type="hidden" name="action" value="install" />
 				<input type="hidden" name="file" value="{if $addon.directory}{$addon.directory}{else}{$addon.INSTALL.directory}{/if}" />
+                <input type="hidden" name="type" value="{$addon.type}" />
+                <input type="hidden" name="{$csrfname}" value="{$csrftoken}" />
 				<input type="submit" name="install_manual_module" class="fc_gradient_red" value="{translate('Execute install.php manually')}" />
-			</form>
+			  </form>
 			  {else}
+              {if $addon.type == 'module'}
               <h3>{translate('No install.php found! The module cannot be installed!')}</h3>
+              {/if}
 			{/if}
+            {else}
+            {if !$addon.is_installed}
+           <form name="install_language" id="install_language" action="manual_install.php" method="post">
+				<input type="hidden" name="file" value="{$addon.directory}" />
+				<input type="hidden" name="type" value="{$addon.type}" />
+                <input type="hidden" name="action" value="install" />
+                <input type="hidden" name="{$csrfname}" value="{$csrftoken}" />
+				<input type="submit" name="install_language_submit" id="install_language_submit" value="{translate('Install Language')}" class="fc_gradient_red" />
+			</form>
+            {/if}
+            {/if}
 			{if $addon.UPGRADE}
 			<form name="upgrade" action="manual_install.php" method="post">
 				<input type="hidden" name="action" value="upgrade" />
@@ -64,6 +81,6 @@
 				<input type="submit" name="upgrade_module" class="fc_gradient_red" value="{translate('Execute upgrade.php manually')}" />
 			</form>
 			{/if}
-            {/if}
+{/if}
 			<div class="clear_sp"></div>
 		</div>

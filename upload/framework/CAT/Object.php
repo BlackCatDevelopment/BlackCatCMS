@@ -219,13 +219,28 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             // remove path info from file
             $file = ( isset($caller[1]) && isset($caller[1]['file']) )
                   ? basename( $caller[1]['file'] )
-                  : 'unknown';
+                      : (
+                          ( isset($caller[0]) && isset($caller[0]['file']) )
+                          ? basename( $caller[0]['file'] )
+                          : 'unknown'
+                        );
+            $line     = ( isset($caller[1]) && isset($caller[1]['line'])     )
+                      ? $caller[1]['line']
+                      : (
+                          ( isset($caller[0]) && isset($caller[0]['line'])     )
+                          ? $caller[0]['line']
+                          : '-'
+                        );
+            $function = ( isset($caller[1]) && isset($caller[1]['function']) )
+                      ? $caller[1]['function']
+                      : (
+                          ( isset($caller[0]) && isset($caller[0]['function']) )
+                          ? $caller[0]['function']
+                          : '-'
+                        );
 
             echo "<br /><br /><span style=\"font-size: smaller;\">[ ",
-                 $file, ' : ',
-                 ( ( isset($caller[1]) && isset($caller[1]['line'])     ) ? $caller[1]['line']     : '-' ),
-                 ' : ',
-                 ( ( isset($caller[1]) && isset($caller[1]['function']) ) ? $caller[1]['function'] : '-' ),
+                 $file, ' : ', $line, ' : ', $function,
                  " ]</span><br />\n";
 
             #if ( $this->debugLevel == self::DEBUG ) {
@@ -292,12 +307,18 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                     = isset( $caller[0]['class'] )
                     ? $caller[0]['class']
                     : NULL;
-    			if ($caller_class && is_object($caller_class) && method_exists($caller_class, "print_footer"))
+    			if ($caller_class && method_exists($caller_class, "print_footer"))
                 {
+                    if( is_object($caller_class) )
     				$caller_class->print_footer();
+                    else
+                        $caller_class::print_footer();
                 }
+else {
+    echo "unable to print footer - no such method $caller_class -> print_footer()";
+}
+                exit();
             }
-    		exit();
     	}   // end function printMsg()
 
 

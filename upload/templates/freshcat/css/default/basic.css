@@ -371,3 +371,5 @@ div#testmail_result{
 }
 
 .ui-dialog { z-index: 999; }
+
+#fc_lists_overview.fc_addons button { width: 52px; }

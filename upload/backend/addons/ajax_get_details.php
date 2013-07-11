@@ -55,14 +55,25 @@ if ( !$users->checkPermission('Addons','addons') )
 }
 
 $module = CAT_Helper_Validate::sanitizePost('module');
+$type   = CAT_Helper_Validate::sanitizePost('type');
 
-if(CAT_Helper_Addons::isModuleInstalled($module))
+if(CAT_Helper_Addons::isModuleInstalled($module,NULL,$type))
 {
     $addon  = CAT_Helper_Addons::getAddonDetails($module);
 }
 else
 {
-    $info = CAT_Helper_Addons::checkInfo(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$module));
+    $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type.'/'.$module.(($type=='languages')?'.php':''));
+    $info = CAT_Helper_Addons::checkInfo($path);
+    if ( ! is_array($info) || ! count($info) )
+    {
+        $ajax	= array(
+    		'message'	=> $backend->lang()->translate("No Addon info available, seems to be an invalid addon!"),
+    		'success'	=> false
+    	);
+    	print json_encode( $ajax );
+    	exit();
+    }
     $addon = array(
         'type' => $info['addon_function'],
         'installed' => NULL,
@@ -71,7 +82,7 @@ else
     );
     foreach($info as $key => $value)
     {
-        $key = preg_replace('/^module_/i','',$key);
+        $key = preg_replace('/^(module_|addon_)/i','',$key);
         $addon[$key] = $value;
     }
 }
@@ -212,10 +223,14 @@ $addon = array_merge(
     array(
         'installed'    => ( ($addon['installed']!='' )  ? CAT_Helper_DateTime::getDate($addon['installed']) : NULL ),
         'upgraded'     => ( ($addon['upgraded'] !='' )  ? CAT_Helper_DateTime::getDate($addon['upgraded'])  : NULL ),
-        'is_installed' => true,
+        'is_installed' => CAT_Helper_Addons::isModuleInstalled($addon['directory'],NULL,$addon['type']),
         'is_removable' => ( ($addon['removable']=='N') ? false : true ),
         'link'         => $link,
 ));
+
+// create token
+$tpl_data['csrftoken'] = csrf_get_tokens();
+$tpl_data['csrfname']  = $GLOBALS['csrf']['input-name'];
 
 require_once dirname(__FILE__).'/../../config.php';
 require_once dirname(__FILE__).'/../../framework/functions.php';

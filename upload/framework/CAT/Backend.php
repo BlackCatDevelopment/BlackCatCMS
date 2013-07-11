@@ -42,7 +42,7 @@ if (!class_exists('CAT_Backend', false))
          * @access public
          * @return object
          **/
-        public static function getInstance($section_name, $section_permission = 'start', $auto_header = true, $auto_auth = true)
+        public static function getInstance($section_name = 'Start', $section_permission = 'start', $auto_header = true, $auto_auth = true)
         {
             if (!self::$instance)
             {
@@ -342,7 +342,7 @@ if (!class_exists('CAT_Backend', false))
         *
         * @access public
         **/
-        public function print_footer()
+        public static function print_footer()
         {
             global $parser;
             $tpl_data = array();
@@ -354,6 +354,8 @@ if (!class_exists('CAT_Backend', false))
             $data['CAT_CORE']                   = CAT_Registry::get('CAT_CORE');
             $data['permissions']['pages']       = CAT_Users::checkPermission('pages','pages') ? true : false;
 
+            $self = ( isset($this) && is_object($this) ) ? $this : self::getInstance();
+
             // ========================================================================
             // ! Try to get the actual version of the backend-theme from the database
             // ========================================================================
@@ -361,7 +363,7 @@ if (!class_exists('CAT_Backend', false))
             if (defined('DEFAULT_THEME'))
             {
                 $backend_theme_version
-                    = $this->db()->get_one(sprintf(
+                    = $self->db()->get_one(sprintf(
                           "SELECT `version` from `%saddons` where `directory`= '%s'",
                           CAT_TABLE_PREFIX,DEFAULT_THEME
                       ));
@@ -404,6 +406,7 @@ if (!class_exists('CAT_Backend', false))
         public function print_error($message, $redirect = 'index.php', $auto_footer = true)
         {
             CAT_Object::printError($message,$redirect);
+            exit();
         }
     	public function print_success($message, $redirect = 'index.php', $auto_footer = true)
     	{

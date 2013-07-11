@@ -49,7 +49,7 @@ $counter   = 0;
 $seen_dirs = array();
 
 $tpl_data['addons']               = array();
-$tpl_data['not_installed_addons'] = array();
+$tpl_data['not_installed_addons'] = array('modules'=>array(),'templates'=>array(),'languages'=>array());
 $tpl_data['groups']               = $users->get_groups('' , '', false);
 
 foreach( $addons as $addon )
@@ -87,31 +87,57 @@ $tpl_data['permissions']['MODULES_UNINSTALL'] = $users->checkPermission('addons'
 // scan modules path for modules not seen yet
 if( $users->checkPermission('addons','modules_install') )
 {
-    $new = CAT_Helper_Directory::getInstance()
-               ->maxRecursionDepth(0)
-               ->setSkipDirs($seen_dirs)
-               ->getDirectories( CAT_PATH.'/modules', CAT_PATH.'/modules/' );
-    if ( count($new) )
+    $addon = CAT_Helper_Addons::getInstance();
+    foreach( array('modules','templates') as $type )
     {
-        $addon = CAT_Helper_Addons::getInstance();
-        foreach( $new as $dir )
+        $new = CAT_Helper_Directory::getInstance()
+                   ->maxRecursionDepth(0)
+                   ->setSkipDirs($seen_dirs)
+                   ->getDirectories( CAT_PATH.'/'.$type, CAT_PATH.'/'.$type.'/' );
+        if ( count($new) )
         {
-            $info = $addon->checkInfo(CAT_PATH.'/modules/'.$dir);
-            if ( $info )
+            foreach( $new as $dir )
             {
-                $tpl_data['not_installed_addons'][$counter] = array(
+                $info = $addon->checkInfo(CAT_PATH.'/'.$type.'/'.$dir);
+                if ( $info )
+                {
+                    $tpl_data['not_installed_addons'][$type][$counter] = array(
+                        'is_installed' => false,
+                        'type'         => $type,
+                        'INSTALL'      => file_exists(CAT_PATH.'/'.$type.'/'.$dir.'/install.php') ? true : false
+                    );
+                    foreach( $info as $key => $value )
+                    {
+                        $tpl_data['not_installed_addons'][$type][$counter][str_ireplace('module_','',$key)] = $value;
+                    }
+                    $counter++;
+                }
+            }
+            $tpl_data['not_installed_addons'][$type] = CAT_Helper_Array::ArraySort($tpl_data['not_installed_addons'][$type],'name','asc',true);
+        }
+    }
+
+    $languages = CAT_Helper_Directory::getInstance()->setSkipFiles(array('index'))->maxRecursionDepth(0)->getPHPFiles( CAT_PATH.'/languages', CAT_PATH.'/languages/' );
+    if(count($languages))
+    {
+        foreach($languages as $lang)
+        {
+            $directory = pathinfo($lang,PATHINFO_FILENAME);
+            if(!in_array($directory,$seen_dirs))
+            {
+                $info = $addon->checkInfo(CAT_PATH.'/languages/'.$lang);
+                $tpl_data['not_installed_addons']['languages'][$counter] = array(
                     'is_installed' => false,
-                    'type'         => 'modules',
-                    'INSTALL'      => file_exists(CAT_PATH.'/modules/'.$dir.'/install.php') ? true : false
+                    'type'         => 'languages',
+                    'directory'    => $directory,
                 );
                 foreach( $info as $key => $value )
                 {
-                    $tpl_data['not_installed_addons'][$counter][str_ireplace('module_','',$key)] = $value;
+                    $tpl_data['not_installed_addons']['languages'][$counter][str_ireplace('module_','',$key)] = $value;
                 }
                 $counter++;
             }
         }
-        $tpl_data['not_installed_addons'] = CAT_Helper_Array::ArraySort($tpl_data['not_installed_addons'],'name','asc',true);
     }
 }
 
