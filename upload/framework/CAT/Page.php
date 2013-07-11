@@ -54,7 +54,7 @@ if (!class_exists('CAT_Page', false))
         public static function getInstance( $page_id )
         {
             if (!is_numeric($page_id))
-                self::fatalError('Invalid page ID!');
+                self::printFatalError('Invalid page ID!');
             if (!self::$helper)
                 self::$helper = CAT_Helper_Page::getInstance();
             if ($page_id==-1 || !isset(self::$instances[$page_id]))

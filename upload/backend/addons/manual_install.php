@@ -87,19 +87,12 @@ if ( $type != 'languages' )
         ));
         return false;
     }
+    // Run the modules install // upgrade script if there is one
+    if ( file_exists($path.'/'.$action.'.php') )
+        require $path.'/'.$action.'.php';
 }
 
-if ( ! CAT_Helper_Addons::installModule($path) )
-{
-    // the method will print the error, but to be sure...
-    $backend->print_error(
-          $backend->lang()->translate(
-              'Unable to {{ action }} {{ type }} {{ module }}!',
-              array('action'=>$action,'type'=>substr( $type, 0, -1 ),'module'=>$info['module_name'])
-          ),
-        $js_back
-    );
-}
+CAT_Helper_Addons::loadModuleIntoDB($path,$action,$info);
 
 switch ($action)
 {

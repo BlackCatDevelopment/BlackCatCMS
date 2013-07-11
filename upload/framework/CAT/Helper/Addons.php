@@ -837,7 +837,7 @@ if (!class_exists('CAT_Helper_Addons'))
             }
             elseif ( $extension == 'zip' )
             {
-                $self->log()->LogDebug(sprintf('creatung temp. unzip dir [%s]', $temp_unzip));
+                $self->log()->LogDebug(sprintf('creating temp. unzip dir [%s]', $temp_unzip));
                 CAT_Helper_Directory::createDirectory( $temp_unzip );
 
                 $self->log()->LogDebug(sprintf('zip file [%s], output dir [%s]',$zipfile,$temp_unzip));

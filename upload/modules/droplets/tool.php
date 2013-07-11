@@ -119,80 +119,24 @@ function list_droplets( $info = NULL )
 {
     global $parser, $settings, $val, $backend;
 
-    // check for global read perms
-    $groups  = CAT_Users::get_groups_id();
-    $dirh    = CAT_Helper_Directory::getInstance();
-    $backups = $dirh->scanDirectory( $dirh->sanitizePath( dirname( __FILE__ ) . '/export' ), true, true, NULL, array(
-         'zip'
-    ) );
+    $groups = CAT_Users::get_groups_id();
+    $rows   = CAT_Helper_Droplet::getDroplets(true);
 
-    $rows = array();
-    $fields  = 't1.id, `name`, `code`, `description`, `active`, `comments`, `view_groups`, `edit_groups`';
-    $query   = $dirh->db()->query(sprintf(
-          "SELECT $fields FROM `%smod_droplets` AS t1 LEFT OUTER JOIN `%smod_droplets_permissions` AS t2 "
-        . "ON t1.id=t2.id ORDER BY name ASC",
-        CAT_TABLE_PREFIX,CAT_TABLE_PREFIX
-    ));
-
-    if ( $query->numRows() )
-    {
-        while ( $droplet = $query->fetchRow(MYSQL_ASSOC) )
-        {
-            // the current user needs global edit permissions, or specific edit permissions to see this droplet
-            if ( !is_allowed( 'modify_droplets', $groups ) )
-            {
-                // get edit groups for this drople
-                if ( $droplet[ 'edit_groups' ] )
-                {
-                    if ( CAT_Users::get_user_id() != 1 && !is_in_array( $droplet[ 'edit_groups' ], $groups ) )
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        $droplet[ 'user_can_modify_this' ] = true;
-                    }
-                }
-            }
-            $comments = str_replace( array(
-                "\r\n",
-                "\n",
-                "\r"
-            ), '<br />', $droplet[ 'comments' ] );
-            if ( !strpos( $comments, "[[" ) ) //
-            {
-                $comments = '<span class="usage">' . $dirh->lang()->translate( 'Use' ) . ": [[" . $droplet[ 'name' ] . "]]</span><br />" . $comments;
-            }
-            $comments                  = str_replace( array(
-                "[[",
-                "]]"
-            ), array(
-                '<b>[[',
-                ']]</b>'
-            ), $comments );
-            $droplet[ 'valid_code' ]   = check_syntax( $droplet[ 'code' ] );
-            $droplet[ 'comments' ]     = $comments;
-            // droplet included in search?
-	        $droplet['is_in_search']   = CAT_Helper_Droplet::is_registered_for_search($droplet['name']);
-            // is there a data file for this droplet?
-            if ( file_exists( dirname( __FILE__ ) . '/data/' . $droplet[ 'name' ] . '.txt' ) || file_exists( dirname( __FILE__ ) . '/data/' . strtolower( $droplet[ 'name' ] ) . '.txt' ) || file_exists( dirname( __FILE__ ) . '/data/' . strtoupper( $droplet[ 'name' ] ) . '.txt' ) )
-            {
-                $droplet[ 'datafile' ] = true;
-            }
-            array_push( $rows, $droplet );
-        }
-    }
+    $backups = CAT_Helper_Directory::scanDirectory(
+        CAT_Helper_Directory::sanitizePath(
+            dirname(__FILE__).'/export'
+        ), true, true, NULL, array('zip') );
 
     $parser->output( 'tool', array(
         'rows'       => $rows,
         'info'       => $info,
-        'backups'    => ( ( count( $backups ) && is_allowed( 'manage_backups', $groups ) ) ? 1 : NULL ),
-        'can_export' => ( is_allowed( 'export_droplets', $groups ) ? 1 : NULL ),
-        'can_import' => ( is_allowed( 'import_droplets', $groups ) ? 1 : NULL ),
-        'can_delete' => ( is_allowed( 'delete_droplets', $groups ) ? 1 : NULL ),
-        'can_modify' => ( is_allowed( 'modify_droplets', $groups ) ? 1 : NULL ),
-        'can_perms'  => ( is_allowed( 'manage_perms'   , $groups ) ? 1 : NULL ),
-        'can_add'    => ( is_allowed( 'add_droplets'   , $groups ) ? 1 : NULL )
+        'backups'    => ( ( count( $backups ) && CAT_Helper_Droplet::is_allowed( 'manage_backups', $groups ) ) ? 1 : NULL ),
+        'can_export' => ( CAT_Helper_Droplet::is_allowed( 'export_droplets', $groups ) ? 1 : NULL ),
+        'can_import' => ( CAT_Helper_Droplet::is_allowed( 'import_droplets', $groups ) ? 1 : NULL ),
+        'can_delete' => ( CAT_Helper_Droplet::is_allowed( 'delete_droplets', $groups ) ? 1 : NULL ),
+        'can_modify' => ( CAT_Helper_Droplet::is_allowed( 'modify_droplets', $groups ) ? 1 : NULL ),
+        'can_perms'  => ( CAT_Helper_Droplet::is_allowed( 'manage_perms'   , $groups ) ? 1 : NULL ),
+        'can_add'    => ( CAT_Helper_Droplet::is_allowed( 'add_droplets'   , $groups ) ? 1 : NULL )
     ) );
 
 } // end function list_droplets()
@@ -205,7 +149,7 @@ function manage_droplet_backups()
     global $parser, $settings, $val, $backend;
 
     $groups = CAT_Users::get_groups_id();
-    if ( !is_allowed( 'manage_backups', $groups ) )
+    if ( !CAT_Helper_Droplet::is_allowed( 'manage_backups', $groups ) )
     {
         $backend->print_error( CAT_Backend::getInstance()->lang()->translate( "You don't have the permission to do this" ) );
     }
@@ -308,7 +252,7 @@ function manage_droplet_perms()
     $rows   = array();
 
     $this_user_groups = CAT_Users::get_groups_id();
-    if ( !is_allowed( 'manage_droplet_perms', $this_user_groups ) )
+    if ( !CAT_Helper_Droplet::is_allowed( 'manage_droplet_perms', $this_user_groups ) )
     {
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
@@ -373,7 +317,7 @@ function export_droplets()
     global $parser, $val, $backend;
 
     $groups = CAT_Users::get_groups_id();
-    if ( !is_allowed( 'export_droplets', $groups ) )
+    if ( !CAT_Helper_Droplet::is_allowed( 'export_droplets', $groups ) )
     {
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
@@ -510,7 +454,7 @@ function import_droplets()
     global $parser, $backend;
 
     $groups = CAT_Users::get_groups_id();
-    if ( !is_allowed( 'import_droplets', $groups ) )
+    if ( !CAT_Helper_Droplet::is_allowed( 'import_droplets', $groups ) )
     {
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
@@ -567,7 +511,7 @@ function delete_droplets()
     global $parser, $val, $backend;
 
     $groups = CAT_Users::get_groups_id();
-    if ( !is_allowed( 'delete_droplets', $groups ) )
+    if ( !CAT_Helper_Droplet::is_allowed( 'delete_droplets', $groups ) )
     {
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
@@ -631,7 +575,7 @@ function copy_droplet( $id )
 
     $groups = CAT_Users::get_groups_id();
 
-    if ( !is_allowed( 'modify_droplets', $groups ) )
+    if ( !CAT_Helper_Droplet::is_allowed( 'modify_droplets', $groups ) )
     {
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
@@ -683,13 +627,13 @@ function edit_droplet( $id )
 
     $groups = CAT_Users::get_groups_id();
 
-    if ( $id == 'new' && !is_allowed( 'add_droplets', $groups ) )
+    if ( $id == 'new' && !CAT_Helper_Droplet::is_allowed( 'add_droplets', $groups ) )
     {
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
     else
     {
-        if ( !is_allowed( 'modify_droplets', $groups ) )
+        if ( !CAT_Helper_Droplet::is_allowed( 'modify_droplets', $groups ) )
         {
             $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
         }
@@ -843,7 +787,7 @@ function edit_droplet_perms( $id )
 
     // look if user can set permissions
     $this_user_groups = CAT_Users::get_groups_id();
-    if ( !is_allowed( 'manage_perms', $this_user_groups ) )
+    if ( !CAT_Helper_Droplet::is_allowed( 'manage_perms', $this_user_groups ) )
     {
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
@@ -919,7 +863,7 @@ function edit_datafile( $id )
     $info = $problem = NULL;
 
     $groups = CAT_Users::get_groups_id();
-    if ( !is_allowed( 'modify_droplets', $groups ) )
+    if ( !CAT_Helper_Droplet::is_allowed( 'modify_droplets', $groups ) )
     {
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
@@ -991,7 +935,7 @@ function toggle_active( $id )
     global $parser, $val, $backend;
 
     $groups = CAT_Users::get_groups_id();
-    if ( !is_allowed( 'modify_droplets', $groups ) )
+    if ( !CAT_Helper_Droplet::is_allowed( 'modify_droplets', $groups ) )
     {
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
@@ -1045,35 +989,6 @@ function is_in_array( $allowed, $current )
     }
     return false;
 } // end function is_in_array()
-
-/**
- *
- **/
-function is_allowed( $perm, $gid )
-{
-    global $settings;
-    // admin is always allowed to do all
-    if ( CAT_Users::is_root() )
-    {
-        return true;
-    }
-    if ( !array_key_exists( $perm, $settings ) )
-    {
-        return false;
-    }
-    else
-    {
-        $value = $settings[ $perm ];
-        if ( !is_array( $value ) )
-        {
-            $value = array(
-                 $value
-            );
-        }
-        return is_in_array( $value, $gid );
-    }
-    return false;
-} // end function is_allowed()
 
 /**
  * check the syntax of given code

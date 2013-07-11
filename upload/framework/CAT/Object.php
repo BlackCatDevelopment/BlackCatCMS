@@ -31,12 +31,13 @@
 if ( ! class_exists( 'CAT_Object', false ) ) {
 
     if ( ! class_exists( 'CAT_Helper_KLogger', false ) ) {
-		@include dirname(__FILE__).'/Helper/KLogger.php';
-	}
+        @include dirname(__FILE__).'/Helper/KLogger.php';
+    }
 
-	class CAT_Object
-	{
-	    // array to store config options
+    class CAT_Object
+    {
+
+        // array to store config options
         protected $_config         = array( 'loglevel' => 8 );
         // Language helper object handle
         protected static $lang;
@@ -47,14 +48,14 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
         
         // Log levels
         const EMERG  = 0;  // Emergency: system is unusable
-	    const ALERT  = 1;  // Alert: action must be taken immediately
-	    const CRIT   = 2;  // Critical: critical conditions
-	    const ERR    = 3;  // Error: error conditions
-	    const WARN   = 4;  // Warning: warning conditions
-	    const NOTICE = 5;  // Notice: normal but significant condition
-	    const INFO   = 6;  // Informational: informational messages
-	    const DEBUG  = 7;  // Debug: debug messages
-    	const OFF    = 8;
+        const ALERT  = 1;  // Alert: action must be taken immediately
+        const CRIT   = 2;  // Critical: critical conditions
+        const ERR    = 3;  // Error: error conditions
+        const WARN   = 4;  // Warning: warning conditions
+        const NOTICE = 5;  // Notice: normal but significant condition
+        const INFO   = 6;  // Informational: informational messages
+        const DEBUG  = 7;  // Debug: debug messages
+        const OFF    = 8;
 
         /**
          * inheritable constructor; allows to set object variables
@@ -72,12 +73,12 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             if ( isset( $this->_config['debug'] ) ) {
                 $this->debug(true);
             }
-		}   // end function __construct()
-		
-		public function __destruct() {}
-		
+        }   // end function __construct()
+        
+        public function __destruct() {}
+
         public function __call($method, $args)
-		{
+        {
             if ( ! isset($this) || ! is_object($this) )
                 return false;
             if ( method_exists( $this, $method ) )
@@ -85,15 +86,15 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
         }
         
         public static function lang()
-            {
+        {
             if ( ! is_object(CAT_Object::$lang) )
             {
                 CAT_Object::$lang = CAT_Helper_I18n::getInstance(CAT_Registry::get('LANGUAGE',NULL,'EN'));
-		}
+            }
             return CAT_Object::$lang;
         }   // end function lang()
-		
-		/**
+        
+        /**
          * set config values
          *
          * This method allows to set object variables at runtime.
@@ -110,12 +111,12 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          *
          **/
         public function config( $option, $value = NULL ) {
-			if ( is_array( $option ) )
-			{
+            if ( is_array( $option ) )
+            {
                 $this->_config = array_merge( $this->_config, $option );
             }
             else
-			{
+            {
                 $this->_config[$option] = $value;
             }
             return $this;
@@ -147,12 +148,13 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          * @access public
          * @param  string  $message - error message
          * @param  string  $link    - page to forward to
-         * @param  mixed   $args - additional args to print
+         * @param  mixed   $args    - additional args to print
          *
          **/
         public static function printError( $message = NULL, $link = 'index.php', $args = NULL ) {
             $print_footer = false;
             $caller       = debug_backtrace();
+
             // remove first item (it's the printError() method itself)
             array_shift($caller);
             // if called by printFatalError(), shift again...
@@ -164,8 +166,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                           : NULL;
 
             if (true === is_array($message)){
-    			$message = implode("<br />", $message);
-    		}
+                $message = implode("<br />", $message);
+            }
 
             $message = CAT_Object::lang()->translate($message);
 
@@ -182,7 +184,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 
             // if we're able to use the template parser...
             global $parser;
-            if (!is_object($parser) || !defined('CAT_PAGE_CONTENT_DONE'))
+            if (!is_object($parser) || ( !CAT_Backend::isBackend() && !defined('CAT_PAGE_CONTENT_DONE')) )
             {
                 echo "  </head>
     <style type=\"text/css\">
@@ -192,17 +194,30 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
           background-repeat:no-repeat;
           background-position:15px center;
       }
+      #catbacklink{
+          border:1px solid #ccc;margin:25px auto;padding:5px;width:75%;
+      }
     </style>
   <body>
-    <div id=\"caterror\">\n",
-                 "  <h1>BlackCat CMS Fatal Error</h1><br /><br />\n",
-                 "  <div style=\"color: #FF0000; font-weight: bold; font-size: 1.2em;\">\n",
-                     "  $message\n";
+        <div id=\"fc_content_header\">
+	      <a class=\"fc_button_back ui-corner-right\" href=\"$link\">Zurück</a>
+        </div>
+    <div id=\"caterror\">
+      <h1>BlackCat CMS Fatal Error</h1><br /><br />
+        <div style=\"color: #FF0000; font-weight: bold; font-size: 1.2em;\">
+            $message\n";
             }
             else
             {
-                $parser->setPath(sanitize_path(CAT_PATH.'/templates/'.TEMPLATE.'/templates/default'));
-                $parser->setFallbackPath(CAT_THEME_PATH.'/templates/default');
+                if(!CAT_Backend::isBackend())
+                {
+                    $parser->setPath(sanitize_path(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/templates/default'));
+                    $parser->setFallbackPath(CAT_THEME_PATH.'/templates/default');
+                }
+                else
+                {
+                    CAT_Backend::initPaths();
+                }
                 $parser->output('error', array('MESSAGE'=>$message,'LINK'=>$link));
             }
 
@@ -217,8 +232,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             }
 
             // remove path info from file
-            $file = ( isset($caller[1]) && isset($caller[1]['file']) )
-                  ? basename( $caller[1]['file'] )
+            $file     = ( isset($caller[1]) && isset($caller[1]['file']) )
+                      ? basename( $caller[1]['file'] )
                       : (
                           ( isset($caller[0]) && isset($caller[0]['file']) )
                           ? basename( $caller[0]['file'] )
@@ -250,7 +265,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             #    echo "</textarea>";
             #}
 
-            echo "  </div>\n</div>\n";
+            echo "  </div>\n</div>\n",
+                 "<div id=\"catbacklink\" class=\"fc_gradient4\"><a class=\"fc_button_back ui-corner-right\" href=\"$link\">Zurück</a></div>";
 
             if ( $print_footer ) {
                 echo "</body></html>\n";
@@ -268,20 +284,20 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          **/
         public static function printFatalError( $message = NULL, $args = NULL ) {
             CAT_Object::printError( $message, $args );
-		    exit;
-		}   // end function printFatalError()
+            exit;
+        }   // end function printFatalError()
 
         /**
          *  Print a success message and redirect the user to another page
          *
-         * @access public
+         *  @access public
          *  @param  mixed   $message     - message string or an array with a couple of messages
          *  @param  string  $redirect    - redirect url; default is "index.php"
          *  @param  boolean $auto_footer - optional flag to 'print' the footer. Default is true.
          *  @return void    exit()s
          */
     	public static function printMsg($message, $redirect = 'index.php', $auto_footer = true)
-        {
+    	{
     		global $parser;
 
     		if (true === is_array($message)){
@@ -293,13 +309,12 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 
     		$parser->output('success',array(
                 'MESSAGE'        => CAT_Helper_I18n::getInstance()->translate($message),
-                'REDIRECT' => $redirect,
+                'REDIRECT'       => $redirect,
                 'REDIRECT_TIMER' => CAT_Registry::get('REDIRECT_TIMER'),
             ));
 
-
     		if ($auto_footer == true)
-            {
+    		{
                 $caller       = debug_backtrace();
                 // remove first item (it's the printMsg() method itself)
                 array_shift($caller);
@@ -308,18 +323,18 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                     ? $caller[0]['class']
                     : NULL;
     			if ($caller_class && method_exists($caller_class, "print_footer"))
-                {
+    			{
                     if( is_object($caller_class) )
-    				$caller_class->print_footer();
+    				    $caller_class->print_footer();
                     else
                         $caller_class::print_footer();
+    			}
+                else {
+                    //echo "unable to print footer - no such method $caller_class -> print_footer()";
                 }
-else {
-    echo "unable to print footer - no such method $caller_class -> print_footer()";
-}
                 exit();
-            }
-    	}   // end function printMsg()
+    		}
+        }   // end function printMsg()
 
 
         
@@ -334,15 +349,15 @@ else {
          * @param  boolean  enable (TRUE) / disable (FALSE)
          *
          **/
-		public function debug( $bool ) {
+        public function debug( $bool ) {
             if ( $bool === true )
             {
-               	$this->debugLevel = 7; // 7 = Debug
-			}
+                $this->debugLevel = 7; // 7 = Debug
+            }
             else
             {
-			    $this->debugLevel = 8; // 8 = OFF
-			}
+                $this->debugLevel = 8; // 8 = OFF
+            }
         }   // end function debug()
 
         /**
@@ -368,13 +383,13 @@ else {
         }   // end function db()
 
         /**
-      	 * Accessor to KLogger class; this makes using the class significant faster!
-      	 *
-      	 * @access public
-      	 * @return object
-      	 *
-      	 **/
-      	public function log () {
+           * Accessor to KLogger class; this makes using the class significant faster!
+           *
+           * @access public
+           * @return object
+           *
+           **/
+          public function log () {
             if ( $this->debugLevel < 8 ) { // 8 = OFF
                 if ( ! is_object( $this->logObj ) ) {
                     if ( ! CAT_Registry::exists('CAT_PATH',false) )
@@ -389,20 +404,20 @@ else {
                 return $this->logObj;
             }
             return $this;
-      	}   // end function log ()
+          }   // end function log ()
 
-		/**
-		 * Fake KLogger access methods if debugLevel is set to 8 (=OFF)
-		 **/
-  		public function logInfo  () {}
-		public function logNotice() {}
-		public function logWarn  () {}
-		public function logError () {}
-		public function logFatal () {}
-		public function logAlert () {}
-		public function logCrit  () {}
-		public function logEmerg () {}
-		public function logDebug () {}
+        /**
+         * Fake KLogger access methods if debugLevel is set to 8 (=OFF)
+         **/
+        public function logInfo  () {}
+        public function logNotice() {}
+        public function logWarn  () {}
+        public function logError () {}
+        public function logFatal () {}
+        public function logAlert () {}
+        public function logCrit  () {}
+        public function logEmerg () {}
+        public function logDebug () {}
 
-	}
+    }
 }

@@ -406,6 +406,7 @@ if (!class_exists('CAT_Backend', false))
         public function print_error($message, $redirect = 'index.php', $auto_footer = true)
         {
             CAT_Object::printError($message,$redirect);
+            self::print_footer();
             exit();
         }
     	public function print_success($message, $redirect = 'index.php', $auto_footer = true)
