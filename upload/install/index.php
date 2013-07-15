@@ -192,11 +192,14 @@ $parser->setGlobals(
 );
 
 if($this_step == 'intro') {
-    // check for optional modules
-    $zip_files = $dirh->scanDirectory( dirname(__FILE__).'/optional', true, true, dirname(__FILE__).'/optional/', array('zip') );
-    if(!count($zip_files) && $steps[6]['id'] == 'optional') {
-        // remove step 'optional'
-        array_splice($steps,6,1);
+    if(file_exists(dirname(__FILE__).'/optional'))
+    {
+        // check for optional modules
+        $zip_files = $dirh->scanDirectory( dirname(__FILE__).'/optional', true, true, dirname(__FILE__).'/optional/', array('zip') );
+        if(!count($zip_files) && $steps[6]['id'] == 'optional') {
+            // remove step 'optional'
+            array_splice($steps,6,1);
+        }
     }
 }
 
@@ -638,6 +641,7 @@ function show_step_optional() {
         return array( true, $output );
     }
     // list of optional modules
+    // no check for 'exists' here, because this is done in intro step!
     $zip_files = $dirh->scanDirectory( dirname(__FILE__).'/optional', true, true, dirname(__FILE__).'/optional/', array('zip') );
     if(count($zip_files)) {
         // try to set max_execution_time
