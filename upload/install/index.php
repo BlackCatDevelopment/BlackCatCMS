@@ -688,7 +688,23 @@ function check_step_optional() {
  *
  **/
 function show_step_finish() {
-    global $lang, $parser, $installer_uri, $config;
+    global $lang, $parser, $installer_uri, $config, $dirh;
+
+    // check if installation is done
+    $cat_path = $dirh->sanitizePath( dirname(__FILE__).'/..' );
+    init_constants($cat_path);
+    include $cat_path.'/framework/class.database.php';
+    $database = new database();
+    $result = $database->query("SHOW TABLES FROM ".CAT_DB_NAME. " LIKE '%system_permissions'");
+    if(!$result->numRows())
+    {
+        // do base installation first
+        list( $result, $output ) = __do_install();
+        if ( ! $result ) {
+            return array( true, $output );
+        }
+    }
+
     $tpl = 'finish.tpl';
     if ( file_exists( dirname(__FILE__).'/templates/default/finish_'.$lang->getLang().'.tpl' ) )
     {
