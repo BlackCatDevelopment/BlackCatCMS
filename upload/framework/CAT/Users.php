@@ -241,7 +241,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 			$get_ip		= $_SERVER['REMOTE_ADDR'];
                             $query  = "UPDATE `%susers` SET login_when = '%s', login_ip = '%s' WHERE user_id = '%d'";
                             $self->db()->query(sprintf($query,CAT_TABLE_PREFIX,$get_ts,$get_ip,$user['user_id']));
+                            if ( self::getInstance()->checkPermission( 'start', 'start' ) )
                             return CAT_ADMIN_URL.'/start/index.php?initial=true';
+                            else
+                                return CAT_URL.'/index.php';
                         }
                         else
                         {
@@ -299,7 +302,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
             }
             else
             {
-                header('Location: '.CAT_ADMIN_URL.'/start/index.php' );
+                if ( self::getInstance()->checkPermission( 'start', 'start' ) )
+                    return CAT_ADMIN_URL.'/start/index.php';
+                else
+                    return CAT_URL.'/index.php';
             }
 
         }   // end function handleLogin()
@@ -454,8 +460,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         {
             // root is always allowed to do it all
             if ( self::is_root() ) return true;
-            // all authenticated users are allowed to see the dashboard
-            if ( $perm == 'start' && self::is_authenticated() ) return true;
+
             $self = self::getInstance();
             // fill permissions cache on first call
             if ( ! count(self::$permissions) )

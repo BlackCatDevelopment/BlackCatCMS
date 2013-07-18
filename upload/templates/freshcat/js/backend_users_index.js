@@ -176,7 +176,8 @@
 								$.each(data.groups, function(index, value)
 								{
 									$('#fc_User_groups_' + value).prop( {checked: true});
-								});							}
+								});
+                            }
 							return_success( jqXHR.process , data.message);
 						}
 						else {
@@ -458,9 +459,8 @@ jQuery(document).ready(function()
 
 		buttons.removeClass('fc_active');
 		current.addClass('fc_active');
-
-		tabs.not(rel).addClass('hidden');
-		$(rel).removeClass('hidden');
-
+        // hide all
+        tabs.hide();
+        $(rel.substring(rel.indexOf('#'))).show();
 	}).filter(':first').click();
 });

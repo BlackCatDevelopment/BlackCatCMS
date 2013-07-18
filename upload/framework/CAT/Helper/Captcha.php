@@ -64,11 +64,23 @@ if (!class_exists('CAT_Helper_Captcha'))
          * @access public
          * @return mixed
          **/
-        public static function show($action='all', $style='', $sec_id='') {
-            if(!CAT_Helper_Image::check_gd() || !file_exists(CAT_PATH.'/modules/lib_securimage/include/securimage.php'))
+        public static function show($action='all', $style='', $sec_id='')
+        {
+            // old style is used if:
+            // + there are any function args (new method don't have some)
+            // + no GD available
+            // + no lib_securimage installed
+            if(
+                   func_num_args()
+                || !CAT_Helper_Image::check_gd()
+                || !file_exists(CAT_PATH.'/modules/lib_securimage/include/securimage.php')
+            ) {
                 return self::wbstyle($action, $style, $sec_id);
+            }
             else
+            {
                 return self::securImage();
+            }
         }   // end function show()
 
         /**

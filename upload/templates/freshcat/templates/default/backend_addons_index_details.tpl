@@ -74,7 +74,7 @@
 			</form>
             {/if}
             {/if}
-			{if $addon.UPGRADE}
+			{if $addon.UPGRADE && $addon.is_installed}
 			<form name="upgrade" action="manual_install.php" method="post">
 				<input type="hidden" name="action" value="upgrade" />
                 <input type="hidden" name="type" value="{$addon.type}" />

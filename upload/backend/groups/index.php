@@ -44,6 +44,8 @@ $users    = CAT_Users::getInstance();
 $addons   = CAT_Helper_Addons::getInstance();
 $tpl_data = array();
 
+global $parser;
+
 // =========================== 
 // ! Add permissions to Dwoo   
 // =========================== 
@@ -51,8 +53,6 @@ $tpl_data['permissions']['GROUPS_ADD']		= $users->checkPermission('Access','grou
 $tpl_data['permissions']['GROUPS_MODIFY']	= $users->checkPermission('Access','groups_modify')	? true : false;
 $tpl_data['permissions']['GROUPS_DELETE']	= $users->checkPermission('Access','groups_delete')	? true : false;
 $tpl_data['permissions']['USERS']			= $users->checkPermission('Access','users')			? true : false;
-
-global $parser;
 
 $tpl_data['templates']		= $addons->get_addons( DEFAULT_TEMPLATE , 'template' );
 $tpl_data['languages']		= $addons->get_addons( DEFAULT_LANGUAGE , 'language' );

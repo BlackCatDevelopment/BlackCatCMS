@@ -80,4 +80,8 @@ div#fc_set_form_content.fc_gradient1 p {
 }
 .fc_modifyUser input {
     margin-left: 2em;
-    }
+}
+.fc_form_infotext {
+    font-size: 0.8em;
+    font-style: italic;
+}

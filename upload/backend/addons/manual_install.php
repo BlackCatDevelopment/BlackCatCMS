@@ -70,7 +70,8 @@ if ( ! is_array($info) || ! count($info) )
               array('action'=>$action,'type'=>substr( $type, 0, -1 ),'module'=>$path)
           )
         . ': <tt>"'
-        . htmlentities(basename($path)).'/'.$action.'.php"</tt> does not exist',
+        . htmlentities(basename($path)).'/'.$action.'.php"</tt> '
+        . $backend->lang()->translate('does not exist'),
         $js_back
     );
 }
