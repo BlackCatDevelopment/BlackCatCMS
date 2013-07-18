@@ -14,9 +14,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
+ *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
@@ -41,16 +39,16 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$is_upgrade = false;
-if ( file_exists( dirname(__FILE__).'/../droplets' ) ) {
-    $is_upgrade = true;
-}
+$backend   = CAT_Backend::getInstance('Addons', 'modules_install');
 
 // check if we already have a droplets table; leave it if yes
-$result = $database->query("SHOW TABLES LIKE '".CAT_TABLE_PREFIX ."mod_droplets';");
+$result = $backend->db()->query(sprintf(
+    "SHOW TABLES LIKE '%smod_droplets';",
+    CAT_TABLE_PREFIX
+));
 if ( $result->numRows() == 0 ) {
 	$table = CAT_TABLE_PREFIX .'mod_droplets';
-	$database->query("CREATE TABLE `$table` (
+	$backend->db()->query("CREATE TABLE `$table` (
 		`id` INT NOT NULL auto_increment,
 		`name` VARCHAR(32) NOT NULL,
 		`code` LONGTEXT NOT NULL ,
@@ -66,16 +64,19 @@ if ( $result->numRows() == 0 ) {
 		)"
 	);
 	// check for errors
-	if( $database->is_error() ) {
-	    $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->get_error() ) ) );
+	if( $backend->db()->is_error() ) {
+	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->get_error() ) ) );
 	}
 }
 
 // create the new permissions table
-$result = $database->query("SHOW TABLES LIKE '".CAT_TABLE_PREFIX ."mod_droplets_permissions';");
+$result = $backend->db()->query(sprintf(
+    "SHOW TABLES LIKE '%smod_droplets_permissions';",
+    CAT_TABLE_PREFIX
+));
 if ( $result->numRows() == 0 ) {
 	$table = CAT_TABLE_PREFIX .'mod_droplets_permissions';
-	$database->query("CREATE TABLE `$table` (
+	$backend->db()->query("CREATE TABLE `$table` (
 		`id` INT(10) UNSIGNED NOT NULL,
 		`edit_groups` VARCHAR(50) NOT NULL,
 		`view_groups` VARCHAR(50) NOT NULL,
@@ -83,16 +84,19 @@ if ( $result->numRows() == 0 ) {
 		) COLLATE='utf8_general_ci' ENGINE=InnoDB;"
 	);
 	// check for errors
-	if( $database->is_error() ) {
-	    $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->get_error() ) ) );
+	if( $backend->db()->is_error() ) {
+	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->get_error() ) ) );
 	}
 }
 
 // create the settings table
-$result = $database->query("SHOW TABLES LIKE '".CAT_TABLE_PREFIX ."mod_droplets_settings';");
+$result = $backend->db()->query(sprintf(
+    "SHOW TABLES LIKE '%smod_droplets_settings';",
+    CAT_TABLE_PREFIX
+));
 if ( $result->numRows() == 0 ) {
 	$table = CAT_TABLE_PREFIX .'mod_droplets_settings';
-	$database->query("CREATE TABLE `$table` (
+	$backend->db()->query("CREATE TABLE `$table` (
 		`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 		`attribute` VARCHAR(50) NOT NULL DEFAULT '0',
 		`value` VARCHAR(50) NOT NULL DEFAULT '0',
@@ -100,11 +104,13 @@ if ( $result->numRows() == 0 ) {
 		) COLLATE='utf8_general_ci' ENGINE=InnoDB;"
 	);
 	// check for errors
-	if( $database->is_error() ) {
-	    $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->get_error() ) ) );
+	if( $backend->db()->is_error() ) {
+	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->get_error() ) ) );
 	}
+    else
+    {
 	// insert settings
-	$database->query("INSERT INTO `".CAT_TABLE_PREFIX ."mod_droplets_settings` (`id`, `attribute`, `value`) VALUES
+    	$backend->db()->query("INSERT INTO `".CAT_TABLE_PREFIX ."mod_droplets_settings` (`id`, `attribute`, `value`) VALUES
 	(1, 'manage_backups', '1'),
 	(2, 'import_droplets', '1'),
 	(3, 'delete_droplets', '1'),
@@ -113,33 +119,5 @@ if ( $result->numRows() == 0 ) {
 	(6, 'modify_droplets', '1'),
 	(7, 'manage_perms', '1');
 	");
-}
-
-// if it's an upgrade from the old droplets module...
-if ( $is_upgrade ) {
-
-	// create backup copy
-	$temp_file = sanitize_path( CAT_PATH . '/temp/droplets_module_backup.zip' );
-	$temp_dir  = sanitize_path( CAT_PATH . '/modules/droplets'                );
-
-    $zip1      = CAT_Helper_Zip::getInstance($temp_file)->config( 'removePath', $temp_dir );
-    $file_list = $zip1->create( $temp_dir );
-    if ( $file_list == 0 )
-    {
-        $admin->print_error( $admin->lang->translate( "Packaging error" ) . ' - ' . $zip1->errorInfo( true ) );
     }
-
-	// remove the folder
-	CAT_Helper_Directory::getInstance()->removeDirectory( CAT_PATH.'/modules/droplets' );
-
-	// re-create the folder
-	@mkdir( CAT_PATH.'/modules/droplets', 0755 );
-
-	// unpack the compatibility files
-	$temp_file = sanitize_path( CAT_PATH . '/modules/droplets/install/droplets.zip' );
-	CAT_Helper_Zip::getInstance($temp_file)->config( 'Path', sanitize_path( CAT_PATH.'/modules/droplets' ) )->extract( $temp_file );
-
 }
-
-
-?>
