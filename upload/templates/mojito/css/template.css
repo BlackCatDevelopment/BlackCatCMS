@@ -27,24 +27,25 @@
 @import url('menu.css');
 
 #main_header {
+	margin: auto;
 	padding: 7px 0px 13px 0px;
 	width: 960px;
-	margin: auto;
 }
 
 	#logo {
+		display: inline-block;
 		margin-left: 1em;
 		width: 174px;
 		height: 64px;
-		display: inline-block;
-		text-indent: -9999px;
+		border-bottom: none;
 		background: url(images/logo.png) left center no-repeat;
+		text-indent: -9999px;
 	}
 
 
 #content {
-	width: 960px;
 	margin: auto;
+	width: 960px;
 	border: 1px solid #9da8b2;
 	-webkit-box-shadow:	black 0px 0px 4px -1px;
 	-moz-box-shadow:	black 0px 0px 4px -1px;
@@ -53,43 +54,53 @@
 	#content_header {
 		position: relative;
 		padding: 1em 2em;
+		-webkit-box-shadow: 10px 10px 5px #687a8a inset;
+		-moz-box-shadow: -5px 10px 5px #687a8a inset;
+		box-shadow: 0px -8px 5px -10px #687a8a inset;
 	}
 
 		#fork_me {
 			position: absolute;
 			top: 0px;
 			right: 0px;
-			background: url(images/forkme.png) no-repeat;
-			height: 114px;
 			width: 114px;
+			height: 114px;
+			border-bottom: none;
+			background: url(images/forkme.png) no-repeat;
 		}
 
 	#content_main {
-		width: 715px;
+		display: table-cell;
 		padding: 2em;
-		float: right;
+		width: 715px;
 		background: white;
+		vertical-align: top;
 	}
 	#sidebar {
+		display: table-cell;
 		width: 243px;
-		float: left;
+		-webkit-box-shadow: -10px 0px 10px -10px #687a8a inset;
+		-moz-box-shadow: -10px 0px 10px -10px #687a8a inset;
+		box-shadow: -10px 0px 10px -10px #687a8a inset;
+		vertical-align: top;
 	}
 
 
 #main_footer {
-	width: 960px;
 	margin: auto;
+	width: 960px;
 }
 	#footer_content {
-		font-size: 0.9em;
-		color: #687a8a;
-		line-height: 1.2em;
 		clear: both;
 		padding-bottom: 2em;
+		color: #687a8a;
 		text-align: center;
+		font-size: 0.9em;
+		line-height: 1.2em;
 	}
-		.footer_icon {
-			font-size: 1.8em;
+		a.footer_icon {
 			display: inline-block;
 			margin: 0.4em 0.6em 1em 0.6em;
+			border-bottom: none;
+			font-size: 1.8em;
 		}

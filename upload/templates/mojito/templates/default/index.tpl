@@ -55,13 +55,13 @@
 		</header>
 		{/if}
 
+		<aside id="sidebar" class="{if !check_section(2)}br_left{else}br_bottomleft{/if}">
+			{show_menu(1, SM2_ROOT, SM2_ALL, SM2_ALL|SM2_XHTML_STRICT, '<li class="sib_[sib] [class]">[ac][menu_title]</a>', '</li>', '<ul class="hauptnavigation menu-[level]">', '</ul>')}
+		</aside>
+
 		<section id="content_main" class="{if !check_section(2)}br_right{else}br_bottomright{/if}">
 			{page_content(1)}
 		</section>
-
-		<aside id="sidebar" class="br_left">
-			{show_menu(1, SM2_ROOT, SM2_ALL, SM2_ALL|SM2_XHTML_STRICT, '<li class="sib_[sib] [class]">[ac][menu_title]</a>', '</li>', '<ul class="hauptnavigation menu-[level]">', '</ul>')}
-		</aside>
 
 		<div class="clear"></div>
 	</section>

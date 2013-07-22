@@ -118,6 +118,7 @@ img {
 a, a:link, a:visited, a:active {
 	color: #0f79a3;
 	text-decoration: none;
+	border-bottom: 1px dotted #0f79a3;
 }
 
 a:hover {
@@ -132,7 +133,7 @@ ul,ol {
 	padding-left: 0.4em;
 }
 li {
-	padding-left: 20px;
+	padding-left: 0px;
 	list-style-position: inside;
 	list-style-image: url(images/li.png);
 }

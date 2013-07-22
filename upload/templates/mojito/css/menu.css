@@ -21,6 +21,13 @@
  *
  */
 
+
+/*
+/* !Top navigation */
+/*
+ */
+
+
 #main_nav {
 	padding-top: 1.8em;
 	float: right;
@@ -33,11 +40,13 @@
 			margin:		0px;
 			padding:	0em 1em;
 			float:		left;
+			list-style: none;
 		}
 	#main_nav a {
 		display:	inline-block;
 		padding:	0.2em 1em;
 		color: 		#282a2e;
+		border-bottom: none;
 	}
 	#main_nav a.menu-current, #main_nav a.menu-parent {
 		font-weight:	800;
@@ -45,6 +54,13 @@
 	#main_nav a:hover {
 		color: 		#0f7aa4;
 	}
+
+
+
+/*
+/* !Bottom navigation */
+/*
+ */
 
 #meta_nav {
 	float: right;
@@ -58,11 +74,13 @@
 			margin:		0px;
 			padding:	0em 1em;
 			float:		left;
+			list-style: none;
 		}
 	#meta_nav a {
 		display:	inline-block;
 		padding:	0.2em 1em;
 		color: 		#282a2e;
+		border-bottom: none;
 	}
 	#meta_nav a.menu-current, #meta_nav a.menu-parent {
 		font-weight:	800;
@@ -73,58 +91,33 @@
 
 
 
+/*
+/* !Main navigation */
+/*
+ */
+
 ul.menu-0 {
-	border-right-width: 0px;
-	border-left-width: 0px;
-	border-color: #181a21;
-	border-top-width: 1px;
-	border-style: dotted;
-	border-bottom-width: 1px;
-	margin-left: 0px;
-	margin-bottom: 40px;
-	margin-right: 0px;
-	margin-top: 20px;
-	padding-left: 0px;
-	padding-bottom: 5px;
-	padding-right: 0px;
-	padding-top: 5px;
+	border-top: 1px solid #d8dbdd;
+	margin: 2em 0em 4em 0em;
+	padding: 0em;
 }
 
 .hauptnavigation li {
-	padding-left: 5px;
-	padding-bottom: 0px;
-	padding-right: 0px;
-	padding-top: 0px;
-	border-left-color: transparent;
-	border-left-width: 5px;
-	border-left-style: solid;
+	padding: 0px;
 	margin: 0px;
 	list-style-image: none;
 	list-style-type: none;
 }
 
-.hauptnavigation li:hover {
-	border-left-color: #0f7aa4;
-	background-color: white;
-}
-
-.hauptnavigation li li:hover, .hauptnavigation li li.menu-parent {
-	border-left-color: transparent;
-}
-
 .hauptnavigation a {
-	min-height: 20px;
+	font-size: 1em;
 	text-decoration: none;
-	padding-right: 0px;
-	padding-left: 0px;
-	border-bottom-width: 0px;
+	padding: 0.4em 1em 0.4em 1em;
+	border-bottom:	1px solid #d8dbdd;
 	line-height: 20px;
-	font-weight: bold;
 	display: block;
 	font-size: 15px;
 	color: #687a8a;
-	padding-top: 5px;
-	padding-bottom: 5px;
 	font-size: 1.1em;
 }
 
@@ -137,104 +130,33 @@ ul.menu-0 {
 	margin: 0px;
 }
 
-.hauptnavigation li:hover ul {
-
-}
-
 .hauptnavigation li li a {
-	font-size: 1em;
-	text-transform: uppercase;
+	font-size: 0.9em;
 	width: auto;
 	padding-bottom: 0px;
 	display: block;
-	padding-right: 0px;
-	padding-left: 0px;
+	padding: 0.4em 1em 0.4em 2em;
 }
 
 .hauptnavigation li li li a {
-	font-style: normal;
-	font-weight: normal;
-	text-transform: none;
+	padding: 0.4em 1em 0.4em 3em;
+}
+.hauptnavigation li li li li a {
+	padding: 0.4em 1em 0.4em 3.5em;
+}
+.hauptnavigation li li li li li a {
+	padding: 0.4em 1em 0.4em 4em;
 }
 
-.hauptnavigation li li a:hover,.hauptnavigation li ul a.menu-expand:hover {
-	color: #0079a3;
+.hauptnavigation li li a:hover,
+.hauptnavigation li ul a.menu-expand:hover {
+	color: #007ba3;
 }
 
-.hauptnavigation a.menu-current, .hauptmenu .menu-parent a {
-	text-transform: uppercase;
-	font-weight: bold;
-	color: #0f7aa4;
-	-moz-border-radius: 3px;
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
-	-webkit-border-radius:3px;
-	border-radius:3px;
-	border-radius:3px;
-}
-
-.hauptnavigation a.menu-current:hover {
-	text-decoration: none;
-}
-
-#metanavigation {
-	float: right;
-}
-
-#metanavigation ul {
-	padding: 0px;
-	margin: 0px;
-}#metanavigation li {
-	padding: 0px;
-	margin: 0px;
-	float: left;
-	list-style-image: none;
-}
-
-#metanavigation li a {
-	border-bottom-color: transparent;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	padding-top: 0px;
-	padding-bottom: 0px;
-	float: right;
-	padding-right: 10px;
-	padding-left: 10px;
-	display: inline-block;
-	font-size: 1em;
-	text-decoration: none;
-	font-weight: 700;
-	color: #181a21;
-}
-
-#metanavigation li a:hover {
-	border-color: #0f7aa4;
+.hauptnavigation a.menu-current {
+	font-weight: 800;
 	color: #0f7aa4;
 }
 
-#metanavigation li.menu-current a {
-	text-transform: uppercase;
-	border-width: 0px;
-	background-color: #0f7aa4;
-	color: white;
-}
 
-.hauptnavigation ul.menu-1 > li.menu-last {
-	padding-bottom: 1em;
-}
-
-.menu-0 > li.menu-expand {
-	background-repeat: no-repeat;
-	background-position: right top;
-	background-image: url(images/plus.png);
-}
-
-.menu-1 a.menu-expand:before {
-	padding-right: 5px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-	padding-top: 0px;
-	margin: 0px;
-	content: url(images/plus_small.png);
-}
 

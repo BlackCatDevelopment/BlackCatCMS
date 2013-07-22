@@ -24,7 +24,7 @@
 
 $(document).ready(function()
 {
-	$('li.menu-expand').not('.menu-parent').children('ul').addClass('hidden').slideUp(0);
+	/*$('li.menu-expand').not('.menu-parent').children('ul').addClass('hidden').slideUp(0);
 	$('li.menu-expand').mouseover( function()
 	{
 		if ( typeof navigationTimer != 'undefined' )
@@ -49,5 +49,5 @@ $(document).ready(function()
 				$('li.menu-expand').not('.menu-parent').children('ul').css({height: 'auto'}).stop().slideUp(1000);
 			}
 		}, 1500);
-	});
+	});*/
 });
