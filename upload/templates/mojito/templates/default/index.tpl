@@ -60,6 +60,7 @@
 		</aside>
 
 		<section id="content_main" class="{if !check_section(2)}br_right{else}br_bottomright{/if}">
+			{if !check_section(2)}{page_header()}{/if}
 			{page_content(1)}
 		</section>
 

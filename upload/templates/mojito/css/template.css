@@ -70,6 +70,7 @@
 		}
 
 	#content_main {
+		position: relative;
 		display: table-cell;
 		padding: 2em;
 		width: 715px;
@@ -102,5 +103,6 @@
 			display: inline-block;
 			margin: 0.4em 0.6em 1em 0.6em;
 			border-bottom: none;
+			text-shadow: 1px 1px 1px white;
 			font-size: 1.8em;
 		}
