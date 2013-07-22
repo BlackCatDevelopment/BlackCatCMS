@@ -45,6 +45,7 @@
 #content {
 	width: 960px;
 	margin: auto;
+	border: 1px solid #9da8b2;
 	-webkit-box-shadow:	black 0px 0px 4px -1px;
 	-moz-box-shadow:	black 0px 0px 4px -1px;
 	box-shadow:			black 0px 0px 4px -1px;
@@ -64,13 +65,13 @@
 		}
 
 	#content_main {
-		width: 716px;
+		width: 715px;
 		padding: 2em;
 		float: right;
 		background: white;
 	}
 	#sidebar {
-		width: 244px;
+		width: 243px;
 		float: left;
 	}
 

@@ -50,7 +50,17 @@ Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
 [class*="icon-"] {
 */
-.icon-github, .icon-facebook, .icon-comments, .icon-reading, .icon-puzzle, .icon-color-palette, .icon-mail, .icon-arrow-down, .icon-plus, .icon-minus, .icon-arrow-left {
+.icon-github:before,
+.icon-facebook:before,
+.icon-comments:before,
+.icon-reading:before,
+.icon-puzzle:before,
+.icon-color-palette:before,
+.icon-mail:before,
+.icon-arrow-down:before,
+.icon-plus:before,
+.icon-minus:before,
+.icon-arrow-left:before {
 	font-family: 'icomoon-ultimate';
 	speak: none;
 	font-style: normal;
@@ -91,5 +101,78 @@ you can use the generic selector below, but it's slower:
 	content: "\e008";
 }
 .icon-arrow-left:before {
+	content: "\e009";
+}
+
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:after {
+	font-family: 'icomoon-ultimate';
+	content: attr(data-icon);
+	speak: none;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+/*
+Instead of a list of all class selectors,
+you can use the generic selector below, but it's slower:
+[class*="iconafter-"] {
+*/
+.iconafter-github:after,
+.iconafter-facebook:after,
+.iconafter-comments:after,
+.iconafter-reading:after,
+.iconafter-puzzle:after,
+.iconafter-color-palette:after,
+.iconafter-mail:after,
+.iconafter-arrow-down:after,
+.iconafter-plus:after,
+.iconafter-minus:after,
+.iconafter-arrow-left:after {
+	font-family: 'icomoon-ultimate';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+.iconafter-github:after {
+	content: "\e000";
+}
+.iconafter-facebook:after {
+	content: "\e001";
+}
+.iconafter-comments:after {
+	content: "\e002";
+}
+.iconafter-reading:after {
+	content: "\e003";
+}
+.iconafter-puzzle:after {
+	content: "\e004";
+}
+.iconafter-color-palette:after {
+	content: "\e005";
+}
+.iconafter-mail:after {
+	content: "\e013";
+}
+.iconafter-arrow-down:after {
+	content: "\e006";
+}
+.iconafter-plus:after {
+	content: "\e007";
+}
+.iconafter-minus:after {
+	content: "\e008";
+}
+.iconafter-arrow-left:after {
 	content: "\e009";
 }
