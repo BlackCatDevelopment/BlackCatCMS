@@ -758,10 +758,9 @@ if (!class_exists('CAT_Helper_Addons'))
          **/
         public static function checkModulePermissions($module)
         {
-//******************************************************************************
-// TODO!
-//******************************************************************************
-            return false;
+            if ( CAT_Users::is_root() )
+                return true;
+            return CAT_Users::get_permission($module, 'module');
         }   // end function checkModulePermissions()
 
         /**
