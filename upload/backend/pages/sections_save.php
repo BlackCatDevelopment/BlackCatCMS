@@ -96,8 +96,9 @@ if ( $add_module != '' )
 
     // make sure we have a valid block id
     $add_to_block = $add_to_block > 0 ? $add_to_block : 1;
+    $section_id   = CAT_Sections::addSection($page_id,$module,$add_to_block);
 
-    if(!CAT_Sections::addSection($page_id,$module,$add_to_block))
+    if($section_id===false)
     {
         $backend->print_error('Error adding module');
     }
