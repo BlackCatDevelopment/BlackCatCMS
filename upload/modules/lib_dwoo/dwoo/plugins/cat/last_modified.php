@@ -44,11 +44,19 @@ if (defined('CAT_PATH')) {
 
 require_once CAT_PATH.'/framework/functions.php';
 
-function Dwoo_Plugin_check_section(Dwoo $dwoo, $block) {
-	global $page_id;
-	$sections	= CAT_Sections::getInstance()->getActiveSections( intval($page_id), intval($block) );
-	$return		= ( is_array($sections) && count($sections) ) ? true : false;
-	return $return;
+function Dwoo_Plugin_last_modified(Dwoo $dwoo, $page_id = false) {
+	global $backend;
+	if ( is_numeric( $page_id ) )
+	{
+		$sql	= "SELECT `modified_when` FROM `%spages` WHERE `page_id` = %d";
+		$t		= CAT_Helper_Page::getInstance()->db()->get_one( sprintf( $sql, CAT_TABLE_PREFIX, intval($page_id) ) );
+
+	}
+	else {
+		$sql	= "SELECT `modified_when` FROM `%spages` WHERE `visibility`= public OR `visibility`= hidden ORDER BY `modified_when` DESC LIMIT 0,1";
+		$t		= CAT_Helper_Page::getInstance()->db()->get_one( sprintf( $sql, CAT_TABLE_PREFIX ) );
+	}
+	return CAT_Helper_DateTime::getInstance()->getDate($t);
 }
 
 ?>
