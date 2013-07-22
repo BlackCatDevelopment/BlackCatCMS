@@ -1,0 +1,240 @@
+/**
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         mojito
+ *
+ */
+
+#main_nav {
+	padding-top: 1.8em;
+	float: right;
+}
+	#main_nav ul {
+		margin:		0px;
+		padding:	0px;
+	}
+		#main_nav li {
+			margin:		0px;
+			padding:	0em 1em;
+			float:		left;
+		}
+	#main_nav a {
+		display:	inline-block;
+		padding:	0.2em 1em;
+		color: 		#282a2e;
+	}
+	#main_nav a.menu-current, #main_nav a.menu-parent {
+		font-weight:	800;
+	}
+	#main_nav a:hover {
+		color: 		#0f7aa4;
+	}
+
+#meta_nav {
+	float: right;
+	padding: 1em 0px;
+}
+	#meta_nav ul {
+		margin:		0px;
+		padding:	0px;
+	}
+		#meta_nav li {
+			margin:		0px;
+			padding:	0em 1em;
+			float:		left;
+		}
+	#meta_nav a {
+		display:	inline-block;
+		padding:	0.2em 1em;
+		color: 		#282a2e;
+	}
+	#meta_nav a.menu-current, #meta_nav a.menu-parent {
+		font-weight:	800;
+	}
+	#meta_nav a:hover {
+		color: 		#0f7aa4;
+	}
+
+
+
+ul.menu-0 {
+	border-right-width: 0px;
+	border-left-width: 0px;
+	border-color: #181a21;
+	border-top-width: 1px;
+	border-style: dotted;
+	border-bottom-width: 1px;
+	margin-left: 0px;
+	margin-bottom: 40px;
+	margin-right: 0px;
+	margin-top: 20px;
+	padding-left: 0px;
+	padding-bottom: 5px;
+	padding-right: 0px;
+	padding-top: 5px;
+}
+
+.hauptnavigation li {
+	padding-left: 5px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+	padding-top: 0px;
+	border-left-color: transparent;
+	border-left-width: 5px;
+	border-left-style: solid;
+	margin: 0px;
+	list-style-image: none;
+	list-style-type: none;
+}
+
+.hauptnavigation li:hover {
+	border-left-color: #0f7aa4;
+	background-color: white;
+}
+
+.hauptnavigation li li:hover, .hauptnavigation li li.menu-parent {
+	border-left-color: transparent;
+}
+
+.hauptnavigation a {
+	min-height: 20px;
+	text-decoration: none;
+	padding-right: 0px;
+	padding-left: 0px;
+	border-bottom-width: 0px;
+	line-height: 20px;
+	font-weight: bold;
+	display: block;
+	font-size: 15px;
+	color: #687a8a;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	font-size: 1.1em;
+}
+
+.hauptnavigation a:hover {
+	color: #0f7aa4;
+}
+
+.hauptnavigation li ul {
+	padding: 0px;
+	margin: 0px;
+}
+
+.hauptnavigation li:hover ul {
+
+}
+
+.hauptnavigation li li a {
+	font-size: 1em;
+	text-transform: uppercase;
+	width: auto;
+	padding-bottom: 0px;
+	display: block;
+	padding-right: 0px;
+	padding-left: 0px;
+}
+
+.hauptnavigation li li li a {
+	font-style: normal;
+	font-weight: normal;
+	text-transform: none;
+}
+
+.hauptnavigation li li a:hover,.hauptnavigation li ul a.menu-expand:hover {
+	color: #0079a3;
+}
+
+.hauptnavigation a.menu-current, .hauptmenu .menu-parent a {
+	text-transform: uppercase;
+	font-weight: bold;
+	color: #0f7aa4;
+	-moz-border-radius: 3px;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+	border-radius:3px;
+}
+
+.hauptnavigation a.menu-current:hover {
+	text-decoration: none;
+}
+
+#metanavigation {
+	float: right;
+}
+
+#metanavigation ul {
+	padding: 0px;
+	margin: 0px;
+}#metanavigation li {
+	padding: 0px;
+	margin: 0px;
+	float: left;
+	list-style-image: none;
+}
+
+#metanavigation li a {
+	border-bottom-color: transparent;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	float: right;
+	padding-right: 10px;
+	padding-left: 10px;
+	display: inline-block;
+	font-size: 1em;
+	text-decoration: none;
+	font-weight: 700;
+	color: #181a21;
+}
+
+#metanavigation li a:hover {
+	border-color: #0f7aa4;
+	color: #0f7aa4;
+}
+
+#metanavigation li.menu-current a {
+	text-transform: uppercase;
+	border-width: 0px;
+	background-color: #0f7aa4;
+	color: white;
+}
+
+.hauptnavigation ul.menu-1 > li.menu-last {
+	padding-bottom: 1em;
+}
+
+.menu-0 > li.menu-expand {
+	background-repeat: no-repeat;
+	background-position: right top;
+	background-image: url(images/plus.png);
+}
+
+.menu-1 a.menu-expand:before {
+	padding-right: 5px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-top: 0px;
+	margin: 0px;
+	content: url(images/plus_small.png);
+}
+

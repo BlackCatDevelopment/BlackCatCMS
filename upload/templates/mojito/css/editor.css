@@ -1,0 +1,264 @@
+/**
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         mojito
+ *
+ */
+
+html {
+	line-height: 1.4em;
+	font-size: 13px;
+	font-family: "HelveticaNeue-Light", "HelveticaNeue", Helvetica, Arial, Verdana, sans-serif;
+	height: 100%;
+	background-position: center top;
+	color: #0f7aa4;
+	background-image: url(images/main_background.png);
+	background-color: white;
+	background-repeat: repeat;
+}
+body {
+	background-position: 0 top;
+	background-image: url(images/header_back.png);
+	background-repeat: repeat-x;
+	height: 100%;
+	font-weight: 400;
+}
+
+h1 {
+	font-family: "HelveticaNeue-Light", "HelveticaNeue", Helvetica, Arial, Verdana, sans-serif;
+	line-height: 1.4em;
+	font-weight: 400;
+	color: #0f7aa4;
+	margin-bottom: 0.4em;
+	margin-top: 0.2em;
+	font-size: 2.6em;
+}
+
+h2 {
+	font-weight: 300;
+	font-family: "HelveticaNeue-Light", "HelveticaNeue", Helvetica, Arial, Verdana, sans-serif;
+	color: #0f7aa4;
+	line-height: 1.4em;
+	margin-bottom: 0.4em;
+	margin-top: 0.2em;
+	font-size: 1.6em;
+}
+
+h3 {
+	font-family: "HelveticaNeue-Light", "HelveticaNeue", Helvetica, Arial, Verdana, sans-serif;
+	color: #0f7aa4;
+	font-weight: bold;
+	line-height: 1.2em;
+	margin-bottom: 0.4em;
+	margin-top: 0.2em;
+	font-size: 1.4em;
+}
+
+h4 {
+	font-family: "HelveticaNeue-Light", "HelveticaNeue", Helvetica, Arial, Verdana, sans-serif;
+	color: #0079a3;
+	font-weight: bold;
+	margin-top: 0.2em;
+	margin-bottom: 0.4em;
+	font-size: 1.2em;
+}
+
+h5 {
+	margin-top: 0.2px;
+	margin-bottom: 0.6px;
+	font-size: 1em;
+}
+
+h6 {
+	font-weight: bold;
+	margin-top: 0.2px;
+	margin-bottom: 0.6px;
+	font-size: 0.8em;
+}
+
+hr {
+	clear: both;
+	border-top-color: #b6d0ee;
+	border-top-width: 1px;
+	border-left-style: none;
+	border-bottom-style: none;
+	border-right-style: none;
+	border-top-style: dashed;
+	border-bottom-width: 0px;
+	height: 0px;
+}img {
+	border-width: 0px;
+	padding: 0px;
+	margin: 1%;
+}
+
+a, a:link, a:visited, a:active {
+	text-decoration: none;
+	color: #0f7aa4;
+}
+
+a:hover {
+	color: #1296de;
+}
+.left {
+	float: left;
+}
+.right {
+	float: right;
+}
+ul,ol {
+	padding-top: 0.6em;
+	padding-bottom: 1em;
+	padding-right: 0.4em;
+	padding-left: 0.4em;
+}
+li {
+	list-style-image: url(images/li.png);
+	list-style-position: inside;
+	padding-left: 20px;
+}
+
+ol li {
+	list-style-image: none;
+	list-style-type: decimal;
+}
+
+p {
+	margin: 0px;
+	padding-top: 0.2em;
+	padding-bottom: 0.5em;
+}
+.clear {clear: both;display: block;overflow: hidden;visibility: hidden;width: 0;height: 0;}
+.clearfix:after {clear: both;content:' ';display: block;font-size: 0;line-height: 0;visibility: hidden;width: 0;height: 0;}
+.clearfix {display: inline-block;}
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+
+blockquote{
+	font-weight: 400;
+	text-indent: 3em;
+	background-repeat: no-repeat;
+	background-position: 1em 1em;
+	background-image: url(images/blockquote.png);
+	padding-left: 1em;
+	padding-bottom: 2em;
+	padding-right: 1em;
+	padding-top: 1em;
+	border-left-width: 6px;
+	border-bottom-width: 0px;
+	border-right-width: 0px;
+	border-top-width: 0px;
+	border-style: solid;
+	border-color: #b6d0ee;
+	margin-left: 0;
+	margin-bottom: 1em;
+	margin-right: 0;
+	margin-top: 0.6em;
+	background-color: #1297dd;
+	color: white;
+}
+
+pre, .code {
+	padding-left: 1em;
+	padding-bottom: 0.4em;
+	padding-right: 1em;
+	padding-top: 0.4em;
+	margin-left: 0;
+	margin-bottom: 1em;
+	margin-right: 0;
+	margin-top: 0.6em;
+	border-left-width: 6px;
+	border-bottom-width: 0px;
+	border-right-width: 0px;
+	border-top-width: 0px;
+	border-color: #b6d0ee;
+	border-style: solid;
+	color: white;
+	background-color: #f9a103;
+	font-size:1em;
+	overflow:auto;
+	line-height:2.2em;
+}
+
+address {
+	border-left-width: 6px;
+	border-bottom-width: 0px;
+	border-right-width: 0px;
+	border-top-width: 0px;
+	padding-left: 1em;
+	padding-bottom: 0.4em;
+	padding-right: 1em;
+	padding-top: 0.4em;
+	margin-left: 0;
+	margin-bottom: 1em;
+	margin-right: 0;
+	margin-top: 0.6em;
+	font-weight: 900;
+	border-color: #1297dd;
+	border-style: solid;
+	color: white;
+	background-color: #0079a3;
+	font-size:1em;
+	overflow:auto;
+	line-height: 1.6em;
+}
+
+.small {
+	display: inline-block;
+	font-size: 10px;
+}
+
+.highlight {
+	background-image: url(images/highlight.png);
+	background-repeat: repeat-x;
+	font-weight: 700;
+	padding-left: 0.4em;
+	padding-bottom: 0.2em;
+	padding-right: 0.4em;
+	padding-top: 0.2em;
+	color: white;
+	background-color: #8f0d00;
+}
+
+.button, a.button {
+	text-decoration: none;
+	border-style: solid;
+	border-color: #670009;
+	border-width: 1px;
+	background-position: 0 top;
+	padding-right: 0.6em;
+	padding-left: 0.6em;
+	padding-bottom: 0.2em;
+	padding-top: 0.2em;
+	display: inline-block;
+	color: white;
+	background-color: #a80014;
+	background-image: url(images/button.png);
+	background-repeat: repeat-x;
+}
+
+.button:hover, a.button:hover {
+	border-color: #670009;
+	background-position: 0 -30px;
+}
+
+.small {
+	font-size: 0.8em;
+	font-style: italic;
+}

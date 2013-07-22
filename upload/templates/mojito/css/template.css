@@ -1,0 +1,94 @@
+/**
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         mojito
+ *
+ */
+
+@import url('reset.css');
+@import url('font.css');
+@import url('basic.css');
+@import url('menu.css');
+
+#main_header {
+	padding: 7px 0px 13px 0px;
+	width: 960px;
+	margin: auto;
+}
+
+	#logo {
+		margin-left: 1em;
+		width: 174px;
+		height: 64px;
+		display: inline-block;
+		text-indent: -9999px;
+		background: url(images/logo.png) left center no-repeat;
+	}
+
+
+#content {
+	width: 960px;
+	margin: auto;
+	-webkit-box-shadow:	black 0px 0px 4px -1px;
+	-moz-box-shadow:	black 0px 0px 4px -1px;
+	box-shadow:			black 0px 0px 4px -1px;
+}
+	#content_header {
+		position: relative;
+		padding: 1em 2em;
+	}
+
+		#fork_me {
+			position: absolute;
+			top: 0px;
+			right: 0px;
+			background: url(images/forkme.png) no-repeat;
+			height: 114px;
+			width: 114px;
+		}
+
+	#content_main {
+		width: 716px;
+		padding: 2em;
+		float: right;
+		background: white;
+	}
+	#sidebar {
+		width: 244px;
+		float: left;
+	}
+
+
+#main_footer {
+	width: 960px;
+	margin: auto;
+}
+	#footer_content {
+		font-size: 0.9em;
+		color: #687a8a;
+		line-height: 1.2em;
+		clear: both;
+		padding-bottom: 2em;
+		text-align: center;
+	}
+		.footer_icon {
+			font-size: 1.8em;
+			display: inline-block;
+			margin: 0.4em 0.6em 1em 0.6em;
+		}
