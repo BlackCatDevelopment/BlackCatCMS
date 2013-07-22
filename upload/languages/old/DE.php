@@ -716,14 +716,3 @@ $OVERVIEW = array(
 	'USERS' 					=> 'Verwaltung von Benutzern, die sich in Lepton einloggen d&uuml;rfen...',
 	'VIEW' 						=> 'Ansicht Ihrer Webseite in einem neuen Fenster...'
 ); // OVERVIEW
-
-/*
- * Create the old languages definitions only if specified in settings
- */
-if (ENABLE_OLD_LANGUAGE_DEFINITIONS) {
-	foreach ($MESSAGE as $key => $value) {
-		$x = strpos($key, '_');
-		$MESSAGE[substr($key, 0, $x)][substr($key, $x+1)] = $value;
-	}
-}
-?>

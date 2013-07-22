@@ -39,10 +39,7 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-require_once CAT_PATH.'/framework/functions.php';
-
-function Dwoo_Plugin_cat_url(Dwoo $dwoo) {
-	return CAT_URL;
+function Dwoo_Plugin_count(Dwoo $dwoo, $array ) {
+    if(!is_array($array)) return 0;
+	return count($array);
 }
-
-?>

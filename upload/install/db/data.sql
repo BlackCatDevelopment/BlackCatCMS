@@ -23,7 +23,7 @@ INSERT INTO `cat_settings` (name, value) VALUES
     ('catmailer_smtp_username', ''),
     ('default_charset', 'utf-8'),
     ('default_date_format', '%d.%m.%Y'),
-    ('default_template', 'lepton'),
+    ('default_template', 'mojito'),
     ('default_theme', 'freshcat'),
     ('default_theme_variant', ''),
     ('default_time_format', '%H:%M:%S'),
