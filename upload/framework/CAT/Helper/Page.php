@@ -577,11 +577,18 @@ if (!class_exists('CAT_Helper_Page'))
             if (count(CAT_Helper_Page::$css))
             {
                 $val = CAT_Helper_Validate::getInstance();
+                $seen = array();
                 foreach (CAT_Helper_Page::$css as $item)
                 {
+                    if ( ! preg_match( '~^/~', $item['file'] ) )
+                        $item['file'] = '/' . $item['file'];
+                    if ( ! isset($seen[$item['file']]) )
+                    {
                     // make sure we have an URI (CAT_URL included)
                     $file = (preg_match('#' . CAT_URL . '#i', $item['file']) ? $item['file'] : CAT_URL . '/' . $item['file']);
                     $output .= '<link rel="stylesheet" type="text/css" href="' . $val->sanitize_url($file) . '" media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
+                }
+                    $seen[$item['file']] = 1;
                 }
             }
             return $output;
@@ -668,18 +675,12 @@ if (!class_exists('CAT_Helper_Page'))
         {
             // what for?
             if (!$for || $for == '' || ($for != 'frontend' && $for != 'backend'))
-            {
                 $for = 'frontend';
-            }
 
             if ($for == 'backend')
-            {
                 return self::getBackendFooters();
-            }
             else
-            {
                 return self::getFrontendFooters();
-            }
         } // end function getFooters()
 
         /**
@@ -870,17 +871,13 @@ if (!class_exists('CAT_Helper_Page'))
         public static function getJavaScripts($for = 'header')
         {
             if ($for == 'header')
-            {
                 $static =& CAT_Helper_Page::$js;
-            }
             else
-            {
                 $static =& CAT_Helper_Page::$f_js;
-            }
+
             if (is_array($static) && count($static))
-            {
                 return implode("\n", $static) . "\n";
-            }
+
             return NULL;
         } // end function getJavaScripts()
 
@@ -893,17 +890,13 @@ if (!class_exists('CAT_Helper_Page'))
         public static function getJQuery($for = 'header')
         {
             if ($for == 'header')
-            {
                 $static =& CAT_Helper_Page::$jquery;
-            }
             else
-            {
                 $static =& CAT_Helper_Page::$f_jquery;
-            }
+
             if (count($static))
-            {
                 return implode($static);
-            }
+
             return NULL;
         } // end function getJQuery()
 
@@ -2070,13 +2063,17 @@ if (!class_exists('CAT_Helper_Page'))
             if (count(CAT_Helper_Page::$js_search_path))
             {
                 $val = CAT_Helper_Validate::getInstance();
+                $seen = array();
                 foreach (CAT_Helper_Page::$js_search_path as $directory)
                 {
                     $file = sanitize_path($directory . '/' . $for . '.js');
+                    if ( ! isset($seen[$file]) )
                     if (file_exists(CAT_PATH . '/' . $file))
-                    {
-                        CAT_Helper_Page::$js[] = '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $file) . '"></script>' . "\n";
-                    }
+                            CAT_Helper_Page::$js[]
+                                = '<script type="text/javascript" src="'
+                                . $val->sanitize_url(CAT_URL . $file)
+                                . '"></script>' . "\n";
+                    $seen[$file] = 1;
                 }
             }
             self::$instance->log()->logDebug('JS',CAT_Helper_Page::$js);
