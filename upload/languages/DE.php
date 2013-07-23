@@ -390,6 +390,7 @@ $LANG = array(
     'Modify user' => 'Benutzer ändern',
     'Modules' => 'Module',
     'Password' => 'Kennwort',
+    'Permissions' => 'Rechte',
     'Please note: You should only enter values in those fields if you wish to change this users password'
         => 'Hinweis: In die folgenden Felder nur etwas eintragen, wenn das Kennwort geändert werden soll',
     'Removing group' => 'Entferne Gruppe',
@@ -402,7 +403,6 @@ $LANG = array(
     'Template permissions' => 'Templateberechtigungen',
     'The group cannot be deleted as it has members' => 'Die Gruppe kann nicht gelöscht werden da sie noch Mitglieder hat',
     'Upload files' => 'Dateien hochladen',
-    'User & Group permissions' => 'Benutzer- und Gruppenrechte',
     'User loaded successfully' => 'Benutzer erfolgreich geladen',
     'Username' => 'Benutzerkennung',
     'Users' => 'Benutzer',

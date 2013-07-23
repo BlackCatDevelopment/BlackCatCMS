@@ -51,6 +51,8 @@ class admin extends wb
         return CAT_Backend::getInstance($section_name,$section_permission,$auto_header,$auto_auth);
     }
 
+    function get_email()                             { return CAT_Users::get_email();                       }
+    function get_page_details($page_id)              { return CAT_Helper_Page::properties($page_id);        }
     function get_permission($name, $type = 'system') { return CAT_Users::get_permission($name,$type); }
     function get_user_details($user_id)              { return CAT_Users::get_user_details($user_id);  }
     function print_banner()                          { return CAT_Backend::getInstance('')->print_banner(); }

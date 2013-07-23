@@ -105,7 +105,11 @@ if ( $add_module != '' )
     else
     {
         if(file_exists(CAT_PATH.'/modules/'.$module.'/add.php'))
+        {
+            global $backend, $admin;
+            $admin =& $backend;
             require(CAT_PATH.'/modules/'.$module.'/add.php');
+        }
     }
 }
 // delete section

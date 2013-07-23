@@ -42,7 +42,7 @@
 								</td>
 								{if $MANAGE_SECTIONS}
 								<td class="fc_sections_options">
-									<span class="fc_section_button icon-eye-2 fc_toggle_section_block" title="show/hide section"></span>
+									<span class="fc_section_button icon-eye-2 fc_toggle_section_block" title="{translate('show/hide section')}"></span>
 									<div class="fc_section_modify_div_parent">
 										<span class="fc_section_button fc_open_section_modify icon-calendar" title="{translate('Modify section')}"></span>
 										<div class="fc_section_modify_div fc_gradient1 fc_border_all_light fc_shadow_small fc_br_all">
@@ -84,7 +84,7 @@
 											</form>
 										</div>
 									</div>
-									<div class="fc_section_button fc_delete_section icon-remove" title="delete section">
+									<div class="fc_section_button fc_delete_section icon-remove" title="{translate('delete section')}">
                                         <form method="post" action="{$CAT_ADMIN_URL}/pages/ajax_sections_save.php" name="modify_section" class="fc_modify_section ajaxForm">
 										    <input type="hidden" name="delete_section_id" value="{$block.section_id}" />
                                         </form>
