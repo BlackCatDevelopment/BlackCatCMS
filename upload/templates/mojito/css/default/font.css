@@ -69,6 +69,7 @@ you can use the generic selector below, but it's slower:
 	text-transform: none;
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
+	margin-right: 0.4em;
 }
 .icon-github:before {
 	content: "\e000";
@@ -142,6 +143,8 @@ you can use the generic selector below, but it's slower:
 	text-transform: none;
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
+	font-size: 1.2em;
+	margin-left: 0.4em;
 }
 .iconafter-github:after {
 	content: "\e000";

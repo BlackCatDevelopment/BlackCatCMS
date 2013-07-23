@@ -48,7 +48,7 @@ $mod_headers = array(
 		'css' => array(
 			array(
 				'media'		=> 'all',
-				'file'		=> 'templates/mojito/css/template.css'
+				'file'		=> 'templates/mojito/css/default/template.css'
 			)
 		),
 		'jquery' => array(
