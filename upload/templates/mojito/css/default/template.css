@@ -67,6 +67,7 @@
 			height: 114px;
 			border-bottom: none;
 			background: url(images/forkme.png) no-repeat;
+			z-index: 9999;
 		}
 
 	#content_main {
