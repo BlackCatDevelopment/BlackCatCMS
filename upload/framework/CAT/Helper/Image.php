@@ -150,9 +150,13 @@ if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 	     * @param  string  $destination - path and filename for the thumbnail
 	     * @param  integer $height      - thumbnail height
 	     * @param  integer $width       - (optional) thumbnail width
+		 * @param string $method
+		 *				 fit = Fits image into width and height while keeping original aspect ratio. Expect your image not to use the full area.
+		 *				 crop = Crops image to fill the area while keeping original aspect ratio. Expect your image to get, well, cropped.
+		 *               fill = Fits image into the area without taking care of any ratios. Expect your image to get deformed.
 	     *
 	     **/
-	    public function make_thumb( $source, $destination, $height, $width = NULL )
+	    public function make_thumb( $source, $destination, $height, $width = NULL, $method = 'fit' )
 		{
 		
 	        $dest_path = pathinfo( $destination, PATHINFO_DIRNAME );
@@ -176,7 +180,7 @@ if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 				}
 			}
 			
-			$image->resize( $width, $height );
+			$image->resize( $width, $height, $method );
 			return $image->save( $dest_file, $dest_path );
 	    }   // end function make_thumb()
 	    
