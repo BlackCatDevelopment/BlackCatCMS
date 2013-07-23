@@ -542,6 +542,16 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     
     function get_parent_ids($id)    { return CAT_Helper_Page::getParentIDs($id); }
     function get_page_trail($id)    { return CAT_Helper_Page::getPageTrail($id); }
+
+    if(!function_exists('file_list'))
+    {
+        function file_list( $directory, $skip = array(), $show_hidden = false )
+        {
+            return CAT_Helper_Directory::getInstance()
+                   ->setSkipDirs($skip)
+                   ->scanDirectory($directory,true,true,$directory.'/');
+        }
+    }
     if(!function_exists('page_link'))
     {
     	function page_link($link)
