@@ -1334,7 +1334,7 @@ if (!class_exists('CAT_Helper_Addons'))
                         // get current value
                         $addons   = explode(',', $groups[$gid][$check_permission] );
                         // add newly installed module
-                        $addons[] = $addon_directory;
+                        $addons[] = $addon_info['module_directory'];
                         $addons   = array_unique($addons);
                         asort( $addons );
                         // Update the database

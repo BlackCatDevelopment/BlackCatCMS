@@ -100,7 +100,7 @@ if (!class_exists('CAT_Helper_Protect'))
             if ( is_object(self::$csrf) ) return self::$csrf;
             if ( ! function_exists('csrf_ob_handler') )
             {
-                $path = CAT_Helper_Directory::getInstance()->sanitizePath(CAT_PATH . '/modules/lib_csrfmagic/csrf-magic.php');
+                $path = CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/lib_csrfmagic/csrf-magic.php');
                 if ( ! file_exists( $path ) )
                 {
                     $this->printFatalError('Missing library CSRF-Magic!');
@@ -113,76 +113,54 @@ if (!class_exists('CAT_Helper_Protect'))
          * creates tokens for CSRF protection and stores it in the session
          * requirements: an active session must be available
          *
-         * should be called only once for a page!
+         * uses csrf-magic if available; returns NULL if not
          *
          * @access public
          * @return string
          */
-    	public function createToken()
+    	public static function createToken()
     	{
-    		if (function_exists('microtime'))
+            $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_csrfmagic/csrf-magic.php');
+            if ( file_exists( $path ) )
             {
-    			list($usec, $sec) = explode(" ", microtime());
-    			$time = (string)((float)$usec + (float)$sec);
+                if ( ! function_exists('csrf_get_tokens') )
+                    include_once $path;
+                return csrf_get_tokens();
     		}
             else
             {
-    			$time = (string)time();
+        		// no token without csrf-magic!
+                return NULL;
     		}
-    		$token = substr(md5($time . $this->_generate_salt()), 0, 21) . "z" . substr($time, 0, 10);
-    		(isset($_SESSION['Tokens'])) ? $_SESSION['Tokens'][] = $token : $_SESSION['Tokens'] = array($token);
-    		return $token;
     	}   // end function createToken()
 
         /*
          * checks received token against session-stored tokens
          *
          * requirements: an active session must be available
-         * this check will prevent from multiple sending a form.
-         * history.back() will never work!
+         * 
+         * uses csrf-magic if available; returns true if not
          *
          * @access public
          * @return boolean - true if numbers matches against one of the stored tokens
          */
-    	function checkToken()
+        public static function checkToken($token)
     	{
-// ----- TODO: Diese Funktion muss angepasst werden! -----
-return true;
     		if (!TOKEN_LIFETIME) return true;
 
-    		$timelimit = (string) (time() - TOKEN_LIFETIME);
-    		$retval = false;
-    		if (isset($_GET['ctoken'])) {
-    			$tok = $_GET['ctoken'];
-    		} elseif (isset($_GET['amp;ctoken'])) {
-    			$tok = $_GET['amp;ctoken'];
-    		} elseif (isset($_POST['ctoken'])) {
-    			$tok = $_POST['ctoken'];
-    		} elseif (isset($_POST['amp;ctoken'])) {
-    			$tok = $_POST['amp;ctoken'];
-    		} else {
-    			return $retval;
+            $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_csrfmagic/csrf-magic.php');
+            if ( file_exists( $path ) )
+            {
+                if ( ! function_exists('csrf_check_token') )
+                    include_once $path;
+                return csrf_check_token($token);
     		}
-    		if (isset($_SESSION['Tokens']))
+            else
     		{
-    			// delete dated tokens, except the last one
-    			$token = $_SESSION['Tokens'][0];
-    			while (($timelimit > substr($token, -10)) and (count($_SESSION['Tokens']) > 1)) {
-    				array_shift($_SESSION['Tokens']);
-    				$token = $_SESSION['Tokens'][0];
-    			}
-
-    			$tokens = $_SESSION['Tokens'];
-    			foreach ($tokens as $i => $token) {
-    				$retval = ($tok == $token);
-    				if ($retval) {
-    					break;
-    				}
-    			}
-    		}
-
-    		return $retval;
+        		// no token without csrf-magic!
+                return true;
     	}
+    	}   // end function checkToken()
 
         /**
          * generate salt

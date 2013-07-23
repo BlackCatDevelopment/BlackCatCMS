@@ -53,3 +53,6 @@ global $database, $wb, $admin;
 
 require_once CAT_PATH.'/framework/class.database.php';
 $database = new database();
+
+// old template engine
+require_once(CAT_PATH."/include/phplib/template.inc");

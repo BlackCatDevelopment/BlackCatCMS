@@ -277,10 +277,10 @@ class wb
 
     /* empty methods for compatibility with WB 2.8.3 and above */
    	public function createFTAN() {}
-	public function getFTAN( $mode = 'POST') {}
-	public function checkFTAN( $mode = 'POST') {}
+	public function getFTAN( $mode = 'POST') { return CAT_Helper_Protect::createToken(); }
+	public function checkFTAN( $mode = 'POST') { return CAT_Helper_Protect::checkToken(); }
 	public function getIDKEY($value) {}
-	public function checkIDKEY( $fieldname, $default = 0, $request = 'POST' ) {}
+	public function checkIDKEY( $fieldname, $default = 0, $request = 'POST' ) { return true; }
 	public function clearIDKEY() {}
 }
 
