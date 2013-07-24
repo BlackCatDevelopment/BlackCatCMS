@@ -66,12 +66,11 @@ if( file_exists(CAT_PATH.'/install/') ) {
 }
 
 // exec initial_page
-if($val->sanitizeGet('initial'))
+if($val->sanitizeGet('initial') || ! $user->checkPermission('start','start') === true )
 {
-    if(file_exists(CAT_PATH .'/modules/initial_page/classes/c_init_page.php') && isset($_SESSION['USER_ID'])) {
-        require_once (CAT_PATH .'/modules/initial_page/classes/c_init_page.php');
-        $ins = new c_init_page($backend->db(), $_SESSION['USER_ID'], $_SERVER['SCRIPT_NAME']);
-    }
+    $page = $user->get_initial_page();
+    if ( $page )
+        header( 'Location: '.$page );
 }
 
 $tpl_data = array();

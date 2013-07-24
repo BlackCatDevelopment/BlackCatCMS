@@ -79,6 +79,27 @@ if (!class_exists('CAT_Backend', false))
     	}
 
         /**
+         * returns a list of backend pages (used for "initial page")
+         *
+         * @access public
+         * @return array
+         **/
+        public static function getPages()
+        {
+            $self = self::getInstance('start','start',false);
+            return array (
+    			$self->lang()->translate('Start') => 'start/index.php',
+    			$self->lang()->translate('Addons') => 'addons/index.php',
+    			$self->lang()->translate('Admin-Tools') => 'admintools/index.php',
+    			$self->lang()->translate('Groups') => 'groups/index.php',
+    			$self->lang()->translate('Media') => 'media/index.php',
+    			$self->lang()->translate('Preferences') => 'preferences/index.php',
+    			$self->lang()->translate('Settings') => 'settings/index.php',
+    			$self->lang()->translate('Users') => 'users/index.php',
+    		);
+        }   // end function getPages()
+
+        /**
          *
          * @access public
          * @return

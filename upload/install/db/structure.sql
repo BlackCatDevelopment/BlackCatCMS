@@ -374,7 +374,6 @@ CREATE TABLE IF NOT EXISTS `cat_users_options` (
 )
 COMMENT='additional expandable settings for users' ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 CREATE TABLE IF NOT EXISTS `cat_mod_initial_page` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL DEFAULT '1',

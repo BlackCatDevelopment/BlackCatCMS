@@ -24,6 +24,10 @@
 				<input type="checkbox" class="fc_checkbox_jq" name="frontend_login" id="fc_list_FRONTEND_login" value="true" {if $values.frontend_login} checked="checked"{/if}/>
 				<label for="fc_list_FRONTEND_login">{translate('Allow frontend login')}</label>
 			</div>
+            <div class="fc_settings_max">
+                <input type="checkbox" class="fc_checkbox_jq" name="initial_page" id="fc_initial_page" value="true" {if $values.initial_page} checked="checked"{/if}/>
+                <label for="fc_initial_page">{translate('Use initial page')}</label>
+            </div>
 			<div class="fc_settings_max">
 				<input type="checkbox" class="fc_checkbox_jq" name="home_folders" id="fc_home_folders" value="true" {if $values.home_folders} checked="checked"{/if}/>
 				<label for="fc_home_folders">{translate('Personal folders')}</label>

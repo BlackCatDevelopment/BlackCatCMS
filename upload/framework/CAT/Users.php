@@ -55,6 +55,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
             'date_format'        => 'CAT_Helper_DateTime::checkDateformat',
             'date_format_short'  => 'CAT_Helper_DateTime::checkDateformat',
             'time_format'        => 'CAT_Helper_DateTime::checkTimeformat',
+            'init_page'          => '',
+            'init_page_param'    => '',
         );
         private static $permissions     = array();
         private static $defaultuser     = array();
@@ -303,9 +305,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
             else
             {
                 if ( self::getInstance()->checkPermission( 'start', 'start' ) )
-                    return CAT_ADMIN_URL.'/start/index.php';
+                    header( 'Location: '.CAT_ADMIN_URL.'/start/index.php' );
                 else
-                    return CAT_URL.'/index.php';
+                    header( 'Location: '.CAT_URL.'/index.php' );
             }
 
         }   // end function handleLogin()
@@ -734,10 +736,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
             {
                 if ( isset($options[$key]) && $options[$key] !== '' )
                 {
-                    $q  = "UPDATE `".CAT_TABLE_PREFIX."users_options` SET "
-                        . "`option_value`='".mysql_real_escape_string($options[$key])."' "
-                        . " WHERE `option_name`='$key' AND `user_id`='".$user_id."'";
-                    $self->db()->query($q);
+                    $q  = "REPLACE INTO `%susers_options` VALUES ( "
+                        . " '%d', '%s', '%s'"
+                        . ")";
+                    $self->db()->query(sprintf($q,CAT_TABLE_PREFIX,$user_id,$key,mysql_real_escape_string($options[$key])));
                        if ($self->db()->is_error())
                     {
                         $errors[] = $self->db()->get_error();
@@ -1006,6 +1008,45 @@ if ( ! class_exists( 'CAT_Users', false ) )
     		}
     		return $user;
     	}   // end function get_user_details()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function get_initial_page($user_id=NULL,$as_array=false)
+        {
+            $self     = self::getInstance();
+            $user_id  = ( isset($user_id) ? $user_id : $self->get_user_id() );
+            $opt      = $self->getUserOptions($user_id);
+
+            if( is_array($opt) )
+            {
+                if ( isset($opt['init_page']) )
+            {
+                    $page = array(
+                        'init_page'       => $opt['init_page'],
+                        'init_page_param' => ( isset($opt['init_page_param']) ? $opt['init_page_param'] : '' )
+                    );
+                    if ( $as_array ) return $page;
+                    $path = CAT_ADMIN_URL."/".$page['init_page']
+                          .  ( isset($opt['init_page_param']) ? '?'.$opt['init_page_param'] : '' )
+                          ;
+                return $path;
+            }
+            else
+            {
+                    return NULL;
+                }
+            }
+            else
+            {
+                if ( self::getInstance()->checkPermission( 'start', 'start' ) )
+                    return CAT_ADMIN_URL.'/start/index.php?initial=true';
+                else
+                    return CAT_URL;
+            }
+        }   // end function get_initial_page()
 
         /**
          * Check if current user is superuser (the one who installed the CMS)

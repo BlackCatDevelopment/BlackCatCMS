@@ -85,7 +85,7 @@ if ( $user = $get_user->fetchRow( MYSQL_ASSOC ) )
 		$num					 = mt_rand(0, $salt_len);
 		$username_fieldname		.= $salt[ $num ];
 	}
-
+    $page   = $users->get_initial_page($user_id,true);
 	$ajax	= array(
 		'user_id'				=> $user['user_id'],
 		'username'				=> $user['username'],
@@ -96,7 +96,9 @@ if ( $user = $get_user->fetchRow( MYSQL_ASSOC ) )
 		'home_folder'			=> $user['home_folder'],
 		'username_fieldname'	=> $username_fieldname,
 		'message'				=> $backend->lang()->translate( 'User loaded successfully' ),
-		'success'				=> true
+		'success'				=> true,
+        'initial_page'          => $page['init_page'],
+        'initial_page_param'    => $page['init_page_param'],
 	);
 	print json_encode( $ajax );
 	exit();

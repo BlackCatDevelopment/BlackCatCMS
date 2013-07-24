@@ -58,10 +58,33 @@
 
 			<label for="fc_User_email" class="fc_label_200">{translate('Email')}:</label>
 			<input type="text" name="email" id="fc_User_email" maxlength="255" value="" />
+			<div class="clear_sp"></div><hr />
+
+            {if $INITIAL_PAGE}
+            <h3>{translate('Initial page')}:</h3>
+			<label for="fc_init_page" class="fc_label_200">{translate('Page')}:</label>
+            <select id="fc_init_page" name="init_page">
+            {if count($frontend_pages)}<optgroup label="{translate('Frontend page')}">
+            {foreach $frontend_pages label page}
+                <option value="{$page}"{if $init_page == $page} selected="selected"{/if}>{$label}</option>
+            {/foreach}</optgroup>{/if}
+            {if count($backend_pages)}<optgroup label="{translate('Backend page')}">
+            {foreach $backend_pages label page}
+                <option value="{$page}"{if $init_page == $page} selected="selected"{/if}>{$label}</option>
+            {/foreach}</optgroup>{/if}
+            {if count($admin_tools)}<optgroup label="{translate('Admin Tool')}">
+            {foreach $admin_tools label page}
+                <option value="{$page}"{if $init_page == $page} selected="selected"{/if}>{$label}</option>
+            {/foreach}</optgroup>{/if}
+            </select>
+
 			<div class="clear_sp"></div>
+            <label for="fc_init_page_param" class="fc_label_200">{translate('Optional parameters')}:</label>
+            <input type="text" name="init_page_param" id="fc_init_page_param" value="{$init_page_param}" />
+			<div class="clear_sp"></div><hr />
+            {/if}
 
 			{if $HOME_FOLDERS}
-			
 			<label for="fc_User_home_folder" class="fc_label_200">{translate('Home folder')}:</label>
 			<select name="home_folder" id="fc_User_home_folder">
 				<option value="">{translate('None')}</option>
@@ -69,7 +92,7 @@
 				<option value="{$homefolder.FOLDER}">{$homefolder.NAME}</option>
 				{/foreach}
 			</select>
-            <div class="clear_sp"></div>
+            <div class="clear_sp"></div><hr />
 			{/if}
 
 			<div class="fc_modifyUser fc_password_notification fc_br_all icon-notification fc_gradient_red fc_input_description">
@@ -91,9 +114,9 @@
 
 			<hr />
 
-			<label for="fc_User_group">{translate('Groups')}:</label>
+			<h3>{translate('Groups')}:</h3>
 			<div id="fc_User_group" class="fc_settings_max">
-				<span class="fc_description">({translate('You need to choose at least one group')})</span><br/>
+				<span class="fc_description">({translate('You need to choose at least one group')})</span><br />
 				{foreach $groups.viewers group}
 				<input type="checkbox" class="fc_checkbox_jq" name="groups[]" id="fc_User_groups_{$group.VALUE}" value="{$group.VALUE}"{if $group.VALUE == 1}{if !$is_admin} disabled="disabled"{/if}{/if}/>
 				<label for="fc_User_groups_{$group.VALUE}">{$group.NAME}</label>

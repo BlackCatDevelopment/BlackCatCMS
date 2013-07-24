@@ -1,6 +1,6 @@
 /* forms.css */
 
-input {
+input, select {
 	font-family:	HelveticaNeue, Helvetica, Arial, Verdana, sans-serif;
 	min-height:		1.8em;
 	padding:		0em 0.3em;
@@ -16,7 +16,7 @@ textarea {
 	border:			1px solid #9da8b2;
 	padding:		0.3em;
 }
-textarea, input[type=text],input[type=password] {
+textarea, input[type=text], input[type=password], select {
     width:          300px;
 }
 textarea.fc_input_300, input[type=text].fc_input_300,input[type=password].fc_input_300 {
@@ -84,4 +84,9 @@ div#fc_set_form_content.fc_gradient1 p {
 .fc_form_infotext {
     font-size: 0.8em;
     font-style: italic;
+}
+
+div.fc_all_forms h3 {
+    margin-left: 0.8em !important;
+    margin-bottom: 1em;
 }

@@ -172,6 +172,8 @@
 								$('#fc_User_email').val( data.email );
 								$('#fc_User_password, #fc_User_password2').val('');
 								$('#fc_User_active_user').prop( {checked: data.active});
+                                $('#fc_init_page').val(data.initial_page);
+                                $('#fc_init_page_param').val( data.initial_page_param );
 								$('#fc_User_home_folder option').prop( {selected: false}).filter('[value="' + data.home_folder + '"]').prop( {selected: true});
 								$.each(data.groups, function(index, value)
 								{

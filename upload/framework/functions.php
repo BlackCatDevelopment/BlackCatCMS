@@ -549,7 +549,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         {
             return CAT_Helper_Directory::getInstance()
                    ->setSkipDirs($skip)
-                   ->scanDirectory($directory,true,true,$directory.'/');
+                   ->scanDirectory($directory,true,true);
         }
     }
     if(!function_exists('page_link'))

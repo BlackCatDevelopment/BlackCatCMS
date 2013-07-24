@@ -204,6 +204,7 @@ else
 {
     $options = array(
         'group_id'     => $group_id,
+        'groups_id'    => $group_id,
         'active'       => $active,
         'username'     => $username,
         'display_name' => $display_name,
@@ -211,6 +212,20 @@ else
     );
     if($password)
         $options['password'] = md5($password);
+    // extended
+    $available = $users->getExtendedOptions();
+    foreach( $available as $key => $method )
+    {
+        $value = $val->sanitizePost($key);
+        if ( $value )
+        {
+            if ( $method )
+            {
+            }
+        }
+        $options[$key] = $value;
+    }
+
     $errors = $users->setUserOptions($user_id,$options);
     if(count($errors))
     {
@@ -248,7 +263,7 @@ if( $backend->db()->is_error() )
 
 	$action	= $addUser != '' ? 'added' : 'saved';
 	$ajax	= array(
-		'message'				=> $backend->lang()->translate('User {{action}} successfully', array( 'action' => $action ) ),
+		'message'				=> $backend->lang()->translate('User {{action}} successfully', array( 'action' => $backend->lang()->translate($action) ) ),
 		'action'				=> $action,
 		'username'				=> $username,
 		'display_name'			=> $display_name,
