@@ -230,7 +230,7 @@ elseif ( $update_section_id )
 	if(!$section || !is_array($section) || !count($section))
 				{
 					$ajax	= array(
-			'message'	=> $backend->lang()->translate('Section not found.'),
+						'message'	=> $backend->lang()->translate('Section not found.'),
 						'success'	=> false
 					);
 					print json_encode( $ajax );
@@ -239,36 +239,36 @@ elseif ( $update_section_id )
 
 	#if ( !is_numeric (array_search($section['module'], $module_permissions) ) )
 	#{
-        $options = array();
-        if($block) $options['block'] = $val->add_slashes($block);
-        if($name)  $options['name']  = mysql_real_escape_string($name);
+	$options = array();
+	if($block) $options['block'] = $val->add_slashes($block);
+	if($name)  $options['name']  = mysql_real_escape_string($name);
 
-		$date_from
-            = ($day_from * $month_from * $year_from) > 0
-            ? mktime( $hour_from, $minute_from, 0, $month_from, $day_from, $year_from )
-            : 0;
-		$date_to
-            = ($day_to * $month_to * $year_to) > 0
-            ? mktime( $hour_to, $minute_to, 0, $month_to, $day_to, $year_to )
-            : 0;
-        if ( $date_from > $date_to )
-		{
-			$ajax	= array(
-				'message'	=> $backend->lang()->translate('Please check your entries for dates.'),
-				'success'	=> false
-			);
-			print json_encode( $ajax );
-			exit();
-		}
-        else
-        {
-            $options['publ_start'] = $date_from;
-            $options['publ_end']   = $date_to;
-	}
-        if(!CAT_Helper_Section::updateSection($update_section_id,$options))
+	$date_from
+		= ($day_from * $month_from * $year_from) > 0
+			? mktime( $hour_from, $minute_from, 0, $month_from, $day_from, $year_from )
+			: 0;
+	$date_to
+		= ($day_to * $month_to * $year_to) > 0
+			? mktime( $hour_to, $minute_to, 0, $month_to, $day_to, $year_to )
+			: 0;
+	if ( $date_from > $date_to )
 	{
 		$ajax	= array(
-    			'message'	=> $backend->lang()->translate('Unable to save section: '.CAT_Helper_Section::getInstance()->db()->get_error()),
+			'message'	=> $backend->lang()->translate('Please check your entries for dates.'),
+			'success'	=> false
+		);
+		print json_encode( $ajax );
+		exit();
+	}
+	else
+	{
+		$options['publ_start'] = $date_from;
+		$options['publ_end']   = $date_to;
+	}
+	if(!CAT_Helper_Section::updateSection($update_section_id,$options))
+	{
+		$ajax	= array(
+			'message'	=> $backend->lang()->translate('Unable to save section: '.CAT_Helper_Section::getInstance()->db()->get_error()),
 			'success'	=> false
 		);
 		print json_encode( $ajax );
@@ -284,14 +284,22 @@ elseif ( $update_section_id )
 	#	print json_encode( $ajax );
 	#	exit();
 	#}
+	$updated_section	= CAT_Helper_Section::getSection($update_section_id);
+	$updated_block		= $parser->get_template_block_name(
+							CAT_Helper_Page::getPageTemplate($page_id), $updated_section['block'] ) .
+							' ('.$backend->lang()->translate('Block number').': '.$updated_section['block'].')';
+;
 }
 
 // ============================================ 
 // ! Check for error or print success message   
 // ============================================ 
+
 $ajax	= array(
-	'message'	=> $backend->lang()->translate('Section properties saved successfully.'),
-		'success'	=> true
+	'message'			=> $backend->lang()->translate('Section properties saved successfully.'),
+	'updated_section'	=> isset($updated_section) ? $updated_section : false,
+	'updated_block'		=> isset($updated_block) ? $updated_block : false,
+	'success'			=> true
 );
 print json_encode( $ajax );
 exit();

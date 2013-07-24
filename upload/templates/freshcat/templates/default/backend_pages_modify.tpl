@@ -47,7 +47,7 @@
 										<span class="fc_section_button fc_open_section_modify icon-calendar" title="{translate('Modify section')}"></span>
 										<div class="fc_section_modify_div fc_gradient1 fc_border_all_light fc_shadow_small fc_br_all">
 											<div class="fc_arrow_up"></div>
-											<form method="post" action="{$CAT_ADMIN_URL}/pages/ajax_sections_save.php" name="modify_section" class="fc_modify_section ajaxForm">
+											<form method="post" action="{$CAT_ADMIN_URL}/pages/ajax_sections_save.php" name="modify_section" class="fc_modify_section">
 												<div>
                                                     <input type="hidden" name="_cat_ajax" value="1" />
 													<input type="hidden" name="update_section_id" value="{$block.section_id}" />
@@ -85,7 +85,7 @@
 										</div>
 									</div>
 									<div class="fc_section_button fc_delete_section icon-remove" title="{translate('delete section')}">
-                                        <form method="post" action="{$CAT_ADMIN_URL}/pages/ajax_sections_save.php" name="modify_section" class="fc_modify_section ajaxForm">
+                                        <form method="post" action="{$CAT_ADMIN_URL}/pages/ajax_sections_save.php" name="modify_section" class="fc_modify_section">
 										    <input type="hidden" name="delete_section_id" value="{$block.section_id}" />
                                         </form>
 									</div>

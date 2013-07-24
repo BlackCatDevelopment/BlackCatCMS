@@ -176,8 +176,8 @@ jQuery(document).ready(function()
                             if(jqXHR.responseText.indexOf('fc_login_form') != -1) {
                                 location.href = CAT_ADMIN_URL + '/login/index.php';
                             } else {
-							$('.popup').dialog('destroy').remove();
-							alert(textStatus + ': ' + errorThrown );
+								$('.popup').dialog('destroy').remove();
+								alert(textStatus + ': ' + errorThrown );
                             }
 						}
 					});
@@ -214,17 +214,16 @@ jQuery(document).ready(function()
 		current_modify.toggle(300);
 	});
 
-	$('.fc_save_section input').click( function (e)
+	$('.fc_modify_section input[type=submit]').click( function (e)
 	{
 		e.preventDefault();
 		// Create link for ajax
 		var current		= $(this).closest('.fc_section_modify_div_parent'),
 			dates			= {
-				'update_section_id':	current.find('input[name=section_id]').val(),
+				'update_section_id':	current.find('input[name=update_section_id]').val(),
 				'page_id':				$('input[name=page_id]').val(),
-				'block':				current.find('select[name=set_block]').val(),
-				'name':					current.find('input[name=blockname]').val(),
-				'block_name':			current.find('select[name=set_block] option:selected').html(),
+				'set_block':			current.find('select[name=set_block]').val(),
+				'blockname':			current.find('input[name=blockname]').val(),
 				'day_from':				current.find('input[name=day_from]').val(),
 				'month_from':			current.find('input[name=month_from]').val(),
 				'year_from':			current.find('input[name=year_from]').val(),
@@ -257,10 +256,10 @@ jQuery(document).ready(function()
 				var current	= $(this);
 
 				if ( data.success === true )
-				{
+				{					console.log(data);
 					return_success( jqXHR.process , data.message );
-					current.closest('.fc_blocks_header').find('.fc_section_header_block strong').text(jqXHR.block_name);
-					current.closest('.fc_blocks_header').find('.fc_section_header_name strong').text(jqXHR.name);
+					current.closest('.fc_blocks_header').find('.fc_section_header_block strong').text(data.updated_block);
+					current.closest('.fc_blocks_header').find('.fc_section_header_name strong').text(data.updated_section.name);
 					current.children('.fc_section_modify_div').fadeOut(300);
 				}
 				else {
