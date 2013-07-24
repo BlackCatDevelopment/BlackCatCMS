@@ -54,11 +54,11 @@
 								element.children('span').removeClass('fc_page_loader');
 								if ( data.success === true )
 								{
-									return_success( '#fc_activity', data.message );
+									return_success( jqXHR.process, data.message );
 									current.slideUp(300, function() { current.remove(); });
 								}
 								else {
-									return_error( jqXHR.process , data.message);
+									return_error( jqXHR.process , data.message );
 								}
 							},
 							error:		function(jqXHR, textStatus, errorThrown)

@@ -1,5 +1,5 @@
-/**
- *   This program is free software; you can redistribute it and/or modify
+/*
+/*   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or (at
  *   your option) any later version.
@@ -17,12 +17,12 @@
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Template
- *   @package         freshcat
- *
+ *   @package         freshcat */
+/*
  */
 
-/**
- * Import different stylesheets for different pages/elemtents
+/*
+/* !Import different stylesheets for different pages/elemtents
  */
 @import url(reset.css);
 @import url(webfont.css);
@@ -45,9 +45,9 @@
 @import url(../../../../modules/lib_jquery/jquery-ui/themes/base/jquery-ui.css);
 @import url(../../../../modules/lib_jquery/plugins/tag-it/tag-it.css);
 
-/**
- * Define basic elements
- *
+/*
+/* !Define basic elements */
+/*
  */
 
 body,html {
@@ -118,9 +118,9 @@ label {
 }
 
 
-/**
- * Define basic classes
- *
+/*
+/* !Define basic classes */
+/*
  */
 
 .left {
@@ -264,38 +264,9 @@ label {
 	display: none;
 }
 
-/**
- * Gradients
- *
- */
-
-.fc_gradient1,
-.fc_page_link:hover > a,
-.fc_page_tree_item > a.fc_pages_tree_options_button_active,
-
-
-.fc_gradient_blue,
-#fc_pages ul .highlight,
-#fc_search_page_options li:hover,
-.fc_activeSearchOption,
-.fc_gradient1.fc_active,
-.fc_gradient2.fc_active,
-.fc_gradient3.fc_active,
-.fc_gradient4.fc_active,
-.fc_media_folder li.fc_active,
-.fc_media_folder li.fc_open_folder {
-	cursor:				pointer;
-}
-button[type=submit].fc_gradient_red,
-input[type=submit].fc_gradient_red,
-.fc_gradient_red,
-.highlight {
-	cursor:				pointer;
-}
-
-/**
- * Borderradius
- *
+/*
+/* !Borderradius */
+/*
  */
 
 .fc_br_topleft, .fc_br_left, .fc_br_all, .fc_br_top {
@@ -322,9 +293,9 @@ input[type=submit].fc_gradient_red,
 	-moz-border-radius-topright:		4px;
 }
 
-/**
- * Shadows
- *
+/*
+/* !Shadows */
+/*
  */
 
 .fc_shadow_small {
