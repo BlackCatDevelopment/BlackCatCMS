@@ -256,7 +256,7 @@ jQuery(document).ready(function()
 				var current	= $(this);
 
 				if ( data.success === true )
-				{					console.log(data);
+				{
 					return_success( jqXHR.process , data.message );
 					current.closest('.fc_blocks_header').find('.fc_section_header_block strong').text(data.updated_block);
 					current.closest('.fc_blocks_header').find('.fc_section_header_name strong').text(data.updated_section.name);
