@@ -284,6 +284,8 @@ jQuery(document).ready(function()
 
 		$('#fc_Group_form, #fc_User_form').find('input:checkbox').prop( 'checked', false );
 		$('#fc_User_form select > option:first').prop( 'selected', true );
+        $('#fc_init_page > option[value="start/index.php"]').prop( 'selected', true );
+        $('#fc_init_page').val("start/index.php");
 		$('#fc_Group_name, #fc_Group_group_id, #fc_User_form input:text, #fc_User_form input:password').val('').filter('#fc_Group_name').focus();
 	}).click();
 
@@ -370,7 +372,7 @@ jQuery(document).ready(function()
 			groups					= new Array();
 
 		dates[current.prop('name')]	= current.val();
-		currentForm.find('input[type=checkbox]:checked, input:text, input:password, #fc_User_user_id, #fc_User_fieldname').map( function()
+		currentForm.find('input[type=checkbox]:checked, input:text, input:password, select, #fc_User_user_id, #fc_User_fieldname').map( function()
 		{
 			var fieldname	= $(this).prop('name') == 'groups[]' ? 'groups' : $(this).prop('name');
 			return dates[fieldname]	= $(this).prop('name') == 'groups[]' ? groups.push( $(this).val() ) : $(this).val();

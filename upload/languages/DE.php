@@ -58,6 +58,9 @@ $language_time        = '%H:%I:%S';
 $language_time_string = 'Uhr';
 
 $LANG = array(
+// ----- will be removed in later versions -----
+    'Please note: The BlackCat CMS permissions system is going to be reengineered with version 1.1. We recommend to keep your permissions as simple as possible until next version. We kindly ask for your understanding.'
+        => 'Hinweis: Das BlackCat CMS Rechtesystem wird in Version 1.1 komplett überarbeitet. Wir empfehlen, die Berechtigungen bis dahin möglichst einfach zu halten. Vielen Dank für Ihr Verständnis.',
 // ----- ./account folder -----
     'Captcha verification' => 'Captcha',
     'Change password' => 'Kennwort ändern',
@@ -298,6 +301,7 @@ $LANG = array(
     'Should be at least' => 'Empfehlung (mindestens)',
     'System settings' => 'Systemeinstellungen',
     'Token lifetime' => 'Token Gültigkeitsdauer',
+    'Use initial page' => 'Standard-Startseite verwenden',
     'User settings' => 'Benutzereinstellungen',
     'Website description' => 'Webseitenbeschreibung',
     'Website keywords' => 'Schl&uuml;sselw&ouml;rter',
@@ -363,11 +367,13 @@ $LANG = array(
     'Add user' => 'Benutzer anlegen',
     'Add group' => 'Gruppe anlegen',
     'added' => 'hinzugefügt',
+    'Backend page' => 'Backend Bereich',
     'Create folder' => 'Verzeichnisse anlegen',
     'Delete group' => 'Gruppe löschen',
     'Delete user' => 'Benutzer löschen',
     'Display name' => 'Anzeigename',
     'Do you really want to delete this group?' => 'Soll diese Gruppe wirklich gelöscht werden?',
+    'Frontend page' => 'Frontend Seite',
     'General System' => 'Allgemein System',
     'Group added successfully' => 'Gruppe erfolgreich angelegt',
     'Group deleted successfully' => 'Gruppe erfolgreich gelöscht',
@@ -375,6 +381,7 @@ $LANG = array(
     'Group name' => 'Gruppenname',
     'Groups' => 'Gruppen',
     'Home folder' => 'Heimatverzeichnis',
+    'Initial page' => 'Standard Startseite',
     'Installed admintools' => 'Installierte Admin-Tools',
     'Installed modules' => 'Installierte Erweiterungen',
     'Installed templates' => 'Installierte Templates',
@@ -392,6 +399,7 @@ $LANG = array(
     'Module permissions' => 'Modulberechtigungen',
     'Modify user' => 'Benutzer ändern',
     'Modules' => 'Module',
+    'Optional parameters' => 'Optionale Parameter',
     'Password' => 'Kennwort',
     'Permissions' => 'Rechte',
     'Please note: You should only enter values in those fields if you wish to change this users password'
@@ -403,6 +411,7 @@ $LANG = array(
     'Save user' => 'Benutzer speichern',
     'saved' => 'gespeichert',
     'Settings' => 'Einstellungen',
+    'Start' => 'Start (Dashboard)',
     'System permissions' => 'Systemberechtigungen',
     'Template permissions' => 'Templateberechtigungen',
     'The group cannot be deleted as it has members' => 'Die Gruppe kann nicht gelöscht werden da sie noch Mitglieder hat',
