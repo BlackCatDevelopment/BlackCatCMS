@@ -26,7 +26,8 @@ if ( typeof jQuery != 'undefined' )
     jQuery.ajaxSetup({
         error: function( jqXHR, textStatus, errorThrown )
         {
-            console.log();
+            console.log(textStatus);
+            console.log(errorThrown);
             if (jqXHR.status === 0) {
                 alert('Not connected.\n Verify Network.');
             } else if (jqXHR.status == 404) {
@@ -40,7 +41,11 @@ if ( typeof jQuery != 'undefined' )
             } else if (errorThrown === 'abort') {
                 alert('Ajax request aborted.');
             } else {
-                alert('Uncaught Error.\n' + jqXHR.responseText);
+                if(jqXHR.responseText.indexOf('fc_login_form') != -1) {
+                    location.href = CAT_ADMIN_URL + '/login/index.php';
+                } else {
+                    alert('Uncaught Error.\n' + jqXHR.responseText);
+                }
             }
         }
     });

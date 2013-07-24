@@ -173,8 +173,12 @@ jQuery(document).ready(function()
 						},
 						error:		function(jqXHR, textStatus, errorThrown)
 						{
+                            if(jqXHR.responseText.indexOf('fc_login_form') != -1) {
+                                location.href = CAT_ADMIN_URL + '/login/index.php';
+                            } else {
 							$('.popup').dialog('destroy').remove();
 							alert(textStatus + ': ' + errorThrown );
+                            }
 						}
 					});
 				},

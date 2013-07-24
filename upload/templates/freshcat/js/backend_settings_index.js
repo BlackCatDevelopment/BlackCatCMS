@@ -42,8 +42,7 @@ function create_guid(URL) {
             success:	function( data, textStatus, jqXHR  ) {
                 jQuery('#guid').html(data);
                 $('#fc_createguid').hide();
-            },
-            error: function(data, textStatus, jqXHR) { alert(textStatus); }
+            }
         });
     }
 }

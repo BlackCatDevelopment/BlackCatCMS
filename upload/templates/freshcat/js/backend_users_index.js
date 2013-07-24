@@ -185,11 +185,6 @@
 						else {
 							return_error( jqXHR.process , data.message);
 						}
-					},
-					error:		function(jqXHR, textStatus, errorThrown)
-					{
-						console.log('Error: ' + jqXHR.responseText);
-						alert(textStatus + ': ' + errorThrown );
 					}
 				});
 			});
@@ -353,10 +348,6 @@ jQuery(document).ready(function()
 				else {
 					return_error( jqXHR.process , data.message);
 				}
-			},
-			error:		function(jqXHR, textStatus, errorThrown)
-			{
-				alert(textStatus + ': ' + errorThrown );
 			}
 		});
 	});
@@ -417,10 +408,6 @@ jQuery(document).ready(function()
 				else {
 					return_error( jqXHR.process , data.message);
 				}
-			},
-			error:		function(jqXHR, textStatus, errorThrown)
-			{
-				alert(textStatus + ': ' + errorThrown );
 			}
 		});
 	});

@@ -39,7 +39,7 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$backend = CAT_Backend::getInstance('Access', 'users',false);
+$backend = CAT_Backend::getInstance('Access','users',false,false);
 $users   = CAT_Users::getInstance();
 $val     = CAT_Helper_Validate::getInstance();
 
