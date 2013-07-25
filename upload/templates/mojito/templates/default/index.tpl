@@ -36,6 +36,16 @@
 
 	{get_page_headers()}
 
+	<!--[if lte IE 8]>
+		<script src="{template_dir()}/js/html5.js" type="text/javascript"></script>
+		<style type="text/css">
+			#sidebar {
+				float: left;
+				width: 189px;
+			}
+		</style>
+	<![endif]-->
+
 </head>
 <body>
 
