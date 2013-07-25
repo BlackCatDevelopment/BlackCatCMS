@@ -56,7 +56,7 @@ jQuery(document).ready(function()
 		forceHelperSize:	true,
 		start:				function(event, ui)
 							{
-								if ( typeof tinyMCE != 'undefined')
+								/*if ( typeof tinyMCE != 'undefined')
 								{
 									tinyids = new Array();
 									var i = 0;
@@ -75,7 +75,7 @@ jQuery(document).ready(function()
 									//editAreaLoader.execCommand('content13', 'set_editable', false);
 								}
 								*/
-								if ( typeof CKEDITOR != 'undefined')
+								/*if ( typeof CKEDITOR != 'undefined')
 								{
 									myinstances = new Array();
 									
@@ -85,10 +85,12 @@ jQuery(document).ready(function()
 										myinstances[CKEDITOR.instances[j].name] = CKEDITOR.instances[j].getData();
 										CKEDITOR.instances[j].destroy();
 									}
-								}
+								}*/
+								if(typeof ckeditorOff=='function')ckeditorOff();
 							},
 		stop:				function(event, ui)
 							{
+								/*
 								if ( typeof tinyids != 'undefined')
 								{
 									$.each(tinyids, function(key, value) {
@@ -101,8 +103,9 @@ jQuery(document).ready(function()
 									{
 										CKEDITOR.replace(i).setData(myinstances[i]);
 									}
-								}
+								}*/
 								//editAreaLoader.execCommand('content13', 'set_editable', true);
+								if(typeof ckeditorOn=='function')ckeditorOn();
 							},
 		update:				function(event, ui)
 							{
