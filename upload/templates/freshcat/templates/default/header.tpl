@@ -68,7 +68,7 @@
 	<div id="fc_sidebar_header" class="fc_gradient1 fc_border">
 		{translate('Pages')}
         <span class="icon-home fc_gradient1 fc_gradient_hover fc_side_home" title="{translate('Open frontend')}" style="right:24px;"></span>
-        <span class="icon-plus fc_gradient1 fc_gradient_hover fc_side_add" title="{translate('Add page')}"></span>
+        <span class="icon-plus fc_gradient1 fc_gradient_hover fc_side_add fc_page_tree_options_open" title="{translate('Add page')}"></span>
 	</div>
 	<div id="fc_sidebar_content">
 		{include('backend_pageTree.tpl')}

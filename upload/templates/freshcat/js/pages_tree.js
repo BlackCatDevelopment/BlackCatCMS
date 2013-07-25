@@ -71,20 +71,30 @@
 				});
 			}
 
-			element.find('.fc_page_tree_options_open').on( 'click', function(event)
+			element.find('.fc_page_tree_options_open, #fc_add_page input:reset').on( 'click', function(event)
 			{
 				event.preventDefault();
-				var current_button	= $(this),
-					page_id			= current_button.closest('li').find('input').val(),
-					dates			= {
-										'page_id' : page_id,
-										'_cat_ajax': 1
-									},
-					link			= CAT_ADMIN_URL + '/pages/ajax_page_settings.php';
-
+				var current_button	= $(this);
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
-				current_button.closest('li').addClass('page_tree_open_options');
-				$('#fc_addPage_keywords_ul').remove();
+
+				if( current_button.is('input') || current_button.hasClass('fc_side_add') ) // If the reset is clicked
+				{
+					var dates			= {
+											'_cat_ajax':	1,
+											'parent_id':	$('#fc_addPage_parent_page_id').val()
+										},
+						link			= CAT_ADMIN_URL + '/pages/ajax_get_dropdown.php';
+					$('#fc_addPage_keywords').val('');
+				}
+				else {
+					var page_id			= current_button.closest('li').find('input').val(),
+						dates			= {
+											'page_id' : page_id,
+											'_cat_ajax': 1
+										},
+						link			= CAT_ADMIN_URL + '/pages/ajax_page_settings.php';
+						current_button.closest('li').addClass('page_tree_open_options');
+				}
 				$.ajax(
 				{
 					type:		'POST',
@@ -94,6 +104,8 @@
 					cache:		false,
 					beforeSend:	function( data )
 					{
+						$('#fc_addPage_keywords_ul').remove();
+
 						if ( $('#fc_add_page').is(':visible') )
 						{
 							$('#fc_add_page').stop().animate({width: 'toggle'}, 200);
@@ -101,8 +113,10 @@
 					},
 					success:	function( data, textStatus, jqXHR  )
 					{
+						console.log(data);
+
 						var form	= $('#fc_add_page'),
-							option	= '<select name="parent" id="fc_addPage_parent"><option value="">['+cattranslate('None')+']</option>';
+							option	= '<option value="">['+cattranslate('None')+']</option>';
 						if ( data.visibility == 'deleted' )
 						{
 							form.find('nav, ul, .fc_changePageOnly, .fc_addPageOnly').hide();
@@ -111,6 +125,7 @@
 						else {
 							form.find('.fc_restorePageOnly, .fc_addPageOnly').hide();
 							form.find('nav, ul, .fc_changePageOnly').show();
+
 							$.each(data.parent_list, function(index, value)
 							{
 								option	= option + '<option value="' + value.page_id + '"';
@@ -128,8 +143,18 @@
 								}
 								option	= option + value.menu_title + '</option>';
 							});
-							option	= option + '</select>';
-							$('#fc_addPage_parent').replaceWith(option);
+
+							var newSelect	= $('#fc_addPage_parent').html( option );
+
+							if ( typeof data.parent_id !== 'undefined' && data.parent_id !== '' )
+							{
+								console.log(data.parent_id);
+								console.log(option);
+								newSelect.children('option:selected').prop('selected', false);
+								newSelect.children('option[value="' +  data.parent_id + '"]').prop( "selected", true );
+							}
+
+							console.log($('#fc_addPage_parent').html());
 
 							// Set textfields
 							$('#fc_addPage_title').val(data.menu_title);
@@ -186,6 +211,7 @@
 									current.prop('checked',true);
 								}
 							});
+
 							// Activate tagit for Keywords in the adding
 							$('#fc_addPage_keywords_ul').remove();
 							$('<ul id="fc_addPage_keywords_ul" />').insertBefore( $('#fc_addPage_keywords') ).tagit(
@@ -200,7 +226,7 @@
 								}
 							});
 						}
-						form.animate({width: 'toggle'});
+						form.animate({width: 'toggle'}, 300);
 					}
 				});
 			});
@@ -424,111 +450,14 @@
 
 jQuery(document).ready(function()
 {
-	$('#fc_page_tree_top').page_tree();
+	$('#fc_sidebar').page_tree();
 	$("#fc_search_page_tree").page_treeSearch();
 	$('fc_page_tree_not_editable > a').click( function(e)
 	{
 		e.preventDefault();
-		console.log('check');
 	});
 
 	$('#fc_add_page').slideUp(0);
-
-	$('#fc_add_page input:reset').click( function()
-	{
-		var form	= $('#fc_add_page');
-
-		form.find('.fc_addPageOnly').show();
-		form.find('.fc_changePageOnly').hide();
-		form.animate({ width: 'toggle' },300);
-
-		$('.page_tree_open_options').removeClass('page_tree_open_options');
-
-		// Activate tagit for Keywords in the adding
-		$('#fc_addPage_keywords_ul').remove();
-		$('#fc_addPage_keywords').val('');
-		$('<ul id="fc_addPage_keywords_ul" />').insertBefore( $('#fc_addPage_keywords') ).tagit(
-		{
-			allowSpaces:			true,
-			singleField:			true,
-			singleFieldDelimiter:	',',
-			singleFieldNode:		$('#fc_addPage_keywords'),
-			beforeTagAdded:			function(event, ui)
-			{
-				ui.tag.addClass('icon-tag');
-			}
-		});
-		var dates	= {
-			'_cat_ajax': 1
-		};
-		$.ajax(
-		{
-			context:	form,
-			type:		'POST',
-			url:		CAT_ADMIN_URL + '/pages/ajax_get_dropdown.php',
-			dataType:	'json',
-			data:		dates,
-			cache:		false,
-			success:	function( data, textStatus, jqXHR )
-			{
-				if ( data.success === true )
-				{
-					var form	= $(this),
-						option	= '<select name="parent" id="fc_addPage_parent"><option value="">['+cattranslate('None')+']</option>',
-						page_id	= $('#fc_addPage_parent_page_id').val();
-					$.each(data.parent_list, function(index, value)
-					{
-						option	= option + '<option value="' + value.page_id + '"';
-                        option	= (
-                                       value.is_editable === false      // no permission or deleted page
-                                    || value.is_current === true        // current page
-                                    || value.is_direct_parent === true  // direct parent
-                                  )
-								? option + ' disabled="disabled">'
-                                : option + '>'
-                                ;
-                        for ( var i = 0; i < value.level; i++ )
-						{
-							option	= option + '|-- ';
-						}
-						option	= option + value.menu_title + '</option>';
-					});
-					option	= option + '</select>';
-					$('#fc_addPage_parent').replaceWith( option );
-					console.log( page_id );
-					if ( page_id !== '' )
-					{
-						$('#fc_addPage_parent').val( page_id );
-					}
-				}
-				else {
-					return_error( jqXHR.process , data.message);
-				}
-			},
-			error:		function(jqXHR, textStatus, errorThrown)
-			{
-				console.log(jqXHR);
-				console.log(textStatus);
-				console.log(errorThrown);
-				alert(textStatus + ': ' + errorThrown );
-			}
-		});
-	});
-
-	$('.fc_side_add').click( function(e)
-	{
-		e.preventDefault();
-		var form	= $('#fc_add_page');
-		if ( $('#fc_add_page').is(':visible') )
-		{
-			$('#fc_add_page').stop().animate({width: 'toggle'}, 100);
-		}
-		form.find('.fc_restorePageOnly, .fc_changePageOnly').hide();
-		form.find('nav, ul, .fc_addPageOnly').show();
-		form.find('a:first').click();
-		form.find('input:text:first').focus();
-		form.find('input:reset').trigger('click');
-	});
 
 	$('.fc_side_home').click( function(e)
 	{

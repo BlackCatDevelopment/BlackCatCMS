@@ -214,11 +214,6 @@ if (!class_exists('CAT_Backend', false))
                 $tpl_data['modules']   = $addons->get_addons('wysiwyg', 'module', 'page');
                 $tpl_data['groups']    = $user->get_groups();
 
-                // list of all parent pages for dropdown parent
-                #$tpl_data['parents_list']  = $this->pg->pages_list(0, 0);
-                // List of available Menus of default template
-                #$tpl_data['TEMPLATE_MENU'] = $this->pg->get_template_menus();
-
                 // ===========================================
                 // ! Check and set permissions for templates
                 // ===========================================

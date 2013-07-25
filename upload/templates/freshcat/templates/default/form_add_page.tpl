@@ -26,13 +26,10 @@
 					{/foreach}
 				</select>
 			</div>
-
 			<input type="hidden" name="parent_page_id" id="fc_addPage_parent_page_id" value=""/>
 			<label for="fc_addPage_parent">{translate('Parent')}:</label>
 			<select name="parent" id="fc_addPage_parent">
-				{foreach $parents_list as parent}
-				<option value="{$parent.id}"{if $parent.disabled} disabled="disabled"{/if}>{for i 0 $parent.level 1}{if $i>0}- {/if}{/for}{$parent.menu_title}</option>
-				{/foreach}
+				<option></option>
 			</select>
 
 		</li>

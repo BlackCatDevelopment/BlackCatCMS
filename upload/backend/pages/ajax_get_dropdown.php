@@ -66,12 +66,13 @@ $permission['pages_delete']		= $users->checkPermission('Pages','pages_delete') ?
 $permission['pages_settings']	= $users->checkPermission('Pages','pages_settings') ? true : false;
 $permission['pages_intro']		= ( $users->checkPermission('Pages','pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
-$dropdown_list = CAT_Helper_Page::getPages();
+$dropdown_list = CAT_Helper_ListBuilder::sort(CAT_Helper_Page::getPages(),0);
 
 // ============================================= 
 // ! Add result_array to the template variable   
 // ============================================= 
 $ajax	= array(
+		'parent_id'		=> $val->sanitizePost('parent_id','numeric'),
 		'parent_list'	=> $dropdown_list,
 		'success'		=> true
 );
