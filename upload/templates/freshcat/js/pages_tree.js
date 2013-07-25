@@ -74,7 +74,8 @@
 			element.find('.fc_page_tree_options_open, #fc_add_page input:reset').on( 'click', function(event)
 			{
 				event.preventDefault();
-				var current_button	= $(this);
+				var current_button	= $(this),
+					form			= $('#fc_add_page');
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
 
 				if( current_button.is('input') || current_button.hasClass('fc_side_add') ) // If the reset is clicked
@@ -85,6 +86,9 @@
 										},
 						link			= CAT_ADMIN_URL + '/pages/ajax_get_dropdown.php';
 					$('#fc_addPage_keywords').val('');
+					$('#fc_changePageOnly').show();
+					form.find('.fc_restorePageOnly, .fc_changePageOnly').hide();
+					form.find('nav, ul, .fc_addPageOnly').show();
 				}
 				else {
 					var page_id			= current_button.closest('li').find('input').val(),
@@ -94,6 +98,8 @@
 										},
 						link			= CAT_ADMIN_URL + '/pages/ajax_page_settings.php';
 						current_button.closest('li').addClass('page_tree_open_options');
+						form.find('.fc_restorePageOnly, .fc_addPageOnly').hide();
+						form.find('nav, ul, .fc_changePageOnly').show();
 				}
 				$.ajax(
 				{
@@ -113,8 +119,6 @@
 					},
 					success:	function( data, textStatus, jqXHR  )
 					{
-						console.log(data);
-
 						var form	= $('#fc_add_page'),
 							option	= '<option value="">['+cattranslate('None')+']</option>';
 						if ( data.visibility == 'deleted' )
@@ -123,8 +127,18 @@
 							form.find('.fc_restorePageOnly').show();
 						}
 						else {
-							form.find('.fc_restorePageOnly, .fc_addPageOnly').hide();
-							form.find('nav, ul, .fc_changePageOnly').show();
+							if ( typeof data.call !== 'undefined' && data.call == 'save' )
+							{
+								form.find('.fc_restorePageOnly, .fc_addPageOnly').hide();
+								form.find('nav, ul, .fc_changePageOnly').show();
+							}
+							else if ( typeof data.call !== 'undefined' && data.call == 'add' ) {
+
+							}
+							else {
+
+							}
+
 
 							$.each(data.parent_list, function(index, value)
 							{
@@ -148,12 +162,13 @@
 
 							if ( typeof data.parent_id !== 'undefined' && data.parent_id !== '' )
 							{
-								console.log('parent_id: ' + data.parent_id);
 								newSelect.children('option:selected').prop('selected', false);
 								newSelect.children('option[value="' +  data.parent_id + '"]').prop( "selected", true );
 							}
-
-							console.log('selected_val: ' + newSelect.children('option:selected').val());
+							else {
+								$('#fc_addPage_parent option').removeAttr('selected');
+								$('#fc_addPage_parent option[value=' + data.parent + ']').prop('selected', true);
+							}
 
 							// Set textfields
 							$('#fc_addPage_title').val(data.menu_title);
@@ -163,8 +178,6 @@
 							$('#fc_addPage_page_link').val(data.short_link);
 							
 							// Set selectfields
-							$('#fc_addPage_parent option').removeAttr('selected');
-							$('#fc_addPage_parent option[value=' + data.parent + ']').prop('selected', true);
 							$('#fc_addPage_menu option').removeAttr('selected');
 							$('#fc_addPage_menu option[value=' + data.menu + ']').prop('selected', true);
 							$('#fc_addPage_target option').removeAttr('selected');
