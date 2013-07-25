@@ -148,13 +148,12 @@
 
 							if ( typeof data.parent_id !== 'undefined' && data.parent_id !== '' )
 							{
-								console.log(data.parent_id);
-								console.log(option);
+								console.log('parent_id: ' + data.parent_id);
 								newSelect.children('option:selected').prop('selected', false);
 								newSelect.children('option[value="' +  data.parent_id + '"]').prop( "selected", true );
 							}
 
-							console.log($('#fc_addPage_parent').html());
+							console.log('selected_val: ' + newSelect.children('option:selected').val());
 
 							// Set textfields
 							$('#fc_addPage_title').val(data.menu_title);
