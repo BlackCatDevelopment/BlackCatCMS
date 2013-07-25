@@ -37,10 +37,6 @@
 	{get_page_headers}
 
 	<!--[if lte IE 8]>
-		<script type="text/javascript" src="{template_dir}/templates/mojito/js/modernizr.custom.62906.js"></script>
-	<![endif]-->
-
-	<!--[if lte IE 8]>
 		<style type="text/css">
 			#sidebar {
 				float: left;
