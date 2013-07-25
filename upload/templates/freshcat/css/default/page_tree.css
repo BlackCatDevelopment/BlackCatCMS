@@ -379,10 +379,10 @@ span.fc_page_tree_restore_page {
  * you don't want this feature.
  **/
 .flag-DE {
-    background: transparent url(../../../languages/de.png) left center no-repeat !important;
+    background: transparent url(../../../../languages/de.png) left center no-repeat !important;
 }
 .flag-EN {
-    background: transparent url(../../../languages/en.png) left center no-repeat !important;
+    background: transparent url(../../../../languages/en.png) left center no-repeat !important;
 }
 .fc_pages_tree_options_button {
     width: 40px;
