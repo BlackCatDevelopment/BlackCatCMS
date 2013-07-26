@@ -1,5 +1,5 @@
-/*
-/*   This program is free software; you can redistribute it and/or modify
+/**
+ *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or (at
  *   your option) any later version.
@@ -17,12 +17,12 @@
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Template
- *   @package         freshcat */
-/*
+ *   @package         freshcat
+ *
  */
 
-/*
-/* !Import different stylesheets for different pages/elemtents
+/**
+ * Import different stylesheets for different pages/elemtents
  */
 @import url(reset.css);
 @import url(webfont.css);
@@ -45,9 +45,9 @@
 @import url(../../../../modules/lib_jquery/jquery-ui/themes/base/jquery-ui.css);
 @import url(../../../../modules/lib_jquery/plugins/tag-it/tag-it.css);
 
-/*
-/* !Define basic elements */
-/*
+/**
+ * Define basic elements
+ *
  */
 
 body,html {
@@ -118,9 +118,9 @@ label {
 }
 
 
-/*
-/* !Define basic classes */
-/*
+/**
+ * Define basic classes
+ *
  */
 
 .left {
@@ -293,9 +293,9 @@ label {
 	-moz-border-radius-topright:		4px;
 }
 
-/*
-/* !Shadows */
-/*
+/**
+ * Shadows
+ *
  */
 
 .fc_shadow_small {
