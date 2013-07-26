@@ -71,14 +71,14 @@
 				});
 			}
 
-			element.find('.fc_page_tree_options_open, #fc_add_page input:reset').on( 'click', function(event)
+			element.find('.fc_page_tree_options_open').add('#fc_add_page input:reset').on( 'click', function(event)
 			{
 				event.preventDefault();
 				var current_button	= $(this),
 					form			= $('#fc_add_page');
 				$('.page_tree_open_options').removeClass('page_tree_open_options');
 
-				if( current_button.is('input') || current_button.hasClass('fc_side_add') ) // If the reset is clicked
+				if( current_button.is('input') || current_button.hasClass('fc_side_add') ) // If the add button is clicked
 				{
 					var dates			= {
 											'_cat_ajax':	1,
@@ -86,7 +86,16 @@
 										},
 						link			= CAT_ADMIN_URL + '/pages/ajax_get_dropdown.php';
 					$('#fc_addPage_keywords').val('');
-					$('#fc_changePageOnly').show();
+					form.find('.fc_restorePageOnly, .fc_changePageOnly').hide();
+					form.find('nav, ul, .fc_addPageOnly').show();
+				}
+				else if( current_button.is('input:reset') ) // If the reset is clicked
+				{
+					var dates			= {
+											'_cat_ajax':	1
+										},
+						link			= CAT_ADMIN_URL + '/pages/ajax_get_dropdown.php';
+					$('#fc_addPage_keywords').val('');
 					form.find('.fc_restorePageOnly, .fc_changePageOnly').hide();
 					form.find('nav, ul, .fc_addPageOnly').show();
 				}
@@ -120,26 +129,13 @@
 					success:	function( data, textStatus, jqXHR  )
 					{
 						var form	= $('#fc_add_page'),
-							option	= '<option value="">['+cattranslate('None')+']</option>';
+							option	= '<option value="">[' + cattranslate('None') + ']</option>';
 						if ( data.visibility == 'deleted' )
 						{
 							form.find('nav, ul, .fc_changePageOnly, .fc_addPageOnly').hide();
 							form.find('.fc_restorePageOnly').show();
 						}
 						else {
-							if ( typeof data.call !== 'undefined' && data.call == 'save' )
-							{
-								form.find('.fc_restorePageOnly, .fc_addPageOnly').hide();
-								form.find('nav, ul, .fc_changePageOnly').show();
-							}
-							else if ( typeof data.call !== 'undefined' && data.call == 'add' ) {
-
-							}
-							else {
-
-							}
-
-
 							$.each(data.parent_list, function(index, value)
 							{
 								option	= option + '<option value="' + value.page_id + '"';
@@ -238,7 +234,12 @@
 								}
 							});
 						}
-						form.animate({width: 'toggle'}, 300);
+						if( current_button.is('input:reset') ){
+							form.animate({width: 'hide'}, 300);
+						}
+						else {
+							form.animate({width: 'toggle'}, 300);
+						}
 					}
 				});
 			});
@@ -462,7 +463,7 @@
 
 jQuery(document).ready(function()
 {
-	$('#fc_sidebar').page_tree();
+	$('#fc_sidebar, #fc_add_page').page_tree();
 	$("#fc_search_page_tree").page_treeSearch();
 	$('fc_page_tree_not_editable > a').click( function(e)
 	{
@@ -535,7 +536,6 @@ jQuery(document).ready(function()
 				{
 					return_success( jqXHR.process , data.message );
 					var current			= $(this);
-					//$('#fc_add_page input[type=reset]').click();
 					window.location.replace( data.url );
 				}
 				else {
