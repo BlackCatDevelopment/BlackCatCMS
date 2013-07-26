@@ -1550,12 +1550,18 @@ if (!class_exists('CAT_Helper_Page'))
                 // shown if user is allowed
                 case 'private':
                 case 'registered':
-                    $u = CAT_Users::getInstance();
-                    if ($u->is_authenticated() == true)
+                    if (CAT_Users::is_authenticated() == true)
                     {
-                        $show_it = ($u->is_group_match($u->get_groups_id(), $page['viewing_groups']) || $u->is_group_match($u->get_user_id(), $page['viewing_users']));
+                        $show_it = (
+                               CAT_Users::is_group_match(CAT_Users::get_groups_id(), $page['viewing_groups'])
+                            || CAT_Users::is_group_match(CAT_Users::get_user_id(), $page['viewing_users'])
+                            || CAT_Users::is_root()
+                        );
                     }
-                    $show_it = true;
+                    else
+                    {
+                        $show_it = false;
+                    }
                     break;
             }
             return $show_it;
