@@ -47,7 +47,7 @@ function among_constants( $among_array )
     $return        = 0;
     if ( strpos($among_array, '+') )
     {
-        $array        = explode( '\+', $among_array );
+        $array        = explode( '+', $among_array );
         $among_array    = 0;
         foreach( $array as $value )
         {
@@ -81,7 +81,6 @@ function Dwoo_Plugin_show_menu(
     )
 {
     if (strpos($aOptions, 'SM2_PRETTY') !== false) return "<strong>Error:</strong> show_menu() does not support the SM2_PRETTY Flag!";
-
     // Set variables to replace strings with constants
     $search_values  = array( 'SM2_ROOT', 'SM2_CURR', 'SM2_ALLMENU', 'SM2_START', 'SM2_MAX', 'SM2_ALLINFO', 'SM2_ALL', 'SM2_TRIM', 'SM2_CRUMB', 'SM2_SIBLING', 'SM2_NUMCLASS', 'SM2_NOCACHE', 'SM2_PRETTY', 'SM2_ESCAPE', 'SM2_NOESCAPE', 'SM2_BUFFER', 'SM2_CURRTREE', 'SM2_SHOWHIDDEN', 'SM2_XHTML_STRICT',  'SM2_NO_TITLE' , 'SM2_ARRAY' );
     $replace_values = array( SM2_ROOT, SM2_CURR, SM2_ALLMENU, SM2_START, SM2_MAX, SM2_ALLINFO, SM2_ALL, SM2_TRIM, SM2_CRUMB, SM2_SIBLING, SM2_NUMCLASS, SM2_NOCACHE, SM2_PRETTY, SM2_ESCAPE, SM2_NOESCAPE, SM2_BUFFER, SM2_CURRTREE, SM2_SHOWHIDDEN, SM2_XHTML_STRICT,  SM2_NO_TITLE, '' );
@@ -102,7 +101,6 @@ function Dwoo_Plugin_show_menu(
     $Start          = among_constants( $aStart );
     $MaxLevel       = among_constants( $aMaxLevel );
     $Options        = among_constants( $aOptions );
-
 
     if ( $direct_output ) // If direct output simply print show_menu2()
     {
