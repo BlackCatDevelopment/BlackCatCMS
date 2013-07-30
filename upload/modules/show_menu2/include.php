@@ -825,13 +825,16 @@ function sm2_recurse(
 
         // display the current element if we have reached the start level
         if ($pageLevel >= $aStartLevel) {
+        	//echo INTRO_PAGE;
             // M.f.i. Aldus - it's not clear why the intro-page got another url at this point.
-            if(!INTRO_PAGE && $page['link'] == $wb->default_link) {
+            /*if(!INTRO_PAGE && $page['link'] == $wb->default_link) {
+            	//echo $nextParent . ' - ' .$page['link'] . ' - ' . $wb->default_link;
                 $url = CAT_URL;
             }
             else {
                 $url = CAT_Helper_Page::getLink( CAT_Helper_Page::properties($page['page_id'],'link') );
-            }
+            }*/
+			$url = CAT_Helper_Page::getLink( CAT_Helper_Page::properties($page['page_id'],'link') );
                     
             // we open the list only when we absolutely need to
             if (!$isListOpen) {
