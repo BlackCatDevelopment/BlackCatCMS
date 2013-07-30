@@ -83,7 +83,8 @@ if ( $doit ) {
     $client->setHeaders(
         array(
             'Pragma' => 'no-cache',
-            'Cache-Control' => 'no-cache'
+            'Cache-Control' => 'no-cache',
+            'Accept-Encoding' => '',
         )
     );
 
