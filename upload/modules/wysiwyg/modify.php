@@ -76,9 +76,13 @@ if(!isset($wysiwyg_editor_loaded))
     }
 	if (!defined('WYSIWYG_EDITOR') || WYSIWYG_EDITOR=="none" || !file_exists(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php'))
     {
-		function show_wysiwyg_editor( $name,$id,$content,$width,$height)
+		function show_wysiwyg_editor( $name, $id, $content, $width = '100%', $height = '250px', $print = true)
         {
-			echo '<textarea name="'.$name.'" id="'.$id.'" style="width: '.$width.'; height: '.$height.';">'.$content.'</textarea>';
+			$editor = '<textarea name="'.$name.'" id="'.$id.'" style="width: '.$width.'; height: '.$height.';">'.$content.'</textarea>';
+            if($print)
+                echo $editor;
+            else
+                return $editor;
 		}
 	}
     else
