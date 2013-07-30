@@ -10,3 +10,9 @@ As the development of Black Cat CMS is still in progress, there's no version for
 moment, but you can always download the current development state here.
 
 At the moment, we plan to release a first Beta around the middle of the year 2013.
+
+Official website of BackCat CMS (german only!):
+http://blackcat-cms.org
+
+You are able to build your bundle with different add ons:
+http://blackcat-cms.org/page/download.php
