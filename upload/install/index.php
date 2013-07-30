@@ -143,7 +143,7 @@ $steps = array(
     array( 'id' => 'site',     'text' => $lang->translate('Site settings'),    'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
     array( 'id' => 'postcheck','text' => $lang->translate('Postcheck'),        'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
     array( 'id' => 'optional', 'text' => $lang->translate('Optional'),         'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
-    array( 'id' => 'finish',   'text' => $lang->translate('Finish'),           'done' => false, 'success' => false, 'current' => false, 'errors' => NULL ),
+    array( 'id' => 'finish',   'text' => $lang->translate('Finish'),           'done' => false, 'success' => false, 'current' => false, 'errors' => NULL )
 );
 // *****************************************************************************
 
