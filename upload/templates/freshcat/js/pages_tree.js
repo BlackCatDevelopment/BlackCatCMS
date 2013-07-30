@@ -685,6 +685,7 @@ jQuery(document).ready(function()
                     if ( tparent.find('ul.ui-sortable').children("li").length === 0 ) {
                         toggle.remove();
                     }
+                    $('#fc_add_page button:reset').click();
 				}
 				else {
 					current.find('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove');
