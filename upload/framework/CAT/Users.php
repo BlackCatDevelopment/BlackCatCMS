@@ -795,7 +795,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 return true;
             }
             return self::is_group_match($groups_list, self::get_groups_id());
-        }   // end function ami_group_member(
+        }   // end function ami_group_member()
 
         /**
          * get the current users id
@@ -1047,6 +1047,33 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     return CAT_URL;
             }
         }   // end function get_initial_page()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function get_init_pages()
+        {
+            // frontend pages
+            $pages          = CAT_Helper_Page::getPages();
+            $frontend_pages = array();
+            foreach($pages as $page)
+                $frontend_pages[$page['menu_title']] = 'pages/modify.php?page_id='.$page['page_id'];
+            // admin tools
+            $tools = CAT_Helper_Addons::get_addons(NULL,'module','tool');
+            $admin_tools = array();
+            foreach($tools as $tool)
+                $admin_tools[$tool['name']] = 'admintools/tool.php?tool='.$tool['directory'];
+            // backend pages
+            $backend_pages = CAT_Backend::getPages();
+            return array(
+                'backend_pages'  => $backend_pages,
+                'frontend_pages' => $frontend_pages,
+                'admin_tools'    => $admin_tools,
+            );
+        }   // end function get_init_pages()
+        
 
         /**
          * Check if current user is superuser (the one who installed the CMS)
