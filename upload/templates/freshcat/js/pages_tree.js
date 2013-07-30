@@ -71,7 +71,7 @@
 				});
 			}
 
-			element.find('.fc_page_tree_options_open').add('#fc_add_page input:reset').on( 'click', function(event)
+			element.find('.fc_page_tree_options_open').add('#fc_add_page button:reset').on( 'click', function(event)
 			{
 				event.preventDefault();
 				var current_button	= $(this),
@@ -89,7 +89,7 @@
 					form.find('.fc_restorePageOnly, .fc_changePageOnly').hide();
 					form.find('nav, ul, .fc_addPageOnly').show();
 				}
-				else if( current_button.is('input:reset') ) // If the reset is clicked
+				else if( current_button.is('button:reset') ) // If the reset is clicked
 				{
 					var dates			= {
 											'_cat_ajax':	1
@@ -234,7 +234,7 @@
 								}
 							});
 						}
-						if( current_button.is('input:reset') ){
+						if( current_button.is('button:reset') ){
 							form.animate({width: 'hide'}, 300);
 						}
 						else {
@@ -603,7 +603,7 @@ jQuery(document).ready(function()
 						new_parent		= $('#pageid_' + data.parent ),
 						old_parent		= current.parent().closest('li');
 
-					$('#fc_add_page input:reset').click();
+					$('#fc_add_page button:reset').click();
 
 					switch (data.visibility) {
 						case 'public':

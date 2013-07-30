@@ -119,7 +119,7 @@
 		<button type="submit" name="save_page" class="icon-checkmark fc_changePageOnly" id="fc_savePageSubmit"> {translate('Save page')}</button>
 		<button type="submit" name="restore_page" class="icon-checkmark fc_restorePageOnly" id="fc_restorePageSubmit"> {translate('Restore page')}</button>
 		<button type="submit" name="add_child_page" class="icon-file-add fc_changePageOnly" id="fc_addPageChildSubmit"> {translate('Add child page')}</button>
-		<input type="reset" name="reset" value="{translate('Close & Reset')}" />
+		<button type="reset" name="reset" class="fc_gradient1 fc_gradient_hover">{translate('Close & Reset')}</button>
 	</p>
 	<hr class="fc_changePageOnly fc_restorePageOnly"/>
 	<p>
