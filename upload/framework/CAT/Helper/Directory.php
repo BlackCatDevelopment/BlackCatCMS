@@ -698,7 +698,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             {
                 if ( file_exists($directory) )
                 {
-                    chmod($directory, octdec( $mode ) );
+                    chmod($directory, $mode );
                     umask($umask);
                 }
             }
@@ -764,7 +764,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             // we've already created some new files, so just check the perms they've got
             $check_for = dirname(__FILE__).'/../../../temp/logs/index.php';
             if ( file_exists($check_for) ) {
-                $default_file_mode = '0'.substr(sprintf('%o', fileperms($check_for)), -3);
+                $default_file_mode = octdec( '0'.substr(sprintf('%o', fileperms($check_for)), -3) );
             } else {
                 $default_file_mode = '0777';
             }
