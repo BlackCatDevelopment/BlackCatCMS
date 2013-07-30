@@ -583,20 +583,19 @@ function show_menu2(
                 }
                     
                 // 2. all pages with no active sections (unless it is the top page) are ignored
-                else if (!$wb->page_is_active($page) && $page['link'] != $wb->default_link && !INTRO_PAGE) {
+                else if ( !CAT_Helper_Page::isActive($page['page_id']) &&
+                			$page['link'] != $wb->default_link &&
+                			!INTRO_PAGE) {
                 	continue;
                 }
 
                 // 3. all pages not visible to this user (unless always visible to registered users) are ignored
-                else if (!$wb->page_is_visible($page) && $page['visibility'] != 'registered') {
+                else if ( !CAT_Helper_Page::isVisible($page['page_id']) &&
+                			$page['visibility'] != 'registered') {
                 	continue;
 				}
 
-                // ensure that we have an array entry in the table to add this to
                 $idx = $page['parent'];
-                if (!array_key_exists($idx, $rgParent)) {
-                    $rgParent[$idx] = array();
-                }
 
                 // mark our current page as being on the current path
                 if ($page['page_id'] == $CURR_PAGE_ID) {
@@ -619,9 +618,14 @@ function show_menu2(
 						unset($page['sm2_hide']); // don't hide a parent page                
                     }
                 }
-                
-                // add the entry to the array                
-                $rgParent[$idx][] = $page;
+
+
+				// add the entry to the array                
+				if ( !isset($page['sm2_hide']) ) {
+					// ensure that we have an array entry in the table to add this to
+					if (!array_key_exists($idx, $rgParent)) $rgParent[$idx] = array();
+					$rgParent[$idx][] = $page;
+				}
             }
         }    
         unset($oRowset);
@@ -639,6 +643,7 @@ function show_menu2(
 
         // mark all elements that have children and are siblings of the current page
         $parentId = $pageParent;
+
         foreach (array_keys($rgParent) as $x) {
             $childSet =& $rgParent[$x];
             foreach (array_keys($childSet) as $y) {
@@ -825,7 +830,7 @@ function sm2_recurse(
                 $url = CAT_URL;
             }
             else {
-                $url = $wb->page_link($page['link']);
+                $url = CAT_Helper_Page::getLink( CAT_Helper_Page::properties($page['page_id'],'link') );
             }
                     
             // we open the list only when we absolutely need to
