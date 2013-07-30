@@ -69,6 +69,7 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/account/logout.php' ),
     ( 0, '/account/preferences.php' ),
     ( 0, '/account/signup.php' ),
+    ( 0, '/backend/addons/ajax_get_details.php' ),
     ( 0, '/backend/addons/index.php' ),
     ( 0, '/backend/addons/install.php' ),
     ( 0, '/backend/addons/manual_install.php' ),
