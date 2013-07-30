@@ -157,27 +157,27 @@ input[type=radio].fc_radio_jq {
 
 
 input[type=checkbox].fc_checkbox_jq + label {
-	background-image: url(../images/check_off.png);
-	background-repeat: no-repeat;
-	background-position: right center;
+	background: url(../images/check_off.png) right center no-repeat;
 	min-height: 22px;
 	display: block;
 	padding: 0px 60px 0px 0px;
 	cursor: pointer;
 }
+
+
 input[type=checkbox].fc_checkbox_jq:checked + label {
-	background-image:		url(../images/check_on.png);
-	background-repeat:		no-repeat;
-	background-position:	right center;
+	background:				url(../images/check_on.png) right center no-repeat;
 	color:					#3f7bb3;
 	min-height:				22px;
 	display:				block;
 	padding:				0px 60px 0px 0px;
 	cursor:					pointer;
 }
+
 input[disabled=disabled].fc_checkbox_jq:checked + label {
 	opacity:		0.5;
 }
+
 
 /**
  * checkboxes fc_checkbox_ind
@@ -185,18 +185,14 @@ input[disabled=disabled].fc_checkbox_jq:checked + label {
  */
  
 input[type=checkbox].fc_checkbox_ind + label {
-	background-image: url(../images/check_off.png);
-	background-repeat: no-repeat;
-	background-position: right center;
+	background: url(../images/check_off.png) right center no-repeat;
 	min-height: 22px;
 	display: block;
 	padding: 0px 60px 0px 0px;
 	cursor: pointer;
 }
 input[type=checkbox].fc_checkbox_ind:checked + label {
-	background-image:		url(../images/check_ind.png);
-	background-repeat:		no-repeat;
-	background-position:	right center;
+	background: url(../images/check_ind.png) right center no-repeat;
 	color:					#3f7bb3;
 	min-height:				22px;
 	display:				block;
@@ -207,31 +203,40 @@ input[disabled=disabled].fc_checkbox_ind:checked + label {
 	opacity:		0.5;
 }
 
+input[type=checkbox].fc_checkbox_jq + label:active {
+	background:				url(../images/check_ind.png) right center no-repeat;
+	color:					#282a2e;
+}
+input[type=checkbox].fc_checkbox_jq + label:hover {
+	color:					black;
+}
+input[type=checkbox].fc_checkbox_jq:checked + label:hover {
+	color:					#284e71;
+}
+
+
 /**
  * radios fc_radio_jq
  *
  */
 
 input[type=radio].fc_radio_jq + label {
-	background-image: url(../images/radio_off.png);
-	background-repeat: no-repeat;
-	background-position: right center;
-	min-height: 22px;
-	display: block;
-	padding: 0px 60px 0px 0px;
-	cursor: pointer;
+	background:		url(../images/radio_off.png) right center no-repeat;
+	min-height:		22px;
+	display:		block;
+	padding:		0px 60px 0px 0px;
+	cursor:			pointer;
 }
 
 input[type=radio].fc_radio_jq:checked + label {
-	background-image:		url(../images/radio_on.png);
-	color:					#3f7bb3;
-	background-repeat:		no-repeat;
-	background-position:	right center;
-	min-height:				22px;
-	display:				block;
-	padding:				0px 60px 0px 0px;
-	cursor:					pointer;
+	background:		url(../images/radio_on.png) right center no-repeat;
+	color:			#3f7bb3;
+	min-height:		22px;
+	display:		block;
+	padding:		0px 60px 0px 0px;
+	cursor:			pointer;
 }
+
 input[disabled=disabled].fc_radio_jq:checked + label {
 	opacity:		0.5;
 }

@@ -22,11 +22,25 @@
 	}
 
 	.fc_settings_max {
-		max-width:	300px;
+		padding:				0.6em 1em;
+		margin:					0.6em 0em;
+		background:				#d8dbdd;
+		max-width:				300px;
+		-webkit-border-radius:	4px;
+		border-radius:			4px;
+		-moz-border-radius:		4px;
+		border:					1px solid #9da8b2;
 	}
 
     .fc_settings_max_large {
-		max-width:	380px;
+		padding:				0.6em 1em;
+		margin:					0.6em 0em;
+		background:				#d8dbdd;
+		max-width:				380px;
+		-webkit-border-radius:	4px;
+		border-radius:			4px;
+		-moz-border-radius:		4px;
+		border:					1px solid #9da8b2;
 	}
 
 	#fc_list_overview li {
