@@ -128,6 +128,7 @@
 					},
 					success:	function( data, textStatus, jqXHR  )
 					{
+						console.log(data);
 						var form	= $('#fc_add_page'),
 							option	= '<option value="">[' + cattranslate('None') + ']</option>';
 						if ( data.visibility == 'deleted' )
@@ -158,12 +159,12 @@
 
 							if ( typeof data.parent_id !== 'undefined' && data.parent_id !== '' )
 							{
-								newSelect.children('option:selected').prop('selected', false);
-								newSelect.children('option[value="' +  data.parent_id + '"]').prop( "selected", true );
+								newSelect.children('option').prop('selected', false)
+									.filter('option[value=' + data.parent_id + ']').prop('selected', true);
 							}
 							else {
-								$('#fc_addPage_parent option').removeAttr('selected');
-								$('#fc_addPage_parent option[value=' + data.parent + ']').prop('selected', true);
+								$('#fc_addPage_parent option').prop('selected', false)
+									.filter('option[value=' + data.parent + ']').prop('selected', true);
 							}
 
 							// Set textfields
@@ -174,22 +175,25 @@
 							$('#fc_addPage_page_link').val(data.short_link);
 							
 							// Set selectfields
-							$('#fc_addPage_menu option').removeAttr('selected');
-							$('#fc_addPage_menu option[value=' + data.menu + ']').prop('selected', true);
-							$('#fc_addPage_target option').removeAttr('selected');
-							$('#fc_addPage_target option[value=' + data.target + ']').prop('selected', true);
-							$('#fc_addPage_template option').removeAttr('selected');
+							$('#fc_addPage_menu option').prop('selected', false)
+								.filter('option[value=' + data.menu + ']').prop('selected', true);
+							$('#fc_addPage_target option').prop('selected', false)
+								.filter('option[value=' + data.target + ']').prop('selected', true);
+
 							if (data.template === '')
 							{
-								$('#fc_addPage_template option:first').prop('selected', true);
+								$('#fc_addPage_template option').prop('selected', false)
+									.filter('option:first').prop('selected', true);
 							}
 							else {
-								$('#fc_addPage_template option[value=' + data.template + ']').prop('selected', true);
+								$('#fc_addPage_template option').prop('selected', false)
+									.filter('option[value=' + data.template + ']').prop('selected', true);
 							}
-							$('#fc_addPage_language option').removeAttr('selected');
-							$('#fc_addPage_language option[value=' + data.language + ']').prop('selected', true);
-							$('#fc_addPage_visibility option').removeAttr('selected');
-							$('#fc_addPage_visibility option[value=' + data.visibility + ']').prop('selected', true);
+							$('#fc_addPage_language option').prop('selected', false)
+								.filter('option[value=' + data.language + ']').prop('selected', true);
+							$('#fc_addPage_visibility option').prop('selected', false)
+								.filter('option[value=' + data.visibility + ']').prop('selected', true);
+
 							
 							// Set checkboxesfields
 							$('#fc_addPage_Searching').prop('checked', data.searching);

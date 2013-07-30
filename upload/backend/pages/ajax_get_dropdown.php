@@ -74,6 +74,7 @@ $dropdown_list = CAT_Helper_ListBuilder::sort(CAT_Helper_Page::getPages(),0);
 $ajax	= array(
 		'parent_id'		=> $val->sanitizePost('parent_id','numeric'),
 		'parent_list'	=> $dropdown_list,
+		'target'		=> '_self',
 		'success'		=> true
 );
 
