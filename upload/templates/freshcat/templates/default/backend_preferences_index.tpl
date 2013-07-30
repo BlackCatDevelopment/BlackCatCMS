@@ -54,11 +54,32 @@
 				{/foreach}
 			</select>
 			<div class="clear_sp"></div>
+
+			{if $INITIAL_PAGE}
 			<div class="hidden">
-				<label for="fc_init_page_select">{$INIT_PAGE_LABEL.label_default}:</label>
-				{$INIT_PAGE_SELECT}
+                <h3>{translate('Initial page')}:</h3>
+    			<label for="fc_init_page" class="fc_label_200">{translate('Page')}:</label>
+                <select id="fc_init_page" name="init_page">
+                {if count($INIT_PAGE_SELECT.frontend_pages)}<optgroup label="{translate('Frontend page')}">
+                {foreach $INIT_PAGE_SELECT.frontend_pages label page}
+                    <option value="{$page}"{if $init_page == $page} selected="selected"{/if}>{$label}</option>
+                {/foreach}</optgroup>{/if}
+                {if count($INIT_PAGE_SELECT.backend_pages)}<optgroup label="{translate('Backend page')}">
+                {foreach $INIT_PAGE_SELECT.backend_pages label page}
+                    <option value="{$page}"{if $init_page == $page} selected="selected"{/if}>{$label}</option>
+                {/foreach}</optgroup>{/if}
+                {if count($INIT_PAGE_SELECT.admin_tools)}<optgroup label="{translate('Admin Tool')}">
+                {foreach $INIT_PAGE_SELECT.admin_tools label page}
+                    <option value="{$page}"{if $init_page == $page} selected="selected"{/if}>{$label}</option>
+                {/foreach}</optgroup>{/if}
+                </select>
+
 				<div class="clear_sp"></div>
+                <label for="fc_init_page_param" class="fc_label_200">{translate('Optional parameters')}:</label>
+                <input type="text" name="init_page_param" id="fc_init_page_param" value="{$init_page_param}" />
+    			<div class="clear_sp"></div><hr />
 			</div>
+        {/if}
 		
 			<label for="fc_email" class="fc_label_300">{translate('Email')}:</label>
 			<input type="text" id="fc_email" name="email" value="{$EMAIL}" />

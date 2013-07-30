@@ -52,22 +52,10 @@ $tpl_data	= array();
 
 include_once(CAT_PATH . '/framework/functions-utf8.php');
 
-// ========================= 
-// ! Initial page addition   
-// ========================= 
-require_once( CAT_PATH . '/modules/initial_page/classes/c_init_page.php' );
-$ref		= new c_init_page( $backend->db() );
-$info		= $ref->get_user_info( $user_id );
+$page       = $user->get_initial_page($user_id,true); // initial page
+$options	= $user->get_init_pages();
 
-$options	= array(
-	'pages'			=> true,
-	'tools'			=> $group_id == 1 ? true : false,
-	'backend_pages' => $group_id == 1 ? true : false
-);
-
-$tpl_data['INIT_PAGE_SELECT'] = $ref->get_single_user_select( $user_id, 'init_page_select', $info['init_page'], $options);
-$tpl_data['INIT_PAGE_LABEL']  = $ref->get_language();
-
+$tpl_data['INIT_PAGE_SELECT'] = $options;
 
 // ============================================================= 
 // ! read user-info from table users and assign it to template   
