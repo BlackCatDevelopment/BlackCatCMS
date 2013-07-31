@@ -47,7 +47,7 @@ $groups = array(
     'frontend' => array('default_template','website_header','website_footer'),
     'backend' => array('default_theme','default_theme_variant','wysiwyg_editor','er_level','redirect_timer','token_lifetime','max_attempts'),
     'system' => array('maintenance_mode','maintenance_page','err_page_404','page_level_limit','page_trash','manage_sections','section_blocks','multiple_menus'),
-    'users' => array('frontend_signup','frontend_login','home_folders'),
+    'users' => array('frontend_signup','frontend_login','home_folders','auth_min_login_length','auth_max_login_length','auth_min_pass_length','auth_max_pass_length'),
     'server' => array('operating_system','pages_directory','page_extension','media_directory','page_spacer','upload_allowed','app_name','sec_anchor'),
     'mail' => array('server_email','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_username','catmailer_smtp_password'),
 );
@@ -452,6 +452,50 @@ function saveSettings($settings) {
         }
     }
 }   // end function saveSettings()
+
+/**
+ * if auth_min_login_length is changed, there must not be any users that have
+ * shorter names
+ **/
+function check_auth_min_login_length($value,$oldvalue) {
+    global $database, $err_msg;
+    $result = $database->query(sprintf(
+        'select count(*) as cnt from `%susers` where char_length(username)<%d',
+        CAT_TABLE_PREFIX,$value
+    ));
+    if($result->numRows()) {
+        $row = $result->fetchRow(MYSQL_ASSOC);
+        if($row['cnt']>0) {
+            $err_msg[] = CAT_Users::getInstance()->lang()->translate(
+                'The min. Login name length could not be saved. There is/are {{ count }} user/s that have shorter names.',
+                array( 'count' => $row['cnt'] )
+            );
+            return $oldvalue;
+        }
+    }
+}   // end function check_auth_min_login_length()
+
+/**
+ * if auth_max_login_length is changed, there must not be any users that have
+ * longer names
+ **/
+function check_auth_max_login_length($value,$oldvalue) {
+    global $database, $err_msg;
+    $result = $database->query(sprintf(
+        'select count(*) as cnt from `%susers` where char_length(username)>%d',
+        CAT_TABLE_PREFIX,$value
+    ));
+    if($result->numRows()) {
+        $row = $result->fetchRow(MYSQL_ASSOC);
+        if($row['cnt']>0) {
+            $err_msg[] = CAT_Users::getInstance()->lang()->translate(
+                'The max. Login name length could not be saved. There is/are {{ count }} user/s that have longer names.',
+                array( 'count' => $row['cnt'] )
+            );
+            return $oldvalue;
+        }
+    }
+}
 
 /**
  * special function to sanitize token lifetime (-1<value<10000)
