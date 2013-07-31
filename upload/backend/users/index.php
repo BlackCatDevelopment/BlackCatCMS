@@ -124,7 +124,7 @@ $tpl_data['PASSWORD']						= isset($_SESSION['au']['password']) ? $_SESSION['au'
 $tpl_data['DISPLAY_NAME']					= isset($_SESSION['au']['display_name']) ? $_SESSION['au']['display_name'] : false;
 $tpl_data['EMAIL']							= isset($_SESSION['au']['email']) ? $_SESSION['au']['email'] : false;
 $tpl_data['HOME_FOLDERS']					= HOME_FOLDERS;
-//$tpl_data['INITIAL_PAGE']                   = INITIAL_PAGE;
+$tpl_data['INITIAL_PAGE']                 			= INITIAL_PAGE;
 $tpl_data['NEWUSERHINT']
     = preg_split('/, /',
           $backend->lang()->translate(
