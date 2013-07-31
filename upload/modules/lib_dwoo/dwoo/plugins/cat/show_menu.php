@@ -80,6 +80,9 @@ function Dwoo_Plugin_show_menu(
         $aTopMenuOpen = false
     )
 {
+
+	if ( CAT_Helper_Page::isMaintenance() ) return false;
+
     if (strpos($aOptions, 'SM2_PRETTY') !== false) return "<strong>Error:</strong> show_menu() does not support the SM2_PRETTY Flag!";
     // Set variables to replace strings with constants
     $search_values  = array( 'SM2_ROOT', 'SM2_CURR', 'SM2_ALLMENU', 'SM2_START', 'SM2_MAX', 'SM2_ALLINFO', 'SM2_ALL', 'SM2_TRIM', 'SM2_CRUMB', 'SM2_SIBLING', 'SM2_NUMCLASS', 'SM2_NOCACHE', 'SM2_PRETTY', 'SM2_ESCAPE', 'SM2_NOESCAPE', 'SM2_BUFFER', 'SM2_CURRTREE', 'SM2_SHOWHIDDEN', 'SM2_XHTML_STRICT',  'SM2_NO_TITLE' , 'SM2_ARRAY' );
