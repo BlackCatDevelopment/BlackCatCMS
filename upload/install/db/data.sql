@@ -33,6 +33,7 @@ INSERT INTO `cat_settings` (name, value) VALUES
     ('frontend_signup', 'false'),
     ('home_folders', 'true'),
     ('homepage_redirection', 'false'),
+    ('initial_page', 'false'),
     ('intro_page', 'false'),
     ('maintenance_mode', 'true'),
     ('maintenance_page', '3'),
