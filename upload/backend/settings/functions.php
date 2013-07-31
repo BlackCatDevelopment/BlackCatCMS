@@ -44,7 +44,7 @@ require_once(CAT_PATH.'/framework/functions-utf8.php');
 global $groups, $allow_tags_in_fields, $allow_empty_values, $boolean, $numeric;
 $groups = array(
     'seo' => array('website_title','website_description','website_keywords'),
-    'frontend' => array('default_template','website_header','website_footer'),
+    'frontend' => array('default_template','default_template_variant','website_header','website_footer'),
     'backend' => array('default_theme','default_theme_variant','wysiwyg_editor','er_level','redirect_timer','token_lifetime','max_attempts'),
     'system' => array('maintenance_mode','maintenance_page','err_page_404','page_level_limit','page_trash','manage_sections','section_blocks','multiple_menus','page_languages','intro_page','homepage_redirection'),
     'users' => array('frontend_signup','frontend_login','home_folders','auth_min_login_length','auth_max_login_length','auth_min_pass_length','auth_max_pass_length'),
@@ -421,7 +421,7 @@ function saveGroup($backend,$group) {
  *
  **/
 function saveSettings($settings) {
-    global $database;
+    global $database, $err_msg;
     global $groups, $allow_tags_in_fields, $allow_empty_values, $boolean, $numeric;
     $old_settings = getSettingsTable();
     foreach($settings as $key => $value)
@@ -445,10 +445,29 @@ function saveSettings($settings) {
         }
         if ( $value != '' || in_array($key,$allow_empty_values) )
         {
+            $check  = $database->query(sprintf(
+                'SELECT `value` FROM `%ssettings` WHERE `name`="%s"',
+                CAT_TABLE_PREFIX, $key
+            ));
+            if(!$check->numRows())
+            {
+                $database->query(sprintf(
+                    'INSERT INTO `%ssettings` VALUES ( "", "%s", "%s" )',
+                    CAT_TABLE_PREFIX, $key, $value
+                ));
+            }
+            else
+            {
             $database->query(sprintf(
-                'UPDATE `%ssettings` SET `value`=\'%s\' WHERE `name`=\'%s\'',
+                    'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
                 CAT_TABLE_PREFIX, $value, $key
             ));
+            }
+            if($database->is_error())
+                $err_msg[] =  CAT_Users::getInstance()->lang()->translate(
+                    'Unable to save setting [{{ setting }}] - error {{ error }}',
+                    array( 'setting' => $key, 'error' => $database->get_error() )
+                );
         }
     }
 }   // end function saveSettings()

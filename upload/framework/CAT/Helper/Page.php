@@ -561,7 +561,7 @@ if (!class_exists('CAT_Helper_Page'))
             self::_load_js('backend');
 
             // return the results
-            return self::getCSS() . self::getJQuery('header') . self::getJavaScripts('header');
+            return self::getCSS('backend') . self::getJQuery('header') . self::getJavaScripts('header');
 
         } // end function getBackendHeaders()
 
@@ -571,11 +571,26 @@ if (!class_exists('CAT_Helper_Page'))
          * @access public
          * @return HTML
          **/
-        public static function getCSS()
+        public static function getCSS($for='frontend')
         {
             $output = NULL;
             if (count(CAT_Helper_Page::$css))
             {
+                // check for template variants
+                $key    = 'DEFAULT_TEMPLATE_VARIANT';
+                $subkey = 'DEFAULT_TEMPLATE';
+                $file   = 'template';
+                if ( $for == 'backend' )
+                {
+                    $key    = 'DEFAULT_THEME_VARIANT';
+                    $subkey = 'DEFAULT_THEME';
+                    $file   = 'theme';
+                }
+                $path   = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/templates/'.CAT_Registry::get($subkey).'/css/'.CAT_Registry::get($key));
+                if(CAT_Registry::get($key) != '' && file_exists($path) && file_exists($path.'/'.$file.'.css') )
+                {
+                    array_push(CAT_Helper_Page::$css, array('file'=>'templates/'.CAT_Registry::get($subkey).'/css/'.CAT_Registry::get($key).'/'.$file.'.css'));
+                }
                 $val = CAT_Helper_Validate::getInstance();
                 $seen = array();
                 foreach (CAT_Helper_Page::$css as $item)
@@ -807,7 +822,7 @@ if (!class_exists('CAT_Helper_Page'))
             }
 
             // return the results
-            return self::getMeta() . self::getCSS() . self::getJQuery('header') . self::getJavaScripts('header');
+            return self::getMeta() . self::getCSS('frontend') . self::getJQuery('header') . self::getJavaScripts('header');
 
         } // end function getFrontendHeaders()
 

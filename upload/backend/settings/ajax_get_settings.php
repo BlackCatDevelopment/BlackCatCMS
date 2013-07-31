@@ -69,6 +69,11 @@ switch($region)
 {
     case 'frontend':
         $tpl_data['templates'] = getTemplateList('frontend');
+        $tpl_data['variants']  = array();
+        $info = CAT_Helper_Addons::checkInfo(CAT_PATH.'/templates/'.CAT_Registry::get('DEFAULT_TEMPLATE'));
+        if(isset($info['module_variants']) && is_array($info['module_variants']) && count($info['module_variants'])) {
+            $tpl_data['variants'] = $info['module_variants'];
+        }
         break;
     case 'backend':
         $tpl_data['backends']  = getTemplateList('backend');

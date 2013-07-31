@@ -76,13 +76,4 @@ $mod_headers = array(
 	)
 );
 
-if(CAT_Registry::get('DEFAULT_THEME_VARIANT') != '' && file_exists(CAT_THEME_PATH.'/css/'.CAT_Registry::get('DEFAULT_THEME_VARIANT')))
-{
-    array_push($mod_headers['backend']['css'], array('file'=>'templates/freshcat/css/'.CAT_Registry::get('DEFAULT_THEME_VARIANT').'/basic.css'));
-}
-else
-{
-    CAT_Registry::register('DEFAULT_THEME_VARIANT','default');
-}
-
 ?>
