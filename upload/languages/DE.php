@@ -146,6 +146,10 @@ $LANG = array(
     'Missing page_id!' => 'Keine page_id angegeben!',
     'Searched paths' => 'Durchsuchte Pfade',
     "Sorry, but you don't have the permissions for this action" => 'Sie haben leider nicht die notwendigen Rechte für diese Aktion',
+    'The max. Login name length could not be saved. There is/are {{ count }} user/s that have longer names.'
+        => 'Die Maximallänge des Anmeldenamens konnte nicht gespeichert werden. Es gibt {{ count }} Benutzer mit einem längeren Namen.',
+    'The min. Login name length could not be saved. There is/are {{ count }} user/s that have shorter names.'
+        => 'Die Mindestlänge des Anmeldenamens konnte nicht gespeichert werden. Es gibt {{ count }} Benutzer mit einem kürzeren Namen.',
     'The page does not have any content!' => 'Diese Seite hat keine aktiven Inhalte!',
     'The template [{{ tpl }}] does not exists in one of the possible template paths!'
         => 'Das Template [{{ tpl }}] wurde in keinem der Template-Pfade gefunden!',

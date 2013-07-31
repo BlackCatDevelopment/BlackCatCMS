@@ -274,7 +274,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 	        @require_once dirname(__FILE__).'/CAT/Helper/Addons.php';
         }
 		$addons_helper = new CAT_Helper_Addons();
-		return $addons_helper->installModule($directory, $install);
+		return $addons_helper->installModule($directory, $install, true);
     }   // end function load_module()
 
     /**

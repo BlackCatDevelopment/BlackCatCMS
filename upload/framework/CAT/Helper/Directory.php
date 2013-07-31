@@ -698,7 +698,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             {
                 if ( file_exists($directory) )
                 {
-                    chmod($directory, $mode );
+                    chmod($directory, $mode);
                     umask($umask);
                 }
             }
@@ -738,21 +738,18 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		}   // end function is_world_writable()
 		
 		/**
+		 * If the configuration setting 'string_dir_mode' is missing, we need
+		 * a default value that fits most cases.
 		 *
          * @access public
-         * @return
+         * @return string
          **/
         public static function defaultDirMode() {
-            $temp_dir = dirname(__FILE__).'/../../../temp';
-            if(is_writable($temp_dir)) {
-                $dirname = $temp_dir.'/test_permissions/';
-                mkdir($dirname);
-                $default_dir_mode = '0'.substr(sprintf('%o', fileperms($dirname)), -3);
-                rmdir($dirname);
-            } else {
-                $default_dir_mode = '0777';
-            }
-            return $default_dir_mode;
+            return (
+                  (OPERATING_SYSTEM != 'windows')
+                ? '0755'
+                : '0777'
+            );
         }   // end function defaultDirMode()
 
         /**

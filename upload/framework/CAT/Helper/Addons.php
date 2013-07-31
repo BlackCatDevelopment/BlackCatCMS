@@ -797,7 +797,7 @@ if (!class_exists('CAT_Helper_Addons'))
 
             $self->log()->LogDebug(sprintf('uploaded file was moved to [%s], call installModule()',$temp_file));
 
-            return self::installModule($temp_file);
+            return self::installModule($temp_file,false,true);
 
         }   // end function installUploaded()
         
@@ -809,7 +809,7 @@ if (!class_exists('CAT_Helper_Addons'))
          * @access public
          * @param
          **/
-        public static function installModule( $zipfile, $silent = false )
+        public static function installModule( $zipfile, $silent = false, $remove_zip_on_error = false )
         {
             // keep old modules happy
             global $wb, $admin, $database, $backend;
@@ -848,7 +848,8 @@ if (!class_exists('CAT_Helper_Addons'))
                 if ( ! $list )
                 {
                     CAT_Helper_Directory::removeDirectory($temp_unzip);
-                    //CAT_Helper_Directory::removeDirectory($zipfile);
+                    if($remove_zip_on_error)
+                        CAT_Helper_Directory::removeDirectory($zipfile);
                     if(!$silent)
                     self::printError( 'Unable to extract the file. Please check the ZIP format.' );
                     return false;
@@ -861,7 +862,8 @@ if (!class_exists('CAT_Helper_Addons'))
                     if ( ! $info )
                 {
                         CAT_Helper_Directory::removeDirectory($temp_unzip);
-                        //CAT_Helper_Directory::removeDirectory($zipfile);
+                        if($remove_zip_on_error)
+                            CAT_Helper_Directory::removeDirectory($zipfile);
                         if(!$silent)
                         self::printError( 'Invalid installation file. No info.php found. Please check the ZIP format.' );
                         return false;
@@ -875,7 +877,8 @@ if (!class_exists('CAT_Helper_Addons'))
                     else
                     {
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
-                //CAT_Helper_Directory::removeDirectory($zipfile);
+                if($remove_zip_on_error)
+                    CAT_Helper_Directory::removeDirectory($zipfile);
                 if(!$silent)
                 self::printError( 'Invalid installation file. Wrong extension. Please check the ZIP format.' );
                 return false;
@@ -890,7 +893,8 @@ if (!class_exists('CAT_Helper_Addons'))
             else
             {
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
-                //CAT_Helper_Directory::removeDirectory($zipfile);
+                if($remove_zip_on_error)
+                    CAT_Helper_Directory::removeDirectory($zipfile);
                 if(!$silent)
                 {
                 self::printError(
@@ -931,7 +935,8 @@ if (!class_exists('CAT_Helper_Addons'))
                     if ( self::versionCompare ($previous_info['module_version'], $addon_info['module_version'], '>=' ) )
                     {
                         CAT_Helper_Directory::removeDirectory($temp_unzip);
-                        //CAT_Helper_Directory::removeDirectory($zipfile);
+                        if($remove_zip_on_error)
+                            CAT_Helper_Directory::removeDirectory($zipfile);
                         if(!$silent)
                         self::printError( 'Already installed' );
                         else
@@ -949,14 +954,16 @@ if (!class_exists('CAT_Helper_Addons'))
                 if ( CAT_Helper_Directory::copyRecursive( $temp_unzip, $addon_dir ) !== true )
                 {
                     CAT_Helper_Directory::removeDirectory($temp_unzip);
-                    //CAT_Helper_Directory::removeDirectory($zipfile);
+                    if($remove_zip_on_error)
+                        CAT_Helper_Directory::removeDirectory($zipfile);
                     if(!$silent)
                     self::printError( 'Unable to install - error copying files' );
                     return false;
                 }
                 // remove temp
                 CAT_Helper_Directory::removeDirectory($temp_unzip);
-                //CAT_Helper_Directory::removeDirectory($zipfile);
+                if($remove_zip_on_error)
+                    CAT_Helper_Directory::removeDirectory($zipfile);
             }
 
             // load the module info into the database
