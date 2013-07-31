@@ -58,11 +58,16 @@
    <tr>
       <td><label for="installer_default_wysiwyg">{translate('Default WYSIWYG Editor')}</label></td>
       <td>
+        {if ! count($editors)}
+        <input type="hidden" id="installer_default_wysiwyg" name="installer_default_wysiwyg" value="" />
+        {translate('None found')}
+        {else}
         <select id="installer_default_wysiwyg" name="installer_default_wysiwyg" tabindex="4">
 		  {foreach $editors dir name}
 		  <option value="{$dir}"{if $dir == $installer_default_wysiwyg} selected="selected"{/if}>{$name}</option>
 		  {/foreach}
         </select>
+        {/if}
         <span style="width:55%;float:right;display:none;" id="installer_default_wysiwyg_optional_info">{translate('Please do not forget to check this Add-On at the [Optional] step! The WYSIWYG Editor will not work otherwise!')}</span>
 	  </td>
 	</tr>

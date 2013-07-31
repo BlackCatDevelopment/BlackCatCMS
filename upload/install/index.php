@@ -523,12 +523,12 @@ function show_step_site( $step ) {
     $output = $parser->get(
         'site.tpl',
         array(
-            'installer_website_title'    => ( isset($config['website_title'])    ? $config['website_title']    : 'Black Cat CMS' ),
-            'installer_admin_username'   => ( isset($config['admin_username'])   ? $config['admin_username']   : ''              ),
-            'installer_admin_password'   => ( isset($config['admin_password'])   ? $config['admin_password']   : ''              ),
-            'installer_admin_repassword' => ( isset($config['admin_repassword']) ? $config['admin_repassword'] : ''              ),
-            'installer_admin_email'      => ( isset($config['admin_email'])       ? $config['admin_email']      : ''              ),
-            'errors' => $step['errors']
+            'installer_website_title'    => ( isset($config['website_title'])    ? $config['website_title']    : 'BlackCat CMS' ),
+            'installer_admin_username'   => ( isset($config['admin_username'])   ? $config['admin_username']   : ''             ),
+            'installer_admin_password'   => ( isset($config['admin_password'])   ? $config['admin_password']   : ''             ),
+            'installer_admin_repassword' => ( isset($config['admin_repassword']) ? $config['admin_repassword'] : ''             ),
+            'installer_admin_email'      => ( isset($config['admin_email'])      ? $config['admin_email']      : ''             ),
+            'errors'                     => $step['errors']
         )
     );
     return array( true, $output );
@@ -553,8 +553,8 @@ function check_step_site() {
         $errors['installer_admin_username'] = $lang->translate( 'Please enter an admin username (choose "admin", for example)!' );
     }
     else {
-        if ( strlen($config['admin_username']) < 3 ) {
-            $errors['installer_admin_username'] = $lang->translate('Name too short! The admin username should be at least 3 chars long.');
+        if ( strlen($config['admin_username']) < 5 ) {
+            $errors['installer_admin_username'] = $lang->translate('Name too short! The admin username should be at least 5 chars long.');
         }
         elseif ( ! preg_match( '/^[a-z0-9][a-z0-9_-]+$/i', $config['admin_username'] ) ) {
             $errors['installer_admin_username'] = $lang->translate('Only characters a-z, A-Z, 0-9 and _ allowed in admin username');

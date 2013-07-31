@@ -16,6 +16,7 @@
       <td>
         <input type="text" tabindex="3" name="installer_admin_username" id="installer_admin_username" style="width: 97%;" value="{$installer_admin_username}" />
         {if $errors.installer_admin_username}<br /><span>{$errors.installer_admin_username}</span>{/if}
+        <br /><span style="font-size: 10px; color: #666666;">{translate("at least 5 chars")}</span>
 	  </td>
 	</tr>
 	<tr{if $errors.installer_admin_email || $errors.global} class="fail"{/if}>
