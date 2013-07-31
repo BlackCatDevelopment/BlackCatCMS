@@ -184,8 +184,8 @@ if ( !in_array(1, $users->get_groups_id()) )
 	}
 }
 
-$options['admin_groups']		= implode(',', $options['admin_groups']);
-$options['viewing_groups']		= implode(',', $options['viewing_groups']);
+$options['admin_groups']		= implode(',', array_unique($options['admin_groups']));
+$options['viewing_groups']		= implode(',', array_unique($options['viewing_groups']));
 
 // ====================================================== 
 // ! Work-out what the link and page filename should be   
