@@ -1040,13 +1040,13 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function getParentIDs($page_id)
         {
-            $page  = self::properties($page_id);
-            if(!$page || !is_array($page) || !count($page)) return array(0);
-            $ids   = array($page_id,$page['parent']);
-            if($page['is_parent'])
+            $ids = array();
+            while ( self::properties($page_id,'parent') !== NULL )
             {
-                $parent_ids = self::getParentIDs($page['parent']);
-                $ids = array_merge($ids, $parent_ids);
+                if ( self::properties($page_id,'level') == 0 )
+                    break;
+                $ids[]   = self::properties($page_id,'parent');
+                $page_id = self::properties($page_id,'parent');
             }
             return $ids;
         }   // end function getParentIDs()
@@ -1205,11 +1205,14 @@ if (!class_exists('CAT_Helper_Page'))
          * @access public
          * @return
          **/
-        public static function getPageTrail($page_id,$skip_zero=false)
+        public static function getPageTrail($page_id,$skip_zero=false,$as_array=false)
         {
             $ids = array_reverse(self::getParentIDs($page_id));
             if($skip_zero) array_shift($ids);
-            return implode(',',$ids);
+            $ids[] = $page_id;
+            return (
+                $as_array ? $ids : implode(',',$ids)
+            );
         }   // end function getPageTrail()
         
         /**
@@ -1220,20 +1223,10 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function getRootParent($page_id)
         {
-            $parent = self::properties($page_id,'parent');
-            $level  = self::properties($page_id,'level');
-            if ($level == 1)
-                return $parent;
-            elseif ($parent == 0)
-                return $page_id;
-            else
-            {
-                $trail = self::properties($page_id,'trail');
-                return
-                    ( $trail )
-                    ? substr(self::properties($page_id,'trail'),0,strpos($trail,','))
-                    : 0;
-            }
+            if(self::properties($page_id,'level')==0)
+                return 0;
+            $trail = self::getPageTrail($page_id,false,true);
+            return $trail[0];
         }   // end function getRootParent()
         
         /**
@@ -1375,6 +1368,8 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function properties($page_id,$key=NULL)
         {
+            if(!$page_id)
+                return NULL;
             if(!count(self::$pages)&&!CAT_Registry::exists('CAT_HELPER_PAGE_INITIALIZED'))
                 self::init();
             // get page data
