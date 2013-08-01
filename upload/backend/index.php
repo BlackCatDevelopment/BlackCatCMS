@@ -17,11 +17,13 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license			http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
+
+define('CAT_LOGIN_PHASE',1);
 
 if (defined('CAT_PATH')) {	
     if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
