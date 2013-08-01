@@ -8,10 +8,12 @@
 /* Manuel Reinhard, manu@sprain.ch
 /* Twitter: @sprain
 /* Web: www.sprain.ch
-/* Beware, known for being one sandwich short of a picnic.
 /* ------------------------------------------------------------------------ */
 /* History:
-/* 2012/03/23 - Bianka Martinovic - fixed transparency for watermark images
+/* 2012/08/14 - Manuel Reinhard - Bugfix in rotate()
+/* 2012/02/05 - Manuel Reinhard - Bugfix and simplification when cropping images
+/*								  added getHTML() and improved displayHTML()
+/*								  added basic test file
 /* 2011/02/14 - Manuel Reinhard - added project to Github
 /* 2011/01/24 - Manuel Reinhard - added parameter $jpegQuality to functions resize() and rotate()
 /* 2010/11/09 - Manuel Reinhard - now uses sys_get_temp_dir() to determine default temp directory (if available),
@@ -93,7 +95,7 @@ class Image {
 		$this->imageInfo["imagetype"] = $data[2];
 		$this->imageInfo["htmlWidthAndHeight"] = $data[3];
 		$this->imageInfo["mime"] = $data["mime"];
-		$this->imageInfo["channels"] = $data["channels"];
+		$this->imageInfo["channels"] = ( isset($data["channels"]) ? $data["channels"] : NULL );
 		$this->imageInfo["bits"] = $data["bits"];
 
 		return true;
@@ -178,7 +180,7 @@ class Image {
 		$newImage_square = false;
 
 		//Set new data
-		$newImage_width = $max_width;
+		$newImage_width  = $max_width;
 		$newImage_height = $max_height;
 		$srcX = 0;
 		$srcY = 0;
@@ -215,19 +217,12 @@ class Image {
 		//or want to crop it?
 		}elseif($method == "crop"){
 
-			//set width and height
-			if($newImage_landscape){
+			//set new max height or width
+			if($ratioOfMaxSizes > $this->getRatioWidthToHeight()){
 				$max_height = $max_width * $this->getRatioHeightToWidth();
-			}elseif($newImage_square){
-				if($landscape){
-					$max_width = $max_height * $this->getRatioWidthToHeight();
-				}else{
-					$max_height = $max_width * $this->getRatioHeightToWidth();
-				}//if
 			}else{
 				$max_width = $max_height * $this->getRatioWidthToHeight();
-			}//if
-
+			}
 
 			//which area to crop?
 			if($cropAreaLeftRight == "r"){
@@ -252,11 +247,19 @@ class Image {
 		//Let's get it on, create image!
 		$imageC = ImageCreateTrueColor($newImage_width, $newImage_height);
 		$newImage = $image_create_func($this->image);
+
+		if($image_save_func == 'ImagePNG'){
+			//http://www.akemapa.com/2008/07/10/php-gd-resize-transparent-image-png-gif/
+			imagealphablending($imageC, false);
+			imagesavealpha($imageC, true);
+			$transparent = imagecolorallocatealpha($imageC, 255, 255, 255, 127);
+			imagefilledrectangle($imageC, 0, 0, $newImage_width, $newImage_height, $transparent);
+		}
+
 		ImageCopyResampled($imageC, $newImage, 0, 0, $srcX, $srcY, $max_width, $max_height, $width, $height);
 
-
 		//Set image
-		if($image_save_func == "imageJPG"){
+		if($image_save_func == "imageJPG" || $image_save_func == "ImageJPEG"){
 			if(!$image_save_func($imageC, $this->tmpfile, $jpgQuality)){
 				throw new Exception("Cannot save file ".$this->tmpfile);
 			}//if
@@ -305,61 +308,69 @@ class Image {
 	 *               c = center
 	 *               b = bottom
 	 */
-public function writeWatermark($opacity=50, $marginH=0, $marginV=0, $positionWatermarkLeftRight="c", $positionWatermarkTopBottom="c") {
+	public function writeWatermark($opacity=50, $marginH=0, $marginV=0, $positionWatermarkLeftRight="c", $positionWatermarkTopBottom="c"){
 
-    //Watermark
-    list($image_create_func, $image_save_func) = $this->Watermark->getFunctionNames();
-    $watermark = $image_create_func($this->Watermark->getImage());
-    if ( $this->Watermark->getType() == 'png' ) {
-        imagealphablending($watermark, true);
-        imagesavealpha($watermark, true);
-    }
+		//add Watermark
+		list($image_create_func, $image_save_func) = $this->Watermark->getFunctionNames();
+		$watermark = $image_create_func($this->Watermark->getImage());
 
-    //get base image
-    list($image_create_func, $image_save_func) = $this->getFunctionNames();
-    $baseImage = $image_create_func($this->image);
-    if ( $this->getType() == 'png' ) {
-        imagealphablending($baseImage, true);
-        imagesavealpha($baseImage, true);
-    }
+		//get base image
+		list($image_create_func, $image_save_func) = $this->getFunctionNames();
+		$baseImage = $image_create_func($this->image);
 
-    if ( $this->getType() == 'gif' && $this->Watermark->getType() != 'gif' )
-    {
-        // we have to convert the watermark to gif, too
-        $tempimg = imagecreatetruecolor(imagesx($baseImage),imagesy($baseImage));
-        imagefill($tempimg, 0, 0, $bgcolor = imagecolorallocate($tempimg,0,0,0));
-        imagecopyresampled($tempimg, $watermark, 0, 0, 0, 0, imagesx($baseImage), imagesy($baseImage), imagesx($watermark), imagesy($watermark) );
-        imagecolortransparent($tempimg, $bgcolor);
-        $dest_path = pathinfo( $this->tmpfile, PATHINFO_DIRNAME );
-        $dest_file = 'tmp.gif';
-        imagegif($tempimg,$dest_path.'/'.$dest_file);
-        imagedestroy($tempimg);
-        $watermark = imagecreatefromgif($dest_path.'/'.$dest_file);
-        // we don't need the temp file anymore
-        unlink($dest_path.'/'.$dest_file);
-    }
 
-    if ( $this->getType() == 'gif' ) {
-        imagecopy( $baseImage, $watermark, 0, 0, 0, 0, imagesx($baseImage), imagesy($baseImage));
-    }
-    else {
-        // resize the watermark to fit original image size
-        imagecopyresampled( $baseImage, $watermark, 0, 0, 0, 0, imagesx($baseImage), imagesy($baseImage), imagesx($watermark), imagesy($watermark));
-    }
+		//Calculate margins
 
-    //Set image
-    if(!$image_save_func($baseImage, $this->tmpfile)){
-        throw new Exception("Cannot save file ".$this->tmpfile);
-    }//if
+		if($positionWatermarkLeftRight == "r"){
+			$marginH = imagesx($baseImage) - imagesx($watermark) - $marginH;
+		}//if
 
-    //Set new main image
-    $this->setNewMainImage($this->tmpfile);
+		if($positionWatermarkLeftRight == "c"){
+			$marginH = (imagesx($baseImage)/2) - (imagesx($watermark)/2) - $marginH;
+		}//if
 
-    //Free memory!
-    imagedestroy($baseImage);
-    unset($Watermark);
+		if($positionWatermarkTopBottom == "b"){
+			$marginV = imagesy($baseImage) - imagesy($watermark) - $marginV;
+		}//if
 
-}//function
+		if($positionWatermarkTopBottom == "c"){
+			$marginV = (imagesy($baseImage)/2) - (imagesy($watermark)/2) - $marginV;
+		}//if
+
+
+		//****************************
+		//Add watermark and keep alpha channel of pngs.
+		//The following lines are based on the code found on
+		//http://ch.php.net/manual/en/function.imagecopymerge.php#92787
+		//****************************
+
+			// creating a cut resource
+			$cut = imagecreatetruecolor(imagesx($watermark), imagesy($watermark));
+
+			// copying that section of the background to the cut
+			imagecopy($cut, $baseImage, 0, 0, $marginH, $marginV, imagesx($watermark), imagesy($watermark));
+
+			// placing the watermark now
+			imagecopy($cut, $watermark, 0, 0, 0, 0, imagesx($watermark), imagesy($watermark));
+			imagecopymerge($baseImage, $cut, $marginH, $marginV, 0, 0, imagesx($watermark), imagesy($watermark), $opacity);
+
+        //****************************
+        //****************************
+
+
+        //Set image
+		if(!$image_save_func($baseImage, $this->tmpfile)){
+			throw new Exception("Cannot save file ".$this->tmpfile);
+		}//if
+
+		//Set new main image
+		$this->setNewMainImage($this->tmpfile);
+
+		//Free memory!
+		imagedestroy($baseImage);
+		unset($Watermark);
+
+	}//function
 
 
 
@@ -374,17 +385,17 @@ public function writeWatermark($opacity=50, $marginH=0, $marginV=0, $positionWat
 		//do it
 		$source = $image_create_func($this->image);
 		if(function_exists("imagerotate")){
-			$rotate = imagerotate($source, $degrees, 0, true);
+			$imageRotated = imagerotate($source, $degrees, 0, true);		
 		}else{
-			$rotate = $this->rotateImage($source, $degrees);
+			$imageRotated = $this->rotateImage($source, $degrees);	
 		}
-
-		if($image_save_func == "imageJPG"){
-			if(!$image_save_func($imageC, $this->tmpfile, $jpgQuality)){
+		
+		if($image_save_func == "ImageJPEG"){
+			if(!$image_save_func($imageRotated, $this->tmpfile, $jpgQuality)){
 				throw new Exception("Cannot save file ".$this->tmpfile);
 			}//if
 		}else{
-			if(!$image_save_func($imageC, $this->tmpfile)){
+			if(!$image_save_func($imageRotated, $this->tmpfile)){
 				throw new Exception("Cannot save file ".$this->tmpfile);
 			}//if
 		}//if
@@ -408,21 +419,35 @@ public function writeWatermark($opacity=50, $marginH=0, $marginV=0, $positionWat
 
 
 	/**
-	 * Sends html code to display image
+	 * Prints html code to display image
 	 */
-	public function displayHTML($alt="", $title="", $class="", $id=""){
+	public function displayHTML($alt=false, $title=false, $class=false, $id=false, $extras=false){
+		print $this->getHTML($alt, $title, $class, $id, $extras);
+	}//function
+
+
+
+	/**
+	 * Creates html code to display image
+	 */
+	public function getHTML($alt=false, $title=false, $class=false, $id=false, $extras=false){
 
 		//Build path
 		$path = str_replace($_SERVER["DOCUMENT_ROOT"], "", $this->image);
 
 		//Make code
-		$code = '<img src="'.$path.'" alt="'.$alt.'" title="'.$title.'" class="'.$class.'" id="'.$id.'" width="'.$this->getWidth().'" height="'.$this->getHeight().'" />';
+		$code = '<img src="/'.$path.'" width="'.$this->getWidth().'" height="'.$this->getHeight().'"';
+		if($alt   ){ $code .= ' alt="'.$alt.'"';}
+		if($title ){ $code .= ' title="'.$title.'"';}
+		if($class ){ $code .= ' class="'.$class.'"';}
+		if($id    ){ $code .= ' id="'.$id.'"';}
+		if($extras){ $code .= ' '.$extras;}
+		$code .= ' />';
 
 		//Output
-		print $code;
-		return true;
-	}//function
+		return $code;
 
+	}//function
 
 
 	/**

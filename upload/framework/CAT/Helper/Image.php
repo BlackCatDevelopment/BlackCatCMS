@@ -156,7 +156,7 @@ if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 		 *               fill = Fits image into the area without taking care of any ratios. Expect your image to get deformed.
 	     *
 	     **/
-	    public function make_thumb( $source, $destination, $height, $width = NULL, $method = 'fit' )
+	    public function make_thumb( $source, $destination, $height, $width = NULL, $method = 'fit', $extension = NULL )
 		{
 		
 	        $dest_path = pathinfo( $destination, PATHINFO_DIRNAME );
@@ -181,7 +181,7 @@ if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 			}
 			
 			$image->resize( $width, $height, $method );
-			return $image->save( $dest_file, $dest_path );
+			return $image->save( $dest_file, $dest_path, $extension );
 	    }   // end function make_thumb()
 	    
 	    /**
