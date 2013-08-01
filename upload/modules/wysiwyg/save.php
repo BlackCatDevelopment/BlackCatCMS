@@ -41,6 +41,8 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
+$update_when_modified = true;
+
 $val     = CAT_Helper_Validate::getInstance();
 $user    = CAT_Users::getInstance();
 $backend = CAT_Backend::getInstance('Pages', 'pages_modify');
