@@ -16,11 +16,12 @@ textarea {
 	border:			1px solid #9da8b2;
 	padding:		0.3em;
 }
-textarea, input[type=text], input[type=password], select {
-    width:          300px;
-}
-textarea.fc_input_300, input[type=text].fc_input_300,input[type=password].fc_input_300 {
-    width:          300px;
+
+textarea.fc_input_300,
+input[type=text].fc_input_300,
+input[type=password].fc_input_300.
+select.fc_input_300. {
+	width:			300px;
 }
 input[type=file] {
 	margin-bottom:	5px;
