@@ -9,10 +9,11 @@ The name "BlackCat" is derived from the forum names of the founders: creative<st
 As the development of Black Cat CMS is still in progress, there's no version for production use at the 
 moment, but you can always download the current development state here.
 
-At the moment, we plan to release a first Beta around the middle of the year 2013.
-
 Official website of BackCat CMS (german only!):
 http://blackcat-cms.org
 
-You are able to build your bundle with different add ons:
+To build your unique download bundle with the add ons of your choice:
 http://blackcat-cms.org/page/download.php
+
+**IMPORTANT NOTE:** After v1.0 is finished - which means we have a release -, we will move
+the repository to our Organization profile at https://github.com/BlackCatDevelopment.
