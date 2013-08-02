@@ -62,8 +62,14 @@ if ( $res_settings = $backend->db()->query( $sql ) ) {
 }
 ob_clean();
 
+// this is not the optimal solution, but as we have 2 libs only, it's good enough
+$lib_to_driver = array(
+    'lib_phpmailer' => 'PHPMailer',
+    'lib_swift'     => 'Swift'
+);
+
 // send mail
-if( CAT_Helper_Mail::getInstance('PHPMailer')->sendMail( $settings['SERVER_EMAIL'], $settings['SERVER_EMAIL'], $settings['CATMAILER_DEFAULT_SENDERNAME'], $backend->lang()->translate('This is the required test mail: CAT mailer is working') ) )
+if( CAT_Helper_Mail::getInstance($lib_to_driver[$settings['CATMAILER_LIB']])->sendMail( $settings['SERVER_EMAIL'], $settings['SERVER_EMAIL'], $settings['CATMAILER_DEFAULT_SENDERNAME'], $backend->lang()->translate('This is the required test mail: CAT mailer is working') ) )
 {
     echo "<div style='border: 2px solid #006600; padding: 5px; text-align: center; background-color: #dff2bf;'>",
          $backend->lang()->translate('The test eMail was sent successfully. Please check your inbox.'),
