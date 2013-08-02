@@ -49,7 +49,7 @@ $groups = array(
     'system' => array('maintenance_mode','maintenance_page','err_page_404','page_level_limit','page_trash','manage_sections','section_blocks','multiple_menus','page_languages','intro_page','homepage_redirection'),
     'users' => array('frontend_signup','frontend_login','home_folders','auth_min_login_length','auth_max_login_length','auth_min_pass_length','auth_max_pass_length'),
     'server' => array('operating_system','pages_directory','page_extension','media_directory','page_spacer','upload_allowed','app_name','sec_anchor'),
-    'mail' => array('server_email','catmailer_lib','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_username','catmailer_smtp_password'),
+    'mail' => array('server_email','catmailer_lib','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_auth','catmailer_smtp_username','catmailer_smtp_password'),
 );
 $allow_tags_in_fields = array('website_header', 'website_footer');
 $allow_empty_values   = array('website_header', 'website_footer', 'sec_anchor', 'pages_directory','catmailer_smtp_host','catmailer_smtp_username','catmailer_smtp_password');
@@ -365,7 +365,11 @@ function saveMail($backend) {
              }
         }
         // Work-out if SMTP authentification should be checked
-        $settings['catmailer_smtp_auth'] = $settings['catmailer_smtp_auth']=='' ? 'false' : 'true';
+        $settings['catmailer_smtp_auth']
+            = ( ! isset($settings['catmailer_smtp_auth']) || $settings['catmailer_smtp_auth']=='' )
+            ? 'false'
+            : 'true'
+            ;
         if ($settings['catmailer_smtp_auth'] == 'true')
         {
             // later change min and max lenght with variables
@@ -379,17 +383,16 @@ function saveMail($backend) {
             {
                  $settings['catmailer_smtp_username'] = $catmailer_smtp_username;
             }
-            // receive password vars and calculate needed action
-            $pattern = '/[^'.$admin->password_chars.']/';
             $current_password = $val->sanitizePost('catmailer_smtp_password');
             $current_password = ($current_password == null ? '' : $current_password);
             if (($current_password == ''))
             {
                  $err_msg[] = $backend->lang()->translate('SMTP').': '.$backend->lang()->translate('Username or password incorrect');
             }
-            elseif (preg_match($pattern, $current_password))
+            elseif (!CAT_Users::validatePassword($current_password))
             {
-                 $err_msg[] = $backend->lang()->translate('Invalid password chars used, valid chars are: a-z\A-Z\0-9\_\-\!\#\*\+');
+                 $err_msg[] = $backend->lang()->translate('Invalid password')
+                            . ': ' . CAT_Users::getPasswordError();
             }
         }
         // If SMTP-Authentification is disabled delete USER and PASSWORD for securityreasons

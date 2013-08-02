@@ -5,8 +5,8 @@
 			<hr />
 
             {if count($CATMAILER_LIBS)>1}
+            <span class="fc_label_200" for="fc_catmailer_lib">{translate('Mailer library')}:</span><br />
             <div id="fc_catmailer_lib" class="settings_label fc_settings_max">
-                <span class="fc_label_200" for="fc_catmailer_lib">{translate('Mailer library')}:</span><br />
                 {foreach $CATMAILER_LIBS item}
                     <input type="radio" class="fc_radio_jq" name="catmailer_lib" id="fc_catmailer_{$item.dir}" value="{$item.dir}" {if $values.catmailer_lib == $item.dir}checked="checked"{/if}/>
                     <label for="fc_catmailer_{$item.dir}">{$item.name}</label>
@@ -23,9 +23,13 @@
 			<input type="text" name="catmailer_default_sendername" id="fc_catmailer_default_sendername" value="{$values.catmailer_default_sendername}" />
 			<div class="clear_sp"></div>
 
+            {if $values.catmailer_lib}
             <div id="testmail_result" style="display:none;">&nbsp;</div>
 			<div class="clear"></div>
 			<button class="icon-mail right" dir="ltr" type="submit" id="fc_checkmail" name="checkmail" onclick="send_testmail('{$CAT_ADMIN_URL}/settings/ajax_testmail.php');return false;"> {translate('Send test mail')}</button>
+            {else}
+            <span class="right">{translate('Please choose Mailer library and click [Save] to send a test mail')}</span>
+            {/if}
 
 			{if $DISPLAY_ADVANCED}
 			<label class="fc_label_200" for="fc_catmailer_routine">{translate('Mail routine')}:</label><br />
@@ -61,6 +65,7 @@
 					  <input type="text" name="catmailer_smtp_username" id="fc_catmailer_smtp_username" value="{$values.catmailer_smtp_username}" /><br />
 					<label class="fc_label_200" for="fc_catmailer_smtp_password">{translate('SMTP password')}:</label>
 					  <input type="password" name="catmailer_smtp_password" id="fc_catmailer_smtp_username" value="{$values.catmailer_smtp_password}" /><br />
+                    <p class="fc_important">({translate('Please note: The SMTP password will be stored as plain text in the settings table!')})</p>
 				</div>
 			</div>
 			{else}

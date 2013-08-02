@@ -57,7 +57,7 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
         /**
          *
          **/
-        public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname)
+        public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname='')
         {
 
             // Create the message
