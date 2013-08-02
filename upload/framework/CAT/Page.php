@@ -80,6 +80,7 @@ if (!class_exists('CAT_Page', false))
             {
                 if(!$value) continue;
                 if(CAT_Registry::exists(strtoupper($key))) continue;
+                if(is_array($value)) continue;
                 CAT_Registry::register(strtoupper($key),$value,true);
             }
     		// Work-out if any possible in-line search boxes should be shown
@@ -131,9 +132,8 @@ if (!class_exists('CAT_Page', false))
             global $wb, $admin, $database, $page_id, $section_id;
             $admin =& $wb;
             if ( $page_id == '' )
-            {
                 $page_id = $this->_page_id;
-            }
+            // keep old modules happy
 
             $this->log()->LogDebug(sprintf('showing page with ID [%s]',$page_id));
 
@@ -163,7 +163,7 @@ if (!class_exists('CAT_Page', false))
                 // including the template; it may calls different functions
                 // like page_content() etc.
                 ob_start();
-                    require CAT_PATH.'/templates/'.TEMPLATE.'/index.php';
+                    require CAT_TEMPLATE_DIR.'/index.php';
                     $output = ob_get_contents();
                 ob_clean();
 
@@ -378,18 +378,24 @@ if (!class_exists('CAT_Page', false))
     		if(!defined('TEMPLATE'))
             {
                 $prop = $this->getProperties();
+                // page has it's own template
     			if(isset($prop['template']) && $prop['template'] != '') {
     				if(file_exists(CAT_PATH.'/templates/'.$prop['template'].'/index.php')) {
     					CAT_Registry::register('TEMPLATE', $prop['template'], true);
     				} else {
     					CAT_Registry::register('TEMPLATE', DEFAULT_TEMPLATE, true);
     				}
+                // use global default
     			} else {
     				CAT_Registry::register('TEMPLATE', DEFAULT_TEMPLATE, true);
     			}
     		}
-    		// Set the template dir
-    		CAT_Registry::register('TEMPLATE_DIR', CAT_URL.'/templates/'.TEMPLATE, true);
+            $dir = '/templates/'.TEMPLATE;
+    		// Set the template dir (which is, in fact, the URL, but for backward
+            // compatibility, we have to keep this irritating name)
+    		CAT_Registry::register('TEMPLATE_DIR', CAT_URL.$dir, true);
+            // This is the REAL dir
+            CAT_Registry::register('CAT_TEMPLATE_DIR', CAT_PATH.$dir, true);
         }   // end function setTemplate()
 
 

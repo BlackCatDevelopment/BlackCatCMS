@@ -177,6 +177,25 @@ if (!class_exists('CAT_Helper_Page'))
                         else
                             $children_count[$row['parent']]++;
 
+                        // add any other settings
+                        $set = self::$instance->db()->query(sprintf(
+                            'SELECT * FROM %spages_settings WHERE page_id=%d',
+                            CAT_TABLE_PREFIX, $row['page_id']
+                        ));
+                        if( $set && $set->numRows()>0 )
+                        {
+                            while ( false !== ( $set_row = $set->fetchRow(MYSQL_ASSOC) ) )
+                            {
+                                if(!isset($row['settings']))
+                                    $row['settings'] = array();
+                                if(!isset($row['settings'][$set_row['set_type']]))
+                                    $row[$set_row['set_type']] = array();
+                                if(!isset($row['settings'][$set_row['set_type']][$set_row['set_name']]))
+                                    $row[$set_row['set_type']][$set_row['set_name']] = array();
+                                $row['settings'][$set_row['set_type']][$set_row['set_name']][] = $set_row['set_value'];
+                            }
+                        }
+
                         self::$pages[] = $row;
 
                         end(self::$pages);
@@ -1139,7 +1158,35 @@ if (!class_exists('CAT_Helper_Page'))
                 '__li_has_child_class' => 'fc_expandable',
                 '__title_key'          => 'menu_title',
             ))->tree( $pages, 0 );
+        }   // end function getPageSelect()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getPageSettings($page_id,$type='internal',$key=NULL)
+        {
+            $set = self::properties($page_id,'settings');
+            if($type)
+            {
+                if($key)
+                {
+                    if( isset($set[$type][$key]) )
+                    {
+                        if(is_array($set[$type][$key]) && count($set[$type][$key]) == 1)
+                            return $set[$type][$key][0];
+                        return $set[$type][$key];
+                    }
         }
+                else
+                {
+                    return ( isset($set[$type]) ? $set[$type] : NULL );
+                }
+            }
+            return $set;
+        }   // end function getPageSettings()
+
 
         /**
          *

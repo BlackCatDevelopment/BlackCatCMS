@@ -1,0 +1,10 @@
+span.code, span.file {
+    display:inline-block;
+    width: 120px;
+}
+span.code {
+    background: transparent url(images/code.png) left center no-repeat;
+}
+span.file {
+    background: transparent url(images/file.png) left center no-repeat;
+}

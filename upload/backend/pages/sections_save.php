@@ -153,12 +153,22 @@ elseif ( $update_section_id != '' )
 		{
 			if ( !is_numeric (array_search($section['module'], $module_permissions) ) )
 			{
-				// $dst = date("I") ? " DST" : "";				// returns "1" if daylight saving time - is not used anywhere!!!!
-				$sql		= $block	!= ''	? '`block` = ' . $backend->add_slashes($block) . ', '			: '';
-				$sql		= $name		!= ''	? $sql . '`name` = "' . mysql_real_escape_string($name) . '", '	: $sql;
-
-				$date_from	= ($day_from * $month_from * $year_from) > 0	? mktime( $hour_from, $minute_from, 0, $month_from, $day_from, $year_from ) : 0;
-				$date_to	= ($day_to * $month_to * $year_to) > 0			? mktime( $hour_to, $minute_to, 0, $month_to, $day_to, $year_to ) : 0;
+                $sql       = ( $block != '' )
+                           ? '`block` = ' . $backend->add_slashes($block) . ', '
+                           : ''
+                           ;
+                $sql      .= ( $name != '' )
+                           ? '`name` = "' . mysql_real_escape_string($name) . '", '
+                           : ''
+                           ;
+                $date_from = ($day_from * $month_from * $year_from) > 0
+                           ? mktime( $hour_from, $minute_from, 0, $month_from, $day_from, $year_from )
+                           : 0
+                           ;
+                $date_to   = ($day_to * $month_to * $year_to) > 0
+                           ? mktime( $hour_to, $minute_to, 0, $month_to, $day_to, $year_to )
+                           : 0
+                           ;
 
 				if ( $date_from > $date_to )
 				{
@@ -166,7 +176,9 @@ elseif ( $update_section_id != '' )
 				}
 
 				$sql	.= '`publ_start` = ' . $date_from . ', ';
-				$sql	.= '`publ_end` = ' . $date_to;
+                $sql .= '`publ_end` = '   . $date_to   . ', ';
+                $sql .= '`modified_when` = "'.time().'", ';
+                $sql .= '`modified_by` = '.CAT_Users::get_user_id();
 
 				$backend->db()->query('UPDATE ' . CAT_TABLE_PREFIX . 'sections SET ' . $sql . ' WHERE `page_id`= ' . $page_id . ' AND section_id = ' . $update_section_id . ' LIMIT 1');
 			}
