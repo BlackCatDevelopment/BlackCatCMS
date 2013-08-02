@@ -1,5 +1,7 @@
-            <label class="fc_label_200" for="fc_default_template">{translate('Security settings')}:</label>
-            <div class="fc_settings_max">
+            
+            <span class="fc_label_200">{translate('Security settings')}:</span>
+            <div class="clear"></div>
+            <div class="fc_settings_max settings_label">
 
                 <input type="checkbox" class="fc_checkbox_jq" name="auto_disable_users" id="fc_auto_disable_users" value="true" {if $values.auto_disable_users} checked="checked"{/if}/>
     			<label for="fc_auto_disable_users">{translate('Disable user accounts when max login attempts is reached')}</label><br />

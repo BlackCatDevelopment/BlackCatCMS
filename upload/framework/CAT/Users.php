@@ -990,7 +990,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  integer $user_id
          * @return array
          **/
-        public static function get_user_details($user_id)
+        public static function get_user_details($user_id,$attr=NULL)
         {
             $self     = self::getInstance();
             $get_user = $self->db()->query(sprintf(
@@ -1006,6 +1006,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
     			$user['display_name'] = 'Unknown';
     			$user['username']     = 'unknown';
     		}
+            if ( $attr && isset($user[$attr]) )
+            {
+                return $user[$attr];
+            }
     		return $user;
     	}   // end function get_user_details()
 

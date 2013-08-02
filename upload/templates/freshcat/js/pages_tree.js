@@ -180,6 +180,24 @@
 							$('#fc_addPage_target option').prop('selected', false)
 								.filter('option[value=' + data.target + ']').prop('selected', true);
 
+                            // template variants
+                            $("#fc_default_template_variant").empty();
+                            if( $(data.variants).size() > 0 )
+                            {
+                                $.each(data.variants, function(index, value)
+                                {
+                                    $("<option/>").val(value).text(value).appendTo("#fc_default_template_variant");
+                                });
+                                if( $(data.template_variant).size() > 0 )
+                                {
+                                    $("#fc_default_template_variant option[value="+data.template_variant+"]").prop('selected',true);
+                                }
+                                $('#fc_div_template_variants').show();
+                            }
+                            else {
+                                $('#fc_div_template_variants').hide();
+                            }
+
 							if (data.template === '')
 							{
 								$('#fc_addPage_template option').prop('selected', false)
@@ -725,4 +743,44 @@ jQuery(document).ready(function()
 		$('#fc_addPage_parent_page_id').val( $('.page_tree_open_options').children('input[name=page_id]').val() );
 		$('.fc_side_add').click();
 	});
+
+    $('select[id=fc_addPage_template]').change( function()
+    {
+        var dates    = {
+            '_cat_ajax': 1,
+            'template':  $('#fc_addPage_template').val()
+        };
+        $.ajax(
+        {
+            type:     'POST',
+            url:      CAT_ADMIN_URL + '/settings/ajax_get_template_variants.php',
+            dataType: 'json',
+            data:     dates,
+            cache:    false,
+            success:  function( data, textStatus, jqXHR )
+            {
+                if ( data.success === true )
+                {
+                    var form    = $(this);
+                    // remove old options
+                    $("#fc_default_template_variant").empty();
+                    if( $(data.variants).size() > 0 )
+                    {
+                        $.each(data.variants, function(index, value)
+                        {
+                            $("<option/>").val(value).text(value).appendTo("#fc_default_template_variant");
+                        });
+                        $('#fc_div_template_variants').show();
+                    }
+                    else {
+                        $('#fc_div_template_variants').hide();
+                    }
+                }
+                else {
+                    return_error( jqXHR.process , data.message);
+                }
+            }
+        });
+    });
+
 });

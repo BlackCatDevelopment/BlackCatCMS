@@ -5,7 +5,7 @@
 			<hr />
 
             {if count($CATMAILER_LIBS)>1}
-            <span class="fc_label_200" for="fc_catmailer_lib">{translate('Mailer library')}:</span><br />
+            <span class="fc_label_200">{translate('Mailer library')}:</span><br />
             <div id="fc_catmailer_lib" class="settings_label fc_settings_max">
                 {foreach $CATMAILER_LIBS item}
                     <input type="radio" class="fc_radio_jq" name="catmailer_lib" id="fc_catmailer_{$item.dir}" value="{$item.dir}" {if $values.catmailer_lib == $item.dir}checked="checked"{/if}/>

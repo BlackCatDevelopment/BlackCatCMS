@@ -99,7 +99,10 @@
 					{$block.content}
 					<div class="clear"></div>
 				</div>
-				<div class="fc_blocks_footer fc_br_bottom fc_gradient1 fc_border"></div>
+				<div class="fc_blocks_footer fc_br_bottom fc_gradient1 fc_border">
+                    {if $block.modified_by}{translate('Last modification by')} {$block.modified_by}{/if}
+                    {if $block.modified_when}- {$block.modified_when}{/if}
+                </div>
 			</div>
 		</li>
 		{/foreach}

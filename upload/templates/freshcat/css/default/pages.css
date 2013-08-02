@@ -50,6 +50,8 @@
 }
 .fc_blocks_footer {
 	height:			20px;
+    padding-right: 5px;
+    text-align: right;
 }
 #fc_add_section {
 	display: inline-block;

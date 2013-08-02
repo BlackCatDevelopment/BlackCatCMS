@@ -144,26 +144,24 @@ $permission['pages_intro']		= ( $users->checkPermission('Pages','pages_intro') !
 // list of all pages for dropdown, sorted by parent->child
 $pages = CAT_Helper_ListBuilder::sort(CAT_Helper_Page::getPages(),0);
 
-// ============================================= 
+// =============================================
 // ! Add result_array to the template variable   
 // ============================================= 
 $ajax	= array(
-	'page_id'					=> $results_array['page_id'],
-	'page_title'				=> $results_array['page_title'],
-	'short_link'				=> substr( $results_array['link'], strripos( $results_array['link'], '/' ) + 1 ),
-	'menu_title'				=> $results_array['menu_title'],
-	'parent'					=> $results_array['parent'],
 	'description'				=> $results_array['description'],
 	'keywords'					=> $results_array['keywords'],
-	'parent'					=> $results_array['parent'],
-	'menu'						=> $results_array['menu'],
-	'visibility'				=> $results_array['visibility'],
-	'template'					=> $results_array['template'],
 	'language'					=> $results_array['language'],
-	'target'					=> $results_array['target'],
 	'level'						=> $results_array['level'],
+	'menu'						=> $results_array['menu'],
+	'menu_title'				=> $results_array['menu_title'],
 	'modified_when'				=> ($results_array['modified_when'] != 0) ? CAT_Helper_DateTime::getDate($results_array['modified_when']) : 'Unknown',
+	'page_id'					=> $results_array['page_id'],
+	'page_title'				=> $results_array['page_title'],
+	'parent'					=> $results_array['parent'],
 	'searching'					=> $results_array['searching'] == 0 ? false : true,
+	'short_link'				=> substr( $results_array['link'], strripos( $results_array['link'], '/' ) + 1 ),
+	'target'					=> $results_array['target'],
+	'template'					=> $results_array['template'],
 	'visibility'				=> $results_array['visibility'],
 
 	'display_name'				=> $user['display_name'],
@@ -180,10 +178,17 @@ $ajax	= array(
 	'PAGE_EXTENSION'			=> $backend->db()->get_one(sprintf("SELECT value FROM `%ssettings` WHERE name = 'page_extension'",CAT_TABLE_PREFIX)),
 );
 
-// ==================== 
+$ajax['variants'] = array();
+$info = CAT_Helper_Addons::checkInfo(CAT_PATH.'/templates/'.CAT_Helper_Page::getPageTemplate($results_array['page_id']));
+if(isset($info['module_variants']) && is_array($info['module_variants']) && count($info['module_variants'])) {
+    $ajax['variants'] = $info['module_variants'];
+    array_unshift($ajax['variants'],'');
+}
+$ajax['template_variant'] = CAT_Helper_Page::getPageSettings($results_array['page_id'],'internal','template_variant');
+
+// ====================
 // ! Return values 	
 // ==================== 
-
 print json_encode( $ajax );
 exit();
 ?>

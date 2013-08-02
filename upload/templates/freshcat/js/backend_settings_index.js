@@ -58,7 +58,6 @@ jQuery(document).ready(function(){
 		};
 		$.ajax(
 		{
-			context:	form,
 			type:		'POST',
 			url:		CAT_ADMIN_URL + '/settings/ajax_get_settings.php',
 			dataType:	'json',

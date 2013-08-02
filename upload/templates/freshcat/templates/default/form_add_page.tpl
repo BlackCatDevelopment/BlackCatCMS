@@ -56,7 +56,16 @@
 				{foreach $templates as template}
 				<option value="{$template.VALUE}">{$template.NAME}</option>
 				{/foreach}
+            </select><br />
+
+            <div id="fc_div_template_variants" style="display:{if $variants || $template_variant}inline-block{else}none{/if}">
+            <label for="fc_default_template_variant">{translate('Variant')}:</label>
+            <select name="default_template_variant" id="fc_default_template_variant">
+                {foreach $variants variant}
+                <option value="{$variant}"{if $variant == $template_variant} selected="selected"{/if}>{$variant}</option>
+                {/foreach}
 			</select>
+            </div>
 
 			{if $DISPLAY_LANGUAGE_LIST}
 			<label for="fc_addPage_language">{translate('Language')}:</label>
@@ -92,7 +101,7 @@
 			</select>
 
 			<div id="fc_addPage_allowed_admins">
-				<hr/>
+                <hr />
 				<strong>{translate('Administrators')}:</strong>
 				<div class="fc_settings_label" id="fc_addPage_admin_groups">
 					{foreach $groups.admins group}
@@ -103,7 +112,7 @@
 			</div>
 
 			<div id="fc_addPage_allowed_viewers" class="{if $VISIBILITY == 'private' || $VISIBILITY == 'registered'}active_element{else}inactive_element{/if}">
-				<hr/>
+                <hr />
 				<strong>{translate('Registered viewers')}:</strong>
 				<div class="fc_settings_label" id="fc_addPage_viewers_groups">
 					{foreach $groups.viewers viewer}

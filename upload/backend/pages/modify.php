@@ -171,6 +171,12 @@ foreach( $sections as $section )
 				$tpl_data['blocks'][$bcnt]['date_year_to']		= $section['publ_start'] > 0 ? date('Y', $section['publ_end'] ) : '';
 				$tpl_data['blocks'][$bcnt]['date_hour_to']		= $section['publ_start'] > 0 ? date('H', $section['publ_end'] ) : '';
 				$tpl_data['blocks'][$bcnt]['date_minute_to']		= $section['publ_start'] > 0 ? date('i', $section['publ_end'] ) : '';
+                $tpl_data['blocks'][$bcnt]['modified_when']         = $section['modified_when']  ? CAT_Helper_DateTime::getDateTime($section['modified_when'])     : '';
+                $tpl_data['blocks'][$bcnt]['modified_by']
+                    = $section['modified_by']
+                    ?   ( CAT_Users::get_user_details($section['modified_by'],'display_name') ? CAT_Users::get_user_details($section['modified_by'],'display_name') : '' )
+                      . ' ('.CAT_Users::get_user_details($section['modified_by'],'username').')'
+                    : '';
 
                 // load language file (if any)
                 $langfile = sanitize_path(CAT_PATH.'/modules/'.$module.'/languages/'.LANGUAGE.'.php');
