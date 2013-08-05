@@ -309,6 +309,26 @@ if (!class_exists('CAT_Helper_Page'))
         }   // end function updatePage()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function updatePageSettings($page_id,$options)
+        {
+            if(!self::$instance) self::getInstance();
+            foreach($options as $key => $value)
+            {
+                if(is_array($value))
+                    $value = implode(',',$value);
+                self::$instance->db()->query(sprintf(
+                    'REPLACE INTO `%spages_settings` VALUES( %d, "%s", "%s", "%s" )',
+                    CAT_TABLE_PREFIX,$page_id,'internal',$key,$value
+                ));
+            }
+        }   // end function updatePageSettings()
+        
+
+        /**
          * delete page; uses _trashPages() if trash is enabled, _deletePage()
          * otherwise
          *

@@ -216,6 +216,7 @@ if ( $options['link'] !== $old_link )
 // Get page trail
 $options['page_trail'] = CAT_Helper_Page::getPageTrail($options['parent']).','.$page_id;
 
+// save page
 if ( !CAT_Helper_Page::updatePage($page_id,$options) )
 {
 	$ajax	= array(
@@ -229,6 +230,13 @@ if ( !CAT_Helper_Page::updatePage($page_id,$options) )
 if ( $options['parent'] != $old_parent )
 {
 	$order->clean($old_parent);
+}
+
+// additional settings
+$template_variant = $val->sanitizePost('template_variant',NULL,true);
+if($template_variant)
+{
+    CAT_Helper_Page::updatePageSettings($page_id,array('template_variant' => $template_variant));
 }
 
 // Create a new file in the /pages dir if title changed

@@ -188,9 +188,10 @@
                                 {
                                     $("<option/>").val(value).text(value).appendTo("#fc_default_template_variant");
                                 });
-                                if( $(data.template_variant).size() > 0 )
+                                if( data.template_variant.length > 0 )
                                 {
                                     $("#fc_default_template_variant option[value="+data.template_variant+"]").prop('selected',true);
+                                    $("#fc_default_template_variant").val(data.template_variant);
                                 }
                                 $('#fc_div_template_variants').show();
                             }
