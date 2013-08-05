@@ -21,6 +21,8 @@
  *   @category        CAT_Modules
  *   @package         blackcatFilter
  *
+ *   This filter fixes dates emitted from old modules (like TOPICS)
+ *
  */
 
 if (defined('CAT_PATH')) {
@@ -39,15 +41,18 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$module_directory	  = 'blackcatFilter';
-$module_name		  = 'BlackCat CMS Output Filters';
-$module_function	  = 'tool';
-$module_version		  = '0.2';
-$module_platform	  = '1.x';
-$module_author		  = 'Black Cat Development';
-$module_license		  = 'copyright, all rights reserved';
-$module_license_terms = '';
-$module_description	  = 'Adds extendable and configurable output filters to your frontend';
-$module_guid		  = 'CE82BB3C-C6B1-4A6D-810A-19BD015230A9';
+/**
+ * try to fix dates modules produce using the new (strftime) formats with the
+ * old date() or gmdate() methods
+ * will not work with long formats!
+ **/
+function fixDate(&$content)
+{
+    // first, match simple dates (%05.%08.%2013)
+    $content = preg_replace( '~\%(\d+)([\.-])\%(\d+)([\.-])\%(\d+)~', '\\1\\2\\3\\4\\5', $content );
+    // can't really fix this...
+    // '%A,|%d.|%B|%Y' -- %PM,|%05.|%574|%2013
+    //                    %AM,|%04.|%413|%2013
+    //if ( preg_match_all( '~(\%(A|B)M),\|\%(\d+)\.\|\%(\d+)\|\%(\d+)~i', $content, $matches, PREG_SET_ORDER ) )
 
-?>
+}

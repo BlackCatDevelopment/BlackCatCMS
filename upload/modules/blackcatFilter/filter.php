@@ -39,6 +39,16 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
+global $_bc_filter_js, $_bc_filter_onload;
+$_bc_filter_js     = array();
+$_bc_filter_onload = array();
+
+/**
+ * execute registered filters
+ *
+ * @param  reference $content
+ * @return void
+ **/
 function executeFilters(&$content)
 {
     // get active filters
@@ -67,4 +77,135 @@ function executeFilters(&$content)
             }
         }
     }
+
+    // if we have some JS registered...
+    global $_bc_filter_js;
+    if(count($_bc_filter_js))
+    {
+        $js  = array();
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        @$dom->loadHTML($content);
+        $h   = $dom->getElementsByTagName('head')->item(0);
+        foreach($_bc_filter_js as $file)
+        {
+            $element = $dom->createElement('script');
+            // Creating an empty text node forces <script></script>
+            $element->appendChild ($dom->createTextNode (''));
+            $element->setAttribute( 'type', 'text/javascript' );
+            $element->setAttribute( 'src', $file );
+            $h->appendChild($element);
+        }
+        $content = $dom->saveHTML();
+    }
+
+    // onload events
+    global $_bc_filter_onload;
+    if(count($_bc_filter_onload))
+    {
+        $attach   = NULL;
+        $listener = NULL;
+        foreach($_bc_filter_onload as $item)
+        {
+             $attach   .= "    window.attachEvent('onload','$item');\n";
+             $listener .= "    window.addEventListener('DOMContentLoaded',$item,false);\n";
+        }
+        $h   = $dom->getElementsByTagName('body')->item(0);
+        $element = $dom->createElement('script');
+        $element->appendChild ($dom->createTextNode("\nif(window.attachEvent) {\n".$attach."\n} else {\n".$listener."\n}\n"));
+        $element->setAttribute( 'type', 'text/javascript' );
+        $h->appendChild($element);
+        $content = $dom->saveHTML();
+    }
 }   // end function executeFilters()
+
+/**
+ * register a JS file
+ *
+ * @access public
+ * @param  string  $file     - file URI
+ * @param  string  $position - OPTIONAL 'body'|'head' (default 'head')
+ * @return void
+ **/
+function register_filter_js($file,$position='head')
+{
+    global $_bc_filter_js;
+    if ( ! in_array($file,$_bc_filter_js) )
+        $_bc_filter_js[] = $file;
+}   // end function register_filter_js()
+
+/**
+ * register an onload event (will be added to <body>)
+ *
+ * @access public
+ * @param  string  $code - onload content
+ * @return void
+ **/
+function register_filter_onload($code)
+{
+    global $_bc_filter_onload;
+    if ( ! in_array($code,$_bc_filter_onload) )
+        $_bc_filter_onload[] = $code;
+}   // end function register_filter_onload()
+
+
+/**
+ * allows modules to register output filters
+ *
+ * This method can only be called in BACKEND context! 
+ * It needs 'modules_install' permissions!
+ *
+ * @param  string  $filter_name
+ * @param  string  $module_directory
+ * @param  string  $filter_description - optional
+ * @param  string  $filter_code        - optional
+ * @return boolean
+ **/
+function register_filter($filter_name,$module_directory,$filter_description=NULL,$filter_code=NULL)
+{
+    $backend = CAT_Backend::getInstance('addons','modules_install');
+	$SQL     = sprintf("SELECT * FROM `%smod_output_filter` WHERE module_name='%s'", CAT_TABLE_PREFIX, $module_directory);
+	if (false !== ($data = $backend->db()->get_one($SQL, MYSQL_ASSOC)))
+    {
+		if (empty($data))
+        {
+			$SQL = sprintf(
+                "INSERT INTO `%smod_filter` SET
+                filter_name='%s', module_name='%s', filter_description='%s',
+                filter_code='%s', 'filter_active='Y'",
+            CAT_TABLE_PREFIX, $filter_name, $module_directory, $filter_description, $filter_code
+            );
+			if (!$backend->db()->query($SQL))
+            {
+				trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->get_error()));
+				return false;
+			}
+		}
+	}
+	else {
+		trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->get_error()));
+		return false;
+	}
+	return true;
+}   // end function register_filter()
+
+/**
+ * Unregister an output filter
+ *
+ * @param  string  $filter_name
+ * @param  string  $module_directory
+ * @return boolean
+ */
+function unregister_filter($filter_name,$module_directory)
+{
+    $backend = CAT_Backend::getInstance('addons','modules_uninstall');
+	$SQL     = sprintf(
+        "DELETE FROM `%smod_filter` WHERE filter_name='%s' aND module_directory='%s'",
+        CAT_TABLE_PREFIX, $filter_name, $module_directory
+    );
+	if (!$backend->db()->query($SQL)) {
+		trigger_error(sprintf('[%s] %s', __FUNCTION__, $backend->db()->get_error()));
+		return false;
+	}
+	return true;
+}   // end function unregister_filter()
