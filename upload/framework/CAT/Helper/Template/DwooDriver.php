@@ -52,6 +52,11 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
         $this->logger = new CAT_Helper_KLogger( CAT_PATH.'/temp', $this->debuglevel );
     }   // end function __construct()
 
+    public function output($_tpl, $data = array(), Dwoo_ICompiler $compiler = NULL)
+    {
+        echo $this->get($_tpl,$data,$compiler);
+    }
+
     /**
      * this overrides and extends the original get() method Dwoo provides:
      * - use the template search and fallback paths
@@ -68,7 +73,7 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
             $data = array_merge( self::$_globals, $data );
         }
         if ( ! is_object ( $_tpl ) ) {
-            if ( !file_exists($_tpl) )
+            if ( !file_exists($_tpl) || is_dir($_tpl) )
             {
                 global $parser;
                 $file = $parser->findTemplate($_tpl);

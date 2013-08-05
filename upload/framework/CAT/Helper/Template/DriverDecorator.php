@@ -145,23 +145,10 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
      **/
     public function hasTemplate($name)
     {
-        // scan search paths (if any)
-        $paths = array();
-            if ( $this->te->path ) {
-                $paths[] = $this->te->path;
-        }
-            if ( $this->te->fallback_path ) {
-                $paths[] = $this->te->fallback_path;
-        }
-            $paths[] = $this->te->workdir;
-        // remove doubles
-        $paths = array_unique($paths);
-            $dirh  = CAT_Helper_Directory::getInstance();
-            $dirh->setSuffixFilter(array('tpl','htt','lte'));
-        foreach ( $paths as $dir ) {
-                $file = $dirh->findFile($name,$dir,true);
-                if ( $file ) { return true; }
-        }
+            $file = $this->findTemplate($name);
+            if ( $file )
+                return $file;
+            else
         return false;
         }   // end function hasTemplate()
 

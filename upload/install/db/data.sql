@@ -115,7 +115,7 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/backend/pages/sections_save.php' ),
     ( 0, '/backend/pages/settings_save.php' ),
     ( 0, '/backend/pages/trash.php' ),
-    ( 0, '/backend/preferences/save.php' ),
+    ( 0, '/backend/preferences/ajax_save.php' ),
     ( 0, '/backend/profiles/index.php' ),
     ( 0, '/backend/settings/ajax_get_settings.php' ),
     ( 0, '/backend/settings/ajax_guid.php' ),

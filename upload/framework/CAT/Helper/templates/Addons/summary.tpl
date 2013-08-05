@@ -1,7 +1,7 @@
 	<h2{if $fail} style="color:#c00;"{/if}>{$heading}</h2>
 	<p>{$message}</p>
 
-	<table style="width:80%">
+	<table style="width:100%">
 	<thead>
 	  <tr>
 		<th>&nbsp;</th>
@@ -16,7 +16,7 @@
 	{$seen=true}
 	<tr>
       <td>&nbsp;</td>
-      <td style="{$line.style}" colspan="3">{translate('PHP Settings')}</td>
+      <td colspan="3">{translate('PHP Settings')}</td>
 	</tr>
 	{/if}
     {if $line.key && $line.key == 'ADDONS' && $addonsseen == false}
@@ -28,7 +28,7 @@
 	{/if}
  	<tr>
 	  <td class="{if $line.status}ok{else}fail{/if}">&nbsp;</td>
-      <td style="{$line.style}" class="col1">{$line.check}</td>
+      <td class="col1">{$line.check}</td>
       <td style="{$line.style}" class="col2">{$line.required}</td>
       <td style="{$line.style}" class="col3">{$line.actual}</td>
 	</tr>

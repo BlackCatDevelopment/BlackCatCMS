@@ -592,6 +592,7 @@ jQuery(document).ready(function()
 			'menu':				$('#fc_addPage_menu option:selected').val(),
 			'target':			$('#fc_addPage_target option:selected').val(),
 			'template':			$('#fc_addPage_template option:selected').val(),
+            'template_variant':	$('#fc_default_template_variant option:selected').val(),
 			'language':			$('#fc_addPage_language option:selected').val(),
 			'page_link':		$('#fc_addPage_page_link').val(),
 			'description':		$('#fc_addPage_description').val(),
