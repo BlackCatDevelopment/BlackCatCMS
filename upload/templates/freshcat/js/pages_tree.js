@@ -188,7 +188,7 @@
                                 {
                                     $("<option/>").val(value).text(value).appendTo("#fc_default_template_variant");
                                 });
-                                if( data.template_variant.length > 0 )
+                                if( typeof data.template_variant !== 'object' && data.template_variant.length > 0 )
                                 {
                                     $("#fc_default_template_variant option[value="+data.template_variant+"]").prop('selected',true);
                                     $("#fc_default_template_variant").val(data.template_variant);
