@@ -291,6 +291,16 @@ CREATE TABLE IF NOT EXISTS `cat_pages` (
   PRIMARY KEY (`page_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `cat_pages_settings` (
+	`page_id` INT(11) NOT NULL,
+	`set_type` ENUM('internal','meta') NOT NULL DEFAULT 'internal',
+	`set_name` VARCHAR(50) NOT NULL,
+	`set_value` TINYTEXT NOT NULL,
+	UNIQUE INDEX `set_type_set_name` (`page_id`, `set_type`, `set_name`),
+	CONSTRAINT `page_id` FOREIGN KEY (`page_id`) REFERENCES `cat_pages` (`page_id`)
+) COMMENT='Additional settings for pages' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 CREATE TABLE IF NOT EXISTS `cat_pages_load` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `register_name` varchar(255) NOT NULL DEFAULT '',
@@ -320,16 +330,18 @@ CREATE TABLE IF NOT EXISTS `cat_search` (
   PRIMARY KEY (`search_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `cat_sections` (
-  `section_id` int(11) NOT NULL AUTO_INCREMENT,
-  `page_id` int(11) NOT NULL DEFAULT '0',
-  `position` int(11) NOT NULL DEFAULT '0',
-  `module` varchar(255) NOT NULL DEFAULT '',
-  `block` varchar(255) NOT NULL DEFAULT '',
-  `publ_start` varchar(255) NOT NULL DEFAULT '0',
-  `publ_end` varchar(255) NOT NULL DEFAULT '0',
-  `name` varchar(255) NOT NULL DEFAULT 'no name',
-  PRIMARY KEY (`section_id`)
+CREATE TABLE `cat_sections` (
+	`section_id` INT(11) NOT NULL AUTO_INCREMENT,
+	`page_id` INT(11) NOT NULL DEFAULT '0',
+	`position` INT(11) NOT NULL DEFAULT '0',
+	`module` VARCHAR(255) NOT NULL DEFAULT '',
+	`block` VARCHAR(255) NOT NULL DEFAULT '',
+	`publ_start` VARCHAR(255) NOT NULL DEFAULT '0',
+	`publ_end` VARCHAR(255) NOT NULL DEFAULT '0',
+	`name` VARCHAR(255) NOT NULL DEFAULT 'no name',
+	`modified_when` INT(11) NOT NULL DEFAULT '0',
+	`modified_by` INT(11) NOT NULL DEFAULT '0',
+	PRIMARY KEY (`section_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cat_settings` (
