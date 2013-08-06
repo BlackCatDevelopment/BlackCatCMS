@@ -152,7 +152,7 @@ function register_filter_onload($code)
 /**
  * allows modules to register output filters
  *
- * This method can only be called in BACKEND context! 
+ * This method can only be called in BACKEND context!
  * It needs 'modules_install' permissions!
  *
  * @param  string  $filter_name
@@ -164,29 +164,29 @@ function register_filter_onload($code)
 function register_filter($filter_name,$module_directory,$filter_description=NULL,$filter_code=NULL)
 {
     $backend = CAT_Backend::getInstance('addons','modules_install');
-	$SQL     = sprintf("SELECT * FROM `%smod_output_filter` WHERE module_name='%s'", CAT_TABLE_PREFIX, $module_directory);
-	if (false !== ($data = $backend->db()->get_one($SQL, MYSQL_ASSOC)))
+    $SQL     = sprintf("SELECT * FROM `%smod_output_filter` WHERE module_name='%s'", CAT_TABLE_PREFIX, $module_directory);
+    if (false !== ($data = $backend->db()->get_one($SQL, MYSQL_ASSOC)))
     {
-		if (empty($data))
+        if (empty($data))
         {
-			$SQL = sprintf(
+            $SQL = sprintf(
                 "INSERT INTO `%smod_filter` SET
                 filter_name='%s', module_name='%s', filter_description='%s',
-                filter_code='%s', 'filter_active='Y'",
+                filter_code='%s', filter_active='Y'",
             CAT_TABLE_PREFIX, $filter_name, $module_directory, $filter_description, $filter_code
             );
-			if (!$backend->db()->query($SQL))
+            if (!$backend->db()->query($SQL))
             {
-				trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->get_error()));
-				return false;
-			}
-		}
-	}
-	else {
-		trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->get_error()));
-		return false;
-	}
-	return true;
+                trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->get_error()));
+                return false;
+            }
+        }
+    }
+    else {
+        trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->get_error()));
+        return false;
+    }
+    return true;
 }   // end function register_filter()
 
 /**
@@ -199,13 +199,13 @@ function register_filter($filter_name,$module_directory,$filter_description=NULL
 function unregister_filter($filter_name,$module_directory)
 {
     $backend = CAT_Backend::getInstance('addons','modules_uninstall');
-	$SQL     = sprintf(
+    $SQL     = sprintf(
         "DELETE FROM `%smod_filter` WHERE filter_name='%s' aND module_directory='%s'",
         CAT_TABLE_PREFIX, $filter_name, $module_directory
     );
-	if (!$backend->db()->query($SQL)) {
-		trigger_error(sprintf('[%s] %s', __FUNCTION__, $backend->db()->get_error()));
-		return false;
-	}
-	return true;
+    if (!$backend->db()->query($SQL)) {
+        trigger_error(sprintf('[%s] %s', __FUNCTION__, $backend->db()->get_error()));
+        return false;
+    }
+    return true;
 }   // end function unregister_filter()
