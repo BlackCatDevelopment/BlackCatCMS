@@ -39,7 +39,7 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$module_description	  = 'Erweiter- und konfigurierbare Ausgabefilter für das Frontend';
+$module_description	  = 'Erweiter- und konfigurierbare Ausgabefilter fÃ¼r das Frontend';
 
 $LANG = array(
     'Provided by (module)' => 'Definiert in (Modul)',

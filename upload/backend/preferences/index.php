@@ -60,9 +60,9 @@ $tpl_data['INIT_PAGE_SELECT'] = $options;
 // ============================================================= 
 // ! read user-info from table users and assign it to template   
 // ============================================================= 
-$sql  = 'SELECT `display_name`, `username`, `email`, `statusflags` FROM `'.CAT_TABLE_PREFIX.'users` WHERE `user_id` = '.(int)$user->get_user_id();
+$sql  = 'SELECT `display_name`, `username`, `email`, `statusflags` FROM `%susers` WHERE `user_id` = %d';
 
-$res_user	= $backend->db()->query($sql);
+$res_user	= $backend->db()->query(sprintf($sql,CAT_TABLE_PREFIX,(int)$user->get_user_id()));
 if ($res_user->numRows() > 0)
 {
 	if( ($rec_user = $res_user->fetchRow()) )
@@ -115,6 +115,7 @@ foreach ($timezone_table as $title)
 // =========================== 
 $DATE_FORMATS = CAT_Helper_DateTime::getDateFormats();
 $USE_DEFAULT  = $val->fromSession('USE_DEFAULT_DATE_FORMAT');
+$userformat   = $val->fromSession('DATE_FORMAT');
 $counter=0;
 foreach ( $DATE_FORMATS AS $format => $title )
 {
@@ -122,7 +123,7 @@ foreach ( $DATE_FORMATS AS $format => $title )
 	$tpl_data['dateformats'][$counter]['VALUE']	= ( $format != 'system_default' ) ? $format : 'system_default';
 	$tpl_data['dateformats'][$counter]['NAME']	= $title;
 	$tpl_data['dateformats'][$counter]['SELECTED']
-        =    ( DATE_FORMAT      == $format && ! $USE_DEFAULT )
+        =    ( $userformat      == $format && ! $USE_DEFAULT )
           || ( 'system_default' == $format &&   $USE_DEFAULT )
         ? true
         : false;
@@ -134,6 +135,7 @@ foreach ( $DATE_FORMATS AS $format => $title )
 // =========================== 
 $TIME_FORMATS = CAT_Helper_DateTime::getTimeFormats();
 $USE_DEFAULT  = $val->fromSession('USE_DEFAULT_TIME_FORMAT');
+$userformat   = $val->fromSession('TIME_FORMAT');
 $counter	= 0;
 foreach ( $TIME_FORMATS AS $format => $title )
 {
@@ -141,7 +143,7 @@ foreach ( $TIME_FORMATS AS $format => $title )
 	$tpl_data['timeformats'][$counter]['VALUE']		= $format != 'system_default' ? $format : 'system_default';
 	$tpl_data['timeformats'][$counter]['NAME']		= $title;
 	$tpl_data['timeformats'][$counter]['SELECTED']
-        =    ( TIME_FORMAT      == $format && ! $USE_DEFAULT )
+        =    ( $userformat      == $format && ! $USE_DEFAULT )
           || ( 'system_default' == $format &&   $USE_DEFAULT )
 		? true
         : false;

@@ -55,8 +55,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
             'date_format'        => 'CAT_Helper_DateTime::checkDateformat',
             'date_format_short'  => 'CAT_Helper_DateTime::checkDateformat',
             'time_format'        => 'CAT_Helper_DateTime::checkTimeformat',
-            'init_page'          => '',
-            'init_page_param'    => '',
+            'init_page'          => NULL,
+            'init_page_param'    => NULL,
         );
         private static $permissions     = array();
         private static $defaultuser     = array();

@@ -15,8 +15,8 @@
 	<form name="preferences_form" id="fc_preferences_form" action="{$CAT_ADMIN_URL}/preferences/ajax_save.php" method="post" class="ajaxForm">
         <input type="hidden" name="_cat_ajax" value="1" />
 		<p class="submit_settings fc_gradient1 fc_border">
-			<input type="submit" class="fc_preferences_submit" name="submit" value="{translate('Save')}" />
-			<input type="reset" class="fc_modifyUser_reset" name="reset" value="{translate('Reset')}" />
+			<input type="submit" value="{translate('Save')}" />
+			<input type="reset" value="{translate('Reset')}" />
 		</p>
 		<div class="fc_list_forms fc_gradient1">
 			<label for="fc_pref_display_name" class="fc_label_300">{translate('Display name')}:</label>
@@ -91,7 +91,7 @@
     			</div>
                 <div class="clear_sp"></div>
     			<label for="fc_current_password" class="fc_label_300">{translate('Confirm with current password')}:</label>
-    			<input type="password" id="fc_current_password" name="current_password" value="" />
+    			<input type="password" id="fc_current_password" name="current_password" />
                 <div class="clear_sp"></div>
             </div>
 
@@ -116,8 +116,8 @@
 		
 		</div>
 		<p class="submit_settings fc_gradient1 fc_border fc_text_right">
-			<input type="submit" class="fc_preferences_submit" name="submit" value="{translate('Save')}" />
-			<input type="reset" class="fc_modifyUser_reset" name="reset" value="{translate('Reset')}" />
+			<input type="submit" value="{translate('Save')}" />
+			<input type="reset" value="{translate('Reset')}" />
 		</p>
 	</form>
 </div>

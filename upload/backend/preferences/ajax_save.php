@@ -170,7 +170,7 @@ if (!count($err_msg))
             {
                 $value = $val->sanitizePost($opt);
 //echo "OPT -$opt- VAL -$value- CHECK -$check- VALID -" . call_user_func($check,$value) . "-\n<br />";
-                if ( ! call_user_func($check,$value) ) continue;
+                if ( $check && ! call_user_func($check,$value) ) continue;
                 $sql = 'INSERT INTO `%susers_options` '
                      . 'VALUES ( "%d", "%s", "%s" )'
                      ;

@@ -87,6 +87,8 @@ function executeFilters(&$content)
         libxml_use_internal_errors(true);
         @$dom->loadHTML($content);
         $h   = $dom->getElementsByTagName('head')->item(0);
+        if($h)
+        {
         foreach($_bc_filter_js as $file)
         {
             $element = $dom->createElement('script');
@@ -97,6 +99,7 @@ function executeFilters(&$content)
             $h->appendChild($element);
         }
         $content = $dom->saveHTML();
+    }
     }
 
     // onload events
