@@ -151,10 +151,10 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
 
         }   // end function dropdown ()
 
-        public static function tree( $list, $root_id )
+        public static function tree( $list, $root_id, $selected=NULL )
         {
             $self   = self::getInstance();
-            $output = self::listbuilder($list,$root_id);
+            $output = self::listbuilder($list,$root_id,'ul',$selected);
             return $self->startUL()
 		         . join( "\n\t", $output )."\n"
                  . $self->closeUL();
@@ -184,6 +184,8 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             $title_key = $self->_config['__title_key'];
             $level_key = $self->_config['__level_key'];
             $isopen_key = $self->_config['__is_open_key'];
+            $link_key   = $self->_config['__link_key'];
+            $auto_link  = $self->_config['__auto_link'];
             $space     = $self->_config['space'];
             $is_first  = true;
             $is_last   = false;
@@ -225,7 +227,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                             : 0;
                     $tab    = str_repeat( $space, $level );
                     $text   = $option['value'][$title_key];
-                    $is_open = $option['value'][$isopen_key];
+                    $is_open = ( $selected ? $selected : $option['value'][$isopen_key] );
                     // mark selected
                     if($type=='select')
                     {
@@ -240,7 +242,10 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                         // HTML for menu item containing children (open)
                         $output[] = $tab.$self->startLI($option['value'][$id_key],$level,true,$is_first,$is_last,$is_open)
                                //. "<span>$text</span>";
-                                  . $text;
+                                  . ( ($auto_link&&$link_key) ? '<a href="'.CAT_Helper_Page::getLink($option['value'][$id_key]).'">' : '' )
+                                  . $text
+                                  . ( ($auto_link&&$link_key) ? '</a>' : '' )
+                                  ;
                         // open sub list
                         $output[] = $tab . "\t" . $self->startUL( $space, '', $option['value'][$level_key] );
                         #$output[] = '-'.$option['value'][$id_key].'-';
@@ -255,19 +260,22 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                             : 0;
                     $tab    = str_repeat( $space, $level );
                     $text   = $option['value'][$title_key];
+                    $is_current = ( ( isset($selected) && $selected == $option['value'][$id_key] ) ? true : false );
                     if($type=='select')
                     {
                     // mark selected
                     $sel    = NULL;
-                    if ( isset($selected) && $selected == $option['value'][$id_key] ) {
+                        if ( $is_current ) {
                         $sel = ' selected="selected"';
                     }
                         $output[] = $self->getOption($option['value'][ $id_key ],$sel,$tab,$text);
                     }
                     else
                     {
-                        $output[] = $tab.$self->startLI($option['value'][$id_key],$level,false,$is_first,$is_last)
+                        $output[] = $tab.$self->startLI($option['value'][$id_key],$level,false,$is_first,$is_last,$is_current)
+                                  . ( ($auto_link&&$link_key) ? '<a href="'.CAT_Helper_Page::getLink($option['value'][$id_key]).'">' : '' )
                                   . $text
+                                  . ( ($auto_link&&$link_key) ? '</a>' : '' )
                                   . $self->closeLI();
                     }
                 }
@@ -279,7 +287,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 $last   = array_splice( $output, -1, 1 );
                 // add last item css
                 $last   = str_ireplace( 'class="', 'class="'.$self->_config['__li_last_item_class'].' ', $last );
-                $output[]  = $last[0];
+                $output[] = ( is_array($last) && count($last) ) ? $last[0] : '';
             }
 
             return $output;
@@ -456,6 +464,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
 	            '__id_key'              => 'page_id',
 	            '__title_key'           => 'menu_title',
 	            '__level_key'           => 'level',
+                '__link_key'            => 'link',
 	            '__children_key'        => 'children',
 	            '__current_key'         => 'current',
 	            '__hidden_key'          => 'hidden',
@@ -479,6 +488,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 '__li_is_open_class'    => 'item_open',
                 '__li_is_closed_class'  => 'item_closed',
                 '__no_html'             => false,
+                '__auto_link'           => false,
 			    'space'                 => '    ',
 			);
             return $this; // make chainable

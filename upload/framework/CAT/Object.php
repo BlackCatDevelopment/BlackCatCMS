@@ -148,10 +148,11 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          * @access public
          * @param  string  $message - error message
          * @param  string  $link    - page to forward to
+         * @param  boolean $print_header
          * @param  mixed   $args    - additional args to print
          *
          **/
-        public static function printError( $message = NULL, $link = 'index.php', $args = NULL ) {
+        public static function printError( $message = NULL, $link = 'index.php', $print_header = true, $args = NULL ) {
             $print_footer = false;
             $caller       = debug_backtrace();
 
@@ -172,21 +173,14 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             $message = CAT_Object::lang()->translate($message);
 
             // avoid "headers already sent" error
-            if ( ! headers_sent() ) {
+            if ( ! headers_sent() && $print_header ) {
                 $print_footer = true;
                 echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
   <meta http-equiv="content-type" content="text/html; charset=windows-1250">
   <title>BlackCat CMS - '.$caller_class.' Fatal Error</title>
-';
-            }
-
-            // if we're able to use the template parser...
-            global $parser;
-            if (!is_object($parser) || ( !CAT_Backend::isBackend() && !defined('CAT_PAGE_CONTENT_DONE')) )
-            {
-                echo "  </head>
+  </head>
     <style type=\"text/css\">
       #caterror{
           border:3px solid #f00;padding:5px 5px 5px 170px;margin:25px auto;width:75%;color:#f00;background-color:#f3d8d8;
@@ -202,6 +196,14 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
         <div id=\"fc_content_header\">
 	      <a class=\"fc_button_back ui-corner-right\" href=\"$link\">Zurück</a>
         </div>
+';
+            }
+
+            // if we're able to use the template parser...
+            global $parser;
+            if (!is_object($parser) || ( !CAT_Backend::isBackend() && !defined('CAT_PAGE_CONTENT_DONE')) )
+            {
+                echo "
     <div id=\"caterror\">
       <h1>BlackCat CMS Fatal Error</h1><br /><br />
         <div style=\"color: #FF0000; font-weight: bold; font-size: 1.2em;\">
@@ -282,8 +284,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          * @access public
          *
          **/
-        public static function printFatalError( $message = NULL, $args = NULL ) {
-            CAT_Object::printError( $message, $args );
+        public static function printFatalError( $message = NULL, $link = 'index.php', $print_header = true, $args = NULL ) {
+            CAT_Object::printError( $message, $link, $print_header, $args );
             exit;
         }   // end function printFatalError()
 

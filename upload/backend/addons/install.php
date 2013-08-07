@@ -67,5 +67,6 @@ if(CAT_Helper_Addons::installUploaded($_FILES['userfile']['tmp_name'],$_FILES['u
 }
 else
 {
-    $backend->print_error( 'Unable to install the module' );
+    // error is already printed by the helper
+    $backend->print_footer( 'Unable to install the module' );
 }

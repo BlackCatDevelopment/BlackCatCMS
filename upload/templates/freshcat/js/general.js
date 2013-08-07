@@ -98,6 +98,22 @@ function getThemeName()
 	return 'freshcat';
 }
 
+function getDatesFromQuerystring(q)
+{
+    var vars = [], hash;
+    if(q != undefined)
+    {
+        q = q.split('&');
+        for(var i = 0; i < q.length; i++)
+        {
+            hash = q[i].split('=');
+            vars.push(hash[1]);
+            vars[hash[0]] = hash[1];
+        }
+    }
+    return vars;
+}
+
 // match css class with given prefix
 function match_class_prefix(prefix,elem)
 {
@@ -250,9 +266,7 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 	$('.fc_popup').html( message );
 
 	// check for all necessary values
-	var ajaxUrl			= typeof ajaxUrl == 'undefined' ||
-							ajaxUrl === false ?
-									alert( 'You sent an invalid url' ) : ajaxUrl,
+	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl === false					? alert( 'You sent an invalid url' ) : ajaxUrl,
 		ajaxType		= typeof ajaxType == 'undefined' || ajaxType === false				    ? 'POST' : ajaxType,
 		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType === false		    ? 'JSON' : ajaxDataType,
 		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext === false		? $('document.body') : ajaxjQcontext,
@@ -382,10 +396,6 @@ function dialog_ajax( title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSe
 				// return error
 				return_error( jqXHR.process , data.message );
 			}
-		},
-		error:		function( data )
-		{
-			return_error( jqXHR.process , data.message );
 		}
 	});
 }
@@ -549,6 +559,13 @@ jQuery(document).ready( function()
 	{
 		dialog_form( $(this) );
 	});
+
+    // Activate Ajax for Links having class 'ajaxLink'
+    $('a.ajaxLink').click( function(e) {
+        e.preventDefault();
+        var ajaxUrl = $(this).prop('href');
+        dialog_ajax( 'Saving', ajaxUrl, getDatesFromQuerystring(document.URL.split('?')[1]) );
+    });
 
 	// Bind buttons to show popups
 	//$('.show_popup').fc_show_popup();

@@ -634,13 +634,21 @@ if (!class_exists('CAT_Helper_Page'))
                 $seen = array();
                 foreach (CAT_Helper_Page::$css as $item)
                 {
-                    if ( ! preg_match( '~^/~', $item['file'] ) )
-                        $item['file'] = '/' . $item['file'];
                     if ( ! isset($seen[$item['file']]) )
                     {
                     // make sure we have an URI (CAT_URL included)
+                        if(!preg_match('~^http(s)?://~i',$item['file']))
+                        {
+                            if ( ! preg_match( '~^/~', $item['file'] ) )
+                                $item['file'] = '/' . $item['file'];
                     $file = (preg_match('#' . CAT_URL . '#i', $item['file']) ? $item['file'] : CAT_URL . '/' . $item['file']);
-                    $output .= '<link rel="stylesheet" type="text/css" href="' . $val->sanitize_url($file) . '" media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
+                            $file = $val->sanitize_url($file);
+                        }
+                        else
+                        {
+                            $file = $item['file'];
+                        }
+                        $output .= '<link rel="stylesheet" type="text/css" href="' . $file . '" media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
                 }
                     $seen[$item['file']] = 1;
                 }
@@ -1233,6 +1241,42 @@ if (!class_exists('CAT_Helper_Page'))
         }   // end function getPages()
 
         /**
+         * returns pages array for given menu number
+         *
+         * @access public
+         * @param  integer  $id    - menu id
+         * @return array
+         **/
+        public static function getPagesForMenu($id)
+        {
+            if(!count(self::$pages)) self::getInstance();
+            $menu = array();
+            foreach(self::$pages as $pg)
+            {
+                if( $pg['menu'] == $id && self::isVisible($pg['page_id']) )
+                    $menu[] = $pg;
+            }
+            return $menu;
+        }   // end function getPagesForMenu()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getPagesForLevel($level)
+        {
+            if(!count(self::$pages)) self::getInstance();
+            $pages = array();
+            foreach(self::$pages as $pg)
+            {
+                if ( $pg['level'] == $level  && self::isVisible($pg['page_id']) )
+                    $pages[] = $pg;
+            }
+            return $pages;
+        }   // end function getPagesForLevel()
+
+        /**
          * returns a list of page_id's containing the children of given parent
          *
          * @access public
@@ -1619,8 +1663,12 @@ if (!class_exists('CAT_Helper_Page'))
                 case 'deleted':
                     $show_it = false;
                     break;
-                // shown if called
+                // shown if called, but not in menu
                 case 'hidden':
+                    if(CAT_Registry::get('PAGE_ID')==$page_id)
+                        $show_it = true;
+                    break;
+                // always visible
                 case 'public':
                     $show_it = true;
                     break;

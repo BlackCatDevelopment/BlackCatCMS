@@ -20,8 +20,8 @@ a:hover {
 	color:	        #3f7bb3;
 }
 .highlight, .warning, .success {
-	background-color: #ec0056;
-	color: white;
+	background-color: #ffccaa;
+	color: #000;
 }
 	.success {
 		background-color: #D0FFA0;
@@ -32,7 +32,7 @@ a:hover {
 	 	border-color: #cb004a;
 	}
 	.warning > * {
-		color: #f8f8f8;
+		
 	}
 .fc_invalid {
 	border-color: #ec0056;
