@@ -250,7 +250,9 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 	$('.fc_popup').html( message );
 
 	// check for all necessary values
-	var ajaxUrl			= typeof ajaxUrl == 'undefined' || ajaxUrl === false					? alert( 'You sent an invalid url' ) : ajaxUrl,
+	var ajaxUrl			= typeof ajaxUrl == 'undefined' ||
+							ajaxUrl === false ?
+									alert( 'You sent an invalid url' ) : ajaxUrl,
 		ajaxType		= typeof ajaxType == 'undefined' || ajaxType === false				    ? 'POST' : ajaxType,
 		ajaxDataType	= typeof ajaxDataType == 'undefined' || ajaxDataType === false		    ? 'JSON' : ajaxDataType,
 		ajaxjQcontext	= typeof ajaxjQcontext == 'undefined' || ajaxjQcontext === false		? $('document.body') : ajaxjQcontext,
