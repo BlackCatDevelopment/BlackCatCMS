@@ -391,16 +391,21 @@ function dialog_ajax( title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSe
 }
 
 // Function to define confirm of forms showing in a dialog and adding a optional beforeSend and afterSend
-function dialog_form( currentForm, beforeSend, afterSend )
+function dialog_form( currentForm, beforeSend, afterSend, data_type )
 {
+	if ( typeof data_type == 'undefined' ) {
+		var data_type	= 'HTML';
+	}
 	// If form is submitted
-	currentForm.submit(function(e)
+	currentForm.submit( function(e)
 	{
 		// Prevent form from being send twice!
 		e.preventDefault();
 		// Define ajax for form
 		currentForm.ajaxSubmit(
 		{
+			context:		currentForm,
+			dataType:		data_type,
 			beforeSend:		function( data )
 			{
 				// Check if the form has a (mostly hidden) input field with a title for the form (if not 'loading' is used
