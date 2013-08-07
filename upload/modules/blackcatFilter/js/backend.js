@@ -40,6 +40,9 @@ jQuery(document).ready( function() {
                     replace     = ( dates['action'] == 'activate' ) ? 'action=activate'   : 'action=deactivate';
                     replacement = ( dates['action'] == 'activate' ) ? 'action=deactivate' : 'action=activate';
                     clicked.prop('href',clicked.prop('href').replace(replace,replacement));
+                    if( dates['action'] == 'delete' ) {
+                        window.location.replace(location.href);
+                    }
     			}
     			else {
     				// return error
