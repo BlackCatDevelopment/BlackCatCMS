@@ -44,29 +44,37 @@ if (defined('CAT_PATH')) {
 
 require_once CAT_PATH.'/framework/functions.php';
 
-function Dwoo_Plugin_makeThumb(Dwoo $dwoo, $file='', $prefix='', $height=300, $width=200, $method='fit') {
+function Dwoo_Plugin_make_thumb(Dwoo $dwoo, $file='', $prefix='', $height=300, $width=200, $method='fit', $overwrite = false) {
 	if ( $file == '' ) return false;
 
+	// check if the file contains the Path to the image
 	$file			= str_replace( CAT_URL, CAT_PATH, $file );
 	$file			= strpos( $file, CAT_PATH ) === false ?
 							CAT_PATH . $file :
 							$file;
 
-	$info	= pathinfo( $file );
+	// Set some values
+	$temp_path		= CAT_PATH . '/temp/' . MEDIA_DIRECTORY . '/';
+	$info			= pathinfo( $file );
 
-	$new_path		= CAT_PATH . '/temp/media/' . $prefix . $info['filename'] . '_' . $width . '_' . $height . '.' . $info['extension'] ;
-	$new_url		= CAT_URL . '/temp/media/' . $prefix . $info['filename']  . '_' . $width . '_' . $height . '.' . $info['extension'] ;
+	$new_path		= $temp_path. $prefix . $info['filename'] . '_' . $width . '_' . $height . '.' . $info['extension'] ;
+	$new_url		= $temp_path . $prefix . $info['filename']  . '_' . $width . '_' . $height . '.' . $info['extension'] ;
 
-	if ( !file_exists( CAT_PATH . '/temp/media/' ) )
-		CAT_Helper_Directory::createDirectory( CAT_PATH . '/temp/media/', NULL, true );
+	// Create temp directory, if the folder doesn't exist
+	if ( !file_exists( $temp_path ) )
+		CAT_Helper_Directory::createDirectory( $temp_path, NULL, true );
 
-	CAT_Helper_Image::getInstance()->make_thumb(
-		$file,
-		$new_path,
-		$height,
-		$width,
-		$method
-	);
+	// Create the file, if the file does not exist or overwrite is set to true
+	if ( !file_exists( $new_path ) || $overwrite == true )
+	{
+		CAT_Helper_Image::getInstance()->make_thumb(
+			$file,
+			$new_path,
+			$height,
+			$width,
+			$method
+		);
+	}
 
 	return $new_url;
 	// end makeThumb()
