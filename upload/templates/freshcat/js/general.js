@@ -408,7 +408,6 @@ function dialog_form( currentForm, beforeSend, afterSend, data_type )
 			dataType:		data_type,
 			beforeSend:		function( data )
 			{
-				console.log(data);
 				// Check if the form has a (mostly hidden) input field with a title for the form (if not 'loading' is used
 				if ( currentForm.find('input[name=fc_form_title]').size() > 0 )
 				{
