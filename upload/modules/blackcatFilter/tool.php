@@ -39,7 +39,67 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$backend =  CAT_Backend::getInstance('admintools','blackcatFilter');
+$backend      = CAT_Backend::getInstance('admintools','blackcatFilter');
+$val          = CAT_Helper_Validate::getInstance();
+$showit       = false;
+$errors       = array();
+$upload_error = NULL;
+
+// new filter?
+if ( $val->sanitizePost('filter_add') )
+{
+    $data    = array();
+    foreach( array( 'module_name','name','description','code','active' ) as $key )
+    {
+        if(!$val->sanitizePost('filter_'.$key))
+        {
+            if($key=='code' && isset($_FILES['filter_file']))
+            {
+                $data[$key] = '';
+                continue;
+            }
+            $errors[$key] = $backend->lang()->translate('Please fill out the field: {{ name }}', array('name'=>$backend->lang()->translate($key)) );
+        }
+        else
+        {
+            $data[$key] = $val->sanitizePost('filter_'.$key);
+        }
+    }
+
+    if(isset($errors['file']) && !isset($errors['code']))
+        unset($errors['file']);
+
+    if(!count($errors))
+    {
+        if(isset($_FILES['filter_file']))
+        {
+            $file = CAT_Helper_Upload::getInstance($_FILES['filter_file']);
+            $file->no_script = false;
+            $file->allowed   = array('application/octet-stream');
+            $file->process(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/blackcatFilter/filter/'));
+            if ( !$file->processed )
+                $upload_error = $file->error;
+            else
+                $data['name'] = $file->file_dst_name_body;
+                // filter must have the same name as the file
+                // the file will be renamed by the upload helper if it already
+                // exists, so we use the destination name here
+        }
+    }
+    if(count($errors) || $upload_error)
+    {
+        $showit = true;
+    }
+    else
+    {
+        $backend->db()->query(sprintf(
+            "INSERT INTO `%smod_filter` VALUES ( '%s', '%s', '%s', '%s', '%s' )",
+            CAT_TABLE_PREFIX, $data['name'], $data['module_name'], $data['description'], $data['code'], $data['active']
+        ));
+        if($backend->db()->is_error())
+            $errors[] = $backend->db()->get_error();
+    }
+}
 
 // get available filters
 $filters = array();
@@ -58,5 +118,10 @@ if($result->numRows())
 
 $parser->setPath(dirname(__FILE__).'/templates/default');
 $parser->output('tool.tpl',array(
-    'filters' => $filters
+    'filters'      => $filters,
+    'showit'       => $showit,
+    'missing'      => $errors,
+    'modules'      => CAT_Helper_Addons::get_addons('blackcatFilter','module'),
+    'upload_error' => $upload_error,
+    'errors'       => implode('<br />',$errors) . '<br />' . $upload_error,
 ));

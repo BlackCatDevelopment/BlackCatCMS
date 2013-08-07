@@ -39,9 +39,11 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
+$addons_helper = CAT_Helper_Addons::getInstance();
+
 // Create table
-CAT_Helper_Page::getInstance()->db()->query("DROP TABLE IF EXISTS `" . CAT_TABLE_PREFIX . "mod_filters`");
-CAT_Helper_Page::getInstance()->db()->query(sprintf(
+$addons_helper->db()->query("DROP TABLE IF EXISTS `" . CAT_TABLE_PREFIX . "mod_filters`");
+$addons_helper->db()->query(sprintf(
     "CREATE TABLE `%smod_filter` (
     `filter_name` VARCHAR(50) NOT NULL,
     `module_name` VARCHAR(50) NULL DEFAULT NULL,
@@ -57,8 +59,14 @@ CAT_Helper_Page::getInstance()->db()->query(sprintf(
 ));
 
 // insert default filters
-CAT_Helper_Page::getInstance()->db()->query(sprintf(
+$addons_helper->db()->query(sprintf(
     "INSERT INTO `%smod_filter` (`filter_name`, `module_name`, `filter_description`, `filter_code`, `filter_active`)
     VALUES ('obfuscateEmail', 'blackcatFilter', 'Obfuscates eMail addresses', '', 'N');",
     CAT_TABLE_PREFIX
 ));
+
+// add files to class_secure
+if ( false === $addons_helper->sec_register_file( 'blackcatFilter', 'ajax_set.php' ) )
+{
+     error_log( "Unable to register file -ajax_set.php-!" );
+}

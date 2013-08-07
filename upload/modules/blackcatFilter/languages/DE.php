@@ -45,6 +45,27 @@ $LANG = array(
     'Provided by (module)' => 'Definiert in (Modul)',
     'Enabled' => 'Aktiviert',
 // --- filter descriptions ---
-    'Obfuscates eMail addresses; please note that this will require JavaScript to be enabled'
-        => 'Maskiert eMail-Adressen; bitte beachten dass dies JavaScript erfordert',
+    'Obfuscates eMail addresses'
+        => 'Maskiert eMail-Adressen',
+    'Highlights search terms'
+        => 'Hebt Suchbegriffe hervor',
+    'Fixes date formats'
+        => 'Korrigiert Datumsformate',
+// --- legend ---
+    'The code is located in a PHP file which resides in <tt>./&lt;Module&gt;/filter</tt>' => 'Der Code ist in einer PHP Datei enthalten, Verzeichnis ist <tt>./&lt;Module&gt;/filter</tt>',
+    'The code is located in the database table <tt>&lt;Prefix&gt;mod_filter</tt>' => 'Der Code steht in der Datenbank, Tabelle <tt>&lt;Prefix&gt;mod_filter</tt>',
+// --- map fieldnames to strings ---
+    'file' => 'Datei',
+    'name' => 'Filtername',
+    'description' => 'Beschreibung',
+    'code' => 'Code',
+// --- new filter form ---
+    'Please fill out the field: {{ name }}' => 'Bitte das Feld ausfüllen: {{ name }}',
+    'Add entry' => 'Eintrag hinzufügen',
+    'Add new filter' => 'Neuen Filter anlegen',
+    'Filter name' => 'Filtername',
+    'Filter description' => 'Beschreibung',
+    'Code' => 'Code',
+    'Filter is active' => 'Filter aktivieren',
+    'Upload file' => 'Als Datei hochladen',
 );
