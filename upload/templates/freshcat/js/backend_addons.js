@@ -139,7 +139,6 @@ jQuery(document).ready(function(){
 		};
 		$.ajax(
 		{
-			context:	form,
 			type:		'POST',
 			url:		CAT_ADMIN_URL + '/addons/ajax_get_details.php',
 			dataType:	'json',
