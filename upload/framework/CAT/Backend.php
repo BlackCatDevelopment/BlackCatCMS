@@ -427,21 +427,7 @@ if (!class_exists('CAT_Backend', false))
         }
     	public function print_success($message, $redirect = 'index.php', $auto_footer = true)
     	{
-            global $update_when_modified, $page_id, $section_id;
-            // if changes were made, the var might be set
-            if(isset($update_when_modified) && $update_when_modified == true) {
-            	self::getInstance()->db()->query(sprintf(
-                    "UPDATE `%spages` SET modified_when = '%s', modified_by = '%d' WHERE page_id = %d",
-                    CAT_TABLE_PREFIX,time(),CAT_Users::get_user_id(),$page_id
-                ));
-                if ( $section_id )
-                {
-                    self::getInstance()->db()->query(sprintf(
-                        "UPDATE `%ssections` SET modified_when = '%s', modified_by = '%d' WHERE section_id = %d",
-                        CAT_TABLE_PREFIX,time(),CAT_Users::get_user_id(),$section_id
-                    ));
-                }
-            }
+            CAT_Backend::updateWhenModified();
     		CAT_Object::printMsg($message,$redirect,$auto_footer);
     	}
 
@@ -488,6 +474,31 @@ if (!class_exists('CAT_Backend', false))
                 $parser->setPath(CAT_THEME_PATH.'/templates/'.CAT_Registry::get('DEFAULT_THEME_VARIANT'),'backend');
             }
         }   // end function initPaths()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function updateWhenModified()
+        {
+            global $update_when_modified, $page_id, $section_id;
+            // if changes were made, the var might be set
+            if(isset($update_when_modified) && $update_when_modified == true) {
+           	    self::getInstance()->db()->query(sprintf(
+                    "UPDATE `%spages` SET modified_when = '%s', modified_by = '%d' WHERE page_id = %d",
+                    CAT_TABLE_PREFIX,time(),CAT_Users::get_user_id(),$page_id
+                ));
+                if ( $section_id )
+                {
+                    self::getInstance()->db()->query(sprintf(
+                        "UPDATE `%ssections` SET modified_when = '%s', modified_by = '%d' WHERE section_id = %d",
+                        CAT_TABLE_PREFIX,time(),CAT_Users::get_user_id(),$section_id
+                    ));
+                }
+            }
+        }   // end function updateWhenModified()
+        
 
 
     }
