@@ -49,4 +49,6 @@ $LANG = array(
     'Version check source file' => 'Quelldatei für die Versionsprüfung',
     'Proxy host (leave empty if you don\'t have one)' => 'Proxy Host (leer lassen wenn nicht vorhanden)',
     'Proxy port (leave empty if you don\'t need a proxy)' => 'Proxy Port (leer lassen wenn nicht vorhanden)',
+    'Warning: no WYSIWYG Editors installed!' => 'Warnung: Keine WYSIWYG Editoren installiert!',
+    'Warning: no mailer libs installed!' => 'Warnung: Keine Mailbibliotheken installiert!',
 );

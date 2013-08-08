@@ -142,6 +142,8 @@ $parser->output(
         'last' => CAT_Helper_DateTime::getInstance()->getDate($last).' '.CAT_Helper_DateTime::getInstance()->getTime($last),
         'CAT_VERSION' => CAT_VERSION,
         'uri' => $_SERVER['SCRIPT_NAME'],
+        'missing_mailer_libs' => count(CAT_Helper_Addons::getLibraries('mail')),
+        'missing_wysiwyg' => count(CAT_Helper_Addons::get_addons(NULL,'module','wysiwyg')),
     )
 );
 

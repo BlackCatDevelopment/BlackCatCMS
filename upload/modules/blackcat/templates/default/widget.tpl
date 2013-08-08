@@ -13,5 +13,8 @@
       <input type="hidden" name="widget" value="blackcat" />
       <input type="submit" name="blackcat_refresh" value="{translate('Refresh now')}" />
     </form>
-    <br clear="right" />
+
+    <br clear="right" /><br />
+    {if $missing_wysiwyg == 0} <div class="widget_info widget_error" style="color:#f00;">{translate('Warning: no WYSIWYG Editors installed!')}</div>{/if}
+    {if $missing_mailer_libs == 0} <div class="widget_info widget_error" style="color:#f00;">{translate('Warning: no mailer libs installed!')}</div>{/if}
 </div>
