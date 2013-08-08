@@ -198,7 +198,7 @@ if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 	        return $image->save( $dest_file, $dest_path );
 		}   // end function rotate()
 		
-		public function watermark( $source, $destination, $watermark = NULL )
+		public function watermark( $source, $destination, $watermark = NULL, $opacity = 50 )
 	    {
 	        $dest_path = pathinfo( $destination, PATHINFO_DIRNAME );
 			$dest_file = pathinfo( $destination, PATHINFO_FILENAME );
@@ -224,10 +224,11 @@ if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 			// images; this is a known issue; maybe we can reactivate this later
 			// $w_mark->resize($image->getWidth(),$image->getHeight());
 			// write it in the main image
-			$image->writeWatermark();
+			$image->writeWatermark($opacity);
 			// save new image
 			return $image->save( $dest_file, $dest_path );
 	    }   // end function watermark()
+
 	    
 	    /***********************************************************************
 							CONVENIENCE METHODS
