@@ -43,10 +43,75 @@ if (!class_exists('CAT_Helper_Widget'))
             return self::$instance;
         }
 
-        public function getWidgets()
+        public function __call($method, $args)
         {
-            return CAT_Helper_Directory::getInstance()->findFiles( 'widget.php', CAT_PATH.'/modules' );
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( $this, $method ) )
+                return call_user_func_array(array($this, $method), $args);
         }
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getWidgets()
+        {
+            global $parser;
+            $data    = array();
+            $widgets = self::findWidgets();
+            $addonh  = CAT_Helper_Addons::getInstance();
+            $base    = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules');
+            foreach( $widgets as $widget )
+            {
+                $path = pathinfo(CAT_Helper_Directory::sanitizePath($widget),PATHINFO_DIRNAME);
+                $info = $content = NULL;
+                // check if path is deeper than CAT_PATH/modules/<module>
+                if ( count(explode('/',str_ireplace( $base.'/', '', $path ))) > 1 )
+                {
+                    $temp = explode('/',str_ireplace( $base.'/', '', $path ));
+                    $path = $base.'/'.$temp[0];
+                }
+                if ( file_exists($path.'/info.php') )
+                {
+                    $info = $addonh->checkInfo($path);
+                }
+                if ( file_exists($path.'/languages/'.LANGUAGE.'.php') )
+                {
+                    $addonh->lang()->addFile(LANGUAGE.'.php', $path.'/languages/');
+                }
+                ob_start();
+                    include($widget);
+                    $content = ob_get_contents();
+                ob_clean();
+                $data[] = array_merge( ( is_array($info) ? $info : array() ), array('content'=>$content) );
+            }
+            return $data;
+        }   // end function getWidgets()
+        
+        /**
+         * scans modules for widgets
+         *
+         * @access public
+         * @return array
+         **/
+        public static function findWidgets()
+        {
+            // find files called widget.php
+            $widgets     = CAT_Helper_Directory::getInstance()->maxRecursionDepth(2)->findFiles( 'widget.php', CAT_PATH.'/modules' );
+            // find files in directory called widgets
+            $directories = CAT_Helper_Directory::getInstance()->maxRecursionDepth(2)->findDirectories( 'widgets', CAT_PATH.'/modules' );
+            if(count($directories))
+            {
+                if(!is_array($widgets)) $widgets = array();
+                foreach($directories as $dir)
+                {
+                    $widgets = array_merge($widgets, CAT_Helper_Directory::getPHPFiles($dir));
+                }
+            }
+            return $widgets;
+        }   // end function findWidgets()
 
     }
 

@@ -7,15 +7,10 @@
     <div class="fc_error_box warning ui-corner-all ui-shadow">
 		{$MESSAGE}
     </div>
+    {if $LINK}
+	<div class="fc_fallback">
+		<a target="_top" class="fc_button_back ui-corner-right" href="{$LINK}">{translate('Back')}</a>
+	</div>
+    {/if}
 </div>
-
-        {if $LINK}
-		<div class="fc_fallback">
-			<a target="_top" class="fc_button_back ui-corner-right" href="{$LINK}">{translate('Back')}</a>
-		</div>
-        {/if}
-
-
-
-
 

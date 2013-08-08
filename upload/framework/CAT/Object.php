@@ -267,8 +267,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             #    echo "</textarea>";
             #}
 
-            echo "  </div>\n</div>\n",
-                 "<div id=\"catbacklink\" class=\"fc_gradient4\"><a class=\"fc_button_back ui-corner-right\" href=\"$link\">Zurück</a></div>";
+            echo "  </div>\n</div>\n";
 
             if ( $print_footer ) {
                 echo "</body></html>\n";

@@ -105,6 +105,30 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             $dir_handle->close();
             return true;
         }   // end function copyRecursive()
+
+        /**
+         *
+         *
+         *
+         *
+         **/
+        public static function findDirectories( $pattern, $dir, $remove_dir = false )
+        {
+            $list  = self::scanDirectory( $dir, false, false );
+            $dirs  = array();
+            // sort list
+            sort($list);
+            foreach($list as $entry)
+            {
+                if( preg_match( "~^$pattern$~i", pathinfo($entry,PATHINFO_BASENAME) ) )
+                {
+                    $dirs[] = $remove_dir
+                            ? str_ireplace( $dir, '', $entry )
+                            : $entry;
+                }
+            }
+            return $dirs;
+        }   // end function findDirectories()
 	    
         /**
          * find file with given name; returns file path if found, false if not

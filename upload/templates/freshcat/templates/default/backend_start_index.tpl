@@ -2,7 +2,6 @@
 	{translate('Welcome to Black Cat CMS Administration')}
 </div>
 <div id="fc_main_content">
-	{translate('We are still working on Black Cat CMS!')}
 	<ul id="fc_widget_list_1" class="fc_widgets">
 	{foreach $widgets as widget}
 		<li class="fc_widget_wrapper">
