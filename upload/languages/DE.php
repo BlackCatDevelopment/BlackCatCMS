@@ -117,6 +117,7 @@ $LANG = array(
     'Logged-In' => 'Angemeldet',
     'Modify' => 'Bearbeiten',
     'Need to log-in?' => 'Wollen Sie sich anmelden?',
+    'No' => 'Nein',
     'Notification' => 'Hinweis',
     'Options' => 'Optionen',
     'or' => 'oder',
@@ -135,6 +136,7 @@ $LANG = array(
     'View' => 'Ansicht',
     'Website Under Construction' => 'Momentan in Bearbeitung.',
     'Welcome back' => 'Willkommen',
+    'YES' => 'JA',
 // ----- error messages -----
     'Error creating access file in the pages directory, insufficient privileges'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Ungen&uuml;gende Zugangsrechte)',
@@ -181,6 +183,8 @@ $LANG = array(
     'Invalid credentials' => 'Die Logindaten sind ungültig',
 // ----- BACKEND -----
     'Welcome to Black Cat CMS Administration' => 'Willkommen im Black Cat CMS Administrationsbereich',
+    'This is your dashboard. At the moment, it is not possible to change the widgets shown here or to set permissions. This will be done in next version of BlackCat CMS.'
+        => 'Dies ist Ihr Dashboard. Zur Zeit ist es leider nicht möglich, die hier angezeigten Widgets zu administrieren bzw. Rechte zu vergeben. Dies wird in der nächsten Version von BlackCat CMS umgesetzt.',
     'To use <span class="icon-logo">Black Cat CMS</span>, please enable JavaScript in your browser and try again.'
         => 'Um <span class="icon-logo">Black Cat CMS</span> zu verwenden, bitte JavaScript im Browser aktivieren und nochmal versuchen.',
     'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.'
@@ -223,6 +227,7 @@ $LANG = array(
     'No editable pages were found' => 'Keine bearbeitbaren Seiten verfügbar',
     'No more languages available' => 'Keine weiteren Sprachen verfügbar',
     'No pages available' => 'Keine Seiten vorhanden',
+    'No sections were found for this page' => 'Keine Sektionen für diese Seite gefunden',
     'None' => 'Keine',
     'Page added successfully' => 'Seite wurde erfolgreich angelegt',
     'Page(s) deleted successfully' => 'Seite(n) erfolgreich gelöscht',

@@ -280,7 +280,7 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 	// define button for confirm dialog positive
 	buttonsOpts.push(
 	{
-		'text':		'YES', 'click':  function()
+		'text':		cattranslate('YES'), 'click':  function()
 			{
 				$.ajax(
 				{
@@ -333,7 +333,7 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 	// define button for confirm dialog negative
 	buttonsOpts.push(
 	{
-		'text':		CAT_TEXT['NO'], 'click':  function()
+		'text':		cattranslate('No'), 'click':  function()
 			{
 				$('.fc_popup').dialog('destroy');
 			},

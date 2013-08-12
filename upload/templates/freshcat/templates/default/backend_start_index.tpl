@@ -2,6 +2,9 @@
 	{translate('Welcome to Black Cat CMS Administration')}
 </div>
 <div id="fc_main_content">
+    <div class="highlight" style="width:100%">
+    {translate('This is your dashboard. At the moment, it is not possible to change the widgets shown here or to set permissions. This will be done in next version of BlackCat CMS.')}
+    </div>
 	<ul id="fc_widget_list_1" class="fc_widgets">
 	{foreach $widgets as widget}
 		<li class="fc_widget_wrapper">

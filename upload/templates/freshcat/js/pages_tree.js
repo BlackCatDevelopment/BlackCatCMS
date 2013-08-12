@@ -711,7 +711,7 @@ jQuery(document).ready(function()
 					current.find('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove');
 				}
 			};
-        dialog_confirm( 'Do you really want to delete this page?', 'Removing page', CAT_ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
+        dialog_confirm( cattranslate('Do you really want to delete this page?'), cattranslate('Remove page'), CAT_ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
 
 	$('#fc_restorePageSubmit').click( function (e)
