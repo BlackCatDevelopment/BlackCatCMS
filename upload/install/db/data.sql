@@ -51,6 +51,8 @@ INSERT INTO `cat_settings` (name, value) VALUES
     ('prompt_mysql_errors', 'true'),
     ('redirect_timer', '1500'),
     ('upload_allowed', 'jpg,jpeg,gif,gz,png,pdf,tif,zip'),
+    ('upload_enable_mimecheck', true),
+    ('upload_mime_default_type','application/octet-stream'),
     ('users_allow_mailaddress', 'false'),
     ('search', 'public'),
     ('sec_anchor', 'cat_'),

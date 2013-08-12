@@ -1,5 +1,5 @@
 			<div class="clear_sp"></div>
-			<label class="fc_label_200" for="fc_operating_system">{translate('Server Operating System')}:</label>
+			<span class="fc_label_200">{translate('Server Operating System')}:</span><br />
 			<div class="settings_label fc_settings_max" id="fc_operating_system">
 				<input type="radio" class="fc_radio_jq fc_toggle_element show___fc_linux" name="operating_system" id="fc_operating_system_linux" value="linux" {if $values.operating_system == 'linux'} checked="checked"{/if}/>
 				<label for="fc_operating_system_linux">{translate('Linux/Unix based')}</label>

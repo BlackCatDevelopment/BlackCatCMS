@@ -404,7 +404,7 @@ function dialog_ajax( title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSe
 function dialog_form( currentForm, beforeSend, afterSend, data_type )
 {
 	if ( typeof data_type == 'undefined' ) {
-		var data_type	= 'HTML';
+		var data_type	= 'json';
 	}
 	// If form is submitted
 	currentForm.submit( function(e)

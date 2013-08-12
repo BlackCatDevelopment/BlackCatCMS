@@ -492,6 +492,13 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                 }
         }
     
+            // allow to override default settings
+            if(CAT_Registry::get('UPLOAD_ENABLE_MIMECHECK')=='false')
+                $this->mime_check = false;
+            if(CAT_Registry::get('UPLOAD_MIME_DEFAULT_TYPE')=='false')
+                $this->mime_default_type = false;
+
+    
             // get allowed upload mime types from settings
             $this->log()->LogDebug('getting allowed upload mimetypes from settings');
             if(CAT_Registry::exists('UPLOAD_ALLOWED'))
@@ -809,7 +816,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                     {
                         if (substr($server_path, -1, 1) != '/') $server_path = $server_path . '/';
                     }
-                    $this->log()->logDebug( 'process file to '  . $server_path );
+                    $this->log()->logDebug(sprintf('process file to server path [%s]', $server_path));
                 }
             }
             if ($this->processed)
@@ -861,12 +868,14 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                 else if ($this->mime_check && !empty($this->file_src_mime) && strpos($this->file_src_mime, '/') !== false)
                 {
                     list($m1, $m2) = explode('/', $this->file_src_mime);
+                    $this->log()->logDebug(sprintf('checking mime type [%s]',$this->file_src_mime));
                     $allowed = false;
                     // check wether the mime type is allowed
                     if (!is_array($this->allowed)) $this->allowed = array($this->allowed);
                     foreach($this->allowed as $k => $v)
                     {
                         list($v1, $v2) = explode('/', $v);
+                        $this->log()->logDebug(sprintf('checking allowed %s/%s against %s/%s',$v1,$v2,$m1,$m2));
                         if (($v1 == '*' && $v2 == '*') || ($v1 == $m1 && ($v2 == $m2 || $v2 == '*')))
                         {
                             $allowed = true;
@@ -878,6 +887,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                     foreach($this->forbidden as $k => $v)
                     {
                         list($v1, $v2) = explode('/', $v);
+                        $this->log()->logDebug(sprintf('checking forbidden %s/%s against %s/%s',$v1,$v2,$m1,$m2));
                         if (($v1 == '*' && $v2 == '*') || ($v1 == $m1 && ($v2 == $m2 || $v2 == '*')))
                         {
                             $allowed = false;
