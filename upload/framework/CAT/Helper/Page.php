@@ -1067,15 +1067,25 @@ if (!class_exists('CAT_Helper_Page'))
             }
 
             // description
-            if (isset($properties['description']))
+            $description 
+                = (isset($properties['description']) && $properties['description'] != '' )
+                ? $properties['description']
+                : CAT_Registry::get('WEBSITE_DESCRIPTION')
+                ;
+            if ($description!='')
             {
-                $output[] = CAT_Helper_Page::$space . '<meta name="description" content="' . $properties['description'] . '" />';
+                $output[] = CAT_Helper_Page::$space . '<meta name="description" content="' . $description . '" />';
             }
 
             // keywords
-            if (isset($properties['keywords']))
+            $keywords
+                = (isset($properties['keywords']) && $properties['keywords']!='')
+                ? $properties['keywords']
+                : CAT_Registry::get('WEBSITE_KEYWORDS')
+                ;
+            if ($keywords!='')
             {
-                $output[] = CAT_Helper_Page::$space . '<meta name="keywords" content="' . $properties['keywords'] . '" />';
+                $output[] = CAT_Helper_Page::$space . '<meta name="keywords" content="' . $keywords . '" />';
             }
 
             return implode("\n", $output) . "\n";
