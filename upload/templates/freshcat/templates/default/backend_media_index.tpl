@@ -69,7 +69,7 @@
                     {if $permissions.media_rename}
 					<button type="submit" class="left fc_rename_file">{translate('Rename')}</button>
                     {/if}
-                    {if $permissoins.media_delete}
+                    {if $permissions.media_delete}
 					<button type="submit" class="right fc_delete_file fc_gradient_red">{translate('Delete')}</button>
                     {/if}
 					<div class="clear"></div>
