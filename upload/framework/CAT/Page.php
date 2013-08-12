@@ -128,12 +128,12 @@ if (!class_exists('CAT_Page', false))
         public function show()
         {
 
-            // keep old modules happy
+            // ----- keep old modules happy -----
             global $wb, $admin, $database, $page_id, $section_id;
             $admin =& $wb;
             if ( $page_id == '' )
                 $page_id = $this->_page_id;
-            // keep old modules happy
+            // ----- keep old modules happy -----
 
             $this->log()->LogDebug(sprintf('showing page with ID [%s]',$page_id));
 
@@ -252,8 +252,11 @@ if (!class_exists('CAT_Page', false))
                 $page_id = $this->_page_id;
 
             // check if user is allowed to see this page
-            if(!self::$helper->isVisible($this->_page_id) && !CAT_Users::is_root())
-            {
+            if(
+                   !self::$helper->isVisible($this->_page_id)
+                && !CAT_Users::is_root()
+                && (!self::$helper->isMaintenance() || CAT_Registry::get('MAINTENANCE_PAGE') != $this->_page_id)
+            ) {
                 if(self::$helper->isDeleted($this->_page_id))
                 {
                     return self::print404();
