@@ -234,7 +234,7 @@ class wb
     public function page_is_visible($page) { return CAT_Helper_Page::isVisible($page['page_id']); }
     public function page_is_active($page)  { return CAT_Helper_Page::isActive($page['page_id']);  }
     public function page_link($link)       { return CAT_Helper_Page::getLink($link);   }
-    public function show_page($page)       { return CAT_Helper_Page::show_page($page); }
+    public function show_page($page)       { return CAT_Helper_Page::isVisible($page['page_id']); }
 
     /* moved to CAT_Sections */
     public function section_is_active($section_id) { return CAT_Sections::section_is_active($section_id); }
