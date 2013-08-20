@@ -17,4 +17,6 @@
     <br clear="right" /><br />
     {if $missing_wysiwyg == 0} <div class="widget_info widget_error" style="color:#f00;">{translate('Warning: no WYSIWYG Editors installed!')}</div>{/if}
     {if $missing_mailer_libs == 0} <div class="widget_info widget_error" style="color:#f00;">{translate('Warning: no mailer libs installed!')}</div>{/if}
+
+    <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=blackcat">{translate('Edit connection settings')}</a>
 </div>

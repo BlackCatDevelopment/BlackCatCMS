@@ -535,6 +535,7 @@ $LANG = array(
         => 'Kann Template <span class="highlight_text">{{name}}</span> nicht deinstallieren, weil es das {{type}} ist!',
 // ----- addons - backend_addons_index.tpl -----
     'Addon permissions' => 'Addon Berechtigungen',
+    'Install manually' => 'Manuell installieren',
     'You can set permissions for each group to use this addon.' => 'Es können für jede Gruppe Berechtigungen für dieses Addon gesetzt werden.',
     'You can customize permissions later on group administration.' => 'Die Rechte können später in der Gruppenadministration angepaßt werden.',
     'If you upgrade a module, those settings will have no effect on current permissions.' => 'Bei einem Update haben die hier gesetzten Rechte keine Auswirkungen.',

@@ -44,7 +44,6 @@ $backend = CAT_Backend::getInstance('start');
 $user  = CAT_Users::getInstance();
 $lang  = CAT_Helper_I18n::getInstance();
 $widget = CAT_Helper_Widget::getInstance();
-$addonh = CAT_Helper_Addons::getInstance();
 
 // this will redirect to the login page if the permission is not set
 $user->checkPermission('start','start',false);
@@ -122,26 +121,7 @@ foreach(
 // ============
 // ! Widgets
 // ============
-$widgets = $widget->getWidgets();
-
-foreach( $widgets as $widget )
-{
-    $path = pathinfo($widget,PATHINFO_DIRNAME);
-    $info = $content = NULL;
-    if ( file_exists($path.'/info.php') )
-    {
-        $info = $addonh->checkInfo($path);
-    }
-    if ( file_exists($path.'/languages/'.LANGUAGE.'.php') )
-    {
-        $backend->lang()->addFile(LANGUAGE.'.php', $path.'/languages/');
-    }
-    ob_start();
-        include($widget);
-        $content = ob_get_contents();
-    ob_clean();
-    $tpl_data['widgets'][] = array_merge( $info, array('content'=>$content) );
-}
+$tpl_data['widgets'] = $widget->getWidgets();
 
 // ==================== 
 // ! Parse the site   

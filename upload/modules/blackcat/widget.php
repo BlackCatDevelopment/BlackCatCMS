@@ -91,8 +91,8 @@ if ( $doit ) {
     try {
         $response = $client->request( Zend_Http_Client::GET );
         if ( $response->getStatus() != '200' ) {
-            $error = "Unable to load source:<br />"
-                   . "(Using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
+            $error = "Unable to load source "
+                   . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
                    . "Status: " . $response->getStatus() . " - " . $response->getMessage()
                    . ( ( $debug ) ? "<br />".var_dump($client->getLastRequest()) : NULL )
                    . "<br />"
@@ -104,8 +104,8 @@ if ( $doit ) {
             $version = $response->getRawBody();
         }
     } catch ( Zend_HTTP_Client_Adapter_Exception $e) {
-    $error = "Unable to load source:<br />"
-               . "(Using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
+        $error = "Unable to load source "
+               . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
            . $e->getMessage()
            . "<br />"
            ;
