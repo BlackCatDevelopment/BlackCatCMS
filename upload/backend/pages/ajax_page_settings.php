@@ -142,7 +142,7 @@ $permission['pages_settings']	= $users->checkPermission('Pages','pages_settings'
 $permission['pages_intro']		= ( $users->checkPermission('Pages','pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
 
 // list of all pages for dropdown, sorted by parent->child
-$pages = CAT_Helper_ListBuilder::sort(CAT_Helper_Page::getPages(),0);
+$pages = CAT_Helper_ListBuilder::sort(CAT_Helper_Page::getPages(CAT_Backend::isBackend()),0);
 
 // =============================================
 // ! Add result_array to the template variable   

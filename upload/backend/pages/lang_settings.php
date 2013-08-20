@@ -127,7 +127,7 @@ if(is_array($items) && count($items)) {
 // ===========
 // ! get pages
 // ===========
-$pages_list = CAT_Helper_Page::getPages();
+$pages_list = CAT_Helper_Page::getPages(CAT_Backend::isBackend());
 // skip current page
 $arrh->ArrayRemove( $page_id, $pages_list, 'page_id' );
 // skip already linked pages

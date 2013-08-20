@@ -125,7 +125,7 @@ function getErrorLevels() {
  *
  **/
 function getPagesList($fieldname,$selected,$add_empty=false) {
-    $pages_list = CAT_Helper_Page::getPages();
+    $pages_list = CAT_Helper_Page::getPages(CAT_Backend::isBackend());
     $deleted    = CAT_Helper_Page::getPagesByVisibility('deleted');
     if(count($deleted))
     {

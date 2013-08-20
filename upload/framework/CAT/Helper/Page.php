@@ -149,6 +149,7 @@ if (!class_exists('CAT_Helper_Page'))
                         $row['is_direct_parent'] = false;
                         $row['is_current']       = false;
                         $row['is_open'] = isset( $_COOKIE['pageid_'.$row['page_id']] ) ? true : false; // for page tree
+                        $row['href']             = CAT_URL . PAGES_DIRECTORY . $row['link'] . PAGE_EXTENSION;
 
                         // mark editable pages by checking user perms and page
                         // visibility
@@ -1188,7 +1189,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function getPageSelect()
         {
-            $pages  = CAT_Helper_Page::getPages();
+            $pages  = CAT_Helper_Page::getPages(CAT_Backend::isBackend());
             return CAT_Helper_ListBuilder::getInstance()->config(array(
                 '__li_level_css'       => true,
                 '__li_id_prefix'       => 'pageid_',
@@ -1242,12 +1243,20 @@ if (!class_exists('CAT_Helper_Page'))
          * returns complete pages array
          *
          * @access public
+         * @param  boolean $all - show all page or only visible (default:false)
          * @return array
          **/
-        public static function getPages()
+        public static function getPages($all=false)
         {
             if(!count(self::$pages)) self::getInstance();
+            if ( $all )
             return self::$pages;
+            // only visible for current lang
+            $pages = array();
+            foreach(self::$pages as $pg)
+                if(self::isVisible($pg['page_id']))
+                    $pages[] = $pg;
+            return $pages;
         }   // end function getPages()
 
         /**
@@ -1298,7 +1307,7 @@ if (!class_exists('CAT_Helper_Page'))
     	{
             if(!count(self::$pages_by_parent))
             {
-                $pages = self::getPages();
+                $pages = self::getPages(CAT_Backend::isBackend());
                 foreach ( $pages as $page ) {
                     self::$pages_by_parent[$page['parent']][] = $page['page_id'];
                 }
@@ -1680,6 +1689,8 @@ if (!class_exists('CAT_Helper_Page'))
                     break;
                 // always visible
                 case 'public':
+                    // check language
+                    if(CAT_Registry::get('PAGE_LANGUAGES')===false || self::properties($page_id,'language')==''||self::properties($page_id,'language')==LANGUAGE)
                     $show_it = true;
                     break;
                 // shown if user is allowed
@@ -1687,6 +1698,8 @@ if (!class_exists('CAT_Helper_Page'))
                 case 'registered':
                     if (CAT_Users::is_authenticated() == true)
                     {
+                        // check language
+                        if(CAT_Registry::get('PAGE_LANGUAGES')=='false'||(self::properties($page_id,'language')==''||self::properties($page_id,'language')==LANGUAGE))
                         $show_it = (
                                CAT_Users::is_group_match(CAT_Users::get_groups_id(), $page['viewing_groups'])
                             || CAT_Users::is_group_match(CAT_Users::get_user_id(), $page['viewing_users'])

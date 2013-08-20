@@ -174,7 +174,7 @@ if (!class_exists('CAT_Backend', false))
                 // ==========================
                 // ! Get info for pagesTree
                 // ==========================
-                $pages = CAT_Helper_Page::getPages();
+                $pages = CAT_Helper_Page::getPages(true);
                 // create LI content for ListBuilder
                 foreach($pages as $i => $page)
                 {
