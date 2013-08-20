@@ -243,7 +243,7 @@ if (!class_exists('CAT_Helper_Template'))
     			}
     			if ( !isset($menu[1]) || $menu[1] == '' )
     			{
-    				$menu[1]	= self::getInstance()->lang()->translate('Main');
+    				$menu[1]	= 'Main';
     			}
     			foreach ( $menu AS $number => $name )
     			{
