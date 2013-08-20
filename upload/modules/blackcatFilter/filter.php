@@ -57,7 +57,7 @@ function executeFilters(&$content)
         CAT_TABLE_PREFIX
     ));
 
-    if($res->numRows())
+    if(is_object($res) && $res->numRows())
     {
         $filter = array();
         while( false !== ( $row = $res->fetchRow(MYSQL_ASSOC) ) )
