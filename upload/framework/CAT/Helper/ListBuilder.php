@@ -155,9 +155,12 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
         {
             $self   = self::getInstance();
             $output = self::listbuilder($list,$root_id,'ul',$selected);
+            if(is_array($output) && count($output))
             return $self->startUL()
 		         . join( "\n\t", $output )."\n"
                  . $self->closeUL();
+            else
+                return '';
         }   // end function tree()
 
         /**

@@ -30,11 +30,18 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
 	class CAT_Helper_Menu extends CAT_Object
 	{
+        /**
+         * enable/disable logging/debugging
+         * 8 = off
+         * 7 = debug
+         **/
 	    protected $_config
 			= array(
                  'loglevel'             => 7,
 			);
-
+        /**
+         * map menu options to ListBuilder keys
+         **/
         private static $_lbmap = array(
             'first'   => '__li_first_item_class',
             'last'    => '__li_last_item_class',
@@ -42,7 +49,9 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
             'current' => '__li_is_open_class',
             'closed'  => '__li_is_closed_class',
         );
-
+        /**
+         * holds local instance
+         **/
         private static $instance;
 
         public static function getInstance($reset=false)
@@ -69,25 +78,24 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
          * @access public
          * @return
          **/
-        public static function breadcrumbMenu($page_id=0,$max_level=999,array &$options = array())
+        public static function breadcrumbMenu($id=NULL,$max_level=999,$show_current=false,array &$options = array())
         {
+            global $page_id;
+            if(!$id) $id = $page_id;
             self::analyzeOptions($options);
             $menu       = array();
-            $level      = CAT_Helper_Page::properties($page_id,'level');
-            $level_diff = self::analyzeLevel($page_id,$max_level);
-            $subpages   = array_reverse(CAT_Helper_Page::getPageTrail($page_id,false,true));
+            $level      = CAT_Helper_Page::properties($id,'level');
+            $level_diff = self::analyzeLevel($id,$max_level);
+            $subpages   = array_reverse(CAT_Helper_Page::getPageTrail($id,false,true));
+
             foreach($subpages as $id)
             {
                 $pg = CAT_Helper_Page::properties($id);
-// ---- ACHTUNG DAS IST NOCH NICHT RICHTIG HIER! FUNZT NICHT MIT $max_level = +1! -----
                 if ( $max_level !== 999 && $pg['level'] < $max_level )
                     break;
                 $menu[] = $pg;
             }
-echo "last page level: ", $pg['level'], "<br />";
-echo "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
-print_r( $pg );
-echo "</textarea>";
+
             $root_id = ( $pg['level'] > 0 ? $pg['page_id'] : 0 );
             // use ListBuilder to create the menu
             return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($menu,$root_id);
@@ -104,28 +112,33 @@ echo "</textarea>";
          *     example: level for $page_id is 5, $max_level is '+3' = show 3 levels
          *
          * @access public
-         * @param  integer $page_id   - parent page
+         * @param  integer $id           - parent page; default: current page
          * @param  mixed   $max_level - see above; default: 999 (unlimited)
-         * @return string
+         * @param  boolean $show_current - show current page in the menu; default: false
+         * @return string  HTML
          **/
-        public static function subMenu($page_id=0,$max_level=999,array &$options = array())
+        public static function subMenu($id=NULL,$max_level=999,$show_current=false,array &$options = array())
         {
+            global $page_id;
+            if(!$id) $id = $page_id;
             self::analyzeOptions($options);
+
+            $self       = self::getInstance();
             $menu       = array();
-            $level_diff = self::analyzeLevel($page_id,$max_level);
-            // one level only is easy, we have a function for this...
+            $level_diff = self::analyzeLevel($id,$max_level);
+
+            $self->log()->LogDebug(sprintf('levels to show [%d]',$level_diff));
+
             if($level_diff==1)
-            {
-                $subpages = CAT_Helper_Page::getPagesByParent($page_id);
-            }
+                $subpages = CAT_Helper_Page::getPagesByParent($id);
             else
-            {
-                $subpages = CAT_Helper_Page::getSubPages($page_id);
-            }
-            foreach($subpages as $id)
-                $menu[] = CAT_Helper_Page::properties($id);
+                $subpages = CAT_Helper_Page::getSubPages($id);
+
+            foreach($subpages as $sid)
+                $menu[] = CAT_Helper_Page::properties($sid);
+
             // use ListBuilder to create the menu
-            return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($menu,$page_id);
+            return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($menu,$id);
         }   // end function subMenu()
 
         /**
@@ -135,8 +148,10 @@ echo "</textarea>";
          * @param  integer $page_id
          * @return string
          **/
-        public static function siblingsMenu($page_id=0,array &$options = array())
+        public static function siblingsMenu($id=NULL,$max_level=999,$show_current=false,array &$options = array())
         {
+            global $page_id;
+            if(!$id) $id = $page_id;
             self::analyzeOptions($options);
             $level   = CAT_Helper_Page::properties($page_id,'level');
             $menu    = CAT_Helper_Page::getPagesForLevel($level);

@@ -23,7 +23,7 @@
 			<input type="text" name="catmailer_default_sendername" id="fc_catmailer_default_sendername" value="{$values.catmailer_default_sendername}" />
 			<div class="clear_sp"></div>
 
-            {if $values.catmailer_lib}
+            {if $values.catmailer_lib && $values.server_email != 'admin@yourdomain.tld'}
             <div id="testmail_result" style="display:none;">&nbsp;</div>
 			<div class="clear"></div>
 			<button class="icon-mail right" dir="ltr" type="submit" id="fc_checkmail" name="checkmail" onclick="send_testmail('{$CAT_ADMIN_URL}/settings/ajax_testmail.php');return false;"> {translate('Send test mail')}</button>
