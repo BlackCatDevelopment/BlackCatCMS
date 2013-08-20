@@ -695,10 +695,6 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             $temp_unzip = $temp_dir . '/unzip_' . pathinfo( $tmpfile, PATHINFO_FILENAME ) . '/';
             $temp_file  = $temp_dir . $name;
 
-            // make sure the temp directory exists, is writable and is empty
-            CAT_Helper_Directory::removeDirectory( $temp_unzip );
-            CAT_Helper_Directory::createDirectory( $temp_unzip );
-
             // Try to upload the file to the temp dir
             if ( !move_uploaded_file( $tmpfile, $temp_file ) )
             {
@@ -734,7 +730,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             $extension = pathinfo( $zipfile, PATHINFO_EXTENSION );
             $sourcedir = pathinfo( $zipfile, PATHINFO_DIRNAME );
 
-            $self->log()->LogDebug( sprintf( 'file extension [%s], source dir [%s]', $extension, $sourcedir ) );
+            $self->log()->LogDebug( sprintf( 'file extension [%s], source dir [%s], remove zip [%s]', $extension, $sourcedir, $remove_zip_on_error ) );
 
             // Set temp vars
             $temp_dir   = CAT_PATH . '/temp/';
@@ -760,6 +756,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 // check if anything was extracted
                 if ( !$list )
                 {
+                    $self->log()->LogDebug(sprintf('No $list from ZIP-Helper, removing [%s]', $temp_unzip));
                     CAT_Helper_Directory::removeDirectory( $temp_unzip );
                     if ( $remove_zip_on_error )
                         CAT_Helper_Directory::removeDirectory( $zipfile );
@@ -774,6 +771,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     $info = CAT_Helper_Directory::getInstance()->maxRecursionDepth( 3 )->findFile( 'info.php', $temp_unzip );
                     if ( !$info )
                     {
+                        $self->log()->LogDebug(sprintf('No info.php found, removing [%s]', $temp_unzip));
                         CAT_Helper_Directory::removeDirectory( $temp_unzip );
                         if ( $remove_zip_on_error )
                             CAT_Helper_Directory::removeDirectory( $zipfile );
@@ -783,12 +781,14 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     }
                     else
                     {
-                        $temp_unzip = pathinfo( $info, PATHINFO_DIRNAME );
+                        $temp_info = pathinfo( $info, PATHINFO_DIRNAME );
+                        $self->log()->LogDebug(sprintf('set $temp_info to [%s]', $temp_info));
                     }
                 }
             }
             else
             {
+                $self->log()->LogDebug(sprintf('Extension [%s] neither "php" nor "zip", removing [%s]',$extension,$temp_unzip));
                 CAT_Helper_Directory::removeDirectory( $temp_unzip );
                 if ( $remove_zip_on_error )
                     CAT_Helper_Directory::removeDirectory( $zipfile );
@@ -799,18 +799,19 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
             // Check the info.php file / language file
             $precheck_errors = NULL;
-            if ( $addon_info = self::checkInfo( $temp_unzip ) )
+            if ( $addon_info = self::checkInfo( $temp_info ) )
             {
-                $precheck_errors = self::preCheckAddon( $zipfile, $temp_unzip, false );
+                $precheck_errors = self::preCheckAddon( $zipfile, $temp_info, false );
             }
             else
             {
+                $self->log()->LogDebug(sprintf('Unable to load info file, removing [%s]',$temp_unzip));
                 CAT_Helper_Directory::removeDirectory( $temp_unzip );
                 if ( $remove_zip_on_error )
                     CAT_Helper_Directory::removeDirectory( $zipfile );
                 if ( !$silent )
                 {
-                    self::printError( self::getInstance()->lang()->translate( 'Invalid installation file. {{error}}', array(
+                    self::printError( $self->lang()->translate( 'Invalid installation file. {{error}}', array(
                          'error' => 'Unable to find info.php'
                     ) ) );
                 }
@@ -818,13 +819,18 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             }
             if ( $precheck_errors != '' && !is_bool( $precheck_errors ) )
             {
+                $self->log()->LogDebug(sprintf('Pre-installation check(s) failed, removing [%s]',$temp_unzip));
+                CAT_Helper_Directory::removeDirectory( $temp_unzip );
                 if ( !$silent )
                     self::printError( $precheck_errors, $_SERVER['SCRIPT_NAME'], false );
                 return false;
             }
 
             // So, now we have done all preinstall checks, lets see what to do next
-            $addon_directory = $addon_info[ 'addon_function' ] == 'language' ? $addon_info[ 'module_code' ] . '.php' : $addon_info[ 'module_directory' ];
+            $addon_directory
+                = $addon_info[ 'addon_function' ] == 'language'
+                ? $addon_info[ 'module_code' ] . '.php'
+                : $addon_info[ 'module_directory' ];
 
             // Set module directory
             $addon_dir = CAT_PATH . '/' . $addon_info[ 'addon_function' ] . 's/' . $addon_directory;
@@ -842,6 +848,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                      */
                     if ( self::versionCompare( $previous_info[ 'module_version' ], $addon_info[ 'module_version' ], '>=' ) )
                     {
+                        $self->log()->LogDebug(sprintf('Version check found no difference between installed and uploaded version, removing [%s]', $temp_unzip));
                         CAT_Helper_Directory::removeDirectory( $temp_unzip );
                         if ( $remove_zip_on_error )
                             CAT_Helper_Directory::removeDirectory( $zipfile );
@@ -857,10 +864,12 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             // Make sure the module dir exists, and chmod if needed
             if ( $addon_info[ 'addon_function' ] != 'language' )
             {
+                $self->log()->LogDebug(sprintf('Creating addon directory [%s]', $addon_dir));
                 CAT_Helper_Directory::createDirectory( $addon_dir );
                 // copy files from temp folder
-                if ( CAT_Helper_Directory::copyRecursive( $temp_unzip, $addon_dir ) !== true )
+                if ( CAT_Helper_Directory::copyRecursive( $temp_info, $addon_dir ) !== true )
                 {
+                    $self->log()->LogDebug(sprintf('Copy failed, removing [%s]',$temp_unzip));
                     CAT_Helper_Directory::removeDirectory( $temp_unzip );
                     if ( $remove_zip_on_error )
                         CAT_Helper_Directory::removeDirectory( $zipfile );
@@ -869,6 +878,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     return false;
                 }
                 // remove temp
+                $self->log()->LogDebug(sprintf('removing [%s]',$temp_unzip));
                 CAT_Helper_Directory::removeDirectory( $temp_unzip );
                 if ( $remove_zip_on_error )
                     CAT_Helper_Directory::removeDirectory( $zipfile );
@@ -877,6 +887,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             // load the module info into the database
             if ( !self::loadModuleIntoDB( $addon_dir, $action, self::checkInfo( $addon_dir ) ) )
             {
+                $self->log()->LogDebug(sprintf('Loading module into DB failed, removing [%s]',$temp_unzip));
                 CAT_Helper_Directory::removeDirectory( $temp_unzip );
                 CAT_Helper_Directory::removeDirectory( $addon_dir );
                 if ( !$silent )
@@ -1401,9 +1412,11 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
          **/
         public static function checkInfo( $directory )
         {
+            $self = self::getInstance();
+            $self->log()->LogDebug(sprintf('checking info.php for $directory [%s]',$directory));
             if ( is_dir( $directory ) && file_exists( $directory . '/info.php' ) )
             {
-
+                $self->log()->LogDebug('$directory is a directory and info.php found');
                 // get header info
                 $link = NULL;
                 ini_set( 'auto_detect_line_endings', true );
@@ -1438,7 +1451,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 else
                 {
                     self::$error = 'Invalid info.php - neither $module_function nor $template_function set';
-                    self::getInstance()->log()->logDebug( self::$error );
+                    $self->log()->logDebug( self::$error );
                     return false;
                 }
                 // Check if the file is valid
@@ -1447,7 +1460,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     if ( !isset( ${$varname} ) )
                     {
                         self::$error = 'Invalid info.php - mandatory var ' . $varname . ' not set';
-                        self::getInstance()->log()->logDebug( self::$error );
+                        $self->log()->logDebug( self::$error );
                         return false;
                     }
                     else
@@ -1480,12 +1493,13 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             }
             elseif ( file_exists( $directory ) && pathinfo( $directory, PATHINFO_EXTENSION ) == 'php' )
             {
+                $self->log()->LogDebug('$directory is a file and has "php" suffix');
                 // Check if the file is valid
                 $content = file_get_contents( $directory );
                 if ( strpos( $content, '<?php' ) === false )
                 {
                     self::$error = 'Invalid language file - missing PHP delimiter';
-                    self::getInstance()->log()->logDebug( self::$error );
+                    $self->log()->logDebug( self::$error );
                     return false;
                 }
 
@@ -1500,7 +1514,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     if ( !isset( ${$varname} ) )
                     {
                         self::$error = 'Invalid language file - var ' . $varname . ' not set';
-                        self::getInstance()->log()->logDebug( self::$error );
+                        $self->log()->logDebug( self::$error );
                         return false;
                     }
                     else
@@ -1520,7 +1534,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             else
             {
                 self::$error = 'invalid directory/language file or info.php is missing, check of language file failed';
-                self::getInstance()->log()->logDebug( self::$error );
+                $self->log()->logDebug( self::$error );
                 return false;
             }
         } // end function checkInfo()
