@@ -533,7 +533,7 @@ function check_token_lifetime($value,$oldvalue) {
  * special function to sanitize redirect timer (-1<value<10000)
  **/
 function check_redirect_timer($value,$oldvalue) {
-    return ( $value > -1 && $value < 10000 )
+    return ( $value > -1 && $value <= 10000 )
         ? $value
         : $oldvalue;
 }

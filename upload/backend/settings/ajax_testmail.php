@@ -69,17 +69,17 @@ $lib_to_driver = array(
 );
 
 // send mail
-if( CAT_Helper_Mail::getInstance($lib_to_driver[$settings['CATMAILER_LIB']])->sendMail( $settings['SERVER_EMAIL'], $settings['SERVER_EMAIL'], $settings['CATMAILER_DEFAULT_SENDERNAME'], $backend->lang()->translate('This is the required test mail: CAT mailer is working') ) )
+$mailer = CAT_Helper_Mail::getInstance($lib_to_driver[$settings['CATMAILER_LIB']]);
+if( $mailer->sendMail( $settings['SERVER_EMAIL'], $settings['SERVER_EMAIL'], $settings['CATMAILER_DEFAULT_SENDERNAME'], $backend->lang()->translate('This is the required test mail: CAT mailer is working') ) )
 {
     echo "<div style='border: 2px solid #006600; padding: 5px; text-align: center; background-color: #dff2bf;'>",
          $backend->lang()->translate('The test eMail was sent successfully. Please check your inbox.'),
          "</div>";
 }
 else {
-    $message = ob_get_clean();
     echo "<div style='border: 2px solid #CC0000; padding: 5px; text-align: center; background-color: #ffbaba;'>",
          $backend->lang()->translate('The test eMail could not be sent! Please check your settings!'),
-         "<br />$message<br /></div>";
+         "<br />",CAT_Helper_Mail::getError(),"<br /></div>";
 }
 
 ?>

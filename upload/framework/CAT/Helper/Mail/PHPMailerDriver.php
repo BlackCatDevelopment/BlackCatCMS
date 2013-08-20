@@ -35,7 +35,7 @@ if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
 
         public function __construct()
         {
-            parent::__construct();
+            parent::__construct(true);
             $this->IsHTML(true);
     		$this->WordWrap = 80;
     		$this->Timeout  = 30;
@@ -53,12 +53,15 @@ if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
             if ( $settings )
             {
                 self::$settings = $settings;
+                $is_error       = false;
+                try {
                 // create the transport
                 if(    isset(self::$settings['routine'])
                     && self::$settings['routine'] == "smtp"
                     && isset(self::$settings['smtp_host'])
                     && strlen(self::$settings['smtp_host']) > 5
                 ) {
+                        self::$instance->SMTPDebug = 0;
                     self::$instance->IsSMTP();
         			self::$instance->Host = self::$settings['smtp_host'];
         			if (   isset(self::$settings['smtp_auth'])
@@ -77,7 +80,20 @@ if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
         			// use PHP mail() function for outgoing mails send by Website Baker
         			self::$instance->IsMail();
         		}
+                } catch ( phpmailerException $e ) {
+                    CAT_Helper_Mail::setError(self::$instance->ErrorInfo);
+                    $is_error = true;
+                } catch ( Exception $e ) {
+                    CAT_Helper_Mail::setError($e->getMessage());
+                    $is_error = true;
+                }
 
+                if ( $is_error ) {
+                    return false;
+                }
+                else
+                {
+                    try {
                 // set default sender name
         		if(self::$instance->FromName == 'Root User') {
         			if(isset($_SESSION['DISPLAY_NAME'])) {
@@ -87,6 +103,12 @@ if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
         			}
         		}
         		self::$instance->From = self::$settings['server_email'];
+                    } catch ( phpmailerException $e ) {
+                        CAT_Helper_Mail::setError(self::$instance->ErrorInfo);
+                    } catch ( Exception $e ) {
+                        CAT_Helper_Mail::setError($e->getMessage());
+                    }
+                }
 
                 // set language file for PHPMailer error messages
         		if(defined("LANGUAGE")) {
@@ -114,6 +136,7 @@ if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
             $subject     = preg_replace('/[\r\n]/'  , ''      , $subject    );
             $message     = preg_replace('/\r\n?|\n/', '<br \>', $message    );
 
+            try {
             if ($fromaddress != '')
             {
                 if ($fromname != '')
@@ -126,13 +149,17 @@ if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
             self::$instance->Subject = $subject;
             self::$instance->Body    = $message;
             self::$instance->AltBody = strip_tags($message);
-
-            if(!self::$instance->Send()) {
-                CAT_Helper_Mail::getInstance()->setError(self::$instance->ErrorInfo);
-                return false;
-            } else {
+                self::$instance->Send();
                 return true;
+            } catch ( phpmailerException $e ) {
+                CAT_Helper_Mail::setError(self::$instance->ErrorInfo);
+                return false;
+            } catch ( Exception $e ) {
+                CAT_Helper_Mail::setError($e->getMessage());
+                return false;
             }
+            // never reached
+            return true;
         }   // end function sendMail()
     }
 }

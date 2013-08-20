@@ -4,7 +4,7 @@
 			<div class="clear"></div>
 			<hr />
 
-            {if count($CATMAILER_LIBS)>1}
+            {if count($CATMAILER_LIBS)>0}
             <span class="fc_label_200">{translate('Mailer library')}:</span><br />
             <div id="fc_catmailer_lib" class="settings_label fc_settings_max">
                 {foreach $CATMAILER_LIBS item}
@@ -28,7 +28,7 @@
 			<div class="clear"></div>
 			<button class="icon-mail right" dir="ltr" type="submit" id="fc_checkmail" name="checkmail" onclick="send_testmail('{$CAT_ADMIN_URL}/settings/ajax_testmail.php');return false;"> {translate('Send test mail')}</button>
             {else}
-            <span class="right">{translate('Please choose Mailer library and click [Save] to send a test mail')}</span>
+            <span class="right">{translate('Please choose a Mailer library and enter a valid sender address and click [Save] to send a test mail')}</span>
             {/if}
 
 			{if $DISPLAY_ADVANCED}

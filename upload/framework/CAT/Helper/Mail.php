@@ -32,7 +32,7 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
 	class CAT_Helper_Mail extends CAT_Object
 	{
         protected        $debugLevel = 8; // 8 = OFF
-        private          $error      = NULL;
+        private   static $error      = NULL;
         private   static $_drivers   = array();
         private   static $init       = false;
         private   static $instance;
@@ -130,9 +130,9 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
          *
          *
          **/
-        public function setError($msg)
+        public static function setError($msg)
         {
-            $this->error = $msg;
+            self::$error = $msg;
         }
             
         /**
@@ -141,9 +141,9 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
          *
          *
          **/
-        public function getError()
+        public static function getError()
         {
-            return $this->error;
+            return self::$error;
         }
     }
 }
