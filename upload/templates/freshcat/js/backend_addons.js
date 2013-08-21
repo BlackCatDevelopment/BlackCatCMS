@@ -161,4 +161,11 @@ jQuery(document).ready(function(){
 			}
 		});
     });
+
+    $('#fc_add_new_module_button').click(
+        function(e) {
+            $('#fc_add_new_module').toggle('slow');
+            e.preventDefault();
+        }
+    );
 });

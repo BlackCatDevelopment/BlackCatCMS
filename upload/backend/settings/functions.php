@@ -447,7 +447,7 @@ function saveSettings($settings) {
             $func  = 'check_'.$key;
             $value = $func($value,$old_settings[$key]);
         }
-        if ( $value != '' || in_array($key,$allow_empty_values) )
+        if ( $value !== '' || in_array($key,$allow_empty_values) )
         {
             $check  = $database->query(sprintf(
                 'SELECT `value` FROM `%ssettings` WHERE `name`="%s"',

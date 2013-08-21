@@ -9,7 +9,7 @@
 				<input type="submit" name="uninstall_module" value="{translate('Uninstall Addon')}" class="fc_gradient_red" />
 			</form>
 {else}
-            <div class="submit_settings">
+            <div class="submit_settings fc_gradient1">
                 <strong>{translate('Module details')}: {$addon.name}</strong>
                 {if ! $addon.is_removable}
                 <span>{translate('Marked as mandatory')}</span>

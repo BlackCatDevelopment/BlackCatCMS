@@ -54,6 +54,7 @@
 					install_new.slideDown(0);
 					install_new.find('ul.fc_groups_tabs a:first').click();
 					install_new.find('input[type=text]:first').focus();
+                    jQuery('#addon_details').html('');
 				});
 			}
 
@@ -65,6 +66,7 @@
 				options.fc_list_forms.not('#' + form_id ).slideUp(0);
 				element_item.slideDown(0);
 				element_item.find('ul.fc_groups_tabs a:first').click();
+                jQuery('#fc_add_new_module').hide();
 			});
 
 		});
