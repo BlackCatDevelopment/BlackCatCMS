@@ -18,6 +18,9 @@
 			<ul class="fc_gradient1 fc_border fc_shadow_small fc_br_top">
 				<li><span>{$CAT_CORE}:</span> {$CAT_VERSION}</li>
 				<li><span>{$THEME_NAME}:</span> {$THEME_VERSION}</li>
+				{foreach $system_information as $info}
+				<li><span>{$info.name}:</span> {$info.status}</li>
+				{/foreach}
 			</ul>
 		</div>
 	</div>
