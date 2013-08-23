@@ -42,6 +42,11 @@
 		}
 
 		[class^="icon-fc"]:before, [class*=" icon-fc"]:before {
+			font-family: 'blackcat';
+			font-style: normal;
+			speak: none;
+			font-weight: normal;
+			-webkit-font-smoothing: antialiased;
 			display:		block;
 			font-size:		2em;
 		}
