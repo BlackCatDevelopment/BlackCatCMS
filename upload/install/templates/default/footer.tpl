@@ -2,7 +2,7 @@
 	  </div>
 	</div><!-- end of content -->
     <div id="buttons">
-      {if $prevstep}
+      {if $prevstep && $prevstep != 'postcheck'}
       <input type="hidden" name="prevstep" value="{$prevstep}" />
       <input accesskey="b" type="submit" id="btn_back" name="btn_back" value="&laquo; {translate('Back')}" />
       {/if}

@@ -695,8 +695,7 @@ function show_step_finish() {
     init_constants($cat_path);
     include $cat_path.'/framework/class.database.php';
     $database = new database();
-    $result = $database->query("SHOW TABLES FROM ".CAT_DB_NAME. " LIKE '%system_permissions'");
-    if(!$result->numRows())
+    if(!isset($config['install_tables_done']))
     {
         // do base installation first
         list( $result, $output ) = __do_install();
@@ -714,6 +713,7 @@ function show_step_finish() {
     $parser->setGlobals(
         array(
             'installer_uri' => $installer_uri,
+            'prevstep'      => NULL,
         )
     );
     // fix path (some modules may change it)
@@ -722,7 +722,6 @@ function show_step_finish() {
         $tpl,
         array(
             'backend_path'  => 'backend',
-//            'cat_url'       => CAT_URL,
             'installer_uri' => $installer_uri,
         )
     );
@@ -1451,7 +1450,6 @@ function __do_install() {
 
     init_constants($cat_path);
 
-#    require $cat_path.'/framework/class.login.php';
     include $cat_path.'/framework/class.database.php';
     $database = new database();
 
@@ -1488,6 +1486,7 @@ function __do_install() {
                     }
                 }
             }
+            $config['install_tables_done'] = true;
         }
     }
 

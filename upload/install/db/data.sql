@@ -77,6 +77,7 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/backend/addons/manual_install.php' ),
     ( 0, '/backend/addons/reload.php' ),
     ( 0, '/backend/addons/uninstall.php' ),
+    ( 0, '/backend/addons/ajax_create.php' ),
     ( 0, '/backend/admintools/index.php' ),
     ( 0, '/backend/admintools/tool.php' ),
     ( 0, '/backend/groups/ajax_delete_group.php' ),
