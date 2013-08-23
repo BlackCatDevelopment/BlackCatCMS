@@ -45,6 +45,39 @@
 		height:			30px;
 		line-height:	30px;
 	}
+		#fc_footer_info {
+			float: right;
+			position: relative;
+			margin-right: 1em;
+			font-weight: 900;
+		}
+			#fc_footer_info > span {
+				display: inline-block;
+				padding: 0.1em 1em;
+				font-weight: 100;
+				cursor: pointer;
+				line-height: 1.4em;
+				border: 1px solid #9da8b2;
+			}
+			#fc_footer_info ul {
+				text-align: left;
+				position: absolute;
+				bottom: 30px;
+				right: 0px;
+				padding: 0px;
+				display: none;
+			}
+				#fc_footer_info li {
+					margin: 0px;
+					padding: 0.1em 1em;
+					white-space: nowrap;
+					border-bottom: 1px solid #9da8b2;
+				}
+					#fc_footer_info li span {
+						display: inline-block;
+						width: 80px;
+						font-weight: 100;
+					}
 
 	#fc_main_content_footer {
 		line-height: 30px;

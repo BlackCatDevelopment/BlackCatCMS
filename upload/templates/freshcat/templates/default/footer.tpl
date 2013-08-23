@@ -9,11 +9,17 @@
 	</div>
 	{/if}
 	<div id="fc_content_footer" {if !$permissions.pages} class="fc_no_sidebar"{/if}>
-		{$CAT_CORE}: {$CAT_VERSION} | {$THEME_NAME}: {$THEME_VERSION} -
 		<!-- Please note: the below reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. -->
 		<a href="{$URL_HELP}" title="Black Cat CMS" target="_blank">Black Cat CMS</a> is released under the <a href="http://www.gnu.org/licenses/gpl.html" title="Black Cat CMS Core is GPL" target="_blank">GNU General Public License</a>.
 		<!-- Please note: the above reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. 
 		<a href="{$URL_HELP}" title="Black Cat CMS Bundle" target="_blank">Black Cat CMS Bundle</a> is released under several different licenses.-->
+		<div id="fc_footer_info">
+			<span id="fc_showFooter_info" class="icon-logo_bc fc_gradient1 fc_gradient_hover fc_border_all"> {translate('System information')}</span>
+			<ul class="fc_gradient1 fc_border fc_shadow_small fc_br_top">
+				<li><span>{$CAT_CORE}:</span> {$CAT_VERSION}</li>
+				<li><span>{$THEME_NAME}:</span> {$THEME_VERSION}</li>
+			</ul>
+		</div>
 	</div>
 </div>
 </body>

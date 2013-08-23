@@ -1,17 +1,17 @@
 @font-face {
-	font-family: 'lepton2';
-	src:url('../webfont/lepton2.eot');
-	src:url('../webfont/lepton2.eot?#iefix') format('embedded-opentype'),
-		url('../webfont/lepton2.svg#lepton2') format('svg'),
-		url('../webfont/lepton2.woff') format('woff'),
-		url('../webfont/lepton2.ttf') format('truetype');
+	font-family: 'blackcat';
+	src:url('../webfont/blackcat.eot');
+	src:url('../webfont/blackcat.eot?#iefix') format('embedded-opentype'),
+		url('../webfont/blackcat.svg#blackcat') format('svg'),
+		url('../webfont/blackcat.woff') format('woff'),
+		url('../webfont/blackcat.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
 
 /* Use the following CSS code if you want to use data attributes for inserting your icons */
 [data-icon]:before {
-	font-family: 'lepton2';
+	font-family: 'blackcat';
 	content: attr(data-icon);
 	speak: none;
 	font-weight: normal;
@@ -20,7 +20,7 @@
 
 /* Use the following CSS code if you want to have a class per icon */
 [class^="icon-"]:before, [class*=" icon-"]:before {
-	font-family: 'lepton2';
+	font-family: 'blackcat';
 	font-style: normal;
 	speak: none;
 	font-weight: normal;
@@ -76,13 +76,6 @@
 	content: "\e049";
 }
 
-.icon-folder-add:before {
-	content: "\e04b";
-}
-.icon-folder:before {
-	padding-right:	0.5em;
-	content:		"\e04c";
-}
 .icon-pencil:before {
 	content: "\e001";
 }
@@ -308,23 +301,24 @@
 .icon-file-css:before {
 	content: "\e04a";
 }
-.icon-folder-add:before {
+.icon-home:before {
 	content: "\e04b";
 }
-.icon-folder:before {
+.icon-folder-add:before {
 	content: "\e04c";
 }
-.icon-move:before {
+.icon-folder:before {
+	padding-right: 0.5em;
 	content: "\e04d";
 }
-.icon-menu:before {
+.icon-screen-3:before {
 	content: "\e04e";
 }
-.icon-home:before {
+.icon-menu:before {
 	content: "\e04f";
 }
-.icon-logo:before {
-	content: "\e052";
+.icon-logo_bc:before {
+	content: "\e050";
 }
 .icon-creativecat:before {
 	content: "\e051";
