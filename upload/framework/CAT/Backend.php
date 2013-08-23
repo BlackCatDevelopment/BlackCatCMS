@@ -388,20 +388,10 @@ if (!class_exists('CAT_Backend', false))
             $data['THEME_VERSION'] = $backend_theme_version;
             $data['THEME_NAME']    = DEFAULT_THEME;
 
-			function convert($size)
-			{
-				$unit=array('b','kb','mb','gb','tb','pb');
-				return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
-			}
-
 			$data['system_information'] = array(
 				array(
 					'name'		=> $self->lang()->translate('Memory usage'),
-					'status'	=> '~' . convert(memory_get_usage(true))
-				),
-				array(
-					'name'		=> $self->lang()->translate('Exec. time'),
-					'status'	=> ''
+					'status'	=> '~ ' . CAT_Helper_Directory::getInstance()->byte_convert(memory_get_usage(true))
 				)
 			);
 
