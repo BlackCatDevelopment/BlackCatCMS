@@ -609,4 +609,10 @@ jQuery(document).ready( function()
 		return false;
 	});
 
+	// Active button in the footer to show System information
+	$('#fc_footer_info').on( 'click', '#fc_showFooter_info', function()
+	{
+		$(this).toggleClass('fc_active').parent('#fc_footer_info').children('ul').slideToggle(300);
+	});
+
 });

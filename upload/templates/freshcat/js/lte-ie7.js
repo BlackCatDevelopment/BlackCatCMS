@@ -1,9 +1,9 @@
-/* Use this script if you need to support IE 7 and IE 6. */
+/* Load this script using conditional IE comments if you need to support IE 7 and IE 6. */
 
 window.onload = function() {
 	function addIcon(el, entity) {
 		var html = el.innerHTML;
-		el.innerHTML = '<span style="font-family: \'lepton2\'">' + entity + '</span>' + html;
+		el.innerHTML = '<span style="font-family: \'blackcat\'">' + entity + '</span>' + html;
 	}
 	var icons = {
 			'icon-pencil' : '&#xe001;',
@@ -81,18 +81,21 @@ window.onload = function() {
 			'icon-file-zip' : '&#xe048;',
 			'icon-file-xml' : '&#xe049;',
 			'icon-file-css' : '&#xe04a;',
-			'icon-folder-add' : '&#xe04b;',
-			'icon-folder' : '&#xe04c;',
-			'icon-move' : '&#xe04d;',
-			'icon-menu' : '&#xe04e;',
-			'icon-home' : '&#xe04f;',
-			'icon-logo' : '&#xe052;',
+			'icon-home' : '&#xe04b;',
+			'icon-folder-add' : '&#xe04c;',
+			'icon-folder' : '&#xe04d;',
+			'icon-screen-3' : '&#xe04e;',
+			'icon-menu' : '&#xe04f;',
+			'icon-logo_bc' : '&#xe050;',
 			'icon-creativecat' : '&#xe051;'
 		},
 		els = document.getElementsByTagName('*'),
 		i, attr, html, c, el;
-	for (i = 0; i < els.length; i += 1) {
+	for (i = 0; ; i += 1) {
 		el = els[i];
+		if(!el) {
+			break;
+		}
 		attr = el.getAttribute('data-icon');
 		if (attr) {
 			addIcon(el, attr);
