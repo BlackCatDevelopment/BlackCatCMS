@@ -1129,7 +1129,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         mysql_real_escape_string( $addon_info['module_directory'] ),
                         mysql_real_escape_string( $addon_info['module_name'] ),
                         mysql_real_escape_string( $addon_info['module_description'] ),
-                        $addon_info['module_type'],
+                        $addon_info['addon_function'],
                         mysql_real_escape_string( strtolower( $addon_info['module_function'] ) ),
                         mysql_real_escape_string( $addon_info['module_version'] ),
                         ( isset( $addon_info['module_platform'] ) ? mysql_real_escape_string( $addon_info['module_platform'] ) : '' ),
