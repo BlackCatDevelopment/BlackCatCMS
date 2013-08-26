@@ -964,6 +964,21 @@ if (!class_exists('CAT_Helper_Page'))
         } // end function getJQuery()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getLastEdited($number=10)
+        {
+            $result = array();
+            $pages  = self::getPages(1);
+            // sort pages by when_changed
+            $res = usort( $pages, create_function( '$a,$b', 'return ( ( $a["modified_when"] < $b["modified_when"] ) ? 1 : -1 );' ) );
+            return array_slice($pages,0,$number);
+        }   // end function getLastEdited()
+        
+
+        /**
          * counts the levels from given page_id to root
          *
          * taken from old functions.php, dunno why this is done this way, maybe

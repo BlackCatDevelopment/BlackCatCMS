@@ -59,10 +59,11 @@ if (!class_exists('CAT_Helper_Widget'))
         public static function getWidgets()
         {
             global $parser;
-            $data    = array();
-            $widgets = self::findWidgets();
-            $addonh  = CAT_Helper_Addons::getInstance();
-            $base    = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules');
+            $_chw_data    = array();
+            $widgets      = self::findWidgets();
+            $widget_name  = NULL;
+            $addonh       = CAT_Helper_Addons::getInstance();
+            $base         = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules');
             foreach( $widgets as $widget )
             {
                 $path = pathinfo(CAT_Helper_Directory::sanitizePath($widget),PATHINFO_DIRNAME);
@@ -82,12 +83,16 @@ if (!class_exists('CAT_Helper_Widget'))
                     $addonh->lang()->addFile(LANGUAGE.'.php', $path.'/languages/');
                 }
                 ob_start();
+                    $widget_name  = NULL;
                     include($widget);
                     $content = ob_get_contents();
                 ob_clean();
-                $data[] = array_merge( ( is_array($info) ? $info : array() ), array('content'=>$content) );
+                $_chw_data[$widget] = array_merge( ( is_array($info) ? $info : array() ), array('content'=>$content) );
+                if($widget_name)
+                    $_chw_data[$widget]['module_name'] .= ' - '.$widget_name;
             }
-            return $data;
+
+            return $_chw_data;
         }   // end function getWidgets()
         
         /**

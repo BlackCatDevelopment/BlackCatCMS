@@ -71,12 +71,12 @@
 #fc_widget_list_1 {
 	margin: 2%;
 	float: left;
-	width: 47%;
+	width: 45%;
 }
 #fc_widget_list_2 {
 	margin: 2%;
 	float: right;
-	width: 47%;
+	width: 45%;
 }
 .fc_widget_content .fc_close {
 	display: none;
@@ -85,10 +85,6 @@
 	right: 20px;
 	position: absolute;
 }
-#fc_widget_list_2 {
-	display: none;
-}
-
 .widget_error{
     background-color: #F3D8D8;
     border: 1px solid #FF0000;

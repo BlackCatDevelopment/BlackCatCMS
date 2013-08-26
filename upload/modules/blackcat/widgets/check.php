@@ -39,15 +39,16 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-include dirname(__FILE__).'/data/config.inc.php';
+include dirname(__FILE__).'/../data/config.inc.php';
 
+$widget_name = 'Version check';
 $error = $version = $newer = $last = $last_version = NULL;
 $debug = false;
 $doit  = true;
 
 if(!CAT_Helper_Validate::sanitizeGet('blackcat_refresh'))
 {
-    $file = sanitize_path(dirname(__FILE__).'/data/.last');
+    $file = sanitize_path(dirname(__FILE__).'/../data/.last');
     if ( file_exists($file) )
     {
         $fh = @fopen($file,'r');
@@ -132,7 +133,8 @@ else {
              : $version;
 }
 
-$parser->setPath(dirname(__FILE__).'/templates/default');
+global $parser;
+$parser->setPath(dirname(__FILE__).'/../templates/default');
 $parser->output(
     'widget.tpl',
     array(
@@ -146,4 +148,3 @@ $parser->output(
         'missing_wysiwyg' => count(CAT_Helper_Addons::get_addons(NULL,'module','wysiwyg')),
     )
 );
-

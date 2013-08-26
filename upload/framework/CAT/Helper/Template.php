@@ -34,7 +34,7 @@ if (!class_exists('CAT_Helper_Template'))
 
         protected $debuglevel      = CAT_Helper_KLogger::CRIT;
         protected $logger          = NULL;
-        protected $_config         = array( 'loglevel' => 7 );
+        protected $_config         = array( 'loglevel' => CAT_Helper_KLogger::CRIT );
         private   static $_drivers = array();
         private   static $_driver  = NULL;
         protected static $template_menus = array();
