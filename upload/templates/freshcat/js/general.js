@@ -306,7 +306,7 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 					},
 					success:	function( data, textStatus, jqXHR )
 					{
-						if ( data.success === true )
+						if ( data.success === true || $(data).find('.fc_success_box').size() > 0 )
 						{
 							// Check if there is a div.success_box in returned data that implements that the request was completely successful
 							return_success( jqXHR.process , data.message );
