@@ -23,20 +23,20 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-    if (defined('CAT_VERSION')) include(CAT_PATH.'/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-    include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
-    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
-    $inc = false;
-    foreach ($subs as $sub) {
-        if (empty($sub)) continue; $dir .= '/'.$sub;
-        if (file_exists($dir.'/framework/class.secure.php')) {
-            include($dir.'/framework/class.secure.php'); $inc = true;    break;
-        }
-    }
-    if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	$root = "../";
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= "../";
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) { 
+		include($root.'/framework/class.secure.php'); 
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
 }
 
 $backend = CAT_Backend::getInstance('Addons', 'modules_install', false);
