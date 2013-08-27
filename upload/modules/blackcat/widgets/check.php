@@ -120,7 +120,7 @@ if ( $doit ) {
     }
     }
 
-    $fh   = @fopen(sanitize_path(dirname(__FILE__).'/data/.last'),'w');
+    $fh   = @fopen(sanitize_path(dirname(__FILE__).'/../data/.last'),'w');
     if ( is_resource($fh) ) {
     fputs($fh,time().'|'.$version);
     fclose($fh);
