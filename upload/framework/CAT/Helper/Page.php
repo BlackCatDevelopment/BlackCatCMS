@@ -1699,7 +1699,7 @@ if (!class_exists('CAT_Helper_Page'))
                     break;
                 // shown if called, but not in menu
                 case 'hidden':
-                    if(CAT_Registry::get('PAGE_ID')==$page_id)
+                    if(self::selectPage()==$page_id)
                         $show_it = true;
                     break;
                 // always visible
