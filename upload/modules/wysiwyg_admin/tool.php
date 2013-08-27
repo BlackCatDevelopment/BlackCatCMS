@@ -90,9 +90,9 @@ if(preg_match('~(\d+)(.*)~',$height,$match))
 $skins        = $c->getSkins($c->getSkinPath());
 $current_skin = $c->getSkin($config);
 $settings     = $c->getAdditionalSettings();
-$plugins         = $c->getAdditionalPlugins();
+$plugins      = $c->getAdditionalPlugins();
 $filemanager  = $c->getFilemanager();
-$toolbars            = $c->getToolbars();
+$toolbars     = $c->getToolbars();
 $preview      = NULL;
 $plugins_checked = array();
 $filemanager_checked = array();

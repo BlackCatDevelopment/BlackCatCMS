@@ -52,4 +52,5 @@ $LANG = array(
     'Warning: no WYSIWYG Editors installed!' => 'Warnung: Keine WYSIWYG Editoren installiert!',
     'Warning: no mailer libs installed!' => 'Warnung: Keine Mailbibliotheken installiert!',
     'Edit connection settings' => 'Verbindungseinstellungen',
+    'Visit download page' => 'Downloadseite besuchen',
 );
