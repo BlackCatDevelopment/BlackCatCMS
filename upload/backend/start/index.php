@@ -121,7 +121,17 @@ foreach(
 // ============
 // ! Widgets
 // ============
-$tpl_data['widgets'] = $widget->getWidgets();
+$widgets = $widget->getWidgets();
+if(count($widgets)>1)
+{
+    $half = ceil(count($widgets)/2);
+    $tpl_data['widgets_1'] = array_splice($widgets,0,$half);
+    $tpl_data['widgets_2'] = $widgets;
+}
+else
+{
+    $tpl_data['widgets_1'] = $widgets;
+}
 
 // ==================== 
 // ! Parse the site   
