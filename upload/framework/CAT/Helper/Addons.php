@@ -33,8 +33,8 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
     class CAT_Helper_Addons extends CAT_Object
     {
         // array to store config options
-        protected $_config = array( 'loglevel' => 8 );
-        protected $debugLevel = 8;
+        protected      $_config = array( 'loglevel' => 4 );
+        protected      $debugLevel = 4;
         private static $dirh;
         private static $error = NULL;
         private static $instance = NULL;
@@ -1369,12 +1369,14 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             if ( !CAT_Backend::isBackend() && !is_object( $admin ) && !defined( 'CAT_INSTALL' ) )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called outside admin context!" );
+                self::$error = "sec_register_file() called outside admin context!";
                 return false;
             }
             // check permissions
             if ( !CAT_Users::checkPermission( 'Addons', 'modules_install' ) && !defined( 'CAT_INSTALL' ) )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called without modules_install perms!" );
+                self::$error = "sec_register_file() called without modules_install perms!";
                 return false;
             }
             // this will remove ../.. from $filepath
@@ -1382,18 +1384,24 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             if ( !is_dir( CAT_PATH . '/modules/' . $module ) )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called for non existing module [$module] (path: [$filepath])" );
+                self::$error = "sec_register_file() called for non existing module [$module] (path: [$filepath])";
                 return false;
             }
             if ( !file_exists( self::$dirh->sanitizePath( CAT_PATH . '/modules/' . $module . '/' . $filepath ) ) )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called for non existing file [$filepath] (module: [$module])" );
+                self::$error = "sec_register_file() called for non existing file [$filepath] (module: [$module])";
                 return false;
             }
             $self = self::getInstance();
-            $q    = $self->db()->query( 'SELECT * FROM ' . CAT_TABLE_PREFIX . 'addons WHERE directory = "' . $module . '"' );
+            $q    = $self->db()->query(sprintf(
+                'SELECT * FROM `%saddons` WHERE directory = "%s"',
+                CAT_TABLE_PREFIX, $module
+            ));
             if ( !$q->numRows() )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called for non existing module [$module] (path: [$filepath]) - not found in addons table!" );
+                self::$error = "sec_register_file() called for non existing module [$module] (path: [$filepath]) - not found in addons table!";
                 return false;
             }
             $row      = $q->fetchRow();
@@ -1404,7 +1412,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             if ( !$q->numRows() )
             {
                 $self->db()->query( sprintf( 'REPLACE INTO `%sclass_secure` VALUES ( "%d", "%s" )', CAT_TABLE_PREFIX, $row['addon_id'], '/modules/' . $module . '/' . $filepath ) );
-                return $self->db()->is_error();
+                return ( $self->db()->is_error() ? false : true );
             }
             return true;
         } // end function sec_register_file()

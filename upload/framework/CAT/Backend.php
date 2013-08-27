@@ -23,6 +23,9 @@
  *
  */
 
+global $_be_mem, $_be_time;
+$_be_time = microtime(TRUE);
+$_be_mem  = memory_get_usage();
 if (!class_exists('CAT_Object', false))
 {
     @include dirname(__FILE__) . '/Object.php';
@@ -388,11 +391,16 @@ if (!class_exists('CAT_Backend', false))
             $data['THEME_VERSION'] = $backend_theme_version;
             $data['THEME_NAME']    = DEFAULT_THEME;
 
+            global $_be_mem, $_be_time;
 			$data['system_information'] = array(
 				array(
 					'name'		=> $self->lang()->translate('Memory usage'),
-					'status'	=> '~ ' . CAT_Helper_Directory::getInstance()->byte_convert(memory_get_usage(true))
-				)
+					'status'	=> '~ ' . sprintf('%0.2f',( (memory_get_usage() - $_be_mem) / (1024 * 1024) )) . ' MB'
+				),
+                array(
+                    'name'      => $self->lang()->translate('Script run time'),
+                    'status'    => '~ ' . sprintf('%0.2f',( microtime(TRUE) - $_be_time )) . ' sec'
+                ),
 			);
 
             // ====================

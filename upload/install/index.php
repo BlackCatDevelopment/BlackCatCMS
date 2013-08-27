@@ -930,9 +930,6 @@ function install_modules ($cat_path,$database) {
             {
                 fwrite( $logh, 'installing module/template ['.$item.']'."\n" );
                 $addon_info = CAT_Helper_Addons::checkInfo($dir.'/'.$item);
-                // Run the install script if there is one
-                if ( file_exists($dir.'/'.$item.'/install.php') )
-                    require $dir.'/'.$item.'/install.php';
                 // load the module info into the database
                 if ( !CAT_Helper_Addons::loadModuleIntoDB($dir.'/'.$item,'install',$addon_info))
                 {
@@ -941,6 +938,9 @@ function install_modules ($cat_path,$database) {
                 }
                 else
                 {
+                    // Run the install script if there is one
+                    if ( file_exists($dir.'/'.$item.'/install.php') )
+                        require $dir.'/'.$item.'/install.php';
                     fwrite( $logh, sprintf('%s [%s] sucessfully installed',ucfirst(substr($type,0,-1)),$item)."\n" );
                 }
             }
@@ -990,7 +990,9 @@ function install_optional_modules () {
         $config['optional_addon'] == $_REQUEST['installer_optional_addon'];
     }
 
-    fwrite($logh,'installing optional addons:');
+    fwrite($logh,'------------------------------------');
+    fwrite($logh,'-----installing optional addons-----');
+    fwrite($logh,'------------------------------------');
     fwrite($logh,print_r($config['optional_addon'],1));
 
     $cat_path = $dirh->sanitizePath( dirname(__FILE__).'/..' );

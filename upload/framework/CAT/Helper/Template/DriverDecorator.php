@@ -25,131 +25,143 @@
 
 if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
 {
-    class CAT_Helper_Template_DriverDecorator extends CAT_Helper_Template {
-
-    private $te;
-        private $paths = array( 'current' => NULL, 'frontend' => NULL, 'frontend_fallback' => NULL, 'backend' => NULL, 'backend_fallback' => NULL, 'workdir' => NULL );
-        private $search_order = array( 'current', 'frontend', 'frontend_fallback', 'backend', 'backend_fallback', 'workdir' );
-    public  $template_block;
-        protected $_config         = array( 'loglevel' => 7 );
-
-    public function __construct( $obj )
+    class CAT_Helper_Template_DriverDecorator extends CAT_Helper_Template
     {
-        parent::__construct();
-        $this->te = $obj;
-                // get current working directory
-        $callstack = debug_backtrace();
+
+        private $te;
+        private $paths = array(
+            'current'           => NULL,
+            'frontend'          => NULL,
+            'frontend_fallback' => NULL,
+            'backend'           => NULL,
+            'backend_fallback'  => NULL,
+            'workdir'           => NULL
+        );
+        private $search_order = array(
+            'current', 'frontend', 'frontend_fallback', 'backend', 'backend_fallback', 'workdir'
+        );
+        public  $template_block;
+        protected $_config = array( 'loglevel' => CAT_Helper_KLogger::CRIT );
+
+        public function __construct( $obj )
+        {
+            parent::__construct();
+            $this->te = $obj;
+            // get current working directory
+            $callstack = debug_backtrace();
             $this->te->paths['workdir']
-            = ( isset( $callstack[0] ) && isset( $callstack[0]['file'] ) )
+                = ( isset( $callstack[0] ) && isset( $callstack[0]['file'] ) )
                 ? CAT_Helper_Directory::sanitizePath(realpath(dirname($callstack[0]['file'])))
                 : CAT_Helper_Directory::sanitizePath(realpath(dirname(__FILE__)));
 
-        if (
-                 file_exists( $this->te->paths['workdir'].'/templates' )
-        ) {
+            if (file_exists( $this->te->paths['workdir'].'/templates' ))
+            {
                 $this->te->paths['workdir'] .= '/templates';
-        }
+            }
             $this->te->paths['current'] = $this->te->paths['workdir'];
-    }
-
-    public function __call($method, $args)
-    {
-        if ( ! method_exists( $this->te, $method ) )
-        {
-            $this->logger->logCrit('No such method: ['.$method.']');
         }
-        return call_user_func_array(array($this->te, $method), $args);
-    }
 
-    /**
-         * set current template search path
-     *
-     * @access public
-     * @param  string  $path
-         * @param  string  $context - frontend (default) or backend
-     * @return boolean
-     *
-     **/
-        public function setPath ( $path, $context = 'frontend' )
+        public function __call($method, $args)
         {
+            if ( ! method_exists( $this->te, $method ) )
+            {
+                $this->logger->logCrit('No such method: ['.$method.']');
+            }
+            return call_user_func_array(array($this->te, $method), $args);
+        }
+
+        /**
+         * set current template search path
+         *
+         * @access public
+         * @param  string  $path
+         * @param  string  $context - frontend (default) or backend
+         * @return boolean
+         *
+         **/
+         public function setPath ( $path, $context = 'frontend' )
+         {
             $path = CAT_Helper_Directory::sanitizePath($path);
             $this->logger->logDebug(sprintf('context [%s] path [%s]', $context, $path ));
-        if ( file_exists( $path ) ) {
+            if ( file_exists( $path ) )
+            {
                 $this->te->paths[$context]  = $path;
                 $this->te->paths['current'] = $path;
                 if(!isset($this->te->paths[$context.'_fallback']))
                     $this->te->paths[$context.'_fallback'] = $path;
-            return true;
-        }
-        else {
-            $this->logger->logWarn( 'unable to set template path: does not exist!', $path );
-            return false;
-        }
-    }   // end function setPath()
+                return true;
+            }
+            else
+            {
+                $this->logger->logWarn( 'unable to set template path: does not exist!', $path );
+                return false;
+            }
+        }   // end function setPath()
 
-    /**
-     * set template fallback path (for templates not found in default path)
-     *
-     * @access public
-     * @param  string  $path
+        /**
+         * set template fallback path (for templates not found in default path)
+         *
+         * @access public
+         * @param  string  $path
          * @param  string  $context - frontend (default) or backend
-     * @return boolean
-     *
-     **/
+         * @return boolean
+         *
+         **/
         public function setFallbackPath ( $path, $context = 'frontend' )
         {
             $path = CAT_Helper_Directory::sanitizePath($path);
             $this->logger->logDebug(sprintf('context [%s] fallback path [%s]', $context, $path ));
-        if ( file_exists( $path ) ) {
+            if ( file_exists( $path ) ) {
                 $this->te->paths[$context.'_fallback'] = $path;
             return true;
-        }
-        else {
-            $this->logger->logWarn( 'unable to set fallback template path: does not exist!', $path );
-            return false;
-        }
-    }   // end function setFallbackPath()
-
-    /**
-     * set global replacement values
-     *
-     * Usage
-     *    $t->setGlobals( 'varname', 'value' );
-     * or
-     *    $t->setGlobals( array( 'var1' => 'val1', 'var2' => 'val2', ... ) );
-     *
-     * The second param is ignored if $var is an array
-     *
-     * @access public
-     * @param  string || array  $var
-     * @param  string           $value (optional)
-     *
-     **/
-    public function setGlobals( $var, $value = NULL )
-    {
-        $class = get_class($this->te);
-        if ( ! is_array( $var ) && isset( $value ) ) {
-           $class::$_globals[ $var ] = $value;
-           return;
-        }
-        if ( is_array( $var ) ) {
-            foreach ( $var as $k => $v ) {
-                $class::$_globals[ $k ] = $v;
             }
-        }
+            else
+            {
+                $this->logger->logWarn( 'unable to set fallback template path: does not exist!', $path );
+                return false;
+            }
+        }   // end function setFallbackPath()
 
-    }  // end function setGlobals()
+        /**
+         * set global replacement values
+         *
+         * Usage
+         *    $t->setGlobals( 'varname', 'value' );
+         * or
+         *    $t->setGlobals( array( 'var1' => 'val1', 'var2' => 'val2', ... ) );
+         *
+         * The second param is ignored if $var is an array
+         *
+         * @access public
+         * @param  string || array  $var
+         * @param  string           $value (optional)
+         *
+         **/
+        public function setGlobals( $var, $value = NULL )
+        {
+            $class = get_class($this->te);
+            if ( ! is_array( $var ) && isset( $value ) ) {
+               $class::$_globals[ $var ] = $value;
+               return;
+            }
+            if ( is_array( $var ) ) {
+                foreach ( $var as $k => $v ) {
+                    $class::$_globals[ $k ] = $v;
+                }
+            }
 
-    /**
-     * check if template exists in current search path(s)
-     **/
-    public function hasTemplate($name)
-    {
+        }  // end function setGlobals()
+
+        /**
+         * check if template exists in current search path(s)
+         **/
+        public function hasTemplate($name)
+        {
             $file = $this->findTemplate($name);
             if ( $file )
                 return $file;
             else
-        return false;
+                return false;
         }   // end function hasTemplate()
 
         /**
