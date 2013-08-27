@@ -462,10 +462,10 @@ function saveSettings($settings) {
             }
             else
             {
-            $database->query(sprintf(
+                $database->query(sprintf(
                     'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
-                CAT_TABLE_PREFIX, $value, $key
-            ));
+                    CAT_TABLE_PREFIX, $value, $key
+                ));
             }
             if($database->is_error())
                 $err_msg[] =  CAT_Users::getInstance()->lang()->translate(

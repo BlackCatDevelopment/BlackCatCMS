@@ -116,10 +116,18 @@ if (!class_exists('CAT_Helper_Protect'))
          * uses csrf-magic if available; returns NULL if not
          *
          * @access public
+         * @param  string  $mode - this is for backward compatibility with WB
          * @return string
          */
-    	public static function createToken()
+    	public static function createToken($mode = 'POST')
     	{
+            // for backward compatibility...
+            if((is_string($mode) && strtolower($mode) == 'post') || ($mode === true))
+    			return '';
+            // We return an empty string here, just to keep WB modules happy.
+            // The CSRF protection will be added automatically to the Backend,
+            // so there's no need to do it this way.
+
             $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_csrfmagic/csrf-magic.php');
             if ( file_exists( $path ) )
             {
@@ -142,11 +150,19 @@ if (!class_exists('CAT_Helper_Protect'))
          * uses csrf-magic if available; returns true if not
          *
          * @access public
+         * @param  string  $token - token to check
          * @return boolean - true if numbers matches against one of the stored tokens
          */
         public static function checkToken($token)
     	{
     		if (!TOKEN_LIFETIME) return true;
+
+            // for backward compatibility with WB...
+            if((is_string($token) && strtolower($token) == 'post') || ($token === true))
+    			return true;
+            // We return true here, just to keep WB modules happy.
+            // The CSRF protection will be added automatically to the Backend,
+            // so there's no need to do it this way.
 
             $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_csrfmagic/csrf-magic.php');
             if ( file_exists( $path ) )

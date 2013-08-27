@@ -1265,7 +1265,7 @@ if (!class_exists('CAT_Helper_Page'))
         {
             if(!count(self::$pages)) self::getInstance();
             if ( $all )
-            return self::$pages;
+                return self::$pages;
             // only visible for current lang
             $pages = array();
             foreach(self::$pages as $pg)

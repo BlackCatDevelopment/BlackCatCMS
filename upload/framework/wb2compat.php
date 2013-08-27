@@ -56,3 +56,6 @@ $database = new database();
 
 // old template engine
 require_once(CAT_PATH."/include/phplib/template.inc");
+
+// old language definitions - needed for some older modules, like Code2
+define('ENABLE_OLD_LANGUAGE_DEFINITIONS',true);

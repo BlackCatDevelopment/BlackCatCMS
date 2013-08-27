@@ -717,3 +717,9 @@ $OVERVIEW = array(
 	'VIEW' 					=> 'Quickly view and browse your website in a new window...'
 );
 
+if (defined('ENABLE_OLD_LANGUAGE_DEFINITIONS') && ENABLE_OLD_LANGUAGE_DEFINITIONS) {
+	foreach ($MESSAGE as $key => $value) {
+		$x = strpos($key, '_');
+		$MESSAGE[substr($key, 0, $x)][substr($key, $x+1)] = $value;
+	}
+}
