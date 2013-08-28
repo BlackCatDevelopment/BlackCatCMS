@@ -104,7 +104,7 @@ if (!class_exists('CAT_Helper_Widget'))
         public static function findWidgets()
         {
             // find files called widget.php
-            $widgets     = CAT_Helper_Directory::getInstance()->maxRecursionDepth(2)->findFiles( 'widget.php', CAT_PATH.'/modules' );
+            $widgets     = CAT_Helper_Directory::getInstance()->maxRecursionDepth(2)->setSkipFiles(array('index.php'))->findFiles( 'widget.php', CAT_PATH.'/modules' );
             // find files in directory called widgets
             $directories = CAT_Helper_Directory::getInstance()->maxRecursionDepth(2)->findDirectories( 'widgets', CAT_PATH.'/modules' );
             if(count($directories))
@@ -112,7 +112,7 @@ if (!class_exists('CAT_Helper_Widget'))
                 if(!is_array($widgets)) $widgets = array();
                 foreach($directories as $dir)
                 {
-                    $widgets = array_merge($widgets, CAT_Helper_Directory::getPHPFiles($dir));
+                    $widgets = array_merge($widgets, CAT_Helper_Directory::getInstance()->setSkipFiles(array('index.php'))->getPHPFiles($dir));
                 }
             }
             return $widgets;

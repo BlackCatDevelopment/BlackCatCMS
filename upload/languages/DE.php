@@ -235,6 +235,7 @@ $LANG = array(
     'Page groups' => 'Seitengruppen',
     'Page saved successfully' => 'Seite erfolgreich gespeichert',
     'Page settings' => 'Seiteneinstellungen',
+    'Page settings saved successfully' => 'Seiteneinstellungen erfolgreich gespeichert',
     'Parent' => 'Übergeordnete Seite',
     'Please enter a page title' => 'Bitte einen Seitentitel angeben',
     'Preferences' => 'Optionen',

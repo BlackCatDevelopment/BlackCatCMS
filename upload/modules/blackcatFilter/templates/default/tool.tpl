@@ -16,7 +16,7 @@
         <tr>
             <td>
                 <a class="ajaxAction" href="{$CAT_URL}/modules/blackcatFilter/ajax_set.php?filter={$filter.filter_name}&amp;action=delete">
-                    <img src="{$CAT_URL}/modules/blackcatFilter/css/images/inactive.png" />
+                    <img src="{$CAT_URL}/modules/blackcatFilter/css/images/delete.png" />
                 </a>
             </td>
             <td>{$filter.module_name}</td>

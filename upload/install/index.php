@@ -1273,6 +1273,10 @@ function create_default_page($database) {
     fwrite($fh,str_replace('%%id%%',4,$pg_content));
     fclose($fh);
 
+    $database->query(sprintf(
+        'UPDATE `%spages` SET `modified_when`="%s"',
+        CAT_TABLE_PREFIX, time()
+    ));
 
 }   // end function create_default_page()
 

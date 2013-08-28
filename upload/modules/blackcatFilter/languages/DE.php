@@ -47,10 +47,12 @@ $LANG = array(
 // --- filter descriptions ---
     'Obfuscates eMail addresses'
         => 'Maskiert eMail-Adressen',
-    'Highlights search terms'
-        => 'Hebt Suchbegriffe hervor',
-    'Fixes date formats'
-        => 'Korrigiert Datumsformate',
+    'Highlights search terms forwarded from search engines'
+        => 'Hebt Suchbegriffe hervor, die von Suchmaschinen übermittelt wurden',
+    'fixes dates emitted from old modules'
+        => 'Korrigiert Datumsformate bei alten Modulen',
+    'Processes internal page links'
+        => 'Ersetzt interne Seitenlinks',
 // --- legend ---
     'The code is located in a PHP file which resides in <tt>./&lt;Module&gt;/filter</tt>' => 'Der Code ist in einer PHP Datei enthalten, Verzeichnis ist <tt>./&lt;Module&gt;/filter</tt>',
     'The code is located in the database table <tt>&lt;Prefix&gt;mod_filter</tt>' => 'Der Code steht in der Datenbank, Tabelle <tt>&lt;Prefix&gt;mod_filter</tt>',

@@ -60,8 +60,11 @@ $addons_helper->db()->query(sprintf(
 
 // insert default filters
 $addons_helper->db()->query(sprintf(
-    "INSERT INTO `%smod_filter` (`filter_name`, `module_name`, `filter_description`, `filter_code`, `filter_active`)
-    VALUES ('obfuscateEmail', 'blackcatFilter', 'Obfuscates eMail addresses', '', 'N');",
+    "REPLACE INTO `%smod_filter` (`filter_name`, `module_name`, `filter_description`, `filter_code`, `filter_active`)
+    VALUES ('obfuscateEmail', 'blackcatFilter', 'Obfuscates eMail addresses', '', 'N'),
+           ('cmsplink', 'blackcatFilter', 'Processes internal page links', '', 'Y'),
+           ('fixDate', 'blackcatFilter', 'fixes dates emitted from old modules', '', 'N'),
+           ('searchHighlight', 'blackcatFilter', 'Highlights search terms forwarded from search engines', '', 'N');",
     CAT_TABLE_PREFIX
 ));
 

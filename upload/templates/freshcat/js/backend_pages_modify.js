@@ -56,15 +56,15 @@ jQuery(document).ready(function()
 		forceHelperSize:	true,
 		start:				function(event, ui)
 							{
-								/*if ( typeof tinyMCE != 'undefined')
+								if ( typeof tinyMCE != 'undefined')
 								{
 									tinyids = new Array();
 									var i = 0;
-									$('.mceEditor').each(function()
+									$('.mce-tinymce').each(function()
 									{
-										var id = $(this).prev('textarea').prop('id');
+										var id = $(this).next('textarea').prop('id');
 										tinyids[i] = id;
-										tinyMCE.execCommand('mceRemoveControl', false, id);
+										tinyMCE.execCommand('mceRemoveEditor', false, id);
 										i++;
 									});
 								}
@@ -90,20 +90,13 @@ jQuery(document).ready(function()
 							},
 		stop:				function(event, ui)
 							{
-								/*
+
 								if ( typeof tinyids != 'undefined')
 								{
 									$.each(tinyids, function(key, value) {
-										tinyMCE.execCommand('mceAddControl', false, value);
+										tinyMCE.execCommand('mceAddEditor', false, value);
 									});
 								}
-								if ( typeof CKEDITOR != 'undefined')
-								{
-									for(var i in myinstances)
-									{
-										CKEDITOR.replace(i).setData(myinstances[i]);
-									}
-								}*/
 								//editAreaLoader.execCommand('content13', 'set_editable', true);
 								if(typeof ckeditorOn=='function')ckeditorOn();
 							},

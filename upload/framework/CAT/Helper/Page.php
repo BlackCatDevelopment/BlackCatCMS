@@ -1558,24 +1558,9 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function preprocess(&$content)
         {
-    		$regexp = array( '/\[cmsplink([0-9]+)\]/isU' );
-            // for backward compatibility with WB
-            if(defined('WB_PREPROCESS_PREG')) $regexp[] = WB_PREPROCESS_PREG;
-            foreach($regexp as $preg) {
-        		if(preg_match_all( $preg, $content, $ids ) ) {
-        			$new_ids = array_unique($ids[1]);
-        			foreach($new_ids as $key => &$page_id) {
-        				$link = self::$pages_by_id[$page_id]['link'];
-        				if( !is_null($link) ) {
-        					$content = str_replace(
-        						$ids[0][ $key ],
-        						$this->page_link($link),
-        						$content
-        					);
-        				}
-        			}
-        		}
-	        }
+            if( ! function_exists('cmsplink') )
+                @include_once CAT_PATH.'/modules/blackcatFilter/filter/cmsplink.php';
+            cmsplink($content);
         }   // end static function preprocess()
 
         public static function printUnderConstruction()

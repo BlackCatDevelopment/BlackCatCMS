@@ -44,19 +44,9 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         public static function getInstance()
         {
             if (!self::$instance)
-            {
                 self::$instance = new self();
-            }
             else
-            {
-                // reset to defaults
-                self::$instance->setRecursion(true);
-                self::$instance->maxRecursionDepth();
-                self::$instance->setPrefix(NULL);
-                self::$instance->setSkipFiles(NULL);
-                self::$instance->setSkipDirs(NULL);
-                self::$instance->setSuffixFilter(NULL);
-            }
+                self::reset();
             return self::$instance;
         }
 
@@ -419,7 +409,9 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 						{
 						    continue;
 						}
-                        if ( count($skip_files) && in_array( pathinfo($dir.'/'.$file,PATHINFO_FILENAME), $skip_files) )
+#if ( count($skip_files) )
+#    echo "checking -", pathinfo($dir.'/'.$file,PATHINFO_BASENAME), "- against -", print_r($skip_files), "-<br />";
+                        if ( count($skip_files) && in_array( pathinfo($dir.'/'.$file,PATHINFO_BASENAME), $skip_files) )
 						{
 						    continue;
 						}
@@ -504,13 +496,10 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		        return;
 			}
 		    // make sure $dirs is an array
-            if ( $files && is_scalar($files) ) {
+            if ( $files && is_scalar($files) )
                 $files = array( $files );
-			}
 			if ( is_array($files) )
-			{
 			    self::$skip_files = $files;
-			}
             if(self::$instance) return self::$instance;
         }   // end function setSkipFiles()
 		
@@ -791,7 +780,22 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             }
             return $default_file_mode;
         }   // end function defaultFileMode()
-        
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function reset() {
+            // reset to defaults
+            self::$instance->setRecursion(true);
+            self::$instance->maxRecursionDepth();
+            self::$instance->setPrefix(NULL);
+            self::$instance->setSkipFiles(NULL);
+            self::$instance->setSkipDirs(NULL);
+            self::$instance->setSuffixFilter(NULL);
+        }   // end function reset()
+
 		/**
 		 *
 		 *
