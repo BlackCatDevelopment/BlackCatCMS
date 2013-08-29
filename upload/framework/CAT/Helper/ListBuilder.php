@@ -64,7 +64,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             if ( empty($list) || ! is_array( $list ) || count($list) == 0 )
                 return NULL;
 
-            $self      = self::getInstance();
+            $self      = self::getInstance(false);
             $return    = array();
             $children  = array();
             $p_key     = $self->_config['__parent_key'];
@@ -142,9 +142,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
 
             if ( $options_only )
                 return join( "\n\t", $output )."\n";
-
-            $self   = self::getInstance();
-
+            $self   = self::getInstance(false);
             return $self->startSelect($name)
 		         . join( "\n\t", $output )."\n"
                  . $self->closeSelect();
@@ -153,7 +151,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
 
         public static function tree( $list, $root_id, $selected=NULL )
         {
-            $self   = self::getInstance();
+            $self   = self::getInstance(false);
             $output = self::listbuilder($list,$root_id,'ul',$selected);
             if(is_array($output) && count($output))
             return $self->startUL()
@@ -176,23 +174,23 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             }
 
             // initialize
-            $self      = self::getInstance();
-            $output    = array();
-            $hidden    = ( isset($self->_config['__hidden_key'])
-                       ? $self->_config['__hidden_key']
-                       : ''
-                       );
-            $p_key     = $self->_config['__parent_key'];
-            $id_key    = $self->_config['__id_key'];
-            $title_key = $self->_config['__title_key'];
-            $level_key = $self->_config['__level_key'];
+            $self       = self::getInstance(false);
+            $output     = array();
+            $hidden     = ( isset($self->_config['__hidden_key'])
+                        ? $self->_config['__hidden_key']
+                        : ''
+                        );
+            $p_key      = $self->_config['__parent_key'];
+            $id_key     = $self->_config['__id_key'];
+            $title_key  = $self->_config['__title_key'];
+            $level_key  = $self->_config['__level_key'];
             $isopen_key = $self->_config['__is_open_key'];
             $link_key   = $self->_config['__link_key'];
             $auto_link  = $self->_config['__auto_link'];
-            $space     = $self->_config['space'];
-            $is_first  = true;
-            $is_last   = false;
-            $is_open   = false;
+            $space      = $self->_config['space'];
+            $is_first   = true;
+            $is_last    = false;
+            $is_open    = false;
 
             // create a list of children for each item
             foreach ( $list as $item ) {
@@ -305,7 +303,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          **/
         private static function startSelect($name)
         {
-            $self      = self::getInstance();
+            $self      = self::getInstance(false);
             return
                   $self->_config['__no_html']
                 ? NULL
@@ -320,7 +318,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          **/
         private static function closeSelect()
         {
-            $self      = self::getInstance();
+            $self      = self::getInstance(false);
             return
                 $self->_config['__no_html']
                 ? NULL
@@ -339,7 +337,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          **/
         private static function getOption($value,$sel,$tab,$text)
         {
-            $self    = self::getInstance();
+            $self    = self::getInstance(false);
             $content = $tab . ' ' . $text;
             return
                 $self->_config['__no_html']
@@ -356,7 +354,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
         private static function startUL($space=NULL, $ul_id=NULL, $level=NULL )
         {
 
-            $self  = self::getInstance();
+            $self  = self::getInstance(false);
 
             $class = $self->_config['__ul_css_prefix']
                    . $self->_config['__ul_class'];
@@ -406,7 +404,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          *
          **/
         function closeUL( $space = NULL ) {
-            $self = self::getInstance();
+            $self = self::getInstance(false);
             return $space . $self->_config['__list_close'];
         }   // end function closeUL()
 
@@ -418,7 +416,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          **/
         function startLI($id,$level,$has_children=false,$is_first=false,$is_last=false,$is_open=false)
         {
-            $self  = self::getInstance();
+            $self  = self::getInstance(false);
             $id    = ( isset($self->_config['__li_id_prefix']) )
                    ? $self->_config['__li_id_prefix'].$id
                    : $id;
@@ -453,7 +451,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          **/
         function closeLI( $space = NULL )
         {
-            return $space . self::getInstance()->_config['__list_item_close'];
+            return $space . self::getInstance(false)->_config['__list_item_close'];
         }   // end function closeLI()
         
         /**

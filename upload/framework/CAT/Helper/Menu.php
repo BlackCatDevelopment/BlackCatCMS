@@ -43,11 +43,12 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
          * map menu options to ListBuilder keys
          **/
         private static $_lbmap = array(
-            'first'   => '__li_first_item_class',
-            'last'    => '__li_last_item_class',
-            'child'   => '__li_has_child_class',
-            'current' => '__li_is_open_class',
-            'closed'  => '__li_is_closed_class',
+            'first'      => '__li_first_item_class',
+            'last'       => '__li_last_item_class',
+            'child'      => '__li_has_child_class',
+            'current'    => '__li_is_open_class',
+            'closed'     => '__li_is_closed_class',
+            'list-class' => '__ul_class',
         );
         /**
          * holds local instance
@@ -81,7 +82,8 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
         public static function breadcrumbMenu($id=NULL,$max_level=999,$show_current=false,array &$options = array())
         {
             global $page_id;
-            if(!$id) $id = $page_id;
+            if($id===NULL) $id = $page_id;
+            if($id===0)    $id = CAT_Helper_Page::getRootParent($page_id);
             self::analyzeOptions($options);
             $menu       = array();
             $level      = CAT_Helper_Page::properties($id,'level');
@@ -120,7 +122,8 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
         public static function subMenu($id=NULL,$max_level=999,$show_current=false,array &$options = array())
         {
             global $page_id;
-            if(!$id) $id = $page_id;
+            if($id===NULL) $id = $page_id;
+            if($id===0)    $id = CAT_Helper_Page::getRootParent($page_id);
             self::analyzeOptions($options);
 
             $self       = self::getInstance();
@@ -151,16 +154,53 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
         public static function siblingsMenu($id=NULL,$max_level=999,$show_current=false,array &$options = array())
         {
             global $page_id;
-            if(!$id) $id = $page_id;
+            if($id===NULL) $id = $page_id;
+            if($id===0)    $id = CAT_Helper_Page::getRootParent($page_id);
             self::analyzeOptions($options);
-            $level   = CAT_Helper_Page::properties($page_id,'level');
-            $menu    = CAT_Helper_Page::getPagesForLevel($level);
-            return CAT_Helper_ListBuilder::getInstance()->config(
+            $level    = CAT_Helper_Page::properties($id,'level');
+            $menu     = CAT_Helper_Page::getPagesForLevel($level);
+            $selected = $id;
+            // if current page is not in the menu...
+            if(!self::isInMenu($id,$menu))
+            {
+                $trail = CAT_Helper_Page::getPageTrail($page_id,false,true);
+                foreach($trail as $id)
+                {
+                    if(false!==($i=self::isInMenu($id,$menu)))
+                    {
+                        $menu[$i]['is_open'] = true;
+                        $menu[$i]['is_current'] = true;
+                        $selected = $menu[$i]['page_id'];
+                        break;
+                    }
+                }
+            }
+            return CAT_Helper_ListBuilder::getInstance(false)->config(
                     array(
                         '__auto_link' => true,
                     )
-                )->tree($menu,0,$page_id);
+                )->tree($menu,0,$selected);
         }   // end function siblingsMenu()
+
+        /**
+         *
+         * @access private
+         * @return
+         **/
+        private static function isInMenu($id,&$menu)
+        {
+            $found   = false;
+            foreach($menu as $i => $item)
+            {
+                if($item['page_id']===$id)
+                {
+                    $found = $i;
+                    break;
+                }
+            }
+            return $found;
+        }   // end function isInMenu()
+        
 
         /**
          *

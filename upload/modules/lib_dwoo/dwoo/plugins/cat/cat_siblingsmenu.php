@@ -50,5 +50,9 @@ function Dwoo_Plugin_cat_siblingsmenu() {
     array_shift($attr);
     // second attr is $page_id
     $page_id = array_shift($attr);
-    return CAT_Helper_Menu::siblingsMenu($page_id,$attr);
+    // third attr is the max depth
+    $max_level = array_shift($attr);
+    // fourth is a boolean
+    $show_parent = array_shift($attr);
+    return CAT_Helper_Menu::siblingsMenu($page_id,$max_level,$show_parent,$attr);
 }
