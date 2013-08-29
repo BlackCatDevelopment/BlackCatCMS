@@ -115,9 +115,9 @@ if ( $doit ) {
 
     if ( $version && $version != 'unknown' )
     {
-    if ( CAT_Helper_Addons::getInstance()->versionCompare($version,CAT_VERSION,'>' ) ) {
-        $newer = true;
-    }
+        if ( CAT_Helper_Addons::getInstance()->versionCompare($version,CAT_VERSION,'>' ) ) {
+            $newer = true;
+        }
     }
 
     $fh   = @fopen(sanitize_path(dirname(__FILE__).'/../data/.last'),'w');

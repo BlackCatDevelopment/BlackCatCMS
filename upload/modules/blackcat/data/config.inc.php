@@ -65,11 +65,19 @@ $settings = array (
     'label' => 'Proxy port (leave empty if you don\'t need a proxy)',
     'type' => 'text',
   ),
+  array (
+    'value' => '5',
+    'name' => 'last_edited_count',
+    'label' => 'Number of last edited pages to show',
+    'type' => 'text',
+  ),
 );
 
+// --- do not change this manually, use the Admin Tool! ---
 $current = array(
     'source' => 'http://blackcat-cms.org/media/_internal_/version.txt',
-    'timeout' => 30,
+    'timeout' => '30',
     'proxy_host' => '',
     'proxy_port' => '',
+    'last_edited_count' => '10',
 );

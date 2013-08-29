@@ -53,4 +53,7 @@ $LANG = array(
     'Warning: no mailer libs installed!' => 'Warnung: Keine Mailbibliotheken installiert!',
     'Edit connection settings' => 'Verbindungseinstellungen',
     'Visit download page' => 'Downloadseite besuchen',
+    'Number of last edited pages to show' => 'Anzahl zuletzt geänderter Seiten anzeigen',
+    'Latest changed pages' => 'Zuletzt geänderte Seiten',
+    'Version check failed!' => 'Versionsprüfung fehlgeschlagen!',
 );

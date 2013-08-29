@@ -18,7 +18,7 @@
                 </tbody>
             </table>
         </span><br style="clear:left;" />
-        <span class="fc_label_200">{translate('Latest changes')}:</span>
+        <span class="fc_label_200">{translate('Latest changed pages')}:</span>
         <span style="display:inline_block;width:50%;float:left;">
             <table style="width:100%" class="fc_table">
                 <thead>

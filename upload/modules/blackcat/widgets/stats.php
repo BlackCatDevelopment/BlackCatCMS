@@ -39,8 +39,13 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$data = array();
+include dirname(__FILE__).'/../data/config.inc.php';
+
+$data        = array();
 $widget_name = 'Statistics';
+$number      = ( $current['last_edited_count'] > 0 && $current['last_edited_count'] < 50 )
+             ? $current['last_edited_count']
+             : 10;
 
 // format installation date and time
 $data['installation_time']
@@ -54,7 +59,7 @@ foreach( array_keys($pg) as $key )
 }
 
 // get last edited
-$data['latest'] = CAT_Helper_Page::getLastEdited();
+$data['latest'] = CAT_Helper_Page::getLastEdited($number);
 
 global $parser;
 $parser->setPath(dirname(__FILE__).'/templates/default');
