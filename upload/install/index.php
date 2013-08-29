@@ -1560,6 +1560,7 @@ function __cat_check_db_config() {
             $errors['installer_database_port'] = $lang->translate('Invalid port number!');
         }
     }
+
     // Check if user has entered a database username
     if ( !isset( $config['database_username'] ) || $config['database_username'] == '' )
     {
@@ -1576,6 +1577,7 @@ function __cat_check_db_config() {
             $errors['installer_database_username'] = $lang->translate('Invalid database username!');
         }
     }
+
     // Check if user has entered a database password
     if ( !isset( $config['database_password'] ) || $config['database_password'] == '' )
     {
@@ -1624,6 +1626,7 @@ function __cat_check_db_config() {
             $errors['installer_database_name'] = $lang->translate('Only characters a-z, A-Z, 0-9, - and _ allowed in database name. Please note that a database name must not be composed of digits only.');
         }
     }
+
     // table prefix
     if ( isset($config['table_prefix']) && $config['table_prefix'] != '' && ! preg_match('/^[a-z0-9_]+$/i', $config['table_prefix']) ) {
         $errors['installer_table_prefix'] = $lang->translate('Only characters a-z, A-Z, 0-9 and _ allowed in table_prefix.');
@@ -1637,6 +1640,11 @@ function __cat_check_db_config() {
         if ( ! is_resource($ret) )
         {
             $errors['global'] = $lang->translate('Unable to connect to the database! Please check your settings!');
+        }
+        // check if DB exists
+        if (!mysql_select_db($database_name, $ret))
+        {
+            $errors['installer_database_name'] = $lang->translate('The database does not exist! Please check your settings!');
         }
     }
 

@@ -100,6 +100,8 @@ $LANG = array(
 		=> 'Wenn das Datenbankkennwort leer bleiben soll, oder nicht den üblichen Sicherheitskriterien entspricht, bitte nebenstehende Checkbox anhaken. Hinweis: Dies ist ein Sicherheitsrisiko! Leere und/oder sehr kurze Kennworte sollten nur in (lokalen) Testumgebungen verwendet werden.',
     'The required password complexity is not met'
         => 'Die erforderliche Kennwort-Komplexität ist nicht erfüllt',
+    'The database does not exist! Please check your settings!'
+        => 'Die Datenbank existiert nicht! Bitte prüfen Sie Ihre Einstellungen!',
 // ----- site -----
 	'Site settings' => 'Site Einstellungen',
 	'Website title' => 'Webseitentitel',
