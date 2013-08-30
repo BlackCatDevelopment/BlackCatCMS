@@ -225,7 +225,7 @@ address {
 }
 
 .clear {display: block;visibility: hidden;clear: both;overflow: hidden;width: 0;height: 0;}
-.clearfix:after {display: block;visibility: hidden;clear: both;width: 0;height: 0;content:' ';font-size: 0;line-height: 0;line-}
+.clearfix:after {display: block;visibility: hidden;clear: both;width: 0;height: 0;content:' ';font-size: 0;line-height: 0;}
 .clearfix {display: inline-block;}
 * html .clearfix {height: 1%;}
 .clearfix {display: block;}
@@ -236,8 +236,9 @@ address {
 	padding-right: 0.4em;
 	padding-bottom: 0.2em;
 	padding-left: 0.4em;
-	background: #e24756;
-	color: white;
+    border: 1px solid #D8000C;
+	background: #ffbaba;
+	color: #D8000C;
 	font-weight: 700;
 }
 
