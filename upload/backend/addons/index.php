@@ -117,7 +117,7 @@ if( $users->checkPermission('addons','modules_install') )
         }
     }
 
-    $languages = CAT_Helper_Directory::getInstance()->setSkipFiles(array('index'))->maxRecursionDepth(0)->getPHPFiles( CAT_PATH.'/languages', CAT_PATH.'/languages/' );
+    $languages = CAT_Helper_Directory::getInstance()->setSkipFiles(array('index.php'))->maxRecursionDepth(0)->getPHPFiles( CAT_PATH.'/languages', CAT_PATH.'/languages/' );
     if(count($languages))
     {
         foreach($languages as $lang)
