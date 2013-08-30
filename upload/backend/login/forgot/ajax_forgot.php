@@ -43,9 +43,8 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$val   = CAT_Helper_Validate::getInstance();
-$email = $val->sanitizePost('email',NULL,true);
-$ajax  = array();
+$val	= CAT_Helper_Validate::getInstance();
+$email	= $val->sanitizePost('email',NULL,true);
 
 header('Content-type: application/json');
 
@@ -61,7 +60,7 @@ if ( $email && $val->sanitize_email($email) )
 else
 {
 	$ajax	= array(
-		'message'	=> $admin->lang->translate('You must enter an email address'),
+		'message'	=> $val->lang()->translate('You must enter an email address'),
 		'success'	=> false
 	);
 }
