@@ -81,6 +81,7 @@ $LANG = array(
     'Please enter your CURRENT password to confirm your changes!' => 'Bitte geben Sie Ihr AKTUELLES Kennwort ein, um die Änderungen zu bestätigen!',
     'Re-Type new password' => 'Neues Kennwort wiederholen',
     'Send details' => 'Kennwort anfordern',
+    'Send eMail' => 'eMail schicken',
     'Sign-up' => 'Registrieren',
     'The (current) password you entered is incorrect' => 'Das eingegebene (aktuelle) Kennwort ist falsch',
     'The email address you entered is invalid' => 'Die angegebene Mailadresse ist ungültig',
@@ -151,6 +152,8 @@ $LANG = array(
     'Missing page_id!' => 'Keine page_id angegeben!',
     'Searched paths' => 'Durchsuchte Pfade',
     "Sorry, but you don't have the permissions for this action" => 'Sie haben leider nicht die notwendigen Rechte für diese Aktion',
+    'Sorry, but the system is unable to use mail to send your details. Please contact the administrator.'
+        => 'Entschuldigung, leider kann Ihnen keine eMail mit Ihren Daten zugesandt werden. Bitte kontaktieren Sie den Administrator.',
     'The max. Login name length could not be saved. There is/are {{ count }} user/s that have longer names.'
         => 'Die Maximallänge des Anmeldenamens konnte nicht gespeichert werden. Es gibt {{ count }} Benutzer mit einem längeren Namen.',
     'The min. Login name length could not be saved. There is/are {{ count }} user/s that have shorter names.'

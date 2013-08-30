@@ -43,8 +43,9 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$val	= CAT_Helper_Validate::getInstance();
-$email	= $val->sanitizePost('email',NULL,true);
+$val   = CAT_Helper_Validate::getInstance();
+$email = $val->sanitizePost('email',NULL,true);
+$ajax  = array();
 
 header('Content-type: application/json');
 

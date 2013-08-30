@@ -126,16 +126,19 @@ if( $users->checkPermission('addons','modules_install') )
             if(!in_array($directory,$seen_dirs))
             {
                 $info = $addon->checkInfo(CAT_PATH.'/languages/'.$lang);
-                $tpl_data['not_installed_addons']['languages'][$counter] = array(
-                    'is_installed' => false,
-                    'type'         => 'languages',
-                    'directory'    => $directory,
-                );
-                foreach( $info as $key => $value )
+                if(is_array($info) && count($info))
                 {
-                    $tpl_data['not_installed_addons']['languages'][$counter][str_ireplace('module_','',$key)] = $value;
+                    $tpl_data['not_installed_addons']['languages'][$counter] = array(
+                        'is_installed' => false,
+                        'type'         => 'languages',
+                        'directory'    => $directory,
+                    );
+                    foreach( $info as $key => $value )
+                    {
+                        $tpl_data['not_installed_addons']['languages'][$counter][str_ireplace('module_','',$key)] = $value;
+                    }
+                    $counter++;
                 }
-                $counter++;
             }
         }
     }

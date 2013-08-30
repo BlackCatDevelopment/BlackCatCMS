@@ -122,7 +122,7 @@ if ( strlen( $username ) < 3 )
 	print json_encode( $ajax );
 	exit();
 }
-if ( !preg_match('/^[a-z]{1}[a-z0-9@\._-]{2,}$/i', $username) )
+if ( ! $users->validateUsername($username) )
 {
 	$ajax	= array(
 		'message'	=> $backend->lang()->translate('Invalid chars for username found'),
