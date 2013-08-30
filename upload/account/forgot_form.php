@@ -39,35 +39,49 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$val = CAT_Helper_Validate::getInstance();
+$val          = CAT_Helper_Validate::getInstance();
+$email        = $val->sanitizePost('email',NULL,true);
+$display_form = true;
+$msg_class    = 'info';
 
 global $parser;
 $parser->setPath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/'); // if there's a template for this in the current frontend template
 $parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to default dir
 
-$email = $val->sanitizePost('email',NULL,true);
-$display_form = true;
-$bgcol        = 'e24756';
+// no mailer lib installed?
+if(count(CAT_Helper_Addons::getLibraries('mail'))==0)
+{
+    $parser->output('account_forgot_form',
+        array(
+            'message_class' => 'highlight',
+            'display_form'  => false,
+            'message'       => $val->lang()->translate(
+                'Sorry, but the system is unable to use mail to send your details. Please contact the administrator.'
+            ),
+            'contact'       => (
+                   ( CAT_Registry::exists('SERVER_EMAIL',false) && CAT_Registry::get('SERVER_EMAIL') != 'admin@yourdomain.tld' && $val->validate_email(CAT_Registry::get('SERVER_EMAIL')) )
+                ? '<br />[ <a href="mailto:'.CAT_Registry::get('SERVER_EMAIL').'">'.$val->lang()->translate('Send eMail').'</a> ]'
+                : ''
+            ),
+        )
+    );
+    exit;
+}
 
 // Check if the user has already submitted the form, otherwise show it
 if ( $email && $val->sanitize_email($email) )
-{
     list($result,$message) = CAT_Users::handleForgot($email);
-    if($result===true) $bgcol = '006600';
-}
 else
-{
 	$email = '';
-}
 
 if ( !isset( $message ) )
 {
-	$message       = $val->lang()->translate('Please enter your email address below');
+	$message = $val->lang()->translate('Please enter your email address below');
 }
 
 $parser->output('account_forgot_form',
     array(
-        'message_color' => $bgcol,
+        'message_class' => $msg_class,
         'email'         => $email,
         'display_form'  => $display_form,
         'message'       => $message,

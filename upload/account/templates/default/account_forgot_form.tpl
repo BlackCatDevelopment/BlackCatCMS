@@ -1,4 +1,6 @@
-{if $message}<div class="account_message" style="background-color: #{$message_color}">{$message}</div>{/if}
+<h2>{translate('Forgot your details?')}</h2>
+{if $message}<div class="account_message {$message_class}">{$message}</div>{/if}
+{if $contact}<br />{$contact}<br />{/if}
 {if $display_form}
 <form name="forgot_pass" action="{$CAT_URL}/account/forgot.php" method="post">
   <fieldset class="account_form">
