@@ -164,7 +164,9 @@ if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 			$image     = new Image($source);
 			
 			$image->setPathToTempFiles( CAT_PATH.'/temp' );
-			
+
+			$image->setNewFileType($extension);
+
 			// if no width is given...
 			if ( $width == '' )
 			{
