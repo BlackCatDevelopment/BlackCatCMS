@@ -475,7 +475,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         clearstatcache();
         $root   = empty($root) ? getcwd() : $root;
         $dirh->setRecursion(false);
-        $result = $dirh->scanDirectory( $root, true, false, $root.'/', NULL, NULL, array('index') );
+        $result = $dirh->scanDirectory( $root, true, false, $root.'/', NULL, NULL, array('index.php') );
         $dirh->setRecursion(true);
         // keep backward compatibility
         $FILE = array();
