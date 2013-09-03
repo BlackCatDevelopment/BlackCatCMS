@@ -1,4 +1,4 @@
-**PLEASE NOTE: This is an Alpha version, so current builds might not work perfectly!**
+**PLEASE NOTE: This is an Beta version, so current builds might not work perfectly!**
 
 Black Cat CMS is based on LEPTON v2.0 Alpha, as released in May 2012. (See http://www.lepton-cms.org) 
 After the key developers left the LEPTON Project in May 2012, there seemed to be no more development 
