@@ -217,7 +217,7 @@ if ( $options['link'] !== $old_link )
 $options['page_trail'] = CAT_Helper_Page::getPageTrail($options['parent']).','.$page_id;
 
 // save page
-if ( !CAT_Helper_Page::updatePage($page_id,$options) )
+if ( CAT_Helper_Page::updatePage($page_id,$options) === false )
 {
 	$ajax	= array(
 		'message'	=> 'Database error: '.$backend->db()->get_error(),

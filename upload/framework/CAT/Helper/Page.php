@@ -304,7 +304,7 @@ if (!class_exists('CAT_Helper_Page'))
             // reload pages list
             if(!self::$instance->db()->is_error()) self::init(1);
             return
-                  self::$instance->db()->is_error()
+                  ( self::$instance->db()->is_error() === true )
                 ? false
                 : true;
         }   // end function updatePage()
@@ -1011,22 +1011,19 @@ if (!class_exists('CAT_Helper_Page'))
         public static function getLink($page_id)
         {
             if(!is_numeric($page_id))
-            {
                 $link = $page_id;
-            }
             else
-            {
                 $link = self::properties($page_id,'link');
-            }
+
+            if(!$link)
+                return NULL;
+
             // Check for :// in the link (used in URL's) as well as mailto:
             if (strstr($link, '://') == '' && substr($link, 0, 7) != 'mailto:')
-            {
                 return CAT_URL . PAGES_DIRECTORY . $link . PAGE_EXTENSION;
-            }
             else
-            {
                 return $link;
-            }
+
         }   // end function getLink()
 
         /**
