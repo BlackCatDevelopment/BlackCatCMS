@@ -62,7 +62,7 @@ foreach( array_keys($pg) as $key )
 $data['latest'] = CAT_Helper_Page::getLastEdited($number);
 
 global $parser;
-$parser->setPath(dirname(__FILE__).'/templates/default');
+$parser->setPath(dirname(__FILE__).'/../templates/default');
 $parser->output(
     'stats.tpl',
     $data
