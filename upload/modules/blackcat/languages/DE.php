@@ -43,6 +43,7 @@ $LANG = array(
     'Local version' => 'Lokale Version',
     'Remote version' => 'Ermittelte Version',
     'Last checked' => 'Letzte Überprüfung',
+    'Last edited' => 'Letzte Änderung',
     'Refresh now' => 'Jetzt erneut prüfen',
     'A newer version is available!' => 'Eine neue Version ist verfügbar!',
     "You're up-to-date!" => 'Ihre Version ist aktuell!',
