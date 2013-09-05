@@ -616,7 +616,7 @@ jQuery(document).ready(function()
 			cache:		false,
 			beforeSend:	function( data )
 			{
-				data.process	= set_activity( 'Saving page' );
+				data.process	= set_activity( cattranslate('Saving page') );
 			},
 			success:	function( data, textStatus, jqXHR  )
 			{

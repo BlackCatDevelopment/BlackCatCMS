@@ -181,6 +181,7 @@ $LANG = array(
     'The min. Login name length could not be saved. There is/are {{ count }} user/s that have shorter names.'
         => 'Die Mindestlänge des Anmeldenamens konnte nicht gespeichert werden. Es gibt {{ count }} Benutzer mit einem kürzeren Namen.',
     'The page does not have any content!' => 'Diese Seite hat keine aktiven Inhalte!',
+    'The pages directory is not writable!' => 'Das Seitenverzeichnis ist schreibgeschützt!',
     'The template [{{ tpl }}] does not exists in one of the possible template paths!'
         => 'Das Template [{{ tpl }}] wurde in keinem der Template-Pfade gefunden!',
     'Unable to {{ action }} {{ type }} {{ module }}!'
@@ -273,6 +274,7 @@ $LANG = array(
     'Restore page' => 'Seite wiederherstellen',
     'Same window' => 'Selbes Fenster',
     'Save page' => 'Seite speichern',
+    'Saving page' => 'Speichere Seite',
     'Searching' => 'Suche',
     'Section properties saved successfully' => 'Sektionseinstellungen gespeichert',
     'Security Settings' => 'Sicherheit',

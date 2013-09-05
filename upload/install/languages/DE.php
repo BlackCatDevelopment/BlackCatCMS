@@ -24,9 +24,22 @@
  */
 
 $LANG = array(
+// ----- pre Installation / Update errors -----
+    'Sorry, the BlackCat CMS Installation prerequisites check failed.'
+        => 'Entschuldigung, die Prüfung der BlackCat CMS Installations-Voraussetzungen ist fehlgeschlagen.',
+    'Sorry, the BlackCat CMS Update prerequisites check failed.'
+        => 'Entschuldigung, die Prüfung der BlackCat CMS Update Voraussetzungen ist fehlgeschlagen.',
+    'You need to have <strong>BlackCat CMS v0.11.0Beta</strong> installed to use the Update.<br />You have <strong>{{version}}</strong> installed.'
+        => 'Für das Update muss mindestens <strong>BlackCat CMS v0.11.0Beta</strong> installiert sein.<br />Es wurde <strong>{{version}}</strong> gefunden.',
+    'You will need to fix the errors quoted above to start the installation.'
+        => 'Die oben aufgeführten Probleme müssen behoben werden, um die Installation zu starten.',
     'Installation Wizard' => 'Installation Wizard',
-    'Black Cat CMS Step by Step Installation Wizard' => 'Black Cat CMS Schritt-für-Schritt Installation',
+    'BlackCat CMS Step by Step Installation Wizard' => 'BlackCat CMS Schritt-für-Schritt Installation',
     'Step' => 'Schritt',
+// ----- Update wizard -----
+    'To start the update, please click here' => 'Zum Starten des Updates bitte hier klicken',
+    'Update done' => 'Update erfolgreich',
+    'Click here to enter the backend' => 'Hier klicken, um das Backend aufzurufen',
 // ----- Nav ----
 	'Welcome' => 'Willkommen',
 	'Precheck' => 'Checks',
@@ -34,9 +47,9 @@ $LANG = array(
 	'Database settings' => 'Datenbank Einstellungen',
     'Optional' => 'Optionale Add-Ons',
 // ----- Welcome page -----
-    'Welcome to your Black Cat CMS Installation' => 'Willkommen zu Ihrer Black Cat CMS Installation',
-    'This wizard will help you to install and configure Black Cat CMS on your server. But first, please read the license agreement below.'
-		=> 'Dieser Wizard hilft Ihnen bei der Installation und Konfiguration von Black Cat CMS auf Ihrem Server. Bitte lesen Sie zunächst untenstehende Lizenzinformationen.',
+    'Welcome to your BlackCat CMS Installation' => 'Willkommen zu Ihrer BlackCat CMS Installation',
+    'This wizard will help you to install and configure BlackCat CMS on your server. But first, please read the license agreement below.'
+		=> 'Dieser Wizard hilft Ihnen bei der Installation und Konfiguration von BlackCat CMS auf Ihrem Server. Bitte lesen Sie zunächst untenstehende Lizenzinformationen.',
     'License Agreement' => 'Lizenzvereinbarung',
 // ----- Precheck page -----
     'CMS root directory' => 'CMS Basisverzeichnis',
@@ -149,7 +162,7 @@ $LANG = array(
 	'Next' => 'Weiter',
 // ----- field names to strings -----
     'operating_system' => 'Betriebssystem',
-	'cat_url' => 'Black Cat CMS URL',
+	'cat_url' => 'BlackCat CMS URL',
 	'default_timezone_string' => 'Standard Zeitzone',
 	'default_language' => 'Standardsprache',
     'default_wysiwyg' => 'Standard WYSIWYG Editor',

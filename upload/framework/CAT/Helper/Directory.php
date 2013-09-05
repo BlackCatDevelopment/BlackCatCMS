@@ -692,6 +692,25 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	            return rmdir($directory);
 	        }
 	    }   // end function removeDirectory()
+        /**
+         * move directory with all contents by first copying it and then
+         * removing the source
+         *
+         * @access public
+         * @param  string  $src
+         * @param  string  $target
+         * @return
+         **/
+        public static function moveDirectory($src,$target,$createIndex = false)
+        {
+            if(!is_dir($target))
+                self::createDirectory($target,NULL,$createIndex);
+            if(self::copyRecursive($src,$target)===true)
+                if(self::removeDirectory($src)===true)
+                    return true;
+            return false;
+        }   // end function moveDirectory()
+        
 	    
         /**
          * set access perms for directory; the perms are set in the backend,

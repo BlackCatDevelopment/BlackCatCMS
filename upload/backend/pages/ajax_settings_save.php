@@ -17,7 +17,7 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license			http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
@@ -46,7 +46,7 @@ $users   = CAT_Users::getInstance();
 header('Content-type: application/json');
 
 // Get page id
-$page_id		= $val->sanitizePost('page_id','numeric');
+$page_id = $val->sanitizePost('page_id','numeric');
 if ( !$page_id )
 {
 	$ajax	= array(
@@ -57,6 +57,7 @@ if ( !$page_id )
 	exit();
 }
 
+// check permissions
 if ( !$users->checkPermission('Pages','pages_settings') )
 {
 	$ajax	= array(
@@ -67,10 +68,21 @@ if ( !$users->checkPermission('Pages','pages_settings') )
 	exit();
 }
 
+// check if pages folder is writable
+if ( !is_writable( CAT_PATH . PAGES_DIRECTORY . '/') )
+{
+	$ajax	= array(
+		'message'	=> $backend->lang()->translate('The pages directory is not writable!'),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
+}
+
 // Include the WB functions file
 require_once( CAT_PATH . '/framework/functions.php' );
 
-// Get values
+// Get new values
 $options = array(
     'parent'         => ( $val->sanitizePost('parent','numeric',true) ? $val->sanitizePost('parent','numeric',true) : 0 ),
     'target'         => $val->sanitizePost('target',NULL,true),
@@ -92,8 +104,8 @@ $options = array(
     'root_parent'    => 0,
 );
 
-$page_link			= htmlspecialchars($val->sanitizePost('page_link',NULL,true));
-$page_groups		= htmlspecialchars($val->sanitizePost('page_groups',NULL,true));
+$page_link	 = htmlspecialchars($val->sanitizePost('page_link',NULL,true));
+$page_groups = htmlspecialchars($val->sanitizePost('page_groups',NULL,true));
 
 // =======================
 // ! Validate menu_title
@@ -178,7 +190,7 @@ if ( $options['parent'] == '0' )
 }
 else
 {
-	$parent_titles	= array_reverse(CAT_Helper_Page::getParentTitles($options['parent']));
+	$parent_titles	         = array_reverse(CAT_Helper_Page::getParentTitles($options['parent']));
 	$parent_section			 = '';
 	foreach ( $parent_titles AS $parent_title )
 	{
@@ -188,9 +200,10 @@ else
 	{
 		$parent_section		 = '';
 	}
-	$options['link']			= '/' . $parent_section . CAT_Helper_Page::getFilename( $page_link );
+	$options['link']         = '/' . $parent_section . CAT_Helper_Page::getFilename( $page_link );
 }
 
+// new file name
 $filename = CAT_PATH . PAGES_DIRECTORY . $options['link'] . PAGE_EXTENSION;
 
 // ==================================================
@@ -205,18 +218,25 @@ if ( $options['link'] !== $old_link )
     if ( $get_same_page->numRows() > 0 || file_exists(CAT_PATH . PAGES_DIRECTORY.$options['link'].PAGE_EXTENSION) || file_exists(CAT_PATH . PAGES_DIRECTORY.$options['link'].'/') )
     {
 	$ajax	= array(
-    		'message'	=>$backend->lang()->translate( 'A page with the same or similar link exists' ),
-		'success'	=> false
+	    'message' => $backend->lang()->translate( 'A page with the same or similar link exists' ),
+		'success' => false
 	);
 	print json_encode( $ajax );
 	exit();
     }
 }
 
-// Get page trail
-$options['page_trail'] = CAT_Helper_Page::getPageTrail($options['parent']).','.$page_id;
+// we use reset() to reload the page tree
+CAT_Helper_Page::reset();
 
+// Get page trail
+$options['page_trail'] = CAT_Helper_Page::getPageTrail($options['parent'],true).','.$page_id;
+if(substr($options['page_trail'],0,1)==0)
+    $options['page_trail'] = str_replace('0,','',$options['page_trail']);
+
+// ==================================================
 // save page
+// ==================================================
 if ( CAT_Helper_Page::updatePage($page_id,$options) === false )
 {
 	$ajax	= array(
@@ -226,6 +246,7 @@ if ( CAT_Helper_Page::updatePage($page_id,$options) === false )
 	print json_encode( $ajax );
 	exit();
 }
+
 // Clean old order if needed
 if ( $options['parent'] != $old_parent )
 {
@@ -239,79 +260,92 @@ if($template_variant)
     CAT_Helper_Page::updatePageSettings($page_id,array('template_variant' => $template_variant));
 }
 
-// Create a new file in the /pages dir if title changed
-if ( !is_writable( CAT_PATH . PAGES_DIRECTORY . '/') )
+// ====================================================
+// Create a new file if the link differs
+// ====================================================
+if ( $options['link'] !== $old_link )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('Error creating access file in the pages directory, (insufficient privileges)'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
-}
-else
-{
-	$old_filename	= CAT_PATH.PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
+	$old_filename	= CAT_PATH . PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
 
-	// First check if we need to create a new file
-	if ( ( $old_link != $options['link'] ) || (!file_exists($old_filename) ) )
+    // if a directory exists, rename it; if this fails, we need to recover
+    // the changes!
+    if ( is_dir( CAT_PATH.PAGES_DIRECTORY.$old_link ) )
+    {
+        if(!CAT_Helper_Directory::moveDirectory(CAT_PATH.PAGES_DIRECTORY.$old_link,CAT_PATH.PAGES_DIRECTORY.$options['link'],true))
+        {
+            CAT_Helper_Page::updatePage($page_id,$page);
+            $ajax	= array(
+        		'message'	=> 'Unable to move the directory',
+        		'success'	=> false
+        	);
+        	print json_encode( $ajax );
+        	exit();
+        }
+    }
+
+    // delete old file
+	if ( file_exists( $old_filename ) )
+		unlink( $old_filename );
+
+	// create a new file
+	if ( !file_exists($filename) )
+		CAT_Helper_Page::createAccessFile( $filename, $page_id );
+
+	// Update any pages that had the old link with the new one
+	$old_link_len	= strlen($old_link);
+	$sql			= '';
+
+	$query_subs	= $database->query(sprintf(
+        "SELECT `page_id`, `parent`, `link`, `level` FROM `%spages` WHERE link LIKE '%%%s/%%' ORDER BY LEVEL ASC",
+        CAT_TABLE_PREFIX, $old_link
+    ));
+
+	if ( is_object($query_subs) && $query_subs->numRows() > 0 )
 	{
-		// Delete old file
-		$old_filename		= CAT_PATH.PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
-		if ( file_exists( $old_filename ) )
+		while ( $sub = $query_subs->fetchRow(MYSQL_ASSOC) )
 		{
-			unlink( $old_filename );
-		}
-
-		// Create access file
-		CAT_Helper_Page::createAccessFile( $filename, $page_id, $options['level'] );
-
-		// Move a directory for this page
-		if ( file_exists( CAT_PATH . PAGES_DIRECTORY . $old_link . '/') && is_dir( CAT_PATH . PAGES_DIRECTORY . $old_link . '/' ) )
-		{
-			rename( CAT_PATH . PAGES_DIRECTORY . $old_link . '/', CAT_PATH . PAGES_DIRECTORY . $options['link'] . '/' );
-		}
-
-		// Update any pages that had the old link with the new one
-		$old_link_len	= strlen($old_link);
-		$sql			= '';
-
-		$query_subs		= $database->query("SELECT page_id,link,level FROM " . CAT_TABLE_PREFIX . "pages WHERE link LIKE '%$old_link/%' ORDER BY LEVEL ASC");
-
-		if ( $query_subs->numRows() > 0 )
-		{
-			while ( $sub = $query_subs->fetchRow() )
+			// Double-check to see if it contains old link
+			if ( substr($sub['link'], 0, $old_link_len) == $old_link )
 			{
-				// Double-check to see if it contains old link
-				if ( substr($sub['link'], 0, $old_link_len) == $old_link )
-				{
-					// Get new link
-					$replace_this		= $old_link;
-					$old_sub_link_len	= strlen( $sub['link'] );
-					$new_sub_link		= $options['link'] . '/' . substr( $sub['link'], $old_link_len + 1, $old_sub_link_len );
+				// Get new link
+				$replace_this	  = $old_link;
+				$old_sub_link_len = strlen( $sub['link'] );
+				$new_sub_link	  = $options['link'] . '/' . substr( $sub['link'], $old_link_len + 1, $old_sub_link_len );
 
-					// Work out level
-					$new_sub_level		= level_count( $sub['page_id'] );
+				// Work out level
+				$new_sub_level	  = (count(explode('/',$new_sub_link))-2);
 
-					// Update level and link
-					$database->query("UPDATE " . CAT_TABLE_PREFIX . "pages SET link = '$new_sub_link', level = '$new_sub_level' WHERE page_id = '" . $sub['page_id'] . "' LIMIT 1");
+				// Update link and level
+				$database->query(sprintf(
+                    "UPDATE `%spages` SET link='%s', level='%s' WHERE page_id='%s' LIMIT 1",
+                    CAT_TABLE_PREFIX,$new_sub_link,$new_sub_level,$sub['page_id']
+                ));
 
-					// Re-write the access file for this page
-					$old_subpage_file	= CAT_PATH . PAGES_DIRECTORY . $new_sub_link . PAGE_EXTENSION;
+                // we use reset() to reload the page tree
+                CAT_Helper_Page::reset();
 
-					if ( file_exists( $old_subpage_file ) )
-					{
-						unlink( $old_subpage_file );
-					}
-					create_access_file( CAT_PATH . PAGES_DIRECTORY . $new_sub_link . PAGE_EXTENSION, $sub['page_id'], $new_sub_level);
-				}
+                // update trail
+                $database->query(sprintf(
+                    "UPDATE `%spages` SET page_trail='%s' WHERE page_id='%s' LIMIT 1",
+                    CAT_TABLE_PREFIX,CAT_Helper_Page::getPageTrail($sub['page_id']),$sub['page_id']
+                ));
+
+				// Re-write the access file for this page
+				$old_subpage_file	= CAT_PATH.PAGES_DIRECTORY.$new_sub_link.PAGE_EXTENSION;
+
+                // remove old file
+				if ( file_exists( $old_subpage_file ) )
+					unlink( $old_subpage_file );
+
+                // create new
+				CAT_Helper_Page::createAccessFile( CAT_PATH.PAGES_DIRECTORY.$new_sub_link.PAGE_EXTENSION, $sub['page_id']);
 			}
 		}
 	}
+	//
+    if ( is_dir( CAT_PATH.PAGES_DIRECTORY.$old_link ) )
+        CAT_Helper_Page::removeDirectory(CAT_PATH.PAGES_DIRECTORY.$old_link);
 }
-
-// Fix sub-pages page trail
-CAT_Helper_Page::updatePageTrail( $page_id, $options['root_parent'] );
 
 // Check if there is a db error, otherwise say successful
 if ( CAT_Helper_Page::getInstance()->db()->is_error() )
