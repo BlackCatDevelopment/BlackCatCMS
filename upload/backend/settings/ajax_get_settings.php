@@ -110,6 +110,19 @@ switch($region)
     case 'mail':
         $tpl_data['CATMAILER_LIBS'] = getMailerLibs();
         break;
+    case 'security':
+        $admin =& $backend;
+        require_once(CAT_PATH .'/framework/CAT/Helper/Captcha/WB/captcha.php');
+        $captcha                      = getCaptchaTypes($backend);
+        $tpl_data                     = array_merge($tpl_data, $captcha);
+        $tpl_data['useable_captchas'] = $useable_captchas;
+        $tpl_data['ttf_image']        = CAT_URL.'/framework/CAT/Helper/Captcha/WB/captchas/ttf_image.png';
+        $tpl_data['calc_image']       = CAT_URL.'/framework/CAT/Helper/Captcha/WB/captchas/calc_image.png';
+        $tpl_data['calc_ttf_image']   = CAT_URL.'/framework/CAT/Helper/Captcha/WB/captchas/calc_ttf_image.png';
+        $tpl_data['old_image']        = CAT_URL.'/framework/CAT/Helper/Captcha/WB/captchas/old_image.png';
+        $tpl_data['calc_text']        = CAT_URL.'/framework/CAT/Helper/Captcha/WB/captchas/calc_text.png';
+        $tpl_data['text']             = CAT_URL.'/framework/CAT/Helper/Captcha/WB/captchas/text.png';
+        break;
     case 'sysinfo':
         // format installation date and time
         $tpl_data['values']['installation_time']

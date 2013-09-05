@@ -101,6 +101,28 @@ $LANG = array(
 // ----- captcha -----
     'The verification number (also known as Captcha) that you entered is incorrect. If you are having problems reading the Captcha, please email to: <a href="mailto:{{SERVER_EMAIL}}">{{SERVER_EMAIL}}</a>'
         => 'Die eingegebene Pr&uuml;fziffer stimmt nicht &uuml;berein. Wenn Sie Probleme mit dem Lesen der Pr&uuml;fziffer haben, schreiben Sie bitte eine E-Mail an: <a href="mailto:{{SERVER_EMAIL}}">{{SERVER_EMAIL}}</a>',
+    // ----- settings -----
+    'Activate ASP (if available)' => 'ASP benutzen (wenn im Modul vorhanden)',
+    'Activate CAPTCHA for signup' => 'CAPTCHA für Registrierung aktivieren',
+    'ASP tries to determine if a form-input was originated from a human or a spam-bot.'
+        => 'ASP versucht anhand der verschiedenen Verhaltensweisen zu erkennen, ob eine Formular-Eingabe von einem Menschen oder einem Spam-Bot kommt.',
+    'CAPTCHA settings for modules are located in the respective module settings'
+        => 'Die CAPTCHA-Einstellungen f&uuml;r die Module befinden sich in den jeweiligen Modul-Optionen',
+    'Calculation as image' => 'Rechnung als Bild',
+    'Calculation as image with varying fonts and backgrounds' => 'Rechnung als Bild mit wechselnden Schriften und Hintergr&uuml;nden',
+    'Calculation as text' => 'Rechnung als Text',
+    'Captcha and Advanced Spam Protection (ASP)' => 'Captcha und Advanced Spam Protection (ASP) Einstellungen',
+    'Delete this all to add your own entries'."\n".'or your changes won\'t be saved!'."\n".'### example ###'."\n".'Here you can enter Questions and Answers.'."\n".'Use:'."\n".'?What\'s Claudia Schiffer\'s first name?'."\n".'!Claudia'."\n".'?Question 2'."\n".'!Answer 2'."\n".''."\n".'if language doesn\'t matter.'."\n".' ... '."\n".'Or, if language do matter, use:'."\n".'?EN:What\'s Claudia Schiffer\'s first name?'."\n".'!Claudia'."\n".'?EN:Question 2'."\n".'!Answer 2'."\n".'?DE:Wie ist der Vorname von Claudia Schiffer?'."\n".'!Claudia'."\n".' ... '."\n".'### example ###'."\n".''
+        => 'Bitte hier alles l&ouml;schen'."\n".'sonst werden Ihre &Auml;nderungen nicht gespeichert!'."\n".'### Beispiel ###'."\n".'Hier k&ouml;nnen sie Fragen und Antworten eingeben.'."\n".'Entweder:'."\n".'?Wie ist der Vorname von Claudia Schiffer?'."\n".'!Claudia'."\n".'?Frage 2'."\n".'!Antwort 2'."\n".' ... '."\n".'wenn nur eine Sprache benutzt wird.'."\n".''."\n".'Oder, wenn die Sprache relevant ist:'."\n".'?EN:What\'s Claudia Schiffer\'s first name?'."\n".'!Claudia'."\n".'?EN:Question 2'."\n".'!Answer 2'."\n".'?DE:Wie ist der Vorname von Claudia Schiffer?'."\n".'!Claudia'."\n".' ... '."\n".'### Beispiel ###'."\n".'',
+    'Image with varying fonts and backgrounds' => 'Bild mit wechselnden Schriften und Hintergr&uuml;nden',
+    'Old style (not recommended)' => 'Alter Stil (nicht empfohlen)',
+    'Please note: These settings only concern the old Captcha derived from WebsiteBaker. At the moment, there are no settings for the SecurImage library here.'
+        => 'Hinweis: Diese Einstellungen betreffen die alten Captcha Methoden, die von WebsiteBaker übernommen wurden. Zur Zeit können hier keine Einstellungen für die SecurImage Bibliothek vorgenommen werden.',
+    'Questions and Answers' => 'Fragen und Antworten',
+    'Text-CAPTCHA' => 'Text-CAPTCHA',
+    'To make ASP work with modules, modifications in the module itself are necessary.'
+        => 'Damit ASP in Modulen funktioniert, sind entsprechende Anpassungen im Modul selbst erforderlich.',
+    'Type of CAPTCHA' => 'CAPTCHA-Typ',
 // ----- common -----
     'Add' => 'Anlegen',
     'Add Group' => 'Gruppe hinzuf&uuml;gen',

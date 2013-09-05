@@ -77,8 +77,10 @@ switch($region)
     case 'backend':
     case 'users':
     case 'system':
-    case 'security':
         saveGroup($backend,$region);
+        break;
+    case 'security':
+        saveSecurity($backend);
         break;
     case 'mail':
         saveMail($backend);

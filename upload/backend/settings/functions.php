@@ -50,7 +50,7 @@ $groups = array(
     'users' => array('frontend_signup','frontend_login','home_folders','auth_min_login_length','auth_max_login_length','auth_min_pass_length','auth_max_pass_length'),
     'server' => array('operating_system','pages_directory','page_extension','media_directory','page_spacer','upload_allowed','app_name','sec_anchor'),
     'mail' => array('server_email','catmailer_lib','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_auth','catmailer_smtp_username','catmailer_smtp_password'),
-    'security' => array('auto_disable_users','enable_csrfmagic','upload_enable_mimecheck','upload_mime_default_type','upload_allowed'),
+    'security' => array('auto_disable_users','enable_csrfmagic','upload_enable_mimecheck','upload_mime_default_type','upload_allowed','captcha_type','text_qa','enabled_captcha','enabled_asp'),
 );
 $allow_tags_in_fields = array('website_header', 'website_footer');
 $allow_empty_values   = array('website_header', 'website_footer', 'sec_anchor', 'pages_directory','catmailer_smtp_host','catmailer_smtp_username','catmailer_smtp_password');
@@ -260,6 +260,39 @@ function getMailerLibs() {
 /**
  *
  **/
+function getCaptchaTypes($backend) {
+    $text_qa         = '';
+    $enabled_captcha = '1';
+	$enabled_asp     = '1';
+	$captcha_type    = 'calc_text';
+	// load text-captchas
+	if( $query = $backend->db()->query(sprintf("SELECT ct_text FROM `%smod_captcha_control`",CAT_TABLE_PREFIX)) )
+    {
+		$data    = $query->fetchRow(MYSQL_ASSOC);
+		$text_qa = $data['ct_text'];
+	}
+	if($text_qa == '')
+		$text_qa = $backend->lang()->translate('Delete this all to add your own entries'."\n".'or your changes won\'t be saved!'."\n".'### example ###'."\n".'Here you can enter Questions and Answers.'."\n".'Use:'."\n".'?What\'s Claudia Schiffer\'s first name?'."\n".'!Claudia'."\n".'?Question 2'."\n".'!Answer 2'."\n".''."\n".'if language doesn\'t matter.'."\n".' ... '."\n".'Or, if language do matter, use:'."\n".'?EN:What\'s Claudia Schiffer\'s first name?'."\n".'!Claudia'."\n".'?EN:Question 2'."\n".'!Answer 2'."\n".'?DE:Wie ist der Vorname von Claudia Schiffer?'."\n".'!Claudia'."\n".' ... '."\n".'### example ###'."\n".'');
+
+	// connect to database and read out captcha settings
+	if($query = $backend->db()->query(sprintf("SELECT * FROM `%smod_captcha_control`",CAT_TABLE_PREFIX)))
+    {
+		$data            = $query->fetchRow(MYSQL_ASSOC);
+		$enabled_captcha = $data['enabled_captcha'];
+		$enabled_asp     = $data['enabled_asp'];
+		$captcha_type    = $data['captcha_type'];
+	}
+    return array(
+        'captcha_type'    => $captcha_type,
+        'enabled_captcha' => $enabled_captcha,
+        'enabled_asp'     => $enabled_asp,
+        'text_qa'         => $text_qa
+    );
+}
+
+/**
+ *
+ **/
 function saveServer($backend) {
     saveGroup($backend,'server');
     if (CAT_Helper_Validate::sanitizePost('world_writeable') == 'true')
@@ -405,6 +438,33 @@ function saveMail($backend) {
     if(!count($err_msg)) {
         saveSettings($settings);
     }
+}
+
+function saveSecurity($backend) {
+    $val             = CAT_Helper_Validate::getInstance();
+	$enabled_captcha = ($val->sanitizePost('enabled_captcha') == '1') ? '1' : '0';
+	$enabled_asp     = ($val->sanitizePost('enabled_asp')     == '1') ? '1' : '0';
+	$captcha_type    = $val->sanitizePost('captcha_type',NULL,true);
+
+	// update database settings
+	$backend->db()->query(sprintf(
+        "UPDATE `%smod_captcha_control` SET
+		enabled_captcha = '%s', enabled_asp = '%s', captcha_type = '%s' ",
+        CAT_TABLE_PREFIX, $enabled_captcha, $enabled_asp, $captcha_type
+    ));
+
+	// save text-captchas
+	if($captcha_type == 'text') { // ct_text
+		$text_qa = $val->sanitizePost('text_qa',NULL,true);
+		if(!preg_match('/### .*? ###/', $text_qa)) {
+			$backend->db()->query(sprintf(
+                "UPDATE `%smod_captcha_control` SET ct_text = '%s'",CAT_TABLE_PREFIX,$text_qa
+            ));
+		}
+	}
+
+    // save the others
+    saveGroup($backend, 'security');
 }
 
 /**
