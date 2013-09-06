@@ -271,12 +271,11 @@
 			element.find('.fc_toggle_tree').on( 'click',  function()
 			{
 				var clicked_element		= $(this).closest('li'),
-					set_cookie			= clicked_element.prop('id');
-			
+					set_cookie			= SESSION + clicked_element.prop('id');
 				if ( clicked_element.hasClass('fc_tree_open') )
 				{
 					clicked_element.removeClass('fc_tree_open').addClass('fc_tree_close');
-					$.cookie( set_cookie, null, { path: '/' } );
+					$.removeCookie( set_cookie, { path: '/' } );
 				}
 				else
 				{

@@ -266,6 +266,7 @@ if (!class_exists('CAT_Backend', false))
                 'h'
             );
             $tpl_data['TIME_FORMAT'] = str_replace($time_search, $time_replace, CAT_Registry::get('TIME_FORMAT'));
+            $tpl_data['SESSION']	 = session_name();
 
             $tpl_data['HEAD']['SECTION_NAME'] = $this->lang()->translate(strtoupper(self::$instance->section_name));
             $tpl_data['DISPLAY_NAME']         = $user->get_display_name();

@@ -12,7 +12,8 @@
 	<script type="text/javascript">
 		var CAT_URL                           = '{$CAT_URL}',
             DATE_FORMAT						  = '{$DATE_FORMAT}',
-			TIME_FORMAT						  = '{$TIME_FORMAT}';
+			TIME_FORMAT						  = '{$TIME_FORMAT}',
+			SESSION							  =	'{$SESSION}';
 		var CAT_TEXT						  = new Array();
 		CAT_TEXT["SEARCH"]					  = '{translate('Search')}';
 		CAT_TEXT["BACK"]					  = '{translate('Back')}';
