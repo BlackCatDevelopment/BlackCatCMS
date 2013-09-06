@@ -276,5 +276,9 @@ INSERT INTO `cat_mimetypes` (`mime_type`, `mime_suffixes`, `mime_label`, `mime_i
 	('video/x-ms-wmv', '|wmv|', NULL, NULL, NULL)
 ;
 
+INSERT INTO `cat_mod_captcha_control` (`enabled_captcha`, `enabled_asp`, `captcha_type`, `ct_text`) VALUES
+    ('1', '1', 'calc_text', '')
+;
+
 /*!40014 SET FOREIGN_KEY_CHECKS=1 */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
