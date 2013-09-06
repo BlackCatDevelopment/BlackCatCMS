@@ -178,7 +178,9 @@ else
 if ( $options['parent'] != '0' )
 {
 	$options['level']       = CAT_Helper_Page::properties($options['parent'],'level') + 1;
-	$options['root_parent'] = CAT_Helper_Page::getRootParent($options['parent']);
+	$options['root_parent'] = $options['level'] == 1 ? 
+		$options['parent'] : 
+		CAT_Helper_Page::getRootParent($options['parent']);
 }
 
 // Work-out what the link should be
