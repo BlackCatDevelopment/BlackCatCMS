@@ -355,7 +355,6 @@ if ( $options['link'] !== $old_link )
     {
         CAT_Helper_Page::removeDirectory(CAT_PATH . PAGES_DIRECTORY . $old_link);
        }
-    if ( is_dir( CAT_PATH . PAGES_DIRECTORY . $old_link ) )
 }
 
 // Check if there is a db error, otherwise say successful
