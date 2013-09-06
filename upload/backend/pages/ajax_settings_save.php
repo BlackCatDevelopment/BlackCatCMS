@@ -317,14 +317,16 @@ if ( $options['link'] !== $old_link )
 				$new_sub_link	  = $options['link'] . '/' . substr( $sub['link'], $old_link_len + 1, $old_sub_link_len );
 
 				// Work out level
-				$new_sub_level	  = (count(explode('/',$new_sub_link))-2);
+				$new_sub_level		= (count(explode('/',$new_sub_link))-2);
+				$root_parent		= $options['root_parent'] == '0' ? $page_id : $options['root_parent'];
+
 				// Update link and level
 				$database->query(sprintf(
                     "UPDATE `%spages` SET link='%s', level='%s', root_parent='%s' WHERE page_id='%s' LIMIT 1",
                     CAT_TABLE_PREFIX,
                     $new_sub_link,
                     $new_sub_level,
-                    $options['root_parent'],
+                    $root_parent,
                     $sub['page_id']
                 ));
 
@@ -356,6 +358,7 @@ if ( $options['link'] !== $old_link )
         CAT_Helper_Page::removeDirectory(CAT_PATH . PAGES_DIRECTORY . $old_link);
        }
 }
+
 
 // Check if there is a db error, otherwise say successful
 if ( CAT_Helper_Page::getInstance()->db()->is_error() )
