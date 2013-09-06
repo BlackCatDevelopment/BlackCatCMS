@@ -57,6 +57,7 @@ $type    = $val->sanitizePost('new_moduletype');
 $name    = $val->sanitizePost('new_modulename');
 $dir     = $val->sanitizePost('new_moduledir');
 $desc    = $val->sanitizePost('new_moduledesc');
+$author  = $val->sanitizePost('new_moduleauthor');
 $func    = 'page';
 $pre     = 'module_';
 $full    = '';
@@ -129,7 +130,7 @@ $info = array(
     $pre.'description' => $desc,
     $pre.'version' => '0.1',
     $pre.'platform' => '1.x',
-    $pre.'author' => $users->get_display_name(),
+    $pre.'author' => $author,
     $pre.'guid' => CAT_Object::createGUID(),
     $pre.'license' => 'GNU General Public License',
 );
@@ -165,7 +166,7 @@ if(!$fh)
     $message = $backend->lang()->translate('Unable to create info.php!');
     printResult();
 }
-writeHeader($fh,$name,$users->get_display_name());
+writeHeader($fh,$name,$author);
 foreach($info as $key => $value )
 {
     if($type=='language' && $key == 'language_directory') continue;
@@ -187,7 +188,7 @@ if($type=='module')
         $fh = fopen($full.'/'.$n.'.php','w');
         if($fh)
         {
-            writeHeader($fh,$name,$users->get_display_name());
+            writeHeader($fh,$name,$author);
             fclose($fh);
         }
     }
@@ -199,6 +200,7 @@ foreach($info as $key => $value)
     $key = str_replace($pre,'module_',$key);
     $info[$key] = $value;
 }
+$info['addon_function'] = $info[$pre.'function'];
 
 CAT_Helper_Addons::loadModuleIntoDB( $dir, 'install', $info);
 

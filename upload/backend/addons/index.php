@@ -51,6 +51,7 @@ $seen_dirs = array();
 $tpl_data['addons']               = array();
 $tpl_data['not_installed_addons'] = array('modules'=>array(),'templates'=>array(),'languages'=>array());
 $tpl_data['groups']               = $users->get_groups('' , '', false);
+$tpl_data['username']             = $users->get_display_name(); // for new addons
 
 foreach( $addons as $addon )
 {

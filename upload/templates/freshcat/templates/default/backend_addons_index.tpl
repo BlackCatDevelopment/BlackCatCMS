@@ -122,7 +122,9 @@
             <label class="fc_label_200" for="fc_new_moduledir">{translate('Module directory / language code')}</label>
                 <input type="text" id="fc_new_moduledir" name="new_moduledir" /><br />
             <label class="fc_label_200" for="fc_new_moduledesc">{translate('Module description')}</label>
-                <input type="text" id="fc_new_moduledesc" name="new_moduledesc" /><br /><br />
+                <input type="text" id="fc_new_moduledesc" name="new_moduledesc" /><br />
+            <label class="fc_label_200" for="fc_new_modulename">{translate('Author')}</label>
+                <input type="text" id="fc_new_moduleauthor" name="new_moduleauthor" value="{$username}" /><br /><br />
             <p class="submit_settings fc_gradient1" style="margin-left:-10px;text-align:left;">
                 <input type="submit" id="fc_new_submit" value="{translate('Save')}" />
                 <input type="reset" name="reset" value="{translate('Reset')}" />
