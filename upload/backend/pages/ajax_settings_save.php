@@ -267,13 +267,17 @@ if($template_variant)
 // ====================================================
 if ( $options['link'] !== $old_link )
 {
-	$old_filename	= CAT_PATH . PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
+	$old_filename		= CAT_PATH . PAGES_DIRECTORY . $old_link . PAGE_EXTENSION;
 
     // if a directory exists, rename it; if this fails, we need to recover
     // the changes!
-    if ( is_dir( CAT_PATH.PAGES_DIRECTORY.$old_link ) )
+    if ( is_dir( CAT_PATH . PAGES_DIRECTORY . $old_link ) )
     {
-        if(!CAT_Helper_Directory::moveDirectory(CAT_PATH.PAGES_DIRECTORY.$old_link,CAT_PATH.PAGES_DIRECTORY.$options['link'],true))
+        if( !CAT_Helper_Directory::moveDirectory(
+        	CAT_PATH . PAGES_DIRECTORY . $old_link,
+        	CAT_PATH . PAGES_DIRECTORY . $options['link'],
+        	true )
+        )
         {
             CAT_Helper_Page::updatePage($page_id,$page);
             $ajax	= array(
@@ -296,12 +300,10 @@ if ( $options['link'] !== $old_link )
 	// Update any pages that had the old link with the new one
 	$old_link_len	= strlen($old_link);
 	$sql			= '';
-
 	$query_subs	= $database->query(sprintf(
-        "SELECT `page_id`, `parent`, `link`, `level` FROM `%spages` WHERE link LIKE '%%%s/%%' ORDER BY LEVEL ASC",
-        CAT_TABLE_PREFIX, $old_link
+        "SELECT `page_id`, `parent`, `link`, `level` FROM `%spages` WHERE FIND_IN_SET('%s',`page_trail`) ORDER BY LEVEL ASC",
+        CAT_TABLE_PREFIX, $page_id
     ));
-
 	if ( is_object($query_subs) && $query_subs->numRows() > 0 )
 	{
 		while ( $sub = $query_subs->fetchRow(MYSQL_ASSOC) )
@@ -316,11 +318,14 @@ if ( $options['link'] !== $old_link )
 
 				// Work out level
 				$new_sub_level	  = (count(explode('/',$new_sub_link))-2);
-
 				// Update link and level
 				$database->query(sprintf(
-                    "UPDATE `%spages` SET link='%s', level='%s' WHERE page_id='%s' LIMIT 1",
-                    CAT_TABLE_PREFIX,$new_sub_link,$new_sub_level,$sub['page_id']
+                    "UPDATE `%spages` SET link='%s', level='%s', root_parent='%s' WHERE page_id='%s' LIMIT 1",
+                    CAT_TABLE_PREFIX,
+                    $new_sub_link,
+                    $new_sub_level,
+                    $options['root_parent'],
+                    $sub['page_id']
                 ));
 
                 // we use reset() to reload the page tree
@@ -345,8 +350,12 @@ if ( $options['link'] !== $old_link )
 		}
 	}
 	//
-    if ( is_dir( CAT_PATH.PAGES_DIRECTORY.$old_link ) )
-        CAT_Helper_Page::removeDirectory(CAT_PATH.PAGES_DIRECTORY.$old_link);
+
+    if ( is_dir( CAT_PATH . PAGES_DIRECTORY . $old_link ) )
+    {
+        CAT_Helper_Page::removeDirectory(CAT_PATH . PAGES_DIRECTORY . $old_link);
+       }
+    if ( is_dir( CAT_PATH . PAGES_DIRECTORY . $old_link ) )
 }
 
 // Check if there is a db error, otherwise say successful
