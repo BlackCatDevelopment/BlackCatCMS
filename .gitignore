@@ -163,3 +163,4 @@ pip-log.txt
 .DS_Store
 /upload\modules\lib_jquery\plugins\leptranslate/index.php
 HelpNDoc_Doku
+/_diffs
