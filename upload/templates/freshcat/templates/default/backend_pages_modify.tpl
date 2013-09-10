@@ -15,6 +15,7 @@
 		</form>
 		<button class="icon-eye-2 fc_gradient1 fc_gradient_hover" id="show_modules"> {translate('Show all sections')}</button>
 		<button class="icon-eye-blocked-2 fc_gradient1 fc_gradient_hover" id="hide_modules"> {translate('Hide all sections')}</button>
+        <button class="icon-file fc_gradient1 fc_gradient_hover" id="recreate_af"> {translate('Re-create access file')}</button>
 	</div>
 	{if $blocks_counter > 0}
 	<ul id="fc_all_blocks">

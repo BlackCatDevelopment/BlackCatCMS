@@ -943,7 +943,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     if ( $addon_name == DEFAULT_LANGUAGE || $addon_name == LANGUAGE )
                     {
                         $temp = array(
-                             'name' => $addon_name,
+                            'name' => $addon_name,
                             'type' => $addon_name == DEFAULT_LANGUAGE ? self::getInstance()->lang()->translate( 'standard language' ) : self::getInstance()->lang()->translate( 'current language' )
                         );
                         return self::getInstance()->lang()->translate( 'Cannot uninstall this language <span class="highlight_text">{{name}}</span> because it is the {{type}}!', $temp );
@@ -966,7 +966,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         $temp   = explode( ";", self::getInstance()->lang()->translate( 'this page;these pages' ) );
                         $add    = $info->numRows() == 1 ? $temp[ 0 ] : $temp[ 1 ];
                         $values = array(
-                             'type' => self::getInstance()->lang()->translate( 'Module' ),
+                            'type' => self::getInstance()->lang()->translate( 'Module' ),
                             'type_name' => $type,
                             'pages_string' => $add,
                             'count' => $info->numRows(),

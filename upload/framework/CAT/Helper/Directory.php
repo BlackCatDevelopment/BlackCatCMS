@@ -751,6 +751,31 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             umask($umask);
         }
 
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function is_empty($directory,$ignore_index=false)
+        {
+            if (!is_readable($directory)) return NULL;
+            $handle = opendir($directory);
+            if (!is_resource($handle))    return NULL;
+            while (false !== ($entry = readdir($handle)))
+            {
+                if ($entry != "." && $entry != "..")
+                {
+                    if( $ignore_index && $entry == 'index.php')
+                    {
+                        continue;
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }   // end function is_empty()
+        
+
 	    /**
 	     * check if directory is world-writable
 	     * hopefully more secure than is_writable()

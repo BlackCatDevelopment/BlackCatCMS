@@ -218,6 +218,7 @@ $LANG = array(
         => 'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by Black Cat CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.',
 // ----- page -----
     'A page with the same or similar link exists' => 'Eine Seite mit einem &auml;hnlichen oder demselben Titel existiert bereits',
+    'Access file created successfully' => 'Zugangsdatei erfolgreich erzeugt',
     'Add child page' => 'Unterseite hinzuf&uuml;gen',
     'Add Page' => 'Seite hinzuf&uuml;gen',
     'Administration Tools' => 'Admin Tools',
@@ -290,6 +291,7 @@ $LANG = array(
     'Top frame' => 'Top Frame',
     'Type' => 'Typ',
     'Unable to create the page: ' => 'Seite kann nicht angelegt werden: ',
+    'Unable to re-create the access file!' => 'Fehler beim Erneuern der Zugangsdatei!',
     'View page' => 'Ansicht',
     'Visibility' => 'Sichtbarkeit',
     'You cannot modify sections. Please enable "Manage section".' => 'Es können keine Sektionen verwaltet werden. Bitte "Sektionen verwalten" einschalten.',
@@ -298,6 +300,7 @@ $LANG = array(
     'You do not have the permission to delete a page.' => 'Sie haben nicht die notwendigen Berechtigungen zum Löschen einer Seite.',
     'You do not have the permission to delete this page.' => 'Sie haben nicht die notwendigen Berechtigungen zum Löschen dieser Seite.',
     'You do not have the permissions to modify this page.' => 'Sie haben nicht die notwendigen Berechtigungen zum Bearbeiten dieser Seite.',
+    'Re-create access file' => 'Zugangsdatei erneuern',
 // ----- page preview -----
     'Visibility of this page' => 'Sichtbarkeit dieser Seite',
     'Black Cat CMS Page Preview' => 'Black Cat CMS Seitenvorschau',

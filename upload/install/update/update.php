@@ -54,10 +54,26 @@ if(!CAT_Helper_Validate::getInstance()->sanitizeGet('do'))
 /*******************************************************************************
  * DO THE UPDATE
  ******************************************************************************/
+
+// remove captcha_control module
 if(file_exists(CAT_PATH.'/modules/captcha_control/index.php'))
+{
     CAT_Helper_Directory::removeDirectory(CAT_PATH.'/modules/captcha_control');
+    $lang->db()->query(sprintf(
+        "DELETE FROM `%saddons` WHERE directory = '%s' AND type = '%s'",
+        CAT_TABLE_PREFIX, 'captcha_control', 'module'
+    ));
+}
+// moved to widgets subdir; in fact, this change was made before Beta, but anyway...
 if(file_exists(CAT_PATH.'/modules/blackcat/widget.php'))
     unlink(CAT_PATH.'/modules/blackcat/widget.php');
+// add to class_secure table
+$lang->db()->query(sprintf(
+    "REPLACE INTO `%sclass_secure` VALUES ( 0, '%s' )",
+    CAT_TABLE_PREFIX, '/backend/pages/ajax_recreate_af.php'
+));
+
+
 
 $installer_uri = str_replace('/update','',$installer_uri);
 update_wizard_header();

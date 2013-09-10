@@ -351,12 +351,13 @@ if ( $options['link'] !== $old_link )
 			}
 		}
 	}
-	//
 
-    if ( is_dir( CAT_PATH . PAGES_DIRECTORY . $old_link ) )
+	// check if source directory is empty now
+    $source_dir = pathinfo(CAT_PATH.PAGES_DIRECTORY.$old_link,PATHINFO_DIRNAME);
+    if ( CAT_Helper_Directory::is_empty($source_dir,true) )
     {
-        CAT_Helper_Page::removeDirectory(CAT_PATH . PAGES_DIRECTORY . $old_link);
-       }
+        CAT_Helper_Directory::removeDirectory($source_dir);
+    }
 }
 
 

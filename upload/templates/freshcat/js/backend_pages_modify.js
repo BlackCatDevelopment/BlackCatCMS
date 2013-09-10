@@ -41,6 +41,50 @@ jQuery(document).ready(function()
 		$('.fc_toggle_section_block').addClass('fc_active').switchClass( 'icon-eye-blocked-2', 'icon-eye-2' );
 		$('.fc_blocks_content').slideDown(100);
 	});
+    $('#recreate_af').click( function()
+    {
+        dates = {
+			'page_id'  : $('div#fc_add_module').find('input[name=page_id]').val(),
+			'_cat_ajax': 1
+		};
+        $.ajax(
+		{
+			type:		'POST',
+			url:		CAT_ADMIN_URL + '/pages/ajax_recreate_af.php',
+			dataType:	'json',
+			data:		dates,
+			cache:		false,
+			beforeSend:	function( data )
+			{
+				data.process	= set_activity( 'Recreating file...' );
+				data.block_name	= dates.block_name;
+				data.name		= dates.name;
+			},
+			success:	function( data, textStatus, jqXHR  )
+			{
+				var current	= $(this);
+				$('.popup').dialog('destroy').remove();
+
+				if ( data.success === true )
+				{
+					return_success( jqXHR.process , data.message );
+					current.slideUp(300, function() { current.remove(); });
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			},
+			error:		function(jqXHR, textStatus, errorThrown)
+			{
+                if(jqXHR.responseText.indexOf('fc_login_form') != -1) {
+                    location.href = CAT_ADMIN_URL + '/login/index.php';
+                } else {
+					$('.popup').dialog('destroy').remove();
+					alert(textStatus + ': ' + errorThrown );
+                }
+			}
+		});
+    });
 
 	//	If you want to have all sections hidden on startup activate following row
 	// $('.module_block').removeClass('active').find('.blocks_content').slideUp(0);
