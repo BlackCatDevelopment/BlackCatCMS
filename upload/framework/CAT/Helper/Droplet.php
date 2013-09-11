@@ -744,7 +744,7 @@ EOD;
          * @param  string   $content
          * @return eval result
          **/
-        private static function do_eval( $_x_codedata, $_x_varlist, &$content )
+        private static function do_eval( $_x_codedata, $_x_varlist, $content )
         {
             global $wb, $admin, $wb_page_data;
             self::getInstance()->log()->LogDebug('evaluating: '.$_x_codedata);
@@ -802,7 +802,7 @@ EOD;
                         }
                         else
                         {
-                            // no arguments given, so
+                            // no arguments 
                             $droplet_name = $droplet;
                         }
 
@@ -855,7 +855,7 @@ EOD;
                             }
                             else
                             {
-                                $newvalue = true;
+                                $newvalue = NULL;
                             }
                         }
                         $droplet_tags[]         = '[[' . $droplet . ']]';
