@@ -44,13 +44,24 @@ if (defined('CAT_PATH')) {
 function Dwoo_Plugin_show_edit_area( Dwoo $dwoo, $name, $id, $content, $width = '100%', $height = '350px' ) {
     if ( !function_exists( 'show_wysiwyg_editor' ) )
 	{
-		@require_once( CAT_PATH.'/modules/edit_area/include.php' );
-		$wysiwyg_editor_loaded	= true;
+        if(file_exists(CAT_PATH.'/modules/edit_area/include.php'))
+        {
+		    @require_once( CAT_PATH.'/modules/edit_area/include.php' );
+		    $wysiwyg_editor_loaded	= true;
+        }
 	}
-	ob_start();
-	show_wysiwyg_editor( $name, $id, $content, $width, $height );
-	$content = ob_get_clean();
-	echo $content;
+    if ( function_exists( 'show_wysiwyg_editor' ) )
+	{
+	    ob_start();
+	    show_wysiwyg_editor( $name, $id, $content, $width, $height );
+	    $content = ob_get_clean();
+	    echo $content;
+    }
+    else
+    {
+        echo sprintf('<textarea name="%s" id="%s" style="width:%s;height:%s;">%s</textarea>',
+                     $name, $id, $width, $height, $content );
+    }
 }
 
 ?>
