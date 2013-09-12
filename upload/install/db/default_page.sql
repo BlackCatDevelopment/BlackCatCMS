@@ -15,3 +15,5 @@ INSERT INTO `cat_mod_wysiwyg` (`section_id`, `page_id`, `content`, `text`) VALUE
 
 INSERT INTO `cat_page_langs` (`page_id`, `lang`, `link_page_id`) VALUES (1,'DE',2);
 INSERT INTO `cat_page_langs` (`page_id`, `lang`, `link_page_id`) VALUES (2,'EN',1);
+
+INSERT INTO `cat_settings` (name, value) VALUES ('err_page_404', '4');

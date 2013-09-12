@@ -28,7 +28,6 @@ INSERT INTO `cat_settings` (name, value) VALUES
     ('default_theme_variant', ''),
     ('default_time_format', '%H:%M:%S'),
     ('er_level', '8191'),
-    ('err_page_404', ''),
     ('frontend_login', 'false'),
     ('frontend_signup', 'false'),
     ('home_folders', 'true'),
