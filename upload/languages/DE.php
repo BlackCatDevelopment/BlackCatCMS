@@ -473,26 +473,38 @@ $LANG = array(
     'You need to choose at least one group' => 'Sie müssen mindestens eine Gruppe wählen',
 // ----- settings -----
     'Allowed wrong login attempts' => 'Maximale fehlerhafte Anmeldeversuche',
+    'Allows to completely disable the [Manage Sections] option of all pages, disabling the capability to add/remove or reorder the sections of any page'
+        => 'Ermöglicht den Zugang zu [Abschnitte verwalten] Einstellungen auf allen Seiten zu deaktivieren und somit die Möglichkeit, Abschnitte hinzuzufügen, zu löschen oder neu zu sortieren zu unterbinden.',
+    'By default, the default or \'home\' page is the very first page listed in page tree; this options allows to have an introductory page that is totally different to – and outside the rest of – your site'
+        => 'Standardmäßig ist die erste sichtbare Seite im Seitenbaum auch die Einstiegsseite für Besucher; diese Einstellung erlaubt es, eine externe Eingangsseite zu verwenden, die sich komplett vom Rest der Seiten unterscheidet',
     'Create GUID' => 'GUID erzeugen',
     'Disabled' => 'Deaktiviert',
-    'Disabled Inline' => 'Inline deaktiviert',
+    'Enabled' => 'Aktiviert',
     'Homepage redirection' => 'Homepage-Weiterleitung',
+    'If the template you are using supports multiple blocks, and you wish to use this feature, enable it here; requires [Manage sections] to be enabled, too'
+        => 'Wenn die verwendete Designvorlage mehrere Blöcke unterstützt, schalten Sie diese Option hier ein; [Sektionen verwalten] muss ebenfalls aktiviert sein',
+    'If the template you are using supports multiple menus, and you wish to use this feature, enable it here; enabling this feature while using a template with only 1 menu has no effect'
+        => 'Wenn die verwendete Designvorlage mehrere Menüs unterstützt, schalten Sie diese Option hier ein; bei Vorlagen mit nur einem Menü hat die Einstellung keine Auswirkungen',
     'Individual page: DropLEP for search result' => 'Individuelle Seite: DropLEP für Suchergebnisse',
     'Individual page: PAGE_ID for search result' => 'Individuelle Seite: PAGE_ID für Suchergebnisse',
     'Inline' => 'Inline',
     'Install date and time' => 'Installationsdatum und Uhrzeit',
     'Intro page' => 'Einstiegsseite',
+    'Linux/Unix based' => 'Linux/Unix basierend',
     'Manage sections' => 'Sektionen verwalten',
     'Max lines of excerpt' => 'Maximale Anzahl Zeilen',
     'Max time to gather excerpts per module' => 'Max. Zeit pro Modul',
     'Max. width/height of images in search result' => 'Max. Breite/Höhe für Bilder in Suchergebnis',
+    'Maximum depth of page tree' => 'Maximale Verschachtelungstiefe für den Seitenbaum',
     'Module-order for searching' => 'Modulreihenfolge für Suche',
     'Multiple menus' => 'Mehrere Menüs',
     'Page languages' => 'Seitensprache',
     'Page level limit' => 'Seitenlevel Limit',
-    'Page space' => 'Seitentrennzeichen',
+    'Page spacer' => 'Seitentrennzeichen',
     'Page statistics' => 'Seitenstatistik',
     'Page trash' => 'Seitenmülleimer',
+    'Pages are deleted at once' => 'Seiten werden sofort gelöscht',
+    'Pages are marked as \'deleted\' only and can be restored' => 'Seiten werden zunächst nur als \'gelöscht\' markiert und können wiederhergestellt werden',
     'Personal folders' => 'Persönliche Ordner',
     "Please note: This filters the output of every module, so it may break the layout if the module output isn't valid!"
         => 'Hinweis: Hiermit wird die Ausgabe aller Module gefiltert, was dazu führen kann, daß das Layout zerstört wird, wenn das Modul non-valides HTML ausgibt!',
@@ -518,6 +530,10 @@ $LANG = array(
     'Variant' => 'Variante (Skin)',
     'Website footer' => 'Webseite Fußzeile',
     'Website header' => 'Webseite Kopf',
+    'When a visitor first enters your site, the system \'silently\' redirects them to the default page, without changing the address that is displayed in the location bar. If this option is enabled, the redirection will be visible.'
+        => 'Wenn ein Besucher Ihre Seiten betritt, leitet das System ihn \'stillschweigend\' auf die Einstiegsseite um, ohne dass sich die im Browser angezeigte Adresse ändert. Wenn diese Option aktiviert ist, ist diese Umleitung im Browser sichtbar.',
+    'When enabled, the system automatically hides any page from the website menu that is not in the language of the current logged-in user; guest users will see only the pages in the language chosen as the default for the site'
+        => 'Wenn aktiviert, verbirgt das System automatisch alle Seiten im Menü, die nicht auf die vom momentan angemeldeten Benutzer eingestellten Sprache eingestellt sind; Gäste sehen die Seiten in der eingestellten Standardsprache',
     'When reaching this number, more login attempts are not possible for this session.'
         => 'Nach Erreichen dieser Anzahl sind keine weiteren Anmeldeversuche mehr möglich.',
     'World-writeable file permissions' => 'Jeder darf schreiben',
@@ -595,6 +611,7 @@ $LANG = array(
     'Library' => 'Funktionsbibliothek',
     'License' => 'Lizenz',
     'Mark all groups' => 'Alle Gruppen markieren',
+    'Module created successfully' => 'Modul erfolgreich erzeugt',
     'Module details' => 'Moduldetails',
     'Module description' => 'Beschreibung',
     'Module directory / language code' => 'Verzeichnisname / Sprachkürzel',
