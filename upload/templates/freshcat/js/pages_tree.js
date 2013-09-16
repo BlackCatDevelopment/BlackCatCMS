@@ -137,23 +137,27 @@
 							form.find('.fc_restorePageOnly').show();
 						}
 						else {
-							$.each(data.parent_list, function(index, value)
-							{
-								option	= option + '<option value="' + value.page_id + '"';
- 								option	= (
-                                               value.is_editable === false      // no permission or deleted page
-                                            || value.is_current === true        // current page
-                                            || value.is_direct_parent === true  // direct parent
-                                          )
-										? option + ' disabled="disabled">'
-                                        : option + '>'
-                                        ;
-								for ( var i = 0; i < value.level; i++ )
-								{
-									option	= option + '|-- ';
-								}
-								option	= option + value.menu_title + '</option>';
-							});
+                            // handle empty parent list (no pages available)
+                            if( data.parent_list !== null )
+                            {
+    							$.each(data.parent_list, function(index, value)
+    							{
+    								option	= option + '<option value="' + value.page_id + '"';
+     								option	= (
+                                                   value.is_editable === false      // no permission or deleted page
+                                                || value.is_current === true        // current page
+                                                || value.is_direct_parent === true  // direct parent
+                                              )
+    										? option + ' disabled="disabled">'
+                                            : option + '>'
+                                            ;
+    								for ( var i = 0; i < value.level; i++ )
+    								{
+    									option	= option + '|-- ';
+    								}
+    								option	= option + value.menu_title + '</option>';
+    							});
+                            }
 
 							var newSelect	= $('#fc_addPage_parent').html( option );
 

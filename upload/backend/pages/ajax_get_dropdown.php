@@ -55,20 +55,8 @@ if ( !$users->checkPermission('Pages','pages_add') )
 	exit();
 }
 
-// ================================= 
-// ! Add permissions to $data_dwoo   
-// ================================= 
-/*
-$permission['pages']			= $users->checkPermission('Pages','pages') ? true : false;
-$permission['pages_add']		= $users->checkPermission('Pages','pages_add') ? true : false;
-$permission['pages_add_l0']		= $users->checkPermission('Pages','pages_add_l0') ? true : false;
-$permission['pages_modify']		= $users->checkPermission('Pages','pages_modify') ? true : false;
-$permission['pages_delete']		= $users->checkPermission('Pages','pages_delete') ? true : false;
-$permission['pages_settings']	= $users->checkPermission('Pages','pages_settings') ? true : false;
-$permission['pages_intro']		= ( $users->checkPermission('Pages','pages_intro') != true || INTRO_PAGE != 'enabled' ) ? false : true;
-*/
-
-$dropdown_list = CAT_Helper_ListBuilder::sort(CAT_Helper_Page::getPages(),0);
+// note: all pages are listed in the dropdown, even hidden / private AND deleted!
+$dropdown_list = CAT_Helper_ListBuilder::sort(CAT_Helper_Page::getPages(1),0);
 
 // template / variant
 $template = CAT_Helper_Page::properties( $val->sanitizePost('parent_id','numeric'), 'template' );
