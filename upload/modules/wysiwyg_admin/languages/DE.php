@@ -61,4 +61,6 @@ $LANG = array(
     'Invalid boolean value!' => 'Ungültiger Boolean Wert!',
     'If this option is enabled, all WYSIWYG content will be cleaned by using HTMLPurifier before it is stored. Users that are members of group "Administrators" are still allowed to use all HTML, including forms and script.'
        => 'Wenn aktiviert, wird der WYSIWYG Inhalt mit Hilfe von HTMLPurifier bereinigt, bevor er gespeichert wird. Benutzer der Gruppe "Administratoren" dürfen nach wie vor alles, inklusive Formularen und Scripts.',
+    'No configuration file for editor [{{editor}}]' => 'Keine Konfigurationsdatei gefunden für Editor [{{editor}}]',
+    'No WYSIWYG editor set, please set one first (Settings -&gt; Backend settings -&gt; WYSIWYG Editor)' => 'Es ist kein WYSIWYG Editor eingestellt, bitte zuerst einen aktivieren (Einstellungen -&gt; Backend Einstellungen -&gt; WYSIWYG Editor)',
 );

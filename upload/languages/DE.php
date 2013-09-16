@@ -331,6 +331,7 @@ $LANG = array(
     'Max. Login name length' => 'Maximallänge Anmeldename',
     'Max. password length' => 'Maximallänge Kennwort',
     'must begin with a letter or has invalid signs' => 'muss mit einem Buchstaben beginnen oder hat ung&uuml;ltige Zeichen',
+    'No groups found' => 'Keine Gruppen gefunden',
     '[none (use internal)]' => '[keine (interne benutzen)]',
     'Page to show in maintenance mode' => 'Im Wartungsmodus Seite anzeigen',
     'Page to show on 404 "Not found" error' => '404 "Not found" Fehlerseite',

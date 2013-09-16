@@ -436,9 +436,9 @@ if (!class_exists('CAT_Backend', false))
 
         }   // end function print_footer()
 
-        public function print_error($message, $redirect = 'index.php', $auto_footer = true)
+        public function print_error($message, $redirect = 'index.php', $print_header = true)
         {
-            CAT_Object::printError($message,$redirect);
+            CAT_Object::printError($message,$redirect,$print_header);
             self::print_footer();
             exit();
         }

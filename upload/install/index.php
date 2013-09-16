@@ -26,7 +26,7 @@
 define('CAT_DEBUG',false);
 
 // check wether to call update.php or start installation
-if (file_exists('../config.php')) {
+if (file_exists('../config.php') && file_exists('/update/update.php') && ! file_exists('/steps.tmp')) {
     include '/update/update.php';
     exit();
 }

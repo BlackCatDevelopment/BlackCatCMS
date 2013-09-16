@@ -48,6 +48,10 @@ $val     = CAT_Helper_Validate::getInstance();
 // this will redirect to the login page if the permission is not set
 $user->checkPermission('admintools','admintools');
 
+// check if any editor is set
+if(!defined('WYSIWYG_EDITOR') || WYSIWYG_EDITOR == '')
+    $admin->print_error('No WYSIWYG editor set, please set one first (Settings -&gt; Backend settings -&gt; WYSIWYG Editor)',NULL,false);
+
 // check for config driver
 $cfg_file = sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
 if(file_exists($cfg_file))
@@ -59,7 +63,7 @@ elseif(file_exists(sanitize_path(dirname(__FILE__)."/driver/".WYSIWYG_EDITOR."/c
     require_once( dirname(__FILE__)."/driver/".WYSIWYG_EDITOR."/c_editor.php");
 }
 else {
-    $admin->print_error('No configuration file for editor ['.WYSIWYG_EDITOR.']');
+    $admin->print_error($backend->lang()->translate('No configuration file for editor [{{editor}}]',array('editor'=>WYSIWYG_EDITOR)),NULL,false);
 }
 
 // check for language file
