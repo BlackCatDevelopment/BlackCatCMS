@@ -60,13 +60,13 @@ $js_back	= CAT_ADMIN_URL . '/addons/index.php';
 // Check if the module exists
 if ( !$addons->isModuleInstalled($addon_name,NULL,preg_replace('~s$~','',$type)))
 {
-	$backend->print_error( 'Not installed' , $js_back );
+	$backend->print_error( 'Not installed' , $js_back, false );
 }
 
 $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type.'s/'.$file);
 if ( ! file_exists($path) )
 {
-    $backend->print_error( 'Not installed' , $js_back );
+    $backend->print_error( 'Not installed' , $js_back, false );
 }
 
 // Check if we have permissions on the directory
@@ -77,7 +77,7 @@ if ( !is_writable($path) )
 
 $result = CAT_Helper_Addons::uninstallModule($type.'s',$addon_name);
 if($result !== true)
-    $backend->print_error($result);
+    $backend->print_error($result, $js_back, false);
 else
     $backend->print_success( 'Uninstalled successfully' );
 

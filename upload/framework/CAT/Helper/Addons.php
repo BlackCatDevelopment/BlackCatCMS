@@ -1014,7 +1014,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         $page_template_str = "<li><a href='../pages/settings.php?page_id={{id}}'>{{title}}</a></li>";
 
                         $values = array(
-                             'pages' => $add,
+                            'pages' => $add,
                             'name' => $addon_name
                         );
                         $msg    = self::getInstance()->lang()->translate( $msg_template_str, $values );
@@ -1023,13 +1023,13 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         while ( $data = $info->fetchRow() )
                         {
                             $page_info = array(
-                                 'id' => $data['page_id'],
+                                'id' => $data['page_id'],
                                 'title' => $data['page_title']
                             );
                             $page_names .= self::getInstance()->lang()->translate( $page_template_str, $page_info );
                         }
                         $page_names .= '</ul>';
-                        return $msg_template_str . $page_names;
+                        return $msg . $page_names;
                     }
                     break;
 

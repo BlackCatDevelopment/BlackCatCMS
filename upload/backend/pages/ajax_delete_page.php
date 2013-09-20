@@ -96,7 +96,7 @@ $visibility		= $page['visibility'];
 $use_trash      = false;
 
 // Check if we should delete it or just set the visibility to 'deleted'
-if ( CAT_Registry::get('PAGE_TRASH') != 'disabled' && $visibility != 'deleted' )
+if ( CAT_Registry::get('PAGE_TRASH') !== 'false' && $visibility !== 'deleted' )
 {
 	$ajax_status	= 1;
 	// Page trash is enabled and page has not yet been deleted

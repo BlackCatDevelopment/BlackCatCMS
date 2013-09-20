@@ -583,6 +583,8 @@ $LANG = array(
         => 'Ungültiges Verzeichnis, ungültige Sprachdatei, oder info.php fehlt.',
     'Cannot uninstall template <span class="highlight_text">{{name}}</span> because it is the {{type}}!'
         => 'Kann Template <span class="highlight_text">{{name}}</span> nicht deinstallieren, weil es das {{type}} ist!',
+    'Cannot uninstall template <span class="highlight_text">{{name}}</span> because it is still in use on {{pages}}:'
+        => 'Kann Template <span class="highlight_text">{{name}}</span> nicht deinstallieren, weil es auf {{pages}} verwendet wird:',
 // ----- addons - backend_addons_index.tpl -----
     'A language file with the same name already exists' => 'Es existiert bereits eine Sprachdatei mit diesem Namen',
     'A module with the same directory name already exists' => 'Es existiert bereits ein Addon mit diesem Verzeichnisnamen',

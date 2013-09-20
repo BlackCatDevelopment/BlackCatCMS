@@ -166,7 +166,7 @@ if (!class_exists('CAT_Helper_Page'))
 // --------------------- NOT READY YET! ----------------------------------------
         				if ( CAT_Users::ami_group_member($row['admin_groups']) )
         				{
-                            if ( CAT_Registry::get('PAGE_TRASH') != 'inline' || $row['visibility'] != 'deleted' )
+                            if ( CAT_Registry::get('PAGE_TRASH') !== 'true' || $row['visibility'] !== 'deleted' )
                             {
                                 $row['is_editable'] = true;
                                 self::$pages_editable++;
