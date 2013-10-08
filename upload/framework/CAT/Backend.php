@@ -394,6 +394,10 @@ if (!class_exists('CAT_Backend', false))
 
             global $_be_mem, $_be_time;
 			$data['system_information'] = array(
+                array(
+                    'name'      => $self->lang()->translate('PHP version'),
+                    'status'    => phpversion(),
+                ),
 				array(
 					'name'		=> $self->lang()->translate('Memory usage'),
 					'status'	=> '~ ' . sprintf('%0.2f',( (memory_get_usage() - $_be_mem) / (1024 * 1024) )) . ' MB'

@@ -71,44 +71,44 @@ if ( CAT_Helper_Page::getPagePermission($page_id,'admin') !== true )
 // ! Get new content
 // =================
 $content = $val->sanitizePost('content'.$section_id);
-if (!$content)
+
+// for non-admins only
+if(!CAT_Users::getInstance()->ami_group_member(1))
 {
-    $backend->print_error( 'Nothing to save!' );
+    // if HTMLPurifier is enabled...
+    $r = $backend->db()->get_one('SELECT * FROM `'.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2` WHERE set_name="enable_htmlpurifier" AND set_value="1"');
+    if($r)
+    {
+        // use HTMLPurifier to clean up the output
+        $content = CAT_Helper_Protect::getInstance()->purify($content,array('Core.CollectErrors'=>true));
+    }
 }
 else
 {
-    // for non-admins only
-    if(!CAT_Users::getInstance()->ami_group_member(1))
-    {
-        // if HTMLPurifier is enabled...
-        $r = $backend->db()->get_one('SELECT * FROM `'.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2` WHERE set_name="enable_htmlpurifier" AND set_value="1"');
-        if($r) {
-            // use HTMLPurifier to clean up the output
-            $content = CAT_Helper_Protect::getInstance()->purify($content,array('Core.CollectErrors'=>true));
-        }
-    }
-    else {
-        $content = $val->add_slashes($content);
-    }
-	/**
-	 *	searching in $text will be much easier this way
-	 */
-	$text = umlauts_to_entities(strip_tags($content), strtoupper(DEFAULT_CHARSET), 0);
-
-    /**
-     *  save
-     **/
-	$query = "REPLACE INTO `".CAT_TABLE_PREFIX."mod_wysiwyg` VALUES ( '$section_id', $page_id, '$content', '$text' );";
-	$backend->db()->query($query);
-	if ($backend->db()->is_error()) trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $backend->db()->get_error()), E_USER_ERROR);	
+    $content = $val->add_slashes($content);
 }
+/**
+ *	searching in $text will be much easier this way
+ */
+$text = umlauts_to_entities(strip_tags($content), strtoupper(DEFAULT_CHARSET), 0);
+
+/**
+ *  save
+ **/
+$query = "REPLACE INTO `".CAT_TABLE_PREFIX."mod_wysiwyg` VALUES ( '$section_id', $page_id, '$content', '$text' );";
+$backend->db()->query($query);
+if ($backend->db()->is_error())
+    trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $backend->db()->get_error()), E_USER_ERROR);
 
 $edit_page = CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id.'#'.SEC_ANCHOR.$section_id;
 
 // Check if there is a database error, otherwise say successful
-if($backend->db()->is_error()) {
+if($backend->db()->is_error())
+{
 	$backend->print_error($backend->db()->get_error(), $js_back);
-} else {
+}
+else
+{
 	$backend->print_success('Page saved successfully', $edit_page );
 }
 

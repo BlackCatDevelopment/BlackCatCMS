@@ -29,7 +29,7 @@
 	    </ul>
       </div>
 
-		<form method="post" action="{$installer_uri}/index.php">
+		<form method="post" action="{$installer_uri}/index.php" id="cat_installer_form">
     	<input type="hidden" name="laststep" value="{$this_step}" />
       <div id="content">
 		<div>

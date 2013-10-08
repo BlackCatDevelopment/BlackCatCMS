@@ -15,6 +15,12 @@ if( typeof jQuery != 'undefined' ) {
 			    speedIn: 1000
 			}
 		);
+
+        $('body').keydown(function(e) {
+            if (e.keyCode == 13) {
+                $('#btn_next').trigger('click');
+            }
+        });
 		
 		jQuery('#installer_backend_theme').change( function() {
 		    var old_img = jQuery('#preview_image').attr('src').replace(/\\/g,'/').replace( /.*\//, '' ).replace(/\.png/,'');
@@ -34,7 +40,7 @@ if( typeof jQuery != 'undefined' ) {
         });
 		
 	    var animation = true;
-	    if ( $.cookie('lep_animate') == 'no' ) {
+	    if ( $.cookie('cat_animate') == 'no' ) {
 	        animation = false;
 		}
 		if ( animation ) {
@@ -44,7 +50,7 @@ if( typeof jQuery != 'undefined' ) {
 					jQuery('div#content').css('z-index','99999').fadeIn(3000);
 				}
 			);
-			$.cookie('lep_animate', 'no', { expires: 1, path: '/' });
+			$.cookie('cat_animate', 'no', { expires: 1, path: '/' });
 		}
 		else {
 		    jQuery('div#black').hide();
