@@ -642,7 +642,8 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 for ( $i = 0; $i < ( 4 - $n ); $i++ )
                     $version = $version . ".0";
             }
-
+            // remove leading letters ('v1.2.3' => '1.2.3')
+            $version = preg_replace('~^[a-z]+~i','',$version);
             return $version;
         } // end function getVersion2()
 
