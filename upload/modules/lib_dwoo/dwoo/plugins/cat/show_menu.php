@@ -81,7 +81,7 @@ function Dwoo_Plugin_show_menu(
     )
 {
 
-	if ( CAT_Helper_Page::isMaintenance() ) return false;
+	if ( CAT_Helper_Page::isMaintenance() && ! CAT_Users::is_root()) return false;
 
     if (strpos($aOptions, 'SM2_PRETTY') !== false) return "<strong>Error:</strong> show_menu() does not support the SM2_PRETTY Flag!";
     // Set variables to replace strings with constants
