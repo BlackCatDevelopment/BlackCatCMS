@@ -49,22 +49,31 @@ $ajax  = array();
 
 header('Content-type: application/json');
 
-// Check if the user has already submitted the form, otherwise show it
-if ( $email && $val->sanitize_email($email) )
+if(!count(CAT_Helper_Addons::getInstance()->getLibraries('mail')))
 {
-    list($result,$message) = CAT_Users::handleForgot($email);
-    $ajax	= array(
-		'message'	=> $message,
-		'success'	=> $result
+    	$ajax	= array(
+		'message'	=> $val->lang()->translate('Unable to mail login details - no mailer library installed!'),
+		'success'	=> false
 	);
 }
 else
 {
-	$ajax	= array(
-		'message'	=> $val->lang()->translate('You must enter an email address'),
-		'success'	=> false
-	);
+    // Check if the user has already submitted the form, otherwise show it
+    if ( $email && $val->sanitize_email($email) )
+    {
+        list($result,$message) = CAT_Users::handleForgot($email);
+        $ajax	= array(
+    		'message'	=> $message,
+    		'success'	=> $result
+    	);
+    }
+    else
+    {
+    	$ajax	= array(
+    		'message'	=> $val->lang()->translate('You must enter an email address'),
+    		'success'	=> false
+    	);
+    }
 }
-
 print json_encode( $ajax );
 exit();

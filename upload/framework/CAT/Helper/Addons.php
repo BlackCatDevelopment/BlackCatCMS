@@ -1502,6 +1502,21 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         $return_values[ $key ] = isset( ${$varname} ) ? ${$varname} : '';
                     }
                 }
+                // check platform (WB/LEPTON/BC)
+                if(isset($lepton_platform)&&!isset($module_platform))
+                {
+                    $return_values['cms_name'] = 'LEPTON';
+                }
+                if(isset($module_platform))
+                {
+                    if(!self::versionCompare($module_platform,'2.x','<='))
+                        $return_values['cms_name'] = 'WebsiteBaker';
+                    else
+                        $return_values['cms_name'] = 'BlackCat CMS';
+                }
+                if(!isset($return_values['cms_name']))
+                    $return_values['cms_name'] = 'unknown';
+                // link to module homepage
                 if ( $link )
                     $return_values['module_link'] = $link;
                 return $return_values;

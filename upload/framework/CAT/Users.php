@@ -389,7 +389,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         ));
 
         				// Try sending the email
-        				if ( CAT_Helper_Mail::getInstance('PHPMailer')->sendMail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message, CATMAILER_DEFAULT_SENDERNAME ) )
+                        $mailer = CAT_Helper_Mail::getInstance();
+        				if ( is_object($mailer) && $mailer->sendMail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message, CATMAILER_DEFAULT_SENDERNAME ) )
         				{
         					$message      = $self->lang()->translate('Your username and password have been sent to your email address');
         					$display_form = false;
@@ -399,11 +400,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
         				{
                             // reset PW if sending mail failed
         					$self->db()->query(sprintf(
-                                "UPDATE `%susers` SET password = '%s' WHERE user_id = '%d'",
+                                "UPDATE `%susers` SET password = '%s', lastreset='' WHERE user_id = '%d'",
                                 CAT_TABLE_PREFIX, $old_pass, $results_array['user_id']
                             ));
         					$message = $self->lang()->translate('Unable to email password, please contact system administrator');
-                            $message .= '<br />'.CAT_Helper_Mail::getInstance('PHPMailer')->getError();
+                            if ( is_object($mailer) )
+                                $message .= '<br />'.$mailer->getError();
         				}
         			}
 

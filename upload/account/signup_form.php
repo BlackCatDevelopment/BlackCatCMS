@@ -163,7 +163,7 @@ if ( $val->sanitizePost('username') )
             );
 
         	// Try sending the email
-            if ( ! CAT_Helper_Mail::getInstance('PHPMailer')->sendMail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message, CATMAILER_DEFAULT_SENDERNAME ) )
+            if ( ! CAT_Helper_Mail::getInstance()->sendMail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message, CATMAILER_DEFAULT_SENDERNAME ) )
 	{
         		$database->query( "DELETE FROM " . CAT_TABLE_PREFIX . "users WHERE username = '$username'" );
         		$errors[] = $val->lang()->translate('Unable to email password, please contact system administrator');

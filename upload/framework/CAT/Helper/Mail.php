@@ -44,6 +44,10 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
             'smtp_username'      => '',
             'default_sendername' => 'Black Cat CMS Mailer',
         );
+        private   static $routine_driver_map = array(
+            'lib_swift'     => 'Swift',
+            'lib_phpmailer' => 'PHPMailer',
+        );
 
         /**
          *
@@ -51,14 +55,21 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
          *
          *
          **/
-        public static function getInstance( $driver )
+        public static function getInstance( $driver = NULL )
         {
 
             if ( ! self::$init ) self::init();
+            if ( ! $driver && isset(self::$routine_driver_map[CATMAILER_LIB]) )
+                $driver = self::$routine_driver_map[CATMAILER_LIB];
+            if ( ! $driver )
+                $driver = 'PHPMailer';
             if ( ! preg_match('/driver$/i',$driver) )
             {
                 $driver .= 'Driver';
             }
+            // check if the lib is available
+            if ( ! file_exists(dirname(__FILE__).'/../../../modules/'.CATMAILER_LIB) )
+                return false;
             if ( ! isset(self::$_drivers[$driver]) || ! is_object(self::$_drivers[$driver]) )
             {
                 if ( ! file_exists( dirname(__FILE__).'/Mail/'.$driver.'.php' ) )

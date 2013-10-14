@@ -227,7 +227,7 @@ class wb
     /* moved to CAT_Helper_Mail */
     public function mail($fromaddress, $toaddress, $subject, $message, $fromname = '')
     {
-        return CAT_Helper_Mail::getInstance('PHPMailer')->sendMail($fromaddress, $toaddress, $subject, $message, $fromname);
+        return CAT_Helper_Mail::getInstance()->sendMail($fromaddress, $toaddress, $subject, $message, $fromname);
     }
 
     /* moved to CAT_Helper_Page */
