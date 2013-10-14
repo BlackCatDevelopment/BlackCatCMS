@@ -23,20 +23,20 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+    include(CAT_PATH.'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+    while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+        $root .= "../";
+        $level += 1;
+    }
+    if (file_exists($root.'/framework/class.secure.php')) {
+        include($root.'/framework/class.secure.php');
+    } else {
+        trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+    }
 }
 
 global $_bc_filter_js, $_bc_filter_onload;
@@ -199,11 +199,11 @@ function register_filter($filter_name,$module_directory,$filter_description=NULL
  * @param  string  $module_directory
  * @return boolean
  */
-function unregister_filter($filter_name,$module_directory)
+function unregister_filter($filter_name, $module_directory)
 {
     $backend = CAT_Backend::getInstance('addons','modules_uninstall');
     $SQL     = sprintf(
-        "DELETE FROM `%smod_filter` WHERE filter_name='%s' aND module_directory='%s'",
+        "DELETE FROM `%smod_filter` WHERE filter_name='%s' AND module_name='%s'",
         CAT_TABLE_PREFIX, $filter_name, $module_directory
     );
     if (!$backend->db()->query($SQL)) {
@@ -212,3 +212,22 @@ function unregister_filter($filter_name,$module_directory)
     }
     return true;
 }   // end function unregister_filter()
+
+/**
+ * Check if a output filter is already registered
+ *
+ * @param string $filter_name
+ * @param string $module_directory
+ * @return boolean
+ */
+function is_filter_registered($filter_name, $module_directory)
+{
+    $backend = CAT_Backend::getInstance('addons', 'modules_install');
+    $SQL = "SELECT `filter_name` FROM `".CAT_TABLE_PREFIX."mod_filter` WHERE ".
+        "`filter_name`='$filter_name' AND `module_name`='$module_directory'";
+    if (false === ($name = $backend->db()->get_one($SQL, MYSQL_ASSOC))) {
+        trigger_error(sprintf('[%s] %s', __FUNCTION__, $backend->db()->get_error()));
+        return false;
+    }
+    return ($name == $filter_name);
+}
