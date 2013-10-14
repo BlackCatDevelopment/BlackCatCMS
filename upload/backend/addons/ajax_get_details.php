@@ -59,33 +59,35 @@ $type   = CAT_Helper_Validate::sanitizePost('type');
 
 if(CAT_Helper_Addons::isModuleInstalled($module,NULL,$type))
 {
-    $addon  = CAT_Helper_Addons::getAddonDetails($module);
+    $info = CAT_Helper_Addons::checkInfo(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type.'s/'.$module));
 }
 else
 {
     $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type.'/'.$module.(($type=='languages')?'.php':''));
     $info = CAT_Helper_Addons::checkInfo($path);
-    if ( ! is_array($info) || ! count($info) )
-    {
-        $ajax	= array(
-    		'message'	=> $backend->lang()->translate("No Addon info available, seems to be an invalid addon!"),
-    		'success'	=> false
-    	);
-    	print json_encode( $ajax );
-    	exit();
-    }
-    $addon = array(
-        'type' => $info['addon_function'],
-        'installed' => NULL,
-        'upgraded' => NULL,
-        'removable' => 'Y',
-    );
-    foreach($info as $key => $value)
-    {
-        $key = preg_replace('/^(module_|addon_)/i','',$key);
-        $addon[$key] = $value;
-    }
 }
+
+if ( ! is_array($info) || ! count($info) )
+{
+    $ajax	= array(
+		'message'	=> $backend->lang()->translate("No Addon info available, seems to be an invalid addon!"),
+		'success'	=> false
+	);
+	print json_encode( $ajax );
+	exit();
+}
+$addon = array(
+    'type' => $info['addon_function'],
+    'installed' => NULL,
+    'upgraded' => NULL,
+    'removable' => 'Y',
+);
+foreach($info as $key => $value)
+{
+    $key = preg_replace('/^(module_|addon_)/i','',$key);
+    $addon[$key] = $value;
+}
+
 
 // check if the user is allowed to see this item
 if(!$users->get_permission($addon['directory'],$addon['type']))
@@ -154,11 +156,11 @@ if($addon['type'] == 'language')
     {
         // use require as we just need the info vars, not the lang strings
         require $langfile;
-        $addon['name']     = $language_name;
-        $addon['author']   = $addon['author'] != '' ? $addon['author'] : $language_author;
-        $addon['version']  = $language_version;
-        $addon['platform'] = $language_platform;
-        $addon['license']  = $language_license;
+        $addon['name']        = $language_name;
+        $addon['author']      = $addon['author'] != '' ? $addon['author'] : $language_author;
+        $addon['version']     = $language_version;
+        $addon['platform']    = $language_platform;
+        $addon['license']     = $language_license;
         $addon['description'] = $language_name;
     }
 }
