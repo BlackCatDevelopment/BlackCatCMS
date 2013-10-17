@@ -33,7 +33,7 @@
 			<span class="fc_label_200">{translate('Author')}:</span>{$addon.author}<br />
             {if $addon.link}<span class="fc_label_200">{translate('Link')}:</span><a href="{$addon.link}" target="_blank">{$addon.link}</a><br />{/if}
 			{if $addon.function}<span class="fc_label_200">{translate('Function')}:</span>{$addon.function}<br />{/if}
-			<span class="fc_label_200">{translate('Designed for')}:</span>Black Cat CMS {$addon.platform}<br />
+			<span class="fc_label_200">{translate('Designed for')}:</span>{if $addon.cms_name}{$addon.cms_name}{else}BlackCat CMS{/if} {$addon.platform}<br />
 			<span class="fc_label_200">{translate('License')}:</span>{$addon.license}<br />
             {if $addon.installed}<span class="fc_label_200">{translate('Installed')}:</span>{$addon.installed}<br />{/if}
             {if $addon.upgraded}<span class="fc_label_200">{translate('Upgraded')}:</span>{$addon.upgraded}<br />{/if}

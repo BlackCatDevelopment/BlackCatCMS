@@ -63,17 +63,21 @@ $mod_headers = array(
 			array(
 				'all'			=> array( 'debug.js', 'jquery.fc_set_tab_list.js', 'jquery.fc_toggle_element.js', 'jquery.fc_resize_elements.js', 'jquery.fc_show_popup.js', 'general.js', 'pages_tree.js' ),
 				'individual'	=> array (
-					'pages'				=> 'backend_pages_modify.js',
-					'access'			=> 'backend_users_index.js',
-					'addons'			=> 'backend_addons.js',
-					'media'				=> 'backend_media.js',
-					'preferences'		=> 'backend_preferences.js',
-					'settings'			=> 'backend_settings_index.js',
-					'login_index'		=> 'login.js'
+				'pages'				=> 'backend_pages_modify.js',
+				'access'			=> 'backend_users_index.js',
+				'addons'			=> 'backend_addons.js',
+				'media'				=> 'backend_media.js',
+				'preferences'		=> 'backend_preferences.js',
+				'settings'			=> 'backend_settings_index.js',
+				'login_index'		=> 'login.js'
 				)
 			)
 		)
 	)
 );
+
+if ( CAT_Registry::get('DEFAULT_THEME_VARIANT') == 'custom' ) {
+    $mod_headers['backend']['js'][0]['individual']['addons'] = '/custom/backend_addons.js';
+}
 
 ?>

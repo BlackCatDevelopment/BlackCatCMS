@@ -51,7 +51,7 @@ if (!class_exists('CAT_Backend', false))
             {
                 self::$instance = new self();
                 if(!CAT_Registry::defined('CAT_INITIALIZED'))
-    include CAT_PATH.'/framework/initialize.php';
+                include CAT_PATH.'/framework/initialize.php';
                 $user = CAT_Users::getInstance();
        			if($user->is_authenticated() == false && !defined('CAT_INSTALL_PROCESS')) {
     				header('Location: '.CAT_ADMIN_URL.'/login/index.php');

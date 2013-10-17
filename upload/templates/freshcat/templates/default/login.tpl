@@ -44,7 +44,6 @@
 	</noscript>
 	<div id="fc_forms" class="fc_br_all fc_shadow_big">
 		<div id="fc_login_header" class="fc_br_top fc_gradient4">
-			<img src="{$CAT_THEME_URL}/css/images/login/beta_state.png" alt="This is a beta version" id="fc_beta" />
 			<a href="{$CAT_URL}" class="icon-home fc_border_all fc_border_all_light fc_gradient1 fc_gradient_hover" id="fc_home_site" title="{translate('Home')}"></a>
 		</div>
 		<form name="login" action="{$ACTION_URL}" method="post" id="fc_login_form" class="fc_gradient1 fc_br_bottom fc_border">
