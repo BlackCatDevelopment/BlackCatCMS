@@ -86,6 +86,10 @@ foreach( $dirs as $i => $dir )
         $pre_inst_err[] = 'The ['.$dir.'] subfolder must be writable!<br />Das Verzeichnis ['.$dir.'] muss schreibbar sein!';
     }
 }
+if ( ! version_compare( phpversion(), '5.3.0', '>=') )
+{
+    $pre_inst_err[] = 'BlackCat CMS requires PHP >= 5.3. You have '.phpversion().'. Installation not possible!';
+}
 if ( count($pre_inst_err) )
 {
     pre_installation_error( implode( '<br /><br />', $pre_inst_err ) );
@@ -1145,9 +1149,12 @@ function pre_installation_error( $msg ) {
     </div>
     <div style="float:left">
         <h1>BlackCat CMS Installation Prerequistes Error</h1>
-        <h2>'.$lang->translate('Sorry, the BlackCat CMS Installation prerequisites check failed.').'</h2>
+        <h2>Sorry, the BlackCat CMS Installation prerequisites check failed</h2>
         <span style="display:inline-block;background-color:#343434;color:#ff3030;font-size:1.5em;border:1px solid #ff3030;padding:15px;width:100%;margin:15px auto;-webkit-border-radius: 8px;-moz-border-radius: 8px;-khtml-border-radius: 8px;border-radius: 8px;">'.$msg.'</span><br /><br />
-        <h2>'.$lang->translate('You will need to fix the errors quoted above to start the installation.').'</h2>
+        <h2>You will need to fix the errors quoted above to start the installation</h2>
+        <h2>Entschuldigung, die Prüfung der BlackCat CMS Installationsvoraussetzungen ist fehlgeschlagen</h2>
+        <span style="display:inline-block;background-color:#343434;color:#ff3030;font-size:1.5em;border:1px solid #ff3030;padding:15px;width:100%;margin:15px auto;-webkit-border-radius: 8px;-moz-border-radius: 8px;-khtml-border-radius: 8px;border-radius: 8px;">'.$msg.'</span><br /><br />
+        <h2>Sie müssen die o.g. Probleme beheben, um BlackCat CMS zu installieren</h2>
     </div>
   </div>
   <div id="header">
