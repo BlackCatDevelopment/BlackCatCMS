@@ -44,7 +44,7 @@ if (defined('CAT_PATH')) {
 $module_directory = 'wrapper';
 $module_name = 'Wrapper';
 $module_function = 'page';
-$module_version = '2.7.4';
+$module_version = '2.7.5';
 $module_platform = '2.x';
 $module_author = 'Ryan Djurovich, Dietrich Roland Pehlke, Black Cat Development (last)';
 $module_license = 'GNU General Public License';
@@ -52,6 +52,8 @@ $module_description = 'This module allows you to wrap your site around another u
 $module_guid      = 'a5830654-06f3-402a-9d25-a03c53fc5574';
 
 /**
+ *  2.7.5   2013-10-23  - allow to use CSS (%) for width and height
+ *
  *  2.7.4   2013-10-23  - fix for BlackCat CMS
  *
  *	2.7.3	2012-02-09	- added upgrade.php.

@@ -50,16 +50,12 @@ if ( isset( $_POST[ 'url' ] ) )
 {
 	$url    = $admin->add_slashes( strip_tags( $_POST[ 'url' ] ) );
 	$height = ( isset($_POST['height']) ? $_POST['height'] : 400      );
-	$width  = ( isset($_POST['width'])  ? $_POST['width']  : 400      );
+	$width  = ( isset($_POST['width'])        ? $_POST['width']          : '100%'   );
 	$type   = ( isset($_POST['wrapper_type'])   ? $_POST['wrapper_type']   : 'iframe' );
-	if ( !is_numeric( $height ) )
-	{
-		$height = 400;
-	}
-	if ( !is_numeric( $width ) )
-	{
-		$width = 400;
-	}
+	if ( is_numeric( $height ) )
+		$height .= 'px';
+	if ( is_numeric( $width ) )
+		$width  .= 'px';
 	$query = "UPDATE " . CAT_TABLE_PREFIX . "mod_wrapper SET url = '$url', height = '$height', width = '$width', wtype = '$type' WHERE section_id = '$section_id'";
 	$database->query( $query );
 }

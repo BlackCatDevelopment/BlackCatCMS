@@ -43,14 +43,16 @@ if (defined('CAT_PATH')) {
 
 if(!isset($module_version))
 {
-    include dirname(__FILE__).'/info.php';
+    $details = CAT_Helper_Addons::getAddonDetails('wrapper');
+    $module_version = $details['version'];
 }
-if ( $module_version <= '2.7.1' ) {
-	$database->query('ALTER TABLE `'.CAT_TABLE_PREFIX.'mod_wrapper` ADD COLUMN `width` INT(11) NOT NULL DEFAULT \'630\'');
-	$database->query('ALTER TABLE `'.CAT_TABLE_PREFIX.'mod_wrapper` ADD COLUMN `type` VARCHAR(50) NOT NULL DEFAULT \'iframe\' AFTER `width`;');
-}
-if ( $module_version <= '2.7.2' ) {
+if ( ! CAT_Helper_Addons::versionCompare( $module_version, '2.7.2', '>=' ) ) {
 	$database->query('ALTER TABLE `'.CAT_TABLE_PREFIX.'mod_wrapper` CHANGE COLUMN `type` `wtype` VARCHAR(50) NOT NULL DEFAULT \'iframe\' AFTER `width`;');
+}
+if ( ! CAT_Helper_Addons::versionCompare( $module_version, '2.7.5', '>=' ) ) {
+    $database->query('ALTER TABLE `'.CAT_TABLE_PREFIX.'mod_wrapper`
+	CHANGE COLUMN `height` `height` VARCHAR(50) NOT NULL DEFAULT \'400\' AFTER `url`,
+	CHANGE COLUMN `width` `width` VARCHAR(50) NOT NULL DEFAULT \'100%\' AFTER `height`;');
 }
 
 // remove old template files
