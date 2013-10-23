@@ -74,6 +74,7 @@ if (!class_exists('CAT_Page', false))
          **/
         final private static function init($page_id)
         {
+            global $parser;
             self::$instances[$page_id]->_page_id = $page_id;
             $prop = self::$instances[$page_id]->getProperties();
             foreach ( $prop as $key => $value )
@@ -82,6 +83,7 @@ if (!class_exists('CAT_Page', false))
                 if(CAT_Registry::exists(strtoupper($key))) continue;
                 if(is_array($value)) continue;
                 CAT_Registry::register(strtoupper($key),$value,true);
+                $parser->setGlobals(strtoupper($key),$value);
             }
     		// Work-out if any possible in-line search boxes should be shown
     		if(SEARCH == 'public') {
@@ -110,7 +112,6 @@ if (!class_exists('CAT_Page', false))
                 );
     			// Set login menu constants
                 CAT_Registry::register($constants,NULL,true);
-                global $parser;
                 $parser->setGlobals( array(
                     'username_fieldname' => CAT_Helper_Validate::getInstance()->createFieldname('username_'),
                     'password_fieldname' => CAT_Helper_Validate::getInstance()->createFieldname('password_'),

@@ -192,7 +192,7 @@ $options['viewing_groups']		= implode(',', array_unique($options['viewing_groups
 // ====================================================== 
 if ( !$options['parent'] || $options['parent'] == '0' )
 {
-	$options['link'] = '/'.page_filename($options['menu_title']);
+    $options['link'] = '/'.$page_link; //.page_filename($options['menu_title']);
 
 	// =================================================================================================================== 
 	// ! rename menu titles: index && intro to prevent clashes with intro page feature and WB core file /pages/index.php   
@@ -200,11 +200,11 @@ if ( !$options['parent'] || $options['parent'] == '0' )
 	if( $options['link'] == '/index' || $options['link'] == '/intro' )
 	{
 		$options['link']	.= '_0';
-		$filename	= CAT_PATH . PAGES_DIRECTORY .'/' . CAT_Helper_Page::getFilename($options['menu_title']) . '_0' . PAGE_EXTENSION;
+        $filename         = CAT_PATH.PAGES_DIRECTORY.'/'.CAT_Helper_Page::getFilename($page_link).'_0'.PAGE_EXTENSION;
 	}
 	else
 	{
-		$filename	= CAT_PATH . PAGES_DIRECTORY . '/' . CAT_Helper_Page::getFilename($options['menu_title']) . PAGE_EXTENSION;
+        $filename         = CAT_PATH.PAGES_DIRECTORY.'/'.CAT_Helper_Page::getFilename($page_link).PAGE_EXTENSION;
 	}
 }
 else
@@ -217,7 +217,7 @@ else
         $parent_section	.= CAT_Helper_Page::getFilename($parent_title).'/';
 	}
     if ($parent_section == '/') $parent_section = '';
-    $options['link'] = '/'.$parent_section.CAT_Helper_Page::getFilename($options['menu_title']);
+    $options['link'] = '/'.$parent_section.CAT_Helper_Page::getFilename($page_link);
    	$filename = CAT_PATH.PAGES_DIRECTORY.'/'.$parent_section.CAT_Helper_Page::getFilename($options['menu_title']).PAGE_EXTENSION;
 	CAT_Helper_Directory::createDirectory(CAT_PATH.PAGES_DIRECTORY.'/'.$parent_section);
     $options['level'] = count($parent_titles);

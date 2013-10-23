@@ -383,9 +383,9 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function createAccessFile($filename, $page_id)
         {
-            $pages_path    = CAT_PATH . PAGES_DIRECTORY;
-            $rel_pages_dir = str_replace($pages_path, '', dirname($filename));
-            $rel_filename  = str_replace($pages_path, '', $filename);
+            $pages_path    = CAT_Helper_Directory::sanitizePath(CAT_PATH.PAGES_DIRECTORY);
+            $rel_pages_dir = str_replace($pages_path, '', CAT_Helper_Directory::sanitizePath(dirname($filename)));
+            $rel_filename  = str_replace($pages_path, '', CAT_Helper_Directory::sanitizePath($filename));
             // prevent system directories and files from being overwritten (level 0)
             $denied   = false;
             if (PAGES_DIRECTORY == '')
