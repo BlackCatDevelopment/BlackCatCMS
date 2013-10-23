@@ -1,4 +1,4 @@
-<form action="{$CAT_URL}/modules/wrapper/save.php" method="post" class="ajaxForm">
+<form action="{$CAT_URL}/modules/wrapper/save.php" method="post">
 	<input type="hidden" name="page_id" value="{$PAGE_ID}" />
 	<input type="hidden" name="section_id" value="{$SECTION_ID}" />
 	<table cellpadding="0" cellspacing="0" border="0" width="100%">
