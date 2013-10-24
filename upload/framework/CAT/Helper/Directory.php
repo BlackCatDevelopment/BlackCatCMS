@@ -39,6 +39,9 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         protected static $skip_files    = array();
         protected static $current_depth = 0;
 
+        protected      $_config = array( 'loglevel' => 8 );
+        protected      $debugLevel = 8;
+
         private static $instance;
 
         public static function getInstance()

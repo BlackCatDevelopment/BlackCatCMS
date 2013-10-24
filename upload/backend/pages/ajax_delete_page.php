@@ -39,26 +39,15 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$backend = CAT_Backend::getInstance('Pages','pages_delete',false);
-$users   = CAT_Users::getInstance();
-$val     = CAT_Helper_Validate::getInstance();
-
 header('Content-type: application/json');
 
-// Get perms
-if ( ! $users->checkPermission('pages','pages_delete',false) )
-{
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You do not have the permission to delete a page.'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
-}
+include 'functions.php';
 
-$page_id        = $val->sanitizePost('page_id','numeric');
+// check perms and page dir
+backend_pages_prechecks('pages_delete');
 
 // Get page id
+$page_id        = $val->sanitizePost('page_id','numeric');
 if (!$page_id)
 {
 	$ajax	= array(
@@ -96,7 +85,7 @@ $visibility		= $page['visibility'];
 $use_trash      = false;
 
 // Check if we should delete it or just set the visibility to 'deleted'
-if ( CAT_Registry::get('PAGE_TRASH') !== 'false' && $visibility !== 'deleted' )
+if ( PAGE_TRASH !== false && $visibility != 'deleted' )
 {
 	$ajax_status	= 1;
 	// Page trash is enabled and page has not yet been deleted
@@ -107,7 +96,6 @@ if ( CAT_Registry::get('PAGE_TRASH') !== 'false' && $visibility !== 'deleted' )
     $result         = CAT_Helper_Page::deletePage($page_id);
 }	
 
-// Check if there is a db error, otherwise say successful
 if (!$result)
 {
 	$ajax	= array(
@@ -124,6 +112,16 @@ if (!$result)
 }
 else
 {
+    // delete empty parent dir
+    $directory = CAT_PATH.PAGES_DIRECTORY.CAT_Helper_Page::properties($page_id,'link');
+    $directory = pathinfo($directory,PATHINFO_DIRNAME);
+    if (
+           is_dir($directory)
+        && (rtrim($directory, '/') != CAT_PATH . PAGES_DIRECTORY)
+        && CAT_Helper_Directory::is_empty($directory,true)
+    ) {
+        CAT_Helper_Directory::removeDirectory($directory);
+    }
 	$ajax	= array(
 		'message'	=> $backend->lang()->translate('Page(s) deleted successfully'),
 		'status'	=> $ajax_status,

@@ -383,6 +383,11 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function createAccessFile($filename, $page_id)
         {
+
+            // check if $filename is a full path (may be 'link' db value)
+            if(!preg_match('~^'.sanitize_path(CAT_PATH.PAGES_DIRECTORY).'~i',$filename))
+                $filename = sanitize_path(CAT_PATH.PAGES_DIRECTORY.'/'.dirname($filename).'/'.self::getFilename(basename($filename)).PAGE_EXTENSION);
+
             $pages_path    = CAT_Helper_Directory::sanitizePath(CAT_PATH.PAGES_DIRECTORY);
             $rel_pages_dir = str_replace($pages_path, '', CAT_Helper_Directory::sanitizePath(dirname($filename)));
             $rel_filename  = str_replace($pages_path, '', CAT_Helper_Directory::sanitizePath($filename));
@@ -470,8 +475,12 @@ if (!class_exists('CAT_Helper_Page'))
             else
             {
                     unlink($filename);
-                    if (file_exists($directory) && (rtrim($directory, '/') != CAT_PATH . PAGES_DIRECTORY) && (substr($link, 0, 1) != '.'))
-            	{
+                    // delete empty dir
+                    if (
+                           is_dir($directory)
+                        && (rtrim($directory, '/') != CAT_PATH . PAGES_DIRECTORY)
+                        && CAT_Helper_Directory::is_empty($directory,true)
+                    ) {
                         CAT_Helper_Directory::removeDirectory($directory);
                     }
             	}
@@ -493,6 +502,32 @@ if (!class_exists('CAT_Helper_Page'))
                 CAT_TABLE_PREFIX, $page_id, $lang
                     ));
         }   // end function deleteLanguageLink()
+
+        /**
+         * checks if a page exists; checks access file and database entry
+         *
+         * @access public
+         * @return
+         **/
+        public static function exists($link)
+        {
+            // check database
+            if(!self::$instance) self::getInstance(true);
+            $get_same_page = self::$instance->db()->query(sprintf(
+                "SELECT page_id FROM `%spages` WHERE link='%s'",
+                CAT_TABLE_PREFIX,$link
+            ));
+            if ($get_same_page->numRows() > 0)
+                return true;
+            // check access file
+            if(
+                   file_exists(CAT_PATH.PAGES_DIRECTORY.$link.PAGE_EXTENSION)
+                || file_exists(CAT_PATH.PAGES_DIRECTORY.$link.'/')
+            ) {
+                return true;
+            }
+        }   // end function exists()
+        
 
         /**
          * prints the backend footers
@@ -1469,6 +1504,115 @@ if (!class_exists('CAT_Helper_Page'))
             }
             return $result;
         }   // end function getSubPages()
+
+        /**
+         * Work-out if the page parent (if selected) has a seperate language
+         *
+         * @access public
+         * @return
+         **/
+        public static function sanitizeLanguage(&$page)
+        {
+            if($page['language'] == '')
+            {
+                // root level
+                if ( !$page['parent'] || $page['parent'] == '0' )
+                {
+                    $page['language'] = ( $page['language'] == '' ) ? DEFAULT_LANGUAGE : $page['language'];
+                }
+                else
+                {
+                    $parent_lang = self::properties($page['parent'],'language');
+                    $page['language'] = ( $page['language'] == '' ) ? $parent_lang : $page['language'];
+                }
+            }
+        }   // end function sanitizeLanguage()
+
+        /**
+         * Work-out what the link and page filename should be
+         *
+         * @access public
+         * @return
+         **/
+        public static function sanitizeLink(&$page)
+        {
+            if($page['link']=='/')
+                $page['link'] .= $page['menu_title'];
+            // root level
+            if ( !$page['parent'] || $page['parent'] == '0' )
+            {
+                $page['link']
+                    = ( $page['link'] !== '' )
+                      ? self::getFilename($page['link'])
+                      : self::getFilename($page['menu_title'])
+                      ;
+                $page['link'] = '/'.$page['link'];
+                // 'intro' and 'index' are not allowed in root level
+                if( $page['link'] == '/index' || $page['link'] == '/intro' )
+                    $page['link'] .= '_0';
+            }
+            // sub level
+            else
+            {
+                // get the titles of the parent pages to create the subdirectory
+                $parent_section = '';
+                $parent_titles  = array_reverse(self::getParentTitles($page['parent']));
+
+                foreach( $parent_titles as $parent_title )
+                    $parent_section .= self::getFilename($parent_title).'/';
+
+                if ($parent_section == '/')
+                    $parent_section = '';
+
+                $page['link']  = '/'.$parent_section.self::getFilename($page['link']);
+                $page['level'] = count($parent_titles);
+            }
+        }   // end function sanitizeLink()
+
+        /**
+         * Work-out if the page parent (if selected) has a seperate template
+         *
+         * @access public
+         * @return
+         **/
+        public static function sanitizeTemplate(&$page)
+        {
+            if($page['template'] == '')
+            {
+                // root level
+                if ( !$page['parent'] || $page['parent'] == '0' )
+                {
+                    $page['template'] = ( $page['template'] == '' ) ? DEFAULT_TEMPLATE : $page['template'];
+                }
+                else
+                {
+                    $parent_tpl = self::properties($page['parent'],'template');
+                    $page['template'] = ( $page['template'] == '' ) ? $parent_tpl : $page['template'];
+                }
+            }
+        }   // end function sanitizeTemplate()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function sanitizeTitles(&$page)
+        {
+            // =======================================
+            // ! Validate menu_title (mandatory field)
+            // =======================================
+            if ($page['menu_title'] == '' || substr($page['menu_title'],0,1)=='.')
+                return false;
+
+            // check page_title
+            $page['page_title']
+                = ( $page['page_title'] == '' )
+                ? $page['menu_title']
+                : $page['page_title']
+                ;
+        }   // end function sanitizeTitles()
+        
 
         /**
          * identify the page to show
