@@ -13,13 +13,12 @@
 			</select>
             <p>{translate('Allow visitors to sign-up from the frontend, to become members of your site. Anyone signing up will be <strong>automatically accepted</strong> and will become a member of the group you select here.')}</p>
             <hr />
+			{/if}
 
             <div class="fc_settings_max">
 			    <input type="checkbox" class="fc_checkbox_jq" name="users_allow_mailaddress" id="fc_users_allow_mailaddress" value="true" {if $values.users_allow_mailaddress} checked="checked"{/if}/>
 			    <label for="fc_users_allow_mailaddress">{translate('Allow mail address as login name')}</label>
             </div>
-			{/if}
-
 			<div class="fc_settings_max">
 				<input type="checkbox" class="fc_checkbox_jq" name="frontend_login" id="fc_list_FRONTEND_login" value="true" {if $values.frontend_login} checked="checked"{/if}/>
 				<label for="fc_list_FRONTEND_login">{translate('Allow frontend login')}</label>
