@@ -263,24 +263,26 @@ if ( $options['link'] !== $old_link )
 // ==============================
 // ! Check if there is a db error
 // ==============================
-if ( $backend->db()->is_error() )
+if ( CAT_Helper_Page::getInstance()->db()->is_error() )
 {
-    $ajax    = array(
-        'message'    => $backend->db()->get_error(),
-        'success'    => false
-    );
-    print json_encode( $ajax );
-    exit();
+	$ajax	= array(
+		'message'		=> CAT_Helper_Page::getInstance()->db()->get_error(),
+		'success'		=> false
+	);
+	print json_encode( $ajax );
+	exit();
 }
 else
 {
-    // print success and redirect
-    $ajax    = array(
-        'message'    => $backend->lang()->translate( 'Page added successfully' ),
-        'url'        => CAT_ADMIN_URL . '/pages/modify.php?page_id='. $page_id,
-        'success'    => true
-    );
-    print json_encode( $ajax );
-    exit();
+	$ajax	= array(
+		'message'		=> $backend->lang()->translate('Page settings saved successfully'),
+		'menu_title'	=> $options['menu_title'],
+		'page_title'	=> $options['page_title'],
+		'visibility'	=> $options['visibility'],
+		'parent'		=> $options['parent'],
+		'position'		=> $options['position'],
+		'success'		=> true
+	);
+	print json_encode( $ajax );
+	exit();
 }
-exit();

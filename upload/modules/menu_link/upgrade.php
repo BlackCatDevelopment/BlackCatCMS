@@ -47,7 +47,7 @@ foreach(
     array( 'save.php' )
     as $file
 ) {
-    if ( false === $addons_helper->sec_register_file( 'wrapper', $file ) )
+    if ( false === $addons_helper->sec_register_file( 'menu_link', $file ) )
     {
          error_log( "Unable to register file -$file-!" );
     }

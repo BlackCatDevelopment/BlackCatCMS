@@ -111,7 +111,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     function get_page_footers( $for = 'frontend', $print_output = true )
             {
 	    $output = CAT_Helper_Page::getFooters( $for );
-        if ( $print_output )
+        if ( $print_output && ! defined('CAT_FOOTERS_SENT') )
                     {
 			echo $output;
 			define('CAT_FOOTERS_SENT', true);

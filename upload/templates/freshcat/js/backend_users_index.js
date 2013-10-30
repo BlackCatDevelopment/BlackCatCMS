@@ -379,7 +379,7 @@ jQuery(document).ready(function()
 			cache:		false,
 			beforeSend:	function( data )
 			{
-				data.process	= set_activity( 'Saving user' );
+				data.process	= set_activity(cattranslate('Saving user'));
 			},
 			success:	function( data, textStatus, jqXHR  )
 			{

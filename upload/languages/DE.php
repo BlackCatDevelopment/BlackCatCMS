@@ -70,7 +70,6 @@ $LANG = array(
     'Details saved successfully' => 'Einstellungen gespeichert',
     'Forgotten your details?' => 'Haben Sie Ihre pers&ouml;nlichen Daten vergessen?',
     'Full name' => 'Voller Name',
-    'Invalid chars for username found' => 'Es wurden ung&uuml;ltige Zeichen f&uuml;r den Benutzernamen verwendet',
     'My preferences' => 'Profileinstellungen',
     'My settings' => 'Profil / Benutzereinstellungen',
     'Need to log-in?' => 'Anmelden?',
@@ -171,6 +170,7 @@ $LANG = array(
     'Error creating access file in the pages directory, path not writable or forbidden file / directory name'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Verzeichnis nicht schreibbar oder verbotener Datei-/Verzeichnisname)',
     'File upload error: {{error}}' => 'Datei Upload Fehler: {{error}}',
+    'Invalid characters in username found' => 'Ungültige Zeichen im Benutzernamen gefunden',
     'Invalid password chars used, valid chars are: a-z\A-Z\0-9\_\-\!\#\*\+'
         => 'Es wurden ung&uuml;ltige Zeichen f&uuml;r des Passwort verwendet, g&uuml;ltig sind: a-z\A-Z\0-9\_\-\!\#\*\+',
     'Missing page_id!' => 'Keine page_id angegeben!',
@@ -184,11 +184,14 @@ $LANG = array(
         => 'Die Mindestlänge des Anmeldenamens konnte nicht gespeichert werden. Es gibt {{ count }} Benutzer mit einem kürzeren Namen.',
     'The page does not have any content!' => 'Diese Seite hat keine aktiven Inhalte!',
     'The pages directory is not writable!' => 'Das Seitenverzeichnis ist schreibgeschützt!',
+    'The password you entered was too short (Please use at least {{AUTH_MIN_PASS_LENGTH}} chars)' => 'Das Kennwort ist zu kurz (Bitte mindestens {{AUTH_MIN_PASS_LENGTH}} Zeichen verwenden)',
     'The template [{{ tpl }}] does not exists in one of the possible template paths!'
         => 'Das Template [{{ tpl }}] wurde in keinem der Template-Pfade gefunden!',
     'Unable to {{ action }} {{ type }} {{ module }}!'
         => 'Fehler bei Aktion {{ action }}, {{ type }} {{ module }}!',
     'Username or password incorrect' => 'Der Benutzername oder das Passwort ist nicht korrekt.',
+    'Username too long (max.: {{ length }})' => 'Benutzername zu lang (max.: {{ length }})',
+    'Username too short (min.: {{ length }})' => 'Benutzername zu kurz (min.: {{ length }})',
     'You are not allowed to view this page!' => 'Sie besitzen nicht die erforderlichen Rechte, um diese Seite zu besuchen!',
     'You sent an invalid value' => 'Es wurde ein ungültiger Wert angegeben',
 // ----- MENU -----
@@ -462,6 +465,7 @@ $LANG = array(
     'Retype password' => 'Kennwort wiederholen',
     'Save group' => 'Gruppe speichern',
     'Save user' => 'Benutzer speichern',
+    'Saving user' => 'Speichere Benutzer',
     'saved' => 'gespeichert',
     'Settings' => 'Einstellungen',
     'Start' => 'Start (Dashboard)',

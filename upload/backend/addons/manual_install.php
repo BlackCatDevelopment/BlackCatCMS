@@ -88,6 +88,7 @@ if ( $type != 'languages' )
         ));
         return false;
     }
+    $admin =& $backend;
     // Run the modules install // upgrade script if there is one
     if ( file_exists($path.'/'.$action.'.php') )
         require $path.'/'.$action.'.php';
