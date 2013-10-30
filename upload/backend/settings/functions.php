@@ -47,7 +47,7 @@ $groups = array(
     'frontend' => array('default_template','default_template_variant','website_header','website_footer'),
     'backend' => array('default_theme','default_theme_variant','wysiwyg_editor','er_level','redirect_timer','token_lifetime','max_attempts'),
     'system' => array('maintenance_mode','maintenance_page','err_page_404','page_level_limit','page_trash','manage_sections','section_blocks','multiple_menus','page_languages','intro_page','homepage_redirection'),
-    'users' => array('frontend_signup','frontend_login','home_folders','auth_min_login_length','auth_max_login_length','auth_min_pass_length','auth_max_pass_length'),
+    'users' => array('frontend_signup','frontend_login','home_folders','auth_min_login_length','auth_max_login_length','auth_min_pass_length','auth_max_pass_length','users_allow_mailaddress'),
     'server' => array('operating_system','pages_directory','page_extension','media_directory','page_spacer','upload_allowed','app_name','sec_anchor'),
     'mail' => array('server_email','catmailer_lib','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_auth','catmailer_smtp_username','catmailer_smtp_password'),
     'security' => array('auto_disable_users','enable_csrfmagic','upload_enable_mimecheck','upload_mime_default_type','upload_allowed','captcha_type','text_qa','enabled_captcha','enabled_asp'),
@@ -501,6 +501,9 @@ function saveSettings($settings) {
         if (in_array($key,$numeric))
             if( !is_numeric($value) )
                 continue;
+        // suppress errors if no old setting
+        if(!isset($old_settings[$key]))
+            $old_settings[$key] = '';
         // function for this special item?
         if(function_exists('check_'.$key))
         {
@@ -556,6 +559,7 @@ function check_auth_min_login_length($value,$oldvalue) {
             return $oldvalue;
         }
     }
+    return $value;
 }   // end function check_auth_min_login_length()
 
 /**
@@ -578,6 +582,7 @@ function check_auth_max_login_length($value,$oldvalue) {
             return $oldvalue;
         }
     }
+    return $value;
 }
 
 /**

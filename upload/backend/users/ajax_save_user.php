@@ -113,19 +113,10 @@ if ( $groups == '' )
 	print json_encode( $ajax );
 	exit();
 }
-if ( strlen( $username ) < 3 )
-{
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('The username you entered was too short'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
-}
 if ( ! $users->validateUsername($username) )
 {
 	$ajax	= array(
-		'message'	=> $backend->lang()->translate('Invalid chars for username found'),
+		'message'	=> $backend->lang()->translate($users->getError()),
 		'success'	=> false
 	);
 	print json_encode( $ajax );

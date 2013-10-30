@@ -35,6 +35,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
         private static $validatePasswordError = NULL;
         private static $lastValidatedPassword = NULL;
         private static $loginerror            = false;
+        private static $lasterror             = NULL;
+        private static $errorstack            = array();
 
         // user options (column names) added to the session on successful logon
         private static $sessioncols = array(
@@ -124,13 +126,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     // check common issues
                     // we do not check for too long and don't give too much hints!
                     if ( ! $name )
-                        self::setError($lang->translate('Invalid credentials'));
+                        self::setLoginError($lang->translate('Invalid credentials'));
                     if ( ! self::$loginerror && $user == '' || $pw == '' )
-                        self::setError($lang->translate('Please enter your username and password.'));
+                        self::setLoginError($lang->translate('Please enter your username and password.'));
                     if ( ! self::$loginerror && strlen($user) < $min_length )
-                        self::setError($lang->translate('Invalid credentials'));
+                        self::setLoginError($lang->translate('Invalid credentials'));
                     if ( ! self::$loginerror && ! CAT_Registry::defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < $min_pass_length )
-                        self::setError($lang->translate('Invalid credentials'));
+                        self::setLoginError($lang->translate('Invalid credentials'));
 
                     if ( ! self::$loginerror )
                     {
@@ -242,7 +244,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         }
                         else
                         {
-                            self::setError($lang->translate('Invalid credentials'));
+                            self::setLoginError($lang->translate('Invalid credentials'));
                         }
                     }
 
@@ -1259,6 +1261,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     // in case of mail address, we do not check for min and max length!
                     return true;
                 }
+                else
+                {
+                    self::setError('Invalid eMail address');
+                    return false;
+                }
+                self::setError('Invalid characters in username found');
                 return false;
             }
             $min_length = CAT_Registry::exists('AUTH_MIN_LOGIN_LENGTH')
@@ -1267,10 +1275,26 @@ if ( ! class_exists( 'CAT_Users', false ) )
             $max_length = CAT_Registry::exists('AUTH_MAX_LOGIN_LENGTH')
                         ? CAT_Registry::get('AUTH_MAX_LOGIN_LENGTH')
                         : 50;
-            if ( strlen($username ) < AUTH_MIN_LOGIN_LENGTH )
+            if ( strlen($username ) < $min_length )
+            {
+                self::setError(
+                    self::getInstance()->lang()->translate(
+                        'Username too short (min.: {{ length }})',
+                        array('length'=>$min_length)
+                    )
+                );
                 return false;
-            if ( strlen($username) > AUTH_MAX_LOGIN_LENGTH )
+            }
+            if ( strlen($username) > $max_length )
+            {
+                self::setError(
+                    self::getInstance()->lang()->translate(
+                        'Username too long (max.: {{ length }})',
+                        array('length'=>$max_length)
+                    )
+                );
                 return false;
+            }
             return true;
         }
         
@@ -1284,6 +1308,36 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return self::$lastValidatedPassword;
         }   // end function getLastValidatedPassword()
 
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getError()
+        {
+            return self::$lasterror;
+        }   // end function getError()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getErrors()
+        {
+            return self::$errorstack;
+        }   // end function getError()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function setError($msg)
+        {
+            self::$lasterror    = $msg;
+            self::$errorstack[] = $msg;
+        }   // end function setError()
 
         /**
          * set login error and increase number of login attempts
@@ -1292,14 +1346,16 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  string   $msg - error message
          * @return void
          **/
-        private static function setError($msg)
+        private static function setLoginError($msg)
         {
             self::$loginerror = $msg;
+            self::$lasterror    = $msg;
+            self::$errorstack[] = $msg;
             if(!isset($_SESSION['ATTEMPTS']))
                 $_SESSION['ATTEMPTS'] = 0;
             else
                 $_SESSION['ATTEMPTS'] = CAT_Helper_Validate::getInstance()->fromSession('ATTEMPTS') + 1;
-        }   // end function setError()
+        }   // end function setLoginError()
 
 	}
 
