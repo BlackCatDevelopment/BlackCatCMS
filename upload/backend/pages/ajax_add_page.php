@@ -223,6 +223,11 @@ $backend->db()->query(sprintf(
 // ======================
 $section_id = $backend->db()->get_one("SELECT LAST_INSERT_ID()");
 
+//
+// ! Keep old modules happy
+//
+$admin =& $backend;
+
 // ======================================================
 // ! Include the selected modules add file if it exists
 // ======================================================

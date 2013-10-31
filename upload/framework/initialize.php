@@ -112,14 +112,6 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
     }
     
     //**************************************************************************
-    // frontend only
-    //**************************************************************************
-    if (defined('ENABLE_CSRFMAGIC') && true === ENABLE_CSRFMAGIC)
-    {
-        CAT_Helper_Protect::getInstance()->enableCSRFMagic();
-    }
-    
-    //**************************************************************************
     // moved from ./backend/interface/er_levels.php
     //**************************************************************************
     CAT_Registry::register('ER_LEVELS', array(
@@ -189,6 +181,14 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
     if (defined('ENABLED_ASP') && ENABLED_ASP && !isset($_SESSION['session_started']))
         $_SESSION['session_started'] = time();
     
+    //**************************************************************************
+    // frontend only
+    //**************************************************************************
+    if (!CAT_Backend::isBackend() && !defined('CAT_AJAX_CALL') && !defined('CAT_LOGIN_PHASE') && defined('ENABLE_CSRFMAGIC') && true === ENABLE_CSRFMAGIC )
+    {
+        CAT_Helper_Protect::getInstance()->enableCSRFMagic();
+    }
+
     //**************************************************************************
     // Get users language
     //**************************************************************************

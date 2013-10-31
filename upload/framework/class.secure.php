@@ -58,10 +58,10 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
     //**************************************************************************
     if (!defined('CAT_LOGIN_PHASE'))
     {
-        $path = (isset($_SERVER['SCRIPT_FILENAME']) ? CAT_Helper_Directory::getInstance()->sanitizePath($_SERVER['SCRIPT_FILENAME']) : NULL);
+        $path = (isset($_SERVER['SCRIPT_FILENAME']) ? CAT_Helper_Directory::sanitizePath($_SERVER['SCRIPT_FILENAME']) : NULL);
         if ($path)
         {
-            $check = str_replace('/', '\/', CAT_Helper_Directory::getInstance()->sanitizePath(CAT_ADMIN_PATH));
+            $check = str_replace('/', '\/', CAT_Helper_Directory::sanitizePath(CAT_ADMIN_PATH));
             if (preg_match('~^' . $check . '~i', $path))
             {
                 define('CAT_REQUIRE_ADMIN', true);
@@ -74,6 +74,7 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
                 // AJAX so scripts called via AJAX should set this constant
                 if (!defined('CAT_AJAX_CALL'))
                 {
+                    //echo "class.secure is calling enableCSRFMagic<br />";
                     CAT_Helper_Protect::getInstance()->enableCSRFMagic();
                 }
                 global $parser;
@@ -189,7 +190,30 @@ if (!function_exists('cat_csrf_callback'))
 {
     function cat_csrf_callback($tokens)
     {
+        // check headers content type
+        $headers = headers_list();
+        foreach($headers as $entry)
+        {
+            list($key,$value) = explode(': ',$entry);
+            if(!strcasecmp('Content-type',$key))
+            {
+                if(substr_count($value,'json'))
+                {
+                    print json_encode(array(
+                        'message' => 'CSRF check failed. Your form session may have expired, or you may not have cookies enabled.',
+                        'success' => false,
+                    ));
+                    exit();
+                }
+            }
+        }
+        // (yes, $tokens is safe to echo without escaping)
         header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+        $data = '';
+        foreach (csrf_flattenpost($_POST) as $key => $value) {
+            if ($key == $GLOBALS['csrf']['input-name']) continue;
+            $data .= '<input type="hidden" name="'.htmlspecialchars($key).'" value="'.htmlspecialchars($value).'" />';
+        }
         echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
     <html>
       <head>
@@ -197,10 +221,13 @@ if (!function_exists('cat_csrf_callback'))
       <title>Black Cat CMS Error Message</title>
       </head>
       <body>
-      <strong>Black Cat CMS NOTICE</strong><br />
-      CSRF check failed. Please enable cookies.<br /><br />
-      Debug: '.$tokens.'</body></html>';
-    }
+            <p>CSRF check failed. Your form session may have expired, or you may not have
+            cookies enabled.</p>
+            <form method="post" action="">'.$data.'<input type="submit" value="Try again" /></form>';
+        if(CAT_Registry::exists('DEBUG_CSRF') && DEBUG_CSRF === true)
+            echo "<p>Debug: $tokens</p>";
+        echo '</body></html>';
+    }   // end function cat_csrf_callback()
 }
 
 /**

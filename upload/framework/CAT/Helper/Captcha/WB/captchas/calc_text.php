@@ -39,12 +39,12 @@ if (defined('CAT_PATH')) {
 // Must include code to stop this file being accessed directly
 if(defined('CAT_PATH') == false) { exit("Cannot access this file directly"); }
 
-if(!file_exists(dirname(__FILE__)'/languages/'.LANGUAGE .'.php')) {
+if(!file_exists(dirname(__FILE__).'/languages/'.LANGUAGE .'.php')) {
 	// no module language file exists for the language set by the user, include default module language file EN.php
-	require_once(dirname(__FILE__)'/languages/EN.php');
+	require_once(dirname(__FILE__).'/languages/EN.php');
 } else {
 	// a module language file exists for the language defined by the user, load it
-	require_once(dirname(__FILE__)'/languages/'.LANGUAGE .'.php');
+	require_once(dirname(__FILE__).'/languages/'.LANGUAGE .'.php');
 }
 
 $_SESSION['captcha'.$sec_id] = '';

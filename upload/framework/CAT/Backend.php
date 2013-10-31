@@ -49,11 +49,13 @@ if (!class_exists('CAT_Backend', false))
         {
             if (!self::$instance)
             {
+                //register_shutdown_function('CAT_Backend::print_footer');
                 self::$instance = new self();
                 if(!CAT_Registry::defined('CAT_INITIALIZED'))
                 include CAT_PATH.'/framework/initialize.php';
                 $user = CAT_Users::getInstance();
-       			if($user->is_authenticated() == false && !defined('CAT_INSTALL_PROCESS')) {
+                if($user->is_authenticated() == false && !defined('CAT_INSTALL_PROCESS'))
+                {
     				header('Location: '.CAT_ADMIN_URL.'/login/index.php');
     				exit(0);
     			}
@@ -62,7 +64,8 @@ if (!class_exists('CAT_Backend', false))
                 self::initPaths();
                 $parser->setGlobals('TEMPLATE_MENU', CAT_Helper_Template::get_template_menus());
                 // Auto header code
-        		if($auto_header == true) {
+                if($auto_header == true)
+                {
         			self::$instance->print_header();
         		}
             }
@@ -221,9 +224,11 @@ if (!class_exists('CAT_Backend', false))
                 // ! Check and set permissions for templates
                 // ===========================================
                 foreach ($tpl_data['templates'] as $key => $template)
-                {
-                    $tpl_data['templates'][$key]['permissions'] = ($user->get_permission($template['VALUE'], 'template')) ? true : false;
-                }
+                    $tpl_data['templates'][$key]['permissions']
+                        = ($user->get_permission($template['VALUE'], 'template'))
+                        ? true
+                        : false
+                        ;
             }
 
             // =========================
@@ -324,20 +329,20 @@ if (!class_exists('CAT_Backend', false))
             // ! Seperate access-link by permissions
             // =======================================
             if ($user->get_permission('users'))
-            {
                 $tpl_data['MAIN_MENU'][5]['link'] = CAT_ADMIN_URL . '/users/index.php';
-            }
             elseif ($user->get_permission('groups'))
-            {
                 $tpl_data['MAIN_MENU'][5]['link'] = CAT_ADMIN_URL . '/groups/index.php';
-            }
 
             $tpl_data['PREFERENCES'] = array(
                 'link' => CAT_ADMIN_URL . '/preferences/index.php',
                 'title' => $this->lang()->translate('Preferences'),
                 'permission_title' => 'preferences',
-                'permission' => ($this->get_link_permission('preferences')) ? true : false,
-                'current' => ('preferences' == strtolower($this->section_name)) ? true : false
+                'permission'       => ($this->get_link_permission('preferences'))
+                                   ? true
+                                   : false,
+                'current'          => ('preferences' == strtolower($this->section_name))
+                                   ? true
+                                   : false,
             );
 
 
