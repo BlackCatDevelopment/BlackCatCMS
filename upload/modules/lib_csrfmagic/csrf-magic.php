@@ -52,7 +52,9 @@ $GLOBALS['csrf']['rewrite-js'] = false;
  * place it here. If you change this value, all previously generated tokens
  * will become invalid.
  */
-$GLOBALS['csrf']['secret'] = 'sNuayCPdSpWdbcbzHXj6SDUBgu5i5LV';
+$GLOBALS['csrf']['secret'] = '';
+// nota bene: library code should use csrf_get_secret() and not access
+// this global directly
 
 /**
  * Set this to false to disable csrf-magic's output handler, and therefore,
@@ -129,7 +131,7 @@ $GLOBALS['csrf']['xhtml'] = true;
 // FUNCTIONS:
 
 // Don't edit this!
-$GLOBALS['csrf']['version'] = '1.0.1';
+$GLOBALS['csrf']['version'] = '1.0.4';
 
 /**
  * Rewrites <form> on the fly to add CSRF tokens to them. This can also
@@ -139,22 +141,19 @@ function csrf_ob_handler($buffer, $flags) {
     // Even though the user told us to rewrite, we should do a quick heuristic
     // to check if the page is *actually* HTML. We don't begin rewriting until
     // we hit the first <html tag.
-
-// ----- deactivated because this may not work in BlackCat Backend -----
-    #static $is_html = false;
-    #if (!$is_html) {
+    static $is_html = false;
+    if (!$is_html) {
         // not HTML until proven otherwise
-    #    if (stripos($buffer, '<html') !== false) {
-    #        $is_html = true;
-    #    } else {
-    #        return $buffer;
-    #    }
-    #}
-// ----- deactivated because this may not work in BlackCat Backend -----
+        if (stripos($buffer, '<html') !== false) {
+            $is_html = true;
+        } else {
+            return $buffer;
+        }
+    }
     $tokens = csrf_get_tokens();
     $name = $GLOBALS['csrf']['input-name'];
     $endslash = $GLOBALS['csrf']['xhtml'] ? ' /' : '';
-    $input = "\n<input type='hidden' name='$name' value=\"$tokens\"$endslash>";
+    $input = "<input type='hidden' name='$name' value=\"$tokens\"$endslash>";
     $buffer = preg_replace('#(<form[^>]*method\s*=\s*["\']post["\'][^>]*>)#i', '$1' . $input, $buffer);
     if ($GLOBALS['csrf']['frame-breaker']) {
         $buffer = str_ireplace('</head>', '<script type="text/javascript">if (top != self) {top.location.href = self.location.href;}</script></head>', $buffer);
@@ -184,10 +183,6 @@ function csrf_ob_handler($buffer, $flags) {
  */
 function csrf_check($fatal = true) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') return true;
-    // catch post upload errors (i.e., let someone else handle this)
-    if (isset($_SERVER["CONTENT_LENGTH"]))
-        if($_SERVER["CONTENT_LENGTH"]>((int)ini_get('post_max_size')*1024*1024))
-            return true;
     csrf_start();
     $name = $GLOBALS['csrf']['input-name'];
     $ok = false;
@@ -222,9 +217,6 @@ function csrf_get_tokens() {
     $secret = csrf_get_secret();
     if (!$has_cookies && $secret) {
         // :TODO: Harden this against proxy-spoofing attacks
-        // -----------------------------------------------------------------------
-        // changed by Black Cat Development: Use REMOTE_ADDR instead of IP_ADDRESS
-        // -----------------------------------------------------------------------
         $ip = ';ip:' . csrf_hash($_SERVER['REMOTE_ADDR']);
     } else {
         $ip = '';
@@ -250,12 +242,40 @@ function csrf_get_tokens() {
     return 'invalid';
 }
 
+function csrf_flattenpost($data) {
+    $ret = array();
+    foreach($data as $n => $v) {
+        $ret = array_merge($ret, csrf_flattenpost2(1, $n, $v));
+    }
+    return $ret;
+}
+function csrf_flattenpost2($level, $key, $data) {
+    if(!is_array($data)) return array($key => $data);
+    $ret = array();
+    foreach($data as $n => $v) {
+        $nk = $level >= 1 ? $key."[$n]" : "[$n]";
+        $ret = array_merge($ret, csrf_flattenpost2($level+1, $nk, $v));
+    }
+    return $ret;
+}
+
 /**
  * @param $tokens is safe for HTML consumption
  */
 function csrf_callback($tokens) {
+    // (yes, $tokens is safe to echo without escaping)
     header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
-    echo "<html><head><title>CSRF check failed</title></head><body>CSRF check failed. Please enable cookies.<br />Debug: ".$tokens."</body></html>
+    $data = '';
+    foreach (csrf_flattenpost($_POST) as $key => $value) {
+        if ($key == $GLOBALS['csrf']['input-name']) continue;
+        $data .= '<input type="hidden" name="'.htmlspecialchars($key).'" value="'.htmlspecialchars($value).'" />';
+    }
+    echo "<html><head><title>CSRF check failed</title></head>
+        <body>
+        <p>CSRF check failed. Your form session may have expired, or you may not have
+        cookies enabled.</p>
+        <form method='post' action=''>$data<input type='submit' value='Try again' /></form>
+        <p>Debug: $tokens</p></body></html>
 ";
 }
 
@@ -372,7 +392,7 @@ function csrf_generate_secret($len = 32) {
  */
 function csrf_hash($value, $time = null) {
     if (!$time) $time = time();
-    return sha1($GLOBALS['csrf']['secret'] . $value . $time) . ',' . $time;
+    return sha1(csrf_get_secret() . $value . $time) . ',' . $time;
 }
 
 // Load user configuration
