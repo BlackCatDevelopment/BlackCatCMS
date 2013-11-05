@@ -14,19 +14,17 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          LEPTON Project, Black Cat Development
- *   @copyright       2011-2012, LEPTON Project
+ *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Module
+ *   @category        CAT_Modules
  *   @package         lib_search
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -34,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -44,7 +42,7 @@ if (defined('CAT_PATH')) {
 $module_directory     = 'lib_search';
 $module_name          = 'BlackCat CMS Default Search Engine';
 $module_function      = 'library';
-$module_version       = '0.11';
+$module_version       = '0.12';
 $module_platform      = '1.x';
 $module_author        = 'Black Cat Development';
 $module_license       = 'GNU General Public License';

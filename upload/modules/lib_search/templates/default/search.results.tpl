@@ -1,18 +1,5 @@
-{**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
- *
- * @author          LEPTON Project
- * @copyright       2010-2012, LEPTON Project
- * @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- *
- *}
 <div id="search_results">
-  <h2>{translate('Search')}</h2>
+  <h2>{translate('New search')}</h2>
   <div class="search_form">
     <form name="search_form" action="{$form.action}" method="get">
       <table width="100%">
@@ -44,7 +31,8 @@
       </table>
     </form>
   </div>
-  {if $result.count > 0}
+  {if $result.count > 0}<br />
+    <h2>{translate('Search results')}</h2>
     {foreach $result.items item}
       <div class="search_item">
         <div class="search_item_header">
