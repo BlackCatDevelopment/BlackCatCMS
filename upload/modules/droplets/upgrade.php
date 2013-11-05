@@ -121,3 +121,27 @@ if ( $result->numRows() == 0 ) {
 	");
     }
 }
+
+// check droplets extension table
+$result = $backend->db()->query(sprintf(
+    "SHOW TABLES LIKE '%smod_droplets_extension';",
+    CAT_TABLE_PREFIX
+));
+if ( $result->numRows() == 0 ) {
+	$table = CAT_TABLE_PREFIX .'smod_droplets_extension';
+	$backend->db()->query("CREATE TABLE `$table` (
+        	`drop_id` INT(11) NOT NULL AUTO_INCREMENT,
+        	`drop_droplet_name` VARCHAR(255) NOT NULL DEFAULT '',
+        	`drop_page_id` INT(11) NOT NULL DEFAULT '-1',
+        	`drop_module_dir` VARCHAR(255) NOT NULL DEFAULT '',
+        	`drop_type` VARCHAR(20) NOT NULL DEFAULT 'undefined',
+        	`drop_file` VARCHAR(255) NOT NULL DEFAULT '',
+        	`drop_timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        	PRIMARY KEY (`drop_id`)
+		)"
+	);
+	// check for errors
+	if( $backend->db()->is_error() ) {
+	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->get_error() ) ) );
+	}
+}

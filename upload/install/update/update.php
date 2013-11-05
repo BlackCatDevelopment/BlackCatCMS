@@ -85,6 +85,14 @@ $lang->db()->query(sprintf(
 if(file_exists(CAT_PATH."/templates/freshcat/css/images/login/beta_state.png"))
     unlink(CAT_PATH."/templates/freshcat/css/images/login/beta_state.png");
 
+// run lib_search upgrade
+if(file_exists(CAT_PATH.'/modules/lib_search/upgrade.php'))
+    include CAT_PATH.'/modules/lib_search/upgrade.php';
+
+// run droplets upgrade
+if(file_exists(CAT_PATH.'/modules/droplets/upgrade.php'))
+    include CAT_PATH.'/modules/droplets/upgrade.php';
+
 
 $installer_uri = str_replace('/update','',$installer_uri);
 update_wizard_header();
