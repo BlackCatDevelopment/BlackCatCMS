@@ -838,6 +838,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function getFrontendHeaders()
         {
+            global $page_id;
             // -----------------------------------------------------------------
             // -----                  frontend theme                       -----
             // -----------------------------------------------------------------
@@ -893,7 +894,6 @@ if (!class_exists('CAT_Helper_Page'))
                 $file = CAT_PATH.'/templates/'.DEFAULT_THEME.'/css/visibility.css';
                 if(file_exists($file))
                 {
-                    global $page_id;
                     CAT_Helper_Page::$css[] = array(
                         'media' => 'screen,projection',
                         'file' => '/templates/'.DEFAULT_THEME.'/css/visibility.css'
@@ -914,8 +914,17 @@ if (!class_exists('CAT_Helper_Page'))
                 }
             }
 
+            // get droplets
+            $droplets_config = CAT_Helper_Droplet::getDropletsForHeader($page_id);
+
             // return the results
-            return self::getMeta() . self::getCSS('frontend') . self::getJQuery('header') . self::getJavaScripts('header');
+            return self::getMeta($droplets_config)
+                 . self::getCSS('frontend')
+                 . ($droplets_config['css'] ? "<!-- dropletsExtension -->\n".$droplets_config['css']."\n<!-- /dropletsExtension -->\n" : NULL)
+                 . self::getJQuery('header')
+                 . self::getJavaScripts('header')
+                 . ($droplets_config['js'] ? "<!-- dropletsExtension -->\n".$droplets_config['js']."\n<!-- /dropletsExtension -->\n" : NULL)
+                 ;
 
         } // end function getFrontendHeaders()
 
@@ -1105,46 +1114,55 @@ if (!class_exists('CAT_Helper_Page'))
          * @access public
          * @return HTML
          **/
-        public static function getMeta()
+        public static function getMeta($droplets_config=array())
         {
             global $page_id;
 
             $properties = self::properties($page_id);
             $output     = array();
+            $title       = NULL;
+            $keywords    = NULL;
+            $description = NULL;
 
             // charset
             if (isset($properties['default_charset']))
-            {
-                $output[] = CAT_Helper_Page::$space . '<meta http-equiv="Content-Type" content="text/html; charset=' . $properties['default_charset'] . '" />';
-            }
+                $output[] = CAT_Helper_Page::$space
+                          . '<meta http-equiv="Content-Type" content="text/html; charset='
+                          . $properties['default_charset']
+                          . '" />'
+                          ;
 
             // page title
-            if (isset($properties['title']))
-            {
-                $output[] = CAT_Helper_Page::$space . '<title>' . $properties['title'] . '</title>';
-            }
+            if(isset($droplets_config['title']))
+                $title = $droplets_config['title'];
+            elseif(isset($properties['title']))
+                $title = $properties['title'];
+            if($title)
+                $output[] = CAT_Helper_Page::$space . '<title>' . $title . '</title>';
 
             // description
-            $description 
-                = (isset($properties['description']) && $properties['description'] != '' )
-                ? $properties['description']
-                : CAT_Registry::get('WEBSITE_DESCRIPTION')
-                ;
+            if(isset($droplets_config['description']))
+                $description = $droplets_config['description'];
+            elseif(isset($properties['description']) && $properties['description'] != '' )
+                $description = $properties['description'];
+            else
+                $description = CAT_Registry::get('WEBSITE_DESCRIPTION');
             if ($description!='')
-            {
                 $output[] = CAT_Helper_Page::$space . '<meta name="description" content="' . $description . '" />';
-            }
 
             // keywords
-            $keywords
-                = (isset($properties['keywords']) && $properties['keywords']!='')
-                ? $properties['keywords']
-                : CAT_Registry::get('WEBSITE_KEYWORDS')
-                ;
+            if(isset($droplets_config['keywords']))
+                $keywords = $droplets_config['keywords'];
+            elseif(isset($properties['keywords']) && $properties['keywords'] != '' )
+                $keywords = $properties['keywords'];
+            else
+                $keywords = CAT_Registry::get('WEBSITE_KEYWORDS');
             if ($keywords!='')
-            {
                 $output[] = CAT_Helper_Page::$space . '<meta name="keywords" content="' . $keywords . '" />';
-            }
+
+            // other meta tags set by droplets
+            if(isset($droplets_config['meta']))
+                $output[] = $droplets_config['meta'];
 
             return implode("\n", $output) . "\n";
 
