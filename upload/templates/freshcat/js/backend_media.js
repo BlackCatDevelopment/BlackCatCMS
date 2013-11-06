@@ -489,7 +489,7 @@ jQuery(document).ready(function()
 					}
 				};
 			
-			dialog_confirm( 'Do you really want to delete this ' + type + '?', 'Delete' + type, CAT_ADMIN_URL + '/media/ajax_delete.php', dates, 'POST', 'JSON', beforeSend, afterSend, current_active );
+			dialog_confirm( cattranslate('Do you really want to delete this ' + type + '?'), cattranslate('Delete ' + type), CAT_ADMIN_URL + '/media/ajax_delete.php', dates, 'POST', 'JSON', beforeSend, afterSend, current_active );
 		}
 	});
 

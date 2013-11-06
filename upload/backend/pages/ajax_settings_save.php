@@ -181,8 +181,6 @@ $template_variant = $val->sanitizePost('template_variant',NULL,true);
 if($template_variant)
     CAT_Helper_Page::updatePageSettings($page_id,array('template_variant' => $template_variant));
 
-echo "old link -$old_link- new link -", $options['link'], "-\n";
-
 //=====================
 // ! Move (rename) page
 //=====================
