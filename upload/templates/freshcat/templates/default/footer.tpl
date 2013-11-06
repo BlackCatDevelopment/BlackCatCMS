@@ -16,7 +16,7 @@
 		<div id="fc_footer_info">
 			<span id="fc_showFooter_info" class="icon-logo_bc fc_gradient1 fc_gradient_hover fc_border_all"> {translate('System information')}</span>
 			<ul class="fc_gradient1 fc_border fc_shadow_small fc_br_top">
-				<li><span>{$CAT_CORE}:</span> {$CAT_VERSION}</li>
+				<li><span>{$CAT_CORE}:</span> {$CAT_VERSION} {if $CAT_BUILD}(Build {$CAT_BUILD}){/if}</li>
 				<li><span>{$THEME_NAME}:</span> {$THEME_VERSION}</li>
 				{foreach $system_information as info}
 				<li><span>{$info.name}:</span> {$info.status}</li>

@@ -25,6 +25,8 @@
 
 require_once dirname(__FILE__).'/../../config.php';
 
+define('CAT_INSTALL_PROCESS',true);
+
 // Try to guess installer URL
 $installer_uri = 'http://' . $_SERVER[ "SERVER_NAME" ] . ( ( $_SERVER['SERVER_PORT'] != 80 ) ? ':'.$_SERVER['SERVER_PORT'] : '' ) . $_SERVER[ "SCRIPT_NAME" ];
 $installer_uri = dirname( $installer_uri );
@@ -56,9 +58,9 @@ if(!CAT_Helper_Validate::getInstance()->sanitizeGet('do'))
  * DO THE UPDATE
  ******************************************************************************/
 
-/*
+/*******************************************************************************
     BETA TO RELEASE 1.0
-*/
+*******************************************************************************/
 
 // remove captcha_control module
 if(file_exists(CAT_PATH.'/modules/captcha_control/index.php'))
@@ -78,9 +80,9 @@ $lang->db()->query(sprintf(
     CAT_TABLE_PREFIX, '/backend/pages/ajax_recreate_af.php'
 ));
 
-/*
+/*******************************************************************************
     1.0 TO 1.0.1
-*/
+*******************************************************************************/
 // remove beta png
 if(file_exists(CAT_PATH."/templates/freshcat/css/images/login/beta_state.png"))
     unlink(CAT_PATH."/templates/freshcat/css/images/login/beta_state.png");
@@ -93,7 +95,45 @@ if(file_exists(CAT_PATH.'/modules/lib_search/upgrade.php'))
 if(file_exists(CAT_PATH.'/modules/droplets/upgrade.php'))
     include CAT_PATH.'/modules/droplets/upgrade.php';
 
+// run wrapper install script
+if(file_exists(CAT_PATH.'/modules/wrapper/install.php'))
+    include CAT_PATH.'/modules/wrapper/install.php';
 
+// run menu_link install script
+if(file_exists(CAT_PATH.'/modules/menu_link/install.php'))
+    include CAT_PATH.'/modules/menu_link/install.php';
+
+// remove compiled templates
+$dirs = CAT_Helper_Directory::getInstance()->maxRecursionDepth(0)->scanDirectory( CAT_PATH.'/temp/compiled', false, false );
+if(count($dirs))
+    CAT_Helper_Directory::removeDirectory($dirs[0]);
+
+
+
+/*******************************************************************************
+    update version info
+*******************************************************************************/
+if ( file_exists(dirname(__FILE__).'/../tag.txt') )
+{
+    $tag = fopen( dirname(__FILE__).'/../tag.txt', 'r' );
+    list ( $current_version, $current_build ) = explode( '#', fgets($tag) );
+    fclose($tag);
+    include CAT_PATH.'/framework/class.database.php';
+    $database = new database();
+    $database->query(sprintf(
+        'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
+        CAT_TABLE_PREFIX, $current_version, 'cat_version'
+    ));
+    $database->query(sprintf(
+        'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
+        CAT_TABLE_PREFIX, $current_build, 'cat_build'
+    ));
+
+}
+
+/*******************************************************************************
+
+*******************************************************************************/
 $installer_uri = str_replace('/update','',$installer_uri);
 update_wizard_header();
     echo '

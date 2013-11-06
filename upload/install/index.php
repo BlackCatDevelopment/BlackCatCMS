@@ -26,14 +26,14 @@
 define('CAT_DEBUG',false);
 
 // check wether to call update.php or start installation
-if (file_exists('../config.php') && file_exists('/update/update.php') && ! file_exists('/steps.tmp')) {
+if (file_exists('../config.php') && file_exists(dirname(__FILE__).'/update/update.php') && ! file_exists(dirname(__FILE__).'/steps.tmp')) {
     include '/update/update.php';
     exit();
 }
 
 define('CAT_INSTALL',true);
 define('CAT_LOGFILE',dirname(__FILE__).'/../temp/inst.log');
-define('CAT_INST_EXEC_TIME',240);
+define('CAT_INST_EXEC_TIME',600);
 
 // Start a session
 if ( !defined( 'SESSION_STARTED' ) ) {

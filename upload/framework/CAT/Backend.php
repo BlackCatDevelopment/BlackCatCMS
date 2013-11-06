@@ -377,6 +377,7 @@ if (!class_exists('CAT_Backend', false))
             self::initPaths();
 
             $data['CAT_VERSION']                = CAT_Registry::get('CAT_VERSION');
+            $data['CAT_BUILD']                  = CAT_Registry::get('CAT_BUILD');
             $data['CAT_CORE']                   = CAT_Registry::get('CAT_CORE');
             $data['permissions']['pages']       = CAT_Users::checkPermission('pages','pages') ? true : false;
 
