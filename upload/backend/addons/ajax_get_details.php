@@ -230,10 +230,6 @@ $addon = array_merge(
         'link'         => $link,
 ));
 
-// create token
-$tpl_data['csrftoken'] = csrf_get_tokens();
-$tpl_data['csrfname']  = $GLOBALS['csrf']['input-name'];
-
 require_once dirname(__FILE__).'/../../config.php';
 require_once dirname(__FILE__).'/../../framework/functions.php';
 

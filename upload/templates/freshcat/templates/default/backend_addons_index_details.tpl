@@ -4,7 +4,6 @@
 			<form name="uninstall" action="uninstall.php" method="post" class="submit_settings fc_gradient1">
 				<input type="hidden" name="file" value="{$addon.directory}" />
 				<input type="hidden" name="type" value="{$addon.type}" />
-                <input type="hidden" name="{$csrfname}" value="{$csrftoken}" />
 				<strong>{translate('Module details')}: {$addon.name}</strong>
 				<input type="submit" name="uninstall_module" value="{translate('Uninstall Addon')}" class="fc_gradient_red" />
 			</form>
@@ -62,7 +61,6 @@
     				<input type="hidden" name="action" value="install" />
                     <input type="hidden" name="file" value="{if $addon.directory}{$addon.directory}{else}{$addon.INSTALL.directory}{/if}" />
                     <input type="hidden" name="type" value="{$addon.type}" />
-                    <input type="hidden" name="{$csrfname}" value="{$csrftoken}" />
     				<input type="submit" name="install_manual_module" class="fc_gradient_red" value="{translate('Install manually')}" />
     			  </form>
               {/if}
@@ -76,7 +74,6 @@
 			<form name="upgrade" action="manual_install.php" method="post">
 				<input type="hidden" name="action" value="upgrade" />
                 <input type="hidden" name="type" value="{$addon.type}" />
-                <input type="hidden" name="{$csrfname}" value="{$csrftoken}" />
 				<input type="hidden" name="file" value="{if $addon.directory}{$addon.directory}{else}{$addon.INSTALL.directory}{/if}" />
 				<input type="submit" name="upgrade_module" class="fc_gradient_red" value="{translate('Execute upgrade.php manually')}" />
 			</form>
