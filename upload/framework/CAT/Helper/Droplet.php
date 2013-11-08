@@ -633,7 +633,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
         public static function getFirstImageFromContent($page_id, $exec_droplets=true) {
 
             $img = array();
-            $content = '';
+            $__CAT_Helper_Droplets_content = '';
 
             $SQL = sprintf(
                 "SELECT `section_id` FROM `%ssections` WHERE `page_id`='%d' AND `module`='wysiwyg' ORDER BY `position` ASC LIMIT 1",
@@ -654,9 +654,9 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 return false;
             }
             if (is_string($result))
-                $content = self::unsanitizeText($result);
+                $__CAT_Helper_Droplets_content = self::unsanitizeText($result);
 
-            if (!empty($content))
+            if (!empty($__CAT_Helper_Droplets_content))
             {
                 // scan content for images
                 if ($exec_droplets && file_exists(CAT_PATH .'/modules/droplets/droplets.php'))
@@ -667,7 +667,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         include_once(CAT_PATH .'/modules/droplets/droplets.php');
                         if (function_exists('evalDroplets')) {
                             try {
-                                $content = evalDroplets($content);
+                                $__CAT_Helper_Droplets_content = evalDroplets($__CAT_Helper_Droplets_content);
                             } catch (Exception $e) {
                                 trigger_error(sprintf('[%s - %s] %s', __FUNCTION__, __LINE__, $e->getMessage()), E_USER_ERROR);
                             }
@@ -675,7 +675,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                     ob_end_clean();
                     unset($_SESSION['DROPLET_EXECUTED_BY_DROPLETS_EXTENSION']);
                 }
-                if (preg_match('/<img[^>]*>/', $content, $matches))
+                if (preg_match('/<img[^>]*>/', $__CAT_Helper_Droplets_content, $matches))
                 {
                     preg_match_all('/([a-zA-Z]*[a-zA-Z])\s{0,3}[=]\s{0,3}("[^"\r\n]*)"/', $matches[0], $attr);
                     foreach ($attr as $attributes)
@@ -766,18 +766,18 @@ if (!class_exists('CAT_Helper_Droplet')) {
          * restricted to avoid endless loops
          *
          * @access public
-         * @param  string  $content
+         * @param  string  $__CAT_Helper_Droplets_content
          * @param  integer $max_loops - default 3
          * @return string
          **/
-        public static function process( &$content, $max_loops = 3 )
+        public static function process( &$__CAT_Helper_Droplets_content, $max_loops = 3 )
         {
             $max_loops = ( (int) $max_loops = 0 ? 3 : (int) $max_loops );
-            while ( ( self::evaluate($content) === true ) && ( $max_loops > 0 ) )
+            while ( ( self::evaluate($__CAT_Helper_Droplets_content) === true ) && ( $max_loops > 0 ) )
             {
                 $max_loops--;
             }
-            return $content;
+            return $__CAT_Helper_Droplets_content;
         }   // end function process()
 
         /**
@@ -890,38 +890,38 @@ if (!class_exists('CAT_Helper_Droplet')) {
          * @access private
          * @param  string   $_x_codedata
          * @param  string   $_x_varlist
-         * @param  string   $content
+         * @param  string   $__CAT_Helper_Droplets_content
          * @return eval result
          **/
-        private static function do_eval( $_x_codedata, $_x_varlist, &$content )
+        private static function do_eval( $_x_codedata, $_x_varlist, &$__CAT_Helper_Droplets_content )
         {
             global $wb, $admin, $wb_page_data;
-            $wb_page_data =& $content;
+            $wb_page_data =& $__CAT_Helper_Droplets_content;
             self::getInstance()->log()->LogDebug('evaluating: '.$_x_codedata);
             extract( $_x_varlist, EXTR_SKIP );
             return ( eval( $_x_codedata ) );
         }   // end function do_eval()
 
         /**
-         * evaluates the droplets contained in $content
+         * evaluates the droplets contained in $__CAT_Helper_Droplets_content
          *
          * @access public
-         * @param  string $content
+         * @param  string $__CAT_Helper_Droplets_content
          * @return string
          **/
-        private static function evaluate(&$content)
+        private static function evaluate(&$__CAT_Helper_Droplets_content)
         {
 
             $self = self::getInstance();
 
-            $self->log()->LogDebug('processing content:');
-            $self->log()->LogDebug($content);
+            $self->log()->LogDebug('> evaluate() - processing content:');
+            $self->log()->LogDebug($__CAT_Helper_Droplets_content);
 
             // collect all droplets from document
             $droplet_tags         = array();
             $droplet_replacements = array();
 
-            if ( preg_match_all( '/\[\[(.*?)\]\]/', $content, $found_droplets ) )
+            if ( preg_match_all( '/\[\[(.*?)\]\]/', $__CAT_Helper_Droplets_content, $found_droplets ) )
             {
                 foreach ( $found_droplets[1] as $droplet )
                 {
@@ -971,12 +971,13 @@ if (!class_exists('CAT_Helper_Droplet')) {
 
                         if ( !is_null($codedata) )
                         {
-                            $newvalue = self::do_eval( $codedata, $varlist, $content );
-                            $self->log()->LogDebug('eval result: '.$newvalue);
+                            $newvalue = self::do_eval( $codedata, $varlist, $__CAT_Helper_Droplets_content );
+                            $self->log()->LogDebug('eval result (newvalue): '.$newvalue);
 
                             // check returnvalue (must be a string of 1 char at least or (bool)true
                             if ( $newvalue == '' && $newvalue !== true )
                             {
+                                $self->log()->LogDebug('newvalue is empty and not true (this is an error!)');
                                 if ( $self->_config['loglevel'] == 7 )
                                 {
                                     $newvalue = sprintf(
@@ -991,13 +992,17 @@ if (!class_exists('CAT_Helper_Droplet')) {
                             }
                             if ( $newvalue === true )
                             {
+                                $self->log()->LogDebug('newvalue is true, set to empty string');
                                 $newvalue = "";
                             }
+                            $self->log()->LogDebug('newvalue before removing styles:',$newvalue);
                             // remove any defined CSS section from code. For valid XHTML a CSS-section is allowed inside <head>...</head> only!
                             $newvalue = preg_replace( '/<style.*>.*<\/style>/siU', '', $newvalue );
+                            $self->log()->LogDebug('newvalue after removing styles:',$newvalue);
                         }
                         else
                         {
+                            $self->log()->LogDebug('no such droplet!');
                             // just remove droplet placeholder if no code was found
                             if ( $self->_config['loglevel'] == 7 )
                             {
@@ -1012,14 +1017,19 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         $droplet_replacements[] = $newvalue;
                     }
                 }    // End foreach( $found_droplets[1] as $droplet )
+
+                $self->log()->LogDebug('TAGS:',$droplet_tags);
+                $self->log()->LogDebug('REPLACEMENTS:',$droplet_replacements);
+
                 // replace each Droplet-Tag with coresponding $newvalue
-                $content = str_replace( $droplet_tags, $droplet_replacements, $content );
+                $__CAT_Helper_Droplets_content = str_replace( $droplet_tags, $droplet_replacements, $__CAT_Helper_Droplets_content );
             }
 
             $self->log()->LogDebug('returning:');
-            $self->log()->LogDebug($content);
+            $self->log()->LogDebug($__CAT_Helper_Droplets_content);
+            $self->log()->LogDebug('< evaluate()');
 
-            return $content;
+            return $__CAT_Helper_Droplets_content;
         }   // end function evaluate()
 
     } // class CAT_Helper_Droplet

@@ -77,6 +77,10 @@ class CAT_Helper_KLogger
     const STATUS_LOG_CLOSED  = 3;
 
     /**
+     * indentation
+     **/
+    private static $spaces = 0;
+    /**
      * Current status of the log file
      * @var integer
      */
@@ -394,6 +398,14 @@ class CAT_Helper_KLogger
 	        $function  = isset( $info['function'] ) ? $info['function'] : NULL;
 	        $file      = basename($info['file']);
 	        $code_line = $info['line'].'--'.$last['line'];#isset( $info['line'] )     ? $info['line']     : $last['line'];
+
+            if(substr($line,0,1)=='<')
+                    self::$spaces--;
+            self::$spaces = ( self::$spaces > 0 ? self::$spaces : 0 );
+            $line = str_repeat('    ',self::$spaces).$line;
+            if(substr($line,0,1)=='>')
+                self::$spaces++;
+
 	        $line      = "[$function()] $line [ $file:$code_line ]";
             $this->writeFreeFormLine("$status $line \n");
             if ( $args ) {
