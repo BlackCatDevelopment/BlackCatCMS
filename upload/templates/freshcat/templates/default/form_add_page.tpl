@@ -1,4 +1,4 @@
-<form name="add_page" action="#" method="post" id="fc_add_page" class="fc_gradient1 shadow_small">
+<form name="add_page" action="#" method="post" id="fc_add_page" class="fc_gradient1 shadow_small" style="display:none;">
 	<nav>
 		<ul id="fc_add_page_nav">
 			<li><a href="#fc_tabs_general" class="fc_gradient1 fc_gradient_hover fc_first fc_active icon-file" title="{translate('General Settings')}"></a></li>
