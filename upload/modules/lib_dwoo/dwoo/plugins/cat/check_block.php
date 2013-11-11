@@ -40,15 +40,14 @@ if (defined('CAT_PATH')) {
 }
 
 /**
- * checks if given section exists, is active, and has content
+ * checks if given block has active sections
  * @access public
- * @param  integer $section
+ * @param  integer $block
  * @return boolean
  **/
-function Dwoo_Plugin_check_section(Dwoo $dwoo, $section_id) {
+function Dwoo_Plugin_check_block(Dwoo $dwoo, $block) {
 	global $page_id;
-    // second param = active only
-    $section = CAT_Helper::getSection($section_id,true);
-	$return	 = ( is_array($section) && count($section) ) ? true : false;
+	$sections = CAT_Sections::getInstance()->getActiveSections( intval($page_id), intval($block) );
+	$return	  = ( is_array($sections) && count($sections) ) ? true : false;
 	return $return;
-}   // end function Dwoo_Plugin_check_section()
+}   // end function Dwoo_Plugin_check_block()
