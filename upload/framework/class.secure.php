@@ -207,12 +207,15 @@ if (!function_exists('cat_csrf_callback'))
                 }
             }
         }
-        // (yes, $tokens is safe to echo without escaping)
-        header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
         $data = '';
-        foreach (csrf_flattenpost($_POST) as $key => $value) {
-            if ($key == $GLOBALS['csrf']['input-name']) continue;
-            $data .= '<input type="hidden" name="'.htmlspecialchars($key).'" value="'.htmlspecialchars($value).'" />';
+        header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+        if(function_exists('csrf_flattenpost'))
+        {
+            foreach (csrf_flattenpost($_POST) as $key => $value) {
+                if ($key == $GLOBALS['csrf']['input-name']) continue;
+                $data .= '<input type="hidden" name="'.htmlspecialchars($key).'" value="'.htmlspecialchars($value).'" />';
+            }
+            $data = '<form method="post" action="">'.$data.'<input type="submit" value="Try again" /></form>';
         }
         echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
     <html>
@@ -223,7 +226,7 @@ if (!function_exists('cat_csrf_callback'))
       <body>
             <p>CSRF check failed. Your form session may have expired, or you may not have
             cookies enabled.</p>
-            <form method="post" action="">'.$data.'<input type="submit" value="Try again" /></form>';
+            '.$data;
         if(CAT_Registry::exists('DEBUG_CSRF') && DEBUG_CSRF === true)
             echo "<p>Debug: $tokens</p>";
         echo '</body></html>';

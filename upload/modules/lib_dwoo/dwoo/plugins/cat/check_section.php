@@ -48,7 +48,7 @@ if (defined('CAT_PATH')) {
 function Dwoo_Plugin_check_section(Dwoo $dwoo, $section_id) {
 	global $page_id;
     // second param = active only
-    $section = CAT_Helper::getSection($section_id,true);
+    $section = CAT_Helper_Section::getSection($section_id,true);
 	$return	 = ( is_array($section) && count($section) ) ? true : false;
 	return $return;
 }   // end function Dwoo_Plugin_check_section()

@@ -110,7 +110,7 @@ CsrfMagic.end = function() {
 // Sets things up for Mozilla/Opera/nice browsers
 // We very specifically match against Internet Explorer, since they haven't
 // implemented prototypes correctly yet.
-if (window.XMLHttpRequest && window.XMLHttpRequest.prototype && '\v' != 'v') {
+if (window.XMLHttpRequest && window.XMLHttpRequest.prototype && '\v' != '\v') {
     var x = XMLHttpRequest.prototype;
     var c = CsrfMagic.prototype;
 
@@ -142,30 +142,25 @@ if (window.XMLHttpRequest && window.XMLHttpRequest.prototype && '\v' != 'v') {
             }
             return jQuery.csrf_ajax( s );
         }
-    }
-    if (window.Prototype) {
+    } else if (window.Prototype) {
         // This works for script.aculo.us too
         Ajax.csrf_getTransport = Ajax.getTransport;
         Ajax.getTransport = function() {
             return new CsrfMagic(Ajax.csrf_getTransport());
         }
-    }
-    if (window.MooTools) {
+    } else if (window.MooTools) {
         Browser.csrf_Request = Browser.Request;
         Browser.Request = function () {
             return new CsrfMagic(Browser.csrf_Request());
         }
-    }
-    if (window.YAHOO) {
-        // old YUI API
+    } else if (window.YAHOO) {
         YAHOO.util.Connect.csrf_createXhrObject = YAHOO.util.Connect.createXhrObject;
         YAHOO.util.Connect.createXhrObject = function (transaction) {
             obj = YAHOO.util.Connect.csrf_createXhrObject(transaction);
             obj.conn = new CsrfMagic(obj.conn);
             return obj;
         }
-    }
-    if (window.Ext) {
+    } else if (window.Ext) {
         // Ext can use other js libraries as loaders, so it has to come last
         // Ext's implementation is pretty identical to Yahoo's, but we duplicate
         // it for comprehensiveness's sake.
@@ -175,9 +170,7 @@ if (window.XMLHttpRequest && window.XMLHttpRequest.prototype && '\v' != 'v') {
             obj.conn = new CsrfMagic(obj.conn);
             return obj;
         }
-    }
-    if (window.dojo) {
-        // NOTE: this doesn't work with latest dojo
+    } else if (window.dojo) {
         dojo.csrf__xhrObj = dojo._xhrObj;
         dojo._xhrObj = function () {
             return new CsrfMagic(dojo.csrf__xhrObj());

@@ -60,6 +60,8 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
         public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname='')
         {
 
+            $use_smtp = false;
+
             // Create the message
             try
             {
@@ -83,12 +85,14 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                     && strlen(self::$settings['smtp_host']) > 5
                 ) {
                     self::$transport = Swift_SmtpTransport::newInstance(self::$settings['smtp_host'], 25);
+                    $use_smtp = true;
                 }
                 else
                 {
                     self::$transport = Swift_MailTransport::newInstance();
                 }
-                if (   isset(self::$settings['smtp_auth'])
+                if (   $use_smtp
+                    && isset(self::$settings['smtp_auth'])
                     && isset(self::$settings['smtp_username'])
                     && isset(self::$settings['smtp_password'])
                     && self::$settings['smtp_auth'] == "true"
