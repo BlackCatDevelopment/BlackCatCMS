@@ -37,6 +37,9 @@ input.fc_input_normal {
 input.fc_input_large {
 	min-width: 20em;
 }
+input.fc_input_small {
+    width: 50px;
+}
 .submit_settings {
 	margin-bottom:	0em;
 	margin-left:	260px;

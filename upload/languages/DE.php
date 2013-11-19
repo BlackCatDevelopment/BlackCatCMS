@@ -343,6 +343,7 @@ $LANG = array(
     'Pages directory' => 'Seitenverzeichnis',
     'Pages extension' => 'Dateierweiterung für Seiten',
     'Please choose a Mailer library and enter a valid sender address and click [Save] to send a test mail' => 'Bitte eine Mailbibliothek auswählen und eine gültige Absender-Adresse eingeben und [Speichern] klicken, um eine Testmail versenden zu können.',
+    'Please enter a value between 10 and 120 seconds' => 'Bitte einen Wert zwischen 10 und 120 Sekunden eingeben',
     'Please note: The SMTP password will be stored as plain text in the settings table!' => 'Bitte beachten: Das SMTP Kennwort wird im Klartext in der Datenbank gespeichert!',
     'Search settings' => 'Sucheinstellungen',
     'Section-Anchor text' => 'Präfix für Section-Anker',
@@ -353,6 +354,7 @@ $LANG = array(
     'Settings saved' => 'Einstellungen gespeichert',
     'Set to at least 255 if mail address is allowed!' => 'Mindestens 255 wenn Mailadresse als Login-Name erlaubt',
     'Should be at least' => 'Empfehlung (mindestens)',
+    'SMTP timeout' => 'SMTP Timeout',
     'System settings' => 'Systemeinstellungen',
     'The default MIME type is used if the real MIME type cannot be encountered.' => 'Der Standard-MIME-Typ wird verwendet, wenn der tatsächliche MIME-Typ nicht ermittelt werden kann.',
     'Token lifetime' => 'Token Gültigkeitsdauer',
@@ -366,6 +368,8 @@ $LANG = array(
 // ----- mailer -----
     'Default "from" mail' => 'Standard "VON" Adresse',
 	'Default sender name' => 'Standard Absender Name',
+    'Default for SSL is 587; please check the configuration instructions at your provider\'s homepage for details.'
+        => 'Standardport für SSL ist 587; bitte sehen Sie in der Dokumentation Ihres Providers nach.',
     'Please specify a default "FROM" address and "SENDER" name below. It is recommended to use a FROM address like: <strong>admin@yourdomain.com</strong>. Some mail provider (e.g. <em>mail.com</em>) may reject mails with a FROM: address like <em>name@mail.com</em> sent via a foreign relay to avoid spam.<br /><br />The default values are only used if no other values are specified by the CMS. If your server supports <acronym title="Simple mail transfer protocol">SMTP</acronym>, you may want use this option for outgoing mails.'
         => 'Bitte geben Sie eine Standard "VON" Adresse und einen Sendernamen an. Als Absender Adresse empfiehlt sich ein Format wie: <strong>admin@IhreWebseite.de</strong>. Manche E-Mail Provider (z.B. <em>mail.de</em>) stellen keine E-Mails zu, die nicht &uuml;ber den Provider selbst verschickt wurden, in der Absender Adresse aber den Namen des E-Mail Providers <em>name@mail.de</em> enthalten. Die Standard Werte werden nur verwendet, wenn keine anderen Werte von Black Cat CMS gesetzt wurden. Wenn Ihr Service Provider <acronym title="Simple Mail Transfer Protocol">SMTP</acronym> anbietet, sollten Sie diese Option f&uuml;r ausgehende E-Mails verwenden.',
     'Mail routine' => 'E-Mail Routine',
@@ -374,14 +378,19 @@ $LANG = array(
     '<strong>SMTP Mailer Settings:</strong><br />The settings below are only required if you want to send mails via <acronym title="Simple mail transfer protocol">SMTP</acronym>. If you do not know your SMTP host or you are not sure about the required settings, simply stay with the default mail routine: PHP MAIL.'
         => '<strong>SMTP Maileinstellungen:</strong><br />Die nachfolgenden Einstellungen m&uuml;ssen nur angepasst werden, wenn Sie E-Mail &uuml;ber <acronym title="Simple Mail Transfer Protocol">SMTP</acronym> verschicken wollen. Wenn Sie Ihren SMTP Server nicht kennen, oder Sie sich unsicher bei den Einstellungen sind, verwenden Sie einfach die Standard E-Mail Routine: PHP MAIL.',
     'PHP MAIL' => 'PHP MAIL',
+    'Please make sure your provider supports SSL before enabling this feature!'
+        => 'Bitte vor Aktivierung sicherstellen, dass der Provider SSL unterstützt!',
     'Send test mail' => 'Testmail verschicken',
     'SMTP Authentification' => 'SMTP Authentifikation',
-    'only activate if your SMTP host requires authentification' => 'nur aktivieren, wenn SMTP Authentifikation ben&ouml;tigt wird',
+    'only activate if your SMTP host requires authentification' => 'nur aktivieren, wenn SMTP Authentifizierung ben&ouml;tigt wird',
 	'SMTP Password' => 'SMTP Passwort',
 	'SMTP Username' => 'SMTP Benutzername',
     'The test eMail could not be sent! Please check your settings!' => 'Das Versenden der Testmail ist fehlgeschlagen! Bitte die Einstellungen pr&uuml;fen!',
 	'The test eMail was sent successfully. Please check your inbox.' => 'Die Testmail wurde erfolgreich verschickt.',
     'This is the required test mail: CAT mailer is working' => 'Dies ist die angeforderte Testmail: Die Maileinstellungen funktionieren',
+    'Transport security' => 'Übertragungssicherheit',
+    'Use SSL' => 'SSL verwenden',
+    'SSL Port' => 'SSL Port',
 // ----- security -----
     'Disable user accounts when max login attempts is reached'
        => 'Benutzerkonto deaktivieren, wenn die max. Anzahl Anmeldeversuche überschritten wurde',

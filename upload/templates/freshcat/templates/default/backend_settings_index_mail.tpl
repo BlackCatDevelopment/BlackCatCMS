@@ -49,15 +49,27 @@
 				<div class="clear"></div>
 				<hr />
 				<label class="fc_label_200" for="fc_catmailer_smtp_host">{translate('SMTP host')}:</label>
-				<input type="text" name="catmailer_smtp_host" id="fc_catmailer_smtp_host" value="{$values.catmailer_smtp_host}"{if $values.catmailer_smtp_auth} checked="checked"{/if}/>
+				<input type="text" name="catmailer_smtp_host" id="fc_catmailer_smtp_host" value="{$values.catmailer_smtp_host}" /><br />
+				<label class="fc_label_200" for="fc_catmailer_smtp_timeout" title="{translate('Please enter a value between 10 and 120 seconds')}">{translate('SMTP timeout')}:</label>
+				<input type="text" name="catmailer_smtp_timeout" id="fc_catmailer_smtp_timeout" value="{$values.catmailer_smtp_timeout}" />
+
 				<div class="clear_sp"></div>
+
+				<div class="fc_settings_max">
+                <span style="font-weight:900">{translate('Transport security')}</span>
+					<input type="checkbox" class="fc_checkbox_jq fc_toggle_element show___fc_smtp_ssl" name="catmailer_smtp_ssl" id="fc_catmailer_smtp_ssl" value="true" {if $values.catmailer_smtp_ssl && $values.catmailer_routine=='smtp'} checked="checked"{/if} />
+					<label for="fc_catmailer_smtp_ssl" title="{translate('Please make sure your provider supports SSL before enabling this feature!')}">{translate('Use SSL')}</label>
+                    <label class="fc_label_200" title="{translate('Default for SSL is 587; please check the configuration instructions at your provider\'s homepage for details.')}" for="fc_catmailer_smtp_ssl_port">{translate('SSL Port')}:</label>
+					<input class="fc_input_small" style="float:right;" type="text" name="catmailer_smtp_ssl_port" id="fc_catmailer_smtp_ssl_port" value="{if $values.catmailer_smtp_ssl_port}{$values.catmailer_smtp_ssl_port}{/if}" /><br />
+				</div>
+				<div class="clear"></div>
 
 				<div class="fc_settings_max">
 					<input type="checkbox" class="fc_checkbox_jq fc_toggle_element show___fc_smtp_aut" name="catmailer_smtp_auth" id="fc_catmailer_smtp_auth" value="true" {if $values.catmailer_smtp_auth && $values.catmailer_routine=='smtp'} checked="checked"{/if}/>
 					<label for="fc_catmailer_smtp_auth">{translate('SMTP authentification')}</label>
+                    <p class="fc_important">({translate('only activate if your SMTP host requires authentification')})</p>
 				</div>
 				<div class="clear"></div>
-				<p class="fc_important">({translate('only activate if your SMTP host requires authentification')})</p>
 
 				<div id="fc_smtp_aut"{if $values.catmailer_routine == 'phpmail'} class="fc_inactive_element"{/if}>
 				<hr />

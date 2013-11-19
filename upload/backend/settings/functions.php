@@ -49,13 +49,13 @@ $groups = array(
     'system' => array('maintenance_mode','maintenance_page','err_page_404','page_level_limit','page_trash','manage_sections','section_blocks','multiple_menus','page_languages','intro_page','homepage_redirection'),
     'users' => array('frontend_signup','frontend_login','home_folders','auth_min_login_length','auth_max_login_length','auth_min_pass_length','auth_max_pass_length','users_allow_mailaddress'),
     'server' => array('operating_system','pages_directory','page_extension','media_directory','page_spacer','upload_allowed','app_name','sec_anchor'),
-    'mail' => array('server_email','catmailer_lib','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_auth','catmailer_smtp_username','catmailer_smtp_password'),
+    'mail' => array('server_email','catmailer_lib','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_timeout','catmailer_smtp_auth','catmailer_smtp_username','catmailer_smtp_password','catmailer_smtp_ssl','catmailer_smtp_ssl_port'),
     'security' => array('auto_disable_users','enable_csrfmagic','upload_enable_mimecheck','upload_mime_default_type','upload_allowed','captcha_type','text_qa','enabled_captcha','enabled_asp'),
 );
 $allow_tags_in_fields = array('website_header', 'website_footer');
-$allow_empty_values   = array('website_header', 'website_footer', 'sec_anchor', 'pages_directory','catmailer_smtp_host','catmailer_smtp_username','catmailer_smtp_password');
-$boolean              = array('auto_disable_users','frontend_login','home_folders','manage_sections','multiple_menus','page_trash','prompt_mysql_errors','section_blocks','maintenance_mode','homepage_redirection','intro_page','page_languages','users_allow_mailaddress','enable_csrfmagic','upload_enable_mimecheck');
-$numeric              = array('redirect_timer','maintenance_page','err_page_404','page_level_limit','token_lifetime','max_attempts');
+$allow_empty_values   = array('website_header', 'website_footer', 'sec_anchor', 'pages_directory','catmailer_smtp_host','catmailer_smtp_timeout','catmailer_smtp_username','catmailer_smtp_password');
+$boolean              = array('auto_disable_users','frontend_login','home_folders','manage_sections','multiple_menus','page_trash','prompt_mysql_errors','section_blocks','maintenance_mode','homepage_redirection','intro_page','page_languages','users_allow_mailaddress','enable_csrfmagic','upload_enable_mimecheck','catmailer_smtp_ssl');
+$numeric              = array('redirect_timer','maintenance_page','err_page_404','page_level_limit','token_lifetime','max_attempts','catmailer_smtp_ssl_port','catmailer_smtp_timeout');
 
 /**
  * get data from settings table
@@ -396,6 +396,15 @@ function saveMail($backend) {
              else
              {
                   $err_msg[] = $backend->lang()->translate('You must enter details for the following fields').': '.$backend->lang()->translate('SMTP Host');
+             }
+        }
+        // timeout
+        if (isset($settings['catmailer_smtp_timeout']))
+        {
+             // silently catch invalid values
+             if(!$settings['catmailer_smtp_timeout']>10 && !$settings['catmailer_smtp_timeout']<120)
+             {
+                 $settings['catmailer_smtp_timeout'] = 30;
              }
         }
         // Work-out if SMTP authentification should be checked

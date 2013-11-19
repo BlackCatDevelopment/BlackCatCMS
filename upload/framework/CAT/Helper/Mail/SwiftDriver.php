@@ -91,6 +91,7 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                 {
                     self::$transport = Swift_MailTransport::newInstance();
                 }
+                // if SMTP...
                 if (   $use_smtp
                     && isset(self::$settings['smtp_auth'])
                     && isset(self::$settings['smtp_username'])
@@ -103,6 +104,23 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
     				self::$transport->setUsername(self::$settings['smtp_username']);
     				self::$transport->setPassword(self::$settings['smtp_password']);
     			}
+
+                // check for SSL
+                if ( $use_smtp && isset(self::$settings['smtp_ssl']) && self::$settings['smtp_ssl'] == true )
+                {
+                    $transports = stream_get_transports();
+                    if(in_array('ssl',$transports))
+                    {
+                        self::$transport->setEncryption('ssl');
+                        if(isset(self::$settings['smtp_ssl_port']) && self::$settings['smtp_ssl_port'] != '')
+                            self::$transport->setPort(self::$settings['smtp_ssl_port']);
+                        else
+                            self::$transport->setPort(587); // default port
+                    }
+                }
+                // timeout
+                if ( $use_smtp && isset(self::$settings['smtp_timeout']) && self::$settings['smtp_timeout'] != '' )
+                    self::$transport->setTimeout(self::$settings['smtp_timeout']);
             }
 
             if(!self::$mailer)
