@@ -129,7 +129,22 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                 self::$mailer = Swift_Mailer::newInstance(self::$transport);
             }
 
-            return self::$mailer->send($message);
+            try
+            {
+                self::$mailer->send($message);
+            }
+            catch (Swift_TransportException $e)
+            {
+                CAT_Helper_Mail::setError('Transport exception: '.$e->getMessage());
+                return false;
+            }
+            catch (Exception $e)
+            {
+                CAT_Helper_Mail::setError($e->getMessage());
+                return false;
+            }
+
+            return true;
         }   // end function sendMail()
     }
 }
