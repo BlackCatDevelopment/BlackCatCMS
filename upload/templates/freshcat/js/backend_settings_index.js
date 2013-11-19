@@ -27,6 +27,13 @@ function send_testmail(URL) {
             type: 'POST',
             url:  URL,
             data: {'_cat_ajax': 1},
+            beforeSend: function( jqXHR ) {
+                jQuery('#testmail_result').html(
+                    "<div style='border: 2px solid #cc6600; padding: 5px; text-align: center; background-color: #ffcc66;'>" +
+                    cattranslate('Trying to send testmail, please wait...') +
+                    "</div>").show();
+                return true;
+            },
             success:	function( data, textStatus, jqXHR  ) {
                 jQuery('#testmail_result').html(data).show();
             }

@@ -389,6 +389,7 @@ $LANG = array(
 	'The test eMail was sent successfully. Please check your inbox.' => 'Die Testmail wurde erfolgreich verschickt.',
     'This is the required test mail: CAT mailer is working' => 'Dies ist die angeforderte Testmail: Die Maileinstellungen funktionieren',
     'Transport security' => 'Übertragungssicherheit',
+    'Trying to send testmail, please wait...' => 'Teste Mailversand, bitte warten...',
     'Use SSL' => 'SSL verwenden',
     'SSL Port' => 'SSL Port',
 // ----- security -----
