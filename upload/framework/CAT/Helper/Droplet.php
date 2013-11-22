@@ -30,7 +30,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
     }
 
     require_once CAT_PATH.'/modules/lib_search/search.droplets.php';
-    
+
     class CAT_Helper_Droplet extends CAT_Object    {
 
         const field_id                = 'drop_id';
@@ -106,7 +106,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
             if ($query->numRows() > 0)
             {
                 $droplet = $query->fetchRow(MYSQL_ASSOC);
-                if (droplet_exists($droplet['drop_droplet_name'], $page_id))
+                if (self::droplet_exists($droplet['drop_droplet_name'], $page_id))
                 {
                     // the droplet exists
                     if (file_exists(CAT_PATH.'/modules/'.$droplet['drop_module_dir'].'/droplet.extension.php'))
@@ -151,7 +151,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 {
                     $checked      = false;
                     // first check if there exists a custom.* file ...
-                    $file = CAT_PATH.$droplet['drop_module_dir'].'/custom.'.$droplet['drop_file'];
+                    $file = CAT_PATH.'/modules'.$droplet['drop_module_dir'].'/custom.'.$droplet['drop_file'];
                     if (file_exists($file))
                     {
                         $checked = true;
@@ -159,7 +159,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                     else
                     {
                         // check for the regular file ...
-                        $file = CAT_PATH.$droplet['drop_module_dir'].'/'.$droplet['drop_file'];
+                        $file = CAT_PATH.'/modules'.$droplet['drop_module_dir'].'/'.$droplet['drop_file'];
                         if (file_exists($file))
                             $checked = true;
                     }
@@ -305,11 +305,11 @@ if (!class_exists('CAT_Helper_Droplet')) {
          * @return string $droplet_name
          */
         public static function clear_droplet_name($droplet_name) {
-        	$droplet_name = strtolower($droplet_name);
-        	$droplet_name = str_replace('[', '', $droplet_name);
-        	$droplet_name = str_replace(']', '', $droplet_name);
-        	$droplet_name = trim($droplet_name);
-        	return $droplet_name;
+            $droplet_name = strtolower($droplet_name);
+            $droplet_name = str_replace('[', '', $droplet_name);
+            $droplet_name = str_replace(']', '', $droplet_name);
+            $droplet_name = trim($droplet_name);
+            return $droplet_name;
         }  // end function clear_droplet_name()
 
         /**
@@ -321,15 +321,15 @@ if (!class_exists('CAT_Helper_Droplet')) {
          */
         public static function droplet_exists($droplet_name)
         {
-        	$droplet_name = self::clear_droplet_name($droplet_name);
-        	$SQL = sprintf(
+            $droplet_name = self::clear_droplet_name($droplet_name);
+            $SQL = sprintf(
                 "SELECT * FROM `%smod_droplets` WHERE `name`='%s'",
-				CAT_TABLE_PREFIX, $droplet_name
+                CAT_TABLE_PREFIX, $droplet_name
             );
             $result = self::getInstance()->db()->query($SQL);
-        	if (is_object($result) && $result->numRows() > 0)
-        		return true;
-        	return false;
+            if (is_object($result) && $result->numRows() > 0)
+                return true;
+            return false;
         }  // end function droplet_exists()
 
         /**
@@ -342,7 +342,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          */
         public static function is_registered_droplet($droplet_name, $register_type, $page_id)
         {
-        	$droplet_name = self::clear_droplet_name($droplet_name);
+            $droplet_name = self::clear_droplet_name($droplet_name);
             $SQL = sprintf(
                   "SELECT `drop_page_id` FROM `%smod_droplets_extension` "
                 . "WHERE `%s`='%s' AND `%s`='%s' AND `%s`='%s'",
@@ -351,7 +351,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 self::field_type,         $register_type,
                 self::field_page_id,      $page_id
             );
-        	$check = self::getInstance()->db()->get_one($SQL,MYSQL_ASSOC);
+            $check = self::getInstance()->db()->get_one($SQL,MYSQL_ASSOC);
             if(self::getInstance()->db()->is_error() || !$check)
                 return false;
             $result = ($check == $page_id) ? true : false;
@@ -952,7 +952,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         }
                         else
                         {
-                            // no arguments 
+                            // no arguments
                             $droplet_name = $droplet;
                         }
 
@@ -1033,5 +1033,5 @@ if (!class_exists('CAT_Helper_Droplet')) {
         }   // end function evaluate()
 
     } // class CAT_Helper_Droplet
-    
-} // if class_exists()    
+
+} // if class_exists()
