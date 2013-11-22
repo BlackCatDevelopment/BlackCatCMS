@@ -2,6 +2,7 @@
 
 {if $addon.is_removable && $addon.is_installed && $permissions.MODULES_UNINSTALL}
 			<form name="uninstall" action="uninstall.php" method="post" class="submit_settings fc_gradient1">
+                <input type="hidden" name="{$token_name}" value="{$token}" />
 				<input type="hidden" name="file" value="{$addon.directory}" />
 				<input type="hidden" name="type" value="{$addon.type}" />
 				<strong>{translate('Module details')}: {$addon.name}</strong>
