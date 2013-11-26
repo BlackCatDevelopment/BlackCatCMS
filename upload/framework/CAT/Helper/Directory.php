@@ -301,6 +301,33 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         	return $size;
         }   // end function getSize()
 
+        /**
+         * convert string to a valid filename
+         *
+         * @access public
+         * @param  string  $string - filename
+         * @return string
+         **/
+        public static function sanitizeFilename($string)
+        {
+            require_once(CAT_PATH . '/framework/functions-utf8.php');
+            $string = entities_to_7bit($string);
+            // remove all bad characters
+            $bad    = array('\'', '"', '`', '!', '@', '#', '$', '%', '^', '&', '*', '=', '+', '|', '/', '\\', ';', ':', ',', '?');
+            $string = str_replace($bad, '', $string);
+            // replace multiple dots in filename to single dot and (multiple) dots at the end of the filename to nothing
+            $string = preg_replace(array('/\.+/', '/\.+$/'), array('.', ''), $string);
+            // replace spaces
+            $string = trim($string);
+            $string = preg_replace('/(\s)+/', '_', $string);
+            // replace any weird language characters
+            $string = str_replace(array('%2F', '%'), array('/', ''), urlencode($string));
+            // remove path
+            $string = pathinfo($string,PATHINFO_FILENAME);
+            // Finally, return the cleaned string
+            return $string;
+        }   // end function sanitizeFilename()
+
 		/**
 		 * fixes a path by removing //, /../ and other things
 		 *
