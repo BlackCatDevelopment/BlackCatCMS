@@ -23,7 +23,6 @@
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {	
 	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
@@ -39,12 +38,10 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
-require_once CAT_PATH.'/framework/functions.php';
+//require_once CAT_PATH.'/framework/functions.php';
 
 function Dwoo_Plugin_last_modified(Dwoo $dwoo, $page_id = false) {
-	global $backend;
 	if ( is_numeric( $page_id ) )
 	{
 		$sql	= "SELECT `modified_when` FROM `%spages` WHERE `page_id` = %d";
@@ -55,7 +52,7 @@ function Dwoo_Plugin_last_modified(Dwoo $dwoo, $page_id = false) {
 		$sql	= "SELECT `modified_when` FROM `%spages` WHERE `visibility`= public OR `visibility`= hidden ORDER BY `modified_when` DESC LIMIT 0,1";
 		$t		= CAT_Helper_Page::getInstance()->db()->get_one( sprintf( $sql, CAT_TABLE_PREFIX ) );
 	}
-	return CAT_Helper_DateTime::getInstance()->getDate($t);
+	return CAT_Helper_DateTime::getDate($t);
 }
 
 ?>

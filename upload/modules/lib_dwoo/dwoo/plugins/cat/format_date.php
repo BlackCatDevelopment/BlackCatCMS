@@ -39,8 +39,8 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-function Dwoo_Plugin_format_date(Dwoo $dwoo, $date = false)
+function Dwoo_Plugin_format_date(Dwoo $dwoo, $date = false, $long = false)
 {
     if(!$date) return '';
-    return CAT_Helper_DateTime::getDate($date);
+    return CAT_Helper_DateTime::getDate($date,$long);
 }
