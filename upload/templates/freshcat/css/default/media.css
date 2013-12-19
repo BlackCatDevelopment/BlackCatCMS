@@ -136,11 +136,11 @@ ul.fc_header_button_dropdown, ul#fc_header_button_dropdown_toggle {
 	}
 		ul.fc_header_button_dropdown ul, ul#fc_header_button_dropdown_toggle ul {
 			position:		absolute;
-			top:			2.8em;
-			right:			0px;
-			z-index:		2;
+            right:			0;
+            top:            0;
+			z-index:		-2;
 			display:		none;
-			margin:			0px;
+			margin:			2.8em 0px 0px 0px;
 			padding:		0.6em 0px 0px 0px;
 			border:			1px solid black;
 		}

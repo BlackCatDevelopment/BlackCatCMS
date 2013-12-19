@@ -14,9 +14,8 @@
 		{/if}
 		{if $permissions.media_create || $permissions.media_rename || $permissions.media_delete}
 		<ul class="fc_header_button_dropdown">
-			<li><a href="#" class="fc_gradient1 fc_gradient_hover icon-tools fc_br_left"> {translate('Options')}</a></li>
-			<li>
-				<ul class="fc_br_bottom fc_br_topleft fc_gradient4 fc_shadow_small">
+			<li><a href="#" class="fc_gradient1 fc_gradient_hover icon-tools fc_br_left"> {translate('Options')}</a><br />
+				<ul id="fc_media_options" class="fc_br_bottom fc_br_topleft fc_gradient4 fc_shadow_small">
 					{if $permissions.media_create}<li class="fc_create_new_folder icon-plus fc_gradient4 fc_gradient_hover"> {translate('Create new folder')}</li>{/if}
 					{if $permissions.media_rename}<li class="fc_rename_file icon-pencil fc_gradient4 fc_gradient_hover"> {translate('Rename folder/file')}</li>{/if}
 					{if $permissions.media_create}<li class="hidden fc_inactive_button fc_gradient4 fc_gradient_hover"> {translate('Duplicate folder/file')}</li>{/if}
