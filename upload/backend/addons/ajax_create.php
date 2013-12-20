@@ -120,6 +120,9 @@ switch ( $type ) {
         $func = 'language';
         $pre  = 'language_';
         break;
+    case 'page':
+        $type = 'module';
+        break;
 }
 
 $info = array(
@@ -183,7 +186,7 @@ fclose($fh);
 // create some more default files
 if($type=='module')
 {
-    foreach(array('install','uninstall','view','modify') as $n)
+    foreach(array('add','install','uninstall','upgrade','view','modify') as $n)
     {
         $fh = fopen($full.'/'.$n.'.php','w');
         if($fh)

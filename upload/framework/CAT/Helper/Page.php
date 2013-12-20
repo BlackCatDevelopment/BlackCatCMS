@@ -1262,9 +1262,18 @@ if (!class_exists('CAT_Helper_Page'))
          * @access public
          * @return HTML
          **/
-        public static function getPageSelect()
+        public static function getPageSelect($as_array=false)
         {
             $pages  = CAT_Helper_Page::getPages(CAT_Backend::isBackend());
+            if($as_array)
+            {
+                $opt = array();
+                foreach($pages as $pg)
+                    $opt[$pg['page_id']] = $pg['menu_title'];
+                return $opt;
+            }
+            else
+            {
             return CAT_Helper_ListBuilder::getInstance()->config(array(
                 '__li_level_css'       => true,
                 '__li_id_prefix'       => 'pageid_',
@@ -1272,6 +1281,7 @@ if (!class_exists('CAT_Helper_Page'))
                 '__li_has_child_class' => 'fc_expandable',
                 '__title_key'          => 'menu_title',
             ))->tree( $pages, 0 );
+            }
         }   // end function getPageSelect()
 
         /**
@@ -1471,39 +1481,36 @@ if (!class_exists('CAT_Helper_Page'))
         /**
          * returns the sections of a page
          *
+         * to get all sections of all pages, leave param empty
+         *
          * @access public
+         * @param  integer  $page_id
          * @return array
          **/
-        public static function getSections($page_id)
+        public static function getSections($page_id=NULL)
         {
             if(!count(self::$pages)) self::getInstance();
             if(!count(self::$pages_sections)||!isset(self::$pages_sections[$page_id]))
             {
-                // get active sections
+                // get all active sections
                 $now = time();
                 $sec = self::getInstance(true)->db()->query(sprintf(
                       'SELECT * FROM `%ssections` '
                     . 'WHERE ( "%s" BETWEEN `publ_start` AND `publ_end`) OR '
-                    . '("%s" > `publ_start` AND `publ_end`=0) '
-                    . 'AND `page_id`=%d',
-                    CAT_TABLE_PREFIX, $now, $now, $page_id
+                    . '("%s" > `publ_start` AND `publ_end`=0)',
+                    CAT_TABLE_PREFIX, $now, $now
                 ));
                 if ( $sec->numRows() > 0 )
-                {
                     while ( false !== ( $section = $sec->fetchRow(MYSQL_ASSOC) ) )
-                    {
-                        self::$pages_sections[$page_id][] = $section;
-                    }
-                }
-                else
-                {
-                    self::$pages_sections[$page_id] = array();
-                }
+                        self::$pages_sections[$section['page_id']][] = $section;
             }
+            if($page_id)
             return
                   isset(self::$pages_sections[$page_id])
                 ? self::$pages_sections[$page_id]
                 : array();
+            else
+                return self::$pages_sections;
         }   // end function getSections()
 
         /**
@@ -1600,7 +1607,8 @@ if (!class_exists('CAT_Helper_Page'))
                 // root level
                 if ( !$page['parent'] || $page['parent'] == '0' )
                 {
-                    $page['template'] = ( $page['template'] == '' ) ? DEFAULT_TEMPLATE : $page['template'];
+                    //$page['template'] = ( $page['template'] == '' ) ? DEFAULT_TEMPLATE : $page['template'];
+                    $page['template'] = ( $page['template'] == '' ) ? '' : $page['template'];
                 }
                 else
                 {

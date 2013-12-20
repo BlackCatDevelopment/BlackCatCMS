@@ -35,7 +35,8 @@ else
 					data:		{
 	      msg:  string,
 	      attr: attributes,
-          mod: module
+                mod: module,
+                _cat_ajax: 1
 	    },
 					cache:		false,
                     async:      false,

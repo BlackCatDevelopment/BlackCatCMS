@@ -29,6 +29,8 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
     {
 
         private $te;
+        private $dirh;
+        private $seen  = array();
         private $paths = array(
             'current'           => NULL,
             'frontend'          => NULL,
@@ -59,15 +61,31 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
                 $this->te->paths['workdir'] .= '/templates';
             }
             $this->te->paths['current'] = $this->te->paths['workdir'];
+            $this->dirh = CAT_Helper_Directory::getInstance();
         }
 
         public function __call($method, $args)
         {
             if ( ! method_exists( $this->te, $method ) )
-            {
                 $this->logger->logCrit('No such method: ['.$method.']');
+            switch(count($args))
+            {
+                case 0:
+                    return $this->te->$method();
+                case 1:
+                    return $this->te->$method($args[0]);
+                case 2:
+                    return $this->te->$method($args[0], $args[1]);
+                case 3:
+                    return $this->te->$method($args[0], $args[1], $args[2]);
+                case 4:
+                    return $this->te->$method($args[0], $args[1], $args[2], $args[3]);
+                case 5:
+                    return $this->te->$method($args[0], $args[1], $args[2], $args[3], $args[4]);
+                default:
+                    return call_user_func_array(array($this->te, $method), $args);
             }
-            return call_user_func_array(array($this->te, $method), $args);
+            //return call_user_func_array(array($this->te, $method), $args);
         }
 
         /**
@@ -166,39 +184,56 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
 
         /**
          *
-         * @access private
+         * @access public
          * @return
          **/
         public function findTemplate($_tpl)
         {
-            $dirh  = CAT_Helper_Directory::getInstance();
-            $dirh->setSuffixFilter(array('tpl','htt','lte'));
+            // cached
+            if(isset($this->seen[$_tpl]))
+                return $this->seen[$_tpl];
+
+            $suffix = pathinfo($_tpl,PATHINFO_EXTENSION);
+            $has_suffix = ( $suffix != '' ) ? true : false;
+
             // scan search paths (if any)
             $paths = array();
-            foreach($this->te->paths as $key => $value)
-            {
-                if(isset($this->te->paths[$key]) && file_exists($this->te->paths[$key]))
-                {
+            $s_paths = $this->te->paths;
+            // sort paths by key; this sets 'workdir' to the end of the array
+            ksort($s_paths);
+            // move 'current' to begin
+            $temp = array('current' => $s_paths['current']);
+            unset($s_paths['current']);
+            $s_paths = $temp + $s_paths;
+            foreach($s_paths as $key => $value)
+                if(isset($s_paths[$key]) && file_exists($s_paths[$key]))
                     $paths[] = $value;
-                }
-            }
             // remove doubles
             $paths = array_unique($paths);
+            // (re-)set suffix filter
+            $this->dirh->setSuffixFilter(array('tpl','htt','lte'));
+
             foreach ( $paths as $dir ) {
-                $file = $dirh->findFile($_tpl,$dir,true);
-                if ( $file ) {
+                if($has_suffix && file_exists($dir.'/'.$_tpl))
+                    $file = $dir.'/'.$_tpl;
+                else
+                    $file = $this->dirh->findFile($_tpl,$dir,true);
+                if ( $file )
+                {
+                    $this->seen[$_tpl] = $file;
                     return $file;
                 }
             }
             $this->logger->logCrit( "The template [$_tpl] does not exists in one of the possible template paths!", $paths );
             // the template does not exists, so at least prompt an error
+            $br = "\n";
             trigger_error(
                 CAT_Helper_I18n::getInstance()->translate(
                     "The template [{{ tpl }}] does not exists in one of the possible template paths!{{ paths }}",
                     array(
                         'tpl'   => $_tpl,
                         'paths' => ( $this->te->_config['show_paths_on_error']
-                                ? '<br /><br />'.CAT_Helper_I18n::getInstance()->translate('Searched paths').':<br />&nbsp;&nbsp;&nbsp;'.implode('<br />&nbsp;&nbsp;&nbsp;',$paths).'<br />'
+                                ? $br.$br.CAT_Helper_I18n::getInstance()->translate('Searched paths').':'.$br.implode($br,$paths).$br
                                 : NULL )
                     )
                 ), E_USER_ERROR

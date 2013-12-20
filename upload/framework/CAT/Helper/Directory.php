@@ -278,6 +278,23 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         }   // end function byte_convert()
 
         /**
+         * get file modification date (timestamp)
+         *
+         * @access public
+         * @param  string  $file
+         * @return string
+         **/
+        public static function getModdate($file)
+        {
+            if(is_dir($file)) return false;
+    		$stat  = stat($file);
+            $date  = isset($stat['mtime'])
+                   ? $stat['mtime']
+                   : NULL;
+        	return $date;
+        }   // end function getModdate()
+
+        /**
          * get file size
          *
          * @access public

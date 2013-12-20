@@ -14,9 +14,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- * @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
+ *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
@@ -44,9 +42,9 @@ if (defined('CAT_PATH')) {
 $print_info_banner = true;
 
 $backend = CAT_Backend::getInstance('pages','pages_modify');
-$user    = CAT_Users::getInstance();
-$val     = CAT_Helper_Validate::getInstance();
-$page_id = $val->get('_REQUEST','page_id','numeric');
+$_bc_user = CAT_Users::getInstance();
+$_bc_val  = CAT_Helper_Validate::getInstance();
+$page_id  = $_bc_val->get('_REQUEST','page_id','numeric');
 
 // for backward compatibility
 include CAT_PATH.'/framework/class.admin.php';
@@ -65,7 +63,7 @@ if (!defined('CAT_AJAX_CALL'))
     CAT_Helper_Protect::getInstance()->enableCSRFMagic();
 }
 
-$section_id = $val->get('_REQUEST','section_id','numeric');
+$section_id = $_bc_val->get('_REQUEST','section_id','numeric');
 
 // Get section id if there is one
 if ( ! $section_id )
@@ -94,14 +92,14 @@ $old_admin_groups = explode(',', str_replace('_', '', $rec_pages['admin_groups']
 $old_admin_users  = explode(',', str_replace('_', '', $rec_pages['admin_users']));
 
 $in_group = FALSE;
-foreach($user->get_groups_id() as $cur_gid)
+foreach($_bc_user->get_groups_id() as $cur_gid)
 {
     if (in_array($cur_gid, $old_admin_groups))
 	{
         $in_group = TRUE;
     }
 }
-if((!$in_group) && !is_numeric(array_search($user->get_user_id(), $old_admin_users)))
+if((!$in_group) && !is_numeric(array_search($_bc_user->get_user_id(), $old_admin_users)))
 {
 	$backend->print_error('You do not have permissions to modify this page');
 }
@@ -122,7 +120,7 @@ if ($section_id != 0) {
 
 	// check module permissions:
 	$sec = $res_sec->fetchRow( MYSQL_ASSOC );
-	if (!$user->get_permission($sec['module'], 'module'))
+	if (!$_bc_user->get_permission($sec['module'], 'module'))
 	{
 		$backend->print_error('You do not have permissions to modify this page');
 	}	

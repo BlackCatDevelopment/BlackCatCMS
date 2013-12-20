@@ -71,14 +71,13 @@ if (!class_exists('CAT_Helper_Template'))
          **/
         public static function getInstance( $driver )
         {
-            if ( ! preg_match('/driver$/i',$driver) )
-            {
+            if ( ! (strcasecmp(substr($driver, strlen($driver) - strlen('driver')),'driver')===0) )
                 $driver .= 'Driver';
-            }
+
             if ( ! file_exists( dirname(__FILE__).'/Template/'.$driver.'.php' ) )
             {
                 $s = new self();
-                $s->printFatalError( $this->lang->translate( 'No such template driver: ['.$driver.']' ) );
+                $s->printFatalError( $s->lang->translate( 'No such template driver: ['.$driver.']' ) );
             }
             self::$_driver = $driver;
             if ( ! isset(self::$_drivers[$driver]) || ! is_object(self::$_drivers[$driver]) )

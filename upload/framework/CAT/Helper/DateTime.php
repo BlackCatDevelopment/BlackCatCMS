@@ -100,7 +100,7 @@ if (!class_exists('CAT_Helper_DateTime'))
          **/
         public static function getDate($t=NULL,$long=false)
         {
-            $format = ( $long === true )
+            $format = ( $long == true )
                     ? self::getDefaultDateFormatLong()
                     : self::getDefaultDateFormatShort();
             return strftime($format,($t?$t:time()));
@@ -262,9 +262,12 @@ if (!class_exists('CAT_Helper_DateTime'))
         public static function getDefaultDateFormatLong()
         {
             global $language_date_long;
-            if ( defined('DEFAULT_DATE_FORMAT') ) return DEFAULT_DATE_FORMAT;
-            if ( isset($language_date_long) )     return $language_date_long;
-            return '%x';
+            $format = NULL;
+            if ( defined('DEFAULT_DATE_FORMAT') ) $format = DEFAULT_DATE_FORMAT;
+            elseif ( isset($language_date_long) ) $format = $language_date_long;
+            else                                  $format = '%x';
+            $format .= ' ' . self::getDefaultTimeFormat();
+            return $format;
         }
     }
 }

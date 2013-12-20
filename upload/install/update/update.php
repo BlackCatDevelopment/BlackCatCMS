@@ -109,6 +109,25 @@ if(count($dirs))
     CAT_Helper_Directory::removeDirectory($dirs[0]);
 
 
+/*******************************************************************************
+    1.0.1 TO 1.0.2
+*******************************************************************************/
+include CAT_PATH.'/framework/class.database.php';
+$database = new database();
+
+// reset default template (set to empty value in DB) - see issue #205
+$res = $database->query(sprintf(
+    'SELECT `value` FROM `%ssettings` WHERE `name`="%s"',
+    CAT_TABLE_PREFIX, 'default_template'
+));
+if($res && $res->numRows())
+{
+    $row = $res->fetchRow(MYSQL_ASSOC);
+    $database->query(sprintf(
+        'UPDATE `%spages` SET `template`="" WHERE `template`="%s"',
+        CAT_TABLE_PREFIX, $row['value']
+    ));
+}
 
 /*******************************************************************************
     update version info
@@ -118,8 +137,6 @@ if ( file_exists(dirname(__FILE__).'/../tag.txt') )
     $tag = fopen( dirname(__FILE__).'/../tag.txt', 'r' );
     list ( $current_version, $current_build ) = explode( '#', fgets($tag) );
     fclose($tag);
-    include CAT_PATH.'/framework/class.database.php';
-    $database = new database();
     $database->query(sprintf(
         'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
         CAT_TABLE_PREFIX, $current_version, 'cat_version'
@@ -128,7 +145,6 @@ if ( file_exists(dirname(__FILE__).'/../tag.txt') )
         'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
         CAT_TABLE_PREFIX, $current_build, 'cat_build'
     ));
-
 }
 
 /*******************************************************************************
