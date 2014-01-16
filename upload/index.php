@@ -75,6 +75,20 @@ $wb->default_link = CAT_Helper_Page::properties($page_id,'link');
 $admin =& $wb;
 // -----------------------------------------------------------------------------
 
+// -----------------------------------------------------------------------------
+// clean up log files (older than 24 hours and size 0)
+$files = CAT_Helper_Directory::findFiles('log_\d{4}-\d{2}-\d{2}\.txt',CAT_PATH.'/temp');
+if(count($files))
+    foreach($files as $f)
+        if(filemtime($f)<(time()-24*60*60)&&filesize($f)==0)
+            unlink($f);
+$files = CAT_Helper_Directory::findFiles('log_\d{4}-\d{2}-\d{2}\.txt',CAT_PATH.'/temp/logs');
+if(count($files))
+    foreach($files as $f)
+        if(filemtime($f)<(time()-24*60*60)&&filesize($f)==0)
+            unlink($f);
+// -----------------------------------------------------------------------------
+
 // hand over to page handler
 $page->show();
 

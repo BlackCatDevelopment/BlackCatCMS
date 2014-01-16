@@ -115,6 +115,12 @@ if(count($dirs))
 include CAT_PATH.'/framework/class.database.php';
 $database = new database();
 
+// fix cattranslate entry in class_secure table
+$database->query(sprintf(
+    'UPDATE `%sclass_secure` SET `filepath`="%s" WHERE `filepath`="%s"',
+    CAT_TABLE_PREFIX, '/modules/lib_jquery/plugins/cattranslate/cattranslate.php', '/modules/lib_jquery/plugins/catranslate/cattranslate.php'
+));
+
 // reset default template (set to empty value in DB) - see issue #205
 $res = $database->query(sprintf(
     'SELECT `value` FROM `%ssettings` WHERE `name`="%s"',
