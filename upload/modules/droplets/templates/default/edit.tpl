@@ -1,6 +1,7 @@
 {include file="header.tpl"}
   <br /><br /><a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=droplets">&laquo; {translate('Back to overview')} &laquo;</a><br />
   {if $problem}<div class="problem ui-corner-all">{$problem}</div>{/if}
+  {if $details}<div class="details ui-corner-all">{translate('Error details')}<br />{$details}</div>{/if}
   {if $info}<div class="info ui-corner-all">{$info}</div>{/if}
   <form method="post" action="{$action}">
     <input type="hidden" name="tool" value="droplets" />

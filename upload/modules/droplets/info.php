@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 $module_directory   = 'droplets';
 $module_name        = 'Droplets';
 $module_function    = 'tool';
-$module_version     = '3.1';
+$module_version     = '3.2';
 $module_platform    = '1.x';
 $module_author      = 'BlackCat Development';
 $module_license     = 'GNU General Public License';
