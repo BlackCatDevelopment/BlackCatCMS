@@ -44,7 +44,15 @@ if ( typeof jQuery != 'undefined' )
                 if(jqXHR.responseText.indexOf('fc_login_form') != -1) {
                     location.href = CAT_ADMIN_URL + '/login/index.php';
                 } else {
-                    alert('Uncaught Error.\n' + jqXHR.responseText);
+                    // CSRF Magic token lifetime exceeded
+                    if(jqXHR.responseText.match(/CSRF check failed/ig)) {
+                        alert(cattranslate('CSRF check failed. Maybe a token timeout. Trying to reload page.'));
+                        location.reload(true);
+                    }
+                    else
+                    {
+                        alert('Uncaught AJAX Error.\n' + jqXHR.responseText);
+                    }
                 }
             }
         }
