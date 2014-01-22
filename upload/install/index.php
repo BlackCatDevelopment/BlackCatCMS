@@ -32,7 +32,7 @@ if (file_exists('../config.php') && file_exists(dirname(__FILE__).'/update/updat
 }
 
 define('CAT_INSTALL',true);
-define('CAT_LOGFILE',dirname(__FILE__).'/../temp/inst.log');
+define('CAT_LOGFILE',dirname(__FILE__).'/../temp/inst_'.time().'.log');
 define('CAT_INST_EXEC_TIME',600);
 
 // Start a session
@@ -119,8 +119,9 @@ $bundled = array(
 // ----- widgets -----
     'blackcat',
 // ----- modules -----
-    'captcha_control', 'droplets'  , 'edit_area' , 'form '     , 'initial_page',
+    'blackcatFilter' , 'droplets'  , 
     'lib_dwoo'       , 'lib_images', 'lib_jquery', 'lib_pclzip', 'lib_search'  ,
+    'lib_zendlite'   , 'lib_csrfmagic',
     'menu_link'      , 'show_menu2', 'wrapper'   , 'wysiwyg'   , 'wysiwyg_admin',
 // ----- templates -----
     'blank'          , 'freshcat'  ,
@@ -128,7 +129,7 @@ $bundled = array(
     'DE'             , 'EN'
 );
 $mandatory = array(
-    'droplets', 'lib_dwoo', 'lib_jquery', 'show_menu2', 'wysiwyg', 'wysiwyg_admin'
+    'droplets', 'lib_csrfmagic', 'lib_dwoo', 'lib_jquery', 'lib_pclzip', 'show_menu2', 'wysiwyg', 'wysiwyg_admin'
 );
 
 // *****************************************************************************
@@ -693,8 +694,8 @@ function show_step_finish() {
     init_constants($cat_path);
     include $cat_path.'/framework/class.database.php';
     $database = new database();
-    if(!isset($config['install_tables_done']))
-    {
+    list ( $result, $checkerrors ) = check_tables($database);
+    if ( ! $result || count($checkerrors) ) {
         // do base installation first
         list( $result, $output ) = __do_install();
         if ( ! $result ) {
@@ -900,6 +901,10 @@ function install_modules ($cat_path,$database) {
 
     $logh = fopen( CAT_LOGFILE, 'a' );
 
+    fwrite($logh,'------------------------------------'."\n");
+    fwrite($logh,'-----    installing addons     -----'."\n");
+    fwrite($logh,'------------------------------------'."\n");
+
     foreach($dirs AS $type => $dir)
     {
         $subs = ( $type == 'languages' )
@@ -988,9 +993,9 @@ function install_optional_modules () {
         $config['optional_addon'] == $_REQUEST['installer_optional_addon'];
     }
 
-    fwrite($logh,'------------------------------------');
-    fwrite($logh,'-----installing optional addons-----');
-    fwrite($logh,'------------------------------------');
+    fwrite($logh,'------------------------------------'."\n");
+    fwrite($logh,'-----installing optional addons-----'."\n");
+    fwrite($logh,'------------------------------------'."\n");
     fwrite($logh,print_r($config['optional_addon'],1));
 
     $cat_path = $dirh->sanitizePath( dirname(__FILE__).'/..' );
