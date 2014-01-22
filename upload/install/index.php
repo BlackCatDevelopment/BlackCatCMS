@@ -292,6 +292,7 @@ if ( ! $output ) {
     {
         $tpl = 'welcome_'.$lang->getLang().'.tpl';
     }
+    $parser->setPath( dirname(__FILE__).'/templates/default' );
     $output = $parser->get( $tpl,array());
 }
 
@@ -694,8 +695,14 @@ function show_step_finish() {
     init_constants($cat_path);
     include $cat_path.'/framework/class.database.php';
     $database = new database();
-    list ( $result, $checkerrors ) = check_tables($database);
-    if ( ! $result || count($checkerrors) ) {
+
+    // check if pages table exists
+    $table_prefix = $config['table_prefix'];
+    $result = $database->query(sprintf(
+        'SHOW TABLES LIKE "%spages";',
+        $table_prefix
+    ));
+    if ( ! is_object($result) || ! $result->numRows() ) {
         // do base installation first
         list( $result, $output ) = __do_install();
         if ( ! $result ) {
