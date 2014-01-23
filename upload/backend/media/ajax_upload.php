@@ -148,7 +148,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
 
                             if ( $unzip_file != '' )
                             {
-                                $archive = CAT_Helper_Zip::getInstance( $files->file_dst_pathname );
+                                $archive = CAT_Helper_Zip::getInstance( $current->file_dst_pathname );
                                 $archive->config( 'Path', sanitize_path( $file_path ) );
                                 $archive->extract();
                                 if ( $archive->errorInfo() != 0 )
@@ -165,7 +165,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
                                 // ==============================================
                                 if ( $delete_file != '' )
                                 {
-                                    $dirh->removeDirectory( $files->file_dst_pathname );
+                                    $dirh->removeDirectory( $current->file_dst_pathname );
                                 }
                             }
                             // =================================

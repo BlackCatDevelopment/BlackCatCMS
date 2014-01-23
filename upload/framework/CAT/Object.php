@@ -295,9 +295,10 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          *  @param  mixed   $message     - message string or an array with a couple of messages
          *  @param  string  $redirect    - redirect url; default is "index.php"
          *  @param  boolean $auto_footer - optional flag to 'print' the footer. Default is true.
+         *  @param  boolean $auto_exit   - optional flag to call exit() (default) or not
          *  @return void    exit()s
          */
-    	public static function printMsg($message, $redirect = 'index.php', $auto_footer = true)
+    	public static function printMsg($message, $redirect = 'index.php', $auto_footer = true, $auto_exit = true)
     	{
     		global $parser;
 
@@ -333,7 +334,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                 else {
                     //echo "unable to print footer - no such method $caller_class -> print_footer()";
                 }
-                exit();
+                if($auto_exit)
+                    exit();
     		}
         }   // end function printMsg()
 

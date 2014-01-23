@@ -483,14 +483,18 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
             {
                 while(false!==($row=$res->fetchRow(MYSQL_ASSOC)))
                 {
+                    $this->log()->LogDebug('current row',$row);
                     $suffixes = explode('|',$row['mime_suffixes']);
                     foreach($suffixes as $suffix)
                     {
                         if ( $suffix == '' ) continue;
-                        $this->mime_types[$suffix] = $row['mime_type'];
+                        if ( ! isset($this->mime_types[$suffix]) )
+                            $this->mime_types[$suffix] = array();
+                        $this->mime_types[$suffix][] = $row['mime_type'];
                     }
                 }
         }
+            $this->log()->LogDebug('registered mime types',$this->mime_types);
     
             // allow to override default settings
             if(CAT_Registry::get('UPLOAD_ENABLE_MIMECHECK')=='false')
@@ -507,12 +511,13 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                 $this->log()->logDebug(CAT_Registry::get('UPLOAD_ALLOWED'));
                 foreach($allowed as $suffix)
                 {
-                    if ( isset($this->mime_types[$suffix]) && ! in_array($this->mime_types[$suffix],$this->allowed) )
-                    {
-                        $this->allowed[] = $this->mime_types[$suffix];
-                    }
+                    if (isset($this->mime_types[$suffix]))
+                        foreach(array_values($this->mime_types[$suffix]) as $type)
+                            if(!in_array($type,$this->allowed))
+                                $this->allowed[] = $type;
                 }
             }
+            $this->log()->LogDebug('allowed',$this->allowed);
 
         }   // end function init()
     
@@ -897,7 +902,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                     if (!$allowed)
                     {
                         $this->processed = false;
-                        $this->error = 'Incorrect type of file.';
+                        $this->error = 'Incorrect type of file. Mime type ['.$this->file_src_mime.'] is forbidden';
                     }
                     else
                     {

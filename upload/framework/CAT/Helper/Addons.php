@@ -1303,8 +1303,11 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
         public static function isModuleInstalled( $module, $version = NULL, $type = 'module' )
         {
             $self = self::getInstance();
-            $q    = $self->db()->query( sprintf( 'SELECT * FROM `%saddons` WHERE type="%s" AND ( directory="%s" OR name="%s" )', CAT_TABLE_PREFIX, $type, $module, $module ) );
-            if ( !$q->numRows() )
+            $q    = $self->db()->query(sprintf(
+                'SELECT * FROM `%saddons` WHERE type="%s" AND ( directory="%s" OR name="%s" )',
+                CAT_TABLE_PREFIX, $type, $module, $module
+            ));
+            if ( !is_object($q) || !$q->numRows() )
                 return false;
 
             // note: if there's more than one, the first match will be returned!

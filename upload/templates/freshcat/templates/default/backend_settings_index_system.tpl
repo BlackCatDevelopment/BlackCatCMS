@@ -32,9 +32,9 @@
 			<div class="fc_settings_max">
 				<strong>{translate('Page trash')}:</strong>
 				<div class="fc_settings_label" id="fc_page_trash">
-					<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_disabled" value="disabled"{if $values.page_trash == 'disabled'} checked="checked"{/if}/>
+					<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_disabled" value="false"{if $values.page_trash == 'false' || $values.page_trash === false} checked="checked"{/if}/>
 					<label for="fc_page_trash_disabled" title="{translate('Pages are deleted at once')}">{translate('Disabled')}</label>
-					<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_inline" value="inline"{if $values.page_trash == 'inline'} checked="checked"{/if}/>
+					<input type="radio" class="fc_radio_jq" name="page_trash" id="fc_page_trash_inline" value="true"{if $values.page_trash == 'true' || $values.page_trash === true} checked="checked"{/if}/>
 					<label for="fc_page_trash_inline" title="{translate('Pages are marked as \'deleted\' only and can be restored')}">{translate('Enabled')}</label>
 				</div><!-- fc_page_trash -->
 			</div>

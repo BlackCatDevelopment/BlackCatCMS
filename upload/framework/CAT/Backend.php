@@ -536,7 +536,10 @@ if (!class_exists('CAT_Backend', false))
             }
         }   // end function updateWhenModified()
         
-
+        /**
+         * methods declared in class.wb.php in WB, needed here for modules like Bakery
+         **/
+        public function add_slashes($input)     { return CAT_Helper_Validate::add_slashes($input);    }
 
     }
 }

@@ -505,7 +505,10 @@ function saveSettings($settings) {
             $value = strip_tags($value);
         // check boolean
         if (in_array($key,$boolean))
-            $value = ( ! $value || $value == '' ) ? 'false' : 'true';
+            $value = ( ! $value || $value == 'false' || $value == '' )
+                   ? 'false'
+                   : 'true'
+                   ;
         // check numeric
         if (in_array($key,$numeric))
             if( !is_numeric($value) )

@@ -218,10 +218,13 @@ class wb
     public function print_error($message, $link = 'index.php', $auto_footer = true)
     {
         CAT_Object::printError($message,$link);
+        exit();
     }
 	public function print_success($message, $redirect = 'index.php', $auto_footer = true)
 	{
-		CAT_Object::printMsg($message,$redirect,$auto_footer);
+        // this sets auto_exit to false, as some WB modules (like Bakery)
+        // have additional code after calling print_success()
+		CAT_Object::printMsg($message,$redirect,$auto_footer,false);
     }
 
     /* moved to CAT_Helper_Mail */
