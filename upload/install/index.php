@@ -699,7 +699,7 @@ function show_step_finish() {
     // check if pages table exists
     $table_prefix = $config['table_prefix'];
     $result = $database->query(sprintf(
-        'SHOW TABLES LIKE "%spages";',
+        'SHOW TABLES LIKE `%spages`;',
         $table_prefix
     ));
     if ( ! is_object($result) || ! $result->numRows() ) {
@@ -1070,7 +1070,7 @@ function check_tables($database) {
     $requested_tables = array("class_secure","pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_droplets_settings","mod_droplets_permissions","mod_wysiwyg","mod_wysiwyg_admin_v2");
     for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
 
-    $result = mysql_query("SHOW TABLES FROM ".CAT_DB_NAME);
+    $result = mysql_query("SHOW TABLES FROM `".CAT_DB_NAME."`");
 
     if(!is_resource($result)) {
         $errors['tables'] = 'Unable to check tables - no result from SHOW TABLES!';
