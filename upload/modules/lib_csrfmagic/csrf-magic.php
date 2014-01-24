@@ -144,7 +144,12 @@ function csrf_ob_handler($buffer, $flags) {
     static $is_html = false;
     if (!$is_html) {
         // not HTML until proven otherwise
-        if (stripos($buffer, '<html') !== false) {
+// ------------------------------------------------------------
+// -----          modified by Black Cat Development       -----
+// ----- we sometimes parse content without opening <html -----
+// -----               so we use <form here               -----
+// ------------------------------------------------------------
+        if (stripos($buffer, '<form') !== false) {
             $is_html = true;
         } else {
             return $buffer;

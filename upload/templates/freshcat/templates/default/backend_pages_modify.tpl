@@ -1,6 +1,6 @@
 {include('backend_pages_header.tpl')}
+{include backend_pages_banner.tpl}
 <div id="fc_main_content">
-    {include backend_pages_banner.tpl}
 	<div class="fc_modified_header fc_br_bottom fc_gradient1 fc_border">
 		<form action="{$CAT_ADMIN_URL}/pages/sections_save.php" id="fc_add_module_form" name="add_section" method="post">
 			<div id="fc_add_module">

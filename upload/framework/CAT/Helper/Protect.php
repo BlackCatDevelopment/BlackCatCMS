@@ -104,6 +104,7 @@ if (!class_exists('CAT_Helper_Protect'))
                 if ( ! file_exists( $path ) )
                     $this->printFatalError('Missing library CSRF-Magic!');
                 include $path;
+                CAT_Registry::set('CSRF_PROTECTION_ENABLED',true,true);
             }
         }   // end function enableCSRFMagic()
 
