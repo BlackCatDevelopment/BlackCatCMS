@@ -32,7 +32,7 @@ if (file_exists('../config.php') && file_exists(dirname(__FILE__).'/update/updat
 }
 
 define('CAT_INSTALL',true);
-define('CAT_LOGFILE',dirname(__FILE__).'/../temp/inst_'.time().'.log');
+define('CAT_LOGFILE',dirname(__FILE__).'/../temp/inst.log');
 define('CAT_INST_EXEC_TIME',600);
 
 // Start a session

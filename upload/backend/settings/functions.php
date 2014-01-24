@@ -449,6 +449,22 @@ function saveMail($backend) {
     }
 }
 
+function saveSearch($backend) {
+    $olddata = getSearchSettings();
+    $val     = CAT_Helper_Validate::getInstance();
+    foreach($olddata as $key => $value)
+    {
+        $new = $val->sanitizePost('search_'.$key);
+        if($new && $new != '' && $new != $value)
+        {
+            $backend->db()->query(sprintf(
+                "UPDATE `%ssearch` SET `value`='%s' WHERE `name`='%s'",
+                CAT_TABLE_PREFIX, $new, $key
+            ));
+        }
+    }
+}
+
 function saveSecurity($backend) {
     $val             = CAT_Helper_Validate::getInstance();
 	$enabled_captcha = ($val->sanitizePost('enabled_captcha') == '1') ? '1' : '0';

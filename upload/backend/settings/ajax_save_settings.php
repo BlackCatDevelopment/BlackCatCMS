@@ -85,8 +85,8 @@ switch($region)
     case 'mail':
         saveMail($backend);
         break;
-    case 'search':
-        saveSearch();
+    case 'searchblock':
+        saveSearch($backend);
         break;
 }
 

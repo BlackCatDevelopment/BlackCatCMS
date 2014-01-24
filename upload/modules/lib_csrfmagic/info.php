@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 $module_directory     = 'lib_csrfmagic';
 $module_name          = 'CSRF-Magic for BlackCat CMS';
 $module_function      = 'library';
-$module_version       = '1.1';
+$module_version       = '1.1.1';
 $module_platform      = '1.x';
 $module_author        = 'CSRF-Magic by http://csrf.htmlpurifier.org/; this module by Black Cat Development';
 $module_license       = 'CSRF-Magic BSD License, this module GNU General Public License';
