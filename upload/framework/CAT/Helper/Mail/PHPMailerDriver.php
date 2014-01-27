@@ -92,7 +92,6 @@ if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
                         if ( isset(self::$settings['smtp_timeout']) && self::$settings['smtp_timeout'] != '' )
                             $mail->Timeout = self::$settings['smtp_timeout'];
                     }
-                }
                 else {
         			// use PHP mail() function for outgoing mails send by Website Baker
         			self::$instance->IsMail();
