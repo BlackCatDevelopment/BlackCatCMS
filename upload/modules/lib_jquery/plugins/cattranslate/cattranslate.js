@@ -17,8 +17,8 @@ if ( typeof jQuery == 'undefined' ) {
 else
 {  // ----- AJAX Setup -----
   jQuery.ajaxSetup({
-        error: function( x, e )
-        {
+    error: function( x, e )
+    {
       if( x.status == 0 )           { alert('You are offline!!\n Please Check Your Network.'); }
       else if( x.status == 404 )    { alert('Requested URL not found.');                       }
       else if( x.status == 500 )    { alert('Internal Server Error.');                         }
@@ -27,31 +27,30 @@ else
       else                          { alert('Unknown Error.\n'+x.responseText);                }
     }
   });
-	function cattranslate( string, elem, attributes, module ) {
-        translated = '';
-        $.ajax({
-					type:		'post',
-					url:		url,
-					data:		{
-	      msg:  string,
-	      attr: attributes,
-                mod: module,
-                _cat_ajax: 1
-	    },
-					cache:		false,
-                    async:      false,
-                    success:    function( data ) {
-                                    if ( typeof elem != 'undefined' && typeof elem != '' )
-                                    {
-		      jQuery(elem).text(jQuery(data).text());
-          }
-                                    else
-                                    {
-                                        translated = jQuery(data).text();
-                                    }
-          }
-	    });
-        if(translated=='') translated = string;
-        return translated;
-	}
+  function cattranslate( string, elem, attributes, module ) {
+    translated = '';
+    $.ajax({
+      type:    'post',
+      url:     url,
+      data:    {
+        msg:  string,
+        attr: attributes,
+        mod: module,
+        _cat_ajax: 1
+      },
+      cache:   false,
+      async:   false,
+      success: function( data ) {
+        if ( typeof elem != 'undefined' && typeof elem != '' && elem != '' ) {
+          jQuery(elem).text(jQuery(data).text());
+        }
+        else
+        {
+          translated = jQuery(data).text();
+        }
+      }
+    });
+    if(translated=='') translated = string;
+    return translated;
+  }
 }

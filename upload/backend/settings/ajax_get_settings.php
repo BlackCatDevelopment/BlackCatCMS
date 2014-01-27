@@ -109,6 +109,8 @@ switch($region)
         break;
     case 'mail':
         $tpl_data['CATMAILER_LIBS'] = getMailerLibs();
+        if(!isset($tpl_data['values']['catmailer_smtp_timeout']))
+            $tpl_data['values']['catmailer_smtp_timeout'] = 30;
         break;
     case 'security':
         $admin =& $backend;

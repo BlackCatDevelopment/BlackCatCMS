@@ -782,7 +782,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     else
                     {
                         $temp_infofile = pathinfo( $info, PATHINFO_DIRNAME );
-                        $self->log()->LogDebug(sprintf('set $temp_info to [%s]', $temp_info));
+                        $self->log()->LogDebug(sprintf('set $temp_infofile to [%s]', $temp_infofile));
                     }
                 }
                 else
