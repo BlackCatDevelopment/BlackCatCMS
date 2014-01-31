@@ -113,7 +113,7 @@ jQuery(document).ready(function(){
 						window.location		= data.url
 					}
 					else {
-						$('#fc_forms').effect( 'shake', { times: 2 }, 400);
+						$('#fc_forms').effect( 'shake', { times: 2 }, 300, function(){ $(this).css({left: '50%'})});
 						$('#fc_message_login').addClass('icon-warning highlight').removeClass('icon-info').text(' ' + data.message).slideDown(300);
 						$('input[name=' + password_fieldname + ']').val('').focus();
 					}

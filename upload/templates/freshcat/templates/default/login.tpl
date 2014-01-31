@@ -26,8 +26,6 @@
 
 <script src="{$CAT_URL}/modules/lib_jquery/jquery-core/jquery-core.min.js" type="text/javascript"></script>
 <script src="{$CAT_URL}/modules/lib_jquery/jquery-ui/ui/jquery-ui.min.js" type="text/javascript"></script>
-<script src="{$CAT_URL}/modules/lib_jquery/jquery-ui/ui/jquery.effects.fade.min.js" type="text/javascript"></script>
-<script src="{$CAT_URL}/modules/lib_jquery/jquery-ui/ui/jquery.effects.shake.min.js" type="text/javascript"></script>
 
 <script src="{$CAT_THEME_URL}/js/login.js" type="text/javascript"></script>
 
