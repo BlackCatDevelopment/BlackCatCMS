@@ -32,9 +32,12 @@
 			main_content:		$('#fc_main_content'),
 			leftside:			$('#fc_sidebar, #fc_content_container'),
 			rightside:			$('#fc_content_container, #fc_content_footer'),
+			rightcontent:		$('#fc_content_container'),
 			overview_list:		$('#fc_list_overview'),
 			side_add:			$('#fc_add_page'),
-			media:				$('#fc_media_browser')
+			media:				$('#fc_media_browser'),
+			bottomright:		130,
+			bottomleft:			79
 		};
 		var options = $.extend(defaults, options);
 		return this.each(function ()
@@ -50,24 +53,29 @@
 				// set some values
 				options.main_content.css(
 				{
-					maxHeight:	window_height - 131 + 'px'
+					maxHeight:	window_height - options.bottomright + 'px'
 				});
 				options.media.css(
 				{
-					maxHeight:	window_height - 131 + 'px'
+					maxHeight:	window_height - options.bottomright + 'px'
 				});
-				options.leftside.height(window_height - 80);
+				options.leftside.height(window_height - options.bottomright + 30);
+				options.sidebar.height(window_height - options.bottomright + 48);
+				options.rightcontent.height(window_height - options.bottomleft );
+
 				options.rightside.width(window_width - sidebar_width);
-				options.sidebar_content.height(window_height - 102);
+				options.sidebar_content.height(window_height - options.bottomright + 26);
+
+				var add_size	= $('#fc_list_add').size() > 0 ? 58 : 30;
 
 				options.overview_list.css(
 				{
-					maxHeight:	window_height - 187 + 'px'
+					maxHeight:	window_height - options.bottomright - add_size + 'px'
 				});
 				options.side_add.css(
 				{
 					left:	sidebar_width + 'px',
-					height:	window_height - 80 + 'px'
+					height:	window_height - options.bottomright + 51 + 'px'
 				});
 
 			}).resize();
