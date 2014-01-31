@@ -170,6 +170,7 @@ $LANG = array(
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Datei kann nicht geschrieben werden)',
     'Error creating access file in the pages directory, path not writable or forbidden file / directory name'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Verzeichnis nicht schreibbar oder verbotener Datei-/Verzeichnisname)',
+    'File not found' => 'Datei nicht gefunden',
     'File upload error: {{error}}' => 'Datei Upload Fehler: {{error}}',
     'Invalid characters in username found' => 'Ungültige Zeichen im Benutzernamen gefunden',
     'Invalid password chars used, valid chars are: a-z\A-Z\0-9\_\-\!\#\*\+'

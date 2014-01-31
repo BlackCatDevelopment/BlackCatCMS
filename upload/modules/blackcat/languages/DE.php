@@ -57,4 +57,5 @@ $LANG = array(
     'Number of last edited pages to show' => 'Anzahl zuletzt geänderter Seiten anzeigen',
     'Latest changed pages' => 'Zuletzt geänderte Seiten',
     'Version check failed!' => 'Versionsprüfung fehlgeschlagen!',
+    'No logfiles (or all empty)' => 'Keine Logdateien (oder nur leere)',
 );

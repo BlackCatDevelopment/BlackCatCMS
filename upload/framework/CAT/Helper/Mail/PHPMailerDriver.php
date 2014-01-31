@@ -22,11 +22,12 @@
  *   @package         CAT_Core
  *
  */
-require_once dirname(__FILE__).'/../../../../modules/lib_phpmailer/phpmailer/class.phpmailer.php';
+require_once dirname(__FILE__) . '/../../../../modules/lib_phpmailer/phpmailer/class.phpmailer.php';
 
-if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
+if (!class_exists('CAT_Helper_Mail_PHPMailerDriver', false)) {
 
-    class CAT_Helper_Mail_PHPMailerDriver extends PHPMailer {
+    class CAT_Helper_Mail_PHPMailerDriver extends PHPMailer
+    {
 
         private static $instance;
         private static $settings;
@@ -37,145 +38,133 @@ if(!class_exists('CAT_Helper_Mail_PHPMailerDriver',false)) {
         {
             parent::__construct(true);
             $this->IsHTML(true);
-    		$this->WordWrap = 80;
-    		$this->Timeout  = 30;
+            $this->WordWrap = 80;
+            $this->Timeout  = 30;
         }
 
         /**
          * singleton pattern
          **/
-        public static function getInstance($settings=NULL)
+        public static function getInstance($settings = NULL)
         {
-            if (!self::$instance)
-            {
+            if (!self::$instance) {
                 self::$instance = new self();
             }
-            if ( $settings )
-            {
+            if ($settings) {
                 self::$settings = $settings;
                 $is_error       = false;
                 try {
-                // create the transport
-                if(    isset(self::$settings['routine'])
-                    && self::$settings['routine'] == "smtp"
-                    && isset(self::$settings['smtp_host'])
-                    && strlen(self::$settings['smtp_host']) > 5
-                ) {
+                    // create the transport
+                    if (isset(self::$settings['routine']) && self::$settings['routine'] == "smtp" && isset(self::$settings['smtp_host']) && strlen(self::$settings['smtp_host']) > 5) {
                         self::$instance->SMTPDebug = 0;
-                    self::$instance->IsSMTP();
-        			self::$instance->Host = self::$settings['smtp_host'];
-        			if (   isset(self::$settings['smtp_auth'])
-                        && isset(self::$settings['smtp_username'])
-                        && isset(self::$settings['smtp_password'])
-                        && self::$settings['smtp_auth'] == "true"
-                        && strlen(self::$settings['smtp_username']) > 1
-                        && strlen(self::$settings['smtp_password']) > 1
-                    ) {
-        				self::$instance->SMTPAuth = true;
-        				self::$instance->Username = self::$settings['smtp_username'];
-        				self::$instance->Password = self::$settings['smtp_password'];
-        			}
+                        self::$instance->IsSMTP();
+                        self::$instance->Host = self::$settings['smtp_host'];
+                        if (isset(self::$settings['smtp_auth']) && isset(self::$settings['smtp_username']) && isset(self::$settings['smtp_password']) && self::$settings['smtp_auth'] == "true" && strlen(self::$settings['smtp_username']) > 1 && strlen(self::$settings['smtp_password']) > 1) {
+                            self::$instance->SMTPAuth = true;
+                            self::$instance->Username = self::$settings['smtp_username'];
+                            self::$instance->Password = self::$settings['smtp_password'];
+                        }
                         // check for SSL
-                        if (isset(self::$settings['smtp_ssl']) && self::$settings['smtp_ssl'] == true)
-                        {
+                        if (isset(self::$settings['smtp_ssl']) && self::$settings['smtp_ssl'] == true) {
                             $transports = stream_get_transports();
-                            if(in_array('ssl',$transports))
-                            {
+                            if (in_array('ssl', $transports)) {
                                 $mail->SMTPSecure = 'ssl';
-                                if(isset(self::$settings['smtp_ssl_port']) && self::$settings['smtp_ssl_port'] != '')
+                                if (isset(self::$settings['smtp_ssl_port']) && self::$settings['smtp_ssl_port'] != '')
                                     $mail->Port = self::$settings['smtp_ssl_port'];
                                 else
                                     $mail->Port = 587; // default port
                             }
                         }
                         // timeout
-                        if ( isset(self::$settings['smtp_timeout']) && self::$settings['smtp_timeout'] != '' )
+                        if (isset(self::$settings['smtp_timeout']) && self::$settings['smtp_timeout'] != '')
                             $mail->Timeout = self::$settings['smtp_timeout'];
+                    } else {
+                        // use PHP mail() function for outgoing mails send by Website Baker
+                        self::$instance->IsMail();
                     }
-                else {
-        			// use PHP mail() function for outgoing mails send by Website Baker
-        			self::$instance->IsMail();
-        		}
-                } catch ( phpmailerException $e ) {
+                }
+                catch (phpmailerException $e) {
                     CAT_Helper_Mail::setError(self::$instance->ErrorInfo);
                     $is_error = true;
-                } catch ( Exception $e ) {
+                }
+                catch (Exception $e) {
                     CAT_Helper_Mail::setError($e->getMessage());
                     $is_error = true;
                 }
 
-                if ( $is_error ) {
+                if ($is_error) {
                     return false;
-                }
-                else
-                {
+                } else {
                     try {
-                // set default sender name
-        		if(self::$instance->FromName == 'Root User') {
-        			if(isset($_SESSION['DISPLAY_NAME'])) {
-        				self::$instance->FromName = $_SESSION['DISPLAY_NAME'];
-        			} else {
-        				self::$instance->FromName = self::$settings['default_sendername'];
-        			}
-        		}
-        		self::$instance->From = self::$settings['server_email'];
-                    } catch ( phpmailerException $e ) {
+                        // set default sender name
+                        if (self::$instance->FromName == 'Root User') {
+                            if (isset($_SESSION['DISPLAY_NAME'])) {
+                                self::$instance->FromName = $_SESSION['DISPLAY_NAME'];
+                            } else {
+                                self::$instance->FromName = self::$settings['default_sendername'];
+                            }
+                        }
+                        self::$instance->From = self::$settings['server_email'];
+                    }
+                    catch (phpmailerException $e) {
                         CAT_Helper_Mail::setError(self::$instance->ErrorInfo);
-                    } catch ( Exception $e ) {
+                    }
+                    catch (Exception $e) {
                         CAT_Helper_Mail::setError($e->getMessage());
                     }
                 }
 
                 // set language file for PHPMailer error messages
-        		if(defined("LANGUAGE")) {
-        			self::$instance->SetLanguage(strtolower(LANGUAGE),"language/");
-        		}
+                if (defined("LANGUAGE")) {
+                    self::$instance->SetLanguage(strtolower(LANGUAGE), "language/");
+                }
 
-        		// set default charset
-        		if(defined('DEFAULT_CHARSET')) {
-        			self::$instance->CharSet = DEFAULT_CHARSET;
-        		} else {
-        			self::$instance->CharSet = 'utf-8';
-        		}
+                // set default charset
+                if (defined('DEFAULT_CHARSET')) {
+                    self::$instance->CharSet = DEFAULT_CHARSET;
+                } else {
+                    self::$instance->CharSet = 'utf-8';
+                }
             }
             return self::$instance;
-        }   // end function getInstance()
+        } // end function getInstance()
 
         /**
          *
          **/
-        public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname='')
+        public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname = '')
         {
             // format
-            $fromaddress = preg_replace('/[\r\n]/'  , ''      , $fromaddress);
-            $toaddress   = preg_replace('/[\r\n]/'  , ''      , $toaddress  );
-            $subject     = preg_replace('/[\r\n]/'  , ''      , $subject    );
-            $message     = preg_replace('/\r\n?|\n/', '<br \>', $message    );
+            $fromaddress = preg_replace('/[\r\n]/', '', $fromaddress);
+            $toaddress   = preg_replace('/[\r\n]/', '', $toaddress);
+            $subject     = preg_replace('/[\r\n]/', '', $subject);
+            $message     = preg_replace('/\r\n?|\n/', '<br \>', $message);
 
             try {
-            if ($fromaddress != '')
-            {
-                if ($fromname != '')
-                    self::$instance->FromName = $fromname;
-                self::$instance->From = $fromaddress;
-                self::$instance->AddReplyTo($fromaddress);
-            }
+                if ($fromaddress != '') {
+                    if ($fromname != '')
+                        self::$instance->FromName = $fromname;
+                    self::$instance->From = $fromaddress;
+                    self::$instance->AddReplyTo($fromaddress);
+                }
 
-            self::$instance->AddAddress($toaddress);
-            self::$instance->Subject = $subject;
-            self::$instance->Body    = $message;
-            self::$instance->AltBody = strip_tags($message);
+                self::$instance->AddAddress($toaddress);
+                self::$instance->Subject = $subject;
+                self::$instance->Body    = $message;
+                self::$instance->AltBody = strip_tags($message);
                 self::$instance->Send();
                 return true;
-            } catch ( phpmailerException $e ) {
+            }
+            catch (phpmailerException $e) {
                 CAT_Helper_Mail::setError(self::$instance->ErrorInfo);
                 return false;
-            } catch ( Exception $e ) {
+            }
+            catch (Exception $e) {
                 CAT_Helper_Mail::setError($e->getMessage());
                 return false;
             }
             // never reached
             return true;
-        }   // end function sendMail()
+        } // end function sendMail()
     }
 }

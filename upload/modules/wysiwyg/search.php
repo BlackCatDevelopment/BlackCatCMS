@@ -60,6 +60,14 @@ function wysiwyg_search($func_vars)
     {
 		if($res = $query->fetchRow())
         {
+            if(CAT_Helper_Addons::isModuleInstalled('kit_framework'))
+            {
+                // remove all kitCommands from the content
+                preg_match_all('/(~~)( |&nbsp;)(.){3,512}( |&nbsp;)(~~)/', $res['content'], $matches, PREG_SET_ORDER);
+                foreach ($matches as $match) {
+                    $res['content'] = str_replace($match[0], '', $res['content']);
+                }
+            }
 			$mod_vars = array(
 				'page_link'          => $func_page_link,
 				'page_link_target'   => SEC_ANCHOR."#section_$func_section_id",
