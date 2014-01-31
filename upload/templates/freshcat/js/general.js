@@ -154,10 +154,13 @@ function togglePageTree()
 function return_error( process_div, message )
 {
 	// Remove previously generated .process if an error occured
-	process_div.slideUp(1200,function()
-	{
-		process_div.remove();
-	});
+	if ( typeof process_div != 'undefined' )
+ 	{
+		process_div.slideUp(1200,function()
+		{
+			process_div.remove();
+		});
+	}
 
 	// Check if .fc_popup exists - if not add div.fc_popup before #admin_header
 	if ( $('.fc_popup').size() === 0 )
