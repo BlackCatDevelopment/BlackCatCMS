@@ -1044,7 +1044,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function getLevel($page_id)
         {
-            $parent = self::properties($page_id,'level');
+            $parent = self::properties($page_id,'parent');
             if ($parent > 0)
             {
                 $level = self::properties($parent,'level');
