@@ -158,7 +158,7 @@ if (!class_exists('CAT_Helper_Page'))
                         $row['is_in_trail']      = false;
                         $row['is_direct_parent'] = false;
                         $row['is_current']       = false;
-                        $row['is_open'] = isset( $_COOKIE['pageid_'.$row['page_id']] ) ? true : false; // for page tree
+                        $row['is_open'] = isset( $_COOKIE[ session_name() . 'pageid_'.$row['page_id']] ) ? true : false; // for page tree
                         $row['href']             = CAT_URL . PAGES_DIRECTORY . $row['link'] . PAGE_EXTENSION;
 
                         // mark editable pages by checking user perms and page
