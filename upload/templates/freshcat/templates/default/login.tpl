@@ -3,7 +3,7 @@
 <head>
 <title>{translate('Login')}</title>
 
-<link rel="shortcut icon" href="{$CAT_THEME_URL}/images/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="{$CAT_THEME_URL}/css/images/favicon.ico" type="image/x-icon" />
 
 <meta http-equiv="content-type" content="text/html; charset={$meta.CHARSET}" />
 <meta http-equiv="content-language" content="{$meta.LANGUAGE}" />
@@ -40,41 +40,42 @@
 			<p>{translate('To use <span class="icon-logo">Black Cat CMS</span>, please enable JavaScript in your browser and try again.')}</p>
 		</div>
 	</noscript>
-	<div id="fc_forms" class="fc_br_all fc_shadow_big">
-		<div id="fc_login_header" class="fc_br_top fc_gradient4">
-			<a href="{$CAT_URL}" class="icon-home fc_border_all fc_border_all_light fc_gradient1 fc_gradient_hover" id="fc_home_site" title="{translate('Home')}"></a>
+	<div id="shake_wrapper">
+		<div id="fc_forms" class="fc_br_all fc_shadow_big">
+			<div id="fc_login_header" class="fc_br_top fc_gradient4">
+				<a href="{$CAT_URL}" class="icon-home fc_border_all fc_border_all_light fc_gradient1 fc_gradient_hover" id="fc_home_site" title="{translate('Home')}"></a>
+			</div>
+			<form name="login" action="{$ACTION_URL}" method="post" id="fc_login_form" class="fc_gradient1 fc_br_bottom fc_border">
+				<p>
+					{*Currently not active <input type="hidden" name="url" value="{$REDIRECT}" />*}
+					<input type="hidden" name="username_fieldname" value="{$USERNAME_FIELDNAME}" />
+					<input type="hidden" name="password_fieldname" value="{$PASSWORD_FIELDNAME}" />
+		
+					<label for="fc_login_username">{translate('Username')}</label>
+					<input type="text" maxlength="{$MAX_USERNAME_LEN}" name="{$USERNAME_FIELDNAME}" value="{$USERNAME}" id="fc_login_username" />
+				</p>
+				<p>
+					<label for="fc_login_password">{translate('Password')}</label>
+					<input type="password" maxlength="{$MAX_PASSWORD_LEN}" name="{$PASSWORD_FIELDNAME}" id="fc_login_password" />
+				</p>
+				<p>
+					<button type="submit" name="submit_login" class="fc_login_button icon-switch"> {translate('Login')}</button>
+				</p>
+				<p class="fc_loader"></p>
+				<p id="fc_message_login"></p>
+			</form>
+			<form name="forgot_pass" action="{$CAT_ADMIN_URL}/login/forgot/ajax_forgot.php" method="post" id="fc_login_forgot_form" class="fc_gradient1 fc_br_bottom fc_border">
+				<p>
+					<label for="fc_forgot">{translate('Email')}</label>
+					<input type="text" maxlength="255" name="email" value="{if $EMAIL}{$EMAIL}{/if}" id="fc_forgot" />
+					<button type="submit" name="submit_email" class="fc_forgot_button icon-mail"> {translate('Send details')}</button>
+				</p>
+				<p class="fc_loader"></p>
+				<p id="fc_message"></p>
+				<span class="fc_br_top icon-help fc_gradient1 fc_gradient_hover fc_border_all_light" id="fc_home_login"> {translate('Need to log-in?')}</span>
+			</form>
 		</div>
-		<form name="login" action="{$ACTION_URL}" method="post" id="fc_login_form" class="fc_gradient1 fc_br_bottom fc_border">
-			<p>
-				{*Currently not active <input type="hidden" name="url" value="{$REDIRECT}" />*}
-				<input type="hidden" name="username_fieldname" value="{$USERNAME_FIELDNAME}" />
-				<input type="hidden" name="password_fieldname" value="{$PASSWORD_FIELDNAME}" />
-	
-				<label for="fc_login_username">{translate('Username')}</label>
-				<input type="text" maxlength="{$MAX_USERNAME_LEN}" name="{$USERNAME_FIELDNAME}" value="{$USERNAME}" id="fc_login_username" />
-			</p>
-			<p>
-				<label for="fc_login_password">{translate('Password')}</label>
-				<input type="password" maxlength="{$MAX_PASSWORD_LEN}" name="{$PASSWORD_FIELDNAME}" id="fc_login_password" />
-			</p>
-			<p>
-				<button type="submit" name="submit_login" class="fc_login_button icon-switch"> {translate('Login')}</button>
-			</p>
-			<p class="fc_loader"></p>
-			<p id="fc_message_login"></p>
-		</form>
-		<form name="forgot_pass" action="{$CAT_ADMIN_URL}/login/forgot/ajax_forgot.php" method="post" id="fc_login_forgot_form" class="fc_gradient1 fc_br_bottom fc_border">
-			<p>
-				<label for="fc_forgot">{translate('Email')}</label>
-				<input type="text" maxlength="255" name="email" value="{if $EMAIL}{$EMAIL}{/if}" id="fc_forgot" />
-				<button type="submit" name="submit_email" class="fc_forgot_button icon-mail"> {translate('Send details')}</button>
-			</p>
-			<p class="fc_loader"></p>
-			<p id="fc_message"></p>
-			<span class="fc_br_top icon-help fc_gradient1 fc_gradient_hover fc_border_all_light" id="fc_home_login"> {translate('Need to log-in?')}</span>
-		</form>
 	</div>
-	
 	<div class="fc_gradient4 fc_license">
 		<p class="right"><a href="http://blackcat-cms.org" title="Black Cat CMS Core" target="_blank">Black Cat CMS Core</a> is released under the
 			<a href="http://www.gnu.org/licenses/gpl.html" title="Black Cat CMS Core is GPL" target="_blank">GNU General Public License</a>.<br />

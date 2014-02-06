@@ -3,7 +3,7 @@
 <head>
 	<title>{$META.WEBSITE_TITLE} &raquo; {translate('Administration')} - {$HEAD.SECTION_NAME}</title>
 
-	<link rel="shortcut icon" href="{$CAT_THEME_URL}/images/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="{$CAT_THEME_URL}/css/images/favicon.ico" type="image/x-icon" />
     <meta http-equiv="content-type" content="text/html; charset={$META.CHARSET}" />
 	<meta name="description" content="{translate('Administration')}" />
 	<meta name="keywords" content="{translate('Administration')}" />
