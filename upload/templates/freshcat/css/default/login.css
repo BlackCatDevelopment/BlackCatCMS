@@ -63,17 +63,21 @@ input[type=text],input[type=password] {
 	text-align: left;
 }
 #fc_forms, #fc_warning_message {
-	position:		absolute;
+	text-align:		center;
+	line-height:	2em;
+	width:			382px;
+	display:		none;
+}
+#shake_wrapper {
+		position:		absolute;
 	top:			50%;
 	left:			50%;
 	z-index:		2;
-	display:		none;
 	margin-top:		-150px;
 	margin-left:	-191px;
 	padding:		0px;
 	width:			382px;
-	text-align:		center;
-	line-height:	2em;
+
 }
 #fc_warning_message {
 	display:		block;
