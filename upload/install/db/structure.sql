@@ -18,16 +18,8 @@ DROP TABLE IF EXISTS `cat_mod_captcha_control`;
 DROP TABLE IF EXISTS `cat_mod_droplets_permissions`;
 DROP TABLE IF EXISTS `cat_mod_droplets_settings`;
 DROP TABLE IF EXISTS `cat_mod_droplets`;
-DROP TABLE IF EXISTS `cat_mod_form_fields`;
-DROP TABLE IF EXISTS `cat_mod_form_settings`;
-DROP TABLE IF EXISTS `cat_mod_form_submissions`;
 DROP TABLE IF EXISTS `cat_mod_initial_page`;
 DROP TABLE IF EXISTS `cat_mod_menu_link`;
-DROP TABLE IF EXISTS `cat_mod_news_comments`;
-DROP TABLE IF EXISTS `cat_mod_news_groups`;
-DROP TABLE IF EXISTS `cat_mod_news_posts`;
-DROP TABLE IF EXISTS `cat_mod_news_settings`;
-DROP TABLE IF EXISTS `cat_mod_output_interface`;
 DROP TABLE IF EXISTS `cat_mod_wrapper`;
 DROP TABLE IF EXISTS `cat_mod_wysiwyg`;
 DROP TABLE IF EXISTS `cat_mod_wysiwyg_admin`;
@@ -124,51 +116,6 @@ CREATE TABLE `cat_mod_droplets` (
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `cat_mod_form_fields` (
-  `field_id` int(11) NOT NULL AUTO_INCREMENT,
-  `section_id` int(11) NOT NULL DEFAULT '0',
-  `page_id` int(11) NOT NULL DEFAULT '0',
-  `position` int(11) NOT NULL DEFAULT '0',
-  `title` varchar(255) NOT NULL DEFAULT '',
-  `type` varchar(255) NOT NULL DEFAULT '',
-  `required` int(11) NOT NULL DEFAULT '0',
-  `value` text NOT NULL,
-  `extra` text NOT NULL,
-  PRIMARY KEY (`field_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `cat_mod_form_settings` (
-  `section_id` int(11) NOT NULL DEFAULT '0',
-  `page_id` int(11) NOT NULL DEFAULT '0',
-  `header` text NOT NULL,
-  `field_loop` text NOT NULL,
-  `footer` text NOT NULL,
-  `email_to` text NOT NULL,
-  `email_from` varchar(255) NOT NULL DEFAULT '',
-  `email_fromname` varchar(255) NOT NULL DEFAULT '',
-  `email_subject` varchar(255) NOT NULL DEFAULT '',
-  `success_page` text NOT NULL,
-  `success_email_to` text NOT NULL,
-  `success_email_from` varchar(255) NOT NULL DEFAULT '',
-  `success_email_fromname` varchar(255) NOT NULL DEFAULT '',
-  `success_email_text` text NOT NULL,
-  `success_email_subject` varchar(255) NOT NULL DEFAULT '',
-  `stored_submissions` int(11) NOT NULL DEFAULT '0',
-  `max_submissions` int(11) NOT NULL DEFAULT '0',
-  `use_captcha` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`section_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `cat_mod_form_submissions` (
-  `submission_id` int(11) NOT NULL AUTO_INCREMENT,
-  `section_id` int(11) NOT NULL DEFAULT '0',
-  `page_id` int(11) NOT NULL DEFAULT '0',
-  `submitted_when` int(11) NOT NULL DEFAULT '0',
-  `submitted_by` int(11) NOT NULL DEFAULT '0',
-  `body` text NOT NULL,
-  PRIMARY KEY (`submission_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE IF NOT EXISTS `cat_mod_menu_link` (
   `section_id` int(11) NOT NULL DEFAULT '0',
   `page_id` int(11) NOT NULL DEFAULT '0',
@@ -177,74 +124,6 @@ CREATE TABLE IF NOT EXISTS `cat_mod_menu_link` (
   `anchor` varchar(255) NOT NULL DEFAULT '0',
   `extern` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`section_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `cat_mod_news_comments` (
-  `comment_id` int(11) NOT NULL AUTO_INCREMENT,
-  `section_id` int(11) NOT NULL DEFAULT '0',
-  `page_id` int(11) NOT NULL DEFAULT '0',
-  `post_id` int(11) NOT NULL DEFAULT '0',
-  `title` varchar(255) NOT NULL DEFAULT '',
-  `comment` text NOT NULL,
-  `commented_when` int(11) NOT NULL DEFAULT '0',
-  `commented_by` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`comment_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-CREATE TABLE IF NOT EXISTS `cat_mod_news_groups` (
-  `group_id` int(11) NOT NULL AUTO_INCREMENT,
-  `section_id` int(11) NOT NULL DEFAULT '0',
-  `page_id` int(11) NOT NULL DEFAULT '0',
-  `active` int(11) NOT NULL DEFAULT '0',
-  `position` int(11) NOT NULL DEFAULT '0',
-  `title` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `cat_mod_news_posts` (
-  `post_id` int(11) NOT NULL AUTO_INCREMENT,
-  `section_id` int(11) NOT NULL DEFAULT '0',
-  `page_id` int(11) NOT NULL DEFAULT '0',
-  `group_id` int(11) NOT NULL DEFAULT '0',
-  `active` int(11) NOT NULL DEFAULT '0',
-  `position` int(11) NOT NULL DEFAULT '0',
-  `title` varchar(255) NOT NULL DEFAULT '',
-  `link` text NOT NULL,
-  `content_short` text NOT NULL,
-  `content_long` text NOT NULL,
-  `commenting` varchar(7) NOT NULL DEFAULT '',
-  `published_when` int(11) NOT NULL DEFAULT '0',
-  `published_until` int(11) NOT NULL DEFAULT '0',
-  `posted_when` int(11) NOT NULL DEFAULT '0',
-  `posted_by` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`post_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `cat_mod_news_settings` (
-  `section_id` int(11) NOT NULL DEFAULT '0',
-  `page_id` int(11) NOT NULL DEFAULT '0',
-  `header` text NOT NULL,
-  `post_loop` text NOT NULL,
-  `footer` text NOT NULL,
-  `posts_per_page` int(11) NOT NULL DEFAULT '0',
-  `post_header` text NOT NULL,
-  `post_footer` text NOT NULL,
-  `comments_header` text NOT NULL,
-  `comments_loop` text NOT NULL,
-  `comments_footer` text NOT NULL,
-  `comments_page` text NOT NULL,
-  `commenting` varchar(7) NOT NULL DEFAULT '',
-  `resize` int(11) NOT NULL DEFAULT '0',
-  `use_captcha` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`section_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `cat_mod_output_interface` (
-  `module_directory` varchar(64) NOT NULL DEFAULT '',
-  `module_name` varchar(64) NOT NULL DEFAULT '',
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`module_directory`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cat_mod_wrapper` (
