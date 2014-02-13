@@ -89,6 +89,12 @@ function getSearchSettings()
                 = htmlspecialchars(($row['value']));
         }
     }
+    $r = $backend->db()->query(sprintf('SELECT `value` FROM `%ssettings` WHERE `name` = \'%s\' ',CAT_TABLE_PREFIX, 'search'));
+    if($r->numRows())
+    {
+        $row = $r->fetchRow(MYSQL_ASSOC);
+        $data['search'] = $row['value'];
+    }
     return $data;
 }   // end function getSearchSettings()
 
@@ -453,6 +459,13 @@ function saveSearch($backend) {
             ));
         }
     }
+    // 'search' is a global setting
+    $search_set = $val->sanitizePost('search');
+    if(!CAT_Registry::defined('SEARCH') || CAT_Registry::get('SEARCH') != $search_set)
+        $backend->db()->query(sprintf(
+            "UPDATE `%ssettings` SET `value`='%s' WHERE `name`='%s'",
+            CAT_TABLE_PREFIX, $search_set, 'search'
+        ));
 }
 
 function saveSecurity($backend) {

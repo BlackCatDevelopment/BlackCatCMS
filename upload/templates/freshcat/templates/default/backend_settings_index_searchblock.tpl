@@ -1,9 +1,9 @@
 			<label class="fc_label_300" for="fc_search">{translate('Visibility')}:</label>
 			<select name="search" id="fc_search">
-				<option value="public"{if $SEARCH == 'public'} selected="selected"{/if}>{translate('Public')}</option>
-				<option value="private"{if $SEARCH == 'private'} selected="selected"{/if}>{translate('Private')}</option>
-				<option value="registered"{if $SEARCH == 'registered'} selected="selected"{/if}>{translate('Registered')}</option>
-				<option value="none"{if $SEARCH == 'none'} selected="selected"{/if}>{translate('None')}</option>
+				<option value="public"{if $search.search == 'public'} selected="selected"{/if}>{translate('Public')}</option>
+				<option value="private"{if $search.search == 'private'} selected="selected"{/if}>{translate('Private')}</option>
+				<option value="registered"{if $search.search == 'registered'} selected="selected"{/if}>{translate('Registered')}</option>
+				<option value="none"{if $search.search == 'none'} selected="selected"{/if}>{translate('None')}</option>
 			</select>
 			<div class="clear_sp"></div>
 
