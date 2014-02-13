@@ -189,7 +189,7 @@ $group_id = ( is_array($group_id) && in_array('1', $group_id) && $addUser != '' 
 // create new user
 if ( $addUser )
 {
-    $users->createUser($group_id, $active, $username, md5( $password ), $display_name, $email );
+    $users->createUser($group_id, $active, $username, md5( $password ), $display_name, $email, $home_folder );
 }
 else
 {
@@ -200,6 +200,7 @@ else
         'username'     => $username,
         'display_name' => $display_name,
         'email'        => $email,
+        'home_folder'  => $home_folder,
     );
     if($password)
         $options['password'] = md5($password);

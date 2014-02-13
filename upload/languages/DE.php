@@ -443,6 +443,7 @@ $LANG = array(
     'Delete user' => 'Benutzer löschen',
     'Display name' => 'Anzeigename',
     'Do you really want to delete this group?' => 'Soll diese Gruppe wirklich gelöscht werden?',
+    'Do you really want to delete this user?' => 'Soll dieser Benutzer wirklich gelöscht werden?',
     'Frontend page' => 'Frontend Seite',
     'General System' => 'Allgemein System',
     'Group added successfully' => 'Gruppe erfolgreich angelegt',

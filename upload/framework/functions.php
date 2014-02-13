@@ -359,10 +359,10 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      *    This function returns a recursive list of all subdirectories from a given directory
      *
      *    @access  public
-     *    @param   string  $directory: from this dir the recursion will start.
-     *    @param   bool    $show_hidden (optional): if set to TRUE also hidden dirs (.dir) will be shown.
-     *    @param   int     $recursion_deep (optional): An optional integer to test the recursions-deep at all.
-     *    @param   array   $aList (optional): A simple storage list for the recursion.
+     *    @param   string  $directory - directory to start with
+     *    @param   bool    $show_hidden (optional): NO LONGER SUPPORTED!
+     *    @param   int     $recursion_deep (optional): Restrict recursion depth
+     *    @param   array   $aList (optional): NO LONGER SUPPORTED!
      *    @param   string  $ignore (optional): This is the part of the "path" to be "ignored"
      *
      *    @return  array
@@ -380,12 +380,9 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     function directory_list($directory, $show_hidden = false, $recursion_deep = 0, &$aList = null, &$ignore = "")
     {
         global $dirh;
-        if ($aList == null)
-        {
-            $aList = array();
-        }
+        if($recursion_deep) $dirh->maxRecursionDepth($recursion_deep);
         $dirs = $dirh->scanDirectory( $directory, false, false, $ignore );
-        return $aList;
+        return $dirs;
     }   // end function directory_list()
 
     /**

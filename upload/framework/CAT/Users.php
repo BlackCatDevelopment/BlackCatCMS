@@ -601,13 +601,14 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  string  $md5_password
          * @param  string  $display_name
          * @param  string  $email
+         * @param  string  $home_folder
          * @return mixed   true on success, db error message otherwise
          **/
-        public static function createUser($groups_id, $active, $username, $md5_password, $display_name, $email )
+        public static function createUser($groups_id, $active, $username, $md5_password, $display_name, $email, $home_folder )
         {
             $self  = self::getInstance();
-            $query = 'INSERT INTO `%susers` (group_id,groups_id,active,username,password,display_name,email) '
-                   . "VALUES ('$groups_id', '$groups_id', '$active', '$username','$md5_password','$display_name','$email');";
+            $query = 'INSERT INTO `%susers` (`group_id`,`groups_id`,`active`,`username`,`password`,`display_name`,`email`,`home_folder`) '
+                   . "VALUES ('$groups_id', '$groups_id', '$active', '$username','$md5_password','$display_name','$email','$home_folder');";
             $self->db()->query(sprintf($query,CAT_TABLE_PREFIX));
 
             if ( $self->db()->is_error() )

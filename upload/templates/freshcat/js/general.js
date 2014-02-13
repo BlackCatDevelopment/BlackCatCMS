@@ -272,6 +272,7 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
     if ( typeof cattranslate != 'undefined' )
     {
         message = cattranslate(message);
+        title   = cattranslate(title);
     }
 	// Add message to .fc_popup to use function set_popup_title();
 	$('.fc_popup').html( message );
