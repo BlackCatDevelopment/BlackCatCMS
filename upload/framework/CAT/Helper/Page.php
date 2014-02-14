@@ -959,12 +959,20 @@ if (!class_exists('CAT_Helper_Page'))
             $default = "
 		var WB_URL							  = '".CAT_URL."',
 			LEPTON_URL						  = '".CAT_URL."',
-            CAT_URL                           = '".CAT_URL."',
-            THEME_URL						  = '".CAT_THEME_URL."',
+            CAT_URL                           = '".CAT_URL."';
+            ";
+
+            // backend only
+            if($for == 'backend')
+            {
+                $default .= "
+        var THEME_URL                         = '".CAT_THEME_URL."',
 			CAT_THEME_URL					  = '".CAT_THEME_URL."',
             ADMIN_URL						  = '".CAT_ADMIN_URL."',
 			CAT_ADMIN_URL					  = '".CAT_ADMIN_URL."';
             ";
+            }
+
             CAT_Helper_Page::$js[] = '<script type="text/javascript">'.$default.'</script>';
 
             if ($for == 'backend')
