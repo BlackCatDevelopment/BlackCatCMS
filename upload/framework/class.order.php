@@ -231,7 +231,10 @@ class order
 			{
 				if ( is_numeric( $id ) )
 				{
-					$database->query('UPDATE `'.$this->table.'` SET `'.$this->order_field.'` = '. ( $counter++ ) . ' WHERE `'.$this->id_field.'`='.$id);
+					$database->query(sprintf(
+                        'UPDATE `%s` SET `%s`="%s" WHERE `%s`="%s"',
+                        $this->table, $this->order_field, ($counter++), $this->id_field, $id
+                    ));
 					if ( $database->get_error() )
 					{
 						return $database->get_error();

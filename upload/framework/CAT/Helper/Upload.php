@@ -1191,6 +1191,57 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
         }
 
         /**
+         * Uploads a list of files, contained in $_FILES[$param_name]
+         *
+         * @access public
+         * @param  string  $param_name - the fieldname of <input type="file" />
+         *                    default: 'files'
+         * @param  string  $folder     - destination folder
+         * @param  boolean $ajax       - AJAX request (if true, returns JSON)
+         * @param  boolean $overwrite  - allow overwrite or not (default)
+         * @return
+         **/
+        public static function uploadAll($param_name='files',$folder=NULL,$ajax=false,$overwrite=false)
+        {
+            if(!$folder || $folder == '')
+                if(!$ajax)
+                    self::printError('You must pass a folder!');
+                else
+                    return false;
+
+            $files  = array();
+            $errors = array();
+            $ok     = array();
+            $upload = isset($_FILES[$param_name])
+                    ? $_FILES[$param_name]
+                    : null
+                    ;
+
+            if ($upload && is_array($upload))
+            {
+                if(isset($upload['name']))
+                    $files[] = self::getInstance($upload);
+                else
+                    foreach ($upload as $file)
+                        $files[] = self::getInstance($file);
+            }
+
+            if(is_array($files) && count($files))
+            {
+                foreach($files as $file)
+                {
+                    $file->file_overwrite = $overwrite;
+                    $file->process($folder);
+                    if ($file->processed)
+                        $ok[$file->file_src_name] = 1;
+                    else
+                        $errors[$file->file_src_name] = $file->error;
+                }
+            }
+            return array( $ok, $errors );
+        }   // end function uploadAll()
+
+        /**
          *
          * @access public
          * @return
