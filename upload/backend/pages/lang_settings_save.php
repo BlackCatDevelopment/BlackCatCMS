@@ -71,7 +71,7 @@ if ( ! $link_page_id )
 // =====================================
 // ! check if linked page has given lang
 // =====================================
-$page = CAT_Helper_Page::getPage($page_id);
+$page = CAT_Helper_Page::getPage($link_page_id); // page to be linked to
 if ( $page['language'] !== $language )
 {
     $backend->print_error("The page you've chosen does not have the right language! (".$page['language']." !== $language)");

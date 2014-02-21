@@ -292,7 +292,7 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 	// define button for confirm dialog positive
 	buttonsOpts.push(
 	{
-		'text':		cattranslate('YES'), 'click':  function()
+		'text':		cattranslate('Yes'), 'click':  function()
 			{
 				$.ajax(
 				{
