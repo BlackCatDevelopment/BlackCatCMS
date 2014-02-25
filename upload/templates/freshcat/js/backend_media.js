@@ -435,13 +435,13 @@ jQuery(document).ready(function()
 			if ( current_active.hasClass('fc_filetype_file') )
 			{
 				var name		= '<br/><strong>'+current_active.find('.fc_name_short').text()+'</strong>',
-					message		= CAT_TEXT['MEDIA_CONFIRM_DELETE_FILE'].replace( /\{name\}/g, name ),
+					message		= cattranslate('Are you sure you want to delete file {name}').replace( /\{name\}/g, name ),
 					type		= 'file';
 			}
 			else
 			{
 				var name		= '<br/><strong>' + current_active.find('.fc_name_short').text() + '</strong>',
-					message		= CAT_TEXT['MEDIA_CONFIRM_DELETE_DIR'].replace( /\{name\}/g, name ),
+					message		= cattranslate('Are you sure you want to delete the directory {name}').replace( /\{name\}/g, name ),
 					type		= 'folder';
 			}
 			// Create dates for ajax

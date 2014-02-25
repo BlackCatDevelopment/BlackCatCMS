@@ -244,7 +244,13 @@ function set_activity( title )
 function set_popup_title()
 {
 	// Set a default value
-	var title		= CAT_TEXT['DEFAULT_MESSAGE_TITLE'];
+	// Check if cattranslate() is available
+	if ( typeof cattranslate != 'undefined' )
+	{
+		var title   = cattranslate('Notification');
+	} else {
+		var title   = 'Notification';
+	}
 
 	// Check if the .fc_popup has a .fc_popup_header
 	if ( $('.fc_popup .fc_popup_header').size() > 0 )
@@ -559,11 +565,20 @@ jQuery(document).ready( function()
 	// Initial activation of click events
 	set_buttons($('body'));
 
+	// Set a default value
+	// Check if cattranslate() is available
+	if ( typeof cattranslate != 'undefined' )
+	{
+		var innerText   = cattranslate('Search');
+	} else {
+		var innerText   = 'Search';
+	}
+
 	$('#fc_list_search input').livesearch(
 	{
 		searchCallback:			searchUsers,
 		queryDelay:				250,
-		innerText:				CAT_TEXT['SEARCH'],
+		innerText:				innerText,
 		minimumSearchLength:	2
 	});
 

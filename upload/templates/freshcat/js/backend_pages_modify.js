@@ -181,7 +181,7 @@ jQuery(document).ready(function()
 		// define button for confirm dialog positive
 		buttonsOpts.push(
 		{
-			'text':		CAT_TEXT['YES'], 'click':  function()
+			'text':		cattranslate('Yes'), 'click':  function()
 				{
 					$.ajax(
 					{
@@ -228,7 +228,7 @@ jQuery(document).ready(function()
 		// define button for confirm dialog negative
 		buttonsOpts.push(
 		{
-			'text':		CAT_TEXT['NO'], 'click':  function()
+			'text':		cattranslate('No'), 'click':  function()
 				{
 					$('.popup').dialog('destroy').remove();
 				},
@@ -241,7 +241,7 @@ jQuery(document).ready(function()
 			modal:			true,
 			show:			'fade',
 			closeOnEscape:	true,
-			title:			CAT_TEXT["SECTION_DELETE"],
+			title:			cattranslate('Delete section'),
 			buttons:		buttonsOpts
 		});
 

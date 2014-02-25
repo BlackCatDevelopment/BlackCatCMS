@@ -51,7 +51,7 @@ jQuery(document).ready(function()
 			$('<div class="popup" />').appendTo('body');
 		}
     		$('.popup').html('<div class="c_16">'+cattranslate('Confirm with current password')+'</div>');
-		var button		= CAT_TEXT["BACK"];
+		var button		= cattranslate('Back');
 		if ( !$('#fc_current_password').val() )
 		{
 			$('.popup').dialog(

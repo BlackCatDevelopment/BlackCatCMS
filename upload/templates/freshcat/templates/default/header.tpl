@@ -14,20 +14,6 @@
             DATE_FORMAT						  = '{$DATE_FORMAT}',
 			TIME_FORMAT						  = '{$TIME_FORMAT}',
 			SESSION							  =	'{$SESSION}';
-		var CAT_TEXT						  = new Array();
-		CAT_TEXT["SEARCH"]					  = '{translate('Search')}';
-		CAT_TEXT["BACK"]					  = '{translate('Back')}';
-		CAT_TEXT["YES"]						  = '{translate('Yes')}';
-		CAT_TEXT["NO"]						  = '{translate('No')}';
-		CAT_TEXT["DEFAULT_MESSAGE_TITLE"]	  = '{translate('Notification')}';
-		CAT_TEXT["GROUPS_CONFIRM_DELETE"]	  = '{translate('Are you sure you want to delete the selected group (and any users that belong to it)?')}';
-		CAT_TEXT["USERS_CONFIRM_DELETE"]	  = '{translate('Are you sure you want to delete the selected user?')}';
-		CAT_TEXT["MANAGE_GROUPS"]			  = '{translate('Manage groups')}';
-		CAT_TEXT["MANAGE_USERS"]			  = '{translate('Manage users')}';
-		CAT_TEXT["MEDIA_CONFIRM_DELETE_FILE"] = '{translate('Are you sure you want to delete file {name}')}';
-		CAT_TEXT["MEDIA_CONFIRM_DELETE_DIR"]  = '{translate('Are you sure you want to delete the directory {name}')}';
-		CAT_TEXT["SECTION_CONFIRM_DELETE"]	  = '{translate('Are you sure you want to delete this section?')}';
-		CAT_TEXT["SECTION_DELETE"]			  = '{translate('Delete section')}';
 	</script>
 	{get_page_headers( "backend" , true , "$section_name")}
 </head>
