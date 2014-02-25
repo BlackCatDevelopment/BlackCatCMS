@@ -2093,6 +2093,7 @@ if (!class_exists('CAT_Helper_Page'))
             if (!CAT_Helper_Page::$jquery_ui_core && isset($arr['ui']) && $arr['ui'] === true)
             {
                 CAT_Helper_Page::$jquery[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/jquery-ui/ui/jquery-ui.min.js') . '"></script>' . "\n";
+                CAT_Helper_Page::$jquery[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/jquery-ui/ui/i18n/jquery-ui-i18n.min.js') . '"></script>' . "\n";
                 CAT_Helper_Page::$jquery_ui_core = true;
             }
 
