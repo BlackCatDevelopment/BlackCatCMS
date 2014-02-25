@@ -957,23 +957,27 @@ if (!class_exists('CAT_Helper_Page'))
 
             // add default
             $default = "
-		var WB_URL							  = '".CAT_URL."',
-			LEPTON_URL						  = '".CAT_URL."',
-            CAT_URL                           = '".CAT_URL."';
+		var WB_URL							  = '" . CAT_URL . "',
+			LEPTON_URL						  = '" . CAT_URL . "',
+            CAT_URL                           = '" . CAT_URL . "';
             ";
 
             // backend only
             if($for == 'backend')
             {
                 $default .= "
-        var THEME_URL                         = '".CAT_THEME_URL."',
-			CAT_THEME_URL					  = '".CAT_THEME_URL."',
-            ADMIN_URL						  = '".CAT_ADMIN_URL."',
-			CAT_ADMIN_URL					  = '".CAT_ADMIN_URL."';
+        var THEME_URL                         = '" . CAT_THEME_URL . "',
+			CAT_THEME_URL					  = '" . CAT_THEME_URL . "',
+            ADMIN_URL						  = '" . CAT_ADMIN_URL . "',
+			CAT_ADMIN_URL					  = '" . CAT_ADMIN_URL . "',
+            DATE_FORMAT						  = '" . str_replace('%', '', DATE_FORMAT) . "',
+			TIME_FORMAT						  = '" . str_replace('%', '', TIME_FORMAT) . "',
+			DEFAULT_LANGUAGE				  = '" . DEFAULT_LANGUAGE . "',
+			SESSION							  =	'" . session_name() . "';
             ";
             }
 
-            CAT_Helper_Page::$js[] = '<script type="text/javascript">'.$default.'</script>';
+            CAT_Helper_Page::$jquery[] = '<script type="text/javascript">'.$default.'</script>';
 
             if ($for == 'backend')
             {

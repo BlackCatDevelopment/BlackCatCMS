@@ -9,12 +9,6 @@
 	<meta name="keywords" content="{translate('Administration')}" />
 	<meta name="author" content="Matthias Glienke, creativecat" />
 
-	<script type="text/javascript">
-		var CAT_URL                           = '{$CAT_URL}',
-            DATE_FORMAT						  = '{$DATE_FORMAT}',
-			TIME_FORMAT						  = '{$TIME_FORMAT}',
-			SESSION							  =	'{$SESSION}';
-	</script>
 	{get_page_headers( "backend" , true , "$section_name")}
 </head>
 <body class="fc_gradient1">
