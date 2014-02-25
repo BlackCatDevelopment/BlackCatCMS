@@ -970,8 +970,12 @@ if (!class_exists('CAT_Helper_Page'))
 			CAT_THEME_URL					  = '" . CAT_THEME_URL . "',
             ADMIN_URL						  = '" . CAT_ADMIN_URL . "',
 			CAT_ADMIN_URL					  = '" . CAT_ADMIN_URL . "',
-            DATE_FORMAT						  = '" . str_replace('%', '', DATE_FORMAT) . "',
-			TIME_FORMAT						  = '" . str_replace('%', '', TIME_FORMAT) . "',
+            DATE_FORMAT						  = '" . str_replace(
+            	array( '%', 'Y', 'm', 'd' ),
+            	array( '', 'yy', 'mm', 'dd' ),
+            	DATE_FORMAT
+            ) . "',
+			TIME_FORMAT						  = '" . str_replace( '%', '', TIME_FORMAT ) . "',
 			DEFAULT_LANGUAGE				  = '" . DEFAULT_LANGUAGE . "',
 			SESSION							  =	'" . session_name() . "';
             ";
