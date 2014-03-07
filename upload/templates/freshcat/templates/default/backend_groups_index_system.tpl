@@ -11,9 +11,9 @@
                     <input type="checkbox" class="fc_checkbox_jq" name="pages_add" id="fc_Group_pages_add" value="1" />
                     <label for="fc_Group_pages_add">{translate('Add')}<br /><span class="fc_form_infotext">{translate('The user can add new pages')}</span></label>
                     <input type="checkbox" class="fc_checkbox_jq" name="pages_add_l0" id="fc_Group_pages_add_l0" value="1" />
-                    <label for="fc_Group_pages_add_l0">{translate('Level')} 0<br /><span class="fc_form_infotext">{translate('The user can new root pages')}</span></label>
+                    <label for="fc_Group_pages_add_l0">{translate('Level')} 0<br /><span class="fc_form_infotext">{translate('The user can add new root pages')}</span></label>
                     <input type="checkbox" class="fc_checkbox_jq" name="pages_settings" id="fc_Group_pages_settings" value="1" />
-                    <label for="fc_Group_pages_settings">{translate('Modify settings')}<br /><span class="fc_form_infotext">{translate('The user can modify system settings')}</span></label>
+                    <label for="fc_Group_pages_settings">{translate('Modify settings')}<br /><span class="fc_form_infotext">{translate('The user can modify page settings')}</span></label>
                     <input type="checkbox" class="fc_checkbox_jq" name="pages_modify" id="fc_Group_pages_modify" value="1" />
                     <label for="fc_Group_pages_modify">{translate('Modify content')}<br /><span class="fc_form_infotext">{translate('The user can modify existing content')}</span></label>
                     <input type="checkbox" class="fc_checkbox_jq" name="pages_intro" id="fc_Group_pages_intro" value="1" />

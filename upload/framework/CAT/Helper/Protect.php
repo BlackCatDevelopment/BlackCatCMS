@@ -43,7 +43,7 @@ if (!class_exists('CAT_Helper_Protect'))
                 self::$instance = new self();
             }
             return self::$instance;
-        }
+        }   // end function getInstance()
 
         //**************************************************************************
         // interface to HTMLPurifier
@@ -51,7 +51,7 @@ if (!class_exists('CAT_Helper_Protect'))
         public function purify($content,$config=NULL)
         {
             return CAT_Helper_Protect::getPurifier($config)->purify($content);
-        }
+        }   // end function purify()
 
         /**
          * include/enable HTMLPurifier

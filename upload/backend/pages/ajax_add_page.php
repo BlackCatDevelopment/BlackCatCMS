@@ -63,7 +63,7 @@ if ( $options['parent'] != 0 )
         exit();
     }
 }
-elseif ( ! $users->checkPermission('pages_add_l0','system',false) )
+elseif ( ! $users->checkPermission('pages', 'pages_add_l0', false) == true )
 {
     $ajax    = array(
         'message'    => $backend->lang()->translate('You do not have the permission add a page here.'),

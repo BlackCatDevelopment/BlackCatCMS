@@ -473,27 +473,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
             $this->mime_types                = array();
             $this->mime_default_type         = 'application/octet-stream';
 
-            // get mime types from DB
-            $this->log()->LogDebug('getting known mimetypes from DB');
-            $res = $this->db()->query(sprintf(
-                'SELECT * FROM %smimetypes WHERE mime_suffixes IS NOT NULL AND mime_label IS NOT NULL',
-                CAT_TABLE_PREFIX
-            ));
-            if($res)
-            {
-                while(false!==($row=$res->fetchRow(MYSQL_ASSOC)))
-                {
-                    $this->log()->LogDebug('current row',$row);
-                    $suffixes = explode('|',$row['mime_suffixes']);
-                    foreach($suffixes as $suffix)
-                    {
-                        if ( $suffix == '' ) continue;
-                        if ( ! isset($this->mime_types[$suffix]) )
-                            $this->mime_types[$suffix] = array();
-                        $this->mime_types[$suffix][] = $row['mime_type'];
-                    }
-                }
-        }
+            $this->mime_types = CAT_Helper_Protect::getMimeTypes();
             $this->log()->LogDebug('registered mime types',$this->mime_types);
     
             // allow to override default settings
@@ -502,22 +482,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
             if(CAT_Registry::get('UPLOAD_MIME_DEFAULT_TYPE')=='false')
                 $this->mime_default_type = false;
 
-    
-            // get allowed upload mime types from settings
-            $this->log()->LogDebug('getting allowed upload mimetypes from settings');
-            if(CAT_Registry::exists('UPLOAD_ALLOWED'))
-            {
-                $allowed = explode(',', CAT_Registry::get('UPLOAD_ALLOWED'));
-                $this->log()->logDebug(CAT_Registry::get('UPLOAD_ALLOWED'));
-                foreach($allowed as $suffix)
-                {
-                    if (isset($this->mime_types[$suffix]))
-                        foreach(array_values($this->mime_types[$suffix]) as $type)
-                            if(!in_array($type,$this->allowed))
-                                $this->allowed[] = $type;
-                }
-            }
-            $this->log()->LogDebug('allowed',$this->allowed);
+            $this->allowed = CAT_Helper_Protect::getAllowedMimeTypes();
 
         }   // end function init()
     

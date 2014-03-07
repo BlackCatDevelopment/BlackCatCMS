@@ -59,7 +59,9 @@
                 <span style="font-weight:900">{translate('Transport security')}</span>
 					<input type="checkbox" class="fc_checkbox_jq fc_toggle_element show___fc_smtp_ssl" name="catmailer_smtp_ssl" id="fc_catmailer_smtp_ssl" value="true" {if $values.catmailer_smtp_ssl && $values.catmailer_routine=='smtp'} checked="checked"{/if} />
 					<label for="fc_catmailer_smtp_ssl" title="{translate('Please make sure your provider supports SSL before enabling this feature!')}">{translate('Use SSL')}</label>
-                    <label class="fc_label_200" title="{translate('Default for SSL is 587; please check the configuration instructions at your provider\'s homepage for details.')}" for="fc_catmailer_smtp_ssl_port">{translate('SSL Port')}:</label>
+                    <input type="checkbox" class="fc_checkbox_jq fc_toggle_element show___fc_smtp_starttls" name="catmailer_smtp_starttls" id="fc_catmailer_smtp_starttls" value="true" {if $values.catmailer_smtp_starttls && $values.catmailer_routine=='smtp'} checked="checked"{/if} />
+					<label for="fc_catmailer_smtp_starttls" title="{translate('Please make sure your provider requires STARTTLS before enabling this feature!')}">{translate('Use STARTTLS')}</label>
+                    <label class="fc_label_200" title="{translate('Default for STARTTLS is 587, for SSL 465; please check the configuration instructions at your provider\'s homepage for details.')}" for="fc_catmailer_smtp_ssl_port">{translate('SSL Port')}:</label>
 					<input class="fc_input_small" style="float:right;" type="text" name="catmailer_smtp_ssl_port" id="fc_catmailer_smtp_ssl_port" value="{if $values.catmailer_smtp_ssl_port}{$values.catmailer_smtp_ssl_port}{/if}" /><br />
 				</div>
 				<div class="clear"></div>

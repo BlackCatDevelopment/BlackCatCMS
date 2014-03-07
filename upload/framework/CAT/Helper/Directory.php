@@ -242,6 +242,25 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		}   // end function getFiles()
 		
 	    /**
+         * get oldest file from given directory
+         *
+         * @access public
+         * @return
+         **/
+        public static function getOldest($dir)
+        {
+            $self   = self::getInstance(1);
+            $dir    = self::sanitizePath($dir);
+            $files  = $self->setSuffixFilter(array()) // any suffix
+                           ->getFiles($dir);
+            $oldest = array('path'=>NULL,'mtime'=>NULL);
+            foreach($files as $file)
+                if(filemtime($file) <= $oldest['mtime'] || ! isset($oldest['mtime']))
+                    $oldest = array('path'=>$file,'mtime'=>filemtime($file));
+            return $oldest['path'];
+        }   // end function getOldest()
+		
+	    /**
 	     * shortcut method for scanDirectory( $dir, $remove_prefix, true, true, array('php') )
 	     **/
 		public static function getPHPFiles( $dir, $remove_prefix = NULL )
