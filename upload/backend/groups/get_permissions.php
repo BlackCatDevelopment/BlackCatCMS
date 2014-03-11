@@ -270,7 +270,9 @@ else
             }
         }
     }
-    $templates									= (sizeof($templates) > 0) ? $templates : $modlist;
+    if(count($templates))
     $template_permissions						= implode(',', $templates);
+    else
+        $template_permissions					= '';
 }
 ?>

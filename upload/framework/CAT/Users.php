@@ -478,6 +478,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         self::$permissions[$row['perm_group']][$row['perm_name']] = $row['perm_bit'];
                     }
                 }
+                $self->log()->LogDebug('perms from DB',self::$permissions);
             }
 
             $group = strtolower($group);
@@ -485,12 +486,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
             // get needed bit
             $bit = self::$permissions[$group][$perm];
+            // Dashboard should be the only page with bit 0!
             if ( $bit == 0 ) return true;
 
             // get user perms from session
             $has = CAT_Helper_Validate::getInstance()->fromSession('SYSTEM_PERMISSIONS');
 
-            //
+            // no perms at all!
             if ( $has == '' )
                 return false;
 
@@ -1088,6 +1090,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
             if (self::get_user_id() == 1)
                 return true;
             else
+                // member of admin group
+                if(in_array(1,self::get_groups_id()))
+                    return true;
+                else
                 return false;
         }   // end function is_root()
 
