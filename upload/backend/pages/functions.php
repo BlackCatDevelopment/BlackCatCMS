@@ -75,16 +75,16 @@ function backend_pages_getoptions()
     global $val, $users;
     $options = array(
         'admin_groups'   => ( ($val->sanitizePost('admin_groups',NULL,true) != '') ? $val->sanitizePost('admin_groups',NULL,true) : array('1') ),
-        'description'    => htmlspecialchars($val->sanitizePost('description',NULL,true)),
-        'keywords'       => htmlspecialchars($val->sanitizePost('keywords',NULL,true)),
+        'description'    => htmlspecialchars($val->sanitizePost('description',NULL,true), ENT_QUOTES, "UTF-8", false),
+        'keywords'       => htmlspecialchars($val->sanitizePost('keywords',NULL,true), ENT_QUOTES, "UTF-8", false),
         'language'       => $val->sanitizePost('language',NULL,true),
         'level'          => 0, // just a default here
         'link'           => '/'.( ( $val->sanitizePost('page_link',NULL,true) != '' ) ? htmlspecialchars($val->sanitizePost('page_link',NULL,true)) : '' ),
         'menu'           => ( ( $val->sanitizePost('menu',NULL,true) != '') ? $val->sanitizePost('menu',NULL,true) : 1 ),
-        'menu_title'     => htmlspecialchars($val->sanitizePost('menu_title',NULL,true) ),
+        'menu_title'     => htmlspecialchars($val->sanitizePost('menu_title',NULL,true), ENT_QUOTES, "UTF-8", false ),
         'modified_by'    => $users->get_user_id(),
         'modified_when'  => time(),
-        'page_title'     => htmlspecialchars($val->sanitizePost('page_title',NULL,true)),
+        'page_title'     => htmlspecialchars($val->sanitizePost('page_title',NULL,true), ENT_QUOTES, "UTF-8", false),
         'parent'         => ( $val->sanitizePost('parent','numeric',true) ? $val->sanitizePost('parent','numeric',true) : 0 ),
         'position'       => 1, // just a default here
         'searching'      => $val->sanitizePost('searching',NULL,true) ? '1' : '0',

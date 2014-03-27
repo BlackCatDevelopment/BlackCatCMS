@@ -274,8 +274,8 @@ else
 {
 	$ajax	= array(
 		'message'		=> $backend->lang()->translate('Page settings saved successfully'),
-		'menu_title'	=> $options['menu_title'],
-		'page_title'	=> $options['page_title'],
+		'menu_title'	=> htmlspecialchars_decode($options['menu_title'],ENT_QUOTES),
+		'page_title'	=> htmlspecialchars_decode($options['page_title'],ENT_QUOTES),
 		'visibility'	=> $options['visibility'],
 		'parent'		=> $options['parent'],
 		'position'		=> $options['position'],
