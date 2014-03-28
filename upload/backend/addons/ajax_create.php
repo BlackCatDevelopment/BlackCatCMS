@@ -87,6 +87,7 @@ if( $type != 'language' )
 }
 else
 {
+    $dir  = strtoupper($dir);
     $full = CAT_PATH.'/languages/'.$dir.'.php';
     if( file_exists($full) )
         $err = $backend->lang()->translate('A language file with the same name already exists');
@@ -120,8 +121,8 @@ switch ( $type ) {
         $func = 'language';
         $pre  = 'language_';
         break;
-    case 'page':
-        $type = 'module';
+    case 'module':
+        $func = 'page';
         break;
 }
 
@@ -169,19 +170,33 @@ if(!$fh)
     $message = $backend->lang()->translate('Unable to create info.php!');
     printResult();
 }
-writeHeader($fh,$name,$author);
+writeHeader($fh,$name,$author,$type);
 foreach($info as $key => $value )
 {
     if($type=='language' && $key == 'language_directory') continue;
     fwrite($fh,'$'.$key.' = "'.$value.'";'."\n");
 }
 if($type == 'language')
+{
     fwrite($fh,'
 $LANG = array(
 
 );
 ');
+}
 fclose($fh);
+
+if($type=='language')
+{
+    $fh = fopen(CAT_PATH.'/languages/old/'.$dir.'.php','w');
+    writeHeader($fh,$name,$author,$type);
+    fwrite($fh,'$MENU = array();'."\n");
+    fwrite($fh,'$TEXT = array();'."\n");
+    fwrite($fh,'$HEADING = array();'."\n");
+    fwrite($fh,'$MESSAGE = array();'."\n");
+    fwrite($fh,'$OVERVIEW = array();'."\n");
+fclose($fh);
+}
 
 // create some more default files
 if($type=='module')
@@ -191,10 +206,28 @@ if($type=='module')
         $fh = fopen($full.'/'.$n.'.php','w');
         if($fh)
         {
-            writeHeader($fh,$name,$author);
+            writeHeader($fh,$name,$author,$type);
             fclose($fh);
         }
     }
+}
+
+// if it's a template...
+if($type=='template')
+{
+    $contents  = file_get_contents($full.'/index.php');
+    $contents .= "
+\$dwoodata	= array(); // if you need to set some additional template vars, add them here
+\$variant = CAT_Helper_Page::getPageSettings(\$page_id,'internal','template_variant');
+if(!\$variant)
+    \$variant = 'default';
+\$parser->setPath(CAT_TEMPLATE_DIR.'/templates/'.\$variant);
+\$parser->setFallbackPath(CAT_TEMPLATE_DIR.'/templates/default');
+\$parser->output('index.tpl',\$dwoodata);
+";
+    file_put_contents($full.'/index.php', $contents);
+    CAT_Helper_Directory::createDirectory($full.'/templates/default');
+    CAT_Helper_Directory::recursiveCreateIndex($full.'/templates');
 }
 
 // insert module into DB
@@ -203,7 +236,7 @@ foreach($info as $key => $value)
     $key = str_replace($pre,'module_',$key);
     $info[$key] = $value;
 }
-$info['addon_function'] = $info[$pre.'function'];
+$info['addon_function'] = $type;
 
 CAT_Helper_Addons::loadModuleIntoDB( $dir, 'install', $info);
 
@@ -222,7 +255,7 @@ function printResult()
 	exit();
 }
 
-function writeHeader($fh,$name,$author)
+function writeHeader($fh,$name,$author,$type)
 {
     fwrite($fh,'<'.'?'.'php
 
@@ -241,10 +274,10 @@ function writeHeader($fh,$name,$author)
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          '.$author.'
- *   @copyright       2013, Black Cat Development
+ *   @copyright       '.date('Y').', '.$author.'
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Modules
+ *   @category        CAT_'.ucfirst($type).'s
  *   @package         '.$name.'
  *
  */
