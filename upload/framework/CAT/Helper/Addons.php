@@ -817,7 +817,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 if ( !$silent )
                 {
                     self::printError( $self->lang()->translate( 'Invalid installation file. {{error}}', array(
-                         'error' => 'Unable to find info.php'
+                         'error' => $self->lang()->translate('Unable to find info.php')
                     ) ) );
                 }
                 return false;
@@ -1114,7 +1114,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     $module_function = strtolower( $addon_info['module_function'] );
                     $do              = 'insert';
                     // Check that it doesn't already exist
-                    $sql             = sprintf( "SELECT COUNT(*) FROM `%saddons` WHERE `type`='module' AND `directory`='%s'", CAT_TABLE_PREFIX, $addon_info['module_directory'] );
+                    $sql             = sprintf( "SELECT COUNT(*) FROM `%saddons` WHERE `type`='module' AND `directory`='%s' AND `function`='%s'", CAT_TABLE_PREFIX, $addon_info['module_directory'], $module_function );
                     if ( $self->db()->get_one( $sql ) )
                     {
                         $sql = "UPDATE `%saddons` SET `upgraded`='" . time() . "', ";

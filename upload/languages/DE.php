@@ -573,8 +573,9 @@ $LANG = array(
         => 'Kann die Datei nicht entpacken. Bitte das ZIP Format prüfen.',
     'Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.'
         => 'Installation fehlgeschlagen. Das System erfüllt nicht die notwendigen Voraussetzungen. Bitte die untenstehenden Voraussetzungen prüfen und erneut probieren.',
-    'Invalid installation file. No info.php found. Please check the ZIP format.'
-        => 'Ungültige Installationsdatei. Keine info.php gefunden. Bitte das ZIP Format prüfen.',
+    'Invalid installation file. {{error}}'
+        => 'Ungültige Installationsdatei. {{error}}',
+    'Unable to find info.php' => 'info.php nicht gefunden',
     'Invalid installation file. Wrong extension. Please check the ZIP format.'
         => 'Ungültige Installationsdatei. Falsche Dateiendung. Bitte das ZIP Format prüfen.',
     'Not installed yet' => 'Noch nicht installiert',

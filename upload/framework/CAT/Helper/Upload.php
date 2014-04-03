@@ -473,7 +473,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
             $this->mime_types                = array();
             $this->mime_default_type         = 'application/octet-stream';
 
-            $this->mime_types = CAT_Helper_Protect::getMimeTypes();
+            $this->mime_types = CAT_Helper_Mime::getMimeTypes();
             $this->log()->LogDebug('registered mime types',$this->mime_types);
     
             // allow to override default settings
@@ -482,7 +482,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
             if(CAT_Registry::get('UPLOAD_MIME_DEFAULT_TYPE')=='false')
                 $this->mime_default_type = false;
 
-            $this->allowed = CAT_Helper_Protect::getAllowedMimeTypes();
+            $this->allowed = CAT_Helper_Mime::getAllowedMimeTypes();
 
         }   // end function init()
     
@@ -1198,7 +1198,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                     $file->file_overwrite = $overwrite;
                     $file->process($folder);
                     if ($file->processed)
-                        $ok[$file->file_src_name] = 1;
+                        $ok[$file->file_dst_name] = $file->file_src_size;
                     else
                         $errors[$file->file_src_name] = $file->error;
                 }

@@ -354,7 +354,7 @@ if (!class_exists('CAT_Helper_Page'))
             {
             	// Update the page visibility to 'deleted'
             	self::getInstance()->db()->query(sprintf(
-                    "UPDATE `%spages` SET visibility = 'deleted' WHERE page_id = %d LIMIT 1",
+                    "UPDATE `%spages` SET `visibility` = 'deleted' WHERE `page_id` = %d LIMIT 1",
                     CAT_TABLE_PREFIX, $page_id
                 ));
             	return self::_trashPages($page_id);
@@ -2161,6 +2161,11 @@ if (!class_exists('CAT_Helper_Page'))
             }
             // delete access file
             self::deleteAccessFile($page_id);
+            // delete settings
+            self::getInstance()->db()->query(sprintf(
+                'DELETE FROM `%spages_settings` WHERE `page_id`=%d',
+                CAT_TABLE_PREFIX, $page_id
+            ));
             // remove page from DB
             $self->db()->query(sprintf(
                 'DELETE FROM `%spages` WHERE `page_id` = %d',
