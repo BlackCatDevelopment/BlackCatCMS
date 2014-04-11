@@ -862,7 +862,9 @@ if (!class_exists('CAT_Helper_Page'))
                 '/templates/'.$tpl.'/css',
                 // for skinnables
                 '/templates/'.$tpl.'/templates/default',
-                '/templates/'.$tpl.'/templates/default/css'
+                '/templates/'.$tpl.'/templates/default/css',
+                // page
+                CAT_Registry::get('PAGES_DIRECTORY').'/css/'
             );
 
             global $page_id;
@@ -2413,6 +2415,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         private static function _load_js($for = 'frontend')
         {
+            global $page_id;
             if (count(CAT_Helper_Page::$js_search_path))
             {
                 $val = CAT_Helper_Validate::getInstance();
@@ -2427,6 +2430,18 @@ if (!class_exists('CAT_Helper_Page'))
                                 . $val->sanitize_url(CAT_URL . $file)
                                 . '"></script>' . "\n";
                     $seen[$file] = 1;
+                }
+                if ($for == 'frontend')
+                {
+                    $file = sanitize_path(CAT_Registry::get('PAGES_DIRECTORY').'/js/'.$page_id.'.js');
+                    if ( ! isset($seen[$file]) && file_exists(CAT_PATH . '/' . $file) )
+                    {
+                        CAT_Helper_Page::$js[]
+                            = '<script type="text/javascript" src="'
+                            . $val->sanitize_url(CAT_URL . $file)
+                            . '"></script>' . "\n";
+                        $seen[$file] = 1;
+                    }
                 }
             }
             self::$instance->log()->logDebug('JS',CAT_Helper_Page::$js);

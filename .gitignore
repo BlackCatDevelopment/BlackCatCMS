@@ -162,3 +162,14 @@ pip-log.txt
 # Mac crap
 .DS_Store
 
+
+HelpNDoc_Doku
+/_diffs
+/_gitbefehle.TXT
+/upload/framework/CAT/Helper/Captcha/WB/captchas/languages/index.php
+/create_app_list.php
+APS
+/APS_v1.0
+htdocs
+images
+scripts

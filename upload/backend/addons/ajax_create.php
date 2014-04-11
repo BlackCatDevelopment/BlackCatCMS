@@ -201,7 +201,12 @@ fclose($fh);
 // create some more default files
 if($type=='module')
 {
-    foreach(array('add','install','uninstall','upgrade','view','modify') as $n)
+    $files = array('index','install','uninstall','upgrade');
+    if($func=='tool')
+        array_push($files,'tool');
+    else
+        array_push($files,'add','view','modify');
+    foreach( as $n)
     {
         $fh = fopen($full.'/'.$n.'.php','w');
         if($fh)

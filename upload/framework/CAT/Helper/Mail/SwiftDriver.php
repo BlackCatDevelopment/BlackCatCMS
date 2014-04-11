@@ -84,14 +84,47 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                     && isset(self::$settings['smtp_host'])
                     && strlen(self::$settings['smtp_host']) > 5
                 ) {
-                    self::$transport = Swift_SmtpTransport::newInstance(self::$settings['smtp_host'], 25);
+                    $port = '25';
+                    $tp   = NULL;
+                    // check for SSL
+                    // port 587 is for STARTTLS
+                    // port 465 is for TLS
+                    if ( isset(self::$settings['smtp_ssl']) && self::$settings['smtp_ssl'] == true )
+                    {
+                        if(
+                               isset(self::$settings['smtp_ssl_port'])
+                            && self::$settings['smtp_ssl_port'] != ''
+                            && self::$settings['smtp_ssl_port'] != '25'
+                            && self::$settings['smtp_ssl_port'] != '587'
+                        ) {
+                            $transports = stream_get_transports();
+                            if(in_array('tls',$transports))
+                            {
+                                $tp   = 'tls';
+                                $port = ( isset(self::$settings['smtp_ssl_port']) && self::$settings['smtp_ssl_port'] != '' )
+                                      ? self::$settings['smtp_ssl_port']
+                                      : '465'
+                                      ;
+                            }
+                            else {
+                                if(in_array('ssl',$transports))
+                                {
+                                    $tp   = 'ssl';
+                                    $port = ( isset(self::$settings['smtp_ssl_port']) && self::$settings['smtp_ssl_port'] != '' )
+                                          ? self::$settings['smtp_ssl_port']
+                                          : '465'
+                                          ;
+                                }
+                            }
+                        }
+                    }
+                    self::$transport = Swift_SmtpTransport::newInstance(self::$settings['smtp_host'],$port,$tp);
                     $use_smtp = true;
                 }
                 else
                 {
                     self::$transport = Swift_MailTransport::newInstance();
                 }
-                // if SMTP...
                 if (   $use_smtp
                     && isset(self::$settings['smtp_auth'])
                     && isset(self::$settings['smtp_username'])
@@ -105,19 +138,6 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
     				self::$transport->setPassword(self::$settings['smtp_password']);
     			}
 
-                // check for SSL
-                if ( $use_smtp && isset(self::$settings['smtp_ssl']) && self::$settings['smtp_ssl'] == true )
-                {
-                    $transports = stream_get_transports();
-                    if(in_array('ssl',$transports))
-                    {
-                        self::$transport->setEncryption('ssl');
-                        if(isset(self::$settings['smtp_ssl_port']) && self::$settings['smtp_ssl_port'] != '')
-                            self::$transport->setPort(self::$settings['smtp_ssl_port']);
-                        else
-                            self::$transport->setPort(587); // default port
-                    }
-                }
                 // timeout
                 if ( $use_smtp && isset(self::$settings['smtp_timeout']) && self::$settings['smtp_timeout'] != '' )
                     self::$transport->setTimeout(self::$settings['smtp_timeout']);
@@ -135,7 +155,7 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
             }
             catch (Swift_TransportException $e)
             {
-                CAT_Helper_Mail::setError('Transport exception: '.$e->getMessage());
+                CAT_Helper_Mail::setError('Transport exception: '.$e->getMessage().' (Port: '.$port.', Transport: '.$tp.')');
                 return false;
             }
             catch (Exception $e)
@@ -143,6 +163,7 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                 CAT_Helper_Mail::setError($e->getMessage());
                 return false;
             }
+print_r(self::$mailer);
 
             return true;
         }   // end function sendMail()

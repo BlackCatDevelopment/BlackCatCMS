@@ -95,6 +95,15 @@ if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php') )
 	$tpl_data['TOOL']	= ob_get_contents();
 	//ob_end_clean();
     ob_clean(); // allow multiple buffering for csrf-magic
+    // Check whether icon is available for the admintool
+	if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png') )
+	{
+		list($width, $height, $type, $attr) = getimagesize(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png');
+		// Check whether file is 32*32 pixel and is an PNG-Image
+		$tpl_data['ICON'] = ($width == 32 && $height == 32 && $type == 3)
+                          ? CAT_URL.'/modules/'.$tool['directory'].'/icon.png'
+                          : false;
+	}
 }
 else
 {
