@@ -190,8 +190,8 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
         public function findTemplate($_tpl)
         {
             // cached
-            if(isset($this->seen[$_tpl]))
-                return $this->seen[$_tpl];
+            if(isset($this->seen[$this->te->paths['current'] . $_tpl]))
+                return $this->seen[$this->te->paths['current'] . $_tpl];
 
             $suffix = pathinfo($_tpl,PATHINFO_EXTENSION);
             $has_suffix = ( $suffix != '' ) ? true : false;
@@ -220,7 +220,7 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
                     $file = $this->dirh->findFile($_tpl,$dir,true);
                 if ( $file )
                 {
-                    $this->seen[$_tpl] = $file;
+                    $this->seen[$this->te->paths['current'] . $_tpl] = $file;
                     return $file;
                 }
             }
