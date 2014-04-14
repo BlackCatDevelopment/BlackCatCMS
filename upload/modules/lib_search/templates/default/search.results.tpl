@@ -1,7 +1,9 @@
 <div id="search_results">
   <h2>{translate('New search')}</h2>
   <div class="search_form">
-    <form name="search_form" action="{$form.action}" method="get">
+    <form name="search_form" action="{$form.action}" method="post">
+      <input type="hidden" name="page_id" value="{$PAGE_ID}" />
+      
       <table width="100%">
         <colgroup>
           <col width="*" />

@@ -245,6 +245,19 @@ if (!class_exists('CAT_Helper_Page'))
         }   // end function init()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function addCSS($url,$for='frontend',$media='screen')
+        {
+            CAT_Helper_Page::$css[] = array(
+                'media' => $media,
+                'file'  => $url
+            );
+        }   // end function addCSS()
+
+        /**
          * creates a new page
          *
          * @access public
@@ -754,7 +767,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function getFilename($string)
         {
-            require_once(CAT_PATH . '/framework/functions-utf8.php');
+            require_once CAT_PATH . '/framework/functions-utf8.php';
             $string = entities_to_7bit($string);
             // Now remove all bad characters
             $bad = array('\'', '"', '`', '!', '@', '#', '$', '%', '^', '&', '*', '=', '+', '|', '/', '\\', ';', ':', ',', '?');
@@ -864,15 +877,11 @@ if (!class_exists('CAT_Helper_Page'))
                 '/templates/'.$tpl.'/templates/default',
                 '/templates/'.$tpl.'/templates/default/css',
                 // page
-                CAT_Registry::get('PAGES_DIRECTORY').'/css/'
+                CAT_Registry::get('PAGES_DIRECTORY').'/css/',
+                // search
+                '/modules/'.CAT_Registry::get('SEARCH_LIBRARY').'/templates/custom/',
+                '/modules/'.CAT_Registry::get('SEARCH_LIBRARY').'/templates/default/'
             );
-
-            global $page_id;
-            #if($page_id && $this->link )
-            #{
-                #$dir = preg_replace( '~^'.CAT_Helper_Validate::getInstance()->sanitize_url(CAT_URL.'/'.PAGES_DIRECTORY).'~i', '', pathinfo($this->link,PATHINFO_DIRNAME) );
-                #array_push( CAT_Helper_Page::$css_search_path, sanitize_path(PAGES_DIRECTORY.$dir) );
-            #}
 
             // -----------------------------------------------------------------
             // -----                  sections (modules)                   -----
@@ -1704,6 +1713,8 @@ if (!class_exists('CAT_Helper_Page'))
                     return false;
                 }
             }
+
+            // search
             if ( ! $page_id )
                 $page_id = self::getDefaultPage();
 
@@ -1815,7 +1826,7 @@ if (!class_exists('CAT_Helper_Page'))
         public static function isActive($page_id)
         {
             self::getSections($page_id);
-            if(count(self::$pages_sections[$page_id]))
+            if(isset(self::$pages_sections[$page_id]) && count(self::$pages_sections[$page_id]))
                 return true;
             return false;
         } // end function isActive()
@@ -2495,6 +2506,16 @@ if (!class_exists('CAT_Helper_Page'))
                             }
                             $wysiwyg_seen = true;
                         }
+
+                // search
+                if(SHOW_SEARCH)
+                {
+                    array_push(
+                        CAT_Helper_Page::$js_search_path,
+                        '/modules/'.CAT_Registry::get('SEARCH_LIBRARY').'/templates/custom/',
+                        '/modules/'.CAT_Registry::get('SEARCH_LIBRARY').'/templates/default/'
+                    );
+                }
 
             }
         }   // end function _load_sections()

@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 $module_directory     = 'lib_search';
 $module_name          = 'BlackCat CMS Default Search Engine';
 $module_function      = 'library';
-$module_version       = '0.12';
+$module_version       = '0.13';
 $module_platform      = '1.x';
 $module_author        = 'Black Cat Development';
 $module_license       = 'GNU General Public License';

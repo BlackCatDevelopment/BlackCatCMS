@@ -148,6 +148,10 @@ $database->query(sprintf(
     'UPDATE `%ssettings` SET `name`="CAT_DEFAULT_TIME_FORMAT" WHERE `name`="DEFAULT_TIME_FORMAT"',
     CAT_TABLE_PREFIX
 ));
+$database->query(sprintf(
+    'DELETE FROM `%ssearch` WHERE `name`="cfg_search_droplet"',
+    CAT_TABLE_PREFIX
+));
 
 /*******************************************************************************
     update version info

@@ -492,7 +492,7 @@ function print_excerpt2($search_result, $search_parameter) {
 	$image_match = false;
 	$image_array = array();
 	
-	if ($search_parameter['settings'][CFG_SEARCH_IMAGES]) {
+	if ($search_parameter['settings'][CFG_SEARCH_IMAGES] || $search_parameter['search_match'] == SEARCH_TYPE_ALL) {
 	    // ok - now we are looking for matching images ...
 	    foreach ($images as $image) {
 	        $file = urldecode(basename($image['src']));
@@ -510,10 +510,10 @@ function print_excerpt2($search_result, $search_parameter) {
 	            makeThumbnail($src, $target, $search_parameter['settings'][CFG_THUMBS_WIDTH]);
 	            $image_array[] = array(        
 	                'excerpt' => $image_excerpt,
-	                'src' => CAT_URL.'/temp/search/'.urldecode(basename($image['src'])),
-	                'alt' => $image['alt'],
-	                'title' => $image['title'],
-	                'width' => $search_parameter['settings'][CFG_THUMBS_WIDTH]
+	                'src'     => CAT_URL.'/temp/search/'.urldecode(basename($image['src'])),
+	                'alt'     => ( isset($image['alt'])   ? $image['alt']   : '' ),
+	                'title'   => ( isset($image['title']) ? $image['title'] : '' ),
+	                'width'   => $search_parameter['settings'][CFG_THUMBS_WIDTH]
 	            );
 	            $image_match = true;
 	        }
