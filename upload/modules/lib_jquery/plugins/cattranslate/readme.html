@@ -1,0 +1,16 @@
+<h2>Verwendung</h2>
+Das Plugin wird vom Backend automatisch eingebunden. Es ist die Schnittstelle zu den BlackCat CMS Sprachdateien und dient der Übersetzung von Sprachstrings in Javascript.
+<h3>Einbinden im Frontend</h3><br />
+Am besten über eine <tt>headers.inc.php</tt> oder alternativ im Template:<br />
+<span style="color:#000000;font-weight:bold;" title="html/html/tag/start">&lt;script</span> <span style="color:#000066;" title="html/html/tag/attribute">src</span><span style="color:#008000;" title="html/html/tag/symbol">=</span><span style="color:#993333;" title="html/html/string/start">"</span><span style="color:#993333;" title="html/html/string">http://localhost/modules/lib_jquery/plugins/cattranslate/cattranslate.js</span><span style="color:#993333;" title="html/html/string/end">"</span> <span style="color:#000066;" title="html/html/tag/attribute">type</span><span style="color:#008000;" title="html/html/tag/symbol">=</span><span style="color:#993333;" title="html/html/string/start">"</span><span style="color:#993333;" title="html/html/string">text/javascript</span><span style="color:#993333;" title="html/html/string/end">"</span><span style="color:#000000;font-weight:bold;" title="html/html/tag/end">&gt;</span><span style="color:#000000;font-weight:bold;" title="html/html/tag/start">&lt;/script</span><span style="color:#000000;font-weight:bold;" title="html/html/tag/end">&gt;</span><br /><br />
+<h3>Synopsis</h3><br />
+cattranslate( string, elem, attributes, module )<br /><br />
+string - der zu übersetzende Text<br />
+elem <i>(optional)</i> - HTML-Element, dessen Text geändert werden soll<br />
+attributes <i>(optional)</i> - Attribute, die im Text ersetzt werden sollen<br />
+module <i>(optional)</i> - Name des Moduls, dessen Sprachdatei verwendet werden soll<br /><br />
+<h3>Beispiel</h3><br />
+<span style="color:#000000;" title="javascript/javascript">alert<span style="color:#008000;" title="javascript/javascript/symbol">(</span>cattranslate</span><span style="color:#008000;" title="javascript/javascript/symbol">(</span><span style="color:#ff0000;" title="javascript/javascript/single_string/start">'</span><span style="color:#ff0000;" title="javascript/javascript/single_string">This should be translated into anything else</span><span style="color:#ff0000;" title="javascript/javascript/single_string/end">'</span><span style="color:#008000;" title="javascript/javascript/symbol">))</span><span style="color:#008000;" title="javascript/javascript/symbol">;</span><br /><br />
+<ul id="jquery_plugin_mgr_readme">
+<li class="home"><a href="https://github.com/webbird/BlackCatCMS/wiki/Internationalization" target="_blank">Wiki</a></li>
+</ul>
