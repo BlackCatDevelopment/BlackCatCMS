@@ -43,8 +43,6 @@ $lang = CAT_Helper_I18n::getInstance();
 
 // use the parser
 global $parser;
-$parser->setPath(CAT_PATH. '/modules/'. basename(dirname(__FILE__)).'/templates/custom');
-$parser->setFallbackPath(CAT_PATH. '/modules/'. basename(dirname(__FILE__)).'/templates/default');
 
 // Include the functions file
 require_once CAT_PATH. '/framework/functions.php';
@@ -66,7 +64,7 @@ class CATSearch {
     // the $search_functions hold the module function for the search
     protected $search_functions = array();
     
-    // list of all LEPTON users
+    // list of all users
     protected $users = array();
     
     // the search language
@@ -226,7 +224,7 @@ class CATSearch {
     } // getTemplate()
     
     /**
-     * Get the settings for the LEPTON Search
+     * Get the settings for the Search
      * 
      * @access protected
      * @return boolean
@@ -236,20 +234,20 @@ class CATSearch {
         
         // set default values
         $this->setting = array(
-            CFG_CONTENT_IMAGE => CONTENT_IMAGE_FIRST,
-            CFG_SEARCH_DESCRIPTIONS => true,
-            CFG_SEARCH_DROPLEP => true,
-            CFG_SEARCH_IMAGES => true,
-            CFG_SEARCH_KEYWORDS => true,
-            CFG_SEARCH_LIBRARY => 'lib_search',
+            CFG_CONTENT_IMAGE                  => CONTENT_IMAGE_FIRST,
+            CFG_SEARCH_DESCRIPTIONS            => true,
+            CFG_SEARCH_DROPLET                 => true,
+            CFG_SEARCH_IMAGES                  => true,
+            CFG_SEARCH_KEYWORDS                => true,
+            CFG_SEARCH_LIBRARY                 => 'lib_search',
             CFG_SEARCH_LINK_NON_PUBLIC_CONTENT => '',
-            CFG_SEARCH_MAX_EXCERPTS => 15,
-            CFG_SEARCH_MODULE_ORDER => 'wysiwyg',
-            CFG_SEARCH_NON_PUBLIC_CONTENT => false,
-            CFG_SEARCH_SHOW_DESCRIPTIONS => true,
-            CFG_SEARCH_TIME_LIMIT => 0,
-            CFG_SEARCH_USE_PAGE_ID => -1,
-            CFG_THUMBS_WIDTH => 100
+            CFG_SEARCH_MAX_EXCERPTS            => 15,
+            CFG_SEARCH_MODULE_ORDER            => 'wysiwyg',
+            CFG_SEARCH_NON_PUBLIC_CONTENT      => false,
+            CFG_SEARCH_SHOW_DESCRIPTIONS       => true,
+            CFG_SEARCH_TIME_LIMIT              => 0,
+            CFG_SEARCH_USE_PAGE_ID             => -1,
+            CFG_THUMBS_WIDTH                   => 100
         );
         
         $SQL = sprintf("SELECT * FROM %ssearch", CAT_TABLE_PREFIX);
@@ -265,7 +263,7 @@ class CATSearch {
     
     /**
      * Walk through the modules and gather all search functions which should 
-     * included in the LEPTON search in the this->search_functions array
+     * included in the search in the this->search_functions array
      * 
      * @access protected
      * @return boolean - true on success and false on error
@@ -307,7 +305,7 @@ class CATSearch {
     } // checkForModuleSearchFunctions()
     
     /**
-     * Create a list with all registered LEPTON users
+     * Create a list with all registered users
      * 
      * @access protected
      * @return boolean - true on success
@@ -393,6 +391,22 @@ class CATSearch {
             }
         }   
     } // getSearchPath()
+
+    /**
+     * get the ID of the configured search results page
+     *
+     * @access public
+     * @return integer
+     **/
+    public function getSearchPageID() {
+        if(!isset($this->setting[CFG_SEARCH_USE_PAGE_ID]))
+            self::getSettings();
+        $page_id = $this->setting[CFG_SEARCH_USE_PAGE_ID];
+        if($page_id == -1)
+            if(isset($_REQUEST['page_id']) && CAT_Helper_Page::isActive($_REQUEST['page_id']))
+                $page_id = $_REQUEST['page_id'];
+        return $page_id;
+    }   // end function getSearchPageID()
     
     /**
      * Get the type of the search to execute, possible values are
@@ -571,25 +585,25 @@ class CATSearch {
             }
         }
         
-        // get the modules for the DropLEP search
-        $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplep'", CAT_TABLE_PREFIX);
-        if (false === ($get_dropleps = $database->query($SQL))) {
+        // get the modules for the Droplet search
+        $SQL = sprintf("SELECT * FROM %ssearch WHERE name='cfg_search_droplet'", CAT_TABLE_PREFIX);
+        if (false === ($get_droplets = $database->query($SQL))) {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
             return false;
         }
-        $dropleps = array();
-        $droplep_array = array();
-        if ($get_dropleps->numRows() > 0) {
-            while (false !== ($module = $get_dropleps->fetchRow(MYSQL_ASSOC))) {
+        $droplets = array();
+        $droplet_array = array();
+        if ($get_droplets->numRows() > 0) {
+            while (false !== ($module = $get_droplets->fetchRow(MYSQL_ASSOC))) {
                 $value = unserialize($module['extra']);
                 if (isset($value['page_id']) && isset($value['module_directory'])) {
-                    $dropleps[] = array(
+                    $droplets[] = array(
                         'module_directory' => $value['module_directory'],
                         'page_id' => $value['page_id'],
-                        'droplep_name' => $module['value']);
-                    if (!isset($droplep_array[$value['module_directory']])) {
+                        'droplet_name' => $module['value']);
+                    if (!isset($droplet_array[$value['module_directory']])) {
                         $modules[] = $value['module_directory'];
-                        $droplep_array[$value['module_directory']] = $value['module_directory'];
+                        $droplet_array[$value['module_directory']] = $value['module_directory'];
                     }
                 }
             }
@@ -659,10 +673,10 @@ class CATSearch {
                     // there is no search_func for this module
                     continue; 
                 }
-                if (isset($droplep_array[$module_name])) {
-                    // don't look for sections - call DropLEPs search function
+                if (isset($droplet_array[$module_name])) {
+                    // don't look for sections - call droplets search function
                     $pids = array();
-                    foreach ($dropleps as $dl) {
+                    foreach ($droplets as $dl) {
                         if ($dl['module_directory'] == $module_name) $pids[] = $dl['page_id'];
                     }
                     foreach ($pids as $pid) {
@@ -680,7 +694,7 @@ class CATSearch {
                                 $search_func_vars = array(
                                     'database' => $database,
                                     'page_id' => $res['page_id'],
-                                    'section_id' => -1, // no section_id's for DropLEPs needed
+                                    'section_id' => -1, // no section_id's for droplets needed
                                     'page_title' => $res['page_title'],
                                     'page_menu_title' => $res['menu_title'],
                                     'page_description' => $this->setting[CFG_SEARCH_SHOW_DESCRIPTIONS] ? $res['description'] : "",
@@ -923,15 +937,15 @@ class CATSearch {
     } // execSearch()
     
     /**
-     * Execute the LEPTON Search
+     * Execute the Search
      * 
      * @access protected
      * @return string result
      */
     public function exec() {
         if (!SHOW_SEARCH) {
-            // the lepton search is not active
-            $this->setMessage($this->lang->translate('The LEPTON Search is disabled!'));
+            // the search is not active
+            $this->setMessage($this->lang->translate('The Search is disabled!'));
             return $this->Output($this->getMessage);
         }
         
@@ -992,7 +1006,7 @@ class CATSearch {
     } // exec()
     
     /**
-     * Prompt or return the results of the LEPTON Search
+     * Prompt or return the results of the Search
      * 
      * @access protected
      * @param string $result - the string or dialog to output
@@ -1005,25 +1019,27 @@ class CATSearch {
             // prompt error
             $data = array(
                     'error' => array(
-                            'header' => $this->lang->translate('LEPTON Search Error'),
+                            'header' => $this->lang->translate('Search Error'),
                             'text' => $this->getError()
                             )
                     );
-            $result = $this->getTemplate('error.lte', $data);            
+            $result = $this->getTemplate('error.tpl', $data);            
         }
         elseif ($this->isMessage()) {
             // prompt a message
             $data = array(
                     'message' => array(
-                            'header' => $this->lang->translate('LEPTON Search Message'),
+                            'header' => $this->lang->translate('Search Message'),
                             'text' => $this->getMessage()
                             )
                     );
-            $result = $this->getTemplate('message.lte', $data);
+            $result = $this->getTemplate('message.tpl', $data);
         }
         else {
             // return the search result
-            $result = $this->getTemplate('search.results.lte', $data);
+            $parser->setPath(CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/templates/custom');
+            $parser->setFallbackPath(CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/templates/default');
+            $result = $this->getTemplate('search.results.tpl', $data);
         } 
         return ($this->isPrompt()) ? print($result) : $result;
     }

@@ -73,8 +73,8 @@ function make_url_searchstring($search_match, $search_url_array) {
 function get_page_modified($page_modified_when) {
 	global $lang;
 	if($page_modified_when > 0) {
-		$date = gmdate(DATE_FORMAT, $page_modified_when);
-		$time = gmdate(TIME_FORMAT, $page_modified_when);
+		$date = CAT_Helper_DateTime::getDate($page_modified_when);
+		$time = CAT_Helper_DateTime::getTime($page_modified_when);
 	} else {
 		$date = $lang->translate('- unknown date -');
 		$time = $lang->translate('- unknown time -');

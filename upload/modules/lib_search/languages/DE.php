@@ -54,6 +54,8 @@ $LANG = array(
             => '- Zeit unbekannt -',
         '- unknown user -'
             => ' unbekannter Benutzer -',
+        'by'
+            => 'von',
         'all words'
             => 'alle Wörter',
         'any word'
@@ -71,13 +73,15 @@ $LANG = array(
         'Matching images'
             => 'Gefundene Bilder',
         'No matches!'
-            => 'keine Treffer!',
+            => 'Keine Treffer!',
         'only images'
             => 'nur Bilder',
         'Search'
             => 'Suche',
         'Search ...'
             => 'Suche ...',
+        'Search term'
+            => 'Suchwort',
         'Submit'
             => 'Start',
         'The Search is disabled!'
@@ -88,6 +92,8 @@ $LANG = array(
             => 'Neue Suche',
         'Search results'
             => 'Suchergebnis(se)',
+        'Last modified'
+            => 'Letzte Änderung',
 );
 
 ?>

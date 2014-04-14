@@ -71,7 +71,7 @@ define('CFG_SEARCH_IMAGES', 'cfg_search_images');
 define('CFG_THUMBS_WIDTH', 'cfg_thumbs_width');
 define('CFG_CONTENT_IMAGE', 'cfg_content_image');
 define('CFG_SEARCH_LIBRARY', 'cfg_search_library');
-define('CFG_SEARCH_DROPLEP', 'cfg_search_droplep');
+define('CFG_SEARCH_DROPLET', 'cfg_search_droplet');
 define('CFG_SEARCH_USE_PAGE_ID', 'cfg_search_use_page_id');
 
 // $_SESSION constants

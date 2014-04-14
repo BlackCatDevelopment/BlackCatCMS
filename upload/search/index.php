@@ -39,38 +39,33 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-
 // Required page details
-$page_id = 0;
+$page_id          = -1;
 $page_description = '';
-$page_keywords = '';
+$page_keywords    = '';
 
+// load search library
+require_once CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/library.php';
+$s       = new CATSearch();
+$page_id = $s->getSearchPageID();
+
+// load droplets extensions
 $h = CAT_Helper_Droplet::getInstance();
+$h->register_droplet_css('SearchBox',$page_id,'/modules/'.SEARCH_LIBRARY.'/templates/default/','search.box.css');
+$h->register_droplet_js('SearchBox',$page_id,'/modules/'.SEARCH_LIBRARY.'/templates/default/','search.box.js');
 
-$h->register_droplet_css('SearchBox',$page_id,'/modules/lib_search/templates/default/','search.box.css');
-$h->register_droplet_js('SearchBox',$page_id,'/modules/lib_search/templates/default/','search.box.js');
-CAT_Helper_I18n::getInstance()->addFile(LANGUAGE.'.php', CAT_PATH.'/modules/lib_search/languages/');
+if(isset($_GET['string']))
+    CAT_Helper_Page::addCSS(CAT_URL.'/modules/'.SEARCH_LIBRARY.'/templates/default/frontend.css');
 
-define('PAGE_ID', 0);
-define('ROOT_PARENT', 0);
-define('PARENT', 0);
-define('LEVEL', 0);
-define('PAGE_TITLE', $h->lang()->translate('Search'));
-define('MENU_TITLE', $h->lang()->translate('Search'));
-define('MODULE', '');
-define('VISIBILITY', 'public');
+// add language file
+CAT_Helper_I18n::getInstance()->addFile(LANGUAGE.'.php', CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/languages/');
+
+// add template search path
+global $parser;
+$parser->setPath(CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/templates/custom');
+$parser->setFallbackPath(CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/templates/default');
+
 define('PAGE_CONTENT', CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/index.php');
-
-// Find out what the search template is
-$query_template = $h->db()->query(sprintf(
-    "SELECT `value`  FROM `%ssearch` WHERE `name`='template' LIMIT 1",
-    CAT_TABLE_PREFIX
-));
-$fetch_template = $query_template->fetchRow(MYSQL_ASSOC);
-$template       = $fetch_template['value'];
-if ($template != '')
-	define('TEMPLATE', $template);
-unset($template);
 
 // Get the referrer page ID if it exists
 if (isset($_REQUEST['referrer']) && is_numeric($_REQUEST['referrer']) && intval($_REQUEST['referrer']) > 0)

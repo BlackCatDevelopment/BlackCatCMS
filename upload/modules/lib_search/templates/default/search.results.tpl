@@ -10,7 +10,7 @@
         <tr>
           <td>
             <input type="hidden" name="{$form.search_path.name}" value="{$form.search_path.value}" />
-            <input type="text" name="{$form.search_string.name}" value="{$form.search_string.value}" />
+            <input type="text" class="search_box_input" name="{$form.search_string.name}" value="{translate('Search ...')}"  onfocus="javascript:search_box_onfocus(this, '{translate("Search ...")}');" onblur="javascript:search_box_onblur(this, '{translate("Search ...")}');" />
           </td>
           <td>
             <input type="submit" value="{translate('Submit')}" />
@@ -33,6 +33,7 @@
   </div>
   {if $result.count > 0}<br />
     <h2>{translate('Search results')}</h2>
+    <div style="margin-bottom:5px">{translate('Search term')}: {$form.search_string.value}</div>
     {foreach $result.items item}
       <div class="search_item">
         <div class="search_item_header">
@@ -40,6 +41,9 @@
             <img src="{$images.locked.src}" width="{$images.locked.width}" height="{$images.locked.height}" alt="{translate('Content locked')}" title="{translate('Content locked')}" />
           {/if}
           {if count_characters($item.page.link) > 0}<a href="{$item.page.link}">{$item.page.title}</a>{else}{$item.page.title}{/if}
+          <div class="search_item_info">
+            {translate('Last modified')}: {$item.page.last_changed.date_formatted} / {translate('by')}: {$item.user.display_name}
+          </div>
         </div>
         {if $item.page.thumb.active == 1}
         <div class="content_image">
