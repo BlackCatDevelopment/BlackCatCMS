@@ -23,7 +23,7 @@
 
 jQuery(document).ready(function()
 {
-    var fields = new Array( 'fc_pref_display_name', 'fc_language', 'fc_timezone_string', 'fc_date_format', 'fc_email' );
+    var fields = new Array( 'fc_pref_display_name', 'fc_language', 'fc_timezone_string', 'fc_date_format', 'fc_time_format', 'fc_email' );
     for( i=0; i<=fields.length; i++ )
 	{
         $('#'+fields[i]).change( function() {

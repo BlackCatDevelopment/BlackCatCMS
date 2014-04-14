@@ -45,7 +45,7 @@ if ( !defined( 'SESSION_STARTED' ) ) {
 error_reporting(E_ALL^E_NOTICE);
 
 // set global default to avoid warnings
-date_default_timezone_set('Europe/Paris');
+date_default_timezone_set('Europe/Berlin');
 
 set_include_path (
     implode(

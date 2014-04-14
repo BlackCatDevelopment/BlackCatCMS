@@ -190,19 +190,15 @@ if (!count($err_msg))
             $date_format = $val->sanitizePost('date_format');
 			if ( $date_format != '' )
 			{
-				$_SESSION['DATE_FORMAT'] = $date_format;
+				$_SESSION['CAT_DATE_FORMAT'] = $date_format;
 				if ( isset($_SESSION['USE_DEFAULT_DATE_FORMAT']) )
-				{
 					unset($_SESSION['USE_DEFAULT_DATE_FORMAT']);
 				}
-			}
 			else
 			{
 				$_SESSION['USE_DEFAULT_DATE_FORMAT']	= true;
-				if ( isset($_SESSION['DATE_FORMAT']) )
-				{
-					unset($_SESSION['DATE_FORMAT']);
-				}
+				if ( isset($_SESSION['CAT_DATE_FORMAT']) )
+					unset($_SESSION['CAT_DATE_FORMAT']);
 			}
 			// ====================== 
 			// ! Update time format   
@@ -210,19 +206,22 @@ if (!count($err_msg))
             $time_format = $val->sanitizePost('time_format');
 			if ( $time_format != '' )
 			{
-				$_SESSION['TIME_FORMAT']		= $time_format;
+				$_SESSION['CAT_TIME_FORMAT'] = $time_format;
 				if ( isset($_SESSION['USE_DEFAULT_TIME_FORMAT']) )
-				{
 					unset($_SESSION['USE_DEFAULT_TIME_FORMAT']);
 				}
-			}
 			else
 			{
 				$_SESSION['USE_DEFAULT_TIME_FORMAT'] = true;
-				if ( isset($_SESSION['TIME_FORMAT']) )
+				if ( isset($_SESSION['CAT_TIME_FORMAT']) )
+					unset($_SESSION['CAT_TIME_FORMAT']);
+			}
+
+            if( defined('WB2COMPAT') && WB2COMPAT === true )
 				{
-					unset($_SESSION['TIME_FORMAT']);
-				}
+                $wb2compat_format_map = CAT_Registry::get('WB2COMPAT_FORMAT_MAP');
+                $_SESSION['DATE_FORMAT'] = $wb2compat_format_map[$_SESSION['CAT_DATE_FORMAT']];
+                $_SESSION['TIME_FORMAT'] = $wb2compat_format_map[$_SESSION['CAT_TIME_FORMAT']];
 			}
 
 			// ==================== 

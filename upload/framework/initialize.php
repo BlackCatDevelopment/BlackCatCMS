@@ -219,8 +219,8 @@ if (file_exists(dirname(__FILE__) . '/class.database.php'))
     //**************************************************************************
     $timezone_string = (isset($_SESSION['TIMEZONE_STRING']) ? $_SESSION['TIMEZONE_STRING'] : DEFAULT_TIMEZONE_STRING);
 	date_default_timezone_set($timezone_string);
-    CAT_Registry::register('TIME_FORMAT', CAT_Helper_DateTime::getDefaultTimeFormat(), true);
-    CAT_Registry::register('DATE_FORMAT', CAT_Helper_DateTime::getDefaultDateFormatShort(), true);
+    CAT_Registry::register('CAT_TIME_FORMAT', CAT_Helper_DateTime::getDefaultTimeFormat(), true);
+    CAT_Registry::register('CAT_DATE_FORMAT', CAT_Helper_DateTime::getDefaultDateFormatShort(), true);
     
     //**************************************************************************
     // Disable magic_quotes_runtime

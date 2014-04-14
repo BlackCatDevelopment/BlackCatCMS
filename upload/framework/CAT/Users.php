@@ -169,17 +169,24 @@ if ( ! class_exists( 'CAT_Users', false ) )
                                 : CAT_Registry::get('DEFAULT_TIMEZONE_STRING')
                                 ;
 
-                            $_SESSION['DATE_FORMAT']
+                            $_SESSION['CAT_DATE_FORMAT']
                                 = ( isset($prefs['date_format']) && $prefs['date_format'] != '' )
                                 ? $prefs['date_format']
-                                : CAT_Registry::get('DEFAULT_DATE_FORMAT')
+                                : CAT_Registry::get('CAT_DEFAULT_DATE_FORMAT')
                                 ;
 
-                            $_SESSION['TIME_FORMAT']
+                            $_SESSION['CAT_TIME_FORMAT']
                                 = ( isset($prefs['time_format']) && $prefs['time_format'] != '' )
                                 ? $prefs['time_format']
-                                : CAT_Registry::get('DEFAULT_TIME_FORMAT')
+                                : CAT_Registry::get('CAT_DEFAULT_TIME_FORMAT')
                                 ;
+
+                            if( defined('WB2COMPAT') && WB2COMPAT === true )
+                            {
+                                $wb2compat_format_map = CAT_Registry::get('WB2COMPAT_FORMAT_MAP');
+                                $_SESSION['DATE_FORMAT'] = $wb2compat_format_map[$_SESSION['CAT_DATE_FORMAT']];
+                                $_SESSION['TIME_FORMAT'] = $wb2compat_format_map[$_SESSION['CAT_TIME_FORMAT']];
+                            }
 
                 			date_default_timezone_set($_SESSION['TIMEZONE_STRING']);
 

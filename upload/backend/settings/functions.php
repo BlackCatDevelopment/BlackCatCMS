@@ -220,7 +220,7 @@ function getDateformats() {
         $data[$counter] = array(
             'NAME'     => $title,
             'VALUE'    => ( $format != 'system_default' )    ? $format : '',
-            'SELECTED' => ( DEFAULT_DATE_FORMAT == $format ) ? true    : false
+            'SELECTED' => ( CAT_DEFAULT_DATE_FORMAT == $format ) ? true    : false
         );
         $counter++;
     }
@@ -334,15 +334,15 @@ function saveDatetime($backend) {
        ? $default_language
        : $old_settings['default_language'];
     // check date format
-    $settings['default_date_format']
+    $settings['cat_default_date_format']
        = CAT_Helper_DateTime::checkDateformat($val->sanitizePost('default_date_format'))
        ? $val->sanitizePost('default_date_format')
-       : $old_settings['default_date_format'];
+       : $old_settings['cat_default_date_format'];
     // check time format
-    $settings['default_time_format']
+    $settings['cat_default_time_format']
        = CAT_Helper_DateTime::checkTimeformat($val->sanitizePost('default_time_format'))
        ? $val->sanitizePost('default_time_format')
-       : $old_settings['default_date_format'];
+       : $old_settings['cat_default_time_format'];
     // check timezone string
     $settings['default_timezone_string']
        = CAT_Helper_DateTime::checkTZ($val->sanitizePost('default_timezone_string'))

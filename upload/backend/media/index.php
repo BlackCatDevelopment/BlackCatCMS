@@ -105,8 +105,8 @@ if(isset($dir['filename']) && is_array($dir['filename']))
         $tpl_data['files'][$counter]['FILETYPE']     = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
         $tpl_data['files'][$counter]['show_preview'] = ( in_array( strtolower($tpl_data['files'][$counter]['FILETYPE']), $allowed_img_types ) ) ? true : false;
         $tpl_data['files'][$counter]['FILESIZE']     = $dirh->getSize($file_path,true);
-        $tpl_data['files'][$counter]['FILEDATE']     = date (DEFAULT_DATE_FORMAT, filemtime($file_path));
-        $tpl_data['files'][$counter]['FILETIME']     = date (DEFAULT_TIME_FORMAT, filemtime($file_path));
+        $tpl_data['files'][$counter]['FILEDATE']     = date (CAT_DEFAULT_DATE_FORMAT, filemtime($file_path));
+        $tpl_data['files'][$counter]['FILETIME']     = date (CAT_DEFAULT_TIME_FORMAT, filemtime($file_path));
         $tpl_data['files'][$counter]['FULL_NAME']    = $file;
         $tpl_data['files'][$counter]['NAME']         = substr($file , 0 , -( strlen($tpl_data['files'][$counter]['FILETYPE'])+1 ) );
     }

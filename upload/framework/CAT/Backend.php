@@ -267,7 +267,7 @@ if (!class_exists('CAT_Backend', false))
                 'DD',
                 'MM'
             );
-            $tpl_data['DATE_FORMAT'] = str_replace($date_search, $date_replace, CAT_Registry::get('DATE_FORMAT'));
+            $tpl_data['DATE_FORMAT'] = str_replace($date_search, $date_replace, CAT_Registry::get('CAT_DATE_FORMAT'));
             $time_search             = array(
                 'H',
                 'i',

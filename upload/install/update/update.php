@@ -136,6 +136,20 @@ if($res && $res->numRows())
 }
 
 /*******************************************************************************
+    1.0.2 TO 1.0.3
+*******************************************************************************/
+
+// date and time formats
+$database->query(sprintf(
+    'UPDATE `%ssettings` SET `name`="CAT_DEFAULT_DATE_FORMAT" WHERE `name`="DEFAULT_DATE_FORMAT"',
+    CAT_TABLE_PREFIX
+));
+$database->query(sprintf(
+    'UPDATE `%ssettings` SET `name`="CAT_DEFAULT_TIME_FORMAT" WHERE `name`="DEFAULT_TIME_FORMAT"',
+    CAT_TABLE_PREFIX
+));
+
+/*******************************************************************************
     update version info
 *******************************************************************************/
 if ( file_exists(dirname(__FILE__).'/../tag.txt') )

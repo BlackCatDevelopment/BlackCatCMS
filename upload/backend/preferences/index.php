@@ -114,7 +114,7 @@ foreach ($timezone_table as $title)
 // =========================== 
 $DATE_FORMATS = CAT_Helper_DateTime::getDateFormats();
 $USE_DEFAULT  = $val->fromSession('USE_DEFAULT_DATE_FORMAT');
-$userformat   = $val->fromSession('DATE_FORMAT');
+$userformat   = $val->fromSession('CAT_DATE_FORMAT');
 $counter=0;
 foreach ( $DATE_FORMATS AS $format => $title )
 {
@@ -134,7 +134,7 @@ foreach ( $DATE_FORMATS AS $format => $title )
 // =========================== 
 $TIME_FORMATS = CAT_Helper_DateTime::getTimeFormats();
 $USE_DEFAULT  = $val->fromSession('USE_DEFAULT_TIME_FORMAT');
-$userformat   = $val->fromSession('TIME_FORMAT');
+$userformat   = $val->fromSession('CAT_TIME_FORMAT');
 $counter	= 0;
 foreach ( $TIME_FORMATS AS $format => $title )
 {

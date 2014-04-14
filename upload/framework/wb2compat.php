@@ -59,3 +59,36 @@ require_once(CAT_PATH."/include/phplib/template.inc");
 
 // old language definitions - needed for some older modules, like Code2
 define('ENABLE_OLD_LANGUAGE_DEFINITIONS',true);
+
+// map new date and time formats to old ones
+$wb2compat_format_map = array(
+    '%A, %d. %B %Y' => 'l, jS F, Y',
+    '%e %B, %Y'     => 'jS F, Y',
+    '%d %m %Y'      => 'd M Y',
+    '%b %d %Y'      => 'M d Y',
+    '%a %b %d, %Y'  => 'D M d, Y',
+    '%d-%m-%Y'      => 'd-m-Y',
+    '%m-%d-%Y'      => 'm-d-Y',
+    '%d.%m.%Y'      => 'd.m.Y',
+    '%m.%d.%Y'      => 'm.d.Y',
+    '%d/%m/%Y'      => 'd/m/Y',
+    '%m/%d/%Y'      => 'm/d/Y',
+    '%a, %d %b %Y %H:%M:%S %z' => 'r',
+    '%A, %d. %B %Y' => 'l, jS F Y',
+    '%H:%M'         => 'H:i',
+    '%H:%M:%S'      => 'H:i:s',
+    '%I:%M %p'      => 'g:i a',
+);
+
+// global settings
+if(defined('CAT_DATE_FORMAT') && array_key_exists(CAT_DATE_FORMAT,$wb2compat_format_map))
+    define('DATE_FORMAT',$wb2compat_format_map[CAT_DATE_FORMAT]);
+if(defined('CAT_DEFAULT_DATE_FORMAT') && array_key_exists(CAT_DEFAULT_DATE_FORMAT,$wb2compat_format_map))
+    define('DEFAULT_DATE_FORMAT',$wb2compat_format_map[CAT_DEFAULT_DATE_FORMAT]);
+
+if(defined('CAT_TIME_FORMAT') && array_key_exists(CAT_TIME_FORMAT,$wb2compat_format_map))
+    define('TIME_FORMAT',$wb2compat_format_map[CAT_TIME_FORMAT]);
+if(defined('CAT_DEFAULT_TIME_FORMAT') && array_key_exists(CAT_DEFAULT_TIME_FORMAT,$wb2compat_format_map))
+    define('DEFAULT_TIME_FORMAT',$wb2compat_format_map[CAT_DEFAULT_TIME_FORMAT]);
+
+CAT_Registry::set('WB2COMPAT_FORMAT_MAP',$wb2compat_format_map);

@@ -105,7 +105,7 @@ $tpl_data['MODIFIED_WHEN']        = ($results_array['modified_when'] != 0) ? $mo
 
 $tpl_data['SECTION_BLOCKS'] = SECTION_BLOCKS;
 $tpl_data['SEC_ANCHOR']     = SEC_ANCHOR;
-$tpl_data['DATE_FORMAT']    = DATE_FORMAT;
+$tpl_data['DATE_FORMAT']    = CAT_DATE_FORMAT;
 
 $tpl_data['CUR_TAB']     = 'modify';
 $tpl_data['PAGE_HEADER'] = $backend->lang()->translate('Modify page');

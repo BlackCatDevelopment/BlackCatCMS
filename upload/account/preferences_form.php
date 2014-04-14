@@ -50,19 +50,19 @@ CAT_Helper_Protect::getInstance()->enableCSRFMagic();
 $submit_ok = false;
 $message   = false;
 $save      = $val->sanitizePost('save');
+$wbcompat  = (defined('WB2COMPAT') && WB2COMPAT===true) ? true : false;
 
 if ( $save && ( $save == 'account_settings' ) )
 {
-	$query   = "SELECT `password` from `" . CAT_TABLE_PREFIX . "users` where `user_id`='" . $user->get_user_id()
-             . "' AND `password`='" . md5( $val->sanitizePost('current_password') ) . "'";
-	$result  = $database->query( $query );
+	$query  = "SELECT `password` from `%susers` where `user_id`='%d' AND `password`='%s'";
+	$result = $database->query(sprintf($query,CAT_TABLE_PREFIX,$user->get_user_id(),md5($val->sanitizePost('current_password'))));
 	if ( $result->numRows() == 1 )
 	{
 		$submit_ok = true;
 	}
-	unset( $query );
-	unset( $result );
-	unset( $_POST['save'] );
+	unset($query);
+	unset($result);
+	unset($_POST['save']);
 }
 
 if (true === $submit_ok)
@@ -147,21 +147,21 @@ if (true === $submit_ok)
 		foreach($fields as $k=>$v)
             $_SESSION[ strtoupper($k) ] = $v;
 
-		$_SESSION['TIMEZONE_STRING'] = $timezone_string;
+		$_SESSION['CAT_TIMEZONE_STRING'] = $timezone_string;
 		date_default_timezone_set($timezone_string);
 
-		if ( $_SESSION['TIME_FORMAT'] != '' ) {
+		if ( $_SESSION['CAT_TIME_FORMAT'] != '' ) {
 			if(isset($_SESSION['USE_DEFAULT_TIME_FORMAT'])) unset($_SESSION['USE_DEFAULT_TIME_FORMAT']);
 		} else {
 			$_SESSION['USE_DEFAULT_TIME_FORMAT'] = true;
-			unset($_SESSION['TIME_FORMAT']);
+			unset($_SESSION['CAT_TIME_FORMAT']);
 		}
 
-		if ( $_SESSION['DATE_FORMAT'] != '' ) {
+		if ( $_SESSION['CAT_DATE_FORMAT'] != '' ) {
 			if(isset($_SESSION['USE_DEFAULT_DATE_FORMAT'])) unset($_SESSION['USE_DEFAULT_DATE_FORMAT']);
 		} else {
 			$_SESSION['USE_DEFAULT_DATE_FORMAT'] = true;
-			unset($_SESSION['DATE_FORMAT']);
+			unset($_SESSION['CAT_DATE_FORMAT']);
 		}
 	}
 
@@ -181,18 +181,18 @@ $parser->setPath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/'); // if there's a t
 $parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to default dir
 $parser->output('account_preferences_form',
     array(
-        'languages' => $languages,
-        'timezones' => CAT_Helper_DateTime::getTimezones(),
-        'current_tz' => CAT_Helper_DateTime::getTimezone(),
-        'date_formats' => CAT_Helper_DateTime::getDateFormats(),
-        'current_df' => CAT_Helper_DateTime::getDefaultDateFormatShort(),
-        'time_formats' => CAT_Helper_DateTime::getTimeFormats(),
-        'current_tf' => CAT_Helper_DateTime::getDefaultTimeFormat(),
-        'PREFERENCES_URL' => PREFERENCES_URL,
-        'USER_ID' => $user->get_user_id(),
-        'DISPLAY_NAME' => $user->get_display_name(),
-        'GET_EMAIL' => $user->get_email(),
-        'RESULT_MESSAGE' => $message,
+        'languages'             => $languages,
+        'timezones'             => CAT_Helper_DateTime::getTimezones(),
+        'current_tz'            => CAT_Helper_DateTime::getTimezone(),
+        'date_formats'          => CAT_Helper_DateTime::getDateFormats(),
+        'current_df'            => CAT_Helper_DateTime::getDefaultDateFormatShort(),
+        'time_formats'          => CAT_Helper_DateTime::getTimeFormats(),
+        'current_tf'            => CAT_Helper_DateTime::getDefaultTimeFormat(),
+        'PREFERENCES_URL'       => PREFERENCES_URL,
+        'USER_ID'               => $user->get_user_id(),
+        'DISPLAY_NAME'          => $user->get_display_name(),
+        'GET_EMAIL'             => $user->get_email(),
+        'RESULT_MESSAGE'        => $message,
         'AUTH_MIN_LOGIN_LENGTH' => AUTH_MIN_LOGIN_LENGTH,
     )
 );

@@ -975,9 +975,9 @@ if (!class_exists('CAT_Helper_Page'))
             DATE_FORMAT						  = '" . str_replace(
             	array( '%', 'Y', 'm', 'd' ),
             	array( '', 'yy', 'mm', 'dd' ),
-            	DATE_FORMAT
+            	CAT_DATE_FORMAT
             ) . "',
-			TIME_FORMAT						  = '" . str_replace( '%', '', TIME_FORMAT ) . "',
+			TIME_FORMAT						  = '" . str_replace( '%', '', CAT_TIME_FORMAT ) . "',
 			DEFAULT_LANGUAGE				  = '" . DEFAULT_LANGUAGE . "',
 			SESSION							  =	'" . session_name() . "';
             ";
