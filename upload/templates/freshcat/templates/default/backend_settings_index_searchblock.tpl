@@ -24,10 +24,6 @@
 			{$PAGES_LIST}
 			<div class="clear_sp"></div>
 
-			<label class="fc_label_300" for="fc_search_cfg_search_droplet">{translate('Individual page: Droplet for search result')}:</label>
-			<input type="text" name="search_cfg_search_droplet" id="fc_search_cfg_search_droplet" value="{$search.cfg_search_droplet}" />
-			<div class="clear_sp"></div>
-
             <div class="fc_settings_max_large">
               <input type="checkbox" class="fc_checkbox_jq" name="search_cfg_search_images" id="fc_search_cfg_search_images" value="true" {if $search.cfg_search_images == 'true'} checked="checked"{/if}/>
 			  <label for="fc_search_cfg_search_images">{translate('Search for images')}:</label>

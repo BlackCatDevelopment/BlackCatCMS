@@ -2508,7 +2508,7 @@ if (!class_exists('CAT_Helper_Page'))
                         }
 
                 // search
-                if(SHOW_SEARCH)
+                if($for == 'frontend' && CAT_Registry::get('SHOW_SEARCH') === true)
                 {
                     array_push(
                         CAT_Helper_Page::$js_search_path,

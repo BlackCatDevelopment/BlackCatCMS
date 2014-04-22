@@ -38,6 +38,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	    protected static $skip_dirs     = array();
         protected static $skip_files    = array();
         protected static $current_depth = 0;
+        protected static $is_win        = NULL;
 
         protected      $_config = array( 'loglevel' => 8 );
         protected      $debugLevel = 8;
@@ -438,6 +439,14 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 
 			$dirs = array();
 
+            if(!self::$is_win)
+            {
+                self::$is_win = false;
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    self::$is_win = true;
+                }
+            }
+
 			// make sure $suffixes is an array
             if ( $suffixes && is_scalar($suffixes) ) {
                 $suffixes = array( $suffixes );
@@ -483,7 +492,8 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 						}
                         if ( is_dir( $dir.'/'.$file ) ) {
                             if ( ! $files_only ) {
-                                $dirs[]  = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
+                                $current = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
+                                $dirs[]  = $current;
                             }
                             if ( self::$recurse )
                             {
@@ -497,11 +507,10 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                         elseif ( $with_files ) {
                             if ( ! count($suffixes) || in_array( pathinfo($file,PATHINFO_EXTENSION), $suffixes ) )
                             {
-                            	$dirs[]  = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
+                                $current = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
+                                $dirs[]  = $current;
 							}
                         }
-#                        else {
-#                        }
                     }
                 }
             }
@@ -817,6 +826,27 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             umask($umask);
         }
 
+        public static function isDir($directory)
+        {
+            if(self::$is_win)
+            {
+                try{
+                    if(is_dir(utf8_encode($directory))
+                      ||is_dir(utf8_decode($directory))
+                      ||is_dir($directory))
+                        return true;
+                    return false;
+                }
+                catch (\Exception $f)
+                {
+                }
+            }
+            else
+            {
+                return is_dir($directory);
+            }
+        }
+
         /**
          *
          * @access public
@@ -935,5 +965,3 @@ if (defined('CAT_PATH')) {
 
 	}
 }
-
-?>

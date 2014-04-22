@@ -259,6 +259,16 @@ if ( ! class_exists('database', false ) )
 		return null;
 	} // get_one()
 	
+    /**
+     *
+     * @access public
+     * @return
+     **/
+    public function insert_id()
+    {
+        return mysql_insert_id();
+    }   // end function last_insert()
+
 	private function __initSession() {
 		if (defined('SESSION_STARTED') && !isset($_SESSION['CAT_SESSION'])) {
 			// $_SESSION for class.database.php

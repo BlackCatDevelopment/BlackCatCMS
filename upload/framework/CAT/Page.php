@@ -75,6 +75,7 @@ if (!class_exists('CAT_Page', false))
         final private static function init($page_id)
         {
             global $parser;
+            $parser->setGlobals('PAGE_ID',$page_id);
             self::$instances[$page_id]->_page_id = $page_id;
             $prop = self::$instances[$page_id]->getProperties();
             foreach ( $prop as $key => $value )
@@ -97,6 +98,7 @@ if (!class_exists('CAT_Page', false))
     		} else {
     			CAT_Registry::register('SHOW_SEARCH', false,true);
     		}
+            $parser->setGlobals('SHOW_SEARCH',SHOW_SEARCH);
     		// Work-out if menu should be shown
     		if(!defined('SHOW_MENU')) {
     			CAT_Registry::register('SHOW_MENU', true,true);
@@ -316,7 +318,7 @@ if (!class_exists('CAT_Page', false))
                             }
                             // fetch original content
                             ob_start();
-                                require(CAT_PATH . '/modules/' . $module . '/view.php');
+                                require CAT_PATH . '/modules/' . $module . '/view.php';
                                 $content = ob_get_clean();
                             echo $content;
                         }
@@ -329,7 +331,7 @@ if (!class_exists('CAT_Page', false))
             }
             else
             {
-                require(PAGE_CONTENT);
+                require PAGE_CONTENT;
             }
             if (!CAT_Registry::exists('CAT_PAGE_CONTENT_DONE'))
             CAT_Registry::register('CAT_PAGE_CONTENT_DONE',true,true);
