@@ -229,23 +229,28 @@ class order
 			$counter = 1;
 			foreach ( $new_array as $id )
 			{
+                if($id == '') { continue; }
 				if ( is_numeric( $id ) )
 				{
-					$database->query(sprintf(
+                    $q = sprintf(
                         'UPDATE `%s` SET `%s`="%s" WHERE `%s`="%s"',
                         $this->table, $this->order_field, ($counter++), $this->id_field, $id
-                    ));
-					if ( $database->get_error() )
+                    );
+					$database->query($q);
+					if ( $database->is_error() )
 					{
 						return $database->get_error();
 					}
 				}
-				else return false;
+				else
+                {
+                    return false;
+			    }
 			}
 			return true;
 		}
-		else return false;
-	}
+		return false;
+	}   // end function reorder_by_array()
 
 }
 

@@ -46,4 +46,4 @@ div.account_message {
 
 .account_label { float:left; width:250px; text-align:right; margin-right:15px; }
 .account_value input, .account_value select { width:200px; }
-div.account_message { padding: 1em; color: #fff; -webkit-border-radius: 4px;-moz-border-radius: 4px;-khtml-border-radius: 4px;border-radius: 4px;}
+div.account_message { padding: 1em; color: #000; -webkit-border-radius: 4px;-moz-border-radius: 4px;-khtml-border-radius: 4px;border-radius: 4px;}
