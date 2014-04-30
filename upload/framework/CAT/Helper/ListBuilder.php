@@ -149,6 +149,37 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
 
         }   // end function dropdown ()
 
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function breadcrumb( $list, $selected=NULL )
+        {
+            $self     = self::getInstance(false);
+            $tree     = self::buildRecursion($list);
+            $path     = CAT_Helper_Array::ArraySearchRecursive($selected,$tree,$self->_config['__id_key']);
+
+            if(is_array($path) && count($path))
+            {
+                array_pop($path);
+                // push selected item to result
+                eval( '$node = $tree[\''.implode( '\'][\'', $path ).'\'];' );
+                $trail[] = $node;
+                while(count($path)>1)
+                {
+                    array_pop($path);
+                    array_pop($path);
+                    eval( '$node = $tree[\''.implode( '\'][\'', $path ).'\'];' );
+                    if(isset($node['children']))
+                        unset($node['children']);
+                    $trail[] = $node;
+                }
+                return(array_reverse($trail));
+            }
+            return NULL;
+        }   // end function breadcrumb()
+
         public static function tree( $list, $root_id, $selected=NULL )
         {
             $self   = self::getInstance(false);
@@ -223,7 +254,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 // current item has children
                 elseif ( ! empty( $children[ $option['value'][$id_key] ] ) )
                 {
-                    $level  = isset( $option['value'][ $level_key ] )
+                    $level  = ( isset($option['value'][$level_key]) && $option['value'][$level_key] >= 0 )
                             ? $option['value'][ $level_key ]
                             : 0;
                     $tab    = str_repeat( $space, $level );
@@ -256,7 +287,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 }
                 // handle leaf
                 else {
-                    $level  = isset( $option['value'][ $level_key ] )
+                    $level  = ( isset( $option['value'][$level_key]) && $option['value'][$level_key] >= 0 )
                             ? $option['value'][ $level_key ]
                             : 0;
                     $tab    = str_repeat( $space, $level );
@@ -491,10 +522,104 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 '__no_html'             => false,
                 '__auto_link'           => false,
 			    'space'                 => '    ',
+                'max_recursion'         => 15,
 			);
             return $this; // make chainable
         }   // end function reset()
         
+        /**
+         * build multilevel (recursive) array from flat one; will add the
+         * children of an item to __children_key array key
+         *
+         * @access  public
+         * @param   array   $items - flat array (reference!)
+         * @param
+         * @return  array
+         **/
+        public static function buildRecursion ( &$items, $min = -9 )
+        {
+            if ( ! empty( $items ) && ! is_array( $items ) )
+            {
+                return NULL;
+            }
+            if ( isset($items['__is_recursive']) )
+            {
+                return $items;
+            }
+            // if there's only one item, no recursion to do
+            if ( ! ( count( $items ) > 1 ) )
+            {
+                return $items;
+            }
+
+            $tree    = array();
+            $root_id = -1;
+            $self    = self::getInstance(false);
+
+            // spare some typing...
+            $ik      = $self->_config['__id_key'];
+            $pk      = $self->_config['__parent_key'];
+            $ck      = $self->_config['__children_key'];
+            $lk      = $self->_config['__level_key'];
+
+            // make sure that the $items array is indexed by the __id_key
+            $arr     = array();
+            foreach ( $items as $index => $item ){
+                $arr[$item[$ik]] = $item;
+            }
+            $items = $arr;
+
+            //
+            // this creates an array of parents with their associated children
+            //
+            // -----------------------------------------------
+            // REQUIRES that the array index is the parent ID!
+            // -----------------------------------------------
+            //
+            // http://www.tommylacroix.com/2008/09/10/php-design-pattern-building-a-tree/
+            //
+            foreach ( $items as $id => &$node )
+            {
+                // skip nodes with depth < min level
+                if ( isset( $node[$lk] ) && $node[$lk] <= $min )
+                {
+                    continue;
+                }
+
+                // avoid error messages on missing parent key
+                if ( ! isset( $node[$pk] ) )
+                {
+                    $node[$pk] = null;
+                }
+
+                // root node
+                if ( $node[$pk] === null && $root_id < 0 )
+                {
+                    $tree[$id] = &$node;
+                    $root_id   = $id;
+                }
+                // sub node
+                else
+                {
+                    // avoid warnings on missing children key
+                    if ( ! isset($items[$node[$pk]][$ck]) || ! is_array($items[$node[$pk]][$ck]) )
+                    {
+                        $items[$node[$pk]][$ck] = array();
+                    }
+                    $items[$node[$pk]][$ck][] = &$node;
+                }
+
+            }
+            if ( ! empty($tree) && is_array($tree) && count( $tree ) > 0 )
+            {
+                // mark tree as already seen
+                $tree[$root_id][$ck]['__is_recursive'] = 1;
+                $tree = $tree[$root_id][$ck];
+            }
+
+            return $tree;
+
+        }   // end function buildRecursion ()
 
 	}
 }

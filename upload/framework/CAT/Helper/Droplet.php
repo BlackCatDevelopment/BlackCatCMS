@@ -853,14 +853,15 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         $id   = $found;
                     }
                     // execute
-                    $result = CAT_Helper_Directory::getInstance()->db()->query(sprintf(
+                    $q      = sprintf(
                         "$stmt INTO `%smod_droplets` SET "
                         . ( ($id) ? 'id='.$id.', ' : '' )
                         . '`name`=\'%s\', `code`=\'%s\', `description`=\'%s\', '
                         . '`modified_when`=%d, `modified_by`=\'%s\', '
                         . '`active`=\'%s\', `comments`=\'%s\'',
                         CAT_TABLE_PREFIX, $name, $code, $description, time(), CAT_Users::get_user_id(), 1, $usage
-                    ));
+                    );
+                    $result = CAT_Helper_Directory::getInstance()->db()->query($q);
                     if( ! CAT_Helper_Directory::getInstance()->db()->is_error() ) {
                         $count++;
                         $imports[$name] = 1;
