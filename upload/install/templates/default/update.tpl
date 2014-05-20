@@ -5,14 +5,12 @@
   <head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
     <title>{translate('Black Cat CMS Update')}</title>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	<script src="{$installer_uri}/../modules/lib_jquery/jquery-ui/external/jquery.cookie.js" type="text/javascript"></script>
-	<script type="text/javascript" src="{$installer_uri}/../modules/lib_jquery/plugins/FancyBox/jquery.fancybox-1.3.4.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="{$installer_uri}/../modules/lib_jquery/plugins/jquery.cookies/jquery.cookies.js" type="text/javascript"></script>
 	<script charset="windows-1250" type="text/javascript">
 	    var URL = '{$installer_uri}/update/';
  	</script>
 	<script type="text/javascript" src="{$installer_uri}/progress.js"></script>
-	<link rel="stylesheet" type="text/css" href="{$installer_uri}/../modules/lib_jquery/plugins/FancyBox/jquery.fancybox-1.3.4.css" media="screen" />
  	<link rel="stylesheet" href="{$installer_uri}/templates/default/index.css" type="text/css" />
   </head>
   <body>

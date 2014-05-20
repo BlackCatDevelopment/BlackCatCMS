@@ -5,10 +5,10 @@
   <head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
     <title>{translate('Black Cat CMS Step by Step Installation Wizard')}</title>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 	<script src="{$installer_uri}/../modules/lib_jquery/plugins/jquery.cookies/jquery.cookies.js" type="text/javascript"></script>
-	<script type="text/javascript" src="{$installer_uri}/../modules/lib_jquery/plugins/FancyBox/jquery.fancybox-1.3.4.js"></script>
-	<link rel="stylesheet" type="text/css" href="{$installer_uri}/../modules/lib_jquery/plugins/FancyBox/jquery.fancybox-1.3.4.css" media="screen" />
  	<link rel="stylesheet" href="{$installer_uri}/templates/default/index.css" type="text/css" />
    </head>
   <body>

@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS `cat_mod_wysiwyg`;
 DROP TABLE IF EXISTS `cat_mod_wysiwyg_admin`;
 DROP TABLE IF EXISTS `cat_pages_load`;
 DROP TABLE IF EXISTS `cat_page_langs`;
+DROP TABLE IF EXISTS `cat_pages_headerfiles`;
 DROP TABLE IF EXISTS `cat_pages_settings`;
 DROP TABLE IF EXISTS `cat_pages`;
 DROP TABLE IF EXISTS `cat_search`;
@@ -181,20 +182,13 @@ CREATE TABLE `cat_pages_settings` (
 	CONSTRAINT `page_id` FOREIGN KEY (`page_id`) REFERENCES `cat_pages` (`page_id`)
 ) COMMENT='Additional settings for pages' ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-CREATE TABLE IF NOT EXISTS `cat_pages_load` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `register_name` varchar(255) NOT NULL DEFAULT '',
-  `register_type` varchar(64) NOT NULL DEFAULT 'droplet',
-  `page_id` int(11) NOT NULL DEFAULT '0',
-  `module_directory` varchar(255) NOT NULL DEFAULT '',
-  `file_type` varchar(128) NOT NULL DEFAULT '',
-  `file_name` varchar(255) NOT NULL DEFAULT '',
-  `file_path` text NOT NULL,
-  `options` text NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `cat_pages_headers` (
+	`page_id` INT(11) NOT NULL,
+	`page_js_files` TEXT NULL,
+	`page_css_files` TEXT NULL,
+	`page_js` TEXT NULL,
+	UNIQUE INDEX `page_id` (`page_id`)
+) COMMENT='header files' ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cat_page_langs` (
   `page_id` int(10) NOT NULL,

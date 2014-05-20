@@ -12,7 +12,7 @@ an Ihre besonderen Anforderungen und Bedürfnisse anpassen.</p>
 <p><strong>Der Black Cat CMS Installation Wizard führt Sie durch den Installationsprozess.</strong></p>
 
 <p>Black Cat CMS unterliegt der GNU General Public License (GPL). Bitte
-<a href="http://www.gnu.org/licenses/gpl.html" class="fancybox iframe">lesen Sie die Lizenzbedingungen</a> (englisch)
+<a href="gpl-3.0-standalone.html" class="dlg" title="GNU General Public License v3.0">lesen Sie die Lizenzbedingungen</a> (englisch)
 bevor Sie mit der Installation fortfahren.</p>
 
 <p>Vielen Dank.</p>

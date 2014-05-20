@@ -138,7 +138,21 @@ if($res && $res->numRows())
 /*******************************************************************************
     1.0.2 TO 1.0.3
 *******************************************************************************/
-
+// drop obsolete table pages_load
+$database->query(sprintf(
+    'DROP TABLE IF EXISTS `%spages_load`;', CAT_TABLE_PREFIX
+));
+// add new header files table
+$database->query(sprintf(
+    'CREATE TABLE `%spages_headers` (
+    	`page_id` INT(11) NOT NULL,
+    	`page_js_files` TEXT NULL,
+    	`page_css_files` TEXT NULL,
+    	`page_js` TEXT NULL,
+    	UNIQUE INDEX `page_id` (`page_id`)
+    ) COMMENT=\'header files\' ENGINE=InnoDB DEFAULT CHARSET=utf8;',
+    CAT_TABLE_PREFIX
+));
 // date and time formats
 $database->query(sprintf(
     'UPDATE `%ssettings` SET `name`="CAT_DEFAULT_DATE_FORMAT" WHERE `name`="DEFAULT_DATE_FORMAT"',

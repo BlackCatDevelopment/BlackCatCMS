@@ -12,7 +12,7 @@ needs of nearly every web appearances.</p>
 installation process.</strong></p>
 
 <p>Black Cat CMS is released under the GNU General Public License (GPL). Please
-<a href="http://www.gnu.org/licenses/gpl.html" class="fancybox iframe">read the license</a>
+<a href="gpl-3.0-standalone.html" class="dlg" title="GNU General Public License v3.0">read the license</a>
 before you proceed to install.</p>
 
 <p>Thank you.</p>

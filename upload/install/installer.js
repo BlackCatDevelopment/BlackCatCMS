@@ -7,14 +7,28 @@ if( typeof jQuery != 'undefined' ) {
 	    jQuery('input[type="text"]').each( function () {
 			jQuery(this).click( function() { $(this).select(); } );
 		});
-		jQuery("a.fancybox").fancybox(
-			{
-			    width: '80%',
-			    height: '80%',
-			    overlayColor: '#000',
-			    speedIn: 1000
+
+        jQuery('a.dlg').click(function() {
+            var $link = $(this);
+    		var $dialog = $('<div></div>')
+    			.load($link.attr('href'))
+    			.dialog({
+    				autoOpen: false,
+    				title: $link.attr('title'),
+    				width: 800,
+    				height: 600,
+                    buttons: {
+                        "Close": function() {
+                            $(this).dialog("close");
+                        }
 			}
-		);
+    			});
+                if($link.attr('href').substring($link.attr('href').lastIndexOf("."),$link.attr('href').length) == '.log') {
+                    $('.ui-dialog-content').wrap('<pre>')
+                }
+    			$dialog.dialog('open');
+    			return false;
+        });
 
         $('body').keydown(function(e) {
             if (e.keyCode == 13) {

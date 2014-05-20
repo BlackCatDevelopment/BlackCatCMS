@@ -9,7 +9,7 @@
   <input type="submit" value="{translate('Login')}" />
 </form>
 
-<p><a href="{$cat_url}/temp/inst.log" class="fancybox iframe">Do you wish to see a log?</a></p>
+<p><a href="{$cat_url}/temp/inst.log" class="dlg" title="Install log">Do you wish to see a log?</a></p>
 
 <h2>What's next?</h2>
 
