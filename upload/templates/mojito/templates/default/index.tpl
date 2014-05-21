@@ -59,6 +59,7 @@
 	<section id="content" class="gradient_gray br_all">
 		{if check_section(2)}
 		<header id="content_header" class="gradient_gray br_top">
+            <div style="float:right">{language_menu()}</div>
 			{page_header}
 			{page_content(2)}
 		</header>
@@ -89,7 +90,7 @@
 		<div class="clear"></div>
 	</footer>
 
-	{get_page_headers}
+	{get_page_footers}
 
 </body>
 </html>
