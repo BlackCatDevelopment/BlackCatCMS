@@ -463,10 +463,24 @@ jQuery(document).ready(function()
 					if ( data.success === true )
 					{
 						var current		= $(this),
-							current_ul	= current.closest('ul');
+							current_ul	= current.closest('ul'),
+                            parent_id   = current.parent().parent().prop('id');
 						if ( current_ul.children('li').size() == 1 )
 						{
+                            if(parent_id != 'fc_media_browser')
+                            {
 							current_ul.nextAll('ul.fc_media_folder').andSelf().remove();
+                            }
+                            else
+                            {
+                                current_ul.nextAll('ul.fc_media_folder').remove();
+                                current_ul.html(
+                                    '<ul class="fc_media_folder fc_media_folder_active fc_clickable">' +
+                            		'    <input type="hidden" value="' + current_ul.find('input[name="folder_path"]').val() + '" name="folder_path">' +
+     						        '    <li class="fc_filetype_file fc_no_content">' + cattranslate('No files available') + '</li>' +
+                            		'</ul>'
+                                );
+                            }
 							var fc_active	= $('.fc_open_folder:last');
 							fc_active.closest('ul').removeClass('fc_clickable');
 							fc_active.click();
@@ -545,13 +559,32 @@ jQuery(document).ready(function()
 		});
 	});
 
-	$('.fc_create_new_folder').unbind().click(function()
-	{
+	$('.fc_create_new_folder').unbind().click(function() {
+        // bind ENTER to dialog
+        $(document).delegate('.ui-dialog', 'keyup', function(e) {
+            var tagName = e.target.tagName.toLowerCase();
+            tagName = (tagName === 'input' && e.target.type === 'button') ? 'button' : tagName;
+            if (e.which === $.ui.keyCode.ENTER && tagName !== 'textarea' && tagName !== 'select' && tagName !== 'button') {
+                $(this).find('.ui-dialog-buttonset button').eq(0).trigger('click');
+                return false;
+            }
+        });
+        var $dialog = $('<div><input type="text" name="fc_media_add_folder_name" style="width:100%" value="" /></div>')
+			.dialog({
+				autoOpen: false,
+				width: 300,
+				height: 180,
+                title: cattranslate('Folder name'),
+                buttons: [
+                    {
+                        text: cattranslate('Save'),
+                        click: function() {
+                            $(this).dialog("close");
 		// Create link for ajax
 		var current_ul		= get_active_media(),
 			dates			= {
 								'folder_path':	current_ul.children('input[name=folder_path]').val(),
-								'test':			'test',
+                                                    'name'       : $(this).find('input:first').val(),
                                 '_cat_ajax':    1
 							};
 
@@ -584,6 +617,16 @@ jQuery(document).ready(function()
 				}
 			}
 		});
+                        }
+                    },
+                    {
+                        text: cattranslate('Cancel'),
+                        click: function() { $(this).dialog("close"); }
+                    },
+                ]
+ 			});
+        $dialog.dialog('open');
+    	return false;
 	});
 
 	// Activate the upload form to send data with ajax
