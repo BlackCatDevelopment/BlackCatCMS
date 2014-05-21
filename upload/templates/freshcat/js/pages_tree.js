@@ -692,14 +692,17 @@ jQuery(document).ready(function()
 		var current			= $(this),
 			current_form	= current.closest('form'),
 			current_pT		= $('.page_tree_open_options'),
+            page_id         = current_pT.find('input[name=page_id]').val(),
+            current_page_id = $('div#fc_add_module').find('input[name="page_id"]').val(),
 			dates	= {
-				'page_id':			current_pT.find('input[name=page_id]').val(),
+				'page_id':			page_id,
 				'_cat_ajax':        1
 			},
 			afterSend		= function( data, textStatus, jqXHR )
 			{
 				$('#fc_add_page input[type=reset]').click();
 				var current		= $(this);
+                var prev        = current.prev();
 				if ( data.success === true && data.status === 0 )
 				{
                     var toggle = current.parent().parent().find('.fc_page_link').find('.fc_toggle_tree');
@@ -713,6 +716,20 @@ jQuery(document).ready(function()
 				else {
 					current.find('.fc_page_link').find('.fc_page_tree_menu_title').removeClass().addClass('fc_page_tree_menu_title icon-remove');
 				}
+                // page deleted is currently shown page, see issue #235
+                if( current_page_id == page_id )
+                {
+                    if(typeof prev != 'undefined')
+                    {
+                        // activate previous sibling
+                        location.href = CAT_ADMIN_URL + '/pages/modify.php?page_id=' + prev.prop('id').replace('pageid_','');
+                    }
+                    else
+                    {
+                        // no sibling, activate dashboard
+                        location.href = CAT_ADMIN_URL + '/start/index.php';
+                    }
+                }
 			};
         dialog_confirm( cattranslate('Do you really want to delete this page?'), cattranslate('Remove page'), CAT_ADMIN_URL + '/pages/ajax_delete_page.php', dates, 'POST', 'JSON', false, afterSend, current_pT );
 	});
