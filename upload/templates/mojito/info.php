@@ -43,7 +43,7 @@ if (defined('CAT_PATH')) {
 $template_directory		= 'mojito';
 $template_name			= 'Mojito (Standard Frontend Template)';
 $template_function		= 'template';
-$template_version		= '0.1';
+$template_version		= '1.0.3';
 $template_platform		= '1.x';
 $template_license		= '<a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>';
 $template_license_terms	= '-';
@@ -51,7 +51,7 @@ $template_author		= 'Matthias Glienke, creativecat';
 $template_description	= 'Introduced with Black Cat CMS in 2013.<br/><br/>Done by Matthias Glienke, <a class="icon-creativecat" href="http://creativecat.de"> creativecat</a>';
 $template_engine		= 'dwoo';
 $template_guid			= '29c34310-02d0-4609-b00e-6461669b052e';
-$template_variants		= array( 'default', 'custom' );
+$template_variants		= array( 'default', 'blank', 'custom' );
 
 // OPTIONAL VARIABLES FOR ADDITIONAL MENUES AND BLOCKS
 $menu[1]				= 'Hauptnavigation';
