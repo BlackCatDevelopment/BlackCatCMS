@@ -162,7 +162,7 @@ $LANG = array(
     'View' => 'Ansicht',
     'Website Under Construction' => 'Momentan in Bearbeitung.',
     'Welcome back' => 'Willkommen',
-    'YES' => 'JA',
+    'Yes' => 'Ja',
 // ----- error messages -----
     'Error creating access file in the pages directory, insufficient privileges'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Ungen&uuml;gende Zugangsrechte)',

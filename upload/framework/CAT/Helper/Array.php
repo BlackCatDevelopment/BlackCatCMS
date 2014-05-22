@@ -118,6 +118,34 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
             }
             return $array;
         }   // end function ArraySort()
+
+        public static function ArraySearchRecursive( $Needle, $Haystack, $NeedleKey="", $Strict=false, $Path=array() )
+        {
+
+            if( ! is_array( $Haystack ) ) {
+                return false;
+            }
+            reset($Haystack);
+            foreach ( $Haystack as $Key => $Val ) {
+                if (
+                    is_array( $Val )
+                    &&
+                    $SubPath = self::ArraySearchRecursive($Needle,$Val,$NeedleKey,$Strict,$Path)
+                ) {
+                    $Path = array_merge($Path,Array($Key),$SubPath);
+                    return $Path;
+                }
+                elseif (
+                    ( ! $Strict && $Val  == $Needle && $Key == ( strlen($NeedleKey) > 0 ? $NeedleKey : $Key ) )
+                    ||
+                    (   $Strict && $Val === $Needle && $Key == ( strlen($NeedleKey) > 0 ? $NeedleKey : $Key ) )
+                ) {
+                    $Path[]=$Key;
+                    return $Path;
+                }
+            }
+            return false;
+        }   // end function ArraySearchRecursive()
         
         /**
          * make multidimensional array unique

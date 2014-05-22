@@ -236,6 +236,17 @@ if (!class_exists('CAT_Helper_Validate'))
             return self::get('_SERVER',$field,$require,$escape);
         }   // end function sanitizeServer()
 
+        /**
+         * check if string is a MD5 hash
+         *
+         * @access public
+         * @param  string  $md5
+         * @return boolean
+         **/
+        public static function isValidMD5($md5 ='') {
+            return strlen($md5) == 32 && ctype_xdigit($md5);
+        }   // end function isValidMD5()
+
         //*********************************************************************
         // convenience methods; just wrap filter_var
         //*********************************************************************

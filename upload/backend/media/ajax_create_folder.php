@@ -65,11 +65,15 @@ else
 	// ================================ 
 	if ( is_writable(CAT_PATH . $ajax['folder_path']) )
 	{
-		$create_folder		= CAT_PATH . $ajax['folder_path'] .'/' . $backend->lang()->translate('New folder');
+        $folder_name        = $val->sanitizePost('name');
+        if(!$folder_name)
+            $folder_name    = $backend->lang()->translate('New folder');
+
+		$create_folder		= CAT_PATH . $ajax['folder_path'] .'/' . $folder_name;
 		$counter			= 1;
 		while ( is_dir($create_folder) )
 		{
-			$create_folder	= CAT_PATH . $ajax['folder_path'] . '/' . $backend->lang()->translate('New folder') . ' ' . $counter;
+			$create_folder	= CAT_PATH . $ajax['folder_path'] . '/' . $folder_name . ' ' . $counter;
 			$counter++;
 		}
 		// =====================================================

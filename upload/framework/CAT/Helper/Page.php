@@ -376,6 +376,7 @@ if (!class_exists('CAT_Helper_Page'))
             {
                 // remove sub pages
            	    $sub_pages = self::getSubPages($page_id);
+                $sub_pages = array_reverse($sub_pages);
                 $errors    = array();
             	foreach($sub_pages as $sub_page_id)
             	{
@@ -488,11 +489,9 @@ if (!class_exists('CAT_Helper_Page'))
             else
             {
                     unlink($filename);
-                    // delete empty dir
                     if (
                            is_dir($directory)
                         && (rtrim($directory, '/') != CAT_PATH . PAGES_DIRECTORY)
-                        && CAT_Helper_Directory::is_empty($directory,true)
                     ) {
                         CAT_Helper_Directory::removeDirectory($directory);
                     }
@@ -2218,8 +2217,9 @@ if (!class_exists('CAT_Helper_Page'))
             $pages = self::getPagesByParent($parent);
             if(count($pages))
                 {
-    			foreach($pages as $page)
+    			foreach($pages as $page_id)
                 {
+                    $page = self::getPage($page_id);
     				// Update the page visibility to 'deleted'
     				self::getInstance()->db()->query(sprintf(
                         "UPDATE `%spages` SET visibility = 'deleted' WHERE page_id = %d LIMIT 1",

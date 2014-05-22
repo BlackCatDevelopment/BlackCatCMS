@@ -73,7 +73,8 @@ if ($user->checkPermission('media','media',false)==true){
         = ( $user->get_user_id() == 1 || (HOME_FOLDERS && $user->get_home_folder()=='') || !HOME_FOLDERS )
         ? MEDIA_DIRECTORY
         : $dirh->sanitizePath(MEDIA_DIRECTORY.$user->get_home_folder());
-    #$tpl_data['initial_folder'] = preg_replace( '~^/~', '', $tpl_data['initial_folder'] );
+    if(!file_exists(CAT_PATH.'/'.$tpl_data['initial_folder']))
+        $dirh->createDirectory(CAT_PATH.'/'.$tpl_data['initial_folder']);
 }
 else {
     header('Location: ' . CAT_ADMIN_URL);
