@@ -125,12 +125,12 @@ else
 if ( $options['parent'] != '0' )
 {
     $options['level']       = CAT_Helper_Page::properties($options['parent'],'level') + 1;
+}
     $options['root_parent']
         = ($options['level'] == 1)
         ? $options['parent']
         : CAT_Helper_Page::getRootParent($options['parent'])
         ;
-}
 
 // changes the values in the options array
 CAT_Helper_Page::sanitizeLink($options);
