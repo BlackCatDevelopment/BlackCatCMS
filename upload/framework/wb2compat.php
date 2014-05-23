@@ -81,14 +81,14 @@ $wb2compat_format_map = array(
 );
 
 // global settings
-if(defined('CAT_DATE_FORMAT') && array_key_exists(CAT_DATE_FORMAT,$wb2compat_format_map))
+if(defined('CAT_DATE_FORMAT') && !defined('DATE_FORMAT') && array_key_exists(CAT_DATE_FORMAT,$wb2compat_format_map))
     define('DATE_FORMAT',$wb2compat_format_map[CAT_DATE_FORMAT]);
-if(defined('CAT_DEFAULT_DATE_FORMAT') && array_key_exists(CAT_DEFAULT_DATE_FORMAT,$wb2compat_format_map))
+if(defined('CAT_DEFAULT_DATE_FORMAT') && !defined('DEFAULT_DATE_FORMAT') && array_key_exists(CAT_DEFAULT_DATE_FORMAT,$wb2compat_format_map))
     define('DEFAULT_DATE_FORMAT',$wb2compat_format_map[CAT_DEFAULT_DATE_FORMAT]);
 
-if(defined('CAT_TIME_FORMAT') && array_key_exists(CAT_TIME_FORMAT,$wb2compat_format_map))
+if(defined('CAT_TIME_FORMAT') && !defined('TIME_FORMAT') && array_key_exists(CAT_TIME_FORMAT,$wb2compat_format_map))
     define('TIME_FORMAT',$wb2compat_format_map[CAT_TIME_FORMAT]);
-if(defined('CAT_DEFAULT_TIME_FORMAT') && array_key_exists(CAT_DEFAULT_TIME_FORMAT,$wb2compat_format_map))
+if(defined('CAT_DEFAULT_TIME_FORMAT') && !defined('DEFAULT_TIME_FORMAT') && array_key_exists(CAT_DEFAULT_TIME_FORMAT,$wb2compat_format_map))
     define('DEFAULT_TIME_FORMAT',$wb2compat_format_map[CAT_DEFAULT_TIME_FORMAT]);
 
 CAT_Registry::set('WB2COMPAT_FORMAT_MAP',$wb2compat_format_map);
