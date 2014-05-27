@@ -206,7 +206,7 @@ if($type=='module')
         array_push($files,'tool');
     else
         array_push($files,'add','view','modify');
-    foreach( as $n)
+    foreach($files as $n)
     {
         $fh = fopen($full.'/'.$n.'.php','w');
         if($fh)
