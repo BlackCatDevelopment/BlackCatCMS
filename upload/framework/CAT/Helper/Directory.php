@@ -32,11 +32,12 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	{
 	
 	    protected static $recurse = true;
-        protected static $max_recursion_depth = 100;
+        protected static $max_recursion_depth = 15;
 	    protected static $prefix  = NULL;
 	    protected static $suffix_filter = array();
 	    protected static $skip_dirs     = array();
         protected static $skip_files    = array();
+        protected static $show_hidden   = false;
         protected static $current_depth = 0;
         protected static $is_win        = NULL;
 
@@ -479,7 +480,8 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 
 			if (false !== ($dh = opendir( $dir ))) {
                 while( false !== ($file = readdir($dh))) {
-                    if ( ! preg_match( '#^\.#', $file ) ) {
+                    if ( ! self::$show_hidden && ( $file == '.' || $file == '..' ) ) continue;
+                    if ( ! ( $file == '.' || $file == '..' ) ) {
 						if ( count($skip_dirs) && in_array( pathinfo( $dir.'/'.$file, (is_dir($dir.'/'.$file)?PATHINFO_BASENAME:PATHINFO_DIRNAME)), $skip_dirs) )
 						{
 						    continue;
@@ -550,7 +552,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         /**
          *
          **/
-		public static function maxRecursionDepth( $number = 100 )
+		public static function maxRecursionDepth( $number = 15 )
 		{
 		    if ( is_numeric($number) )
 		    {
@@ -621,6 +623,20 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			}
             if(self::$instance) return self::$instance;
 		}   // end function setSuffixFilter()
+		
+		/**
+         * allows to retrieve files and directories with a . (dot) which are
+         * normally hidden
+         *
+         * @access public
+         * @param  boolean  $bool
+         * @return instance
+         **/
+        public static function showHidden($bool)
+        {
+            if( is_bool($bool) ) self::$show_hidden = $bool;
+            if(self::$instance) return self::$instance;
+        }   // end function showHidden()
 		
 		/**
 		 * set directory or file to read-only; used for index.php
@@ -934,6 +950,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             self::$instance->setSkipFiles(NULL);
             self::$instance->setSkipDirs(NULL);
             self::$instance->setSuffixFilter(NULL);
+            self::$instance->showHidden(false);
         }   // end function reset()
 
 		/**
