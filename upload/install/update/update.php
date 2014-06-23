@@ -40,12 +40,31 @@ if(!CAT_Helper_Addons::versionCompare( CAT_VERSION, '0.11.0Beta' ))
         array( 'version' => CAT_VERSION )
     ));
 
+// get new version from tag.txt
+if ( file_exists(dirname(__FILE__).'/../tag.txt') )
+{
+    $tag = fopen( dirname(__FILE__).'/../tag.txt', 'r' );
+    list ( $current_version, $current_build ) = explode( '#', fgets($tag) );
+    fclose($tag);
+    $current_build = str_replace($current_version.'-','',$current_build);
+}
+else
+{
+    pre_update_error($lang->translate(
+        'The file <pre>tag.txt</pre> is missing! Unable to upgrade!'
+    ));
+}
+
 if(!CAT_Helper_Validate::getInstance()->sanitizeGet('do'))
 {
     update_wizard_header();
     echo '
         <h1>BlackCat CMS Update Wizard</h1>
-        <h2>Welcome!</h2>
+        <h2>'.$lang->translate('Welcome!').'</h2>
+		'.$lang->translate('This wizard will help you to upgrade your current BlackCat CMS Version').'<br />
+		<span style="font-weight:bold;color:#f00;">'.CAT_VERSION.'</span><br />
+		'.$lang->translate('to Version').'<br />
+		<span style="font-weight:bold;color:#f00;">'.$current_version.' Build '.$current_build.'</span>
         <form method="get" action="'.$installer_uri.'/update/update.php">
           <input type="hidden" name="do" value="1" />
           <input type="submit" value="'.$lang->translate('To start the update, please click here').'" />
@@ -57,6 +76,7 @@ if(!CAT_Helper_Validate::getInstance()->sanitizeGet('do'))
 /*******************************************************************************
  * DO THE UPDATE
  ******************************************************************************/
+ob_start();
 
 /*******************************************************************************
     BETA TO RELEASE 1.0
@@ -155,11 +175,11 @@ $database->query(sprintf(
 ));
 // date and time formats
 $database->query(sprintf(
-    'UPDATE `%ssettings` SET `name`="CAT_DEFAULT_DATE_FORMAT" WHERE `name`="DEFAULT_DATE_FORMAT"',
+    'UPDATE `%ssettings` SET `name`="cat_default_date_format" WHERE `name`="default_date_format"',
     CAT_TABLE_PREFIX
 ));
 $database->query(sprintf(
-    'UPDATE `%ssettings` SET `name`="CAT_DEFAULT_TIME_FORMAT" WHERE `name`="DEFAULT_TIME_FORMAT"',
+    'UPDATE `%ssettings` SET `name`="cat_default_time_format" WHERE `name`="default_time_format"',
     CAT_TABLE_PREFIX
 ));
 $database->query(sprintf(
@@ -170,20 +190,16 @@ $database->query(sprintf(
 /*******************************************************************************
     update version info
 *******************************************************************************/
-if ( file_exists(dirname(__FILE__).'/../tag.txt') )
-{
-    $tag = fopen( dirname(__FILE__).'/../tag.txt', 'r' );
-    list ( $current_version, $current_build ) = explode( '#', fgets($tag) );
-    fclose($tag);
-    $database->query(sprintf(
-        'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
-        CAT_TABLE_PREFIX, $current_version, 'cat_version'
-    ));
-    $database->query(sprintf(
-        'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
-        CAT_TABLE_PREFIX, $current_build, 'cat_build'
-    ));
-}
+$database->query(sprintf(
+    'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
+    CAT_TABLE_PREFIX, $current_version, 'cat_version'
+));
+$database->query(sprintf(
+    'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
+    CAT_TABLE_PREFIX, $current_build, 'cat_build'
+));
+
+ob_end_clean();
 
 /*******************************************************************************
 
@@ -197,6 +213,7 @@ update_wizard_header();
         </form>
     ';
 update_wizard_footer();
+exit;
 
 function pre_update_error( $msg ) {
     global $installer_uri, $lang;
@@ -224,7 +241,7 @@ function update_wizard_header() {
     <link rel="stylesheet" href="'.$installer_uri.'/templates/default/index.css" type="text/css" />
    </head>
   <body>
-  <div style="width:800px;min-width:800px;margin:auto;margin-top:20%;text-align:center;">
+  <div style="width:800px;min-width:800px;margin:auto;margin-top:20%;text-align:center;color:#5AA2DA;">
     <div style="float:left;width:100%;">';
 }
 

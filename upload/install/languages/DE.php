@@ -37,9 +37,12 @@ $LANG = array(
     'BlackCat CMS Step by Step Installation Wizard' => 'BlackCat CMS Schritt-für-Schritt Installation',
     'Step' => 'Schritt',
 // ----- Update wizard -----
+    'Welcome!' => 'Willkommen!',
     'To start the update, please click here' => 'Zum Starten des Updates bitte hier klicken',
     'Update done' => 'Update erfolgreich',
     'Click here to enter the backend' => 'Hier klicken, um das Backend aufzurufen',
+    'This wizard will help you to upgrade your current BlackCat CMS Version' => 'Dieser Wizard unterstützt Sie beim Update Ihrer BlackCat CMS Version',
+    'to Version' => 'auf Version',
 // ----- Nav ----
 	'Welcome' => 'Willkommen',
 	'Precheck' => 'Checks',
