@@ -44,11 +44,8 @@ if (defined('CAT_PATH')) {
 
   
 
-$table = CAT_TABLE_PREFIX ."mod_wysiwyg_admin_v2";
-
 $jobs = array();
 $jobs[] = "DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_editor_admin`";
-$jobs[] = "DROP TABLE IF EXISTS `".$table."`";
 
 $jobs[] = "CREATE TABLE IF NOT EXISTS `".CAT_TABLE_PREFIX."mod_wysiwyg_admin_v2` (
 	`editor` VARCHAR(50) NOT NULL,

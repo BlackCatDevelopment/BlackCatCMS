@@ -25,6 +25,9 @@
 
 define('CAT_DEBUG',false);
 
+global $depth;
+$depth = 0;
+
 // check wether to call update.php or start installation
 if (file_exists('../config.php') && file_exists(dirname(__FILE__).'/update/update.php') && ! file_exists(dirname(__FILE__).'/steps.tmp')) {
     include dirname(__FILE__).'/update/update.php';
@@ -119,7 +122,7 @@ $bundled = array(
 // ----- widgets -----
     'blackcat',
 // ----- modules -----
-    'blackcatFilter' , 'droplets'  , 
+    'blackcatFilter' , 'droplets'  , 'lib_getid3',
     'lib_dwoo'       , 'lib_images', 'lib_jquery', 'lib_pclzip', 'lib_search'  ,
     'lib_zendlite'   , 'lib_csrfmagic',
     'menu_link'      , 'show_menu2', 'wrapper'   , 'wysiwyg'   , 'wysiwyg_admin',
@@ -190,7 +193,12 @@ $parser->setGlobals(
     )
 );
 
+write2log(sprintf('current step: [%s]',$this_step));
+
 if($this_step == 'intro') {
+    // remove old inst.log
+    if(file_exists(CAT_LOGFILE))
+        @unlink( CAT_LOGFILE );
     if(file_exists(dirname(__FILE__).'/optional'))
     {
         // check for optional modules
@@ -319,6 +327,8 @@ function show_step_precheck() {
     global $lang, $parser, $installer_uri;
     $ok   = true;
 
+    write2log('> [show_step_precheck()]');
+
     // precheck.php
     include dirname(__FILE__).'/../framework/CAT/Helper/Addons.php';
     $addons = CAT_Helper_Addons::getInstance();
@@ -381,6 +391,8 @@ function show_step_precheck() {
         )
     );
 
+    write2log('< [show_step_precheck()]');
+
     return array( $ok, $result.$output );
 
 }   // end function show_step_precheck()
@@ -392,6 +404,8 @@ function show_step_globals( $step ) {
 
     global $lang, $parser, $installer_uri, $config, $dirh;
     global $timezone_table;
+
+    write2log('> [show_step_globals()]');
 
     // get timezones
     include dirname(__FILE__).'/../framework/CAT/Helper/DateTime.php';
@@ -459,6 +473,9 @@ function show_step_globals( $step ) {
             'errors'                            => $step['errors'],
         )
     );
+
+    write2log('< [show_step_globals()]');
+
     return array( true, $output );
 }   // end function show_step_globals()
 
@@ -467,11 +484,13 @@ function show_step_globals( $step ) {
  **/
 function check_step_globals() {
     global $config, $lang;
+    write2log('> [check_step_globals()]');
     $errors = array();
     if ( ! isset($config['cat_url']) || $config['cat_url'] == '' )
     {
         $errors['installer_cat_url'] = $lang->translate('Please insert the base URL!');
     }
+    write2log('< [check_step_globals()]');
     return array(
         ( count($errors) ? false : true ),
         $errors
@@ -483,6 +502,7 @@ function check_step_globals() {
  **/
 function show_step_db( $step ) {
     global $parser, $config;
+    write2log('> [show_step_db()]');
     $output = $parser->get(
         'db.tpl',
         array(
@@ -497,6 +517,7 @@ function show_step_db( $step ) {
             'errors'                      => $step['errors']
         )
     );
+    write2log('< [show_step_db()]');
     return array( true, $output );
 }   // end function show_step_db()
 
@@ -504,11 +525,13 @@ function show_step_db( $step ) {
  * check the db connection
  **/
 function check_step_db() {
+    write2log('> [check_step_db()]');
     // do not check if back button was clicked
     if ( isset($_REQUEST['btn_back']) ) {
         return array( true, array() );
     }
     $errors = __cat_check_db_config();
+    write2log('< [check_step_db()]');
     return array(
         ( count($errors) ? false : true ),
         $errors
@@ -520,6 +543,7 @@ function check_step_db() {
  **/
 function show_step_site( $step ) {
     global $lang, $config, $parser;
+    write2log('> [show_step_site()]');
     $output = $parser->get(
         'site.tpl',
         array(
@@ -531,6 +555,7 @@ function show_step_site( $step ) {
             'errors'                     => $step['errors']
         )
     );
+    write2log('< [show_step_site()]');
     return array( true, $output );
 }   // end function show_step_site()
 
@@ -539,6 +564,7 @@ function show_step_site( $step ) {
  **/
 function check_step_site() {
     global $lang, $config, $users, $parser;
+    write2log('> [check_step_site()]');
     // do not check if back button was clicked
     if ( isset($_REQUEST['btn_back']) ) {
         return array( true, array() );
@@ -595,6 +621,8 @@ function check_step_site() {
         }
     }
 
+    write2log('< [check_step_site()]');
+
     return array(
         ( count($errors) ? false : true ),
         $errors
@@ -606,6 +634,7 @@ function check_step_site() {
  **/
 function show_step_postcheck() {
     global $lang, $config, $parser;
+    write2log('> [show_step_postcheck()]');
     foreach ( $config as $key => $value ) {
         if ( preg_match( '~password~i', $key ) ) {
             $config[$key] = '********';
@@ -627,6 +656,7 @@ function show_step_postcheck() {
         'postcheck.tpl',
         array( 'config' => $config )
     );
+    write2log('< [show_step_postcheck()]');
     return array( true, $output );
 }   // end function show_step_postcheck()
 
@@ -635,6 +665,7 @@ function show_step_postcheck() {
  **/
 function show_step_optional() {
     global $dirh, $parser, $config, $installer_uri, $lang;
+    write2log('> [show_step_optional()]');
     // do base installation first
     list( $result, $output ) = __do_install();
     if ( ! $result ) {
@@ -668,16 +699,20 @@ function show_step_optional() {
                 'info'          => $info
             )
         );
+        write2log('< [show_step_optional()]');
         return array( true, $output );
     }
+    write2log('> [show_step_optional()] (no optional modules found)');
 }   // end function show_step_optional()
 
 /**
  * install optional addons (located in ./optional subfolder)
  **/
 function check_step_optional() {
+    write2log('> [check_step_optional()]');
     if(!isset($_REQUEST['installer_optional_addon'])) return array(true,array());
     list( $ok, $errors ) = install_optional_modules();
+    write2log('< [check_step_optional()]');
     return array(
         ( count($errors) ? false : true ),
         $errors
@@ -689,7 +724,7 @@ function check_step_optional() {
  **/
 function show_step_finish() {
     global $lang, $parser, $installer_uri, $config, $dirh;
-
+    write2log('> [show_step_finish()]');
     // check if installation is done
     $cat_path = $dirh->sanitizePath( dirname(__FILE__).'/..' );
     init_constants($cat_path);
@@ -706,6 +741,7 @@ function show_step_finish() {
         // do base installation first
         list( $result, $output ) = __do_install();
         if ( ! $result ) {
+            write2log('< [show_step_finish()]');
             return array( true, $output );
         }
     }
@@ -731,6 +767,7 @@ function show_step_finish() {
             'installer_uri' => $installer_uri,
         )
     );
+    write2log('< [show_step_finish()]');
     return array( true, $output );
 }   // function show_step_finish()
 
@@ -773,10 +810,11 @@ function default_dir_mode($temp_dir) {
  **/
 function install_tables ($database) {
     global $config ;
+    write2log('> [install_tables()]');
     if (!defined('CAT_INSTALL_PROCESS')) define ('CAT_INSTALL_PROCESS', true);
     // import structure
     $errors['install tables'] = __cat_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
-
+    write2log('< [install_tables()]');
     return array(
         ( count($errors['install tables']) ? false : true ),
         ( count($errors['install tables']) ? $errors : array() )
@@ -790,6 +828,8 @@ function install_tables ($database) {
 function fill_tables($database) {
 
     global $config, $admin;
+
+    write2log('> [fill_tables()]');
 
     $errors = array();
 
@@ -841,15 +881,13 @@ function fill_tables($database) {
         ." ('wysiwyg_editor', '".$config['default_wysiwyg']."')"
         ;
 
-    $logh = fopen( CAT_LOGFILE, 'a' );
-
     $database->query($settings_rows);
     if ( $database->is_error() ) {
         trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);
         $errors['settings'] = $database->get_error();
     }
     else {
-        fwrite( $logh, 'filled table [settings]'."\n" );
+        write2log('filled table [settings]');
     }
 
     // Admin group
@@ -861,7 +899,7 @@ function fill_tables($database) {
         $errors['groups'] = $database->get_error();
     }
     else {
-        fwrite( $logh, 'filled table [group]'."\n" );
+        write2log('filled table [group]');
     }
 
     // Admin user
@@ -872,10 +910,10 @@ function fill_tables($database) {
         $errors['users'] = $database->get_error();
     }
     else {
-        fwrite( $logh, 'filled table [users]'."\n" );
+        write2log('filled table [users]');
     }
 
-    fclose($logh);
+    write2log('< [fill_tables()]');
 
     return array(
         ( count($errors) ? false : true ),
@@ -889,6 +927,8 @@ function fill_tables($database) {
 function install_modules ($cat_path,$database) {
 
     global $admin, $bundled, $mandatory;
+
+    write2log('> [install_modules()]');
 
     $errors = array();
 
@@ -906,11 +946,9 @@ function install_modules ($cat_path,$database) {
         'edit_module_files.php'
     );
 
-    $logh = fopen( CAT_LOGFILE, 'a' );
-
-    fwrite($logh,'------------------------------------'."\n");
-    fwrite($logh,'-----    installing addons     -----'."\n");
-    fwrite($logh,'------------------------------------'."\n");
+    write2log('------------------------------------');
+    write2log('-----    installing addons     -----');
+    write2log('------------------------------------');
 
     foreach($dirs AS $type => $dir)
     {
@@ -924,40 +962,39 @@ function install_modules ($cat_path,$database) {
             if(in_array($item,$ignore_files)) continue;
             if($type == 'languages')
             {
-                fwrite( $logh, 'installing language ['.$item.']'."\n" );
+                write2log('installing language ['.$item.']');
                 $info = CAT_Helper_Addons::checkInfo($dir.'/'.$item);
                 if ( !CAT_Helper_Addons::loadModuleIntoDB($dir.'/'.$item,'install',$info))
                 {
                     $errors[$dir] = sprintf('Unable to add language [%s] to database!',$item);
-                    fwrite( $logh, sprintf('Unable to add language [%s] to database!',$item)."\n" );
+                    write2log(sprintf('Unable to add language [%s] to database!',$item));
                 }
                 else
                 {
-                    fwrite( $logh, sprintf('%s [%s] sucessfully installed',ucfirst(substr($type,0,-1)),$item)."\n" );
+                    write2log(sprintf('%s [%s] sucessfully installed',ucfirst(substr($type,0,-1)),$item));
                 }
             }
             else
             {
-                fwrite( $logh, 'installing module/template ['.$item.']'."\n" );
+                write2log('installing module/template ['.$item.']');
                 $addon_info = CAT_Helper_Addons::checkInfo($dir.'/'.$item);
                 // load the module info into the database
                 if ( !CAT_Helper_Addons::loadModuleIntoDB($dir.'/'.$item,'install',$addon_info))
                 {
                     $errors[$dir] = sprintf('Unable to add %s [%s] to database!',$type,$item);
-                    fwrite( $logh, sprintf('Unable to add %s [%s] to database!',$type,$item)."\n" );
+                    write2log(sprintf('Unable to add %s [%s] to database!',$type,$item));
                 }
                 else
                 {
+                    write2log('running '.$item.'/install.php');
                     // Run the install script if there is one
                     if ( file_exists($dir.'/'.$item.'/install.php') )
                         require $dir.'/'.$item.'/install.php';
-                    fwrite( $logh, sprintf('%s [%s] sucessfully installed',ucfirst(substr($type,0,-1)),$item)."\n" );
+                    write2log(sprintf('%s [%s] sucessfully installed',ucfirst(substr($type,0,-1)),$item));
                 }
             }
         }
     }
-
-    fclose($logh);
 
     // mark bundled modules
     foreach($bundled as $module) {
@@ -974,6 +1011,8 @@ function install_modules ($cat_path,$database) {
         ));
     }
 
+    write2log('< [install_modules()]');
+
     return array(
         ( count($errors) ? false : true ),
         $errors
@@ -987,7 +1026,7 @@ function install_optional_modules () {
 
     global $admin, $bundled, $config, $lang, $dirh;
 
-    $logh     = fopen( CAT_LOGFILE, 'a' );
+    write2log('> [install_optional_modules()]');
 
     if(!isset($_REQUEST['installer_optional_addon']) || !is_array($_REQUEST['installer_optional_addon']) || !count($_REQUEST['installer_optional_addon']))
     {
@@ -1000,10 +1039,10 @@ function install_optional_modules () {
         $config['optional_addon'] == $_REQUEST['installer_optional_addon'];
     }
 
-    fwrite($logh,'------------------------------------'."\n");
-    fwrite($logh,'-----installing optional addons-----'."\n");
-    fwrite($logh,'------------------------------------'."\n");
-    fwrite($logh,print_r($config['optional_addon'],1));
+    write2log('------------------------------------');
+    write2log('-----installing optional addons-----');
+    write2log('------------------------------------');
+    write2log(print_r($config['optional_addon'],1));
 
     $cat_path = $dirh->sanitizePath( dirname(__FILE__).'/..' );
     $errors   = array();
@@ -1020,19 +1059,19 @@ function install_optional_modules () {
     $database = new database();
     foreach($config['optional_addon'] as $file) {
         if(!file_exists($dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file))) {
-            fwrite( $logh, 'file not found: '.$dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file));
+            write2log('file not found: '.$dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file));
             $errors[] = $lang->translate('No such file: [{{file}}]',array('file'=>$file));
         }
         else
         {
-            fwrite( $logh, 'installing optional addon ['.$file.']'."\n" );
+            write2log('installing optional addon ['.$file.']');
             if(
                 ! CAT_Helper_Addons::installModule(
                       $dirh->sanitizePath(dirname(__FILE__).'/optional/'.$file),
                       true // silent
                   )
             ) {
-                fwrite( $logh, '-> installation failed! '.CAT_Helper_Addons::getError()."\n" );
+                write2log('-> installation failed! '.CAT_Helper_Addons::getError());
                 if( CAT_Helper_Addons::getError() != 'already installed' )
                 {
                     $errors[] = $lang->translate(
@@ -1042,12 +1081,12 @@ function install_optional_modules () {
                 }
             }
             else {
-                fwrite( $logh, '-> installation succeeded'."\n" );
+                write2log('-> installation succeeded');
             }
         }
     }
 
-    fclose($logh);
+    write2log('< [install_optional_modules()]');
 
     return array(
         ( count($errors) ? false : true ),
@@ -1064,6 +1103,8 @@ function check_tables($database) {
     $errors = array();
     $all_tables = array();
     $missing_tables = array();
+
+    write2log('> [check_tables()]');
 
     $table_prefix = $config['table_prefix'];
 
@@ -1135,6 +1176,8 @@ function check_tables($database) {
              $errors['password'] = false;
          }
     }
+
+    write2log('< [check_tables()]');
 
     return array(
         ( count($errors) ? false : true ),
@@ -1258,6 +1301,8 @@ function findWYSIWYG()
 
 function create_default_page($database) {
 
+    write2log('> [create_default_page()]');
+
     $errors = __cat_installer_import_sql(dirname(__FILE__).'/db/default_page.sql',$database);
 
     $pg_content = '<'.'?'."php
@@ -1290,6 +1335,8 @@ function create_default_page($database) {
         'UPDATE `%spages` SET `modified_when`="%s"',
         CAT_TABLE_PREFIX, time()
     ));
+
+    write2log('< [create_default_page()]');
 
 }   // end function create_default_page()
 
@@ -1384,6 +1431,8 @@ function __do_install() {
 
     global $config, $parser, $dirh;
 
+    write2log('> [__do_install()]');
+
     include dirname(__FILE__).'/../framework/functions.php';
     $cat_path  = sanitize_path( dirname(__FILE__).'/..' );
     $inst_path = sanitize_path( $cat_path.'/'.pathinfo( dirname(__FILE__), PATHINFO_BASENAME ) );
@@ -1445,6 +1494,7 @@ function __do_install() {
 
     // Check if the file exists and is writable first.
     if(($handle = @fopen($config_filename, 'w')) === false) {
+        write2log('< [__do_install()] (cannot create config file)');
         return array(
             false,
             $lang->translate(
@@ -1454,6 +1504,7 @@ function __do_install() {
         );
     } else {
         if (fwrite($handle, $config_content, strlen($config_content) ) === FALSE) {
+            write2log('< [__do_install()] (cannot write to config file)');
             fclose($handle);
             return array(
                 false,
@@ -1471,10 +1522,6 @@ function __do_install() {
 
     include $cat_path.'/framework/class.database.php';
     $database = new database();
-
-    // remove old inst.log
-    if(file_exists(CAT_LOGFILE))
-        @unlink( CAT_LOGFILE );
 
     // ---- install tables -----
     if ( $install_tables ) {
@@ -1514,6 +1561,8 @@ function __do_install() {
 
     // ---- make sure we have an index.php everywhere ----
     $dirh->recursiveCreateIndex( $cat_path );
+
+    write2log('< [__do_install()]');
 
     if ( count($errors) )
     {
@@ -1763,4 +1812,14 @@ function split_sql_file($sql, $delimiter)
    }
 
    return $output;
+}
+
+function write2log($msg)
+{
+    global $depth;
+    if(substr($msg,0,1) == '<') $depth--;
+    $logh = fopen(CAT_LOGFILE,'a');
+    fwrite($logh,str_repeat('  ',$depth) . $msg."\n");
+    fclose($logh);
+    if(substr($msg,0,1) == '>') $depth++;
 }

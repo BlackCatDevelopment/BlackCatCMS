@@ -727,6 +727,8 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 $admin =& $backend;
             // keep old modules happy
 
+            $self->log()->LogDebug('installModule');
+
             $self      = self::getInstance();
             $extension = pathinfo( $zipfile, PATHINFO_EXTENSION );
             $sourcedir = pathinfo( $zipfile, PATHINFO_DIRNAME );
@@ -904,7 +906,10 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
             // Run the modules install // upgrade script if there is one
             if ( file_exists( $addon_dir . '/' . $action . '.php' ) )
+            {
+                $self->log()->LogDebug(sprintf('Running [%s]',$addon_dir.'/'.$action.'.php'));
                 require( $addon_dir . '/' . $action . '.php' );
+            }
 
             if ( $action == 'install' && $addon_info['addon_function'] == 'language' )
             {
