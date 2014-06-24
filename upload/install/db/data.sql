@@ -47,7 +47,7 @@ INSERT INTO `cat_settings` (name, value) VALUES
     ('page_languages', 'true'),
     ('page_level_limit', '4'),
     ('page_spacer', '-'),
-    ('page_trash', 'inline'),
+    ('page_trash', 'true'),
     ('pages_directory', '/page'),
     ('prompt_mysql_errors', 'true'),
     ('redirect_timer', '1500'),
