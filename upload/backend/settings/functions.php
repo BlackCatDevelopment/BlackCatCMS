@@ -240,7 +240,7 @@ function getTimeformats() {
         $data[$counter] = array(
             'NAME'     => $title,
             'VALUE'    => ( $format != 'system_default' ) ? $format : '',
-            'SELECTED' => ( DEFAULT_TIME_FORMAT == $format ) ? true : false
+            'SELECTED' => ( CAT_DEFAULT_TIME_FORMAT == $format ) ? true : false
         );
         $counter++;
     }
