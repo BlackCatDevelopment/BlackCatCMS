@@ -775,7 +775,7 @@ function install_tables ($database) {
     global $config ;
     if (!defined('CAT_INSTALL_PROCESS')) define ('CAT_INSTALL_PROCESS', true);
     // import structure
-    $errors = __cat_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
+    $errors['install tables'] = __cat_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
 
     return array(
         ( count($errors) ? false : true ),

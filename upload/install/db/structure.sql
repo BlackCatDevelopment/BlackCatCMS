@@ -25,7 +25,6 @@ DROP TABLE IF EXISTS `cat_mod_wysiwyg`;
 DROP TABLE IF EXISTS `cat_mod_wysiwyg_admin`;
 DROP TABLE IF EXISTS `cat_pages_load`;
 DROP TABLE IF EXISTS `cat_page_langs`;
-DROP TABLE IF EXISTS `cat_pages_headerfiles`;
 DROP TABLE IF EXISTS `cat_pages_settings`;
 DROP TABLE IF EXISTS `cat_pages`;
 DROP TABLE IF EXISTS `cat_search`;
@@ -181,14 +180,6 @@ CREATE TABLE `cat_pages_settings` (
 	UNIQUE INDEX `set_type_set_name` (`page_id`, `set_type`, `set_name`),
 	CONSTRAINT `page_id` FOREIGN KEY (`page_id`) REFERENCES `cat_pages` (`page_id`)
 ) COMMENT='Additional settings for pages' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `cat_pages_headers` (
-	`page_id` INT(11) NOT NULL,
-	`page_js_files` TEXT NULL,
-	`page_css_files` TEXT NULL,
-	`page_js` TEXT NULL,
-	UNIQUE INDEX `page_id` (`page_id`)
-) COMMENT='header files' ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cat_page_langs` (
   `page_id` int(10) NOT NULL,
