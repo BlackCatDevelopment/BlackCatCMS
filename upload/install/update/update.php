@@ -44,9 +44,8 @@ if(!CAT_Helper_Addons::versionCompare( CAT_VERSION, '0.11.0Beta' ))
 if ( file_exists(dirname(__FILE__).'/../tag.txt') )
 {
     $tag = fopen( dirname(__FILE__).'/../tag.txt', 'r' );
-    list ( $current_version, $current_build ) = explode( '#', fgets($tag) );
+    list ( $current_version, $current_build, $current_build ) = explode( '#', fgets($tag) );
     fclose($tag);
-    $current_build = str_replace($current_version.'-','',$current_build);
 }
 else
 {
@@ -162,18 +161,7 @@ if($res && $res->numRows())
 $database->query(sprintf(
     'DROP TABLE IF EXISTS `%spages_load`;', CAT_TABLE_PREFIX
 ));
-// add new header files table
-$database->query(sprintf(
-    'CREATE TABLE `%spages_headers` (
-    	`page_id` INT(11) NOT NULL,
-    	`page_js_files` TEXT NULL,
-    	`page_css_files` TEXT NULL,
-    	`page_js` TEXT NULL,
-    	UNIQUE INDEX `page_id` (`page_id`)
-    ) COMMENT=\'header files\' ENGINE=InnoDB DEFAULT CHARSET=utf8;',
-    CAT_TABLE_PREFIX
-));
-// date and time formats
+// date and time formats; the wb2compat.php will create the ones for WB
 $database->query(sprintf(
     'UPDATE `%ssettings` SET `name`="cat_default_date_format" WHERE `name`="default_date_format"',
     CAT_TABLE_PREFIX
@@ -182,13 +170,14 @@ $database->query(sprintf(
     'UPDATE `%ssettings` SET `name`="cat_default_time_format" WHERE `name`="default_time_format"',
     CAT_TABLE_PREFIX
 ));
+// delete search droplet setting as it is no longer used
 $database->query(sprintf(
     'DELETE FROM `%ssearch` WHERE `name`="cfg_search_droplet"',
     CAT_TABLE_PREFIX
 ));
 
 /*******************************************************************************
-    update version info
+    ALL VERSIONS: update version info
 *******************************************************************************/
 $database->query(sprintf(
     'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
