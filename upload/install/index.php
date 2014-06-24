@@ -778,8 +778,8 @@ function install_tables ($database) {
     $errors['install tables'] = __cat_installer_import_sql(dirname(__FILE__).'/db/structure.sql',$database);
 
     return array(
-        ( count($errors) ? false : true ),
-        $errors
+        ( count($errors['install tables']) ? false : true ),
+        ( count($errors['install tables']) ? $errors : array() )
     );
 
 }   // end function install_tables()
