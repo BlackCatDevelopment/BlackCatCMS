@@ -727,9 +727,9 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 $admin =& $backend;
             // keep old modules happy
 
+            $self      = self::getInstance();
             $self->log()->LogDebug('installModule');
 
-            $self      = self::getInstance();
             $extension = pathinfo( $zipfile, PATHINFO_EXTENSION );
             $sourcedir = pathinfo( $zipfile, PATHINFO_DIRNAME );
 
