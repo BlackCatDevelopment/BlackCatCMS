@@ -164,11 +164,11 @@
 							if ( typeof data.parent_id !== 'undefined' && data.parent_id !== '' )
 							{
 								newSelect.children('option').prop('selected', false)
-									.filter('option[value=' + data.parent_id + ']').prop('selected', true);
+									.filter('option[value="' + data.parent_id + '"]').prop('selected', true);
 							}
 							else {
 								$('#fc_addPage_parent option').prop('selected', false)
-									.filter('option[value=' + data.parent + ']').prop('selected', true);
+									.filter('option[value="' + data.parent + '"]').prop('selected', true);
 							}
 
 							// Set textfields
@@ -180,9 +180,9 @@
 							
 							// Set selectfields
 							$('#fc_addPage_menu option').prop('selected', false)
-								.filter('option[value=' + data.menu + ']').prop('selected', true);
+								.filter('option[value="' + data.menu + '"]').prop('selected', true);
 							$('#fc_addPage_target option').prop('selected', false)
-								.filter('option[value=' + data.target + ']').prop('selected', true);
+								.filter('option[value="' + data.target + '"]').prop('selected', true);
 
                             // template variants
                             $("#fc_default_template_variant").empty();
@@ -194,7 +194,7 @@
                                 });
                                 if( typeof data.template_variant !== 'object' && data.template_variant.length > 0 )
                                 {
-                                    $("#fc_default_template_variant option[value="+data.template_variant+"]").prop('selected',true);
+                                    $('#fc_default_template_variant option[value="'+data.template_variant+'"]').prop('selected',true);
                                     $("#fc_default_template_variant").val(data.template_variant);
                                 }
                                 $('#fc_div_template_variants').show();
@@ -210,12 +210,12 @@
 							}
 							else {
 								$('#fc_addPage_template option').prop('selected', false)
-									.filter('option[value=' + data.template + ']').prop('selected', true);
+									.filter('option[value="' + data.template + '"]').prop('selected', true);
 							}
 							$('#fc_addPage_language option').prop('selected', false)
-								.filter('option[value=' + data.language + ']').prop('selected', true);
+								.filter('option[value="' + data.language + '"]').prop('selected', true);
 							$('#fc_addPage_visibility option').prop('selected', false)
-								.filter('option[value=' + data.visibility + ']').prop('selected', true);
+								.filter('option[value="' + data.visibility + '"]').prop('selected', true);
 
 							
 							// Set checkboxesfields
