@@ -21,20 +21,21 @@
  *
  */
 
+
 @font-face {
-	font-family: 'icomoon-ultimate';
-	src:url('fonts/icomoon-ultimate.eot');
-	src:url('fonts/icomoon-ultimate.eot?#iefix') format('embedded-opentype'),
-		url('fonts/icomoon-ultimate.woff') format('woff'),
-		url('fonts/icomoon-ultimate.ttf') format('truetype'),
-		url('fonts/icomoon-ultimate.svg#icomoon-ultimate') format('svg');
+	font-family: 'mojito';
+	src:url('fonts/icomoon.eot?e458h');
+	src:url('fonts/icomoon.eot?#iefixe458h') format('embedded-opentype'),
+		url('fonts/icomoon.woff?e458h') format('woff'),
+		url('fonts/icomoon.ttf?e458h') format('truetype'),
+		url('fonts/icomoon.svg?e458h#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
 
 /* Use the following CSS code if you want to use data attributes for inserting your icons */
 [data-icon]:before {
-	font-family: 'icomoon-ultimate';
+	font-family: 'mojito';
 	content: attr(data-icon);
 	speak: none;
 	font-weight: normal;
@@ -43,72 +44,10 @@
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 }
-
-/* Use the following CSS code if you want to have a class per icon */
-/*
-Instead of a list of all class selectors,
-you can use the generic selector below, but it's slower:
-[class*="icon-"] {
-*/
-.icon-github:before,
-.icon-facebook:before,
-.icon-comments:before,
-.icon-reading:before,
-.icon-puzzle:before,
-.icon-color-palette:before,
-.icon-mail:before,
-.icon-arrow-down:before,
-.icon-plus:before,
-.icon-minus:before,
-.icon-arrow-left:before {
-	font-family: 'icomoon-ultimate';
-	speak: none;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
-	-webkit-font-smoothing: antialiased;
-	margin-right: 0.4em;
-}
-.icon-github:before {
-	content: "\e000";
-}
-.icon-facebook:before {
-	content: "\e001";
-}
-.icon-comments:before {
-	content: "\e002";
-}
-.icon-reading:before {
-	content: "\e003";
-}
-.icon-puzzle:before {
-	content: "\e004";
-}
-.icon-color-palette:before {
-	content: "\e005";
-}
-.icon-mail:before {
-	content: "\e013";
-}
-.icon-arrow-down:before {
-	content: "\e006";
-}
-.icon-plus:before {
-	content: "\e007";
-}
-.icon-minus:before {
-	content: "\e008";
-}
-.icon-arrow-left:before {
-	content: "\e009";
-}
-
 
 /* Use the following CSS code if you want to use data attributes for inserting your icons */
 [data-icon]:after {
-	font-family: 'icomoon-ultimate';
+	font-family: 'mojito';
 	content: attr(data-icon);
 	speak: none;
 	font-weight: normal;
@@ -118,64 +57,402 @@ you can use the generic selector below, but it's slower:
 	-webkit-font-smoothing: antialiased;
 }
 
-/* Use the following CSS code if you want to have a class per icon */
-/*
-Instead of a list of all class selectors,
-you can use the generic selector below, but it's slower:
-[class*="iconafter-"] {
-*/
-.iconafter-github:after,
-.iconafter-facebook:after,
-.iconafter-comments:after,
-.iconafter-reading:after,
-.iconafter-puzzle:after,
-.iconafter-color-palette:after,
-.iconafter-mail:after,
-.iconafter-arrow-down:after,
-.iconafter-plus:after,
-.iconafter-minus:after,
-.iconafter-arrow-left:after {
-	font-family: 'icomoon-ultimate';
+[class^="icon-"]:before, [class*=" icon-"]:before,
+[class^="iconafter-"]:after, [class*=" iconafter-"]:after {
+	font-family: 'mojito';
 	speak: none;
 	font-style: normal;
 	font-weight: normal;
 	font-variant: normal;
 	text-transform: none;
 	line-height: 1;
+
+	/* Better Font Rendering =========== */
 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 	font-size: 1.2em;
 	margin-left: 0.4em;
 }
-.iconafter-github:after {
-	content: "\e000";
-}
-.iconafter-facebook:after {
+
+.icon-modify:before {
 	content: "\e001";
 }
-.iconafter-comments:after {
-	content: "\e002";
-}
-.iconafter-reading:after {
-	content: "\e003";
-}
-.iconafter-puzzle:after {
+.icon-picture:before {
 	content: "\e004";
 }
-.iconafter-color-palette:after {
-	content: "\e005";
+.icon-key:before {
+	content: "\e018";
 }
-.iconafter-mail:after {
-	content: "\e013";
+.icon-bug:before {
+	content: "\e020";
 }
-.iconafter-arrow-down:after {
-	content: "\e006";
+.icon-delete:before {
+	content: "\e022";
 }
-.iconafter-plus:after {
-	content: "\e007";
+.icon-world:before {
+	content: "\e029";
+}
+.icon-visible:before {
+	content: "\e02a";
+}
+.icon-invisible:before {
+	content: "\e02b";
+}
+.icon-visible2:before {
+	content: "\e02c";
+}
+.icon-invisible2:before {
+	content: "\e02d";
+}
+.icon-document:before {
+	content: "\e042";
+}
+.icon-pdf:before {
+	content: "\e043";
+}
+.icon-doc-oo:before {
+	content: "\e044";
+}
+.icon-dotdoc:before {
+	content: "\e045";
+}
+.icon-excel:before {
+	content: "\e046";
+}
+.icon-sheet:before {
+	content: "\e047";
+}
+.icon-zip:before {
+	content: "\e048";
+}
+.icon-code:before {
+	content: "\e049";
+}
+.icon-css:before {
+	content: "\e04a";
+}
+.icon-home:before {
+	content: "\e04b";
+}
+.icon-blackcat:before {
+	content: "\e050";
+}
+.icon-creativecat:before {
+	content: "\e600";
+}
+.icon-palette:before {
+	content: "\e021";
+}
+.icon-reading:before {
+	content: "\e073";
+}
+.icon-tag:before {
+	content: "\e0b7";
+}
+.icon-support:before {
+	content: "\e0d9";
+}
+.icon-phone:before {
+	content: "\e0e4";
+}
+.icon-address-book:before {
+	content: "\e0e8";
+}
+.icon-envelop:before {
+	content: "\e0ec";
+}
+.icon-location:before {
+	content: "\e0f2";
+}
+.icon-calendar:before {
+	content: "\e115";
+}
+.icon-print:before {
+	content: "\e118";
+}
+.icon-mobile:before {
+	content: "\e128";
+}
+.icon-undo:before {
+	content: "\e13b";
+}
+.icon-comments:before {
+	content: "\e152";
+}
+.icon-search:before {
+	content: "\e1b7";
+}
+.icon-puzzle:before {
+	content: "\e270";
+}
+.icon-download:before {
+	content: "\e2c2";
+}
+.icon-upload:before {
+	content: "\e2c3";
+}
+.icon-star:before {
+	content: "\e2fc";
+}
+.icon-star2:before {
+	content: "\e2fd";
+}
+.icon-star3:before {
+	content: "\e2fe";
+}
+.icon-heart:before {
+	content: "\e304";
+}
+.icon-thumbs-up:before {
+	content: "\e310";
+}
+.icon-warning:before {
+	content: "\e356";
+}
+.icon-question:before {
+	content: "\e35c";
+}
+.icon-plus-circle:before {
+	content: "\e35f";
+}
+.icon-minus-circle:before {
+	content: "\e361";
+}
+.icon-info:before {
+	content: "\e363";
+}
+.icon-cancel-circle:before {
+	content: "\e366";
+}
+.icon-checkmark-circle:before {
+	content: "\e368";
+}
+.icon-close:before {
+	content: "\e36e";
+}
+.icon-minus:before {
+	content: "\e375";
+}
+.icon-plus:before {
+	content: "\e376";
+}
+.icon-arrow-up:before {
+	content: "\e3b4";
+}
+.icon-arrow-right:before {
+	content: "\e3b5";
+}
+.icon-arrow-down:before {
+	content: "\e3b6";
+}
+.icon-arrow-left:before {
+	content: "\e3b7";
+}
+.icon-share:before {
+	content: "\e47b";
+}
+.icon-googleplus:before {
+	content: "\e496";
+}
+.icon-facebook:before {
+	content: "\e49b";
+}
+.icon-feed:before {
+	content: "\e4a2";
+}
+.icon-github:before {
+	content: "\e4ba";
+}
+
+
+/* After */
+
+.iconafter-modify:after {
+	content: "\e001";
+}
+.iconafter-picture:after {
+	content: "\e004";
+}
+.iconafter-key:after {
+	content: "\e018";
+}
+.iconafter-bug:after {
+	content: "\e020";
+}
+.iconafter-delete:after {
+	content: "\e022";
+}
+.iconafter-world:after {
+	content: "\e029";
+}
+.iconafter-visible:after {
+	content: "\e02a";
+}
+.iconafter-invisible:after {
+	content: "\e02b";
+}
+.iconafter-visible2:after {
+	content: "\e02c";
+}
+.iconafter-invisible2:after {
+	content: "\e02d";
+}
+.iconafter-document:after {
+	content: "\e042";
+}
+.iconafter-pdf:after {
+	content: "\e043";
+}
+.iconafter-doc-oo:after {
+	content: "\e044";
+}
+.iconafter-dotdoc:after {
+	content: "\e045";
+}
+.iconafter-excel:after {
+	content: "\e046";
+}
+.iconafter-sheet:after {
+	content: "\e047";
+}
+.iconafter-zip:after {
+	content: "\e048";
+}
+.iconafter-code:after {
+	content: "\e049";
+}
+.iconafter-css:after {
+	content: "\e04a";
+}
+.iconafter-home:after {
+	content: "\e04b";
+}
+.iconafter-blackcat:after {
+	content: "\e050";
+}
+.iconafter-creativecat:after {
+	content: "\e600";
+}
+.iconafter-palette:after {
+	content: "\e021";
+}
+.iconafter-reading:after {
+	content: "\e073";
+}
+.iconafter-tag:after {
+	content: "\e0b7";
+}
+.iconafter-support:after {
+	content: "\e0d9";
+}
+.iconafter-phone:after {
+	content: "\e0e4";
+}
+.iconafter-address-book:after {
+	content: "\e0e8";
+}
+.iconafter-envelop:after {
+	content: "\e0ec";
+}
+.iconafter-location:after {
+	content: "\e0f2";
+}
+.iconafter-calendar:after {
+	content: "\e115";
+}
+.iconafter-print:after {
+	content: "\e118";
+}
+.iconafter-mobile:after {
+	content: "\e128";
+}
+.iconafter-undo:after {
+	content: "\e13b";
+}
+.iconafter-bubbles:after {
+	content: "\e152";
+}
+.iconafter-search:after {
+	content: "\e1b7";
+}
+.iconafter-puzzle:after {
+	content: "\e270";
+}
+.iconafter-download:after {
+	content: "\e2c2";
+}
+.iconafter-upload:after {
+	content: "\e2c3";
+}
+.iconafter-star:after {
+	content: "\e2fc";
+}
+.iconafter-star2:after {
+	content: "\e2fd";
+}
+.iconafter-star3:after {
+	content: "\e2fe";
+}
+.iconafter-heart:after {
+	content: "\e304";
+}
+.iconafter-thumbs-up:after {
+	content: "\e310";
+}
+.iconafter-warning:after {
+	content: "\e356";
+}
+.iconafter-question:after {
+	content: "\e35c";
+}
+.iconafter-plus-circle:after {
+	content: "\e35f";
+}
+.iconafter-minus-circle:after {
+	content: "\e361";
+}
+.iconafter-info:after {
+	content: "\e363";
+}
+.iconafter-cancel-circle:after {
+	content: "\e366";
+}
+.iconafter-checkmark-circle:after {
+	content: "\e368";
+}
+.iconafter-close:after {
+	content: "\e36e";
 }
 .iconafter-minus:after {
-	content: "\e008";
+	content: "\e375";
+}
+.iconafter-plus:after {
+	content: "\e376";
+}
+.iconafter-arrow-up:after {
+	content: "\e3b4";
+}
+.iconafter-arrow-right:after {
+	content: "\e3b5";
+}
+.iconafter-arrow-down:after {
+	content: "\e3b6";
 }
 .iconafter-arrow-left:after {
-	content: "\e009";
+	content: "\e3b7";
+}
+.iconafter-share:after {
+	content: "\e47b";
+}
+.iconafter-googleplus:after {
+	content: "\e496";
+}
+.iconafter-facebook:after {
+	content: "\e49b";
+}
+.iconafter-feed:after {
+	content: "\e4a2";
+}
+.iconafter-github:after {
+	content: "\e4ba";
 }

@@ -25,14 +25,14 @@
 <head>
 	<title>{page_title}</title>
 
-	<meta http-equiv="Content-Type" content="text/html; charset={default_charset}" />
-	<meta name="description" content="{page_description}" />
-	<meta name="keywords" content="{page_keywords}" />
+	<meta http-equiv="Content-Type" content="text/html; charset={default_charset}">
+	<meta name="robots" content="noindex">
 
-	<link rel="shortcut icon" href="{template_dir}/css/images/favicon.ico" type="image/x-icon" />
+	<meta name="description" content="{page_description}">
+	<meta name="keywords" content="{page_keywords}">
 
-	<meta name="robots" content="noindex" />
-	<meta http-equiv="content-language" content="de" />
+	<link rel="shortcut icon" href="{template_dir}/css/images/favicon.ico" type="image/x-icon">
+
 
 	{get_page_headers}
 
@@ -49,17 +49,26 @@
 <body>
 
 	<header id="main_header">
+			{if $SHOW_SEARCH}
+			<div id="search_box" class="br_left">
+				<span id="toggleSearch" class="icon-search br_left gradient_blue shadow dr_hover"> </span>
+			    <form name="search" action="{$CAT_URL}/search/index.php" method="post" class="gradient_gray br_left shadow">
+			    	<input type="hidden" name="page_id" value="{$PAGE_ID}">
+			    	<input type="text" name="string" placeholder="{translate('Search ...')}" id="searchInput">
+			    	<input type="submit" class="icon-search" value="{translate('Search...')}">
+			    </form>
+			</div>
+			{/if}
 		<a href="{cat_url}" id="logo">{page_title}</a>
 
 		<nav id="main_nav">
 			{show_menu(1, SM2_ROOT, SM2_START, SM2_ALL|SM2_XHTML_STRICT, '<li>[ac][menu_title]</a>', '</li>', '<ul>', '</ul>')}
 		</nav>
 	</header>
-
 	<section id="content" class="gradient_gray br_all">
 		{if check_section(2)}
 		<header id="content_header" class="gradient_gray br_top">
-            <div style="float:right">{language_menu()}</div>
+			<div class="right">{language_menu()}</div>
 			{page_header}
 			{page_content(2)}
 		</header>

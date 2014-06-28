@@ -24,4 +24,14 @@
 
 $(document).ready(function()
 {
+	var s_box	= $('#search_box'),
+		s_input	= $('#searchInput');
+	$('#toggleSearch').click( function(e)
+	{
+		s_box.toggleClass('visible');
+		if ( s_box.hasClass('visible') )
+		{
+			s_input.focus();
+		}
+	})
 });

@@ -57,6 +57,7 @@ $mod_headers = array(
 			)
 		),
 		'js' => array(
+			'/js/frontend.js',
 			'/js/modernizr.custom.62906.js'
 		)
 	)

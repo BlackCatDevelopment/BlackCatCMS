@@ -25,11 +25,13 @@
 @import url('font.css');
 @import url('basic.css');
 @import url('menu.css');
+@import url('search.box.css');
 
 #main_header {
 	margin: auto;
 	padding: 7px 0px 13px 0px;
 	width: 960px;
+	position: relative;
 }
 
 	#logo {
