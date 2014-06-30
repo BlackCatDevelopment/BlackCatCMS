@@ -882,6 +882,18 @@ if (!class_exists('CAT_Helper_Page'))
                 '/modules/'.CAT_Registry::get('SEARCH_LIBRARY').'/templates/default/'
             );
 
+            // Javascript search path
+            array_push(
+                CAT_Helper_Page::$js_search_path,
+                '/templates/'.$tpl,
+                '/templates/'.$tpl.'/js',
+                // for skinnables
+                '/templates/'.$tpl.'/templates/default',
+                '/templates/'.$tpl.'/templates/default/js',
+                // page
+                CAT_Registry::get('PAGES_DIRECTORY').'/js/'
+            );
+
             // -----------------------------------------------------------------
             // -----                  sections (modules)                   -----
             // -----------------------------------------------------------------
