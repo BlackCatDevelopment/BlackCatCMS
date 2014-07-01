@@ -68,8 +68,8 @@ $mod_headers = array(
 				'addons'			=> 'backend_addons.js',
 				'media'				=> 'backend_media.js',
 				'preferences'		=> 'backend_preferences.js',
-				'settings'			=> 'backend_settings_index.js',
-				'login_index'		=> 'login.js'
+    				'settings'			=> array('backend_pages_modify.js','backend_settings_index.js'),
+    				'login_index'		=> 'login.js',
 				)
 			)
 		)

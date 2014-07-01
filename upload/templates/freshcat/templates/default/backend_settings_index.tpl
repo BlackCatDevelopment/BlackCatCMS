@@ -20,6 +20,10 @@
 				<span class="fc_groups_name">{translate('Frontend settings')}</span>
 				<input type="hidden" name="rel" value="frontend" />
 			</li>
+            <li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-globe">
+				<span class="fc_groups_name">{translate('Global headers')}</span>
+				<input type="hidden" name="rel" value="headers" />
+			</li>
 			<li class="fc_setting_item fc_border fc_gradient1 fc_gradient_hover icon-equalizer">
 				<span class="fc_groups_name">{translate('Backend settings')}</span>
 				<input type="hidden" name="rel" value="backend" />

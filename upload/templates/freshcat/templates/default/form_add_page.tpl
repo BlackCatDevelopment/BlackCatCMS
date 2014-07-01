@@ -1,4 +1,7 @@
 <form name="add_page" action="#" method="post" id="fc_add_page" class="fc_gradient1 shadow_small" style="display:none;">
+    <div id="fc_add_page_header" class="fc_gradient1 fc_border fc_gradient_hover">
+        <span><a href="#" id="fc_add_page_close" class="icon-cancel-2" title="{translate('Close')}"></a></span>
+    </div>
 	<nav>
 		<ul id="fc_add_page_nav">
 			<li><a href="#fc_tabs_general" class="fc_gradient1 fc_gradient_hover fc_first fc_active icon-file" title="{translate('General Settings')}"></a></li>
@@ -128,7 +131,7 @@
 		<button type="submit" name="save_page" class="icon-checkmark fc_changePageOnly" id="fc_savePageSubmit"> {translate('Save page')}</button>
 		<button type="submit" name="restore_page" class="icon-checkmark fc_restorePageOnly" id="fc_restorePageSubmit"> {translate('Restore page')}</button>
 		<button type="submit" name="add_child_page" class="icon-file-add fc_changePageOnly" id="fc_addPageChildSubmit"> {translate('Add child page')}</button>
-		<button type="reset" name="reset" class="fc_gradient1 fc_gradient_hover">{translate('Close & Reset')}</button>
+		<button type="reset" name="reset" class="fc_gradient1 fc_gradient_hover" id="fc_addPageReset">{translate('Close & Reset')}</button>
 	</p>
 	<hr class="fc_changePageOnly fc_restorePageOnly"/>
 	<p>
