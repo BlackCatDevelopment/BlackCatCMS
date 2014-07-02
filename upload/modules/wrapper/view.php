@@ -43,22 +43,13 @@ if (defined('CAT_PATH')) {
 
 global $parser;
 
-// check if module language file exists for the language set by the user (e.g. DE, EN)
-if ( !file_exists( CAT_PATH . '/modules/wrapper/languages/' . LANGUAGE . '.php' ) )
-{
-	// no module language file exists for the language set by the user, include default module language file EN.php
-	require_once( CAT_PATH . '/modules/wrapper/languages/EN.php' );
-}
-else
-{
-	// a module language file exists for the language defined by the user, load it
-	require_once( CAT_PATH . '/modules/wrapper/languages/' . LANGUAGE . '.php' );
-}
-
 // get url
-$get_settings   = $database->query( "SELECT url,height,width,wtype FROM " . CAT_TABLE_PREFIX . "mod_wrapper WHERE section_id = '$section_id'" );
-$fetch_settings = $get_settings->fetchRow( MYSQL_ASSOC );
-$url            = ( $fetch_settings[ 'url' ] );
+$get_settings   = $database->query(sprintf(
+    "SELECT `url`,`height`,`width`,`wtype` FROM `%smod_wrapper` WHERE section_id = '%d'",
+    CAT_TABLE_PREFIX, $section_id
+));
+$fetch_settings = $get_settings->fetchRow();
+$url            = $fetch_settings['url'];
 
 if ( !isset($fetch_settings['wtype']) || ($fetch_settings['wtype']) == '' ) {
     $fetch_settings['wtype'] = 'iframe';
@@ -75,5 +66,3 @@ else {
 	$parser->setPath( CAT_PATH.'/modules/wrapper/htt' );
 	$parser->output( $fetch_settings['wtype'].'.tpl', $data );
 }
-
-?>
