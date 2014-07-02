@@ -43,18 +43,18 @@ require_once(CAT_PATH.'/framework/functions-utf8.php');
 
 global $groups, $allow_tags_in_fields, $allow_empty_values, $boolean, $numeric;
 $groups = array(
-    'seo' => array('website_title','website_description','website_keywords'),
+    'seo' => array('website_title','website_description','website_keywords','use_short_urls'),
     'frontend' => array('default_template','default_template_variant','website_header','website_footer'),
     'backend' => array('default_theme','default_theme_variant','wysiwyg_editor','er_level','redirect_timer','token_lifetime','max_attempts'),
     'system' => array('maintenance_mode','maintenance_page','err_page_404','page_level_limit','page_trash','manage_sections','section_blocks','multiple_menus','page_languages','intro_page','homepage_redirection'),
     'users' => array('frontend_signup','frontend_login','home_folders','auth_min_login_length','auth_max_login_length','auth_min_pass_length','auth_max_pass_length','users_allow_mailaddress'),
     'server' => array('operating_system','pages_directory','page_extension','media_directory','page_spacer','upload_allowed','app_name','sec_anchor'),
-    'mail' => array('server_email','catmailer_lib','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_timeout','catmailer_smtp_auth','catmailer_smtp_username','catmailer_smtp_password','catmailer_smtp_ssl','catmailer_smtp_ssl_port'),
+    'mail' => array('server_email','catmailer_lib','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_timeout','catmailer_smtp_auth','catmailer_smtp_username','catmailer_smtp_password','catmailer_smtp_ssl','catmailer_smtp_ssl_port','catmailer_smtp_starttls'),
     'security' => array('auto_disable_users','enable_csrfmagic','upload_enable_mimecheck','upload_mime_default_type','upload_allowed','captcha_type','text_qa','enabled_captcha','enabled_asp'),
 );
 $allow_tags_in_fields = array('website_header', 'website_footer');
 $allow_empty_values   = array('website_header', 'website_footer', 'sec_anchor', 'pages_directory','catmailer_smtp_host','catmailer_smtp_timeout','catmailer_smtp_username','catmailer_smtp_password');
-$boolean              = array('auto_disable_users','frontend_login','home_folders','manage_sections','multiple_menus','page_trash','prompt_mysql_errors','section_blocks','maintenance_mode','homepage_redirection','intro_page','page_languages','users_allow_mailaddress','enable_csrfmagic','upload_enable_mimecheck','catmailer_smtp_ssl');
+$boolean              = array('auto_disable_users','frontend_login','home_folders','manage_sections','multiple_menus','page_trash','prompt_mysql_errors','section_blocks','maintenance_mode','homepage_redirection','intro_page','page_languages','users_allow_mailaddress','enable_csrfmagic','upload_enable_mimecheck','catmailer_smtp_ssl','catmailer_smtp_starttls','use_short_urls');
 $numeric              = array('redirect_timer','maintenance_page','err_page_404','page_level_limit','token_lifetime','max_attempts','catmailer_smtp_ssl_port','catmailer_smtp_timeout');
 
 /**
@@ -722,3 +722,34 @@ function check_frontend_signup($value,$oldvalue) {
     }
 }
 
+function check_use_short_urls($value,$oldvalue) {
+    if( ($value || $value=='true') && (!$oldvalue || $oldvalue=='false') )
+        create_htaccess();
+    if( (!$value || $value=='false') && ($oldvalue || $oldvalue=='true') && file_exists(CAT_PATH.'/.htaccess') )
+        unlink(CAT_PATH.'/.htaccess');
+}
+
+/**
+ * create .htaccess in root dir
+ **/
+function create_htaccess()
+{
+    $content = '    RewriteEngine On
+    # If called directly - redirect to short url version
+    RewriteCond %{REQUEST_URI} !/'.PAGES_DIRECTORY.'/intro.php
+    RewriteCond %{REQUEST_URI} /'.PAGES_DIRECTORY.'
+    RewriteRule ^'.PAGES_DIRECTORY.'/(.*)'.PAGE_EXTENSION.'$ /$1/ [R=301,L]
+
+    # Send the request to the short.php for processing
+    RewriteCond %{REQUEST_URI} !^/('.PAGES_DIRECTORY.'|'.CAT_BACKEND_FOLDER.'|framework|include|languages|media|account|search|temp|templates/.*)$
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^([\/\sa-zA-Z0-9._-]+)$ '.CAT_PATH.'/index.php?$1 [QSA,L]
+    ';
+    $fh = fopen(CAT_PATH.'/.htaccess','w');
+    if(is_resource($fh) && $fh)
+    {
+        fwrite($fh,$content);
+        fclose($fh);
+    }
+}

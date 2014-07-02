@@ -140,7 +140,7 @@ elseif($val->sanitizePost('del_plugin')!='')
         CAT_Helper_Page::adminDelHeaderComponent('js','/modules/lib_jquery/plugins/'.$plugin.$file,$page_id);
     foreach($css as $file)
         CAT_Helper_Page::adminDelHeaderComponent('css','/modules/lib_jquery/plugins/'.$plugin.$file,$page_id);
-    print json_encode(array('success'=>false,'message'=>'ok'));
+    print json_encode(array('success'=>true,'message'=>'ok'));
     exit();
 }
 elseif($val->sanitizePost('order')!='')

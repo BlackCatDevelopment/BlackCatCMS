@@ -44,6 +44,7 @@ $admin    =& $backend;
 $val      = CAT_Helper_Validate::getInstance();
 $get_tool = $val->sanitizeGet('tool',NULL,true);
 
+if ( $get_tool == '' ) $get_tool = $val->sanitizePost('tool',NULL,true);
 if ( $get_tool == '' )
 {
 	header("Location: index.php");
