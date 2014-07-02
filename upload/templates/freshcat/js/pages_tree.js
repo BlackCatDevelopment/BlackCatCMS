@@ -805,4 +805,12 @@ jQuery(document).ready(function()
         });
     });
 
+    // --------------------------------
+    // v1.1: manage page header files
+    // --------------------------------
+    $('#fc_add_page_close').click(function(event) {
+        event.preventDefault();
+        $('button#fc_addPageReset').click();
+    });
+
 });

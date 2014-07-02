@@ -16,19 +16,17 @@
 #fc_admin_header {
 	top:			0px;
 	line-height:	2em;
-	color:			#1d2023;
 	height:			50px;
 }
 
 	#fc_side_choose {
 		display:		inline-block;
-		width:			180px;
+		width:			235px;
 		padding:		0px 10px;
 		float:			left;
 		line-height:	48px;
 		font-weight:	800;
 	}
-        #fc_side_choose a[href] { color:#000; }
 
 	#fc_account {
 		float: right;
@@ -82,6 +80,19 @@
 	font-weight:		400;
 }
 
+#fc_add_page_header {
+    height: 24px;
+}
+    #fc_add_page_header span a {
+        float:right;
+        display:inline-block;
+        width:23px;
+        height:23px;
+        background: #e24756;filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e24756', endColorstr='#c92c41');background: -webkit-gradient(linear, left top, left bottom, from(#e24756), to(#c92c41));background: -moz-linear-gradient(top,  #e24756, #c92c41);
+        color:#fff;
+        text-align:center;
+    }
+
 #fc_content_header {
 	height:			49px;
 	padding:		0px 15px;
@@ -120,3 +131,5 @@
 	border-bottom-style: dashed;
 	background-color: #f8f8f8;
 }
+
+.icon-logo_bc{margin-right:5px;}

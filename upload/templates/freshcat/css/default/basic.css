@@ -22,30 +22,7 @@
  */
 
 /**
- * Import different stylesheets for different pages/elemtents
- */
-@import url(reset.css);
-@import url(webfont.css);
-@import url(colors.css);
-@import url(sidebar.css);
-@import url(pages.css);
-@import url(page_tree.css);
-@import url(buttons.css);
-@import url(headers.css);
-@import url(menu.css);
-@import url(footers.css);
-@import url(starter.css);
-@import url(media.css);
-@import url(calendar.css);
-@import url(users.css);
-@import url(admintools.css);
-@import url(grid.css);
-@import url(forms.css);
-@import url(widgets.css);
-@import url(../../../../modules/lib_jquery/jquery-ui/themes/base/jquery-ui.css);
-@import url(../../../../modules/lib_jquery/plugins/tag-it/tag-it.css);
 
-/**
  * Define basic elements
  *
  */
@@ -222,6 +199,9 @@ label {
 	height:		100%;
 }
 
+    #fc_main_content>div{
+        padding:15px;
+    }
 .fc_invalid {
 	border-width: 1px;
 	border-style: solid;
@@ -322,8 +302,12 @@ label {
 }
 
 .fc_info {
-    background: transparent url(../images/info.png) left center no-repeat;
-    padding-left: 50px;
+    background: transparent url(../images/info.png) 10px center no-repeat;
+    border: 1px solid #ccc;
+    padding: 8px 50px !important;
+    min-height: 34px;
+    -webkit-border-radius: 4px;-moz-border-radius: 4px;-khtml-border-radius: 4px;border-radius: 4px;
+    -moz-box-shadow: 4px 4px 4px #aaa;-webkit-box-shadow: 4px 4px 4px #aaa;box-shadow: 4px 4px 4px #aaa;
 }
  /**
   * Tables

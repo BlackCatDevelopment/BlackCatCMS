@@ -237,3 +237,6 @@ input[type=submit].fc_gradient_red:hover,
 	border: 1px solid #77878f;
 }
 .fc_not_installed { color:#aaa; }
+
+#fc_admin_header {color:#1d2023;}
+#fc_side_choose a[href] { color:#000; }

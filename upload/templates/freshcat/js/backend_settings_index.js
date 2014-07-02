@@ -56,13 +56,15 @@ function create_guid(URL) {
 
 jQuery(document).ready(function(){
 	$('#fc_list_overview li').fc_set_tab_list();
+    var set_cookie	= SESSION + "_settings_open";
     $('#fc_list_overview li').click( function()
     {
-        var current	= $(this);
-        var dates	= {
+        var current	= $(this),
+            dates	= {
 			'_cat_ajax': 1,
             'template': current.find('input').val()
 		};
+            $.cookie( set_cookie, current.find('input').val(), { path: '/' } );
 		$.ajax(
 		{
 			type:		'POST',
@@ -83,6 +85,10 @@ jQuery(document).ready(function(){
 			}
 		});
     });
+    if($.cookie(set_cookie).length) {
+        $('#fc_list_overview li').find('input[value="' + $.cookie(set_cookie) +'"]').click();
+    }
+
     $('#fc_createguid').click(function()
     {
         create_guid(CAT_ADMIN_URL+'/settings/ajax_guid.php');

@@ -47,6 +47,7 @@
 	border-bottom-color: #cccccc;
 	border-left-color: #cccccc;
 	background-color: white;
+    min-height: 40px;
 }
 .fc_blocks_footer {
 	height:			20px;

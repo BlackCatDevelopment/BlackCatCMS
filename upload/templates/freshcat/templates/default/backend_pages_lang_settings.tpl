@@ -12,7 +12,7 @@
 		<div class="clear"></div>
 	</div>
 
-    <div id="fc_linked_languages" class="g_8 ui-corner-bottom" style="padding:5px 15px">
+    <div id="fc_linked_languages" class="ui-corner-bottom" style="padding:5px 15px">
         <div class="fc_info">
         {translate('Language mappings allow to link pages of different languages together. In combination with the <tt>language_menu()</tt> function in the template, you will get links to all available languages for a page.')}
         </div>
