@@ -572,6 +572,7 @@ $LANG = array(
     'Standard page: Template for search result' => 'Standardseite: Template für Suchergebnisse',
     'Use HTMLPurifier to clean output' => 'Mit HTMLPurifier filtern',
     'Use image from content page in search result' => 'Bild aus Inhalt in Suchergebnis verwenden',
+    'Use short URLs (Apache webserver only, requires mod_rewrite!)' => 'Kurze URLs verwenden (nur Apache Webserver, erfordert mod_rewrite!)',
     'Variant' => 'Variante (Skin)',
     'Website footer' => 'Webseite Fußzeile',
     'Website header' => 'Webseite Kopf',
