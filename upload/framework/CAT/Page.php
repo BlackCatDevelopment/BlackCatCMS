@@ -152,9 +152,9 @@ if (!class_exists('CAT_Page', false))
             {
                 $do_filter = false;
                 // use output filter (if any)
-                if(file_exists(sanitize_path(CAT_PATH.'/modules/blackcatFilter/filter.php')))
+                if(file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/blackcatFilter/filter.php')))
                 {
-                    include_once sanitize_path(CAT_PATH.'/modules/blackcatFilter/filter.php');
+                    include_once CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/blackcatFilter/filter.php');
                     if(function_exists('executeFilters'))
                     {
                         $this->log()->LogDebug('enabling output filters');
@@ -296,7 +296,7 @@ if (!class_exists('CAT_Page', false))
                         if (file_exists(CAT_PATH . '/modules/' . $module . '/view.php'))
                         {
                             // load language file (if any)
-                            $langfile = sanitize_path(CAT_PATH.'/modules/'.$module.'/languages/'.LANGUAGE.'.php');
+                            $langfile = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$module.'/languages/'.LANGUAGE.'.php');
                             if ( file_exists($langfile) )
                             {
                                 if ( ! $this->lang()->checkFile($langfile, 'LANG', true ))
@@ -304,17 +304,17 @@ if (!class_exists('CAT_Page', false))
                                 require $langfile;
                             else
                                 // modern language file
-                            $this->lang()->addFile(LANGUAGE . '.php', sanitize_path(CAT_PATH . '/modules/' . $module . '/languages'));
+                            $this->lang()->addFile(LANGUAGE . '.php', CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/languages'));
                             }
                             // set template path
-                            if (file_exists(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates')))
-                                $parser->setPath(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates'));
-                            if (file_exists(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates/default')))
-                                $parser->setPath(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates/default'));
-                            if (file_exists(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates/' . DEFAULT_TEMPLATE)))
+                            if (file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/templates')))
+                                $parser->setPath(CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/templates'));
+                            if (file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/templates/default')))
+                                $parser->setPath(CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/templates/default'));
+                            if (file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/templates/' . DEFAULT_TEMPLATE)))
                             {
-                                $parser->setFallbackPath(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates/default'));
-                                $parser->setPath(sanitize_path(CAT_PATH . '/modules/' . $module . '/templates/' . DEFAULT_TEMPLATE));
+                                $parser->setFallbackPath(CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/templates/default'));
+                                $parser->setPath(CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/templates/' . DEFAULT_TEMPLATE));
                             }
                             // fetch original content
                             ob_start();

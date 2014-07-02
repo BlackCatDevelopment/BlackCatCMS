@@ -213,7 +213,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             {
                 if(!CAT_Backend::isBackend())
                 {
-                    $parser->setPath(sanitize_path(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/templates/default'));
+                    $parser->setPath(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/templates/default'));
                     $parser->setFallbackPath(CAT_THEME_PATH.'/templates/default');
                 }
                 else

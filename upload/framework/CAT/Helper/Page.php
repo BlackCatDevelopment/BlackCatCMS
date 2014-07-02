@@ -142,7 +142,7 @@ if (!class_exists('CAT_Helper_Page'))
             {
                 $now = time();
                 $result = self::$instance->db()->query(sprintf(
-                    'SELECT * FROM %spages ORDER BY `level` ASC, `position` ASC',
+                    'SELECT * FROM `%spages` ORDER BY `level` ASC, `position` ASC',
                     CAT_TABLE_PREFIX
                 ));
                 if( $result && $result->numRows()>0 )
@@ -245,9 +245,13 @@ if (!class_exists('CAT_Helper_Page'))
         }   // end function init()
 
         /**
+         * allows to add a CSS file programmatically
          *
          * @access public
-         * @return
+         * @param  string  $url
+         * @param  string  $for   - 'frontend' (default) or 'backend'
+         * @param  string  $media - default 'screen'
+         * @return void
          **/
         public static function addCSS($url,$for='frontend',$media='screen')
         {
@@ -256,6 +260,27 @@ if (!class_exists('CAT_Helper_Page'))
                 'file'  => $url
             );
         }   // end function addCSS()
+
+        /**
+         * allows to add a JS file programmatically
+         *
+         * @access public
+         * @param  string  $url
+         * @param  string  $for   - 'frontend' (default) or 'backend'
+         * @param  string  $pos   - 'header' (default) or 'footer'
+         * @return void
+         **/
+        public static function addJS($url,$for='frontend',$pos='header')
+        {
+            if ($pos == 'header')
+                $static =& CAT_Helper_Page::$js;
+            else
+                $static =& CAT_Helper_Page::$f_js;
+            $static[] = self::$space
+                      . '<script type="text/javascript" src="'
+                      . CAT_Helper_Validate::sanitize_url(CAT_URL.$url)
+                      . '"></script>';
+        }   // end function addJS()
 
         /**
          * creates a new page
@@ -399,8 +424,8 @@ if (!class_exists('CAT_Helper_Page'))
         {
 
             // check if $filename is a full path (may be 'link' db value)
-            if(!preg_match('~^'.sanitize_path(CAT_PATH.PAGES_DIRECTORY).'~i',$filename))
-                $filename = sanitize_path(CAT_PATH.PAGES_DIRECTORY.'/'.dirname($filename).'/'.self::getFilename(basename($filename)).PAGE_EXTENSION);
+            if(!preg_match('~^'.CAT_Helper_Directory::sanitizePath(CAT_PATH.PAGES_DIRECTORY).'~i',$filename))
+                $filename = CAT_Helper_Directory::sanitizePath(CAT_PATH.PAGES_DIRECTORY.'/'.dirname($filename).'/'.self::getFilename(basename($filename)).PAGE_EXTENSION);
 
             $pages_path    = CAT_Helper_Directory::sanitizePath(CAT_PATH.PAGES_DIRECTORY);
             $rel_pages_dir = str_replace($pages_path, '', CAT_Helper_Directory::sanitizePath(dirname($filename)));
@@ -540,6 +565,113 @@ if (!class_exists('CAT_Helper_Page'))
             }
         }   // end function exists()
         
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getExtraHeaderFiles($page_id=NULL)
+        {
+            global $database;
+            $data = array(); //'js'=>array(),'css'=>array(),'code'=>''
+            $q    = sprintf(
+                'SELECT * FROM `%spages_headers` WHERE `page_id`="%d"',
+                CAT_TABLE_PREFIX, $page_id
+            );
+            $r = $database->query($q);
+            if($r->numRows())
+            {
+                $row = $r->fetchRow();
+                if(isset($row['page_js_files']) && $row['page_js_files']!='')
+                    $data['js'] = unserialize($row['page_js_files']);
+                if(isset($row['page_css_files']) && $row['page_css_files']!='')
+                    $data['css'] = unserialize($row['page_css_files']);
+                if(isset($row['page_js']) && $row['page_js']!='')
+                    $data['code'] = $row['page_js'];
+            }
+            return $data;
+        }   // end function getExtraHeaderFiles()
+
+        /**
+         * add header file to the database; returns an array with keys
+         *     'success' (boolean)
+         *         and
+         *     'message' (some error text or 'ok')
+         *
+         * @access public
+         * @param  string  $type
+         * @param  string  $file
+         * @param  integer $page_id
+         * @return array
+         **/
+        public static function adminAddHeaderComponent($type,$file,$page_id=NULL)
+        {
+            global $database;
+            $data = self::getExtraHeaderFiles($page_id);
+            if(isset($data[$type]) && is_array($data[$type]) && count($data[$type]) && in_array($file,$data[$type]))
+            {
+                return array(
+                    'success' => false,
+                    'message' => $val->lang()->translate('The file is already listed')
+                );
+            }
+            else
+            {
+                $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_jquery/plugins/'.$file);
+                if(file_exists($path))
+                {
+                    $new    = ( isset($data[$type]) && is_array($data[$type]) && count($data[$type]) )
+                            ? $data[$type]
+                            : array();
+                    array_push($new,CAT_Helper_Directory::sanitizePath('/modules/lib_jquery/plugins/'.$file));
+                    $new = array_unique($new);
+                    $q   = count($data)
+                       ? sprintf(
+                             'UPDATE `%spages_headers` SET `page_%s_files`=\'%s\' WHERE `page_id`="%d"',
+                             CAT_TABLE_PREFIX, $type, serialize($new), $page_id
+                         )
+                       : sprintf(
+                             'REPLACE INTO `%spages_headers` ( `page_id`, `page_%s_files` ) VALUES ( "%d", \'%s\' )',
+                             CAT_TABLE_PREFIX, $type, $page_id, serialize($new)
+                         )
+                       ;
+                    $database->query($q);
+                    return array(
+                        'success' => ( $database->is_error() ? false                  : true ),
+                        'message' => ( $database->is_error() ? $database->get_error() : 'ok' )
+                    );
+                }
+            }
+        }   // end function adminAddHeaderComponent()
+
+        /**
+         * remove header file from the database
+         **/
+        public static function adminDelHeaderComponent($type,$file,$page_id=NULL)
+        {
+            global $database;
+            $data = self::getExtraHeaderFiles($page_id);
+            if(!(is_array($data[$type]) && count($data[$type]) && in_array($file,$data[$type])))
+                return array( 'success' => true, 'message' => 'ok' );
+            if(($key = array_search($file, $data[$type])) !== false) {
+                unset($data[$type][$key]);
+            }
+            $q = count($data)
+               ? sprintf(
+                     'UPDATE `%spages_headers` SET `page_%s_files`=\'%s\' WHERE `page_id`="%d"',
+                     CAT_TABLE_PREFIX, $type, serialize($data[$type]), $page_id
+                 )
+               : sprintf(
+                     'REPLACE INTO `%spages_headers` ( `page_id`, `page_%s_files` ) VALUES ( "%d", \'%s\' )',
+                     CAT_TABLE_PREFIX, $type, $page_id, serialize($data[$type])
+                 )
+               ;
+            $database->query($q);
+            return array(
+                'success' => ( $database->is_error() ? false                  : true ),
+                'message' => ( $database->is_error() ? $database->get_error() : 'ok' )
+            );
+        }   // end function adminDelHeaderComponent()
 
         /**
          * prints the backend footers
@@ -553,7 +685,7 @@ if (!class_exists('CAT_Helper_Page'))
             // -----                    backend theme                      -----
             // -----------------------------------------------------------------
             $tpl  = CAT_Registry::get('DEFAULT_THEME');
-            $file = sanitize_path(CAT_PATH.'/templates/'.$tpl.'/footers.inc.php');
+            $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/templates/'.$tpl.'/footers.inc.php');
             if (file_exists($file))
             {
                 self::getInstance()->log()->logDebug(sprintf('adding footer items for backend theme [%s]', $tpl));
@@ -566,11 +698,11 @@ if (!class_exists('CAT_Helper_Page'))
             $tool = CAT_Helper_Validate::get('_REQUEST','tool','string');
             if ($tool)
             {
-                $path = sanitize_path(CAT_PATH.'/modules/'.$tool.'/tool.php');
+                $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$tool.'/tool.php');
                 self::getInstance()->log()->logDebug(sprintf('handle admin tool [%s] - path [%s]', $tool, $path));
                 if (file_exists($path))
                 {
-                    $file = sanitize_path(CAT_PATH . '/modules/' . $tool . '/footers.inc.php');
+                    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $tool . '/footers.inc.php');
                     if (file_exists($file))
                     {
                         self::getInstance()->log()->logDebug(sprintf('adding footer items for admin tool [%s]', $_REQUEST['tool']));
@@ -587,7 +719,7 @@ if (!class_exists('CAT_Helper_Page'))
                 $val = CAT_Helper_Validate::getInstance();
                 foreach (self::$js_search_path as $directory)
                 {
-                    $file = sanitize_path($directory . '/backend_body.js');
+                    $file = CAT_Helper_Directory::sanitizePath($directory . '/backend_body.js');
                     if (file_exists(CAT_PATH . '/' . $file))
                     {
                         self::$f_js[] = '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $file) . '"></script>' . "\n";
@@ -610,7 +742,7 @@ if (!class_exists('CAT_Helper_Page'))
             // -----------------------------------------------------------------
             // -----                    backend theme                      -----
             // -----------------------------------------------------------------
-            $file = sanitize_path(CAT_PATH . '/templates/' . DEFAULT_THEME . '/headers.inc.php');
+            $file = CAT_Helper_Directory::sanitizePath(CAT_PATH . '/templates/' . DEFAULT_THEME . '/headers.inc.php');
             if (file_exists($file))
             {
                 self::$instance->log()->logDebug(sprintf('adding items for backend theme [%s]', DEFAULT_THEME));
@@ -622,7 +754,7 @@ if (!class_exists('CAT_Helper_Page'))
             // -----------------------------------------------------------------
             if (isset($_REQUEST['tool']))
             {
-                $path = sanitize_path(CAT_PATH . '/modules/' . $_REQUEST['tool'] . '/tool.php');
+                $path = CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $_REQUEST['tool'] . '/tool.php');
                 self::$instance->log()->logDebug(sprintf('handle admin tool [%s] - path [%s]', $_REQUEST['tool'], $path));
 
                 if (file_exists($path))
@@ -630,7 +762,7 @@ if (!class_exists('CAT_Helper_Page'))
                     array_push(CAT_Helper_Page::$css_search_path, '/modules/' . $_REQUEST['tool'], '/modules/' . $_REQUEST['tool'] . '/css');
                     array_push(CAT_Helper_Page::$js_search_path, '/modules/' . $_REQUEST['tool'], '/modules/' . $_REQUEST['tool'] . '/js');
 
-                    $file = sanitize_path(CAT_PATH . '/modules/' . $_REQUEST['tool'] . '/headers.inc.php');
+                    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $_REQUEST['tool'] . '/headers.inc.php');
                     if (file_exists($file))
                     {
                         self::$instance->log()->logDebug(sprintf('adding items for admin tool [%s]', $_REQUEST['tool']));
@@ -815,7 +947,7 @@ if (!class_exists('CAT_Helper_Page'))
             // -----                  frontend theme                       -----
             // -----------------------------------------------------------------
             $tpl  = CAT_Registry::get('TEMPLATE');
-            $file = sanitize_path(CAT_PATH.'/templates/'.$tpl.'/footers.inc.php');
+            $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/templates/'.$tpl.'/footers.inc.php');
             if (file_exists($file))
             {
                 self::$instance->log()->logDebug(sprintf('adding footer items for frontend template [%s]', $tpl));
@@ -830,7 +962,7 @@ if (!class_exists('CAT_Helper_Page'))
                 $val = CAT_Helper_Validate::getInstance();
                 foreach (CAT_Helper_Page::$js_search_path as $directory)
                 {
-                    $file = sanitize_path($directory . '/frontend_body.js');
+                    $file = CAT_Helper_Directory::sanitizePath($directory . '/frontend_body.js');
                     if (file_exists(CAT_PATH . '/' . $file))
                     {
                         CAT_Helper_Page::$f_js[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $file) . '"></script>' . "\n";
@@ -855,7 +987,7 @@ if (!class_exists('CAT_Helper_Page'))
             // -----                  frontend theme                       -----
             // -----------------------------------------------------------------
             $tpl  = CAT_Registry::get('TEMPLATE');
-            $file = sanitize_path(CAT_PATH.'/templates/'.$tpl.'/headers.inc.php');
+            $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/templates/'.$tpl.'/headers.inc.php');
             self::$instance->log()->logDebug(sprintf('searching for file [%s]', $file));
             if (file_exists($file))
             {
@@ -882,17 +1014,18 @@ if (!class_exists('CAT_Helper_Page'))
                 '/modules/'.CAT_Registry::get('SEARCH_LIBRARY').'/templates/default/'
             );
 
-            // Javascript search path
-            array_push(
-                CAT_Helper_Page::$js_search_path,
-                '/templates/'.$tpl,
-                '/templates/'.$tpl.'/js',
-                // for skinnables
-                '/templates/'.$tpl.'/templates/default',
-                '/templates/'.$tpl.'/templates/default/js',
-                // page
-                CAT_Registry::get('PAGES_DIRECTORY').'/js/'
-            );
+            // -----------------------------------------------------------------
+            // -----             get extra header files                    -----
+            // -----------------------------------------------------------------
+            $global_files = CAT_Helper_Page::getExtraHeaderFiles(0);
+            $page_files   = CAT_Helper_Page::getExtraHeaderFiles($page_id);
+            $all_files    = array_merge($global_files,$page_files);
+            if(isset($all_files['css']) && is_array($all_files['css']))
+                foreach($all_files['css'] as $file)
+                    self::addCSS($file);
+            if(isset($all_files['js']) && is_array($all_files['js']))
+                foreach($all_files['js'] as $file)
+                    self::addJS($file);
 
             // -----------------------------------------------------------------
             // -----                  sections (modules)                   -----
@@ -1419,6 +1552,21 @@ if (!class_exists('CAT_Helper_Page'))
         }   // end function getPagesForLevel()
 
         /**
+         *
+         * @access public
+         * @return mixed
+         **/
+        public static function getPageByPath($path)
+        {
+            if(!count(self::$pages)) self::getInstance();
+            if(substr($path,0,1)!='/') $path = '/'.$path;
+            foreach(self::$pages as $pg)
+                if($pg['link']==$path)
+                    return $pg['page_id'];
+            return NULL;
+        }   // end function getPageByPath()
+
+        /**
          * returns a list of page_id's containing the children of given parent
          *
          * @access public
@@ -1727,7 +1875,12 @@ if (!class_exists('CAT_Helper_Page'))
 
             // search
             if ( ! $page_id )
+            {
+                if(CAT_Registry::get('USE_SHORT_URLS')&&isset($_SERVER['REDIRECT_QUERY_STRING']))
+                     $page_id = CAT_Helper_Page::getPageByPath('/'.$_SERVER['REDIRECT_QUERY_STRING']);
+                else
                 $page_id = self::getDefaultPage();
+            }
 
             if(!defined('PAGE_ID'))
                 define('PAGE_ID',$page_id);
@@ -1966,7 +2119,7 @@ if (!class_exists('CAT_Helper_Page'))
                         {
                             if (!preg_match('#' . $subdir . '/#', $css['file']))
                             {
-                                $css['file'] = sanitize_path($subdir.'/'.$css['file']);
+                                $css['file'] = CAT_Helper_Directory::sanitizePath($subdir.'/'.$css['file']);
                             }
                         }
                     }
@@ -2018,7 +2171,7 @@ if (!class_exists('CAT_Helper_Page'))
                             {
                                 if (!preg_match('#' . $subdir . '/#', $item))
                                 {
-                                    $item = sanitize_path($subdir . '/' . $item);
+                                    $item = CAT_Helper_Directory::sanitizePath($subdir . '/' . $item);
                                 }
                             }
                         }
@@ -2038,18 +2191,26 @@ if (!class_exists('CAT_Helper_Page'))
                     if (is_array($arr['individual']))
                     {
                         $val = CAT_Helper_Validate::getInstance();
-                        foreach ($arr['individual'] as $section_name => $item)
+                        foreach ($arr['individual'] as $section_name => $items)
                         {
+                            if(!is_array($items))
+                                $items = array($items);
                             if ($section_name == strtolower($section))
                             {
                                 foreach ($check_paths as $subdir)
                                 {
-                                    if (!preg_match('#' . $subdir . '/#', $item))
+                                    foreach($items as $item)
                                     {
-                                        $item = sanitize_path($subdir . '/' . $item);
+                                        if (
+                                                !preg_match('#'.$subdir.'/#',$item)
+                                             && !preg_match('#'.$subdir.'$#i',$path_prefix)
+                                        ) {
+                                            $item = CAT_Helper_Directory::sanitizePath($subdir . '/' . $item);
+                                        }
+                                        if(file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$path_prefix.'/'.$item)))
+                                            $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL.'/'.$path_prefix.'/'.$item) . '"></script>';
                                     }
                                 }
-                                $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $item) . '"></script>';
                             }
                         }
                     }
@@ -2073,7 +2234,7 @@ if (!class_exists('CAT_Helper_Page'))
                             {
                                 if (!preg_match('#' . $subdir . '/#', $item))
                                 {
-                                    $item = sanitize_path($subdir . '/' . $item);
+                                    $item = CAT_Helper_Directory::sanitizePath($subdir . '/' . $item);
                                 }
                             }
                         }
@@ -2084,7 +2245,7 @@ if (!class_exists('CAT_Helper_Page'))
             }
             else
             {
-                $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . CAT_Helper_Validate::getInstance()->sanitize_url(CAT_URL . '/' . $arr) . '"></script>';
+                $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/' . $arr) . '"></script>';
             }
             self::$instance->log()->logDebug('JavaScripts',$static);
         } // end function _analyze_javascripts()
@@ -2260,10 +2421,10 @@ if (!class_exists('CAT_Helper_Page'))
             if ( pathinfo($item,PATHINFO_EXTENSION) != 'js' )
                 $item .= '.js';
             // just there?
-            if (!file_exists(sanitize_path(CAT_PATH.'/modules/lib_jquery/plugins/'.$item)))
+            if (!file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_jquery/plugins/'.$item)))
             {
                 $dir = pathinfo($item,PATHINFO_FILENAME);
-                if (file_exists(sanitize_path(CAT_PATH.'/modules/lib_jquery/plugins/'.$dir.'/'.$item)))
+                if (file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_jquery/plugins/'.$dir.'/'.$item)))
                 {
                     $item = $dir.'/'.$item;
                     return $item;
@@ -2291,7 +2452,7 @@ if (!class_exists('CAT_Helper_Page'))
                 foreach (CAT_Helper_Page::$css_search_path as $directory)
                 {
                     // template.css
-                    $file = sanitize_path($directory . '/template.css');
+                    $file = CAT_Helper_Directory::sanitizePath($directory . '/template.css');
                     if (file_exists(CAT_PATH . '/' . $file))
                     {
                         CAT_Helper_Page::$css[] = array(
@@ -2300,7 +2461,7 @@ if (!class_exists('CAT_Helper_Page'))
                         );
                     }
                     // print.css
-                    $file = sanitize_path($directory . '/print.css');
+                    $file = CAT_Helper_Directory::sanitizePath($directory . '/print.css');
                     if (file_exists(CAT_PATH . '/' . $file))
                     {
                         CAT_Helper_Page::$css[] = array(
@@ -2309,7 +2470,7 @@ if (!class_exists('CAT_Helper_Page'))
                         );
                     }
                     // frontend.css / backend.css
-                    $file = sanitize_path($directory . '/' . $for . '.css');
+                    $file = CAT_Helper_Directory::sanitizePath($directory . '/' . $for . '.css');
                     if (file_exists(CAT_PATH . '/' . $file))
                     {
                         CAT_Helper_Page::$css[] = array(
@@ -2318,7 +2479,7 @@ if (!class_exists('CAT_Helper_Page'))
                         );
                     }
                     // frontend.css / backend_print.css
-                    $file = sanitize_path($directory . '/' . $for . '_print.css');
+                    $file = CAT_Helper_Directory::sanitizePath($directory . '/' . $for . '_print.css');
                     if (file_exists(CAT_PATH . '/' . $file))
                     {
                         CAT_Helper_Page::$css[] = array(
@@ -2329,16 +2490,16 @@ if (!class_exists('CAT_Helper_Page'))
                     // PAGE_ID.css (frontend only)
                     if ($for == 'frontend' && defined('PAGE_ID') )
                     {
-                        $file = sanitize_path($directory . '/' . PAGE_ID . '.css');
-                        if (file_exists(sanitize_path(CAT_PATH . '/' . $file)))
+                        $file = CAT_Helper_Directory::sanitizePath($directory . '/' . PAGE_ID . '.css');
+                        if (file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH . '/' . $file)))
                         {
                             CAT_Helper_Page::$css[] = array(
                                 'media' => 'screen,projection',
                                 'file' => $file
                             );
                         }
-                        $file = sanitize_path($directory . '/' . PAGE_ID . '_print.css');
-                        if (file_exists(sanitize_path(CAT_PATH . '/' . $file)))
+                        $file = CAT_Helper_Directory::sanitizePath($directory . '/' . PAGE_ID . '_print.css');
+                        if (file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH . '/' . $file)))
                         {
                             CAT_Helper_Page::$css[] = array(
                                 'media' => 'print',
@@ -2445,7 +2606,7 @@ if (!class_exists('CAT_Helper_Page'))
                 $seen = array();
                 foreach (CAT_Helper_Page::$js_search_path as $directory)
                 {
-                    $file = sanitize_path($directory . '/' . $for . '.js');
+                    $file = CAT_Helper_Directory::sanitizePath($directory . '/' . $for . '.js');
                     if ( ! isset($seen[$file]) )
                     if (file_exists(CAT_PATH . '/' . $file))
                             CAT_Helper_Page::$js[]
@@ -2456,7 +2617,7 @@ if (!class_exists('CAT_Helper_Page'))
                 }
                 if ($for == 'frontend')
                 {
-                    $file = sanitize_path(CAT_Registry::get('PAGES_DIRECTORY').'/js/'.$page_id.'.js');
+                    $file = CAT_Helper_Directory::sanitizePath(CAT_Registry::get('PAGES_DIRECTORY').'/js/'.$page_id.'.js');
                     if ( ! isset($seen[$file]) && file_exists(CAT_PATH . '/' . $file) )
                     {
                         CAT_Helper_Page::$js[]
@@ -2495,7 +2656,7 @@ if (!class_exists('CAT_Helper_Page'))
                     foreach ($sections as $section)
                     {
                         $module = $section['module'];
-                        $file   = sanitize_path(CAT_PATH.'/modules/'.$module.'/headers.inc.php');
+                        $file   = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$module.'/headers.inc.php');
                         // find header definition file
                         if (file_exists($file))
                         {
@@ -2514,7 +2675,7 @@ if (!class_exists('CAT_Helper_Page'))
                             if ( file_exists(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php') )
                             {
                                 self::$instance->log()->logDebug('adding headers.inc.php for wysiwyg');
-                        self::_load_headers_inc(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php'), $for, CAT_PATH.'/modules/'.WYSIWYG_EDITOR);
+                        self::_load_headers_inc(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/headers.inc.php'), $for, CAT_PATH.'/modules/'.WYSIWYG_EDITOR);
                             }
                             $wysiwyg_seen = true;
                         }

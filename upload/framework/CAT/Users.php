@@ -520,7 +520,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 }
                 $has = $has_bit;
             }
-#echo "group -$group- NEEDED BIT -$bit- USER HAS HAS_BIT -$has_bit- HAS -$has- INT -", (int)$has,"-<br />";
+//echo "group -$group- NEEDED BIT -$bit- USER HAS HAS_BIT -$has_bit- HAS -$has- INT -", (int)$has,"-<br />\n";
+//echo "HAS -", (int)$has, "- NEED -", (int)$bit, "- RESULT -", ( (int)$has & (int)$bit ), "-<br />\n";
             if ( (int)$has & (int)$bit )
             {
                 return true;

@@ -49,7 +49,7 @@ if (defined('CAT_PATH')) {
 $snippets = CAT_Helper_Addons::get_addons(0,'module','snippet');
 foreach($snippets as $s)
 {
-    $file = sanitize_path(CAT_PATH.'/modules/'.$s['VALUE'].'/include.php');
+    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$s['VALUE'].'/include.php');
     if(file_exists($file))
         include $file;
 }

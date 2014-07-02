@@ -76,6 +76,23 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
         } // end function getInstance()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getAddonByID($id)
+        {
+            $self  = self::getInstance();
+            $addon = $self->db()->query(sprintf(
+                'SELECT * FROM `%saddons` WHERE addon_id="%d"',
+                CAT_TABLE_PREFIX, $id
+            ));
+            if ( $addon->numRows() > 0 )
+                return $addon->fetchRow();
+            return NULL;
+        }   // end function getAddonByID()
+
+        /**
          * gets the details of an addons; uses the directory name to find the
          * addon in the DB
          *
