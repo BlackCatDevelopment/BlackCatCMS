@@ -140,6 +140,14 @@ if (!class_exists('CAT_Page', false))
 
             $this->log()->LogDebug(sprintf('showing page with ID [%s]',$page_id));
 
+            // send appropriate header
+            if(CAT_Helper_Page::isMaintenance() || CAT_Registry::get('MAINTENANCE_PAGE') == $page_id)
+            {
+                header('HTTP/1.1 503 Service Temporarily Unavailable');
+                header('Status: 503 Service Temporarily Unavailable');
+                header('Retry-After: 7200'); // in seconds
+            }
+
             // template engine
             global $parser;
 
