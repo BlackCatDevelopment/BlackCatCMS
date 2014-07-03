@@ -39,6 +39,15 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+if(!file_exists(CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/library.php'))
+{
+    $page_id = CAT_Helper_Validate::get('_REQUEST','page_id');
+    CAT_Object::printFatalError(
+        CAT_Object::lang()->translate('No search library installed!'),
+        CAT_Helper_Page::getLink($page_id)
+    );
+}
+
 // Required page details
 $page_id          = -1;
 $page_description = '';

@@ -170,16 +170,20 @@ $LANG = array(
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Datei kann nicht geschrieben werden)',
     'Error creating access file in the pages directory, path not writable or forbidden file / directory name'
         => 'Beim Anlegen der Zugangsdatei im Seitenverzeichnis ist ein Fehler aufgetreten (Verzeichnis nicht schreibbar oder verbotener Datei-/Verzeichnisname)',
+    'Error message' => 'Fehlermeldung',
     'File not found' => 'Datei nicht gefunden',
     'File upload error: {{error}}' => 'Datei Upload Fehler: {{error}}',
     'Invalid characters in username found' => 'Ungültige Zeichen im Benutzernamen gefunden',
     'Invalid password chars used, valid chars are: a-z\A-Z\0-9\_\-\!\#\*\+'
         => 'Es wurden ung&uuml;ltige Zeichen f&uuml;r des Passwort verwendet, g&uuml;ltig sind: a-z\A-Z\0-9\_\-\!\#\*\+',
     'Missing page_id!' => 'Keine page_id angegeben!',
+    'No search library installed!' => 'Es ist keine Suchfunktion installiert!',
+    'Ooops... A fatal error occured while processing your request!' => 'Es ist leider ein Problem beim Bearbeiten Ihrer Anfrage aufgetreten!',
     'Searched paths' => 'Durchsuchte Pfade',
     "Sorry, but you don't have the permissions for this action" => 'Sie haben leider nicht die notwendigen Rechte für diese Aktion',
     'Sorry, but the system is unable to use mail to send your details. Please contact the administrator.'
         => 'Entschuldigung, leider kann Ihnen keine eMail mit Ihren Daten zugesandt werden. Bitte kontaktieren Sie den Administrator.',
+    'Source' => 'Quelle',
     'The max. Login name length could not be saved. There is/are {{ count }} user/s that have longer names.'
         => 'Die Maximallänge des Anmeldenamens konnte nicht gespeichert werden. Es gibt {{ count }} Benutzer mit einem längeren Namen.',
     'The min. Login name length could not be saved. There is/are {{ count }} user/s that have shorter names.'
@@ -194,6 +198,7 @@ $LANG = array(
     'Username or password incorrect' => 'Der Benutzername oder das Passwort ist nicht korrekt.',
     'Username too long (max.: {{ length }})' => 'Benutzername zu lang (max.: {{ length }})',
     'Username too short (min.: {{ length }})' => 'Benutzername zu kurz (min.: {{ length }})',
+    "We're sorry!" => 'Wir bitten um Entschuldigung!',
     'You are not allowed to view this page!' => 'Sie besitzen nicht die erforderlichen Rechte, um diese Seite zu besuchen!',
     'You sent an invalid value' => 'Es wurde ein ungültiger Wert angegeben',
 // ----- MENU -----

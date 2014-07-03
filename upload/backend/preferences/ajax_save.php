@@ -130,7 +130,7 @@ else
 	}
 }
 
-$current_password		= md5($current_password);
+#$current_password		= md5($current_password);
 $new_password_1			= md5($new_password_1);
 $new_password_2			= md5($new_password_2);
 
@@ -142,6 +142,16 @@ if (!count($err_msg))
 
     $user_id = $user->get_user_id();
 
+    // check pw
+    if(!CAT_Users::checkUserLogin($user->get_username(),$current_password))
+    {
+        print json_encode(array(
+            'success' => false,
+            'message' => $backend->lang()->translate('The (current) password you entered is incorrect')
+        ));
+        exit();
+    }
+
     // --- save basics ---
 	$sql	 = sprintf(
         'UPDATE `%susers` SET `display_name` = "%s", '
@@ -150,18 +160,10 @@ if (!count($err_msg))
 	        .  '`language` = "%s" '
 	        .  'WHERE `user_id` = %d '
             .  'AND `password` = "%s"',
-        CAT_TABLE_PREFIX, $display_name, $new_password_1, $email, $language, $user_id, $current_password
+        CAT_TABLE_PREFIX, $display_name, $new_password_1, $email, $language, $user_id, md5($current_password)
     );
 
-	if ( $backend->db()->query($sql) )
-	{
-		$sql_info = mysql_info();
-		if ( preg_match('/matched: *([1-9][0-9]*)/i', $sql_info) != 1 )
-		{
-			// if the user_id or password doesn't match
-			$backend->print_error( 'The (current) password you entered is incorrect' , $js_back );
-		}
-		else
+	if (($stmt = $backend->db()->query($sql)) !== false)
 		{
 			// update successful
             // --- save additional settings ---
@@ -235,7 +237,6 @@ if (!count($err_msg))
     			$ref->update_user( $_SESSION['USER_ID'], $new_init_page );
     			unset($ref);
             }
-		}
 	}
 	else
 	{

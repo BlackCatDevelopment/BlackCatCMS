@@ -87,6 +87,8 @@ if (!class_exists('database', false))
             {
                 $config = new \Doctrine\DBAL\Configuration();
                 $config->setSQLLogger(new Doctrine\DBAL\Logging\DebugStack());
+                if(!defined('CAT_DB_NAME'))
+                    include dirname(__FILE__).'/../config.php';
                 $connectionParams = array(
                     'charset'  => 'utf8',
                     'dbname'   => CAT_DB_NAME,
@@ -228,7 +230,7 @@ if (!class_exists('database', false))
                     ), E_USER_ERROR);
                 }
             }
-
+            return false;
         }   // end function query()
 
         /**

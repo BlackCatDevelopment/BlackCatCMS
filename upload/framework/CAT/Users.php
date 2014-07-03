@@ -579,6 +579,19 @@ if ( ! class_exists( 'CAT_Users', false ) )
         }   // end function checkEmailExists()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function checkUserLogin($name,$pw)
+        {
+            $self   = self::getInstance();
+            $query  = 'SELECT * FROM `%susers` WHERE `username` = "%s" AND `password` = "%s" AND `active` = 1';
+            $result = $self->db()->query(sprintf($query,CAT_TABLE_PREFIX,$name,md5($pw)));
+    		return ( $result->numRows() == 1 ) ? true : false;
+        }   // end function checkUserLogin()
+        
+        /**
          * checks if given username already exists
          *
          * @access public
