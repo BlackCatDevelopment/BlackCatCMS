@@ -14,11 +14,11 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- * @copyright       2004-2010, Website Baker Project
+ *   @copyright       2004-2010, Website Baker Project
  *   @copyright       2011-2012, LEPTON Project
- * @copyright       2013, Black Cat Development
- * @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ *   @copyright       2013, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
@@ -50,11 +50,11 @@ class wb
     public  $page                = array(); // keep SM2 happy
     
     private static $depre_func   = array(
-        'bind_jquery' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers()</a>',
-        'register_backend_modfiles' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers("backend", true, "$section_name")</a>',
-        'register_backend_modfiles_body' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_footers()">get_page_footers("backend")</a>',
-        'register_frontend_modfiles' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers()</a>',
-        'register_frontend_modfiles_body' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_footers()">get_page_footers()</a>',
+        'bind_jquery' => '<a href="https://github.com/webbird/BlackCatCMS/wiki/get_page_headers%28%29">get_page_headers()</a>',
+        'register_backend_modfiles' => '<a href="https://github.com/webbird/BlackCatCMS/wiki/get_page_headers%28%29">get_page_headers("backend", true, "$section_name")</a>',
+        'register_backend_modfiles_body' => '<a href="https://github.com/webbird/BlackCatCMS/wiki/get_page_footers()">get_page_footers("backend")</a>',
+        'register_frontend_modfiles' => '<a href="https://github.com/webbird/BlackCatCMS/wiki/get_page_headers%28%29">get_page_headers()</a>',
+        'register_frontend_modfiles_body' => '<a href="https://github.com/webbird/BlackCatCMS/wiki/get_page_footers()">get_page_footers()</a>',
         'page_menu' => 'show_menu2()',
         'show_menu' => 'show_menu2()',
         'show_breadcrumbs' => 'show_menu2()',
@@ -68,7 +68,6 @@ class wb
     public function __construct()
     {
   		$this->lang  = CAT_Helper_I18n::getInstance(LANGUAGE);
-
         set_error_handler( array('wb','cat_error_handler') );
     }   // end constructor
 
@@ -230,7 +229,11 @@ class wb
     /* moved to CAT_Helper_Mail */
     public function mail($fromaddress, $toaddress, $subject, $message, $fromname = '')
     {
-        return CAT_Helper_Mail::getInstance()->sendMail($fromaddress, $toaddress, $subject, $message, $fromname);
+        // check if mailer lib is installed
+        if(count(CAT_Helper_Addons::getLibraries('mail')))
+            return CAT_Helper_Mail::getInstance()->sendMail($fromaddress, $toaddress, $subject, $message, $fromname);
+        else
+            return false;
     }
 
     /* moved to CAT_Helper_Page */
