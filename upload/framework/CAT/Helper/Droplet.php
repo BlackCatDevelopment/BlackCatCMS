@@ -29,7 +29,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
         @include dirname(__FILE__).'/../Object.php';
     }
 
-    require_once CAT_PATH.'/modules/lib_search/search.droplets.php';
+    if(file_exists(CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/search.droplets.php'))
+        require_once CAT_PATH.'/modules/lib_search/search.droplets.php';
 
     class CAT_Helper_Droplet extends CAT_Object    {
 

@@ -234,6 +234,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                         'file'     => $file,
                         'line'     => $line,
                         'function' => $function,
+                        'link'     => $link,
                     )
                 );
             }

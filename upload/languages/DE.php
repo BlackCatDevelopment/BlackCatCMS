@@ -589,6 +589,8 @@ $LANG = array(
         => 'Nach Erreichen dieser Anzahl sind keine weiteren Anmeldeversuche mehr möglich.',
     'World-writeable file permissions' => 'Jeder darf schreiben',
 // ----- addons - install.php -----
+    'Addon successfully installed' => 'Addon erfolgreich installiert',
+    'Addon successfully upgraded' => 'Modul erfolgreich aktualisiert',
     'Unable to extract the file. Please check the ZIP format.'
         => 'Kann die Datei nicht entpacken. Bitte das ZIP Format prüfen.',
     'Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.'
@@ -601,6 +603,7 @@ $LANG = array(
     'Not installed yet' => 'Noch nicht installiert',
     'Pre installation check failed' => 'Prüfung der Installationsvoraussetzungen fehlgeschlagen',
     'Pre installation check successful' => 'Prüfung der Installationsvoraussetzungen erfolgreich',
+    'Precheck result for addon' => 'Ergebnis für Addon',
     'Unable to install the module' => 'Fehler beim Installieren des Moduls',
     'Unable to install - error copying files' => 'Installation nicht möglich - Fehler beim Kopieren der Dateien',
     'Upgraded successfully' => 'Erfolgreich aktualisiert',

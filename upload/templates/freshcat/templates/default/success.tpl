@@ -10,8 +10,10 @@
 			setTimeout("top.location.href ='{$REDIRECT}'", {$REDIRECT_TIMER});
 		</script>
 		{/if}
-		<h3>
-			<a target="_top" href="{$REDIRECT}" title="{translate('Next')}">{translate('Back')}</a>
-		</h3>
 	</div>
 </div>
+{if $REDIRECT}
+<div class="fc_fallback fc_gradient4">
+	<a target="_top" class="fc_button_back ui-corner-right" href="{$REDIRECT}">{translate('Back')}</a>
+</div>
+{/if}

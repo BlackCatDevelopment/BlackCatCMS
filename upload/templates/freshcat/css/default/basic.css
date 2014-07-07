@@ -199,9 +199,6 @@ label {
 	height:		100%;
 }
 
-    #fc_main_content>div{
-        padding:15px;
-    }
 .fc_invalid {
 	border-width: 1px;
 	border-style: solid;
@@ -216,8 +213,14 @@ label {
 	margin: 25px;
 }
 .fc_error_box {
+    background: #FEDEBE url(../images/error.png) scroll 5px 5px no-repeat;
+    padding-left:50px;
+    padding-top:15px;
 }
 .fc_success_box {
+}
+.fc_fallback {
+    padding:10px 15px;
 }
 .fc_nostyle {
 	font-weight: normal;

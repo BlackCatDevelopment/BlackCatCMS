@@ -172,6 +172,8 @@ else
     $langfile = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$addon['type'].'s/'.$addon['directory'].'/languages/'.LANGUAGE.'.php');
     if ( function_exists('file_get_contents') && file_exists($langfile) )
     {
+        if(!function_exists('get_variable_content'))
+            @include_once CAT_PATH.'/framework/functions.php';
         // read contents of the module language file into string
         $description          = @file_get_contents($langfile);
         // use regular expressions to fetch the content of the variable from the string

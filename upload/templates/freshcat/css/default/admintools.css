@@ -19,6 +19,10 @@
 	background-color: #f8f8f8;
 }
 
+    .fc_tool {
+        padding:15px;
+    }
+
 	#fc_admintools li {
 		margin: 0px;
 	}

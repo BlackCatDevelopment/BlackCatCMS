@@ -100,7 +100,7 @@ switch ($action)
 {
 	case 'install':
 	case 'upgrade':
-		$backend->print_success( 'Done', $js_back);
+		$backend->print_success( str_replace('deed','ded','Addon successfully '.$action.'ed'), $js_back);
 		break;
 	default:
 		$backend->print_error( 'Action not supported', $js_back );
