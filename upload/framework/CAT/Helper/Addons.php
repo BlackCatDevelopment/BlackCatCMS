@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -33,27 +33,93 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
     class CAT_Helper_Addons extends CAT_Object
     {
         // array to store config options
-        protected      $_config = array( 'loglevel' => 4 );
+        protected      $_config = array(
+                           'loglevel' => 4
+                       );
         protected      $debugLevel = 4;
         private static $dirh;
         private static $error = NULL;
         private static $instance = NULL;
-        private static $states = array( '.0' => 'dev', '.1' => 'preview', '.2' => 'alpha', '.5' => 'beta', '.8' => 'rc', '.9' => 'final' );
-        private static $info_vars_full = array( 'module' => array( 'module_license', 'module_author', 'module_name', 'module_home', 'module_directory', 'module_version', 'module_function', 'module_description', 'module_platform', 'module_guid', 'module_link', 'module_variants' ), 'template' => array( 'template_license', 'template_author', 'template_name', 'template_home', 'template_directory', 'template_version', 'template_function', 'template_description', 'template_platform', 'template_guid', 'template_variants'
-        //'theme_directory'
-            ), 'language' => array( 'language_license', 'language_code', 'language_name', 'language_version', 'language_platform', 'language_author', 'language_guid' ) );
-        private static $info_vars_mandatory = array( 'module' => array( 'module_author', 'module_name', 'module_directory', 'module_version', 'module_function' ), 'template' => array( 'template_author', 'template_name', 'template_directory', 'template_version', 'template_function' ), 'language' => array( 'language_code', 'language_name', 'language_version', 'language_author' ) );
+        private static $states = array(
+                           '.0' => 'dev',
+                           '.1' => 'preview',
+                           '.2' => 'alpha',
+                           '.5' => 'beta',
+                           '.8' => 'rc',
+                           '.9' => 'final'
+                       );
+        private static $info_vars_full = array(
+                           'module' => array(
+                               'module_license',
+                               'module_author',
+                               'module_name',
+                               'module_home',
+                               'module_directory',
+                               'module_version',
+                               'module_function',
+                               'module_description',
+                               'module_platform',
+                               'module_guid',
+                               'module_link',
+                               'module_variants'
+                           ),
+                           'template' => array(
+                               'template_license',
+                               'template_author',
+                               'template_name',
+                               'template_home',
+                               'template_directory',
+                               'template_version',
+                               'template_function',
+                               'template_description',
+                               'template_platform',
+                               'template_guid',
+                               'template_variants',
+                           ),
+                           'language' => array(
+                               'language_license',
+                               'language_code',
+                               'language_name',
+                               'language_version',
+                               'language_platform',
+                               'language_author',
+                               'language_guid'
+                           )
+                       );
+        private static $info_vars_mandatory = array(
+                           'module' => array(
+                               'module_author',
+                               'module_name',
+                               'module_directory',
+                               'module_version',
+                               'module_function'
+                           ),
+                           'template' => array(
+                               'template_author',
+                               'template_name',
+                               'template_directory',
+                               'template_version',
+                               'template_function'
+                           ),
+                           'language' => array(
+                               'language_code',
+                               'language_name',
+                               'language_version',
+                               'language_author'
+                           )
+                       );
         private static $module_functions = array( 'page', 'library', 'tool', 'snippet', 'wysiwyg', 'widget' );
-        private static $template_functions = array( 'template', // frontend
-            'theme' // backend
-            );
+        private static $template_functions = array(
+                           'template', // frontend
+                           'theme'     // backend
+                       );
 
         public function __construct()
         {
             // we need our own instance here, because this helper is used by
             // the installer
             self::$dirh = new CAT_Helper_Directory();
-        }
+        }   // end constructor
 
         public function __call( $method, $args )
         {
@@ -64,7 +130,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                      $this,
                     $method
                 ), $args );
-        }
+        }   // end __call()
 
         public static function getInstance()
         {
@@ -76,17 +142,20 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
         } // end function getInstance()
 
         /**
+         * allows to get addon details by using the ID as set in the DB;
+         * returns array on success, false on fail
          *
          * @access public
-         * @return
+         * @param  integer $id
+         * @return mixed
          **/
         public static function getAddonByID($id)
         {
             $self  = self::getInstance();
-            $addon = $self->db()->query(sprintf(
-                'SELECT * FROM `%saddons` WHERE addon_id="%d"',
-                CAT_TABLE_PREFIX, $id
-            ));
+            $addon = $self->db()->query(
+                'SELECT * FROM `:prefix:addons` WHERE addon_id=:id',
+                array('id'=>$id)
+            );
             if ( $addon->numRows() > 0 )
                 return $addon->fetchRow();
             return NULL;
@@ -100,17 +169,19 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
          * @param  string  $directory
          * @return mixed   array on success, NULL otherwise
          **/
-        public static function getAddonDetails( $directory )
+        public static function getAddonDetails($directory)
         {
             $self  = self::getInstance();
-            $addon = $self->db()->query( sprintf( 'SELECT * FROM `%saddons` WHERE directory="%s"', CAT_TABLE_PREFIX, $directory ) );
+            $addon = $self->db()->query(
+                'SELECT * FROM `:prefix:addons` WHERE directory=:dir',
+                array('dir'=>$directory)
+            );
             if ( $addon->numRows() > 0 )
             {
                 return $addon->fetchRow( MYSQL_ASSOC );
             }
             return NULL;
         } // end function getAddonDetails()
-
 
         /**
          * get_addons function.
@@ -173,16 +244,21 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             // ! Get all addons
             // ==================
             $addons_array = array();
-            $addons       = $self->db()->query( sprintf( "SELECT * FROM `%saddons` %s%s%s ORDER BY 'type' ASC, '%s' ASC", CAT_TABLE_PREFIX, $where, $get_type, $get_function, htmlspecialchars( $order ) ) );
+            $addons       = $self->db()->query(
+                sprintf(
+                    "SELECT * FROM `:prefix:addons` %s%s%s ORDER BY 'type' ASC, '%s' ASC",
+                    $where, $get_type, $get_function, htmlspecialchars($order)
+                )
+            );
             if ( $addons->numRows() > 0 )
             {
                 $counter = 1;
-                while ( $addon = $addons->fetchRow( MYSQL_ASSOC ) )
+                while ( $addon = $addons->fetchRow() )
                 {
                     if ( !$check_permission || ( $addon['type'] != 'language' && CAT_Users::get_permission( $addon['directory'], $addon['type'] ) ) || $addon['type'] == 'language' )
                     {
                         $addons_array[ $counter ] = array_merge( $addon, array(
-                             'VALUE' => $addon['directory'],
+                            'VALUE' => $addon['directory'],
                             'NAME' => $addon['name'],
                             'SELECTED' => ( $selected == $counter || $selected == $addon['name'] || $selected == $addon['directory'] ) ? true : false
                         ) );
@@ -453,7 +529,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                             // compare versions and extract actual status
                             $status = self::versionCompare( PHP_VERSION, $value['VERSION'], $operator );
                             $msg[]  = array(
-                                 'check' => 'PHP-' . self::getInstance()->lang()->translate( 'Version' ),
+                                'check' => 'PHP-' . self::getInstance()->lang()->translate( 'Version' ),
                                 'required' => htmlentities( $operator ) . '&nbsp;' . $value['VERSION'],
                                 'actual' => PHP_VERSION,
                                 'status' => $status
@@ -564,10 +640,12 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             }
 
             $self = self::getInstance();
+            $info = self::checkInfo($temp_path);
 
             $parser->setPath( CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/' );
             $parser->setFallbackPath( dirname( __FILE__ ) . '/templates/Addons' );
             $output = $parser->get( 'summary', array(
+                'addon' => $info['module_name'],
                 'heading' => ( $failed_checks ? $self->lang()->translate( 'Pre installation check failed' ) : $self->lang()->translate( 'Pre installation check successful' ) ),
                 'message' => ( $failed_checks ? $self->lang()->translate( 'Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.' ) : '' ),
                 'summary' => $summary,
@@ -972,7 +1050,10 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         return self::getInstance()->lang()->translate( 'Cannot uninstall this language <span class="highlight_text">{{name}}</span> because it is the {{type}}!', $temp );
                     }
                     // used by other users
-                    $query_users = self::getInstance()->db()->query( sprintf( "SELECT user_id FROM `%susers` WHERE language = '%s' LIMIT 1", CAT_TABLE_PREFIX, $addon_name ) );
+                    $query_users = self::getInstance()->db()->query(
+                        "SELECT `user_id` FROM `:prefix:users` WHERE language=:lang LIMIT 1",
+                        array('lang'=>$addon_name)
+                    );
                     if ( $query_users->numRows() > 0 )
                     {
                         return self::getInstance()->lang()->translate( 'Cannot uninstall this language <span class="highlight_text">{{name}}</span> because it is in use!', array(
@@ -983,7 +1064,10 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
                 case 'modules':
                     // check if the module is still in use
-                    $info = self::getInstance()->db()->query( sprintf( "SELECT section_id, page_id FROM `%ssections` WHERE module = '%s'", CAT_TABLE_PREFIX, $addon_name ) );
+                    $info = self::getInstance()->db()->query(
+                        "SELECT `section_id`, `page_id` FROM `:prefix:sections` WHERE module=:mod",
+                        array('mod'=>$addon_name)
+                    );
                     if ( $info->numRows() > 0 )
                     {
                         $temp   = explode( ";", self::getInstance()->lang()->translate( 'this page;these pages' ) );
@@ -1023,12 +1107,15 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     if ( $addon_name == DEFAULT_THEME || $addon_name == DEFAULT_TEMPLATE )
                     {
                         $temp = array(
-                             'name' => $addon_name,
+                            'name' => $addon_name,
                             'type' => $addon_name == DEFAULT_TEMPLATE ? self::getInstance()->lang()->translate( 'default template' ) : self::getInstance()->lang()->translate( 'default backend theme' )
                         );
                         return self::getInstance()->lang()->translate( 'Cannot uninstall template <span class="highlight_text">{{name}}</span> because it is the {{type}}!', $temp );
                     }
-                    $info = self::getInstance()->db()->query( sprintf( "SELECT page_id, page_title FROM `%spages` WHERE template='%s' order by page_title", CAT_TABLE_PREFIX, $addon_name ) );
+                    $info = self::getInstance()->db()->query(
+                        "SELECT `page_id`, `page_title` FROM `:prefix:pages` WHERE template=:name order by page_title",
+                        array('name'=>$addon_name)
+                    );
                     if ( $info->numRows() > 0 )
                     {
                         $msg_template_str  = 'Cannot uninstall template <span class="highlight_text">{{name}}</span> because it is still in use on {{pages}}:';
@@ -1067,10 +1154,15 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             // Remove entry from DB
             if ( $type != 'languages' )
             {
-                self::getInstance()->db()->query( sprintf( "DELETE FROM `%saddons` WHERE directory = '%s' AND type = '%s'", CAT_TABLE_PREFIX, $addon_name, substr( $type, 0, -1 ) ) );
+                self::getInstance()->db()->query(
+                    "DELETE FROM `:prefix:addons` WHERE directory=:dir AND type=:type",
+                    array('dir'=>$addon_name, 'type'=>substr($type,0,-1) )
+                );
                 if ( self::getInstance()->db()->is_error() )
                     return self::getInstance()->db()->get_error();
-                $stmt = self::getInstance()->db()->query( sprintf( 'SELECT * FROM `%sgroups` WHERE group_id <> 1', CAT_TABLE_PREFIX ) );
+                $stmt = self::getInstance()->db()->query(
+                    'SELECT * FROM `:prefix:groups` WHERE group_id <> 1'
+                );
                 if ( $stmt->numRows() > 0 )
                 {
                     while ( $row = $stmt->fetchRow( MYSQL_ASSOC ) )
@@ -1088,7 +1180,13 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                             asort( $permissions );
                             // Update the database
                             $addon_permissions = implode( ',', $permissions );
-                            self::getInstance()->db()->query( sprintf( "UPDATE `%sgroups` SET %s_permissions = '%s' WHERE group_id=%d", CAT_TABLE_PREFIX, substr( $type, 0, -1 ), $addon_permissions, $gid ) );
+                            self::getInstance()->db()->query(
+                                sprintf(
+                                    "UPDATE `:prefix:groups` SET %s_permissions=:perm WHERE group_id=:id",
+                                    substr( $type, 0, -1 )
+                                ),
+                                array('perm'=>$addon_permissions,'id'=>$gid)
+                            );
                         }
                     }
                 }
@@ -1098,7 +1196,10 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             }
             else
             {
-                self::getInstance()->db()->query( sprintf( "DELETE FROM `%saddons` WHERE directory = '%s' AND type = '%s'", CAT_TABLE_PREFIX, $addon_name, substr( $type, 0, -1 ) ) );
+                self::getInstance()->db()->query(
+                    "DELETE FROM `:prefix:addons` WHERE directory=:dir AND type=:type",
+                    array('dir'=>$addon_name, 'type'=>substr($type,0,-1) )
+                );
                 if ( self::getInstance()->db()->is_error() )
                     return self::getInstance()->db()->get_error();
                 unlink( CAT_PATH . '/languages/' . $addon_name . '.php' );
@@ -1136,44 +1237,44 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     $module_function = strtolower( $addon_info['module_function'] );
                     $do              = 'insert';
                     // Check that it doesn't already exist
-                    $sql             = sprintf( "SELECT COUNT(*) FROM `%saddons` WHERE `type`='module' AND `directory`='%s' AND `function`='%s'", CAT_TABLE_PREFIX, $addon_info['module_directory'], $module_function );
-                    if ( $self->db()->get_one( $sql ) )
+                    $q = $self->db()->query(
+                        "SELECT COUNT(*) FROM `:prefix:addons` WHERE `type`='module' AND `directory`=:dir AND `function`=:func",
+                        array('dir'=>$addon_info['module_directory'], 'func'=>$module_function)
+                    );
+                    if ( $q->numRows() )
                     {
-                        $sql = "UPDATE `%saddons` SET `upgraded`='" . time() . "', ";
+                        $sql = "UPDATE `:prefix:addons` SET `upgraded`=:time, ";
                         $do  = 'update';
                     }
                     else
                     {
-                        $sql = "INSERT INTO `%saddons` SET `installed`='" . time() . "', ";
+                        $sql = "INSERT INTO `:prefix:addons` SET `installed`=:time', ";
                     }
 
                     $options = array(
-                        CAT_TABLE_PREFIX,
-                        mysql_real_escape_string( $addon_info['module_directory'] ),
-                        mysql_real_escape_string( $addon_info['module_name'] ),
-                        mysql_real_escape_string( $addon_info['module_description'] ),
-                        $addon_info['addon_function'],
-                        mysql_real_escape_string( strtolower( $addon_info['module_function'] ) ),
-                        mysql_real_escape_string( $addon_info['module_version'] ),
-                        ( isset( $addon_info['module_platform'] ) ? mysql_real_escape_string( $addon_info['module_platform'] ) : '' ),
-                        ( isset( $addon_info['module_author']   ) ? mysql_real_escape_string( $addon_info['module_author'] )   : '' ),
-                        ( isset( $addon_info['module_license']  ) ? mysql_real_escape_string( $addon_info['module_license'] )  : '' )
+                        'time' => time(),
+                        'dir'  => $addon_info['module_directory'],
+                        'name' => $addon_info['module_name'],
+                        'desc' => $addon_info['module_description'],
+                        'type' => $addon_info['addon_function'],
+                        'func' => strtolower( $addon_info['module_function'] ),
+                        'ver'  => $addon_info['module_version'],
+                        'plat' => ( isset( $addon_info['module_platform'] ) ? $addon_info['module_platform'] : '' ),
+                        'auth' => ( isset( $addon_info['module_author']   ) ? $addon_info['module_author']   : '' ),
+                        'lic'  => ( isset( $addon_info['module_license']  ) ? $addon_info['module_license']  : '' ),
+                        'guid' => ( isset( $addon_info['module_guid']     ) ? $addon_info['module_guid']     : '' ),
                     );
 
-                    $sql .= "`directory`='%s', `name`='%s', `description`='%s', " . "`type`='%s', `function`='%s', `version`='%s', " . "`platform`='%s', `author`='%s', `license`='%s', `guid`='%s'";
-
-                    if ( isset( $addon_info['module_guid'] ) )
-                        array_push( $options, mysql_real_escape_string( $addon_info['module_guid'] ) );
-                    else
-                        array_push( $options, '' );
+                    $sql .= "`directory`=:dir, `name`=:name, `description`=:desc, " .
+                            "`type`=:type, `function`=:func, `version`=:ver, " .
+                            "`platform`=:plat, `author`=:auth, `license`=:lic, `guid`=:guid";
 
                     if ( $do == 'update' )
                     {
-                        $sql .= "WHERE `type`='module' AND `directory`='%s'";
-                        array_push( $options, $addon_info['module_directory'] );
+                        $sql .= " WHERE `type`='module' AND `directory`=:dir2";
+                        $options['dir2'] = $addon_info['module_directory'];
                     }
-
-                    $self->db()->query( vsprintf( $sql, $options ) );
+                    $self->db()->query($sql,$options);
 
                     if ( $self->db()->is_error() )
                         return false;
@@ -1200,7 +1301,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             $check_permission = $addon_info['addon_function'] . '_permissions';
 
             // get groups
-            $stmt = $self->db()->query( sprintf( 'SELECT * FROM `%sgroups` WHERE group_id <> 1', CAT_TABLE_PREFIX ) );
+            $stmt = $self->db()->query('SELECT * FROM `:prefix:groups` WHERE group_id <> 1');
 
             if ( $stmt->numRows() > 0 )
             {
@@ -1230,7 +1331,13 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         asort( $addons );
                         // Update the database
                         $addon_permissions = implode( ',', $addons );
-                        $self->db()->query( sprintf( 'UPDATE `%sgroups` SET `%s`="%s" WHERE `group_id`=%d', CAT_TABLE_PREFIX, $check_permission, $addon_permissions, $gid ) );
+                        $self->db()->query(
+                            sprintf(
+                                'UPDATE `:prefix:groups` SET `%s`=:val WHERE `group_id`=:id',
+                                $check_permission
+                            ),
+                            array('val'=>$addon_permissions, 'id'=>$gid)
+                        );
                         if ( $self->db()->is_error() )
                         {
                             self::printError( $self->db()->get_error() );
@@ -1263,7 +1370,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             $self    = self::getInstance();
             if ( $source != true )
             {
-                $sql     = sprintf( "SELECT `version` FROM `%saddons` WHERE `directory`='%s'", CAT_TABLE_PREFIX, $modulename );
+                $sql     = sprintf( "SELECT `version` FROM `:prefix:addons` WHERE `directory`='%s'", $modulename );
                 $version = $self->db()->get_one( $sql );
             }
             else
@@ -1285,27 +1392,30 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
          * from functions.php
          *
          * @access public
-         * @param  string  Any valid file(-path)
+         * @param  string  $directory - module path
+         * @param  boolean $upgrade   - default is 'false'
          **/
         public static function upgradeModule( $directory, $upgrade = false )
         {
             global $database, $admin;
-            global $module_license, $module_author, $module_name, $module_directory, $module_version, $module_function, $module_guid, $module_description, $module_platform;
+            global $module_license, $module_author, $module_name, $module_directory,
+                   $module_version, $module_function, $module_guid, $module_description, $module_platform;
             $fields = array(
-                 'version' => $module_version,
-                'description' => mysql_real_escape_string( $module_description ),
-                'platform' => $module_platform,
-                'author' => mysql_real_escape_string( $module_author ),
-                'license' => mysql_real_escape_string( $module_license ),
-                'guid' => mysql_real_escape_string( $module_guid )
+                'version'     => $module_version,
+                'description' => $module_description,
+                'platform'    => $module_platform,
+                'author'      => $module_author,
+                'license'     => $module_license,
+                'guid'        => $module_guid,
+                'dir'         => $module_directory,
             );
-            $sql    = 'UPDATE `' . CAT_TABLE_PREFIX . 'addons` SET ';
+            $sql    = 'UPDATE `:prefix:addons` SET ';
             foreach ( $fields as $key => $value )
-                $sql .= "`" . $key . "`='" . $value . "',";
-            $sql = substr( $sql, 0, -1 ) . " WHERE `directory`= '" . $module_directory . "'";
+                $sql .= "`$key`=:$key,";
+            $sql = substr($sql,0,-1) . " WHERE `directory`=:dir";
 
             $self = self::getInstance();
-            $self->db()->query( $sql );
+            $self->db()->query($sql,$fields);
 
             if ( $self->db()->is_error() )
             {
@@ -1320,20 +1430,21 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
          * @access public
          * @param  string  $module  - module name or directory name
          * @param  string  $version - (optional) version to check (>=)
+         * @param  string  $type    - default 'module'
          * @return boolean
          **/
         public static function isModuleInstalled( $module, $version = NULL, $type = 'module' )
         {
             $self = self::getInstance();
-            $q    = $self->db()->query(sprintf(
-                'SELECT * FROM `%saddons` WHERE type="%s" AND ( directory="%s" OR name="%s" )',
-                CAT_TABLE_PREFIX, $type, $module, $module
-            ));
+            $q    = $self->db()->query(
+                'SELECT * FROM `:prefix:addons` WHERE type=:type AND ( directory=:dir OR name=:name )',
+                array('type'=>$type, 'dir'=>$module, 'name'=>$module)
+            );
             if ( !is_object($q) || !$q->numRows() )
                 return false;
 
             // note: if there's more than one, the first match will be returned!
-            while ( $addon = $q->fetchRow( MYSQL_ASSOC ) )
+            while ( $addon = $q->fetchRow() )
             {
                 if ( $version && self::versionCompare( $addon['version'], $version ) )
                     return true;
@@ -1357,10 +1468,13 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
         public static function isRemovable( $module )
         {
             $self = self::getInstance();
-            $q    = $self->db()->query( sprintf( 'SELECT * FROM `%saddons` WHERE type="module" AND ( directory="%s" OR name="%s" ) LIMIT 1', CAT_TABLE_PREFIX, $module, $module ) );
+            $q    = $self->db()->query(
+                'SELECT * FROM `:prefix:addons` WHERE type=:type AND ( directory=:dir OR name=:name ) LIMIT 1',
+                array('type'=>"module", 'dir'=>$module, 'name'=>$module)
+            );
             if ( !$q->numRows() )
                 return false;
-            $row = $q->fetchRow( MYSQL_ASSOC );
+            $row = $q->fetchRow();
             if ( $row['removable'] != 'Y' )
                 return false;
             return true;
@@ -1420,10 +1534,10 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 return false;
             }
             $self = self::getInstance();
-            $q    = $self->db()->query(sprintf(
-                'SELECT * FROM `%saddons` WHERE directory = "%s"',
-                CAT_TABLE_PREFIX, $module
-            ));
+            $q    = $self->db()->query(
+                'SELECT * FROM `:prefix:addons` WHERE directory=:dir',
+                array('dir'=>$module)
+            );
             if ( !$q->numRows() )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called for non existing module [$module] (path: [$filepath]) - not found in addons table!" );
@@ -1433,11 +1547,16 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             $row      = $q->fetchRow();
             // remove trailing / from $filepath
             $filepath = preg_replace( '~^/~', '', $filepath );
-            $sql      = sprintf( 'SELECT * FROM `%sclass_secure` WHERE module="%s" AND filepath="%s"', CAT_TABLE_PREFIX, $row['addon_id'], '/modules/' . $module . '/' . $filepath );
-            $q        = $self->db()->query( $sql );
+            $q        = $self->db()->query(
+                'SELECT * FROM `:prefix:class_secure` WHERE module=:mod AND filepath=:path',
+                array('mod'=> $row['addon_id'], 'path'=>'/modules/'.$module.'/'.$filepath)
+            );
             if ( !$q->numRows() )
             {
-                $self->db()->query( sprintf( 'REPLACE INTO `%sclass_secure` VALUES ( "%d", "%s" )', CAT_TABLE_PREFIX, $row['addon_id'], '/modules/' . $module . '/' . $filepath ) );
+                $self->db()->query(
+                    'REPLACE INTO `:prefix:class_secure` VALUES ( :id, :path )',
+                    array('id'=> $row['addon_id'], 'path'=> '/modules/'.$module.'/'.$filepath )
+                );
                 return ( $self->db()->is_error() ? false : true );
             }
             return true;
@@ -1628,7 +1747,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                                 continue;
                             }
                             $libs[] = array(
-                                 'name' => $module_name,
+                                'name' => $module_name,
                                 'dir' => $module_directory,
                                 'function' => $library_function
                             );
@@ -1655,7 +1774,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     if ( is_array( $values ) )
                     {
                         // extract module version and operator
-                        $version  = ( isset( $values['VERSION'] ) && trim( $values['VERSION'] ) != '' ) ? $values['VERSION'] : '';
+                        $version  = ( isset( $values['VERSION'] )  && trim( $values['VERSION'] )  != '' ) ? $values['VERSION']  : '';
                         $operator = ( isset( $values['OPERATOR'] ) && trim( $values['OPERATOR'] ) != '' ) ? $values['OPERATOR'] : '>=';
                     }
                     else
@@ -1687,15 +1806,15 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
                     // provide addon status
                     $msg[] = array(
-                         'key' => 'ADDONS',
-                        'check' => '&nbsp;&nbsp;&nbsp; ' . htmlentities( $addon ),
+                        'key'      => 'ADDONS',
+                        'check'    => '&nbsp;&nbsp;&nbsp; ' . htmlentities( $addon ),
                         'required' => ( $version != '' ) ? $operator . '&nbsp;' . $version : $self->lang()->translate( 'installed' ),
-                        'actual' => $addon_status,
-                        'status' => $status
+                        'actual'   => $addon_status,
+                        'status'   => $status
                     );
                 }
                 return array(
-                     $status,
+                    $status,
                     $msg
                 );
             }
@@ -1725,9 +1844,6 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     break;
                 default:
                     $this_version = CAT_Registry::get( 'CAT_VERSION' );
-                    // ----- UNTIL RELEASE: ACCEPT v0.x AS v1.x -----
-                    if ( preg_match( '~^v?0\.~i', $this_version ) )
-                        $this_version = '1.0.0';
                     break;
             }
             // obtain operator for string comparison if exist
@@ -1735,13 +1851,13 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             // compare versions and extract actual status
             $status   = self::versionCompare( $this_version, $value['VERSION'], $operator );
             $msg      = array(
-                 'check' => sprintf( 'CMS-%s: ', self::getInstance()->lang()->translate( 'Version' ) ),
+                'check' => sprintf( 'CMS-%s: ', self::getInstance()->lang()->translate( 'Version' ) ),
                 'required' => sprintf( '%s %s', htmlentities( $operator ), $value['VERSION'] ),
                 'actual' => $this_version,
                 'status' => $status
             );
             return array(
-                 $status,
+                $status,
                 $msg
             );
         } // end function checkCMSVersion()
@@ -1757,12 +1873,9 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
          **/
         private static function sortPreCheckArray( $precheck_array )
         {
-            /**
-             * This funtion sorts the precheck array to a common format
-             */
             // define desired precheck order
             $key_order = array(
-                 'CAT_VERSION',
+                'CAT_VERSION',
                 'LEPTON_VERSION',
                 'WB_VERSION',
                 'CAT_ADDONS',
@@ -1776,9 +1889,9 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             $temp_array = array();
             foreach ( $key_order as $key )
             {
-                if ( !isset( $precheck_array[ $key ] ) )
+                if ( !isset( $precheck_array[$key] ) )
                     continue;
-                $temp_array[ $key ] = $precheck_array[ $key ];
+                $temp_array[$key] = $precheck_array[$key];
             }
             return $temp_array;
         } // end function sortPreCheckArray()

@@ -53,6 +53,7 @@ if (!class_exists('database', false))
         private static $conn     = NULL;
         private $lasterror       = NULL;
         private $prompt_on_error = false;
+        private static $prefix   = NULL;
 
         /**
          * constructor; initializes Doctrine ClassLoader and sets up a database
@@ -63,6 +64,7 @@ if (!class_exists('database', false))
          **/
     	public function __construct()
         {
+            self::$prefix = CAT_TABLE_PREFIX;
             if(!$this->classLoader)
             {
                 $this->classLoader = new ClassLoader('Doctrine', dirname(__FILE__).'/../modules/lib_doctrine');
@@ -191,11 +193,20 @@ if (!class_exists('database', false))
          * @params string $SQL
          * @return object
          **/
-    	public function query($sql)
+    	public function query($sql,$bind=array())
         {
+            $sql = str_replace(':prefix:',self::$prefix,$sql);
             $this->setError(NULL);
             try {
-                $stmt = self::$conn->query($sql);
+                if(is_array($bind))
+                {
+                    $stmt = self::$conn->prepare($sql);
+                    $stmt->execute($bind);
+                }
+                else
+                {
+                    $stmt = self::$conn->query($sql);
+                }
                 return new CAT_PDOStatementDecorator($stmt);
             } catch ( Doctrine\DBAL\DBALException $e ) {
                 $error = self::$conn->errorInfo();
