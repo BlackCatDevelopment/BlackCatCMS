@@ -43,6 +43,8 @@ if (defined('CAT_PATH')) {
 
 require_once(CAT_PATH.'/framework/class.wb.php');
 
+if(!class_exists('admin'))
+{
 class admin extends wb
 {
 
@@ -59,9 +61,17 @@ class admin extends wb
     function print_header()                          { return CAT_Backend::getInstance('')->print_header(); }
     function print_footer()                          { return CAT_Backend::getInstance('')->print_footer(); }
 
+        // the following functions are originally located in SecureForm.php (WB 2.8.3)
+        public function checkIDKEY( $fieldname, $default = 0, $request = 'POST' ) {
+            $val = CAT_Helper_Validate::get('_'.$request, $fieldname);
+            return $val ? $val : $default;
+        }
+        public function getIDKEY($value)                 { return $value; }
+
 }
 
 /*
 	get_link_permission($title)
 	get_page_permission($page,$action='admin')
 */
+}
