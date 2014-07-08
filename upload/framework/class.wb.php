@@ -50,11 +50,11 @@ class wb
     public  $page                = array(); // keep SM2 happy
     
     private static $depre_func   = array(
-        'bind_jquery' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers()</a>',
-        'register_backend_modfiles' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers("backend", true, "$section_name")</a>',
-        'register_backend_modfiles_body' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_footers()">get_page_footers("backend")</a>',
-        'register_frontend_modfiles' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_headers%28%29">get_page_headers()</a>',
-        'register_frontend_modfiles_body' => '<a href="https://github.com/webbird/LEPTON_2_BlackCat/wiki/get_page_footers()">get_page_footers()</a>',
+        'bind_jquery' => '<a href="https://github.com/webbird/BlackCatCMS/wiki/get_page_headers%28%29">get_page_headers()</a>',
+        'register_backend_modfiles' => '<a href="https://github.com/webbird/BlackCatCMS/wiki/get_page_headers%28%29">get_page_headers("backend", true, "$section_name")</a>',
+        'register_backend_modfiles_body' => '<a href="https://github.com/webbird/BlackCatCMS/wiki/get_page_footers()">get_page_footers("backend")</a>',
+        'register_frontend_modfiles' => '<a href="https://github.com/webbird/BlackCatCMS/wiki/get_page_headers%28%29">get_page_headers()</a>',
+        'register_frontend_modfiles_body' => '<a href="https://github.com/webbird/BlackCatCMS/wiki/get_page_footers()">get_page_footers()</a>',
         'page_menu' => 'show_menu2()',
         'show_menu' => 'show_menu2()',
         'show_breadcrumbs' => 'show_menu2()',
@@ -230,7 +230,11 @@ class wb
     /* moved to CAT_Helper_Mail */
     public function mail($fromaddress, $toaddress, $subject, $message, $fromname = '')
     {
+        // check if mailer lib is installed
+        if(count(CAT_Helper_Addons::getLibraries('mail')))
         return CAT_Helper_Mail::getInstance()->sendMail($fromaddress, $toaddress, $subject, $message, $fromname);
+        else
+            return false;
     }
 
     /* moved to CAT_Helper_Page */
@@ -278,12 +282,15 @@ class wb
     public function get_post_escaped($field){ return CAT_Helper_Validate::sanitizePost($field,NULL,true); }
     public function validate_email($email)  { return CAT_Helper_Validate::validate_email($email); }
 
-    /* empty methods for compatibility with WB 2.8.3 and above */
+    /* methods for compatibility with WB 2.8.3 and above (originally located in SecureForm.php) */
    	public function createFTAN() {}
 	public function getFTAN( $mode = 'POST')   { return CAT_Helper_Protect::createToken($mode); }
 	public function checkFTAN( $mode = 'POST') { return CAT_Helper_Protect::checkToken($mode);  }
-	public function getIDKEY($value) {}
-	public function checkIDKEY( $fieldname, $default = 0, $request = 'POST' ) { return true; }
+	public function getIDKEY($value)           { return $value; }
+	public function checkIDKEY( $fieldname, $default = 0, $request = 'POST' ) {
+        $val = CAT_Helper_Validate::get('_'.$request, $fieldname);
+        return $val ? $val : $default;
+    }
 	public function clearIDKEY() {}
 }
 
