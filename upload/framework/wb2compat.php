@@ -92,3 +92,11 @@ if(defined('CAT_DEFAULT_TIME_FORMAT') && !defined('DEFAULT_TIME_FORMAT') && arra
     define('DEFAULT_TIME_FORMAT',$wb2compat_format_map[CAT_DEFAULT_TIME_FORMAT]);
 
 CAT_Registry::set('WB2COMPAT_FORMAT_MAP',$wb2compat_format_map);
+
+if(!function_exists('show_menu'))
+{
+    function show_menu()
+    {
+        return show_menu2();
+    }
+}
