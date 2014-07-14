@@ -176,6 +176,25 @@ $database->query(sprintf(
     CAT_TABLE_PREFIX
 ));
 
+
+/*******************************************************************************
+    1.0.3 TO 1.0.4
+*******************************************************************************/
+// fix system permissions
+$database->query(sprintf(
+    'UPDATE `%ssystem_permissions` SET `perm_bit`="1" WHERE `perm_name`="settings"',
+    CAT_TABLE_PREFIX
+));
+$database->query(sprintf(
+    'UPDATE `%ssystem_permissions` SET `perm_bit`="1" WHERE `perm_name`="settings_basic"',
+    CAT_TABLE_PREFIX
+));
+$database->query(sprintf(
+    'UPDATE `%ssystem_permissions` SET `perm_bit`="1" WHERE `perm_name`="settings_advanced"',
+    CAT_TABLE_PREFIX
+));
+
+
 /*******************************************************************************
     ALL VERSIONS: update version info
 *******************************************************************************/
