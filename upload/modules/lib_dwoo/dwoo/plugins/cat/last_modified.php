@@ -44,7 +44,7 @@ if (defined('CAT_PATH')) {
 function Dwoo_Plugin_last_modified(Dwoo $dwoo, $page_id = false) {
 	if ( is_numeric( $page_id ) )
 	{
-		$sql	= "SELECT `modified_when` FROM `%spages` WHERE `page_id` = '%d'";
+		$sql	= "SELECT `modified_when` FROM `%spages` WHERE `page_id` = %d";
 		$t		= CAT_Helper_Page::getInstance()->db()->get_one( sprintf( $sql, CAT_TABLE_PREFIX, intval($page_id) ) );
 
 	}

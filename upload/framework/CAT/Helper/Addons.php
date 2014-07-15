@@ -1389,14 +1389,14 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 return false;
             }
             // this will remove ../.. from $filepath
-            $filepath = self::$dirh->sanitizePath( $filepath );
+            $filepath = CAT_Helper_Directory::sanitizePath( $filepath );
             if ( !is_dir( CAT_PATH . '/modules/' . $module ) )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called for non existing module [$module] (path: [$filepath])" );
                 self::$error = "sec_register_file() called for non existing module [$module] (path: [$filepath])";
                 return false;
             }
-            if ( !file_exists( self::$dirh->sanitizePath( CAT_PATH . '/modules/' . $module . '/' . $filepath ) ) )
+            if ( !file_exists( CAT_Helper_Directory::sanitizePath( CAT_PATH . '/modules/' . $module . '/' . $filepath ) ) )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called for non existing file [$filepath] (module: [$module])" );
                 self::$error = "sec_register_file() called for non existing file [$filepath] (module: [$module])";
@@ -1590,7 +1590,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
          **/
         public static function getLibraries( $type = NULL )
         {
-            $dir  = self::$dirh->sanitizePath( CAT_PATH . '/modules' );
+            $dir  = CAT_Helper_Directory::sanitizePath( CAT_PATH . '/modules' );
             $libs = array();
             if ( $handle = opendir( $dir ) )
             {
