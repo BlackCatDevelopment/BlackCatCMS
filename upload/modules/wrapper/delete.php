@@ -42,6 +42,6 @@ if (defined('CAT_PATH')) {
 }
 
 // Delete page from mod_wrapper
-$database->query("DELETE FROM ".CAT_TABLE_PREFIX."mod_wrapper WHERE section_id = '$section_id'");
+$database->query("DELETE FROM `".CAT_TABLE_PREFIX."mod_wrapper` WHERE `section_id` = '$section_id'");
 
 ?>

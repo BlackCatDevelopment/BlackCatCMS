@@ -44,6 +44,6 @@ if (defined('CAT_PATH')) {
 global $database, $page_id, $section_id;
 
 // Insert an extra row into the database
-$database->query("INSERT INTO ".CAT_TABLE_PREFIX."mod_wrapper (`page_id`, `section_id`, `height`, `width`, `url`) VALUES ('$page_id', '$section_id', '400px', '100%', '')");
+$database->query("INSERT INTO `".CAT_TABLE_PREFIX."mod_wrapper` (`page_id`, `section_id`, `height`, `width`, `url`) VALUES ('$page_id', '$section_id', '400px', '100%', '')");
 
 ?>

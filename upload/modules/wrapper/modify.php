@@ -42,18 +42,18 @@ if (defined('CAT_PATH')) {
 }
 
 // Get page content
-$query        = "SELECT url,height,width,wtype FROM " . CAT_TABLE_PREFIX . "mod_wrapper WHERE section_id = '$section_id'";
+$query        = "SELECT url,height,width,wtype FROM `" . CAT_TABLE_PREFIX . "mod_wrapper` WHERE `section_id` = '$section_id'";
 $get_settings = $database->query( $query );
 $settings     = $get_settings->fetchRow( MYSQL_ASSOC );
-$url          = ( $settings[ 'url' ] );
+$url          = $settings['url'];
 
 // Insert vars
 $data = array(
-	'PAGE_ID' => $page_id,
+	'PAGE_ID'    => $page_id,
 	'SECTION_ID' => $section_id,
-	'CAT_URL' => CAT_URL,
-	'URL' => $url,
-	'settings' => $settings,
+	'CAT_URL'    => CAT_URL,
+	'URL'        => $url,
+	'settings'   => $settings,
 );
 
 $parser->setPath( CAT_PATH.'/modules/wrapper/htt' );
