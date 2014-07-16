@@ -15,16 +15,19 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
+ *   This class is for backward compatibility with Website Baker and LEPTON CMS.
+ *   Please use CAT_Helper_DB instead!
+ *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,8 +35,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -41,91 +44,23 @@ if (defined('CAT_PATH')) {
 
 global $database;
 
-use Doctrine\Common\ClassLoader;
-require dirname(__FILE__).'/../modules/lib_doctrine/Doctrine/Common/ClassLoader.php';
-
 if (!class_exists('database', false))
 {
     class database
     {
-
-        private $classLoader     = NULL;
-        private static $conn     = NULL;
-        private $lasterror       = NULL;
-        private $prompt_on_error = false;
-        private static $prefix   = NULL;
-
-        /**
-         * constructor; initializes Doctrine ClassLoader and sets up a database
-         * connection
-         *
-         * @access public
-         * @return void
-         **/
-    	public function __construct()
+        private static $obj = NULL;
+        public function __construct()
         {
-            self::$prefix = CAT_TABLE_PREFIX;
-            if(!$this->classLoader)
-            {
-                $this->classLoader = new ClassLoader('Doctrine', dirname(__FILE__).'/../modules/lib_doctrine');
-                $this->classLoader->register();
-            }
-            $this->connect();
-        }   // end function __construct()
-
-        /***********************************************************************
-         * functions needed to keep the old API
-         **********************************************************************/
-
-        /**
-         * connect to the database; returns Doctrine connection
-         *
-         * @access public
-         * @return object
-         **/
-    	public function connect()
+            self::$obj = CAT_Helper_DB::getInstance();
+            return self::$obj;
+        }
+        public function __call($method, $args)
         {
-            if(!self::$conn)
-            {
-                $config = new \Doctrine\DBAL\Configuration();
-                $config->setSQLLogger(new Doctrine\DBAL\Logging\DebugStack());
-                if(!defined('CAT_DB_NAME'))
-                    include dirname(__FILE__).'/../config.php';
-                $connectionParams = array(
-                    'charset'  => 'utf8',
-                    'dbname'   => CAT_DB_NAME,
-                    'driver'   => 'pdo_mysql',
-                    'host'     => CAT_DB_HOST,
-                    'password' => CAT_DB_PASSWORD,
-                    'user'     => CAT_DB_USERNAME,
-                );
-                if(CAT_DB_PORT !== '3306') $connectionParams['port'] = CAT_DB_PORT;
-                self::$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-            }
-            return self::$conn;
-        }   // end function connect()
-
-        /**
-         * unsets connection object
-         *
-         * @access protected
-         * @return void
-         **/
-    	final protected function disconnect()
-        {
-            self::$conn = NULL;
-        }   // end function disconnect()
-
-        /**
-         * returns last error message
-         *
-         * @access public
-         * @return string
-         **/
-    	public function get_error()
-        {
-            return $this->lasterror;
-        }   // end function get_error()
+            if ( ! isset($this) || ! is_object($this) )
+                return false;
+            if ( method_exists( self::$obj, $method ) )
+                return call_user_func_array(array(self::$obj, $method), $args);
+        }
 
         /**
          * Execute query and return the first column of the first row of
@@ -154,133 +89,18 @@ if (!class_exists('database', false))
         }   // end function get_one()
 
         /**
-         * returns last insert ID
-         *
-         * @access public
-         * @return mixed
+         * old function names wrap new ones
          **/
-    	public function insert_id()
-        {
-            return self::$conn->lastInsertId();
-        }   // end function insert_id()
-
-        /**
-         * check if there is an error
-         *
-         * @access public
-         * @return boolean
-         **/
-        public function is_error()
-        {
-            return ( $this->lasterror ) ? true : false;
-        }   // end function is_error()
-
-        /**
-         * allows to enable trigger_error() for database statements
-         *
-         * @access public
-         * @param  boolean
-         * @return void
-         **/
-    	public function prompt_on_error($switch=true)
-        {
-            $this->prompt_on_error = $switch;
-        }   // end function prompt_on_error()
-
-        /**
-         * simple query; simple but has several drawbacks
-         *
-         * @params string $SQL
-         * @return object
-         **/
-    	public function query($sql,$bind=array())
-        {
-            $sql = str_replace(':prefix:',self::$prefix,$sql);
-            $this->setError(NULL);
-            try {
-                if(is_array($bind))
-                {
-                    $stmt = self::$conn->prepare($sql);
-                    $stmt->execute($bind);
-                }
-                else
-                {
-                    $stmt = self::$conn->query($sql);
-                }
-                return new CAT_PDOStatementDecorator($stmt);
-            } catch ( Doctrine\DBAL\DBALException $e ) {
-                $error = self::$conn->errorInfo();
-                $this->setError(sprintf(
-                    '[DBAL Error #%d] %s<br /><b>Executed Query:</b><br /><i>%s</i><br />',
-					$error[1],
-					$error[2],
-					$sql
-                ));
-            } catch ( \PDOException $e ) {
-                $error = self::$conn->errorInfo();
-                $this->setError(sprintf(
-                    '[PDO Error #%d] %s<br /><b>Executed Query:</b><br /><i>%s</i><br />',
-					$error[1],
-					$error[2],
-					$sql
-                ));
-            }
-            if($this->is_error() && $this->prompt_on_error)
-            {
-                $logger = self::$conn->getConfiguration()->getSQLLogger();
-                if(count($logger->queries))
-                {
-                    $last = array_pop($logger->queries);
-                    trigger_error(sprintf(
-                        "SQL Error\n".
-                        "    [SQL]      %s\n".
-                        "    [PARAMS]   %s\n".
-                        "    [TYPES]    %s\n".
-                        "    [TIME(MS)] %s",
-                        $last['sql'], $last['params'], $last['types'], $last['executionMS']
-                    ), E_USER_ERROR);
-                }
-            }
-            return false;
-        }   // end function query()
-
-        /**
-         * set error message
-         *
-         * @access protected
-         * @param  string    error message
-         * @return void
-         **/
-    	protected function setError($error = '')
-        {
-            $this->lasterror = $error;
-        }   // end function setError
+        public function is_error()  { return self::$obj->isError();      }
+        public function get_error() { return self::$obj->getError();     }
+        public function insert_id() { return self::$obj->lastInsertId(); }
+        public function prompt_on_error($switch=true) { /* no longer supported */ }
 
     }   // ----- end class database -----
 }
 
-/**
- * decorates PDOStatement object with old WB methods numRows() and fetchRow()
- * for backward compatibility
- **/
-class CAT_PDOStatementDecorator
-{
-    private $pdo_stmt = NULL;
-    public function __construct($stmt)
-    {
-        $this->pdo_stmt = $stmt;
-    }
-    // route all other method calls directly to PDOStatement
-    public function __call($method, $args)
-    {
-        return call_user_func_array(array($this->pdo_stmt, $method), $args);
-    }
-    public function numRows()
-    {
-        return $this->pdo_stmt->rowCount();
-    }
-    public function fetchRow($type=PDO::FETCH_ASSOC)
-    {
-        return $this->pdo_stmt->fetch();
-    }
-}
+/*
+        public function get_one($sql,$type=PDO::FETCH_ASSOC)
+        public function insert_id()
+        public function prompt_on_error($switch=true)
+*/

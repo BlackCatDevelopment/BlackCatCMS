@@ -133,6 +133,7 @@ if (!class_exists('CAT_Page', false))
 
             // ----- keep old modules happy -----
             global $wb, $admin, $database, $page_id, $section_id;
+            global $TEXT;
             $admin =& $wb;
             if ( $page_id == '' )
                 $page_id = $this->_page_id;
