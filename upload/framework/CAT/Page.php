@@ -117,6 +117,7 @@ if (!class_exists('CAT_Page', false))
                 $parser->setGlobals( array(
                     'username_fieldname' => CAT_Helper_Validate::getInstance()->createFieldname('username_'),
                     'password_fieldname' => CAT_Helper_Validate::getInstance()->createFieldname('password_'),
+                    'redirect_url'       => ((isset($_SESSION['HTTP_REFERER']) && $_SESSION['HTTP_REFERER'] != '') ? $_SESSION['HTTP_REFERER'] : CAT_URL ),
                 ));
                 $parser->setGlobals($constants);
     		}

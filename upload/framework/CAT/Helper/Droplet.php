@@ -353,8 +353,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 self::field_type,         $register_type,
                 self::field_page_id,      $page_id
             );
-            $check = self::getInstance()->db()->get_one($SQL,MYSQL_ASSOC);
-            if(self::getInstance()->db()->is_error() || !$check)
+            $check = self::getInstance()->db()->query($SQL)->fetchColumn();
+            if(self::getInstance()->db()->isError() || !$check)
                 return false;
             $result = ($check == $page_id) ? true : false;
             return $result;
@@ -436,7 +436,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 CAT_TABLE_PREFIX, $droplet_name, $page_id, $module_directory, $register_type, $file
             );
             self::getInstance()->db()->query($SQL);
-            return self::getInstance()->db()->is_error();
+            return self::getInstance()->db()->isError();
         }   // end function register_droplet()
 
         /***********************************************************************
@@ -509,7 +509,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 CAT_TABLE_PREFIX, $droplet_name, $register_type, $page_id
             );
             self::getInstance()->db()->query($SQL);
-            if (!self::getInstance()->db()->is_error())
+            if (!self::getInstance()->db()->isError())
                 return false;
             return true;
         }   // end function unregister_droplet()
@@ -712,8 +712,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 CAT_TABLE_PREFIX, $page_id
             );
 
-            $section_id = self::getInstance()->db()->get_one($SQL,MYSQL_ASSOC);
-            if (self::getInstance()->db()->is_error()) {
+            $section_id = self::getInstance()->db()->query($SQL)->fetchColumn();
+            if (self::getInstance()->db()->isError()) {
                 return false;
             }
 
@@ -721,8 +721,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 "SELECT `content` FROM `%smod_wysiwyg` WHERE `section_id`='%d'",
                 CAT_TABLE_PREFIX, $section_id
             );
-            $result = self::getInstance()->db()->get_one($SQL,MYSQL_ASSOC);
-            if (self::getInstance()->db()->is_error()) {
+            $result = self::getInstance()->db()->query($SQL)->fetchColumn();
+            if (self::getInstance()->db()->isError()) {
                 return false;
             }
             if (is_string($result))
@@ -918,7 +918,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                             // Already in the DB?
                             $stmt  = 'INSERT';
                             $id    = NULL;
-                    $found = CAT_Helper_Directory::getInstance()->db()->get_one("SELECT * FROM ".CAT_TABLE_PREFIX."mod_droplets WHERE name='$name'");
+                    $found = CAT_Helper_Directory::getInstance()->db()->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_droplets WHERE name='$name'")->fetchColumn();
                     if ( $found && $found > 0 ) {
                         $stmt = 'REPLACE';
                         $id   = $found;
@@ -933,12 +933,12 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         CAT_TABLE_PREFIX, $name, $code, $description, time(), CAT_Users::get_user_id(), 1, $usage
                     );
                     $result = CAT_Helper_Directory::getInstance()->db()->query($q);
-                    if( ! CAT_Helper_Directory::getInstance()->db()->is_error() ) {
+                    if( ! CAT_Helper_Directory::getInstance()->db()->isError() ) {
                         $count++;
                         $imports[$name] = 1;
                     }
                     else {
-                        $errors[$name] = CAT_Helper_Directory::getInstance()->db()->get_error();
+                        $errors[$name] = CAT_Helper_Directory::getInstance()->db()->getError();
                     }
                 }
 
@@ -1035,10 +1035,10 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         ));
 
                         // request the droplet code from database
-                        $codedata = $self->db()->get_one(sprintf(
+                        $codedata = $self->db()->query(sprintf(
                             'SELECT `code` FROM `%smod_droplets` WHERE `name` LIKE "%s" AND `active` = 1',
                             CAT_TABLE_PREFIX, $droplet_name
-                        ));
+                        ))->fetchColumn();
 
                         $self->log()->LogDebug('code: '.$codedata);
 

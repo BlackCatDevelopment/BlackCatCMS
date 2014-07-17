@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -62,22 +62,21 @@ if (!class_exists('CAT_Helper_Page'))
         private static $pages_editable      = 0;
 
         // header components
-        private static $css             = array();
-        private static $meta            = array();
-        private static $js              = array();
-        private static $jquery          = array();
-        private static $jquery_core     = false;
-        private static $jquery_ui_core  = false;
+        private static $css                 = array();
+        private static $meta                = array();
+        private static $js                  = array();
+        private static $jquery              = array();
+        private static $jquery_core         = false;
+        private static $jquery_ui_core      = false;
 
         // scan dirs
-        private static $css_search_path = array();
-        private static $js_search_path  = array();
+        private static $css_search_path     = array();
+        private static $js_search_path      = array();
 
         // footer components
-        private static $script          = array();
-        private static $f_jquery        = array();
-        private static $f_js            = array();
-
+        private static $script              = array();
+        private static $f_jquery            = array();
+        private static $f_js                = array();
 
         /**
          * the constructor loads the available pages from the DB and stores it
@@ -94,7 +93,7 @@ if (!class_exists('CAT_Helper_Page'))
                 if(!$skip_init) self::init();
             }
             return self::$instance;
-        }
+        }   // end function getInstance()
 
         public function __call($method, $args)
         {
@@ -105,9 +104,10 @@ if (!class_exists('CAT_Helper_Page'))
         }
 
         /**
+         * reset class (reload pages from the DB)
          *
          * @access public
-         * @return
+         * @return void
          **/
         public static function reset()
         {
@@ -130,6 +130,7 @@ if (!class_exists('CAT_Helper_Page'))
                 return;
 
             if(!self::$instance) self::getInstance(true);
+
             // add configurable dirs to forbidden array (level 0)
             foreach( array(PAGES_DIRECTORY,MEDIA_DIRECTORY,CAT_BACKEND_FOLDER) as $dir )
             {
@@ -141,10 +142,9 @@ if (!class_exists('CAT_Helper_Page'))
             if(count(self::$pages)==0 || $force)
             {
                 $now = time();
-                $result = self::$instance->db()->query(sprintf(
-                    'SELECT * FROM `%spages` ORDER BY `level` ASC, `position` ASC',
-                    CAT_TABLE_PREFIX
-                ));
+                $result = self::$instance->db()->query(
+                    'SELECT * FROM `:prefix:pages` ORDER BY `level` ASC, `position` ASC'
+                );
                 if( $result && $result->numRows()>0 )
                 {
                     $children_count = array();
@@ -189,10 +189,10 @@ if (!class_exists('CAT_Helper_Page'))
                             $children_count[$row['parent']]++;
 
                         // add any other settings
-                        $set = self::$instance->db()->query(sprintf(
-                            'SELECT * FROM %spages_settings WHERE page_id=%d',
-                            CAT_TABLE_PREFIX, $row['page_id']
-                        ));
+                        $set = self::$instance->db()->query(
+                            'SELECT * FROM `:prefix:pages_settings` WHERE page_id=:id',
+                            array('id' => $row['page_id'])
+                        );
                         if( $set && $set->numRows()>0 )
                         {
                             while ( false !== ( $set_row = $set->fetchRow(MYSQL_ASSOC) ) )
@@ -293,9 +293,9 @@ if (!class_exists('CAT_Helper_Page'))
         {
             $self = self::getInstance();
             // get mandatory fields
-            $res = $self->db()->query(sprintf(
-                'DESCRIBE `%spages`',CAT_TABLE_PREFIX
-            ));
+            $res = $self->db()->query(
+                'DESCRIBE `:prefix:pages`'
+            );
             $mandatory = array();
             while(false!==($row=$res->fetchRow(MYSQL_ASSOC)))
                 if($row['Null']=='NO'&&$row['Key']!='PRI')
@@ -321,11 +321,11 @@ if (!class_exists('CAT_Helper_Page'))
             $sql = preg_replace('~,\s*$~','',$sql);
             $self->db()->query(sprintf($sql,CAT_TABLE_PREFIX));
             // reload pages list
-            if(!$self->db()->is_error()) self::init(1);
+            if(!$self->db()->isError()) self::init(1);
             return
-                  $self->db()->is_error()
+                  $self->db()->isError()
                 ? false
-                : $self->db()->get_one("SELECT LAST_INSERT_ID()");
+                : $self->db()->lastInsertId();
         }   // end function addPage()
         
         /**
@@ -350,17 +350,20 @@ if (!class_exists('CAT_Helper_Page'))
             $sql .= ' WHERE page_id=%d';
             self::$instance->db()->query(sprintf($sql,CAT_TABLE_PREFIX,$page_id));
             // reload pages list
-            if(!self::$instance->db()->is_error()) self::init(1);
+            if(!self::$instance->db()->isError()) self::init(1);
             return
-                  ( self::$instance->db()->is_error() === true )
+                  ( self::$instance->db()->isError() === true )
                 ? false
                 : true;
         }   // end function updatePage()
 
         /**
+         * save page settings
          *
          * @access public
-         * @return
+         * @param  integer $page_id
+         * @param  array   $options
+         * @return void
          **/
         public static function updatePageSettings($page_id,$options)
         {
@@ -369,14 +372,13 @@ if (!class_exists('CAT_Helper_Page'))
             {
                 if(is_array($value))
                     $value = implode(',',$value);
-                self::$instance->db()->query(sprintf(
-                    'REPLACE INTO `%spages_settings` VALUES( %d, "%s", "%s", "%s" )',
-                    CAT_TABLE_PREFIX,$page_id,'internal',$key,$value
-                ));
+                self::$instance->db()->query(
+                    'REPLACE INTO `:prefix:pages_settings` VALUES( ":id", ":type", ":k", ":v" )',
+                    array( 'id'=>$page_id,'type'=>'internal','k'=>$key,'v'=>$value)
+                );
             }
         }   // end function updatePageSettings()
         
-
         /**
          * delete page; uses _trashPages() if trash is enabled, _deletePage()
          * otherwise
@@ -391,10 +393,10 @@ if (!class_exists('CAT_Helper_Page'))
             if($use_trash)
             {
             	// Update the page visibility to 'deleted'
-            	self::getInstance()->db()->query(sprintf(
-                    "UPDATE `%spages` SET `visibility` = 'deleted' WHERE `page_id` = %d LIMIT 1",
-                    CAT_TABLE_PREFIX, $page_id
-                ));
+            	self::getInstance()->db()->query(
+                    "UPDATE `:prefix:pages` SET `visibility` = :vis WHERE `page_id` = :id LIMIT 1",
+                    array('vis'=>'deleted','id'=>$page_id)
+                );
             	return self::_trashPages($page_id);
             }
             else
@@ -505,14 +507,14 @@ if (!class_exists('CAT_Helper_Page'))
             $filename   = $directory . PAGE_EXTENSION;
             $directory .= '/';
             if (file_exists($filename))
-        {
+            {
                 if (!is_writable(CAT_PATH . PAGES_DIRECTORY . '/'))
-        {
+                 {
                     $self     = self::getInstance(true);
                     $errors[] = $self->lang()->translate('Cannot delete access file!');
-            }
-            else
-            {
+                }
+                else
+                {
                     unlink($filename);
                     if (
                            is_dir($directory)
@@ -522,22 +524,29 @@ if (!class_exists('CAT_Helper_Page'))
                     }
             	}
             }
-
         }   // end function deleteAccessFile()
         
 
         /**
+         * delete language link (linked page)
          *
          * @access public
-         * @return
+         * @param  integer $page_id
+         * @param  string  $lang
+         * @return boolean
          **/
         public static function deleteLanguageLink($page_id,$lang)
     	{
             if(!self::$instance) self::getInstance(true);
-            self::$instance->db()->query(sprintf(
-                'DELETE FROM `%spage_langs` WHERE link_page_id = %d AND lang = "%s"',
-                CAT_TABLE_PREFIX, $page_id, $lang
-                    ));
+            self::$instance->db()->query(
+                'DELETE FROM `:prefix:page_langs` WHERE link_page_id = :id AND lang = :lang',
+                array('id'=>$page_id, 'lang'=>$lang)
+            );
+            return
+                  $self->db()->isError()
+                ? false
+                : true
+                ;
         }   // end function deleteLanguageLink()
 
         /**
@@ -550,10 +559,10 @@ if (!class_exists('CAT_Helper_Page'))
         {
             // check database
             if(!self::$instance) self::getInstance(true);
-            $get_same_page = self::$instance->db()->query(sprintf(
-                "SELECT page_id FROM `%spages` WHERE link='%s'",
-                CAT_TABLE_PREFIX,$link
-            ));
+            $get_same_page = self::$instance->db()->query(
+                "SELECT `page_id` FROM `:prefix:pages` WHERE link=:link",
+                array('link'=>$link)
+            );
             if ($get_same_page->numRows() > 0)
                 return true;
             // check access file
@@ -1042,7 +1051,6 @@ if (!class_exists('CAT_Helper_Page'))
             // -----------------------------------------------------------------
             self::_load_js('frontend');
 
-
             // called from backend?
             if(CAT_Helper_Validate::get('_REQUEST','preview') && CAT_Users::is_authenticated())
             {
@@ -1259,13 +1267,13 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function getLinkedByLanguage($page_id)
         {
-            $sql     = 'SELECT * FROM `%spage_langs` AS t1'
-                     . ' RIGHT OUTER JOIN `%spages` AS t2'
+            $sql     = 'SELECT * FROM `:prefix:page_langs` AS t1'
+                     . ' RIGHT OUTER JOIN `:prefix:pages` AS t2'
                      . ' ON t1.link_page_id=t2.page_id'
-                     . ' WHERE t1.page_id = %d'
+                     . ' WHERE t1.page_id = :id'
                      ;
 
-            $results = self::getInstance()->db()->query(sprintf($sql,CAT_TABLE_PREFIX,CAT_TABLE_PREFIX,$page_id));
+            $results = self::getInstance()->db()->query($sql,array('id'=>$page_id));
             if ($results->numRows())
             {
                 $items = array();
@@ -1680,12 +1688,12 @@ if (!class_exists('CAT_Helper_Page'))
             {
                 // get all active sections
                 $now = time();
-                $sec = self::getInstance(true)->db()->query(sprintf(
-                      'SELECT * FROM `%ssections` '
-                    . 'WHERE ( "%s" BETWEEN `publ_start` AND `publ_end`) OR '
-                    . '("%s" > `publ_start` AND `publ_end`=0)',
-                    CAT_TABLE_PREFIX, $now, $now
-                ));
+                $sec = self::getInstance(true)->db()->query(
+                      'SELECT * FROM `:prefix:sections` '
+                    . 'WHERE ( ":now1" BETWEEN `publ_start` AND `publ_end`) OR '
+                    . '(":now2" > `publ_start` AND `publ_end`=0)',
+                    array('now1'=>$now,'now2'=>$now)
+                );
                 if ( $sec->numRows() > 0 )
                     while ( false !== ( $section = $sec->fetchRow(MYSQL_ASSOC) ) )
                         self::$pages_sections[$section['page_id']][] = $section;
@@ -1715,6 +1723,33 @@ if (!class_exists('CAT_Helper_Page'))
             }
             return $result;
         }   // end function getSubPages()
+
+        /**
+         * virtual pages are used for something like
+         *   - user preferences dialog
+         *   - search results
+         *   - ...
+         * This methods sets some defaults for this case
+         *
+         * @access public
+         * @return
+         **/
+        public static function getVirtualPage($title)
+        {
+            global $page_id, $page_description, $page_keywords;
+            $page_id          = 0;
+            $page_description = '';
+            $page_keywords    = '';
+            define( 'PAGE_ID'    , 0 );
+            define( 'ROOT_PARENT', 0 );
+            define( 'PARENT'     , 0 );
+            define( 'LEVEL'      , 0 );
+            define( 'PAGE_TITLE' , CAT_Helper_I18n::getInstance()->translate($title) );
+            define( 'MENU_TITLE' , CAT_Helper_I18n::getInstance()->translate($title) );
+            define( 'MODULE'     , '' );
+            define( 'VISIBILITY' , 'public' );
+        }   // end function getVirtualPage()
+        
 
         /**
          * Work-out if the page parent (if selected) has a seperate language
@@ -1845,7 +1880,9 @@ if (!class_exists('CAT_Helper_Page'))
                 {
                     if(!CAT_Registry::exists('MAINTENANCE_PAGE'))
                     {
-                        $result = CAT_Registry::getInstance()->db()->query(sprintf('SELECT `value` FROM %ssettings WHERE `name`="maintenance_page"',CAT_TABLE_PREFIX));
+                        $result = CAT_Registry::getInstance()->db()->query(
+                            'SELECT `value` FROM `:prefix:settings` WHERE `name`="maintenance_page"'
+                        );
                         if(is_resource($result) && $result->numRows()==1)
                         {
                             $row = $result->fetchRow(MYSQL_ASSOC);
@@ -1879,7 +1916,7 @@ if (!class_exists('CAT_Helper_Page'))
                 if(CAT_Registry::get('USE_SHORT_URLS')&&isset($_SERVER['REDIRECT_QUERY_STRING']))
                      $page_id = CAT_Helper_Page::getPageByPath('/'.$_SERVER['REDIRECT_QUERY_STRING']);
                 else
-                $page_id = self::getDefaultPage();
+                    $page_id = self::getDefaultPage();
             }
 
             if(!defined('PAGE_ID'))
@@ -1969,10 +2006,10 @@ if (!class_exists('CAT_Helper_Page'))
 #echo "page_id $page_id\n";
             if($page_id)
             {
-                self::$instance->db()->query(sprintf(
-                    'UPDATE `%spages` SET root_parent=%d, page_trail="%s" WHERE page_id=%d',
-                    CAT_TABLE_PREFIX, $root_parent, self::getPageTrail($page_id,true), $page_id
-                ));
+                self::$instance->db()->query(
+                    'UPDATE `:prefix:pages` SET root_parent=:root, page_trail=:trail WHERE page_id=:id',
+                    array('root'=>$root_parent,'trail'=>self::getPageTrail($page_id,true),'id'=>$page_id)
+                );
                 if( $page_id !== $parent )
                 // recurse
         		    self::updatePageTrail($page_id,$root_parent);
@@ -2020,7 +2057,9 @@ if (!class_exists('CAT_Helper_Page'))
         {
             if(!CAT_Registry::exists('MAINTENANCE_MODE'))
             {
-                $result = $this->db()->query(sprintf('SELECT `value` FROM %ssettings WHERE `name`="maintenance_mode"',CAT_TABLE_PREFIX));
+                $result = $this->db()->query(
+                    'SELECT `value` FROM `:prefix:settings` WHERE `name`="maintenance_mode"'
+                );
                 if(is_resource($result)&&$result->numRows()==1)
                 {
                     $row = $result->fetchRow(MYSQL_ASSOC);
@@ -2347,27 +2386,27 @@ if (!class_exists('CAT_Helper_Page'))
             // delete access file
             self::deleteAccessFile($page_id);
             // delete settings
-            self::getInstance()->db()->query(sprintf(
-                'DELETE FROM `%spages_settings` WHERE `page_id`=%d',
-                CAT_TABLE_PREFIX, $page_id
-            ));
+            self::getInstance()->db()->query(
+                'DELETE FROM `:prefix:pages_settings` WHERE `page_id`=:id',
+                array('id'=>$page_id)
+            );
             // remove page from DB
-            $self->db()->query(sprintf(
-                'DELETE FROM `%spages` WHERE `page_id` = %d',
-                CAT_TABLE_PREFIX, $page_id
-            ));
-            if ($self->db()->is_error())
+            $self->db()->query(
+                'DELETE FROM `:prefix:pages` WHERE `page_id` = :id',
+                array('id'=>$page_id)
+            );
+            if ($self->db()->isError())
             {
-                $errors[] = $self->db()->get_error();
+                $errors[] = $self->db()->getError();
             }
             // Update the sections table
-            $self->db()->query(sprintf(
-                'DELETE FROM `%ssections` WHERE `page_id` = %d',
-                CAT_TABLE_PREFIX, $page_id
-            ));
-            if ($self->db()->is_error())
+            $self->db()->query(
+                'DELETE FROM `:prefix:sections` WHERE `page_id` = :id',
+                array('id'=>$page_id)
+            );
+            if ($self->db()->isError())
             {
-                $errors[] = $self->db()->get_error();
+                $errors[] = $self->db()->getError();
             }
             // clean-up ordering
             include_once(CAT_PATH . '/framework/class.order.php');
@@ -2385,23 +2424,23 @@ if (!class_exists('CAT_Helper_Page'))
          * @return void
          **/
        	private static function _trashPages($parent = 0)
-            {
+        {
             // get pages for current parent
             $pages = self::getPagesByParent($parent);
             if(count($pages))
-                {
+            {
     			foreach($pages as $page_id)
                 {
                     $page = self::getPage($page_id);
     				// Update the page visibility to 'deleted'
-    				self::getInstance()->db()->query(sprintf(
-                        "UPDATE `%spages` SET visibility = 'deleted' WHERE page_id = %d LIMIT 1",
-                        CAT_TABLE_PREFIX, $page['page_id']
-                    ));
+    				self::getInstance()->db()->query(
+                        "UPDATE `:prefix:pages` SET visibility = :vis WHERE page_id = :id LIMIT 1",
+                        array('vis'=>'deleted','id'=>$page['page_id'])
+                    );
     				// Run this function again for all sub-pages
     				if( !self::_trashPages( $page['page_id'] ) )
                         return false;
-                    if(self::getInstance()->db()->is_error())
+                    if(self::getInstance()->db()->isError())
                         return false;
                 }
             }

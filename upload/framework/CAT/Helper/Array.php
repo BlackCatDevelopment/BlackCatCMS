@@ -15,13 +15,29 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
+
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
+} else {
+	$root = "../";
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= "../";
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
+}
 
 if ( ! class_exists( 'CAT_Helper_Array' ) )
 {
@@ -49,16 +65,14 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
         public static function getInstance()
         {
             if (!self::$instance)
-            {
                 self::$instance = new self();
-            }
             return self::$instance;
-        }
+        }   // end function getInstance()
 
         private static function filter_callback($v)
         {
             return !isset($v[self::$Key]) || $v[self::$Key] !== self::$Needle;
-        }
+        }   // end function filter_callback()
 
         /**
          * removes an element from an array
@@ -77,7 +91,7 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
             self::$Needle = $Needle;
             self::$Key    = $NeedleKey;
             $Haystack     = array_filter($Haystack, 'self::filter_callback');
-        }
+        }   // end function ArrayRemove()
 
         /**
          * sort an array
@@ -93,11 +107,9 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
         public static function ArraySort ( $array, $index, $order='asc', $natsort=FALSE, $case_sensitive=FALSE )
         {
             if( is_array($array) && count($array)>0 )
-        {
+            {
                  foreach(array_keys($array) as $key)
-                 {
                      $temp[$key]=$array[$key][$index];
-                 }
                  if(!$natsort)
                  {
                      ($order=='asc')? asort($temp) : arsort($temp);
@@ -106,19 +118,26 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
                  {
                      ($case_sensitive)? natsort($temp) : natcasesort($temp);
                      if($order!='asc')
-                     {
                          $temp=array_reverse($temp,TRUE);
-                     }
                  }
                  foreach(array_keys($temp) as $key)
-                 {
                      (is_numeric($key))? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
-                 }
                  return $sorted;
             }
             return $array;
         }   // end function ArraySort()
 
+        /**
+         * search multidimensional array for $Needle
+         *
+         * @access public
+         * @param  string  $Needle
+         * @param  array   $Haystack
+         * @param  string  $NeedleKey - optional
+         * @param  boolean $Strict    - optional, default: false
+         * @param  array   $Path      - needed for recursion
+         * @return mixed   array (path) or false (not found)
+         **/
         public static function ArraySearchRecursive( $Needle, $Haystack, $NeedleKey="", $Strict=false, $Path=array() )
         {
 
@@ -157,24 +176,23 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
         public static function ArrayUniqueRecursive($array) {
     		$set = array();
     		$out = array();
-    		foreach ( $array as $key => $val ) {
-    			  if ( is_array($val) )
+    		foreach ( $array as $key => $val )
             {
-    				    $out[$key] = $this->ArrayUniqueRecursive($val);
-    			  }
-            elseif ( ! isset( $set[$val] ) )
-            {
-    				    $out[$key] = $val;
-    				    $set[$val] = true;
-    			  }
-            else
-            {
-                $out[$key] = $val;
-            }
+                if ( is_array($val) )
+                {
+                    $out[$key] = $this->ArrayUniqueRecursive($val);
+                }
+                elseif ( ! isset( $set[$val] ) )
+                {
+                    $out[$key] = $val;
+                    $set[$val] = true;
+                }
+                else
+                {
+                    $out[$key] = $val;
+                }
     		}
     		return $out;
    		}   // end function ArrayUniqueRecursive()
-	}
+	}   // ----- end class CAT_Helper_Array -----
 }
-
-?>

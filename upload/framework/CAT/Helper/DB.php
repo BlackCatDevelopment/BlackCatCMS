@@ -67,6 +67,21 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
             return self::$instance;
         }   // end function getInstance()
         
+        /**
+         * accessor to current connection object
+         **/
+        public static function conn()
+        {
+            return self::$conn;
+        }   // end function conn()
+
+        /**
+         * accessor to currently used table prefix
+         **/
+        public static function prefix()
+        {
+            return self::$prefix;
+        }   // end function prefix()
 
         /**
          * connect to the database; returns Doctrine connection
