@@ -63,6 +63,9 @@
 
 		<nav id="main_nav">
 			{show_menu(1, SM2_ROOT, SM2_START, SM2_ALL|SM2_XHTML_STRICT, '<li>[ac][menu_title]</a>', '</li>', '<ul>', '</ul>')}
+            {if $FRONTEND_LOGIN}
+            {include login.tpl}
+            {/if}
 		</nav>
 	</header>
 	<section id="content" class="gradient_gray br_all">

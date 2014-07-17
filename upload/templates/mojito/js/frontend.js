@@ -33,5 +33,14 @@ $(document).ready(function()
 		{
 			s_input.focus();
 		}
-	})
+	});
+ 	var l_box	= $('#login_box');
+	$('#toggleLogin').click( function(e)
+	{
+		l_box.toggleClass('visible');
+		if ( l_box.hasClass('visible') )
+		{
+			l_input.focus();
+		}
+	});
 });

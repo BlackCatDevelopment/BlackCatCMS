@@ -26,6 +26,7 @@
 @import url('basic.css');
 @import url('menu.css');
 @import url('search.box.css');
+@import url('login.form.css');
 
 #main_header {
 	margin: auto;
