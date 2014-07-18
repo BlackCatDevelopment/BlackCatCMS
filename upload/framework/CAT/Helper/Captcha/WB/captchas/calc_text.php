@@ -71,4 +71,3 @@ switch ($n) {
 		break;
 }
 echo $cap;
-?>

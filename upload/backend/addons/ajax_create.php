@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -127,16 +127,16 @@ switch ( $type ) {
 }
 
 $info = array(
-    $pre.'name' => $name,
-    $pre.'directory' => $dir,
-    $pre.'type' => $type,
-    $pre.'function' => $func,
+    $pre.'name'        => $name,
+    $pre.'directory'   => $dir,
+    $pre.'type'        => $type,
+    $pre.'function'    => $func,
     $pre.'description' => $desc,
-    $pre.'version' => '0.1',
-    $pre.'platform' => '1.x',
-    $pre.'author' => $author,
-    $pre.'guid' => CAT_Object::createGUID(),
-    $pre.'license' => 'GNU General Public License',
+    $pre.'version'     => '0.1',
+    $pre.'platform'    => '1.x',
+    $pre.'author'      => $author,
+    $pre.'guid'        => CAT_Object::createGUID(),
+    $pre.'license'     => 'GNU General Public License',
 );
 
 if($type == 'language')

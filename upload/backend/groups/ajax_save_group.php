@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -89,13 +89,16 @@ if( $group_name == '' )
 	exit();
 }
 
-$sql	 = "SELECT * FROM `%sgroups` WHERE name = '%s'";
-$sql	.= $saveGroup != '' ? "AND group_id != $group_id" : "";
+$sql = "SELECT * FROM `:prefix:groups` WHERE name = :name";
+$params = array('name'=>$group_name);
 
-$results = $backend->db()->query(sprintf(
-    $sql,
-    CAT_TABLE_PREFIX, $group_name
-));
+if( $saveGroup != '' )
+{
+    $sql .= "AND group_id != :id";
+    $params['id'] = $group_id;
+}
+
+$results = $backend->db()->query($sql,$params);
 
 if(	( $results->numRows() > 0 && $addGroup  != '' ) ||
 	( $results->numRows() > 0 && $saveGroup != ''  ) )
@@ -111,17 +114,28 @@ if(	( $results->numRows() > 0 && $addGroup  != '' ) ||
 // Get system and module permissions
 require( CAT_ADMIN_PATH . '/groups/get_permissions.php' );
 
-$sql = ( $addGroup != '' )
-     ? "INSERT INTO `" . CAT_TABLE_PREFIX . "groups` (name,system_permissions,module_permissions,template_permissions) VALUES ('$group_name','$system_permissions','$module_permissions','$template_permissions')" :
-			"UPDATE `" . CAT_TABLE_PREFIX . "groups` SET name = '$group_name', system_permissions = '$system_permissions', module_permissions = '$module_permissions', template_permissions = '$template_permissions' WHERE group_id = '$group_id'";
+$params = array(
+    'name' => $group_name,'system_permissions'=>$system_permissions,'module_permissions'=>$module_permissions,'template_permissions'=>$template_permissions
+);
+if ( $addGroup != '' )
+{
+    $sql = "INSERT INTO `:prefix:groups` ( `name`, `system_permissions`, `module_permissions`, `template_permissions`) "
+         . "VALUES ( :name, :system_permissions, :module_permissions, :template_permissions)";
+}
+else
+{
+	$sql = "UPDATE `:prefix:groups` SET `name`=:name, `system_permissions`=:system_permissions, "
+         . "`module_permissions`=:module_permissions, `template_permissions`=:template_permissions WHERE group_id=:id";
+    $params['id'] = $group_id;
+}
 
 // Update the database
-$backend->db()->query($sql);
+$backend->db()->query($sql,$params);
 
-if( $backend->db()->is_error() )
+if( $backend->db()->isError() )
 {
 	$ajax	= array(
-		'message'	=> $backend->db()->get_error(),
+		'message'	=> $backend->db()->getError(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -134,7 +148,7 @@ else
 		'message'	=> $backend->lang()->translate('Group {{action}} successfully', array( 'action' => $action ) ),
 		'action'	=> $action,
 		'name'		=> $group_name,
-		'id'		=> $action == 'added' ? $backend->db()->get_one("SELECT LAST_INSERT_ID()") : $group_id,
+		'id'		=> $action == 'added' ? $backend->db()->lastInsertId() : $group_id,
 		'success'	=> true
 	);
 	print json_encode( $ajax );

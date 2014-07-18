@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,14 +32,14 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
 
-$val                  = CAT_Helper_Validate::getInstance();
+$val = CAT_Helper_Validate::getInstance();
 
 // if the group does not have the permission to enter the backend, we do not
 // have to do anything else here
@@ -53,11 +53,6 @@ if ( ! $system_permissions['start'] )
 }
 else
 {
-
-    // ==========================
-    // ! Get system permissions
-    // ==========================
-
     // =============================
     // ! Get permissions for pages
     // =============================
@@ -271,8 +266,7 @@ else
         }
     }
     if(count($templates))
-    $template_permissions						= implode(',', $templates);
+        $template_permissions					= implode(',', $templates);
     else
         $template_permissions					= '';
 }
-?>

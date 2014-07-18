@@ -18,8 +18,8 @@
  *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Core
- *   @package         CAT_Core
+ *   @category        CAT_Modules
+ *   @package         lib_dwoo
  *
  */
 
@@ -39,25 +39,7 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-// this one is only used for the frontend!
-if ( !FRONTEND_LOGIN ) // no frontend login, no preferences
-	if ( INTRO_PAGE )
-		die( header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' ) );
-	else
-		die( header( 'Location: ' . CAT_URL . '/index.php' ) );
-
-// check if user is authenticated
-if ( CAT_Users::getInstance()->is_authenticated() === false )
-	die( header( 'Location: ' . CAT_URL . '/account/login.php' ) );
-
-CAT_Helper_Page::getVirtualPage('Preferences');
-
-/**
- *	Set the page content include file
- */
-define( 'PAGE_CONTENT', CAT_PATH.'/account/preferences_form.php' );
-
-/**
- *	Include the index (wrapper) file
- */
-require CAT_PATH.'/index.php';
+function Dwoo_Plugin_user_logged_in(Dwoo $dwoo)
+{
+    return CAT_Users::is_authenticated();
+}

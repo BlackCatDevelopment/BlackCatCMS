@@ -39,18 +39,19 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-//require_once CAT_PATH.'/framework/functions.php';
-
 function Dwoo_Plugin_last_modified(Dwoo $dwoo, $page_id = false) {
 	if ( is_numeric( $page_id ) )
 	{
-		$sql	= "SELECT `modified_when` FROM `%spages` WHERE `page_id` = '%d'";
-		$t		= CAT_Helper_Page::getInstance()->db()->get_one( sprintf( $sql, CAT_TABLE_PREFIX, intval($page_id) ) );
+		$sql = "SELECT `modified_when` FROM `:prefix:pages` WHERE `page_id` = :id";
+		$t   = CAT_Helper_Page::getInstance()->db()->query(
+                   $sql,
+                   array('id'=>intval($page_id) )
+               )->fetchColumn();
 
 	}
 	else {
-		$sql	= "SELECT `modified_when` FROM `%spages` WHERE `visibility`= 'public' OR `visibility`= 'hidden' ORDER BY `modified_when` DESC LIMIT 0,1";
-		$t		= CAT_Helper_Page::getInstance()->db()->get_one( sprintf( $sql, CAT_TABLE_PREFIX ) );
+		$sql = "SELECT `modified_when` FROM `:prefix:pages` WHERE `visibility`='public' OR `visibility`='hidden' ORDER BY `modified_when` DESC LIMIT 0,1";
+		$t   = CAT_Helper_Page::getInstance()->db()->query($sql)->fetchColumn();
 	}
 	return CAT_Helper_DateTime::getDate($t);
 }

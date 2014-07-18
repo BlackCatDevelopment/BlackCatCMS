@@ -136,11 +136,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
                     if ( ! self::$loginerror )
                     {
-                        $query    = 'SELECT * FROM `%susers` WHERE `username` = "%s" AND `password` = "%s" AND `active` = 1';
-                        $result    = $self->db()->query(sprintf($query,CAT_TABLE_PREFIX,$name,md5($pw)));
-                		if ( $result->numRows() == 1 )
+                        $query  = 'SELECT * FROM `:prefix:users` WHERE `username`=:name AND `password`=:pw AND `active` = 1';
+                        $result = $self->db()->query($query,array('name'=>$name,'pw'=>md5($pw)));
+                		if ( $result->rowCount() == 1 )
                         {
-
                             // get default user preferences
                             $prefs = self::getDefaultUserOptions();
                             // get basic user data
@@ -202,9 +201,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
                 			foreach ( explode(",",$user['groups_id']) as $cur_group_id )
                 			{
-                                $query   = "SELECT * FROM `%sgroups` WHERE group_id = '%d'";
-                                $result  = $self->db()->query(sprintf($query,CAT_TABLE_PREFIX,$cur_group_id));
-                				$results = $result->fetchRow( MYSQL_ASSOC );
+                                $query   = "SELECT * FROM `:prefix:groups` WHERE group_id=:id";
+                                $result  = $self->db()->query($query,array('id'=>$cur_group_id));
+                				$results = $result->fetch();
 
                 				$_SESSION['GROUP_NAME'][$cur_group_id] = $results['name'];
 
@@ -229,26 +228,22 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 				if ( $results['template_permissions'] != '' )
                 				{
                 					if ($first_group)
-                					{
                 						$_SESSION['TEMPLATE_PERMISSIONS'] = explode(',', $results['template_permissions']);
-                					}
                 					else
-                					{
                 						$_SESSION['TEMPLATE_PERMISSIONS'] = array_intersect($_SESSION['TEMPLATE_PERMISSIONS'], explode(',', $results['template_permissions']));
-                					}
-        }
+                                }
 
                 				$first_group = false;
 
                             }   // foreach ( explode(",",$user['groups_id']) as $cur_group_id )
 
                 			// Update the users table with current ip and timestamp
-                			$get_ts		= time();
-                			$get_ip		= $_SERVER['REMOTE_ADDR'];
-                            $query  = "UPDATE `%susers` SET login_when = '%s', login_ip = '%s' WHERE user_id = '%d'";
-                            $self->db()->query(sprintf($query,CAT_TABLE_PREFIX,$get_ts,$get_ip,$user['user_id']));
+                			$get_ts	= time();
+                			$get_ip	= $_SERVER['REMOTE_ADDR'];
+                            $query  = "UPDATE `:prefix:users` SET login_when=:when, login_ip=:ip WHERE user_id=:id";
+                            $self->db()->query($query,array('when'=>$get_ts,'ip'=>$get_ip,'id'=>$user['user_id']));
                             if ( self::getInstance()->checkPermission( 'start', 'start' ) )
-                            return CAT_ADMIN_URL.'/start/index.php?initial=true';
+                                return CAT_ADMIN_URL.'/start/index.php?initial=true';
                             else
                                 return CAT_URL.'/index.php';
                         }
@@ -348,16 +343,16 @@ if ( ! class_exists( 'CAT_Users', false ) )
             $result  = false;
 
         	// Check if the email exists in the database
-        	$results = $self->db()->query(sprintf(
-                "SELECT user_id,username,display_name,email,last_reset,password FROM "
-                . "`%susers` WHERE email = '%s'",
-                CAT_TABLE_PREFIX, $email
-            ));
+        	$results = $self->db()->query(
+                "SELECT `user_id`,`username`,`display_name`,`email`,`last_reset`,`password` FROM "
+                . "`:prefix:users` WHERE email=:mail",
+                array('mail'=>$email)
+            );
 
-        	if ( $results->numRows() > 0 )
+        	if ( $results->rowCount() > 0 )
         	{
         		// Get the id, username, email, and last_reset from the above db query
-        		$results_array = $results->fetchRow( MYSQL_ASSOC );
+        		$results_array = $results->fetch();
 
         		// Check if the password has been reset in the last hour
         		$last_reset = $results_array['last_reset'];
@@ -377,15 +372,15 @@ if ( ! class_exists( 'CAT_Users', false ) )
         			 */
         			$new_pass = self::generateRandomString(AUTH_MIN_PASS_LENGTH);
 
-        			$self->db()->query(sprintf(
-                        "UPDATE `%susers` SET password = '%s', last_reset = '%s' WHERE user_id = '%d'",
-                        CAT_TABLE_PREFIX, md5($new_pass), time(), $results_array['user_id']
-                    ));
+        			$self->db()->query(
+                        "UPDATE `:prefix:users` SET password=:pw, last_reset=:reset WHERE user_id=:id",
+                        array('pw'=>md5($new_pass),'reset'=>time(),'id'=>$results_array['user_id'])
+                    );
 
-        			if ( $self->db()->is_error() )
+        			if ( $self->db()->isError() )
         			{
         				// Error updating database
-        				$message = $self->db()->get_error();
+        				$message = $self->db()->getError();
         			}
         			else
         			{
@@ -411,10 +406,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
         				else
         				{
                             // reset PW if sending mail failed
-        					$self->db()->query(sprintf(
-                                "UPDATE `%susers` SET password = '%s', lastreset='' WHERE user_id = '%d'",
-                                CAT_TABLE_PREFIX, $old_pass, $results_array['user_id']
-                            ));
+        					$self->db()->query(
+                                "UPDATE `:prefix:users` SET password=:pw, lastreset='' WHERE user_id=:id",
+                                array('pw'=>$old_pass, 'id'=>$results_array['user_id'])
+                            );
         					$message = $self->lang()->translate('Unable to email password, please contact system administrator');
                             if ( is_object($mailer) )
                                 $message .= '<br />'.$mailer->getError();
@@ -444,10 +439,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function disableAccount($user_id)
         {
             $self  = self::getInstance();
-            $self->db()->query(sprintf(
-                'UPDATE `%susers` SET active = 0 WHERE '
-                        . ( is_numeric($user_id) ? 'user_id' : 'username' )
-                . " = '%s'",CAT_TABLE_PREFIX,$user_id));
+            $self->db()->query(
+                'UPDATE `:prefix:users` SET active = 0 WHERE `'
+                . ( is_numeric($user_id) ? 'user_id' : 'username' )
+                . "` = :id",array('id'=>$user_id)
+            );
             return $self->db()->isError();
         }   // end function disableAccount()
 
@@ -474,13 +470,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
             // fill permissions cache on first call
             if ( ! count(self::$permissions) )
             {
-                $res  = $self->db()->query(sprintf(
-                    'SELECT perm_name, perm_group, perm_bit FROM `%ssystem_permissions` WHERE perm_for=\'%s\';',
-                    CAT_TABLE_PREFIX, $for
-                ));
-                if($res->numRows())
+                $res  = $self->db()->query(
+                    'SELECT `perm_name`, `perm_group`, `perm_bit` FROM `:prefix:system_permissions` WHERE perm_for=:for;',
+                    array('for'=>$for)
+                );
+                if($res->rowCount())
                 {
-                    while( false !== ( $row = $res->fetchRow(MYSQL_ASSOC) ) )
+                    while( false !== ( $row = $res->fetch() ) )
                     {
                         $row['perm_group'] = strtolower($row['perm_group']);
                         if ( ! isset(self::$permissions[$row['perm_group']]) )
@@ -496,6 +492,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
             // get needed bit
             $bit = self::$permissions[$group][$perm];
+
             // Dashboard should be the only page with bit 0!
             if ( $bit == 0 ) return true;
 
@@ -554,7 +551,6 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 }
             }
 
-
         }   // end function checkPermission()
 
         /**
@@ -566,15 +562,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function checkEmailExists($email)
         {
             $self    = self::getInstance();
-            $results = $self->db()->query(sprintf(
-                'SELECT user_id FROM `%susers` WHERE email = "%s"',
-                CAT_TABLE_PREFIX,
-                CAT_Helper_Validate::add_slashes( $email )
-            ));
-            if ( $results->numRows() > 0 )
-            {
+            $results = $self->db()->query(
+                'SELECT `user_id` FROM `:prefix:users` WHERE email = :mail',
+                array('mail'=>CAT_Helper_Validate::add_slashes( $email ))
+            );
+            if ( $results->rowCount() > 0 )
                 return true;
-            }
             return false;
         }   // end function checkEmailExists()
 
@@ -586,9 +579,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function checkUserLogin($name,$pw)
         {
             $self   = self::getInstance();
-            $query  = 'SELECT * FROM `%susers` WHERE `username` = "%s" AND `password` = "%s" AND `active` = 1';
-            $result = $self->db()->query(sprintf($query,CAT_TABLE_PREFIX,$name,md5($pw)));
-    		return ( $result->numRows() == 1 ) ? true : false;
+            $query  = 'SELECT * FROM `:prefix:users` WHERE `username`=:name AND `password`=:pw AND `active` = 1';
+            $result = $self->db()->query($query,array('name'=>$name,'pw'=>md5($pw)));
+    		return ( $result->rowCount() == 1 ) ? true : false;
         }   // end function checkUserLogin()
         
         /**
@@ -601,14 +594,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function checkUsernameExists($username)
         {
             $self    = self::getInstance();
-            $results = $self->db()->query(sprintf(
-                'SELECT user_id FROM `%susers` WHERE username = "%s"',
-                CAT_TABLE_PREFIX, $username
-            ));
-            if ( $results->numRows() > 0 )
-            {
+            $results = $self->db()->query(
+                'SELECT `user_id` FROM `:prefix:users` WHERE username=:name',
+                array('name'=>$username)
+            );
+            if ( $results->rowCount() > 0 )
                 return true;
-            }
             return false;
         }   // end function checkUsernameExists()
 
@@ -633,14 +624,18 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function createUser($groups_id, $active, $username, $md5_password, $display_name, $email, $home_folder )
         {
             $self  = self::getInstance();
-            $query = 'INSERT INTO `%susers` (`group_id`,`groups_id`,`active`,`username`,`password`,`display_name`,`email`,`home_folder`) '
-                   . "VALUES ('$groups_id', '$groups_id', '$active', '$username','$md5_password','$display_name','$email','$home_folder');";
-            $self->db()->query(sprintf($query,CAT_TABLE_PREFIX));
-
-            if ( $self->db()->is_error() )
-            {
-            	return $self->db()->get_error();
-            }
+            $query = 'INSERT INTO `:prefix:users` (`group_id`,`groups_id`,`active`,`username`,`password`,`display_name`,`email`,`home_folder`) '
+                   . "VALUES (:groups_id, :groups_id2, :active, :username, :md5_password, :display_name, :email, :home_folder);";
+            $self->db()->query(
+                $query,
+                array(
+                    'groups_id'    => $groups_id   , 'groups_id2'   => $groups_id   , 'active'      => $active,
+                    'username'     => $username    , 'md5_password' => $md5_password,
+                    'display_name' => $display_name, 'email'        => $email       , 'home_folder' => $home_folder
+                )
+            );
+            if ( $self->db()->isError() )
+            	return $self->db()->getError();
             return true;
         }   // end function createUser()
 
@@ -654,8 +649,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function deleteUser($user_id)
         {
             $self = self::getInstance();
-       		$self->db()->query(sprintf("DELETE FROM %susers WHERE `user_id` = %d",CAT_TABLE_PREFIX,$user_id));
-            return ( $self->db()->is_error() ? $self->db()->get_error() : true );
+       		$self->db()->query(
+                "DELETE FROM `:prefix:users` WHERE `user_id`=:id",
+                array('id'=>$user_id)
+            );
+            return ( $self->db()->isError() ? $self->db()->getError() : true );
         }   // end function deleteUser()
         
 
@@ -670,13 +668,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
             $self  = self::getInstance();
             if ( ! count(self::$defaultuser) )
             {
-                $result = $self->db()->query(sprintf(
-                    'SELECT * FROM `%susers_options` WHERE user_id="0";',
-                    CAT_TABLE_PREFIX
-                ));
-                if($result->numRows())
+                $result = $self->db()->query(
+                    'SELECT * FROM `:prefix:users_options` WHERE user_id="0";'
+                );
+                if($result->rowCount())
                 {
-                    while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+                    while( false !== ( $row = $result->fetch() ) )
                     {
                         self::$defaultuser[$row['option_name']] = $row['option_value'];
                     }
@@ -696,13 +693,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
         {
             $options = array();
             $self    = self::getInstance();
-            $result  = $self->db()->query(sprintf(
-                'SELECT * FROM `%susers_options` WHERE user_id="%d";',
-                CAT_TABLE_PREFIX, $user_id
-            ));
-            if($result->numRows())
+            $result  = $self->db()->query(
+                'SELECT * FROM `:prefix:users_options` WHERE user_id=:id;',
+                array('id'=>$user_id)
+            );
+            if($result->rowCount())
             {
-                while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+                while( false !== ( $row = $result->fetch() ) )
                 {
                     $options[$row['option_name']] = $row['option_value'];
                 }
@@ -730,44 +727,41 @@ if ( ! class_exists( 'CAT_Users', false ) )
             $ext  = self::getExtendedOptions();
             $self = self::getInstance();
             // get default fields
-            $desc = $self->db()->query(sprintf('DESCRIBE %susers',CAT_TABLE_PREFIX));
-            while ( false !== ( $row = $desc->fetchRow(MYSQL_ASSOC) ) )
-            {
+            $desc = $self->db()->query('DESCRIBE `:prefix:users`');
+            while ( false !== ( $row = $desc->fetch() ) )
                 $fields[] = $row['Field'];
-            }
             // save default options
+            $p = array();
             $c = 0;
-            $q = "UPDATE `".CAT_TABLE_PREFIX."users` SET ";
+            $q = "UPDATE `:prefix:users` SET ";
             foreach($fields as $key)
             {
                 if ( isset($options[$key]) && $options[$key] !== '' )
                 {
-                    $q .= "`".$key."`='".mysql_real_escape_string($options[$key])."', ";
+                    $q .= "`".$key."`=:$key, ";
+                    $p[$key] = $options[$key];
                     $c++;
                 }
             }
-            $q = substr($q, 0, -2) . " WHERE `user_id`='".$user_id."'";
+            $q = substr($q, 0, -2) . " WHERE `user_id`=:id";
+            $p['id'] = $user_id;
             if($c)
             {
-                $self->db()->query($q);
-                   if ($self->db()->is_error())
-                {
-                    $errors[] = $self->db()->get_error();
-                }
+                $self->db()->query($q,$p);
+                if ($self->db()->isError())
+                    $errors[] = $self->db()->getError();
             }
             // save extended options
             foreach( array_keys($ext) as $key )
             {
                 if ( isset($options[$key]) && $options[$key] !== '' )
                 {
-                    $q  = "REPLACE INTO `%susers_options` VALUES ( "
-                        . " '%d', '%s', '%s'"
+                    $q  = "REPLACE INTO `:prefix:users_options` VALUES ( "
+                        . " :id, :key, :val"
                         . ")";
-                    $self->db()->query(sprintf($q,CAT_TABLE_PREFIX,$user_id,$key,mysql_real_escape_string($options[$key])));
-                       if ($self->db()->is_error())
-                    {
-                        $errors[] = $self->db()->get_error();
-                    }
+                    $self->db()->query($q,array('id'=>$user_id,'key'=>$key,'val'=>$options[$key]));
+                    if ($self->db()->isError())
+                        $errors[] = $self->db()->getError();
                 }
             }
             return $errors;
@@ -785,12 +779,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
         {
             $self    = self::getInstance();
             $users   = array();
-            $result  = $self->db()->query(sprintf(
-                'SELECT * FROM `%susers` WHERE group_id=%d;',
-                CAT_TABLE_PREFIX, $group_id
-            ));
-            if($result->numRows())
-                while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+            $result  = $self->db()->query(
+                'SELECT * FROM `:prefix:users` WHERE group_id=:id',
+                array('id'=>$group_id)
+            );
+            if($result->rowCount())
+                while( false !== ( $row = $result->fetch() ) )
                     array_push($users,$row);
             return $users;
         }   // end function getMembers()
@@ -902,10 +896,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
             // ================
     		// ! Getting Groups
     		// ================
-            $get_groups = $self->db()->query(sprintf(
-                'SELECT * FROM `%sgroups`',
-                CAT_TABLE_PREFIX
-            ));
+            $get_groups = $self->db()->query(
+                'SELECT * FROM `:prefix:groups`'
+            );
 
     		// ==============================================
     		// ! Insert admin group and current group first
@@ -1017,13 +1010,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function get_user_details($user_id,$attr=NULL)
         {
             $self     = self::getInstance();
-            $get_user = $self->db()->query(sprintf(
-                'SELECT username, display_name FROM `%susers` WHERE user_id=%d',
-                CAT_TABLE_PREFIX, $user_id
-            ));
-    		if($get_user->numRows() != 0)
+            $get_user = $self->db()->query(
+                'SELECT `username`, `display_name` FROM `:prefix:users` WHERE user_id=:id',
+                array('id'=>$user_id)
+            );
+    		if($get_user->rowCount() != 0)
             {
-    			$user = $get_user->fetchRow(MYSQL_ASSOC);
+    			$user = $get_user->fetch();
     		}
             else
             {
@@ -1118,7 +1111,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 if(in_array(1,self::get_groups_id()))
                     return true;
                 else
-                return false;
+                    return false;
         }   // end function is_root()
 
         /**

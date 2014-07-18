@@ -231,10 +231,10 @@ else
 }
 
 
-if( $backend->db()->is_error() )
+if( $backend->db()->isError() )
 {
 	$ajax	= array(
-		'message'	=> $backend->db()->get_error(),
+		'message'	=> $backend->db()->getError(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -260,7 +260,7 @@ if( $backend->db()->is_error() )
 		'username'				=> $username,
 		'display_name'			=> $display_name,
 		'username_fieldname'	=> $username_fieldname,
-		'id'					=> $action == 'added' ? $backend->db()->get_one("SELECT LAST_INSERT_ID()") : $user_id,
+		'id'					=> $action == 'added' ? $backend->db()->lastInsertId() : $user_id,
 		'success'				=> true
 	);
 	print json_encode( $ajax );

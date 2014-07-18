@@ -98,7 +98,7 @@ if ( $email )
                 "UPDATE `%susers` SET password = '%s', last_reset = '%s' WHERE user_id = '%d'",
                 CAT_TABLE_PREFIX, md5($new_pass), time(), $results_array['user_id']
             ));
-			if ( $backend->db()->is_error() )
+			if ( $backend->db()->isError() )
 			{
 				// Error updating database
 				$backend->db()->query(sprintf(

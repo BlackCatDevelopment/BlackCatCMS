@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,12 +32,19 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
+
+// this one is only used for the frontend!
+if ( !FRONTEND_LOGIN ) // no frontend login, no forgot form
+	if ( INTRO_PAGE )
+		die( header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' ) );
+	else
+		die( header( 'Location: ' . CAT_URL . '/index.php' ) );
 
 $val          = CAT_Helper_Validate::getInstance();
 $email        = $val->sanitizePost('email',NULL,true);
@@ -48,7 +55,7 @@ global $parser;
 $parser->setPath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/'); // if there's a template for this in the current frontend template
 $parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to default dir
 
-// no mailer lib installed?
+// mailer lib installed?
 if(count(CAT_Helper_Addons::getLibraries('mail'))==0)
 {
     $parser->output('account_forgot_form',

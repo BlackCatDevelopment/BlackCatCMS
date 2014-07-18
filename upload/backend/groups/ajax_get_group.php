@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -66,19 +66,15 @@ if ( !$group_id )
 }
 
 $get_group	= $backend->db()->query(sprintf(
-    "SELECT * FROM `%sgroups` WHERE group_id = %d",
-    CAT_TABLE_PREFIX, $group_id
-));
+    "SELECT * FROM `:prefix:groups` WHERE group_id = :id",
+    array('id'=>$group_id)
+);
 
 $members       = array();
 $group_members = $users->getMembers($group_id);
 if(count($group_members))
-{
     foreach($group_members as $member)
-    {
         $members[] = $member['display_name'] . ' ('. $member['username'] . ')';
-    }
-}
 
 // ==============================================
 // ! Insert admin group and current group first
@@ -112,4 +108,3 @@ else {
 }
 
 exit();
-?>

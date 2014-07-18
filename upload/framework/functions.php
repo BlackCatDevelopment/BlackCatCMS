@@ -456,6 +456,24 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     }   // end function sanitize_url()
 
     /**
+     * replaces CAT_PATH with CAT_URL in given $url
+     * if CAT_URL is stored without a scheme (relative URI), the current
+     * scheme will be added before replacement
+     *
+     * @param  string $url
+     * @return string
+     **/
+    function uri_to_path($url)
+    {
+        $rel_parsed = parse_url(CAT_URL);
+        if(!array_key_exists('scheme',$rel_parsed ) || $rel_parsed['scheme']=='')
+            $find = (isset($_SERVER['HTTPS']) ? 'https:' : 'http:') . CAT_URL;
+        else
+            $find = CAT_URL;
+        return str_ireplace(sanitize_url($find),sanitize_path(CAT_PATH),sanitize_url($url));
+    }   // end function uri_to_path()
+
+    /**
      * Scan a given directory for dirs and files.
      *
      * Used by admins/reload.php, for example, so this is left for backward

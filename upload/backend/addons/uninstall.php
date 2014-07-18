@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,16 +32,16 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
 
-$backend = CAT_Backend::getInstance('Addons', 'modules_uninstall');
-$val     = CAT_Helper_Validate::getInstance();
-$addons  = CAT_Helper_Addons::getInstance();
+$backend    = CAT_Backend::getInstance('Addons', 'modules_uninstall');
+$val        = CAT_Helper_Validate::getInstance();
+$addons     = CAT_Helper_Addons::getInstance();
 
 // Get name and type of add on
 $type       = $val->sanitizePost('type',NULL,true);
@@ -55,7 +55,7 @@ if ( trim($file) == '' || trim($type) == '' )
 	exit(0);
 }
 
-$js_back	= CAT_ADMIN_URL . '/addons/index.php';
+$js_back	= CAT_ADMIN_URL.'/addons/index.php';
 
 // Check if the module exists
 if ( !$addons->isModuleInstalled($addon_name,NULL,preg_replace('~s$~','',$type)))
@@ -83,5 +83,3 @@ else
 
 // Print admin footer
 $backend->print_footer();
-
-?>

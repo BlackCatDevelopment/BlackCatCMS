@@ -103,7 +103,7 @@ if (!$result)
                            'An error occured (using trash: {{trash}})',
                            array( 'trash' => $use_trash ? $backend->lang()->translate('Yes') : $backend->lang()->translate('No') )
                        )
-                    .  ( ( $backend->db()->is_error() ) ? ' (DB error: '.$backend->db()->get_error().')' : '' )
+                    .  ( ( $backend->db()->isError() ) ? ' (DB error: '.$backend->db()->getError().')' : '' )
                        ,
 		'success'	=> false
 	);

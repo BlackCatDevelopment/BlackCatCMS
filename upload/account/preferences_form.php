@@ -14,10 +14,8 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
+ *   @author          Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -25,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -34,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -43,12 +41,16 @@ if (defined('CAT_PATH')) {
 
 $user      = CAT_Users::getInstance();
 $val       = CAT_Helper_Validate::getInstance();
+$show_form = true;
+
+// load language file
+$user->lang()->addFile(LANGUAGE);
 
 if(!$user->is_authenticated())
     die( header( 'Location: '.CAT_Registry::get('LOGIN_URL')."\n\n" ) );
 
 // enable CSRFMagic
-CAT_Helper_Protect::getInstance()->enableCSRFMagic();
+//CAT_Helper_Protect::getInstance()->enableCSRFMagic();
 
 $submit_ok = false;
 $message   = false;
@@ -57,12 +59,10 @@ $wbcompat  = (defined('WB2COMPAT') && WB2COMPAT===true) ? true : false;
 
 if ( $save && ( $save == 'account_settings' ) )
 {
-	$query  = "SELECT `password` from `%susers` where `user_id`='%d' AND `password`='%s'";
-	$result = $database->query(sprintf($query,CAT_TABLE_PREFIX,$user->get_user_id(),md5($val->sanitizePost('current_password'))));
-	if ( $result->numRows() == 1 )
-	{
+	$query  = "SELECT `password` from `:prefix:users` where `user_id`=:id AND `password`=:pw";
+	$result = $database->query($query,array('id'=>$user->get_user_id(),'pw'=>md5($val->sanitizePost('current_password'))));
+	if ( $result->rowCount() == 1 )
 		$submit_ok = true;
-	}
 	unset($query);
 	unset($result);
 	unset($_POST['save']);
@@ -89,12 +89,9 @@ if (true === $submit_ok)
 		$errors[] = $user->lang()->translate('The email address you entered is invalid');
 
 	} else {
-		$email = $val->add_slashes($email);
-		$sql  = 'SELECT COUNT(*) FROM `'.CAT_TABLE_PREFIX.'users` ';
-		$sql .= 'WHERE `user_id` <> '.(int)$user->get_user_id().' AND `email` LIKE "'.$email.'"';
-		if( $database->get_one($sql) > 0 ){
+		$sql  = 'SELECT COUNT(*) FROM `:prefix:users` WHERE `user_id`<>:id AND `email` LIKE :email';
+		if( $database->query($sql,array('id'=>(int)$user->get_user_id(),'email'=>$email))->fetchColumn() > 0 )
 			$errors[] = $user->lang()->translate('The email you entered is already in use');
-		}
 	}
 
 	$display_name = strip_tags($val->sanitizePost( 'display_name', 'string', true ));
@@ -138,9 +135,7 @@ if (true === $submit_ok)
 
     // save
 	if (!count($errors))
-    {
         $errors = $user->setUserOptions( $user->get_user_id(), $fields );
-    }
 
     // update session data
     if(!count($errors))
@@ -153,26 +148,36 @@ if (true === $submit_ok)
 		$_SESSION['CAT_TIMEZONE_STRING'] = $timezone_string;
 		date_default_timezone_set($timezone_string);
 
-		if ( $_SESSION['CAT_TIME_FORMAT'] != '' ) {
+		if ( $_SESSION['CAT_TIME_FORMAT'] != '' )
+        {
 			if(isset($_SESSION['USE_DEFAULT_TIME_FORMAT'])) unset($_SESSION['USE_DEFAULT_TIME_FORMAT']);
-		} else {
+		}
+        else
+        {
 			$_SESSION['USE_DEFAULT_TIME_FORMAT'] = true;
 			unset($_SESSION['CAT_TIME_FORMAT']);
 		}
 
-		if ( $_SESSION['CAT_DATE_FORMAT'] != '' ) {
+		if ( $_SESSION['CAT_DATE_FORMAT'] != '' )
+        {
 			if(isset($_SESSION['USE_DEFAULT_DATE_FORMAT'])) unset($_SESSION['USE_DEFAULT_DATE_FORMAT']);
-		} else {
+		}
+        else
+        {
 			$_SESSION['USE_DEFAULT_DATE_FORMAT'] = true;
 			unset($_SESSION['CAT_DATE_FORMAT']);
 		}
 	}
 
-	if (count($errors) > 0) {
+	if (count($errors) > 0)
+    {
 		$message = implode("<br />", $errors );
-	} else {
-		$message = $user->lang()->translate('Details saved successfully')."!<br /><br />";
-	}
+    }
+	else
+    {
+		$message   = $user->lang()->translate('Details saved successfully')."!<br /><br />";
+        $show_form = false;
+    }
 }
 unset($submit_ok);
 
@@ -184,6 +189,7 @@ $parser->setPath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/'); // if there's a t
 $parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to default dir
 $parser->output('account_preferences_form',
     array(
+        'show_form'             => $show_form,
         'languages'             => $languages,
         'timezones'             => CAT_Helper_DateTime::getTimezones(),
         'current_tz'            => CAT_Helper_DateTime::getTimezone(),

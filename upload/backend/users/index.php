@@ -51,9 +51,9 @@ global $parser;
 // ! Insert values into the modify/remove menu   
 // ============================================= 
 $results = $backend->db()->query("SELECT * FROM `".CAT_TABLE_PREFIX."users` WHERE `user_id` != '1' ORDER BY `display_name`,`username`");
-if ( $backend->db()->is_error())
+if ( $backend->db()->isError())
 {
-	$backend->print_error($backend->db()->get_error(), 'index.php');
+	$backend->print_error($backend->db()->getError(), 'index.php');
 }
 if ( $results->numRows() > 0 )
 {

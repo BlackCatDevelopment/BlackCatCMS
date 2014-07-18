@@ -1,7 +1,8 @@
-<div class="result_message">{$RESULT_MESSAGE}</div>
+{if $RESULT_MESSAGE}<div class="result_message">{$RESULT_MESSAGE}</div>{/if}
 <noscript>
     <div class="result_message">{translate('Please enable JavaScript to use this form.')}</div>
 </noscript>
+{if $show_form}
 <form name="user" action="{$PREFERENCES_URL}" method="post" style="margin-bottom: 5px;" onsubmit="return pf_check_form();">
 	<input type="hidden" name="user_id" value="{$USER_ID}" />
 	<input type="hidden" name="save" value="account_settings" />
@@ -81,6 +82,7 @@
 	<input type="submit" name="submit" value="{translate('Save')}" disabled='disabled' id="user_submit" />
 	<input type="reset" name="reset" value="{translate('Reset')}" />
 </form>
+{/if}
 <script type="text/javascript">
 
 var fileref=document.createElement("link");
@@ -113,4 +115,5 @@ function check_input(aRef) {
 		ref.disabled = (aRef.value.length >= {$AUTH_MIN_LOGIN_LENGTH}) ? false : true;
 	}
 }
+
 </script>

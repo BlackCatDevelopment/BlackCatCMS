@@ -197,9 +197,9 @@ elseif ( $update_section_id != '' )
 // ============================================
 // ! Check for error or print success message
 // ============================================
-if ( $backend->db()->is_error() )
+if ( $backend->db()->isError() )
 {
-	$backend->print_error( $backend->db()->get_error(), CAT_ADMIN_URL . '/pages/modify.php?page_id=' . $page_id );
+	$backend->print_error( $backend->db()->getError(), CAT_ADMIN_URL . '/pages/modify.php?page_id=' . $page_id );
 }
 else
 {

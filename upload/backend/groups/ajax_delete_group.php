@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -78,14 +78,14 @@ if(count($members))
 }
 
 // Delete the group
-$backend->db()->query(sprintf(
-    "DELETE FROM `%sgroups` WHERE `group_id` = %d LIMIT 1",
-    CAT_TABLE_PREFIX, $group_id
-));
-if ( $backend->db()->is_error() )
+$backend->db()->query(
+    "DELETE FROM `:prefix:groups` WHERE `group_id` = :id LIMIT 1",
+    array('id'=>$group_id)
+);
+if ( $backend->db()->isError() )
 {
 	$ajax	= array(
-		'message'	=> $backend->db()->get_error(),
+		'message'	=> $backend->db()->getError(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -101,4 +101,3 @@ else
 	exit();
 }
 exit();
-?>

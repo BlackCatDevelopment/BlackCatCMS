@@ -79,7 +79,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
                 CAT_TABLE_PREFIX, $page_id, $module, $position, $add_to_block
             ));
 
-        	if ( !$self->db()->is_error() )
+        	if ( !$self->db()->isError() )
         		// Get the section id
         		return $self->db()->get_one("SELECT LAST_INSERT_ID()");
             else
@@ -99,7 +99,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
                 CAT_TABLE_PREFIX, $section_id
             ));
 
-        	if ( $self->db()->is_error() )
+        	if ( $self->db()->isError() )
         	{
         		return false;
         	}

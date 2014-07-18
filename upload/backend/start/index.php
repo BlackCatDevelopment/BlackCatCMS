@@ -16,7 +16,7 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license			http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
@@ -41,9 +41,9 @@ if (defined('CAT_PATH')) {
 global $parser;
 
 $backend = CAT_Backend::getInstance('start');
-$user  = CAT_Users::getInstance();
-$lang  = CAT_Helper_I18n::getInstance();
-$widget = CAT_Helper_Widget::getInstance();
+$user    = CAT_Users::getInstance();
+$lang    = CAT_Helper_I18n::getInstance();
+$widget  = CAT_Helper_Widget::getInstance();
 
 // this will redirect to the login page if the permission is not set
 $user->checkPermission('start','start',false);
@@ -86,10 +86,10 @@ foreach(
         'admintools',
     ) as $item
 ) {
-    $tpl_data['sections'][$item]['permission']			              = $user->checkPermission($item,$item,false);
-    $tpl_data['sections'][$item]['name']				              = $item;
-    $tpl_data['sections'][$item]['title']				              = $lang->translate(ucfirst($item));
-    $tpl_data['sections'][$item]['description']			              = ( isset($OVERVIEW[strtoupper($item)]) ? $OVERVIEW[strtoupper($item)] : NULL );
+    $tpl_data['sections'][$item]['permission']  = $user->checkPermission($item,$item,false);
+    $tpl_data['sections'][$item]['name']        = $item;
+    $tpl_data['sections'][$item]['title']       = $lang->translate(ucfirst($item));
+    $tpl_data['sections'][$item]['description'] = ( isset($OVERVIEW[strtoupper($item)]) ? $OVERVIEW[strtoupper($item)] : NULL );
 }
 
 foreach(
@@ -142,6 +142,3 @@ $parser->output('backend_start_index', $tpl_data);
 // ! Print admin footer   
 // ====================== 
 $backend->print_footer();
-
-
-?>

@@ -995,7 +995,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 CAT_Helper_Directory::removeDirectory( $temp_unzip );
                 CAT_Helper_Directory::removeDirectory( $addon_dir );
                 if ( !$silent )
-                    self::printError( $self->db()->get_error() );
+                    self::printError( $self->db()->getError() );
                 return false;
             }
 
@@ -1158,8 +1158,8 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     "DELETE FROM `:prefix:addons` WHERE directory=:dir AND type=:type",
                     array('dir'=>$addon_name, 'type'=>substr($type,0,-1) )
                 );
-                if ( self::getInstance()->db()->is_error() )
-                    return self::getInstance()->db()->get_error();
+                if ( self::getInstance()->db()->isError() )
+                    return self::getInstance()->db()->getError();
                 $stmt = self::getInstance()->db()->query(
                     'SELECT * FROM `:prefix:groups` WHERE group_id <> 1'
                 );
@@ -1200,8 +1200,8 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     "DELETE FROM `:prefix:addons` WHERE directory=:dir AND type=:type",
                     array('dir'=>$addon_name, 'type'=>substr($type,0,-1) )
                 );
-                if ( self::getInstance()->db()->is_error() )
-                    return self::getInstance()->db()->get_error();
+                if ( self::getInstance()->db()->isError() )
+                    return self::getInstance()->db()->getError();
                 unlink( CAT_PATH . '/languages/' . $addon_name . '.php' );
             }
 
@@ -1276,7 +1276,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     }
                     $self->db()->query($sql,$options);
 
-                    if ( $self->db()->is_error() )
+                    if ( $self->db()->isError() )
                         return false;
                 }
                 else
@@ -1338,9 +1338,9 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                             ),
                             array('val'=>$addon_permissions, 'id'=>$gid)
                         );
-                        if ( $self->db()->is_error() )
+                        if ( $self->db()->isError() )
                         {
-                            self::printError( $self->db()->get_error() );
+                            self::printError( $self->db()->getError() );
                             return false;
                         }
                     }
@@ -1370,8 +1370,8 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             $self    = self::getInstance();
             if ( $source != true )
             {
-                $sql     = sprintf( "SELECT `version` FROM `:prefix:addons` WHERE `directory`='%s'", $modulename );
-                $version = $self->db()->get_one( $sql );
+                $sql     = "SELECT `version` FROM `:prefix:addons` WHERE `directory`=:dir";
+                $version = $self->db()->query($sql,array('dir'=>$modulename))->fetchColumn();
             }
             else
             {
@@ -1417,10 +1417,10 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             $self = self::getInstance();
             $self->db()->query($sql,$fields);
 
-            if ( $self->db()->is_error() )
+            if ( $self->db()->isError() )
             {
-                $admin->print_error( $self->db()->get_error() );
-                self::getInstance()->log()->logDebug( 'database error: ' . $self->db()->get_error() );
+                $admin->print_error( $self->db()->getError() );
+                self::getInstance()->log()->logDebug( 'database error: ' . $self->db()->getError() );
             }
         } // end function upgradeModule()
 
@@ -1557,7 +1557,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     'REPLACE INTO `:prefix:class_secure` VALUES ( :id, :path )',
                     array('id'=> $row['addon_id'], 'path'=> '/modules/'.$module.'/'.$filepath )
                 );
-                return ( $self->db()->is_error() ? false : true );
+                return ( $self->db()->isError() ? false : true );
             }
             return true;
         } // end function sec_register_file()

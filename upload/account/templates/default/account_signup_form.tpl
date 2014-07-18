@@ -6,7 +6,6 @@
         <legend class="account_legend">{translate('Sign-up')}</legend>
 {if $ENABLED_ASP}
 <div style="display:none;">
-	<input type="hidden" name="submitted_when" value="{$submitted_when}" />
 	<p class="nixhier">
 	email-address:
 	<label for="email-address">Leave this field email-address blank:</label>

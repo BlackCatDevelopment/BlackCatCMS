@@ -57,12 +57,9 @@ $display_name = ( $display_name == '' ) ? $user->get_display_name() : $display_n
 // ================================================================================== 
 // ! check that display_name is unique in whole system (prevents from User-faking)
 // ================================================================================== 
-$sql = sprintf(
-    'SELECT COUNT(*) FROM `%susers` WHERE `user_id` <> %d AND `display_name` LIKE "%s"',
-    CAT_TABLE_PREFIX, (int)$user->get_user_id(), $display_name
-);
+$sql = 'SELECT COUNT(*) FROM `:prefix:users` WHERE `user_id` <> :id AND `display_name` LIKE :name';
 
-if( $backend->db()->get_one( $sql ) > 0 )
+if( $backend->db()->query($sql,array('id'=>(int)$user->get_user_id(),'name'=>$display_name))->fetchColumn() > 0 )
 {
 	$err_msg[]		= $backend->lang->translate( 'The username you entered is already taken' );
 }
@@ -89,11 +86,8 @@ else
 {
 	// check that email is unique
 	$email = $val->add_slashes($email);
-	$sql   = sprintf(
-        'SELECT COUNT(*) FROM `%susers` WHERE `user_id` <> %d AND `email` LIKE "%s"',
-        CAT_TABLE_PREFIX, (int)$user->get_user_id(), $email
-    );
-	if( $backend->db()->get_one($sql) > 0 )
+	$sql   = 'SELECT COUNT(*) FROM `:prefix:users` WHERE `user_id` <> :id AND `email` LIKE :mail';
+	if( $backend->db()->query($sql,array('id'=>(int)$user->get_user_id(),'mail'=>$email))->fetchColumn() > 0 )
 	{
 		$err_msg[] = $backend->lang()->translate( 'The email you entered is already in use' );
 	}
@@ -164,79 +158,79 @@ if (!count($err_msg))
     );
 
 	if (($stmt = $backend->db()->query($sql)) !== false)
-		{
-			// update successful
-            // --- save additional settings ---
-            $backend->db()->query( 'DELETE FROM `'.CAT_TABLE_PREFIX.'users_options` WHERE `user_id` = ' . $user_id );
-            foreach( $extended as $opt => $check )
-            {
-                $value = $val->sanitizePost($opt);
+	{
+		// update successful
+        // --- save additional settings ---
+        $backend->db()->query( 'DELETE FROM `'.CAT_TABLE_PREFIX.'users_options` WHERE `user_id` = ' . $user_id );
+        foreach( $extended as $opt => $check )
+        {
+            $value = $val->sanitizePost($opt);
 //echo "OPT -$opt- VAL -$value- CHECK -$check- VALID -" . call_user_func($check,$value) . "-\n<br />";
-                if ( $check && ! call_user_func($check,$value) ) continue;
-                $sql = 'INSERT INTO `%susers_options` '
-                     . 'VALUES ( "%d", "%s", "%s" )'
-                     ;
-                $backend->db()->query(sprintf($sql,CAT_TABLE_PREFIX,$user_id,$opt,$value));
-            }
+            if ( $check && ! call_user_func($check,$value) ) continue;
+            $sql = 'INSERT INTO `%susers_options` '
+                 . 'VALUES ( "%d", "%s", "%s" )'
+                 ;
+            $backend->db()->query(sprintf($sql,CAT_TABLE_PREFIX,$user_id,$opt,$value));
+        }
 
-			$_SESSION['DISPLAY_NAME']		= $display_name;
-			$_SESSION['LANGUAGE']			= $language;
-			$_SESSION['EMAIL']				= $email;
-			$_SESSION['TIMEZONE_STRING']	= $timezone_string;
+		$_SESSION['DISPLAY_NAME']		= $display_name;
+		$_SESSION['LANGUAGE']			= $language;
+		$_SESSION['EMAIL']				= $email;
+		$_SESSION['TIMEZONE_STRING']	= $timezone_string;
 
-			date_default_timezone_set($timezone_string);
+		date_default_timezone_set($timezone_string);
 
-			// ====================== 
-			// ! Update date format   
-			// ====================== 
-            $date_format = $val->sanitizePost('date_format');
-			if ( $date_format != '' )
-			{
-				$_SESSION['CAT_DATE_FORMAT'] = $date_format;
-				if ( isset($_SESSION['USE_DEFAULT_DATE_FORMAT']) )
-					unset($_SESSION['USE_DEFAULT_DATE_FORMAT']);
-				}
-			else
-			{
-				$_SESSION['USE_DEFAULT_DATE_FORMAT']	= true;
-				if ( isset($_SESSION['CAT_DATE_FORMAT']) )
-					unset($_SESSION['CAT_DATE_FORMAT']);
-			}
-			// ====================== 
-			// ! Update time format   
-			// ====================== 
-            $time_format = $val->sanitizePost('time_format');
-			if ( $time_format != '' )
-			{
-				$_SESSION['CAT_TIME_FORMAT'] = $time_format;
-				if ( isset($_SESSION['USE_DEFAULT_TIME_FORMAT']) )
-					unset($_SESSION['USE_DEFAULT_TIME_FORMAT']);
-				}
-			else
-			{
-				$_SESSION['USE_DEFAULT_TIME_FORMAT'] = true;
-				if ( isset($_SESSION['CAT_TIME_FORMAT']) )
-					unset($_SESSION['CAT_TIME_FORMAT']);
-			}
+		// ====================== 
+		// ! Update date format   
+		// ====================== 
+        $date_format = $val->sanitizePost('date_format');
+		if ( $date_format != '' )
+		{
+			$_SESSION['CAT_DATE_FORMAT'] = $date_format;
+			if ( isset($_SESSION['USE_DEFAULT_DATE_FORMAT']) )
+				unset($_SESSION['USE_DEFAULT_DATE_FORMAT']);
+		}
+		else
+		{
+			$_SESSION['USE_DEFAULT_DATE_FORMAT'] = true;
+			if ( isset($_SESSION['CAT_DATE_FORMAT']) )
+				unset($_SESSION['CAT_DATE_FORMAT']);
+		}
+		// ====================== 
+		// ! Update time format   
+		// ====================== 
+        $time_format = $val->sanitizePost('time_format');
+		if ( $time_format != '' )
+		{
+			$_SESSION['CAT_TIME_FORMAT'] = $time_format;
+			if ( isset($_SESSION['USE_DEFAULT_TIME_FORMAT']) )
+				unset($_SESSION['USE_DEFAULT_TIME_FORMAT']);
+		}
+		else
+		{
+			$_SESSION['USE_DEFAULT_TIME_FORMAT'] = true;
+			if ( isset($_SESSION['CAT_TIME_FORMAT']) )
+				unset($_SESSION['CAT_TIME_FORMAT']);
+		}
 
-            if( defined('WB2COMPAT') && WB2COMPAT === true )
-				{
-                $wb2compat_format_map = CAT_Registry::get('WB2COMPAT_FORMAT_MAP');
-                $_SESSION['DATE_FORMAT'] = $wb2compat_format_map[$_SESSION['CAT_DATE_FORMAT']];
-                $_SESSION['TIME_FORMAT'] = $wb2compat_format_map[$_SESSION['CAT_TIME_FORMAT']];
-			}
+        if( defined('WB2COMPAT') && WB2COMPAT === true )
+        {
+            $wb2compat_format_map = CAT_Registry::get('WB2COMPAT_FORMAT_MAP');
+            $_SESSION['DATE_FORMAT'] = $wb2compat_format_map[$_SESSION['CAT_DATE_FORMAT']];
+            $_SESSION['TIME_FORMAT'] = $wb2compat_format_map[$_SESSION['CAT_TIME_FORMAT']];
+        }
 
-			// ==================== 
-			// ! Set initial page   
-			// ====================
-            $new_init_page = $val->sanitizePost('init_page_select');
-            if($new_init_page)
-            {
-    			require_once( CAT_PATH . '/modules/initial_page/classes/c_init_page.php' );
-    			$ref	= new c_init_page( $backend->db() );
-    			$ref->update_user( $_SESSION['USER_ID'], $new_init_page );
-    			unset($ref);
-            }
+		// ==================== 
+		// ! Set initial page   
+		// ====================
+        $new_init_page = $val->sanitizePost('init_page_select');
+        if($new_init_page)
+        {
+			require_once( CAT_PATH . '/modules/initial_page/classes/c_init_page.php' );
+			$ref	= new c_init_page( $backend->db() );
+			$ref->update_user( $_SESSION['USER_ID'], $new_init_page );
+			unset($ref);
+        }
 	}
 	else
 	{

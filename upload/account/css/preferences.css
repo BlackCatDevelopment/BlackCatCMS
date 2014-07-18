@@ -2,7 +2,7 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
@@ -21,18 +21,9 @@ fieldset.account_form {
 	margin-bottom: 10px;
 	border: 1px solid #999999;
 }
-label.account_label {
-	display: block;
-	line-height: 1.4em;
-	margin: 7px 0;
-	font-size: 12px;
-	padding-left: 5px;
-}
-input.account_input {
-	width: 250px;
-	overflow:hidden;
-}
-div.account_message {
+label.account_label{display:inline-block;width:200px;line-height:1.4em;margin: 7px 0;font-size: 12px;padding-left: 5px;text-align:right;}
+input.account_input {width: 250px;overflow:hidden;}
+div.account_message, div.result_message {
 	color: #990000;
 	font-size: 12px;
 	font-weight: bold;
@@ -42,8 +33,6 @@ div.account_message {
     margin:10px 5px 15px 0;
 }
 
-
-
-.account_label { float:left; width:250px; text-align:right; margin-right:15px; }
+div.captcha_table{display:inline-block;}
 .account_value input, .account_value select { width:200px; }
-div.account_message { padding: 1em; color: #000; -webkit-border-radius: 4px;-moz-border-radius: 4px;-khtml-border-radius: 4px;border-radius: 4px;}
+div.account_message, div.result_message { padding: 1em; color: #000; -webkit-border-radius: 4px;-moz-border-radius: 4px;-khtml-border-radius: 4px;border-radius: 4px;}

@@ -81,9 +81,9 @@ if ( $page['language'] !== $language )
 // ! check if there's already a page for this lang
 // ===============================================
 $results = $backend->db()->query('SELECT * FROM `' . CAT_TABLE_PREFIX . 'page_langs` WHERE page_id = "' . $page_id . '" AND lang = "'.$language.'"');
-if ( $backend->db()->is_error() )
+if ( $backend->db()->isError() )
 {
-	$backend->print_error( $backend->db()->get_error() );
+	$backend->print_error( $backend->db()->getError() );
 }
 if ( $results->numRows() )
 {
@@ -99,15 +99,15 @@ $backend->db()->query(sprintf(
     CAT_TABLE_PREFIX, $page_id, $language, $link_page_id
 ));
 
-if ( $backend->db()->is_error() )
+if ( $backend->db()->isError() )
 {
-	$backend->print_error($backend->db()->get_error(), CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
+	$backend->print_error($backend->db()->getError(), CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
 }
 
 // Check if there is a db error, otherwise say successful
-if ( $backend->db()->is_error() )
+if ( $backend->db()->isError() )
 {
-	$backend->print_error($backend->db()->get_error(), CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
+	$backend->print_error($backend->db()->getError(), CAT_ADMIN_URL . '/pages/lang_settings.php?page_id=' . $page_id );
 }
 else
 {

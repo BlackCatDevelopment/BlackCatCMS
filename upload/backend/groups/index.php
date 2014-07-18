@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -54,12 +54,12 @@ $tpl_data['permissions']['GROUPS_MODIFY']	= $users->checkPermission('Access','gr
 $tpl_data['permissions']['GROUPS_DELETE']	= $users->checkPermission('Access','groups_delete')	? true : false;
 $tpl_data['permissions']['USERS']			= $users->checkPermission('Access','users')			? true : false;
 
-$tpl_data['templates']		= $addons->get_addons( DEFAULT_TEMPLATE , 'template' );
-$tpl_data['languages']		= $addons->get_addons( DEFAULT_LANGUAGE , 'language' );
-$tpl_data['modules']		= $addons->get_addons( -1 , 'module', 'page' );
-$tpl_data['admintools']		= $addons->get_addons( -1 , 'module', 'tool' );
-$tpl_data['groups']			= $users->get_groups('','',false);
-$tpl_data['members']        = NULL;
+$tpl_data['templates']		                = $addons->get_addons( DEFAULT_TEMPLATE , 'template' );
+$tpl_data['languages']		                = $addons->get_addons( DEFAULT_LANGUAGE , 'language' );
+$tpl_data['modules']		                = $addons->get_addons( -1 , 'module', 'page' );
+$tpl_data['admintools']		                = $addons->get_addons( -1 , 'module', 'tool' );
+$tpl_data['groups']			                = $users->get_groups('','',false);
+$tpl_data['members']                        = NULL;
 
 // ==================== 
 // ! Parse the site   
@@ -70,5 +70,3 @@ $parser->output('backend_groups_index', $tpl_data);
 // ! Print admin footer   
 // ====================== 
 $backend->print_footer();
-
-?>

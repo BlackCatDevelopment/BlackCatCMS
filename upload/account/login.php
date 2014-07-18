@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,46 +32,24 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
 
-// Make sure the login is enabled
-if ( !FRONTEND_LOGIN )
-{
+// this one is only used for the frontend!
+if ( !FRONTEND_LOGIN ) // no frontend login, no preferences
 	if ( INTRO_PAGE )
-	{
-		header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' );
-		exit( 0 );
-	}
+		die( header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' ) );
 	else
-	{
-		header( 'Location: ' . CAT_URL . '/index.php' );
-		exit( 0 );
-	}
-}
+		die( header( 'Location: ' . CAT_URL . '/index.php' ) );
 
-$user      = CAT_Users::getInstance();
-
-// Required page details
-$page_id          = 0;
-$page_description = '';
-$page_keywords    = '';
-define( 'PAGE_ID', 0 );
-define( 'ROOT_PARENT', 0 );
-define( 'PARENT', 0 );
-define( 'LEVEL', 0 );
-define( 'PAGE_TITLE', $user->lang()->translate('Please login') );
-define( 'MENU_TITLE', $user->lang()->translate('Please login') );
-define( 'VISIBILITY', 'public' );
+CAT_Helper_Page::getVirtualPage('Please login');
 
 // Set the page content include file
-define( 'PAGE_CONTENT', CAT_PATH . '/account/login_form.php' );
+define( 'PAGE_CONTENT', CAT_PATH.'/account/login_form.php' );
 
 // Include the index (wrapper) file
-require( CAT_PATH . '/index.php' );
-
-?>
+require CAT_PATH.'/index.php';

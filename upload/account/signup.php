@@ -15,16 +15,16 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,40 +32,28 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
 
+
 $val  = CAT_Helper_Validate::getInstance();
 $user = CAT_Users::getInstance();
 $id   = $user->get_user_id();
 
-if(!( intval(FRONTEND_SIGNUP) && (  0 == ($id ? $id : 0) )))
-{
-	if(INTRO_PAGE) {
-		header('Location: '.CAT_URL.PAGES_DIRECTORY.'/index.php');
-		exit(0);
-	} else {
-		header('Location: '.CAT_URL.'/index.php');
-		exit(0);
-	}
-}
+// this one is only used for the frontend!
+if ( !FRONTEND_LOGIN || !FRONTEND_SIGNUP ) // no frontend login, no sign up
+	if ( INTRO_PAGE )
+		die( header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' ) );
+	else
+		die( header( 'Location: ' . CAT_URL . '/index.php' ) );
 
-// Required page details
-$page_id          = 0;
-$page_description = '';
-$page_keywords    = '';
-CAT_Registry::register( 'PAGE_ID', 0, true );
-CAT_Registry::register( 'ROOT_PARENT', 0, true );
-CAT_Registry::register( 'PARENT', 0, true );
-CAT_Registry::register( 'LEVEL', 0, true );
-CAT_Registry::register( 'PAGE_TITLE', $val->lang()->translate('Sign-up'), true );
-CAT_Registry::register( 'MENU_TITLE', $val->lang()->translate('Sign-up'), true );
-CAT_Registry::register( 'MODULE', '', true );
-CAT_Registry::register( 'VISIBILITY', 'public', true );
+CAT_Helper_Page::getVirtualPage('Sign-up');
+
+CAT_Helper_Page::addCSS(CAT_URL.'/account/css/preferences.css');
 
 CAT_Registry::register( 'PAGE_CONTENT', CAT_PATH . '/account/signup_form.php', true );
 
@@ -74,5 +62,3 @@ $auto_auth = false;
 
 // Include the index (wrapper) file
 require( CAT_PATH . '/index.php' );
-
-?>

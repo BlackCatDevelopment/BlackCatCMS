@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -77,9 +77,9 @@ if ( ! is_array($info) || ! count($info) )
 	exit();
 }
 $addon = array(
-    'type' => $info['addon_function'],
+    'type'      => $info['addon_function'],
     'installed' => NULL,
-    'upgraded' => NULL,
+    'upgraded'  => NULL,
     'removable' => 'Y',
 );
 foreach($info as $key => $value)
@@ -167,7 +167,7 @@ if($addon['type'] == 'language')
 else
 {
     // check if a module description exists for the displayed backend language
-    $langfile            = false;
+    $langfile = false;
     // for modules, look for a language file for current language
     $langfile = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$addon['type'].'s/'.$addon['directory'].'/languages/'.LANGUAGE.'.php');
     if ( function_exists('file_get_contents') && file_exists($langfile) )

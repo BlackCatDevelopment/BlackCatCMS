@@ -84,10 +84,10 @@ $results		= $backend->db()->query(sprintf(
     CAT_TABLE_PREFIX, $page_id
 ));
 
-if ( $backend->db()->is_error() )
+if ( $backend->db()->isError() )
 {
 	$ajax	= array(
-		'message'	=> $backend->db()->get_error(),
+		'message'	=> $backend->db()->getError(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
@@ -175,7 +175,7 @@ $ajax	= array(
 	'viewing_groups'			=> explode(',', str_replace('_', '', $results_array['viewing_groups']) ),
 
 	'parent_list'				=> $pages,
-	'PAGE_EXTENSION'			=> $backend->db()->get_one(sprintf("SELECT value FROM `%ssettings` WHERE name = 'page_extension'",CAT_TABLE_PREFIX)),
+	'PAGE_EXTENSION'			=> $backend->db()->query("SELECT `value` FROM `:prefix:settings` WHERE name = 'page_extension'")->fetchColumn(),
 );
 
 $ajax['variants'] = array();

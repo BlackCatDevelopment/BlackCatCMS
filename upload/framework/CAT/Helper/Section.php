@@ -77,7 +77,7 @@ if (!class_exists('CAT_Helper_Section'))
                 'INSERT INTO `%ssections` SET `page_id`=%d, `module`="%s", `position`=%d, `block`=%d;',
                 CAT_TABLE_PREFIX, $page_id, $module, $position, $add_to_block
             ));
-        	if ( !self::$instance->db()->is_error() )
+        	if ( !self::$instance->db()->isError() )
         	{
         		$section_id = self::$instance->db()->get_one("SELECT LAST_INSERT_ID()");
         		if ( file_exists( CAT_PATH . '/modules/' . $module . '/add.php') )
@@ -188,7 +188,7 @@ if (!class_exists('CAT_Helper_Section'))
                 $sql,
                 CAT_TABLE_PREFIX, $section_id
             ));
-            return self::getInstance()->db()->is_error()
+            return self::getInstance()->db()->isError()
                 ? false
                 : true;
         }   // end function updateSection()
@@ -205,7 +205,7 @@ if (!class_exists('CAT_Helper_Section'))
                 'DELETE FROM `%ssections` WHERE `section_id` = %d LIMIT 1',
                 CAT_TABLE_PREFIX, $section_id
             ));
-            return self::getInstance()->db()->is_error()
+            return self::getInstance()->db()->isError()
                 ? false
                 : true;
         }   // end function deleteSection()

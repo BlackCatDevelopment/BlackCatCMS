@@ -164,7 +164,7 @@ $page_id = CAT_Helper_Page::addPage($options);
 if ( !$page_id )
 {
     $ajax    = array(
-        'message'    => $backend->lang()->translate('Unable to create the page: ') . $backend->db()->get_error(),
+        'message'    => $backend->lang()->translate('Unable to create the page: ') . $backend->db()->getError(),
         'success'    => false
     );
     print json_encode( $ajax );
@@ -185,7 +185,7 @@ if (!$result)
     // try to recover = delete page
     CAT_Helper_Page::deletePage($page_id);
     $ajax    = array(
-        'message'    => $backend->db()->get_error(),
+        'message'    => $backend->db()->getError(),
         'success'    => false
     );
     print json_encode( $ajax );
@@ -221,7 +221,7 @@ $backend->db()->query(sprintf(
 // ======================
 // ! Get the section id
 // ======================
-$section_id = $backend->db()->get_one("SELECT LAST_INSERT_ID()");
+$section_id = $backend->db()->lastInsertId();
 
 //
 // ! Keep old modules happy
@@ -237,10 +237,10 @@ if ( file_exists(CAT_PATH . '/modules/' . $module . '/add.php') )
 // ==============================
 // ! Check if there is a db error
 // ==============================
-if ( $backend->db()->is_error() )
+if ( $backend->db()->isError() )
 {
     $ajax    = array(
-        'message'    => $backend->db()->get_error(),
+        'message'    => $backend->db()->getError(),
         'success'    => false
     );
     print json_encode( $ajax );

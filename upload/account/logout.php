@@ -1,26 +1,30 @@
 <?php
 
 /**
- * This file is part of Black Cat CMS Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
- * @author          Website Baker Project, LEPTON Project
- * @copyright       2004-2010, Website Baker Project
- * @copyright       2010-2011, LEPTON Project
- * @link            http://www.LEPTON-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
- * @license_terms   please see LICENSE and COPYING files in your package
- * @reformatted     2011-10-04
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
+ *   @author          Black Cat Development
+ *   @copyright       2014, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -28,32 +32,26 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
-$_SESSION[ 'USER_ID' ]            = null;
-$_SESSION[ 'GROUP_ID' ]           = null;
-$_SESSION[ 'GROUPS_ID' ]          = null;
-$_SESSION[ 'USERNAME' ]           = null;
-$_SESSION[ 'PAGE_PERMISSIONS' ]   = null;
-$_SESSION[ 'SYSTEM_PERMISSIONS' ] = null;
-$_SESSION                         = array();
+$_SESSION['USER_ID']            = null;
+$_SESSION['GROUP_ID']           = null;
+$_SESSION['GROUPS_ID']          = null;
+$_SESSION['USERNAME']           = null;
+$_SESSION['PAGE_PERMISSIONS']   = null;
+$_SESSION['SYSTEM_PERMISSIONS'] = null;
+$_SESSION                       = array(); // in fact, this should be enough
+
+unset($_COOKIE[session_name()]);
 session_unset();
-unset( $_COOKIE[ session_name() ] );
 session_destroy();
 
 if ( INTRO_PAGE )
-{
 	header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' );
-}
 else
-{
 	header( 'Location: ' . CAT_URL . '/index.php' );
-}
-
-?>

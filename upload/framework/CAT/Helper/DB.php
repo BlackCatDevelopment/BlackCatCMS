@@ -34,6 +34,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
         private static $instance = NULL;
         private static $conn     = NULL;
         private static $prefix   = NULL;
+        private static $qb       = NULL;
 
         private $lasterror       = NULL;
         private $classLoader     = NULL;
@@ -82,6 +83,18 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
         {
             return self::$prefix;
         }   // end function prefix()
+
+        /**
+         * accessor to query builder
+         **/
+        public static function qb()
+        {
+            if(!is_object(self::$qb))
+                self::$qb = self::$conn->createQueryBuilder();
+            // reset
+            self::$qb->resetQueryParts();
+            return self::$qb;
+        }   // end function qb()
 
         /**
          * connect to the database; returns Doctrine connection

@@ -182,7 +182,7 @@ elseif ( $delete_section_id )
     if(!CAT_Helper_Section::deleteSection($delete_section_id))
 	{
 		$ajax	= array(
-			'message'	=> CAT_Helper_Section::getInstance()->db()->get_error(),
+			'message'	=> CAT_Helper_Section::getInstance()->db()->getError(),
 			'success'	=> false
 		);
 		print json_encode( $ajax );
@@ -268,7 +268,7 @@ elseif ( $update_section_id )
 	if(!CAT_Helper_Section::updateSection($update_section_id,$options))
 	{
 		$ajax	= array(
-			'message'	=> $backend->lang()->translate('Unable to save section: '.CAT_Helper_Section::getInstance()->db()->get_error()),
+			'message'	=> $backend->lang()->translate('Unable to save section: '.CAT_Helper_Section::getInstance()->db()->getError()),
 			'success'	=> false
 		);
 		print json_encode( $ajax );

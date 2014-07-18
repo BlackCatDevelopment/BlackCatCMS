@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -56,6 +56,5 @@ $parser->output('account_login_form',
         'username_fieldname' => $username_fieldname,
         'password_fieldname' => $password_fieldname,
         'redirect_url'       => ( $redirect ? $redirect : '' ),
-
     )
 );

@@ -15,11 +15,12 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
+ *   @review          17.07.2014 17:04:07
  *
  */
 
@@ -49,40 +50,37 @@ if (!class_exists('CAT_Backend', false))
         {
             if (!self::$instance)
             {
-                //register_shutdown_function('CAT_Backend::print_footer');
                 self::$instance = new self();
                 if(!CAT_Registry::defined('CAT_INITIALIZED'))
-                include CAT_PATH.'/framework/initialize.php';
+                    include CAT_PATH.'/framework/initialize.php';
                 $user = CAT_Users::getInstance();
                 if($user->is_authenticated() == false && !defined('CAT_INSTALL_PROCESS'))
                 {
-    				header('Location: '.CAT_ADMIN_URL.'/login/index.php');
-    				exit(0);
-    			}
+                    header('Location: '.CAT_ADMIN_URL.'/login/index.php');
+                    exit(0);
+                }
                 self::$instance->section_name = $section_name;
                 global $parser;
                 self::initPaths();
                 $parser->setGlobals('TEMPLATE_MENU', CAT_Helper_Template::get_template_menus());
                 // Auto header code
                 if($auto_header == true)
-                {
-        			self::$instance->print_header();
-        		}
+                    self::$instance->print_header();
             }
             return self::$instance;
         }   // end function getInstance()
 
-    	/**
-    	 * Returns a system permission for a menu link
-    	 *
-    	 * !!!FAKE FOR NOW!!!
-    	 *
-    	 * @access public
-    	 * @return boolean
-    	 **/
-    	public function get_link_permission($title) {
+        /**
+         * Returns a system permission for a menu link
+         *
+         * !!!FAKE FOR NOW!!!
+         *
+         * @access public
+         * @return boolean
+         **/
+        public function get_link_permission($title) {
             return true;
-    	}
+        }
 
         /**
          * returns a list of backend pages (used for "initial page")
@@ -94,21 +92,22 @@ if (!class_exists('CAT_Backend', false))
         {
             $self = self::getInstance('start','start',false);
             return array (
-    			$self->lang()->translate('Start') => 'start/index.php',
-    			$self->lang()->translate('Addons') => 'addons/index.php',
-    			$self->lang()->translate('Admin-Tools') => 'admintools/index.php',
-    			$self->lang()->translate('Groups') => 'groups/index.php',
-    			$self->lang()->translate('Media') => 'media/index.php',
-    			$self->lang()->translate('Preferences') => 'preferences/index.php',
-    			$self->lang()->translate('Settings') => 'settings/index.php',
-    			$self->lang()->translate('Users') => 'users/index.php',
-    		);
+                $self->lang()->translate('Start')       => 'start/index.php',
+                $self->lang()->translate('Addons')      => 'addons/index.php',
+                $self->lang()->translate('Admin-Tools') => 'admintools/index.php',
+                $self->lang()->translate('Groups')      => 'groups/index.php',
+                $self->lang()->translate('Media')       => 'media/index.php',
+                $self->lang()->translate('Preferences') => 'preferences/index.php',
+                $self->lang()->translate('Settings')    => 'settings/index.php',
+                $self->lang()->translate('Users')       => 'users/index.php',
+            );
         }   // end function getPages()
 
         /**
+         * prints the top of the backend page
          *
          * @access public
-         * @return
+         * @return void
          **/
         public static function print_banner()
         {
@@ -118,14 +117,14 @@ if (!class_exists('CAT_Backend', false))
             $tpl_data      = array();
             foreach($results_array as $key => $value)
                 $tpl_data[strtoupper($key)] = $value;
-            $tpl_data['MODIFIED_BY']				= $user['display_name'];
-            $tpl_data['MODIFIED_BY_USERNAME']		= $user['username'];
-            $tpl_data['MODIFIED_WHEN']		        = ($results_array['modified_when'] != 0)
-                                                    ? $modified_ts = CAT_Helper_DateTime::getDateTime($results_array['modified_when'])
-                                                    : false;
-            $tpl_data['PAGE_HEADER']                = self::getInstance('')->lang()->translate('Modify page');
-            $tpl_data['CUR_TAB']                    = 'modify';
-            $tpl_data['PAGE_LINK']					= CAT_Helper_Page::getLink($results_array['page_id']);
+            $tpl_data['MODIFIED_BY']          = $user['display_name'];
+            $tpl_data['MODIFIED_BY_USERNAME'] = $user['username'];
+            $tpl_data['MODIFIED_WHEN']        = ($results_array['modified_when'] != 0)
+                                              ? $modified_ts = CAT_Helper_DateTime::getDateTime($results_array['modified_when'])
+                                              : false;
+            $tpl_data['PAGE_HEADER']          = self::getInstance('')->lang()->translate('Modify page');
+            $tpl_data['CUR_TAB']              = 'modify';
+            $tpl_data['PAGE_LINK']            = CAT_Helper_Page::getLink($results_array['page_id']);
             $parser->output('backend_pages_header',$tpl_data);
             $parser->output('backend_pages_banner',$tpl_data);
         }   // end function print_banner()()
@@ -135,6 +134,7 @@ if (!class_exists('CAT_Backend', false))
          *  Print the admin header
          *
          *  @access public
+         *  @return void
          */
         public function print_header()
         {
@@ -146,10 +146,9 @@ if (!class_exists('CAT_Backend', false))
             // Connect to database and get website title
             if(!CAT_Registry::exists('WEBSITE_TITLE'))
             {
-            $title = $this->db()->get_one(sprintf(
-                "SELECT `value` FROM `%ssettings` WHERE `name`='website_title'",
-                CAT_TABLE_PREFIX
-            ));
+                $title = $this->db()->query(
+                    "SELECT `value` FROM `:prefix:settings` WHERE `name`='website_title'"
+                )->fetchColumn();
                 CAT_Registry::define('WEBSITE_TITLE',$title,true);
             }
 
@@ -180,7 +179,7 @@ if (!class_exists('CAT_Backend', false))
                 // ==========================
                 // ! Get info for pagesTree
                 // ==========================
-                $pages = CAT_Helper_Page::getPages(true);
+                $pages    = CAT_Helper_Page::getPages(true);
                 $sections = CAT_Helper_Page::getSections();
                 // create LI content for ListBuilder
                 foreach($pages as $i => $page)
@@ -193,7 +192,6 @@ if (!class_exists('CAT_Backend', false))
                             $page['page_title'] .= "\n".$item['module'].' (ID:'.$item['section_id'].')';
                         }
                     }
-
                     $text = $parser->get(
                         'backend_pagetree_item',
                         array_merge(
@@ -205,7 +203,7 @@ if (!class_exists('CAT_Backend', false))
                             )
                         )
                     );
-    $pages[$i]['text'] = $text;
+                    $pages[$i]['text'] = $text;
                 }
 
                 // list of first level of pages
@@ -251,37 +249,15 @@ if (!class_exists('CAT_Backend', false))
             $tpl_data['CAT_CORE']              = CAT_Registry::get('CAT_CORE');
             $tpl_data['PAGE_EXTENSION']        = CAT_Registry::get('PAGE_EXTENSION');
 
-            $date_search             = array(
-                'Y',
-                'j',
-                'n',
-                'jS',
-                'l',
-                'F'
-            );
-            $date_replace            = array(
-                'yy',
-                'y',
-                'm',
-                'd',
-                'DD',
-                'MM'
-            );
+            $date_search  = array('Y','j','n','jS','l','F');
+            $date_replace = array('yy','y','m','d','DD','MM');
             $tpl_data['DATE_FORMAT'] = str_replace($date_search, $date_replace, CAT_Registry::get('CAT_DATE_FORMAT'));
-            $time_search             = array(
-                'H',
-                'i',
-                's',
-                'g'
-            );
-            $time_replace            = array(
-                'hh',
-                'mm',
-                'ss',
-                'h'
-            );
+
+            $time_search  = array('H','i','s','g');
+            $time_replace = array('hh','mm','ss','h');
             $tpl_data['TIME_FORMAT'] = str_replace($time_search, $time_replace, CAT_Registry::get('TIME_FORMAT'));
-            $tpl_data['SESSION']	 = session_name();
+
+            $tpl_data['SESSION']     = session_name();
 
             $tpl_data['HEAD']['SECTION_NAME'] = $this->lang()->translate(strtoupper(self::$instance->section_name));
             $tpl_data['DISPLAY_NAME']         = $user->get_display_name();
@@ -293,46 +269,46 @@ if (!class_exists('CAT_Backend', false))
             $tpl_data['MAIN_MENU'] = array();
 
             $tpl_data['MAIN_MENU'][0] = array(
-                'link' => CAT_ADMIN_URL . '/start/index.php',
-                'title' => $this->lang()->translate('Start'),
+                'link'             => CAT_ADMIN_URL . '/start/index.php',
+                'title'            => $this->lang()->translate('Start'),
                 'permission_title' => 'start',
-                'permission' => ($user->checkPermission('start', 'start')) ? true : false,
-                'current' => ('start' == strtolower($this->section_name)) ? true : false
+                'permission'       => ($user->checkPermission('start', 'start')) ? true : false,
+                'current'          => ('start' == strtolower($this->section_name)) ? true : false
             );
             $tpl_data['MAIN_MENU'][1] = array(
-                'link' => CAT_ADMIN_URL . '/media/index.php',
-                'title' => $this->lang()->translate('Media'),
+                'link'             => CAT_ADMIN_URL . '/media/index.php',
+                'title'            => $this->lang()->translate('Media'),
                 'permission_title' => 'media',
-                'permission' => ($user->checkPermission('media', 'media')) ? true : false,
-                'current' => ('media' == strtolower($this->section_name)) ? true : false
+                'permission'       => ($user->checkPermission('media', 'media')) ? true : false,
+                'current'          => ('media' == strtolower($this->section_name)) ? true : false
             );
             $tpl_data['MAIN_MENU'][2] = array(
-                'link' => CAT_ADMIN_URL . '/settings/index.php',
-                'title' => $this->lang()->translate('Settings'),
+                'link'             => CAT_ADMIN_URL . '/settings/index.php',
+                'title'            => $this->lang()->translate('Settings'),
                 'permission_title' => 'settings',
-                'permission' => ($user->checkPermission('settings', 'settings')) ? true : false,
-                'current' => ('settings' == strtolower($this->section_name)) ? true : false
+                'permission'       => ($user->checkPermission('settings', 'settings')) ? true : false,
+                'current'          => ('settings' == strtolower($this->section_name)) ? true : false
             );
             $tpl_data['MAIN_MENU'][3] = array(
-                'link' => CAT_ADMIN_URL . '/addons/index.php',
-                'title' => $this->lang()->translate('Addons'),
+                'link'             => CAT_ADMIN_URL . '/addons/index.php',
+                'title'            => $this->lang()->translate('Addons'),
                 'permission_title' => 'addons',
-                'permission' => ($user->checkPermission('addons', 'addons')) ? true : false,
-                'current' => ('addons' == strtolower($this->section_name)) ? true : false
+                'permission'       => ($user->checkPermission('addons', 'addons')) ? true : false,
+                'current'          => ('addons' == strtolower($this->section_name)) ? true : false
             );
             $tpl_data['MAIN_MENU'][4] = array(
-                'link' => CAT_ADMIN_URL . '/admintools/index.php',
-                'title' => $this->lang()->translate('Admin-Tools'),
+                'link'             => CAT_ADMIN_URL . '/admintools/index.php',
+                'title'            => $this->lang()->translate('Admin-Tools'),
                 'permission_title' => 'admintools',
-                'permission' => ($user->checkPermission('admintools', 'admintools')) ? true : false,
-                'current' => ('admintools' == strtolower($this->section_name)) ? true : false
+                'permission'       => ($user->checkPermission('admintools', 'admintools')) ? true : false,
+                'current'          => ('admintools' == strtolower($this->section_name)) ? true : false
             );
             $tpl_data['MAIN_MENU'][5] = array(
-                'link' => CAT_ADMIN_URL . '/users/index.php',
-                'title' => $this->lang()->translate('Access'),
+                'link'             => CAT_ADMIN_URL . '/users/index.php',
+                'title'            => $this->lang()->translate('Access'),
                 'permission_title' => 'access',
-                'permission' => ($user->checkPermission('access', 'access')) ? true : false,
-                'current' => ('access' == strtolower($this->section_name)) ? true : false
+                'permission'       => ($user->checkPermission('access', 'access')) ? true : false,
+                'current'          => ('access' == strtolower($this->section_name)) ? true : false
             );
 
             // =======================================
@@ -386,10 +362,10 @@ if (!class_exists('CAT_Backend', false))
             // init template search paths
             self::initPaths();
 
-            $data['CAT_VERSION']                = CAT_Registry::get('CAT_VERSION');
-            $data['CAT_BUILD']                  = CAT_Registry::get('CAT_BUILD');
-            $data['CAT_CORE']                   = CAT_Registry::get('CAT_CORE');
-            $data['permissions']['pages']       = CAT_Users::checkPermission('pages','pages') ? true : false;
+            $data['CAT_VERSION']          = CAT_Registry::get('CAT_VERSION');
+            $data['CAT_BUILD']            = CAT_Registry::get('CAT_BUILD');
+            $data['CAT_CORE']             = CAT_Registry::get('CAT_CORE');
+            $data['permissions']['pages'] = CAT_Users::checkPermission('pages','pages') ? true : false;
 
             $self = ( isset($this) && is_object($this) ) ? $this : self::getInstance();
 
@@ -400,29 +376,29 @@ if (!class_exists('CAT_Backend', false))
             if (defined('DEFAULT_THEME'))
             {
                 $backend_theme_version
-                    = $self->db()->get_one(sprintf(
-                          "SELECT `version` from `%saddons` where `directory`= '%s'",
-                          CAT_TABLE_PREFIX,DEFAULT_THEME
-                      ));
+                    = $self->db()->query(
+                          "SELECT `version` from `:prefix:addons` where `directory`=:theme",
+                          array('theme'=>DEFAULT_THEME)
+                      )->fetchColumn();
             }
             $data['THEME_VERSION'] = $backend_theme_version;
             $data['THEME_NAME']    = DEFAULT_THEME;
 
             global $_be_mem, $_be_time;
-			$data['system_information'] = array(
+            $data['system_information'] = array(
                 array(
                     'name'      => $self->lang()->translate('PHP version'),
                     'status'    => phpversion(),
                 ),
-				array(
-					'name'		=> $self->lang()->translate('Memory usage'),
-					'status'	=> '~ ' . sprintf('%0.2f',( (memory_get_usage() - $_be_mem) / (1024 * 1024) )) . ' MB'
-				),
+                array(
+                    'name'      => $self->lang()->translate('Memory usage'),
+                    'status'    => '~ ' . sprintf('%0.2f',( (memory_get_usage() - $_be_mem) / (1024 * 1024) )) . ' MB'
+                ),
                 array(
                     'name'      => $self->lang()->translate('Script run time'),
                     'status'    => '~ ' . sprintf('%0.2f',( microtime(TRUE) - $_be_time )) . ' sec'
                 ),
-			);
+            );
 
             // ====================
             // ! Parse the footer
@@ -433,45 +409,44 @@ if (!class_exists('CAT_Backend', false))
             // ! make sure to flush the output buffer
             // ======================================
             if(ob_get_level()>1)
-            {
                 while (ob_get_level() > 0)
-                {
                     ob_end_flush();
-                }
-            }
-
-            // ===================
-            // ! Droplet support
-            // ===================
-            /*
-            $this->html_output_storage = ob_get_contents();
-            ob_clean();
-
-            if ( true === $this->droplets_ok )
-            {
-                $this->html_output_storage = evalDroplets($this->html_output_storage);
-            }
-            echo $this->html_output_storage;
-            */
 
         }   // end function print_footer()
 
+        /**
+         * print error message and exit
+         *
+         * @access public
+         * @param  string  $message
+         * @param  string  $redirect     - default 'index.php'
+         * @param  boolean $print_header - default true
+         **/
         public function print_error($message, $redirect = 'index.php', $print_header = true)
         {
             CAT_Object::printError($message,$redirect,$print_header);
             self::print_footer();
             exit();
-        }
-    	public function print_success($message, $redirect = 'index.php', $auto_footer = true)
-    	{
-            CAT_Backend::updateWhenModified();
-    		CAT_Object::printMsg($message,$redirect,$auto_footer);
-    	}
-
+        }   // end function print_error()
         /**
+         * print message
          *
          * @access public
-         * @return
+         * @param  string  $message
+         * @param  string  $redirect    - default 'index.php'
+         * @param  boolean $auto_footer - default true
+         **/
+        public function print_success($message, $redirect = 'index.php', $auto_footer = true)
+        {
+            CAT_Backend::updateWhenModified();
+            CAT_Object::printMsg($message,$redirect,$auto_footer);
+        }   // end function print_success()
+
+        /**
+         * checks if the current path is inside the backend folder
+         *
+         * @access public
+         * @return boolean
          **/
         public static function isBackend()
         {
@@ -522,16 +497,16 @@ if (!class_exists('CAT_Backend', false))
             global $update_when_modified, $page_id, $section_id;
             // if changes were made, the var might be set
             if(isset($update_when_modified) && $update_when_modified == true) {
-           	    self::getInstance()->db()->query(sprintf(
-                    "UPDATE `%spages` SET modified_when = '%s', modified_by = '%d' WHERE page_id = %d",
-                    CAT_TABLE_PREFIX,time(),CAT_Users::get_user_id(),$page_id
-                ));
+                self::getInstance()->db()->query(
+                    "UPDATE `:prefix:pages` SET modified_when=:mod, modified_by=:by WHERE page_id=:id",
+                    array('mod'=>time(),'by'=>CAT_Users::get_user_id(),'id'=>$page_id)
+                );
                 if ( $section_id )
                 {
-                    self::getInstance()->db()->query(sprintf(
-                        "UPDATE `%ssections` SET modified_when = '%s', modified_by = '%d' WHERE section_id = %d",
-                        CAT_TABLE_PREFIX,time(),CAT_Users::get_user_id(),$section_id
-                    ));
+                    self::getInstance()->db()->query(
+                        "UPDATE `:prefix:sections` SET modified_when=:mod, modified_by=:by WHERE section_id=:id",
+                        array('mod'=>time(),'by'=>CAT_Users::get_user_id(),'id'=>$section_id)
+                    );
                 }
             }
         }   // end function updateWhenModified()

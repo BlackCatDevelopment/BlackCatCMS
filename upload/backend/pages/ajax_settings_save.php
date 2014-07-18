@@ -126,11 +126,12 @@ if ( $options['parent'] != '0' )
 {
     $options['level']       = CAT_Helper_Page::properties($options['parent'],'level') + 1;
 }
-    $options['root_parent']
-        = ($options['level'] == 1)
-        ? $options['parent']
-        : CAT_Helper_Page::getRootParent($options['parent'])
-        ;
+
+$options['root_parent']
+    = ($options['level'] == 1)
+    ? $options['parent']
+    : CAT_Helper_Page::getRootParent($options['parent'])
+    ;
 
 // changes the values in the options array
 CAT_Helper_Page::sanitizeLink($options);
@@ -165,7 +166,7 @@ if(substr($options['page_trail'],0,1)==0)
 if ( CAT_Helper_Page::updatePage($page_id,$options) === false )
 {
     $ajax    = array(
-        'message'    => 'Database error: '.$backend->db()->get_error(),
+        'message'    => 'Database error: '.$backend->db()->getError(),
         'success'    => false
     );
     print json_encode( $ajax );
@@ -261,10 +262,10 @@ if ( $options['link'] !== $old_link )
 // ==============================
 // ! Check if there is a db error
 // ==============================
-if ( CAT_Helper_Page::getInstance()->db()->is_error() )
+if ( CAT_Helper_Page::getInstance()->db()->isError() )
 {
 	$ajax	= array(
-		'message'		=> CAT_Helper_Page::getInstance()->db()->get_error(),
+		'message'		=> CAT_Helper_Page::getInstance()->db()->getError(),
 		'success'		=> false
 	);
 	print json_encode( $ajax );

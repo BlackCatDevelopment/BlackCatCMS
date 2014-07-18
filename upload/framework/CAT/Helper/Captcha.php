@@ -58,6 +58,22 @@ if (!class_exists('CAT_Helper_Captcha'))
         }   // end function __call()
 
         /**
+         * get captcha; the difference between get() and show() is that get()
+         * returns the Captcha HTML while show() prints it (echo)
+         *
+         **/
+        public static function get($action='all',$style='',$sec_id='')
+        {
+echo "get()<br /><textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
+print_r( $_SESSION );
+echo "</textarea>";
+            ob_start();
+                self::show($action,$style,$sec_id);
+                $return = ob_get_clean();
+            return $return;
+        }
+
+        /**
          * shows a captcha; uses securImage if it is installed and GD is
          * available; uses old WB style captchas if not
          *
@@ -137,7 +153,11 @@ if (!class_exists('CAT_Helper_Captcha'))
          * @return
          **/
         private static function wbstyle($action='all', $style='', $sec_id='') {
-            @include_once CAT_PATH.'/framework/CAT/Helper/Captcha/WB/captcha.php';
+            @include CAT_PATH.'/framework/CAT/Helper/Captcha/WB/captcha.php';
+#$fh = fopen(CAT_PATH.'/temp/captcha_'.time().'.txt','w');
+#fwrite($fh,"Action -$action-, Style -$style-, Sec -$sec_id-\n");
+#fwrite($fh,print_r(debug_backtrace(),1));
+#fclose($fh);
             return wb_call_captcha($action, $style, $sec_id);
         }   // end function wbstyle()
         
@@ -148,10 +168,11 @@ if (!class_exists('CAT_Helper_Captcha'))
          **/
         public static function wbstyle_check() {
             self::getInstance()->log()->LogDebug('checking captcha',$_POST);
-            if(isset($_POST['captcha']) AND $_POST['captcha'] != '')
+            if(isset($_POST['captcha']) && $_POST['captcha'] != '')
             {
+                $key = 'captcha';
                 // Check for a mismatch
-				if(!isset($_POST['captcha']) || !isset($_SESSION['captcha']) || $_POST['captcha'] != $_SESSION['captcha'])
+				if(!isset($_POST['captcha']) || !isset($_SESSION[$key]) || $_POST['captcha'] != $_SESSION[$key])
 					return false;
                 else
                     return true;

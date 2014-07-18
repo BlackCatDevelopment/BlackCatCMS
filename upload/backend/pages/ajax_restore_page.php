@@ -133,10 +133,10 @@ if ( CAT_Registry::get('PAGE_TRASH') !== 'false' )
 }
 
 // Check if there is a db error, otherwise say successful
-if ( $backend->db()->is_error() )
+if ( $backend->db()->isError() )
 {
 	$ajax	= array(
-		'message'	=> $backend->db()->get_error(),
+		'message'	=> $backend->db()->getError(),
 		'success'	=> false
 	);
 	print json_encode( $ajax );
