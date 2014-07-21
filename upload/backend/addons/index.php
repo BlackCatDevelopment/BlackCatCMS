@@ -15,11 +15,12 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
+ *   @review          21.07.2014 18:20:07
  *
  */
 
@@ -40,8 +41,7 @@ if (defined('CAT_PATH')) {
 }
 
 global $parser;
-$tpl_data = array();
-
+$tpl_data  = array();
 $backend   = CAT_Backend::getInstance('Addons', 'addons');
 $users     = CAT_Users::getInstance();
 $addons    = CAT_Helper_Addons::get_addons();
@@ -61,6 +61,7 @@ foreach( $addons as $addon )
         $seen_dirs[] = $addon['directory'];
         continue;
     }
+
     // ==================================================
     // ! Check whether icon is available for the module
     // ==================================================

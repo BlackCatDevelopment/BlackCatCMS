@@ -1,24 +1,30 @@
 <?php
 
 /**
- * This file is part of LEPTON2 Core, released under the GNU GPL
- * Please see LICENSE and COPYING files in your package for details, specially for terms and warranties.
- * 
- * NOTICE:LEPTON CMS Package has several different licenses.
- * Please see the individual license in the header of each single file or info.php of modules and templates.
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or (at
+ *   your option) any later version.
  *
- * @author			LEPTON2 Project
- * @copyright		2012, LEPTON2 Project
- * @link			http://lepton2.org
- * @license			http://www.gnu.org/licenses/gpl.html
- * @license_terms	please see LICENSE and COPYING files in your package
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   General Public License for more details.
  *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   @author          Black Cat Development
+ *   @copyright       2014, Black Cat Development
+ *   @link            http://blackcat-cms.org
+ *   @license         http://www.gnu.org/licenses/gpl.html
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
- 
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -26,21 +32,16 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
-// delete most critical session variables manually
-$_SESSION['USER_ID'] = null;
-$_SESSION['GROUP_ID'] = null;
-$_SESSION['GROUPS_ID'] = null;
-$_SESSION['USERNAME'] = null;
-$_SESSION['PAGE_PERMISSIONS'] = null;
-$_SESSION['SYSTEM_PERMISSIONS'] = null;
+// this is not really needed, but just to be really really secure...
+foreach(array_keys($_SESSION) as $key)
+    unset($_SESSION[$key]);
 
 // overwrite session array
 $_SESSION = array();
@@ -54,6 +55,4 @@ if (isset($_COOKIE[session_name()])) {
 session_destroy();
 
 // redirect to admin login
-die(header('Location: ' . CAT_ADMIN_URL . '/login/index.php'));
-
-?>
+die(header('Location: '.CAT_ADMIN_URL.'/login/index.php'));

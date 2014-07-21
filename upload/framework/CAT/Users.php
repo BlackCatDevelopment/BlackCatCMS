@@ -37,6 +37,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         private static $loginerror            = false;
         private static $lasterror             = NULL;
         private static $errorstack            = array();
+        private static $users                 = array();
 
         // user options (column names) added to the session on successful logon
         private static $sessioncols = array(
@@ -683,6 +684,60 @@ if ( ! class_exists( 'CAT_Users', false ) )
         }   // end function getDefaultUserOptions()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getUsers()
+        {
+            if(count(self::$users)) return self::$users;
+            $self    = self::getInstance();
+            $results = $self->db()->query(
+                "SELECT * FROM `:prefix:users` WHERE `user_id` != '1' ORDER BY `display_name`,`username`"
+            );
+            if (!$self->db()->isError())
+            {
+                if ( $results->rowCount() > 0 )
+                {
+                    $counter = 0;
+                    while (false !== ($user = $results->fetch()))
+                    {
+                        self::$users[$counter]['VALUE']        = $user['user_id'];
+                        self::$users[$counter]['DISPLAY_NAME'] = $user['display_name'];
+                        self::$users[$counter]['USER_NAME']    = $user['username'];
+                        self::$users[$counter]['GROUPS']       = array();
+
+                        $users_groups                          = preg_split('/,/',$user['groups_id']);
+                        foreach ( $users_groups as $group_id )
+                        {
+                            self::$users[$counter]['GROUPS'][$group_id] = true;
+                        }
+                        self::$users[$counter]['EMAIL']        = $user['email'];
+                        self::$users[$counter]['ACTIVE']       = $user['active'] == 1 ? true : false;
+                        self::$users[$counter]['HOMEFOLDER']   = $user['home_folder'];
+
+                        // ================================
+                        // ! Generate username field name
+                        // ================================
+                        $username_fieldname = 'username_';
+                        $salt               = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEZ_+-";
+                        $salt_len           = strlen($salt) -1;
+                        $i = 0;
+                        while (++$i <= 7)
+                        {
+                            $num                     = mt_rand(0, $salt_len);
+                            $username_fieldname        .= $salt[ $num ];
+                        }
+                        self::$users[$counter]['USERNAME_FIELDNAME'] = $username_fieldname;
+                        $counter++;
+                    }
+                }
+            }
+            return self::$users;
+        }   // end function getUsers()
+        
+
+        /**
          * get user's preferences
          *
          * @access public
@@ -1011,7 +1066,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         {
             $self     = self::getInstance();
             $get_user = $self->db()->query(
-                'SELECT `username`, `display_name` FROM `:prefix:users` WHERE user_id=:id',
+                'SELECT * FROM `:prefix:users` WHERE user_id=:id',
                 array('id'=>$user_id)
             );
     		if($get_user->rowCount() != 0)

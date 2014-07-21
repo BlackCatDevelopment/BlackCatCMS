@@ -14,10 +14,8 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
+ *   @author          Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -25,22 +23,22 @@
  *
  */
 
-define('CAT_LOGIN_PHASE',true);
+define('CAT_LOGIN_PHASE',1);
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+    include(CAT_PATH.'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+    while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+        $root .= "../";
+        $level += 1;
+    }
+    if (file_exists($root.'/framework/class.secure.php')) {
+        include($root.'/framework/class.secure.php');
+    } else {
+        trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+    }
 }
 
 $val   = CAT_Helper_Validate::getInstance();
@@ -51,10 +49,10 @@ header('Content-type: application/json');
 
 if(!count(CAT_Helper_Addons::getInstance()->getLibraries('mail')))
 {
-    	$ajax	= array(
-		'message'	=> $val->lang()->translate('Unable to mail login details - no mailer library installed!'),
-		'success'	=> false
-	);
+    $ajax    = array(
+        'message'    => $val->lang()->translate('Unable to mail login details - no mailer library installed!'),
+        'success'    => false
+    );
 }
 else
 {
@@ -62,17 +60,17 @@ else
     if ( $email && $val->sanitize_email($email) )
     {
         list($result,$message) = CAT_Users::handleForgot($email);
-        $ajax	= array(
-    		'message'	=> $message,
-    		'success'	=> $result
-    	);
+        $ajax    = array(
+            'message'    => $message,
+            'success'    => $result
+        );
     }
     else
     {
-    	$ajax	= array(
-    		'message'	=> $val->lang()->translate('You must enter an email address'),
-    		'success'	=> false
-    	);
+        $ajax    = array(
+            'message'    => $val->lang()->translate('You must enter an email address'),
+            'success'    => false
+        );
     }
 }
 print json_encode( $ajax );

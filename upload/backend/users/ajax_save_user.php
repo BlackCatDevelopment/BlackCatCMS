@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -53,11 +53,11 @@ header('Content-type: application/json');
 if ( ! $users->checkPermission('access',$perm) )
 {
     $ajax = array(
-		'message'	=> $backend->lang()->translate('You do not have the permission to {{action}} a user.', array( 'action' => str_replace('users','',$perm) ) ),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+        'message'    => $backend->lang()->translate('You do not have the permission to {{action}} a user.', array( 'action' => str_replace('users','',$perm) ) ),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 $addUser  = trim( $val->sanitizePost('addUser',NULL,true) );
@@ -66,26 +66,22 @@ $saveUser = trim( $val->sanitizePost('saveUser',NULL,true) );
 include_once( CAT_PATH . '/framework/functions.php' );
 
 // Gather details entered
-$username_fieldname	= str_replace(array("[[", "]]"), '', htmlspecialchars($val->sanitizePost('username_fieldname'), ENT_QUOTES));
-$username			= trim( $val->sanitizePost($username_fieldname,NULL,true) );
-$display_name		= trim( str_replace(array( '[[', ']]'), '', htmlspecialchars( $val->sanitizePost('display_name'), ENT_QUOTES ) ) );
-
-$user_id			= $val->sanitizePost('user_id',NULL,true);
-$password			= $val->sanitizePost('password');
-$password2			= $val->sanitizePost('password2');
-
-$email				= $val->sanitizePost('email',NULL,true);
-$home_folder		= $val->sanitizePost('home_folder',NULL,true);
-
-$active				= $val->sanitizePost('active') != '' ? true : false;
+$username_fieldname = str_replace(array("[[", "]]"), '', htmlspecialchars($val->sanitizePost('username_fieldname'), ENT_QUOTES));
+$username           = trim( $val->sanitizePost($username_fieldname,NULL,true) );
+$display_name       = trim( str_replace(array( '[[', ']]'), '', htmlspecialchars( $val->sanitizePost('display_name'), ENT_QUOTES ) ) );
+$user_id            = $val->sanitizePost('user_id',NULL,true);
+$password           = $val->sanitizePost('password');
+$password2          = $val->sanitizePost('password2');
+$email              = $val->sanitizePost('email',NULL,true);
+$home_folder        = $val->sanitizePost('home_folder',NULL,true);
+$active             = $val->sanitizePost('active') != '' ? true : false;
 $groups             = NULL;
 
 if($val->sanitizePost('groups',NULL,true))
-    $groups	= implode(",", $val->sanitizePost('groups',NULL,true));
+    $groups    = implode(",", $val->sanitizePost('groups',NULL,true));
 
 /**
- *	Check user_id
- *
+ *    Check user_id
  */
 if (
     (
@@ -96,89 +92,88 @@ if (
     || ( $addUser != '' && $saveUser != '' )
     || $user_id == 'admin'
 ) {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You sent an invalid value'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('You sent an invalid value'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 if ( $groups == '' )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('No group was selected'),
-		'check'		=> '',
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('No group was selected'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 if ( ! $users->validateUsername($username) )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate($users->getError()),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate($users->getError()),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
-if (	( $password != '' && strlen($password) < AUTH_MIN_PASS_LENGTH ) ||
-		( $addUser  != '' && strlen($password) < AUTH_MIN_PASS_LENGTH) )
+if (    ( $password != '' && strlen($password) < AUTH_MIN_PASS_LENGTH ) ||
+        ( $addUser  != '' && strlen($password) < AUTH_MIN_PASS_LENGTH) )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('The password you entered was too short (Please use at least {{AUTH_MIN_PASS_LENGTH}} chars)' , array( 'AUTH_MIN_PASS_LENGTH' => AUTH_MIN_PASS_LENGTH )),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('The password you entered was too short (Please use at least {{AUTH_MIN_PASS_LENGTH}} chars)' , array( 'AUTH_MIN_PASS_LENGTH' => AUTH_MIN_PASS_LENGTH )),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 if( $password != $password2 )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('The passwords you entered do not match'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('The passwords you entered do not match'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 if( $email != '' )
 {
-	if($val->validate_email($email) == false)
-	{
-		$ajax	= array(
-			'message'	=> $backend->lang()->translate('The email address you entered is invalid'),
-			'success'	=> false
-		);
-		print json_encode( $ajax );
-		exit();
-	}
+    if($val->validate_email($email) == false)
+    {
+        $ajax    = array(
+            'message'    => $backend->lang()->translate('The email address you entered is invalid'),
+            'success'    => false
+        );
+        print json_encode( $ajax );
+        exit();
+    }
 } else {
-		$ajax	= array(
-			'message'	=> $backend->lang()->translate('You must enter an email address'),
-			'success'	=> false
-		);
-		print json_encode( $ajax );
-		exit();
+        $ajax    = array(
+            'message'    => $backend->lang()->translate('You must enter an email address'),
+            'success'    => false
+        );
+        print json_encode( $ajax );
+        exit();
 }
 
 if ( $addUser && $users->checkUsernameExists($username) )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('The username you entered is already in use'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('The username you entered is already in use'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 if ( $addUser && $users->checkEmailExists($email) )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('The email you entered is already in use'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('The email you entered is already in use'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 $group_id = $val->sanitizePost('groups',NULL,true);
@@ -189,7 +184,7 @@ $group_id = ( is_array($group_id) && in_array('1', $group_id) && $addUser != '' 
 // create new user
 if ( $addUser )
 {
-    $users->createUser($group_id, $active, $username, md5( $password ), $display_name, $email, $home_folder );
+    $users->createUser($group_id, $active, $username, md5($password), $display_name, $email, $home_folder );
 }
 else
 {
@@ -213,6 +208,7 @@ else
         {
             if ( $method )
             {
+                // not implemented yet
             }
         }
         $options[$key] = $value;
@@ -221,9 +217,9 @@ else
     $errors = $users->setUserOptions($user_id,$options);
     if(count($errors))
     {
-        $ajax	= array(
-        	'message'	=> 'Errors:<br />'.implode('<br />',$errors),
-        	'success'	=> false
+        $ajax    = array(
+            'message'    => 'Errors:<br />'.implode('<br />',$errors),
+            'success'    => false
         );
         print json_encode( $ajax );
         exit();
@@ -233,39 +229,40 @@ else
 
 if( $backend->db()->isError() )
 {
-	$ajax	= array(
-		'message'	=> $backend->db()->getError(),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
-} else {
-	// ================================ 
-	// ! Generate username field name   
-	// ================================ 
-	$username_fieldname			= 'username_';
-	$salt						= "abcdefghijklmnopqrstuvwxyz0123456789ABCDEZ_+-";
-	$salt_len					= strlen($salt) -1;
-	$i = 0;
-	while (++$i <= 7)
-	{
-		$num					 = mt_rand(0, $salt_len);
-		$username_fieldname		.= $salt[ $num ];
-	}
+    $ajax    = array(
+        'message'    => $backend->db()->getError(),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
+}
+else
+{
+    // ================================ 
+    // ! Generate username field name   
+    // ================================ 
+    $username_fieldname          = 'username_';
+    $salt                        = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEZ_+-";
+    $salt_len                    = strlen($salt) -1;
+    $i = 0;
+    while (++$i <= 7)
+    {
+        $num                     = mt_rand(0, $salt_len);
+        $username_fieldname     .= $salt[ $num ];
+    }
 
-	$action	= $addUser != '' ? 'added' : 'saved';
-	$ajax	= array(
-		'message'				=> $backend->lang()->translate('User {{action}} successfully', array( 'action' => $backend->lang()->translate($action) ) ),
-		'action'				=> $action,
-		'username'				=> $username,
-		'display_name'			=> $display_name,
-		'username_fieldname'	=> $username_fieldname,
-		'id'					=> $action == 'added' ? $backend->db()->lastInsertId() : $user_id,
-		'success'				=> true
-	);
-	print json_encode( $ajax );
-	exit();
+    $action    = $addUser != '' ? 'added' : 'saved';
+    $ajax    = array(
+        'message'               => $backend->lang()->translate('User {{action}} successfully', array( 'action' => $backend->lang()->translate($action) ) ),
+        'action'                => $action,
+        'username'              => $username,
+        'display_name'          => $display_name,
+        'username_fieldname'    => $username_fieldname,
+        'id'                    => $action == 'added' ? $backend->db()->lastInsertId() : $user_id,
+        'success'               => true
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 exit();
-?>

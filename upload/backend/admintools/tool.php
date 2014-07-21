@@ -20,23 +20,24 @@
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
+ *   @review          21.07.2014 18:23:24
  *
  */
 
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    include(CAT_PATH.'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+    while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+        $root .= "../";
+        $level += 1;
+    }
+    if (file_exists($root.'/framework/class.secure.php')) {
+        include($root.'/framework/class.secure.php');
+    } else {
+        trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+    }
 }
 
 $backend  =  CAT_Backend::getInstance('admintools', 'admintools');
@@ -45,7 +46,7 @@ $val      =  CAT_Helper_Validate::getInstance();
 $get_tool =  $val->sanitizeGet('tool',NULL,true);
 
 if ( $get_tool == '' ) $get_tool = $val->sanitizePost('tool',NULL,true);
-if ( $get_tool == '' )
+if ( $get_tool == '' ) // still no tool
 {
     header("Location: index.php");
     exit(0);
@@ -96,14 +97,14 @@ if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php') )
         $tpl_data['TOOL'] = ob_get_contents();
     ob_clean(); // allow multiple buffering for csrf-magic
     // Check whether icon is available for the admintool
-	if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png') )
-	{
-		list($width, $height, $type, $attr) = getimagesize(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png');
-		// Check whether file is 32*32 pixel and is an PNG-Image
-		$tpl_data['ICON'] = ($width == 32 && $height == 32 && $type == 3)
+    if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png') )
+    {
+        list($width, $height, $type, $attr) = getimagesize(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png');
+        // Check whether file is 32*32 pixel and is an PNG-Image
+        $tpl_data['ICON'] = ($width == 32 && $height == 32 && $type == 3)
                           ? CAT_URL.'/modules/'.$tool['directory'].'/icon.png'
                           : false;
-	}
+    }
 }
 else
 {

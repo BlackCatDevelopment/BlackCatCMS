@@ -20,23 +20,24 @@
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
+ *   @review          21.07.2014 18:25:11
  *
  */
 
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    include(CAT_PATH.'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+    while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+        $root .= "../";
+        $level += 1;
+    }
+    if (file_exists($root.'/framework/class.secure.php')) {
+        include($root.'/framework/class.secure.php');
+    } else {
+        trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+    }
 }
 
 $backend = CAT_Backend::getInstance('Access', 'groups', false);
@@ -46,26 +47,26 @@ header('Content-type: application/json');
 
 if ( !$users->checkPermission('Access','groups') )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You do not have the permission to view groups'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('You do not have the permission to view groups'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 $group_id = CAT_Helper_Validate::sanitizePost('id','numeric');
 if ( !$group_id )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You sent an invalid value'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('You sent an invalid value'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
-$get_group	= $backend->db()->query(sprintf(
+$get_group    = $backend->db()->query(
     "SELECT * FROM `:prefix:groups` WHERE group_id = :id",
     array('id'=>$group_id)
 );
@@ -81,30 +82,30 @@ if(count($group_members))
 // ==============================================
 if ( $group = $get_group->fetchRow( MYSQL_ASSOC ) )
 {
-	$system_permissions			= explode( ',', $group['system_permissions']);
-	$module_permissions			= explode( ',', $group['module_permissions']);
-	$template_permissions		= explode( ',', $group['template_permissions']);
+    $system_permissions        = explode( ',', $group['system_permissions']);
+    $module_permissions        = explode( ',', $group['module_permissions']);
+    $template_permissions      = explode( ',', $group['template_permissions']);
 
-	$ajax	= array(
-		'group_id'				=> $group['group_id'],
-		'name'					=> $group['name'],
-		'system_permissions'	=> $system_permissions,
-		'module_permissions'	=> $module_permissions,
-		'template_permissions'	=> $template_permissions,
-        'members'               => implode('<br />',$members),
-		'message'				=> $backend->lang()->translate( 'Group loaded successfully' ),
-		'success'				=> true
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'group_id'             => $group['group_id'],
+        'name'                 => $group['name'],
+        'system_permissions'   => $system_permissions,
+        'module_permissions'   => $module_permissions,
+        'template_permissions' => $template_permissions,
+        'members'              => implode('<br />',$members),
+        'message'              => $backend->lang()->translate( 'Group loaded successfully' ),
+        'success'              => true
+    );
+    print json_encode( $ajax );
+    exit();
 }
 else {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('Group could not be found in database'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('Group could not be found in database'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 exit();

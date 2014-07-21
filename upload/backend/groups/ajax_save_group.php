@@ -20,23 +20,24 @@
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
+ *   @review          21.07.2014 18:26:26
  *
  */
 
 if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+    include(CAT_PATH.'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+    while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+        $root .= "../";
+        $level += 1;
+    }
+    if (file_exists($root.'/framework/class.secure.php')) {
+        include($root.'/framework/class.secure.php');
+    } else {
+        trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+    }
 }
 
 $backend = CAT_Backend::getInstance('Access', 'groups', false);
@@ -52,13 +53,13 @@ if (
        ( $addGroup  && ! $users->checkPermission('Access','groups_add')    )
     || ( $saveGroup && ! $users->checkPermission('Access','groups_modify') )
 ) {
-	$action	= $addGroup != '' ? 'add' : 'modify';
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You do not have the permission to {{action}} a group.', array( 'action' => $action ) ),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $action    = $addGroup != '' ? 'add' : 'modify';
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('You do not have the permission to {{action}} a group.', array( 'action' => $action ) ),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 // Gather details entered
@@ -70,23 +71,23 @@ if(
     || ( $addGroup == '' && $saveGroup == '' )
     || ( $addGroup != '' && $saveGroup != '' )
 ) {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You sent an invalid value'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('You sent an invalid value'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 // Check group_name
 if( $group_name == '' )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('Group name is blank'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('Group name is blank'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 $sql = "SELECT * FROM `:prefix:groups` WHERE name = :name";
@@ -100,15 +101,16 @@ if( $saveGroup != '' )
 
 $results = $backend->db()->query($sql,$params);
 
-if(	( $results->numRows() > 0 && $addGroup  != '' ) ||
-	( $results->numRows() > 0 && $saveGroup != ''  ) )
+if(
+       ( $results->numRows() > 0 && $addGroup  != '' )
+    || ( $results->numRows() > 0 && $saveGroup != ''  ) )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('Group name already exists'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('Group name already exists'),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 // Get system and module permissions
@@ -124,7 +126,7 @@ if ( $addGroup != '' )
 }
 else
 {
-	$sql = "UPDATE `:prefix:groups` SET `name`=:name, `system_permissions`=:system_permissions, "
+    $sql = "UPDATE `:prefix:groups` SET `name`=:name, `system_permissions`=:system_permissions, "
          . "`module_permissions`=:module_permissions, `template_permissions`=:template_permissions WHERE group_id=:id";
     $params['id'] = $group_id;
 }
@@ -134,26 +136,25 @@ $backend->db()->query($sql,$params);
 
 if( $backend->db()->isError() )
 {
-	$ajax	= array(
-		'message'	=> $backend->db()->getError(),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+    $ajax    = array(
+        'message'    => $backend->db()->getError(),
+        'success'    => false
+    );
+    print json_encode( $ajax );
+    exit();
 }
 else
 {
-	$action	= $addGroup != '' ? 'added' : 'saved';
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('Group {{action}} successfully', array( 'action' => $action ) ),
-		'action'	=> $action,
-		'name'		=> $group_name,
-		'id'		=> $action == 'added' ? $backend->db()->lastInsertId() : $group_id,
-		'success'	=> true
-	);
-	print json_encode( $ajax );
-	exit();
+    $action    = $addGroup != '' ? 'added' : 'saved';
+    $ajax    = array(
+        'message'    => $backend->lang()->translate('Group {{action}} successfully', array( 'action' => $action ) ),
+        'action'    => $action,
+        'name'        => $group_name,
+        'id'        => $action == 'added' ? $backend->db()->lastInsertId() : $group_id,
+        'success'    => true
+    );
+    print json_encode( $ajax );
+    exit();
 }
 
 exit();
-?>
