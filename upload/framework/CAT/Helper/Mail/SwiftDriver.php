@@ -57,7 +57,7 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
         /**
          *
          **/
-        public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname='')
+        public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname='', $html='')
         {
 
             $use_smtp = false;
@@ -69,7 +69,8 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                     ->setSubject($subject)
                     ->setFrom($fromaddress)
                     ->setTo($toaddress)
-                    ->setBody($message);
+                    ->setBody($message)
+                    ->addPart($html, 'text/html');
             }
             catch(Exception $e)
             {
@@ -163,7 +164,7 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                 CAT_Helper_Mail::setError($e->getMessage());
                 return false;
             }
-print_r(self::$mailer);
+//print_r(self::$mailer);
 
             return true;
         }   // end function sendMail()
