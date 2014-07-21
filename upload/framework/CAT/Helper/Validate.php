@@ -260,9 +260,20 @@ if (!class_exists('CAT_Helper_Validate'))
             return filter_var($address, FILTER_SANITIZE_EMAIL);
         }
 
-        public static function sanitize_url($address)
+        /**
+         * sanitize URL by removing /../ and similiar constructs
+         * takes optional second param to use filter_var(); please note that
+         * this will remove any Umlauts!
+         *
+         * @access public
+         * @param  string  $address
+         * @param  boolean $use_filter - default false
+         * @return string
+         **/
+        public static function sanitize_url($address,$use_filter=false)
         {
-            $address    = htmlspecialchars((filter_var($address, FILTER_SANITIZE_URL)));
+            if($use_filter)
+                $address = filter_var($address, FILTER_SANITIZE_URL);
             // href="http://..." ==> href isn't relative
             $rel_parsed = parse_url($address);
             $path       = $rel_parsed['path'];
@@ -271,23 +282,17 @@ if (!class_exists('CAT_Helper_Validate'))
             // loop through all the parts, popping whenever there's a .., pushing otherwise.
             $parts      = array();
             foreach ( explode('/', preg_replace('~/+~', '/', $path)) as $part )
-            {
                 if ($part === ".." || $part == '')
-                {
                     array_pop($parts);
-                }
                 elseif ($part!="")
-                {
                     $parts[] = $part;
-                }
-            }
-            return
-            (
+            $url = (
                   ( is_array($rel_parsed) && array_key_exists( 'scheme', $rel_parsed ) )
                 ? $rel_parsed['scheme'] . '://' . $rel_parsed['host'] . ( isset($rel_parsed['port']) ? ':'.$rel_parsed['port'] : NULL )
                 : ""
             ) . "/" . implode("/", $parts);
-        }
+            return $url;
+        }   // end function sanitize_url()
 
         public static function validate_string($string)
         {

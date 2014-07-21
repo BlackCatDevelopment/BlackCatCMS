@@ -46,11 +46,12 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 
         private static $instance;
 
-        public static function getInstance()
+        public static function getInstance($reset=false)
         {
             if (!self::$instance)
                 self::$instance = new self();
             else
+                if($reset)
                 self::reset();
             return self::$instance;
         }
@@ -115,6 +116,8 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             sort($list);
             foreach($list as $entry)
             {
+                if(mb_detect_encoding($entry,'UTF-8',true))
+                    $entry = utf8_decode($entry);
                 if( preg_match( "~^$pattern$~i", pathinfo($entry,PATHINFO_BASENAME) ) )
                 {
                     $dirs[] = $remove_dir
@@ -307,7 +310,11 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          **/
         public static function getModdate($file)
         {
+            $file = self::sanitizePath($file);
+            if(mb_detect_encoding($file,'UTF-8',true))
+                $file = utf8_decode($file);
             if(is_dir($file)) return false;
+            if(!file_exists($file)) return false;
     		$stat  = stat($file);
             $date  = isset($stat['mtime'])
                    ? $stat['mtime']
@@ -325,15 +332,21 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
          **/
         public static function getSize($file,$convert=false)
         {
+            $file = self::sanitizePath($file);
             if(is_dir($file)) return false;
-        	$size = filesize($file);
+            if(!file_exists($file)) return false;
+        	$size = @filesize($file);
         	if ($size < 0)
         	if (!(strtoupper(substr(PHP_OS, 0, 3)) == 'WIN'))
         		$size = trim(`stat -c%s $file`);
-        	else{
+        	else
+            {
+                if(extension_loaded('COM'))
+                {
         		$fsobj = new COM("Scripting.FileSystemObject");
         		$f = $fsobj->GetFile($file);
         		$size = $file->Size;
+        	}
         	}
             if($size && $convert) $size = self::byte_convert($size);
         	return $size;
@@ -375,10 +388,10 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		 **/
 		public static function sanitizePath( $path )
 		{
-		
+            $self       = self::getInstance();
+            $self->log()->logDebug('sanitizePath '.$path);
 		    // remove / at end of string; this will make sanitizePath fail otherwise!
 		    $path       = preg_replace( '~/{1,}$~', '', $path );
-		    
 		    // make all slashes forward
 			$path       = str_replace( '\\', '/', $path );
 
@@ -396,6 +409,11 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	            }
 	            elseif ($part!="")
 	            {
+                    $self->log()->logDebug('checking part -'.$part."- encoding -", mb_detect_encoding($part,'UTF-8',true));
+                    $part = ( IS_WIN && mb_detect_encoding($part,'UTF-8',true) )
+                          ? utf8_decode($part)
+                          : $part;
+                    $self->log()->logDebug("adding part -$part-\n");
 	                $parts[] = $part;
 	            }
 	        }
@@ -405,7 +423,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	        if ( ! preg_match( '/^[a-z]\:/i', $new_path ) ) {
 				$new_path = '/' . $new_path;
 			}
-
+            $self->log()->logDebug('returning path: -'.$new_path.'-'."\n");
 	        return $new_path;
 		
 		}   // end function sanitizePath()
@@ -439,6 +457,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		public static function scanDirectory( $dir, $with_files = false, $files_only = false, $remove_prefix = NULL, $suffixes = array(), $skip_dirs = array(), $skip_files = array() ) {
 
 			$dirs = array();
+            $self = self::getInstance();
 
             if(!self::$is_win)
             {
@@ -478,27 +497,34 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 
             if ( self::$current_depth > self::$max_recursion_depth ) { return array(); }
 
-			if (false !== ($dh = opendir( $dir ))) {
-                while( false !== ($file = readdir($dh))) {
-                    if ( ! self::$show_hidden && ( $file == '.' || $file == '..' ) ) continue;
+            $self->log()->logDebug('$dir before sanitizePath: '.$dir);
+            $dir = self::sanitizePath($dir);
+            $self->log()->logDebug('$dir after sanitizePath: '.$dir);
+
+			if (false !== ($dh = dir($dir))) {
+                while( false !== ($file = $dh->read())) {
+                    $self->log()->logDebug('current directory entry: '.$file);
+                    if ( ! self::$show_hidden && substr($file,0,1) == '.' ) continue;
                     if ( ! ( $file == '.' || $file == '..' ) ) {
 						if ( count($skip_dirs) && in_array( pathinfo( $dir.'/'.$file, (is_dir($dir.'/'.$file)?PATHINFO_BASENAME:PATHINFO_DIRNAME)), $skip_dirs) )
 						{
+                            $self->log()->logDebug('skipping (found in $skip_dirs)');
 						    continue;
 						}
-#if ( count($skip_files) )
-#    echo "checking -", pathinfo($dir.'/'.$file,PATHINFO_BASENAME), "- against -", print_r($skip_files), "-<br />";
                         if ( count($skip_files) && in_array( pathinfo($dir.'/'.$file,PATHINFO_BASENAME), $skip_files) )
 						{
+                            $self->log()->logDebug('skipping (found in $skip_files)');
 						    continue;
 						}
                         if ( is_dir( $dir.'/'.$file ) ) {
+                            $self->log()->logDebug('It\'s a directory');
                             if ( ! $files_only ) {
                                 $current = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
                                 $dirs[]  = $current;
                             }
                             if ( self::$recurse )
                             {
+                                $self->log()->logDebug('do recursion');
                             	// recurse
                                 self::$current_depth++;
                             	$subdirs = self::scanDirectory( $dir.'/'.$file, $with_files, $files_only, $remove_prefix, $suffixes, $skip_dirs, $skip_files );
@@ -507,14 +533,24 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 							}
                         }
                         elseif ( $with_files ) {
+                            $self->log()->logDebug('It\'s a file and $with_files is true');
                             if ( ! count($suffixes) || in_array( pathinfo($file,PATHINFO_EXTENSION), $suffixes ) )
                             {
                                 $current = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
                                 $dirs[]  = $current;
 							}
+                            else
+                            {
+                                $self->log()->logDebug('skipped (by suffix filter)');
                         }
                     }
                 }
+            }
+                $dh->close();
+            }
+            else
+            {
+                $self->log()->logWarn('opendir failed, dir ['.$dir.']');
             }
             return $dirs;
         }   // end function scanDirectory()

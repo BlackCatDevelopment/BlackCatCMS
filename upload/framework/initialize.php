@@ -40,6 +40,8 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+ini_set('default_charset','UTF-8');
+
 //**************************************************************************
 // add framework subdir to include path
 //**************************************************************************
@@ -65,6 +67,7 @@ spl_autoload_register(function($class)
 
 CAT_Registry::register('CAT_CORE', 'Black Cat CMS', true);
 CAT_Registry::register('URL_HELP', 'http://blackcat-cms.org/', true);
+CAT_Registry::register('IS_WIN'  , (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? true : false, true);
 
 // Create database class
 // note: we still use the old class here, because there are still some core files

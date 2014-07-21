@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -56,9 +56,9 @@ if ( $val->sanitizePost('load_url') == '' || $user->checkPermission('media','med
 	exit();
 }
 
-$load_file		= $val->sanitizePost('load_url');
+$load_file		= urldecode($val->sanitizePost('load_url'));
 $load_url		= $val->sanitizePost('folder_path') . '/' . $load_file;
-$load_path		= $dirh->sanitizePath( CAT_PATH.'/'.$load_url );
+$load_path		= CAT_PATH.'/'.$load_url;
 
 $ajax	= array(
 	'initial_folder'		=> $dirh->sanitizePath($load_url),
@@ -67,7 +67,7 @@ $ajax	= array(
 
 $allowed_img_types			= array('jpg','jpeg','png','gif','tif');
 
-if ( is_dir( $load_path ) )
+if ( is_dir($load_path) || is_dir(utf8_decode($load_path)) )
 {
 	$ajax['is_folder']		= true;
 	$ajax['is_writable']	= is_writable($load_path);
@@ -76,6 +76,8 @@ if ( is_dir( $load_path ) )
 	// ! Get contents for the intitial folder   
 	// ======================================== 
 	$dir	= scan_current_dir( $load_path );
+#print_r($dir);
+
 	// ============================= 
 	// ! Add folders to $ajax   
 	// ============================= 
@@ -101,8 +103,8 @@ if ( is_dir( $load_path ) )
 				'filetype'			=> $filetype,
 				'show_preview'		=> in_array( strtolower($filetype), $allowed_img_types ) ? true : false,
 				'filesize'			=> $dirh->getSize($file_path,true),
-				'filedate'			=> strftime($date->getDefaultDateFormatShort(), filemtime($file_path)),
-				'filetime'			=> strftime($date->getDefaultTimeFormat(), filemtime($file_path)),
+				'filedate'			=> strftime($date->getDefaultDateFormatShort(), $dirh->getModdate($file_path)),
+				'filetime'			=> strftime($date->getDefaultTimeFormat(), $dirh->getModdate($file_path)),
 				'full_name'			=> $file,
 				'filename'			=> substr($file , 0 , -( strlen($filetype) + 1 ) ),
                 'load_url'			=> $val->sanitize_url(CAT_URL.'/'.$load_url)
@@ -114,15 +116,16 @@ else
 {
 	$ajax['is_folder']	= false;
 	$filetype			= strtolower(pathinfo( $load_path , PATHINFO_EXTENSION));
+    $load_file          = ( IS_WIN ? utf8_decode($load_file) : $load_file );
 	$ajax['files']		= array(
 		'filetype'			=> $filetype,
 		'show_preview'		=> in_array( strtolower($filetype), $allowed_img_types ) ? true : false,
 		'filesize'			=> $dirh->getSize( $load_path, true ),
-		'filedate'			=> strftime($date->getDefaultDateFormatShort(), filemtime( $load_path )),
-		'filetime'			=> strftime($date->getDefaultTimeFormat(), filemtime( $load_path )) . ( isset($language_time_string) ? ' '.$language_time_string : '' ),
+		'filedate'			=> strftime($date->getDefaultDateFormatShort(), $dirh->getModdate($load_path)),
+		'filetime'			=> strftime($date->getDefaultTimeFormat(), $dirh->getModdate( $load_path )) . ( isset($language_time_string) ? ' '.$language_time_string : '' ),
 		'full_name'			=> $load_file,
 		'filename'			=> substr($load_file , 0 , -( strlen($filetype) + 1 ) ),
-		'load_url'			=> $val->sanitize_url(CAT_URL.'/'.$load_url)
+		'load_url'			=> $val->sanitize_url(( IS_WIN ? utf8_decode( CAT_URL.'/'.$load_url ) : $load_url ))
 	);
 }
 // ================================= 
@@ -137,6 +140,4 @@ $ajax['permissions']['media_delete']	= $user->checkPermission('media','media_del
 // ! Return results
 // ==================== 
 header('Content-type: application/json');
-print json_encode( $ajax );
-
-?>
+print json_encode(CAT_Helper_Array::ArrayEncodeUTF8($ajax));

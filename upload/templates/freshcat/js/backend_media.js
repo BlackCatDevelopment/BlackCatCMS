@@ -146,13 +146,13 @@ function reload_folder( current_ul, folder_path, load_url )
 				
 				if( typeof data.folders == 'undefined' && typeof data.files == 'undefined' )
 				{
-					$('ul.fc_media_folder_active').append('<li class="icon-info"> No files found.</li>');
+					$('ul.fc_media_folder_active').append('<li class="icon-info"> ' + cattranslate('No files available') + '</li>');
 				}
 				if( typeof data.folders != 'undefined' )
 				{
 					$.each(data.folders, function(index, value)
 					{
-						var insert	= '<li class="fc_filetype_folder" title="' + value.name + '"><div class="fc_name_short"><p class="icon-folder"> ' + value.name + '</p></div><input type="hidden" name="load_url" value="' + value.name + '" /></li>';
+						var insert	= '<li class="fc_filetype_folder" title="' + value.name + '"><div class="fc_name_short"><p class="icon-folder"> ' + value.name + '</p></div><input type="hidden" name="load_url" value="' + encodeURIComponent(value.name) + '" /></li>';
 						$('ul.fc_media_folder_active').append(insert);
 					});
 				}
@@ -188,7 +188,7 @@ function reload_folder( current_ul, folder_path, load_url )
 				{
 					$('.fc_file_info').children('img').remove();
 					$('.fc_file_info').children('p').hide();
-					$('.fc_file_info').prepend('<img src="' + fileData.load_url + '" alt="" />');
+					$('.fc_file_info').prepend('<img src="' + fileData.load_url + '" alt="' + cattranslate('Preview') + '" />');
 				}
 				else
 				{

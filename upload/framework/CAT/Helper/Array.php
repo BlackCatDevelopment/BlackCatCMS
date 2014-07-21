@@ -75,6 +75,23 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
         }   // end function filter_callback()
 
         /**
+         * encode all entries of an multidimensional array into utf8
+         * http://de1.php.net/manual/de/function.json-encode.php#100492
+         *
+         * @access public
+         * @param  array  $dat
+         * @return array
+         **/
+        public static function ArrayEncodeUTF8($dat) // -- It returns $dat encoded to UTF8
+        {
+            if (is_string($dat)) return utf8_encode($dat);
+            if (!is_array($dat)) return $dat;
+            $ret = array();
+            foreach($dat as $i=>$d) $ret[$i] = self::ArrayEncodeUTF8($d);
+            return $ret;
+        }   // end function ArrayEncodeUTF8()
+
+        /**
          * removes an element from an array
          *
          * @access public

@@ -498,8 +498,15 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         {
             foreach( $result as $item )
             {
-                $key = is_dir($dirh->sanitizePath($root.'/'.$item)) ? 'path' : 'filename';
-                $FILE[$key][] = $item;
+                $current      = $root.'/'.$item;
+                $key          = (
+                                  (is_dir($current) || is_dir(utf8_decode($current)))
+                                  ||
+                                  (is_dir($item) || is_dir(utf8_decode($item)))
+                                )
+                              ? 'path'
+                              : 'filename';
+                $FILE[$key][] = pathinfo($item,PATHINFO_BASENAME);
             }
             if (isset($FILE['path']) && natcasesort($FILE['path']))
             {
