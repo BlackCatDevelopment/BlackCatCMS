@@ -180,13 +180,13 @@ function register_filter($filter_name,$module_directory,$filter_description=NULL
             );
             if (!$backend->db()->query($SQL))
             {
-                trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->get_error()));
+                trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->getError()));
                 return false;
             }
         }
     }
     else {
-        trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->get_error()));
+        trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->getError()));
         return false;
     }
     return true;
@@ -207,7 +207,7 @@ function unregister_filter($filter_name, $module_directory)
         CAT_TABLE_PREFIX, $filter_name, $module_directory
     );
     if (!$backend->db()->query($SQL)) {
-        trigger_error(sprintf('[%s] %s', __FUNCTION__, $backend->db()->get_error()));
+        trigger_error(sprintf('[%s] %s', __FUNCTION__, $backend->db()->getError()));
         return false;
     }
     return true;
@@ -226,7 +226,7 @@ function is_filter_registered($filter_name, $module_directory)
     $SQL = "SELECT `filter_name` FROM `".CAT_TABLE_PREFIX."mod_filter` WHERE ".
         "`filter_name`='$filter_name' AND `module_name`='$module_directory'";
     if (false === ($name = $backend->db()->get_one($SQL, MYSQL_ASSOC))) {
-        trigger_error(sprintf('[%s] %s', __FUNCTION__, $backend->db()->get_error()));
+        trigger_error(sprintf('[%s] %s', __FUNCTION__, $backend->db()->getError()));
         return false;
     }
     return ($name == $filter_name);

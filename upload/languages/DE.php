@@ -59,8 +59,8 @@ $language_time_string = 'Uhr';
 
 $LANG = array(
 // ----- will be removed in later versions -----
-    'Please note: The BlackCat CMS permissions system is going to be reengineered with version 1.1. We recommend to keep your permissions as simple as possible until next version. We kindly ask for your understanding.'
-        => 'Hinweis: Das BlackCat CMS Rechtesystem wird in Version 1.1 komplett überarbeitet. Wir empfehlen, die Berechtigungen bis dahin möglichst einfach zu halten. Vielen Dank für Ihr Verständnis.',
+    'Please note: The BlackCat CMS permissions system is going to be reengineered with version 2.0. We recommend to keep your permissions as simple as possible until next version. We kindly ask for your understanding.'
+        => 'Hinweis: Das BlackCat CMS Rechtesystem wird in Version 2.0 komplett überarbeitet. Wir empfehlen, die Berechtigungen bis dahin möglichst einfach zu halten. Vielen Dank für Ihr Verständnis.',
 // ----- ./account folder -----
     'Captcha verification' => 'Captcha',
     'Change password' => 'Kennwort ändern',

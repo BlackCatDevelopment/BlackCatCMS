@@ -174,7 +174,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                 if( preg_match( "~^$pattern$~i", pathinfo($entry,PATHINFO_BASENAME) ) )
                 {
                     $files[] = $remove_dir
-                             ? str_ireplace( $dir, '', $entry )
+                             ? str_ireplace( self::sanitizePath($dir), '', self::sanitizePath($entry) )
                              : $entry;
                 }
             }
@@ -458,6 +458,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 
 			$dirs = array();
             $self = self::getInstance();
+            $self->log()->logDebug('scanning dir: '.$dir);
 
             if(!self::$is_win)
             {
@@ -494,6 +495,13 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 			{
 			    $remove_prefix = self::$prefix;
 			}
+            else
+            {
+                $remove_orig   = $remove_prefix;
+                $remove_prefix = self::sanitizePath($remove_prefix);
+                if($remove_prefix=='/') $remove_prefix = NULL;
+                if(substr($remove_orig,-1,1)=='/') $remove_prefix .= '/';
+            }
 
             if ( self::$current_depth > self::$max_recursion_depth ) { return array(); }
 
@@ -519,6 +527,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                         if ( is_dir( $dir.'/'.$file ) ) {
                             $self->log()->logDebug('It\'s a directory');
                             if ( ! $files_only ) {
+                                $self->log()->logDebug("$dir/$file - replace -$remove_prefix-");
                                 $current = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
                                 $dirs[]  = $current;
                             }
@@ -536,6 +545,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                             $self->log()->logDebug('It\'s a file and $with_files is true');
                             if ( ! count($suffixes) || in_array( pathinfo($file,PATHINFO_EXTENSION), $suffixes ) )
                             {
+                                $self->log()->logDebug("$dir/$file - replace -$remove_prefix-");
                                 $current = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
                                 $dirs[]  = $current;
 							}

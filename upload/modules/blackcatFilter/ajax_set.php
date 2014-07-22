@@ -69,8 +69,8 @@ if($action!='delete')
         "UPDATE `%smod_filter` SET filter_active='%s' WHERE filter_name='%s'",
         CAT_TABLE_PREFIX, $value, $filter
     ));
-    if($backend->db()->is_error())
-        $error = $backend->db()->get_error();
+    if($backend->db()->isError())
+        $error = $backend->db()->getError();
 }
 // filter to delete?
 else
@@ -93,8 +93,8 @@ else
             "DELETE FROM `%smod_filter` WHERE filter_name='%s'",
             CAT_TABLE_PREFIX, $filter
         ));
-        if($backend->db()->is_error())
-            $error = $backend->db()->get_error();
+        if($backend->db()->isError())
+            $error = $backend->db()->getError();
     }
     // just do nothing if the entry is not there (should never happen)
 }

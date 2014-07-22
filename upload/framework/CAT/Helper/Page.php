@@ -149,7 +149,7 @@ if (!class_exists('CAT_Helper_Page'))
                 {
                     $children_count = array();
                     $direct_parent  = 0;
-                    while ( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+                    while ( false !== ( $row = $result->fetch() ) )
                     {
                         $row['children']  = 0;
                         $row['is_parent'] = false;
@@ -195,7 +195,7 @@ if (!class_exists('CAT_Helper_Page'))
                         );
                         if( $set && $set->rowCount()>0 )
                         {
-                            while ( false !== ( $set_row = $set->fetchRow(MYSQL_ASSOC) ) )
+                            while ( false !== ( $set_row = $set->fetch() ) )
                             {
                                 if(!isset($row['settings']))
                                     $row['settings'] = array();
@@ -297,14 +297,16 @@ if (!class_exists('CAT_Helper_Page'))
                 'DESCRIBE `:prefix:pages`'
             );
             $mandatory = array();
-            while(false!==($row=$res->fetchRow(MYSQL_ASSOC)))
+            while(false!==($row=$res->fetch()))
                 if($row['Null']=='NO'&&$row['Key']!='PRI')
                     $mandatory[$row['Field']] = $row['Type'];
             // fill options
-            $sql	 = 'INSERT INTO `%spages` SET ';
+            $sql	 = 'INSERT INTO `:prefix:pages` SET ';
+            $params  = array();
             foreach($options as $key => $value)
             {
-                $sql .= '`'.$key.'` = \''.$value.'\', ';
+                $sql .= '`'.$key.'` = :'.$key.', ';
+                $params[$key] = $value;
                 if(array_key_exists($key,$mandatory))
                     unset($mandatory[$key]);
             }
@@ -319,13 +321,14 @@ if (!class_exists('CAT_Helper_Page'))
                             );
 
             $sql = preg_replace('~,\s*$~','',$sql);
-            $self->db()->query(sprintf($sql,CAT_TABLE_PREFIX));
+            $self->db()->query($sql,$params);
+            $page_id = $self->db()->lastInsertId();
             // reload pages list
             if(!$self->db()->isError()) self::init(1);
             return
                   $self->db()->isError()
                 ? false
-                : $self->db()->lastInsertId();
+                : $page_id;
         }   // end function addPage()
         
         /**
@@ -1279,7 +1282,7 @@ if (!class_exists('CAT_Helper_Page'))
             if ($results->rowCount())
             {
                 $items = array();
-                while (($row = $results->fetchRow(MYSQL_ASSOC)) !== false)
+                while (($row = $results->fetch()) !== false)
                 {
                     $row['href'] = self::getLink($row['link']) . (($row['lang'] != '') ? '?lang=' . $row['lang'] : NULL);
                     $items[]     = $row;
@@ -1697,7 +1700,7 @@ if (!class_exists('CAT_Helper_Page'))
                     array('now1'=>$now,'now2'=>$now)
                 );
                 if ( $sec->rowCount() > 0 )
-                    while ( false !== ( $section = $sec->fetchRow(MYSQL_ASSOC) ) )
+                    while ( false !== ( $section = $sec->fetch() ) )
                         self::$pages_sections[$section['page_id']][] = $section;
             }
             if($page_id)
@@ -1887,7 +1890,7 @@ if (!class_exists('CAT_Helper_Page'))
                         );
                         if(is_resource($result) && $result->rowCount()==1)
                         {
-                            $row = $result->fetchRow(MYSQL_ASSOC);
+                            $row = $result->fetch();
                             CAT_Registry::register('MAINTENANCE_PAGE',$row['maintenance_page'],true);
                         }
                     }
@@ -2064,7 +2067,7 @@ if (!class_exists('CAT_Helper_Page'))
                 );
                 if(is_resource($result)&&$result->rowCount()==1)
                 {
-                    $row = $result->fetchRow(MYSQL_ASSOC);
+                    $row = $result->fetch();
                     CAT_Registry::register('MAINTENANCE_MODE',$row['maintenance_mode'],true);
                 }
             }

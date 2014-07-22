@@ -96,8 +96,8 @@ if ( $val->sanitizePost('filter_add') )
             "INSERT INTO `%smod_filter` VALUES ( '%s', '%s', '%s', '%s', '%s' )",
             CAT_TABLE_PREFIX, $data['name'], $data['module_name'], $data['description'], $data['code'], $data['active']
         ));
-        if($backend->db()->is_error())
-            $errors[] = $backend->db()->get_error();
+        if($backend->db()->isError())
+            $errors[] = $backend->db()->getError();
     }
 }
 

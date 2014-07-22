@@ -10,7 +10,7 @@
 </div>
 
 <div class="highlight" style="width:100%">
-{translate('Please note: The BlackCat CMS permissions system is going to be reengineered with version 1.1. We recommend to keep your permissions as simple as possible until next version. We kindly ask for your understanding.')}
+{translate('Please note: The BlackCat CMS permissions system is going to be reengineered with version 2.0. We recommend to keep your permissions as simple as possible until next version. We kindly ask for your understanding.')}
 </div>
 
 <div id="fc_main_content">

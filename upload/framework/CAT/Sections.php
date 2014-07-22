@@ -74,14 +74,13 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
         	require(CAT_PATH.'/framework/class.order.php');
         	$order    = new order(CAT_TABLE_PREFIX.'sections', 'position', 'section_id', 'page_id');
         	$position = $order->get_new($page_id);
-        	$self->db()->query(sprintf(
-                'INSERT INTO `%ssections` SET `page_id`=%d, `module`="%s", `position`=%d, `block`=%d;',
-                CAT_TABLE_PREFIX, $page_id, $module, $position, $add_to_block
-            ));
+        	$self->db()->query(
+                'INSERT INTO `:prefix:sections` SET `page_id`=:id, `module`=:module, `position`=:pos, `block`=:block',
+                array('id'=>$page_id, 'module'=>$module, 'pos'=>$position, 'block'=>$add_to_block)
+            );
 
         	if ( !$self->db()->isError() )
-        		// Get the section id
-        		return $self->db()->lastInsertId();
+        		return $self->db()->lastInsertId(); // Get the section id
             else
                 return false;
         }   // end function addSection()
@@ -94,10 +93,10 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
         public static function deleteSection($section_id,$page_id)
         {
             $self = self::getInstance();
-        	$q    = $self->db()->query(sprintf(
-                'DELETE FROM `%ssections` WHERE `section_id` = %d LIMIT 1',
-                CAT_TABLE_PREFIX, $section_id
-            ));
+        	$q    = $self->db()->query(
+                'DELETE FROM `:prefix:sections` WHERE `section_id`=:id',
+                array('id'=>$section_id)
+            );
 
         	if ( $self->db()->isError() )
         	{
@@ -135,18 +134,18 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
                     self::getInstance();
 
 	            // First, get all sections for this page
-	            $sec = self::$instance->db()->query(sprintf(
-                      'SELECT section_id, module, block, publ_start, publ_end FROM %ssections '
-                    . 'WHERE page_id = "%d" ORDER BY block, position',
-                    CAT_TABLE_PREFIX, $page_id
-                ));
+	            $sec = self::$instance->db()->query(
+                      'SELECT `section_id`, `module`, `block`, `publ_start`, `publ_end` FROM `:prefix:sections` '
+                    . 'WHERE page_id = :id ORDER BY block, position',
+                    array('id'=>$page_id)
+                );
 
 	            if ($sec->rowCount() == 0)
 	            {
 	                return NULL;
 	            }
 
-	            while ($section = $sec->fetchRow(MYSQL_ASSOC))
+	            while ($section = $sec->fetch())
 	            {
 	                // skip this section if it is out of publication-date
 	                $now = time();
@@ -186,13 +185,13 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
         public static function getSection($section_id)
         {
             $self = self::getInstance();
-        	$q = $self->db()->query(sprintf(
-                'SELECT `module` FROM `%ssections` WHERE `section_id` = %d',
-                CAT_TABLE_PREFIX, $section_id
-            ));
+        	$q = $self->db()->query(
+                'SELECT `module` FROM `:prefix:sections` WHERE `section_id` = :id',
+                array('id'=>$section_id)
+            );
         	if($q->rowCount() == 0)
                 return false;
-        	return $q->fetchRow(MYSQL_ASSOC);
+        	return $q->fetch();
         }   // end function getSection()
         
 	    
@@ -222,11 +221,11 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
         {
             global $database;
             $now = time();
-            $sql = 'SELECT COUNT(*) FROM `' . CAT_TABLE_PREFIX . 'sections` ';
+            $sql = 'SELECT COUNT(*) FROM `:prefix:sections` ';
             $sql .= 'WHERE (' . $now . ' BETWEEN `publ_start` AND `publ_end`) OR ';
             $sql .= '(' . $now . ' > `publ_start` AND `publ_end`=0) ';
             $sql .= 'AND `section_id`=' . $section_id;
-            return($database->get_one($sql) != false);
+            return($database->query($sql)->fetchColumn() != false);
 	    }
 
         /**
@@ -240,12 +239,11 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
         {
             if(!self::$instance)
                 self::getInstance();
-            $res = self::$instance->db()->query(sprintf(
-                  'SELECT module FROM `%ssections` '
-                . 'WHERE `page_id` = %d AND `module` = "menu_link"',
-                CAT_TABLE_PREFIX,
-                $page_id
-            ));
+            $res = self::$instance->db()->query(
+                  'SELECT `module` FROM `%ssections` '
+                . 'WHERE `page_id` = :id AND `module` = "menu_link"',
+                array('id'=>$page_id)
+            );
             if($res && $res->rowCount())
                 return true;
             return false;
