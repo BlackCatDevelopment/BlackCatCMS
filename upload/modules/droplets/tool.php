@@ -14,19 +14,20 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
+ *   @author          Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Modules
- *   @package         droplets
+ *   @category        CAT_Core
+ *   @package         CAT_Core
+ *
+ *   Please note: The droplets module was originally created for WebsiteBaker
+ *   by Ruud Eisinga (Ruud) and John (PCWacht)
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -34,8 +35,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -174,7 +175,7 @@ function manage_droplet_backups()
         $temp_unzip = $dirh->sanitizePath( CAT_PATH . '/temp/unzip/' );
         $result     = droplets_import( $dirh->sanitizePath( dirname( __FILE__ ) . '/export/' . $recover ), $temp_unzip );
         $info       = $backend->lang()->translate( 'Successfully imported [{{count}}] Droplet(s)', array(
-             'count' => $result[ 'count' ]
+             'count' => $result['count']
         ) );
     }
 
@@ -190,7 +191,7 @@ function manage_droplet_backups()
 
     // delete a list of backups
     // get all marked droplets
-    $marked = isset( $_POST[ 'markeddroplet' ] ) ? $_POST[ 'markeddroplet' ] : array();
+    $marked = isset( $_POST['markeddroplet'] ) ? $_POST['markeddroplet'] : array();
 
     if ( count( $marked ) )
     {
@@ -228,8 +229,8 @@ function manage_droplet_backups()
             $count  = CAT_Helper_Zip::getInstance($file)->listContent();
             $rows[] = array(
                 'name' => basename( $file ),
-                'size' => $stat[ 'size' ],
-                'date' => strftime( '%c', $stat[ 'ctime' ] ),
+                'size' => $stat['size'],
+                'date' => strftime( '%c', $stat['ctime'] ),
                 'files' => count( $count ),
                 'listfiles' => implode( ", ", array_map( create_function( '$cnt', 'return $cnt["filename"];' ), $count ) ),
                 'download' => sanitize_url( CAT_URL . '/modules/droplets/export/' . basename( $file ) )
@@ -261,32 +262,21 @@ function manage_droplet_perms()
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
 
-    // get available groups
-    $query = $backend->db()->query( 'SELECT group_id, name FROM ' . CAT_TABLE_PREFIX . 'groups ORDER BY name' );
-    if ( $query->numRows() )
-    {
-        while ( $row = $query->fetchRow( MYSQL_ASSOC ) )
-        {
-            $groups[ $row[ 'group_id' ] ] = $row[ 'name' ];
-        }
-    }
+    $groups = CAT_Users::getGroups();
 
     if ( $val->get('_REQUEST','save') || $val->get('_REQUEST','save_and_back') )
     {
         foreach ( $settings as $key => $value )
-        {
             if ( $val->get('_REQUEST',$key) )
-            {
-                $backend->db()->query( 'UPDATE ' . CAT_TABLE_PREFIX . "mod_droplets_settings SET value='" . implode( '|',$val->get('_REQUEST',$key) ) . "' WHERE attribute='" . $key . "';" );
-            }
-        }
+                CAT_Helper_Droplet::updateDropletSettings($key,implode('|',$val->get('_REQUEST',$key)));
+
         // reload settings
         $settings = get_settings();
         $info     = $backend->lang()->translate( 'Permissions saved' );
+
         if ( $val->get('_REQUEST','save_and_back') )
-        {
             return list_droplets( $info );
-        }
+
     }
 
     foreach ( $settings as $key => $value )
@@ -329,7 +319,7 @@ function export_droplets()
     $info = array();
 
     // get all marked droplets
-    $marked = isset( $_POST[ 'markeddroplet' ] ) ? $_POST[ 'markeddroplet' ] : array();
+    $marked = isset( $_POST['markeddroplet'] ) ? $_POST['markeddroplet'] : array();
 
     if ( isset( $marked ) && !is_array( $marked ) )
     {
@@ -350,46 +340,33 @@ function export_droplets()
 
     foreach ( $marked as $id )
     {
-        $result = $backend->db()->query(sprintf(
-            "SELECT * FROM `%smod_droplets` WHERE id=%d",
-            CAT_TABLE_PREFIX, $id
-        ));
-        if ( $result->numRows() > 0 )
+        $droplet = CAT_Helper_Droplet::getDroplet($id);
+        $name    = $droplet["name"];
+        $usage   = preg_replace('/[\x00-\x1F\x7F]/', "\n//", $droplet['comments']);
+        if(substr($usage,-2,2)=='//')
+            $usage   = substr($usage,0,-3);
+        $info[]  = 'Droplet: ' . $name . '.php<br />';
+        $sFile   = $temp_dir . $name . '.php';
+        $fh      = fopen( $sFile, 'w' );
+        fwrite( $fh, '//:' . $droplet['description'] . "\n" );
+        fwrite( $fh, '//:' . $usage . "\n" );
+        fwrite( $fh, $droplet['code'] );
+        fclose( $fh );
+        $file = NULL;
+
+        // look for a data file
+        if ( file_exists(dirname(__FILE__).'/data/'.$droplet['name'].'.txt') )
+            $file = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/data/'.$droplet['name'].'.txt');
+        elseif ( file_exists(dirname(__FILE__).'/data/'.strtolower($droplet['name']).'.txt') )
+            $file = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/data/'.strtolower($droplet['name']).'.txt');
+        elseif ( file_exists(dirname(__FILE__).'/data/'.strtoupper($droplet['name']).'.txt') )
+            $file = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/data/'.strtoupper($droplet['name']).'.txt');
+
+        if ($file)
         {
-            $droplet = $result->fetchRow(MYSQL_ASSOC);
-            $name    = $droplet["name"];
-            $usage   = preg_replace('/[\x00-\x1F\x7F]/', "\n//", $droplet['comments']);
-            if(substr($usage,-2,2)=='//')
-                $usage   = substr($usage,0,-3);
-            $info[]  = 'Droplet: ' . $name . '.php<br />';
-            $sFile   = $temp_dir . $name . '.php';
-            $fh      = fopen( $sFile, 'w' );
-            fwrite( $fh, '//:' . $droplet[ 'description' ] . "\n" );
-            fwrite( $fh, '//:' . $usage . "\n" );
-            fwrite( $fh, $droplet[ 'code' ] );
-            fclose( $fh );
-            $file = NULL;
-            // look for a data file
-            if ( file_exists( dirname( __FILE__ ) . '/data/' . $droplet[ 'name' ] . '.txt' ) )
-            {
-                $file = CAT_Helper_Directory::sanitizePath( dirname( __FILE__ ) . '/data/' . $droplet[ 'name' ] . '.txt' );
-            }
-            elseif ( file_exists( dirname( __FILE__ ) . '/data/' . strtolower( $droplet[ 'name' ] ) . '.txt' ) )
-            {
-                $file = CAT_Helper_Directory::sanitizePath( dirname( __FILE__ ) . '/data/' . strtolower( $droplet[ 'name' ] ) . '.txt' );
-            }
-            elseif ( file_exists( dirname( __FILE__ ) . '/data/' . strtoupper( $droplet[ 'name' ] ) . '.txt' ) )
-            {
-                $file = CAT_Helper_Directory::sanitizePath( dirname( __FILE__ ) . '/data/' . strtoupper( $droplet[ 'name' ] ) . '.txt' );
-            }
-            if ( $file )
-            {
-                if ( !file_exists( $temp_dir . '/data' ) )
-                {
-                    @mkdir( $temp_dir . '/data' );
-                }
-                copy( $file, $temp_dir . '/data/' . basename( $file ) );
-            }
+            if ( !file_exists($temp_dir.'/data') )
+                @mkdir($temp_dir.'/data');
+            copy( $file, $temp_dir.'/data/'.basename($file) );
         }
     }
 
@@ -397,25 +374,21 @@ function export_droplets()
 
     // if there's only a single droplet to export, name the zip-file after this droplet
     if ( count( $marked ) === 1 )
-    {
         $filename = 'droplet_' . $name;
-    }
 
     // add current date to filename
     $filename .= '_' . date( 'Y-m-d' );
 
     // while there's an existing file, add a number to the filename
-    if ( file_exists( CAT_PATH . '/modules/droplets/export/' . $filename . '.zip' ) )
+    if ( file_exists( CAT_PATH.'/modules/droplets/export/'.$filename.'.zip' ) )
     {
         $n = 1;
-        while ( file_exists( CAT_PATH . '/modules/droplets/export/' . $filename . '_' . $n . '.zip' ) )
-        {
+        while ( file_exists( CAT_PATH.'/modules/droplets/export/'.$filename.'_'.$n.'.zip' ) )
             $n++;
-        }
         $filename .= '_' . $n;
     }
 
-    $temp_file = sanitize_path( CAT_PATH . '/temp/' . $filename . '.zip' );
+    $temp_file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'.$filename.'.zip');
 
     // create zip
     $archive   = CAT_Helper_Zip::getInstance($temp_file)->config( 'removePath', $temp_dir );
@@ -426,27 +399,32 @@ function export_droplets()
     }
     else
     {
-        $export_dir = sanitize_path( CAT_PATH . '/modules/droplets/export' );
+        $export_dir = CAT_Helper_Directory::sanitizePath( CAT_PATH . '/modules/droplets/export' );
         // create the export folder if it doesn't exist
         if ( !file_exists( $export_dir ) )
         {
             mkdir( $export_dir, 0777 );
         }
-        if ( !copy( $temp_file, $export_dir . '/' . $filename . '.zip' ) )
+        if ( !copy( $temp_file, $export_dir.'/'.$filename.'.zip' ) )
         {
-            echo '<div class="drfail">Unable to move the exported ZIP-File!</div>';
-            $download = CAT_URL . '/temp/' . $filename . '.zip';
+            echo '<div class="drfail">',
+                 $backend->lang()->translate('Unable to move the exported ZIP-File!'),
+                 '</div>';
+            $download = CAT_URL.'/temp/'.$filename.'.zip';
         }
         else
         {
             unlink( $temp_file );
-            $download = sanitize_url( CAT_URL . '/modules/droplets/export/' . $filename . '.zip' );
+            $download = sanitize_url(CAT_URL.'/modules/droplets/export/'.$filename.'.zip' );
         }
     }
 
-    CAT_Helper_Directory::getInstance()->removeDirectory( $temp_dir );
+    CAT_Helper_Directory::removeDirectory( $temp_dir );
 
-    return $backend->lang()->translate( 'Backup created' ) . '<br /><br />' . implode( "\n", $info ) . '<br /><br /><a href="' . $download . '">Download</a>';
+    return $backend->lang()->translate( 'Backup created' )
+         . '<br /><br />'
+         . implode( "\n", $info )
+         . '<br /><br /><a href="'.$download.'">Download</a>';
 
 } // end function export_droplets()
 
@@ -523,7 +501,7 @@ function delete_droplets()
     $errors = array();
 
     // get all marked droplets
-    $marked = isset( $_POST[ 'markeddroplet' ] ) ? $_POST[ 'markeddroplet' ] : array();
+    $marked = isset( $_POST['markeddroplet'] ) ? $_POST['markeddroplet'] : array();
 
     if ( isset( $marked ) && !is_array( $marked ) )
     {
@@ -540,29 +518,18 @@ function delete_droplets()
 
     foreach ( $marked as $id )
     {
-        // get the name; needed to delete data file
-        $query = $backend->db()->query( "SELECT name FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
-        $data  = $query->fetchRow( MYSQL_ASSOC );
-        $backend->db()->query( "DELETE FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
-        if ( $backend->db()->is_error() )
-        {
-            $errors[] = $backend->lang()->translate( 'Unable to delete Droplet: {{id}}', array(
-                 'id' => $id
-            ) );
-        }
+        $data  = CAT_Helper_Droplet::getDroplet($id);
+        $error = CAT_Helper_Droplet::deleteDroplet($id);
+        if($error) $errors[] = $error;
+
         // look for a data file
-        if ( file_exists( dirname( __FILE__ ) . '/data/' . $data[ 'name' ] . '.txt' ) )
-        {
-            @unlink( CAT_Helper_Directory::sanitizePath( dirname( __FILE__ ) . '/data/' . $data[ 'name' ] . '.txt' ) );
-        }
-        elseif ( file_exists( dirname( __FILE__ ) . '/data/' . strtolower( $data[ 'name' ] ) . '.txt' ) )
-        {
-            @unlink( CAT_Helper_Directory::sanitizePath( dirname( __FILE__ ) . '/data/' . strtolower( $data[ 'name' ] ) . '.txt' ) );
-        }
-        elseif ( file_exists( dirname( __FILE__ ) . '/data/' . strtoupper( $data[ 'name' ] ) . '.txt' ) )
-        {
-            @unlink( CAT_Helper_Directory::sanitizePath( dirname( __FILE__ ) . '/data/' . strtoupper( $data[ 'name' ] ) . '.txt' ) );
-        }
+        if ( file_exists(dirname(__FILE__).'/data/'.$data['name'].'.txt') )
+            @unlink(CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/data/'.$data['name'].'.txt'));
+        elseif ( file_exists(dirname(__FILE__).'/data/'.strtolower($data['name']).'.txt') )
+            @unlink(CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/data/'.strtolower($data['name']).'.txt'));
+        elseif ( file_exists(dirname(__FILE__).'/data/'.strtoupper($data['name']).'.txt') )
+            @unlink(CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/data/'.strtoupper($data['name']).'.txt'));
+
     }
 
     list_droplets( implode( "<br />", $errors ) );
@@ -580,46 +547,42 @@ function copy_droplet( $id )
     $groups = CAT_Users::get_groups_id();
 
     if ( !CAT_Helper_Droplet::is_allowed( 'modify_droplets', $groups ) )
-    {
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
-    }
 
-    $query    = $backend->db()->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
-    $data     = $query->fetchRow( MYSQL_ASSOC );
+    $data = CAT_Helper_Droplet::getDroplet($id);
     $tags     = array(
         '<?php',
         '?>',
         '<?'
     );
-    $code     = addslashes( str_replace( $tags, '', $data[ 'code' ] ) );
-    $new_name = $data[ 'name' ] . "_copy";
+    $code     = addslashes( str_replace( $tags, '', $data['code'] ) );
+    $new_name = $data['name'] . "_copy";
     $i        = 1;
 
     // look for doubles
-    $found = $backend->db()->query( 'SELECT * FROM ' . CAT_TABLE_PREFIX . "mod_droplets WHERE name='$new_name'" );
-    while ( $found->numRows() > 0 )
+    $found = CAT_Helper_Droplet::getDropletByName($new_name);
+    while ( $found )
     {
-        $new_name = $data[ 'name' ] . "_copy" . $i;
-        $found    = $backend->db()->query( 'SELECT * FROM ' . CAT_TABLE_PREFIX . "mod_droplets WHERE name='$new_name'" );
+        $new_name = $data['name']."_copy".$i;
+        $found    = CAT_Helper_Droplet::getDropletByName($new_name);
         $i++;
     }
 
-    // generate query
-    $query = "INSERT INTO " . CAT_TABLE_PREFIX . "mod_droplets VALUES "
-    //         ID      NAME         CODE              DESCRIPTION                            MOD_WHEN                     MOD_BY
-		   . "('', '$new_name', '$code', '" . $data[ 'description' ] . "', '" . time() . "', '" . CAT_Users::get_user_id() . "', 1, 1, 1, 0, '" . $data[ 'comments' ] . "' )";
+    $new_id = CAT_Helper_Droplet::insertDroplet(
+        array(
+            'name'        => $new_name,
+            'code'        => $code,
+            'description' => $data['description'],
+            'time'        => time(),
+            'userid'      => CAT_Users::get_user_id(),
+            'comment'     => $data['comments']
+        )
+    );
 
-    // add new droplet
-    $result = $backend->db()->query( $query );
-    if ( !$backend->db()->is_error() )
-    {
-        $new_id = mysql_insert_id();
-        return edit_droplet( $new_id );
-    }
+    if($new_id)
+        return edit_droplet($new_id);
     else
-    {
-        echo "ERROR: ", $backend->db()->get_error();
-    }
+        echo "ERROR: ", $backend->db()->getError();
 }
 
 /**
@@ -655,17 +618,16 @@ function edit_droplet( $id )
 
     if ( $id != 'new' )
     {
-        $query        = $backend->db()->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
-        $data         = $query->fetchRow( MYSQL_ASSOC );
+        $data = CAT_Helper_Droplet::getDroplet($id);
     }
     else
     {
         $data = array(
-            'name' => '',
-            'active' => 1,
+            'name'        => '',
+            'active'      => 1,
             'description' => '',
-            'code' => '',
-            'comments' => ''
+            'code'        => '',
+            'comments'    => ''
         );
     }
 
@@ -711,45 +673,55 @@ function edit_droplet( $id )
                 if ( $id == 'new' )
                 {
                     // check for doubles
-                    $query = $backend->db()->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE name = '$title'" );
-                    if ( $query->numRows() > 0 )
+                    $found = CAT_Helper_Droplet::getDropletByName($title);
+                    if ($found)
                     {
                         $problem  = $backend->lang()->translate( 'There is already a droplet with the same name!' );
                         $continue = false;
                         $data     = $_POST;
-                        $data['code'] = stripslashes( $_POST[ 'code' ] );
+                        $data['code'] = stripslashes( $_POST['code'] );
                     }
                     else
                     {
-						$code  = $val->add_slashes( $content );
-						// generate query
-						$query = "INSERT INTO " . CAT_TABLE_PREFIX . "mod_droplets VALUES "
-							   . "(''," . "'$title', " . "'$code', " . "'$description', " . "'$modified_when', " . "'$modified_by', " . "'$active',1,1, '$show_wysiwyg', '$comments' )";
-					    $result = $backend->db()->query( $query );
-					    if ( $backend->db()->is_error() )
-					    {
-					        echo "ERROR: ", $backend->db()->get_error();
-					    }
-
+                        $new_id = CAT_Helper_Droplet::insertDroplet(
+                            array(
+                                'name'        => $title,
+                                'code'        => $content,
+                                'description' => $description,
+                                'time'        => $modified_when,
+                                'userid'      => $modified_by,
+                                'active'      => $active,
+                                'comment'     => $comments,
+                                'wysiwyg'     => $show_wysiwyg,
+                            )
+                        );
+					    if (!$new_id)
+					        echo "ERROR: ", $backend->db()->getError();
                     }
                 }
                 else
                 {
-                    // Update row
-                    $backend->db()->query( "UPDATE " . CAT_TABLE_PREFIX . "mod_droplets SET name = '$title', active = '$active', show_wysiwyg = '$show_wysiwyg', description = '$description', code = '"
-                                    . $val->add_slashes( $content )
-                                    . "', comments = '$comments', modified_when = '$modified_when', modified_by = '$modified_by' WHERE id = '$id'"
+                    CAT_Helper_Droplet::updateDroplet(
+                        $id,
+                        array(
+                            'name'        => $title,
+                            'code'        => $content,
+                            'description' => $description,
+                            'time'        => $modified_when,
+                            'userid'      => $modified_by,
+                            'active'      => $active,
+                            'comment'     => $comments,
+                            'wysiwyg'     => $show_wysiwyg,
+                        )
                     );
-                    // reload Droplet data
-                    $query = $backend->db()->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
-                    $data  = $query->fetchRow( MYSQL_ASSOC );
+                    $data = CAT_Helper_Droplet::getDroplet($id); // reload
                 }
                 if ( $continue )
                 {
                     // Check if there is a db error
-                    if ( $backend->db()->is_error() )
+                    if ( $backend->db()->isError() )
                     {
-                        $problem = $backend->db()->get_error();
+                        $problem = $backend->db()->getError();
                     }
                     else
                     {
@@ -774,15 +746,15 @@ function edit_droplet( $id )
 
     defined( "ENT_HTML401" ) or define( "ENT_HTML401", 0 );
     defined( "ENT_COMPAT" )  or define( "ENT_COMPAT", 2 );
-    $data[ 'code' ] = htmlspecialchars( $data[ 'code' ], ENT_COMPAT | ENT_HTML401, 'UTF-8', false );
+    $data['code'] = htmlspecialchars( $data['code'], ENT_COMPAT | ENT_HTML401, 'UTF-8', false );
 
     $parser->output( 'edit.tpl', array(
         'problem' => $problem,
         'details' => $details,
-        'info' => $info,
-        'data' => $data,
-        'id'   => $id,
-        'name' => $data[ 'name' ]
+        'info'    => $info,
+        'data'    => $data,
+        'id'      => $id,
+        'name'    => $data['name']
     ) );
 } // end function edit_droplet()
 
@@ -791,7 +763,7 @@ function edit_droplet( $id )
  **/
 function edit_droplet_perms( $id )
 {
-    global $parser, $val, $backend;
+    global $parser, $val, $backend, $users;
 
     // look if user can set permissions
     $this_user_groups = CAT_Users::get_groups_id();
@@ -803,14 +775,7 @@ function edit_droplet_perms( $id )
     $info = NULL;
 
     // get available groups
-    $query = $backend->db()->query( 'SELECT group_id, name FROM ' . CAT_TABLE_PREFIX . 'groups ORDER BY name' );
-    if ( $query->numRows() )
-    {
-        while ( $row = $query->fetchRow( MYSQL_ASSOC ) )
-        {
-            $groups[ $row[ 'group_id' ] ] = $row[ 'name' ];
-        }
-    }
+    $groups = $users->getGroups();
 
     // save perms
     if ( $val->get('_REQUEST','save') || $val->get('_REQUEST','save_and_back') )
@@ -825,7 +790,7 @@ function edit_droplet_perms( $id )
 					? ( is_array($val->get('_REQUEST','view_groups')) ? implode('|',$val->get('_REQUEST','view_groups')) : $val->get('_REQUEST','view_groups') )
 					: NULL
 				);
-        $backend->db()->query( 'REPLACE INTO ' . CAT_TABLE_PREFIX . "mod_droplets_permissions VALUES( '$id', '$edit', '$view' );" );
+        CAT_Helper_Droplet::updateDropletPerms(array('id'=>$id, 'edit'=>$edit, 'view'=>$view));
         $info = $backend->lang()->translate( 'The Droplet was saved' );
         if ( $val->get('_REQUEST','save_and_back') )
         {
@@ -833,14 +798,9 @@ function edit_droplet_perms( $id )
         }
     }
 
-    // get droplet data
-    $query = $backend->db()->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets AS t1 LEFT OUTER JOIN ".CAT_TABLE_PREFIX."mod_droplets_permissions AS t2 ON t1.id=t2.id WHERE t1.id = '$id'" );
-    $data  = $query->fetchRow( MYSQL_ASSOC );
+    $data = CAT_Helper_Droplet::getDropletData($id);
 
-    foreach ( array(
-        'edit_groups',
-        'view_groups'
-    ) as $key )
+    foreach ( array('edit_groups','view_groups') as $key )
     {
         $allowed_groups = ( isset( $data[ $key ] ) ? explode( '|', $data[ $key ] ) : array ());
         $line           = array();
@@ -882,28 +842,22 @@ function edit_datafile( $id )
     }
 
     $query = $backend->db()->query( "SELECT name FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
-    $data  = $query->fetchRow( MYSQL_ASSOC );
+    $data  = $query->fetch();
 
     // find the file
-    if ( file_exists( dirname( __FILE__ ) . '/data/' . $data[ 'name' ] . '.txt' ) )
-    {
-        $file = CAT_Helper_Directory::getInstance()->sanitizePath( dirname( __FILE__ ) . '/data/' . $data[ 'name' ] . '.txt' );
-    }
-    elseif ( file_exists( dirname( __FILE__ ) . '/data/' . strtolower( $data[ 'name' ] ) . '.txt' ) )
-    {
-        $file = CAT_Helper_Directory::getInstance()->sanitizePath( dirname( __FILE__ ) . '/data/' . strtolower( $data[ 'name' ] ) . '.txt' );
-    }
-    elseif ( file_exists( dirname( __FILE__ ) . '/data/' . strtoupper( $data[ 'name' ] ) . '.txt' ) )
-    {
-        $file = CAT_Helper_Directory::getInstance()->sanitizePath( dirname( __FILE__ ) . '/data/' . strtoupper( $data[ 'name' ] ) . '.txt' );
-    }
+    if(file_exists(dirname(__FILE__).'/data/'.$data['name'].'.txt'))
+        $file = CAT_Helper_Directory::getInstance()->sanitizePath(dirname(__FILE__).'/data/'.$data['name'].'.txt');
+    elseif(file_exists(dirname(__FILE__).'/data/'.strtolower($data['name']).'.txt'))
+        $file = CAT_Helper_Directory::getInstance()->sanitizePath(dirname(__FILE__).'/data/'.strtolower($data['name']).'.txt');
+    elseif(file_exists(dirname(__FILE__).'/data/'.strtoupper($data['name']).'.txt'))
+        $file = CAT_Helper_Directory::getInstance()->sanitizePath(dirname(__FILE__).'/data/'.strtoupper($data['name']).'.txt');
 
     // slurp file
     $contents = implode( '', file( $file ) );
 
-    if ( isset( $_POST[ 'save' ] ) || isset( $_POST[ 'save_and_back' ] ) )
+    if ( isset( $_POST['save'] ) || isset( $_POST['save_and_back'] ) )
     {
-        $new_contents = htmlentities( $_POST[ 'contents' ] );
+        $new_contents = htmlentities( $_POST['contents'] );
         // create backup copy
         copy( $file, $file . '.bak' );
         $fh = fopen( $file, 'w' );
@@ -912,7 +866,7 @@ function edit_datafile( $id )
             fwrite( $fh, $new_contents );
             fclose( $fh );
             $info = $backend->lang()->translate( 'The datafile has been saved' );
-            if ( isset( $_POST[ 'save_and_back' ] ) )
+            if ( isset( $_POST['save_and_back'] ) )
             {
                 return list_droplets( $info );
             }
@@ -920,15 +874,15 @@ function edit_datafile( $id )
         else
         {
             $problem = $backend->lang()->translate( 'Unable to write to file [{{file}}]', array(
-                 'file' => str_ireplace( CAT_Helper_Directory::getInstance()->sanitizePath( CAT_PATH ), 'CAT_PATH', $file )
+                 'file' => str_ireplace( CAT_Helper_Directory::sanitizePath( CAT_PATH ), 'CAT_PATH', $file )
             ) );
         }
     }
 
     $parser->output( 'edit_datafile.tpl', array(
-         'info' => $info,
+        'info' => $info,
         'problem' => $problem,
-        'name' => $data[ 'name' ],
+        'name' => $data['name'],
         'id' => $id,
         'contents' => htmlspecialchars( $contents )
     ) );
@@ -948,12 +902,15 @@ function toggle_active( $id )
         $backend->print_error( $backend->lang()->translate( "You don't have the permission to do this" ) );
     }
 
-    $query = $backend->db()->query( "SELECT * FROM " . CAT_TABLE_PREFIX . "mod_droplets WHERE id = '$id'" );
-    $data  = $query->fetchRow( MYSQL_ASSOC );
+    $data = CAT_Helper_Droplet::getDroplet($id);
+    $new  = ( $data['active'] == 1 ) ? 0 : 1;
 
-    $new = ( $data[ 'active' ] == 1 ) ? 0 : 1;
+    $backend->db()->query(
+        'UPDATE `:prefix:mod_droplets` SET active=:active WHERE id=:id',
+        array('active'=>$new,'id'=>$id)
+    );
 
-    $backend->db()->query( 'UPDATE ' . CAT_TABLE_PREFIX . "mod_droplets SET active='$new' WHERE id = '$id'" );
+    return list_droplets();
 
 } // end function toggle_active()
 
@@ -1005,19 +962,17 @@ function get_settings()
 {
     global $backend;
     $settings = array();
-    $query    = $backend->db()->query( 'SELECT * FROM ' . CAT_TABLE_PREFIX . 'mod_droplets_settings' );
-    if ( $query->numRows() )
+    $query    = $backend->db()->query( 'SELECT * FROM `:prefix:mod_droplets_settings`' );
+    if ( $query->rowCount() )
     {
-        while ( $row = $query->fetchRow( MYSQL_ASSOC ) )
+        while ( $row = $query->fetch() )
         {
-            if ( substr_count( $row[ 'value' ], '|' ) )
+            if ( substr_count( $row['value'], '|' ) )
             {
-                $row[ 'value' ] = explode( '|', $row[ 'value' ] );
+                $row['value'] = explode( '|', $row['value'] );
             }
-            $settings[ $row[ 'attribute' ] ] = $row[ 'value' ];
+            $settings[ $row['attribute'] ] = $row['value'];
         }
     }
     return $settings;
 } // end function get_settings()
-
-?>

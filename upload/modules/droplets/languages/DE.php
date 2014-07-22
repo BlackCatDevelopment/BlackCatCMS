@@ -99,6 +99,7 @@ $LANG = array(
  	'Droplet is registered in Search' => 'Das Droplet ist für die Suche aktiv',
  	'No valid Droplet file (missing description and/or usage instructions)' => 'Kein valides Droplet (weder Beschreibung noch Angaben zur Verwendung vorhanden)',
 	// ----- permissions -----
+    'No permission settings found' => 'Keine Berechtigungseinträge gefunden',
 	'add_droplets' => 'Droplets hinzufügen',
 	'modify_droplets' => 'Droplets bearbeiten',
 	'manage_backups' => 'Backups verwalten',

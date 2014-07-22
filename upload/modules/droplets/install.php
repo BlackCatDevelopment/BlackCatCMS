@@ -68,8 +68,8 @@ if ( $result->numRows() == 0 ) {
 		)"
 	);
 	// check for errors
-	if( $database->is_error() ) {
-	    $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->get_error() ) ) );
+	if( $database->isError() ) {
+	    $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->getError() ) ) );
 	}
 }
 
@@ -87,8 +87,8 @@ if ( $result->numRows() == 0 ) {
 	) COLLATE='utf8_general_ci' ENGINE=InnoDB;"
     );
     // check for errors
-    if( $database->is_error() ) {
-    $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->get_error() ) ) );
+    if( $database->isError() ) {
+    $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->getError() ) ) );
     }
 }
 
@@ -106,8 +106,8 @@ if ( $result->numRows() == 0 ) {
 	) COLLATE='utf8_general_ci' ENGINE=InnoDB;"
     );
     // check for errors
-    if( $database->is_error() ) {
-    $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->get_error() ) ) );
+    if( $database->isError() ) {
+    $admin->print_error( $admin->lang->translate( 'Database Error: {{error}}', array( 'error' => $database->getError() ) ) );
     }
     // insert settings
     $database->query("INSERT INTO `".CAT_TABLE_PREFIX ."mod_droplets_settings` (`id`, `attribute`, `value`) VALUES

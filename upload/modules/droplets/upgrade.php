@@ -64,8 +64,8 @@ if ( $result->numRows() == 0 ) {
 		)"
 	);
 	// check for errors
-	if( $backend->db()->is_error() ) {
-	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->get_error() ) ) );
+	if( $backend->db()->isError() ) {
+	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->getError() ) ) );
 	}
 }
 
@@ -84,8 +84,8 @@ if ( $result->numRows() == 0 ) {
 		) COLLATE='utf8_general_ci' ENGINE=InnoDB;"
 	);
 	// check for errors
-	if( $backend->db()->is_error() ) {
-	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->get_error() ) ) );
+	if( $backend->db()->isError() ) {
+	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->getError() ) ) );
 	}
 }
 
@@ -104,8 +104,8 @@ if ( $result->numRows() == 0 ) {
 		) COLLATE='utf8_general_ci' ENGINE=InnoDB;"
 	);
 	// check for errors
-	if( $backend->db()->is_error() ) {
-	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->get_error() ) ) );
+	if( $backend->db()->isError() ) {
+	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->getError() ) ) );
 	}
     else
     {
@@ -141,7 +141,7 @@ if ( $result->numRows() == 0 ) {
 		)"
 	);
 	// check for errors
-	if( $backend->db()->is_error() ) {
-	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->get_error() ) ) );
+	if( $backend->db()->isError() ) {
+	    $backend->print_error( $backend->lang()->translate( 'Database Error: {{error}}', array( 'error' => $backend->db()->getError() ) ) );
 	}
 }

@@ -105,7 +105,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 return false;
 
             // special header extensions
-            if ($query->numRows() > 0)
+            if ($query->rowCount() > 0)
             {
                 $droplet = $query->fetchRow(MYSQL_ASSOC);
                 if (self::droplet_exists($droplet['drop_droplet_name'], $page_id))
@@ -329,7 +329,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 CAT_TABLE_PREFIX, $droplet_name
             );
             $result = self::getInstance()->db()->query($SQL);
-            if (is_object($result) && $result->numRows() > 0)
+            if (is_object($result) && $result->rowCount() > 0)
                 return true;
             return false;
         }  // end function droplet_exists()
@@ -629,6 +629,52 @@ if (!class_exists('CAT_Helper_Droplet')) {
         }   // end function check_syntax()
 
         /**
+         * gets the data of given droplet
+         *
+         * @access public
+         * @param  integer  $id
+         * @return array
+         **/
+        public static function getDroplet($id)
+        {
+            $query = self::getInstance()->db()->query(
+                "SELECT * FROM `:prefix:mod_droplets` WHERE id = :id",
+                array('id'=>$id)
+            );
+            $data = $query->fetch();
+            return $data;
+        }   // end function getDroplet()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getDropletByName($name)
+        {
+            $stmt = self::getInstance()->db()->query(
+                'SELECT * FROM `:prefix:mod_droplets` WHERE name=:name',
+                array('name'=>$name)
+            );
+            return $stmt->fetch();
+        }   // end function getDropletByName()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getDropletData($id)
+        {
+            $query = $backend->db()->query(
+                'SELECT * FROM `:prefix:mod_droplets` AS t1 LEFT OUTER JOIN `:prefix:mod_droplets_permissions` AS t2 ' .
+                'ON t1.id=t2.id WHERE t1.id=:id',
+                array('id'=>$id)
+            );
+            return $query->fetch();
+        }   // end function getDropletData()
+        
+        /**
          * returns a list of droplets the current user is allowed to use
          *
          * @access public
@@ -650,7 +696,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 CAT_TABLE_PREFIX,CAT_TABLE_PREFIX
             ));
 
-            if ( $query->numRows() )
+            if ( $query->rowCount() )
             {
                 while ( $droplet = $query->fetchRow(MYSQL_ASSOC) )
                 {
@@ -676,7 +722,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                     }
                     $comments = str_replace( array("[[","]]"), array('<b>[[',']]</b>'), $comments );
                     if ( $with_code )
-                        $droplet['valid_code']   = check_syntax( $droplet['code'] );
+                        $droplet['valid_code']   = self::check_syntax( $droplet['code'] );
 
                     $droplet['comments']     = $comments;
 
@@ -789,6 +835,112 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 ? CAT_URL.PAGES_DIRECTORY.$link.PAGE_EXTENSION
                 : false;
         }   // end function getURLbyPageID()
+
+        /**
+         * delete droplet; returns NULL in case of success, error text otherwise
+         *
+         * @access public
+         * @param  integer  $id
+         * @return mixed
+         **/
+        public static function deleteDroplet($id)
+        {
+            $error = NULL;
+            self::getInstance()->db()->query(
+                "DELETE FROM `:prefix:mod_droplets` WHERE id = :id",
+                array('id'=>$id
+            ));
+            if ( self::getInstance()->db()->isError() )
+            {
+                $error = $backend->lang()->translate(
+                    'Unable to delete Droplet [{{id}}] - {{error}}',
+                    array( 'id' => $id, 'error' => self::getInstance()->db()->getError() )
+                );
+            }
+            return $error;
+        }   // end function deleteDroplet()
+
+        /**
+         * insert a new droplet; returns new id on success, false on error
+         *
+         * @access public
+         * @param  array  $values - droplet data
+         * @return mixed
+         **/
+        public static function insertDroplet($values)
+        {
+            $self  = self::getInstance();
+            $query = "INSERT INTO `:prefix:mod_droplets` VALUES "
+        		   . "('', :name, :code, :description, :time, :userid, :active, 1, 1, :wysiwyg, :comment )";
+
+            // some defaults
+            foreach(array('active','wysiwyg') as $key)
+                if(!isset($values[$key]))
+                    $values[$key] = 1;
+
+            // add new droplet
+            $result = $self->db()->query(
+                $query, $values
+            );
+            if ( !$self->db()->isError() )
+                return $self->db()->lastInsertId();
+            else
+                return false;
+
+        }   // end function insertDroplet()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function updateDroplet($id,$values)
+        {
+            $self  = self::getInstance();
+            // some defaults
+            foreach(array('active','wysiwyg') as $key)
+                if(!isset($values[$key]))
+                    $values[$key] = 1;
+            // Update row
+            $self->db()->query(
+                "UPDATE `:prefix:mod_droplets` SET name=:name, active=:active, show_wysiwyg=:wysiwyg, " .
+                "description=:description, code=:code, comments=:comment, modified_when=:time, " .
+                "modified_by=:userid WHERE id=:id",
+                array_merge(array('id'=>$id),$values)
+            );
+            if ( !$self->db()->isError() )
+                return true;
+            else
+                return false;
+        }   // end function updateDroplet()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function updateDropletPerms($values)
+        {
+            self::getInstance()->db()->query(
+                'REPLACE INTO `:prefix:mod_droplets_permissions` VALUES( :id, :edit, :view );',
+                $values
+            );
+            return self::getInstance()->db()->isError() ? false : true;
+        }   // end function updateDropletPerms()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function updateDropletSettings($attr,$newval)
+        {
+            self::getInstance()->db()->query(
+                'UPDATE `:prefix:mod_droplets_settings` SET `value`=:val WHERE `attribute`=:attr',
+                array('val' => $newval, 'attr' => $key )
+            );
+            return self::getInstance()->db()->isError() ? false : true;
+        }   // end function updateDropletSettings()
 
         /**
          * Unsanitize a text variable and prepare it for output

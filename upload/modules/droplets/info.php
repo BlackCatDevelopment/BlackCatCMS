@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 $module_directory   = 'droplets';
 $module_name        = 'Droplets';
 $module_function    = 'tool';
-$module_version     = '3.2';
+$module_version     = '3.3';
 $module_platform    = '1.x';
 $module_author      = 'BlackCat Development';
 $module_license     = 'GNU General Public License';

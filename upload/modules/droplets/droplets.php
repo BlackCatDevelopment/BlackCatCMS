@@ -50,5 +50,3 @@ function evalDroplets( &$content, $max_loops = 3 )
 {
     return CAT_Helper_Droplet::process($content,$max_loops);
 }   // end function evalDroplets()
-
-?>
