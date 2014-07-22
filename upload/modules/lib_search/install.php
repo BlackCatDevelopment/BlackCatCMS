@@ -50,7 +50,7 @@ $SQL = 'CREATE TABLE IF NOT EXISTS `%ssearch` ('
     . ' PRIMARY KEY (`search_id`) '
     . ' )';
 if (!$backend->db()->query(sprintf($SQL,CAT_TABLE_PREFIX))) {
-    $errors[] = sprintf('[CREATE TABLE] %s', $backend->db()->get_error());
+    $errors[] = sprintf('[CREATE TABLE] %s', $backend->db()->getError());
 }
 
 // delete existing configuration settings
@@ -65,7 +65,7 @@ $SQL = "DELETE FROM `%ssearch` WHERE name='header' OR name='footer'"
     ." OR name='cfg_search_library' OR name='cfg_search_droplet'"
     ." OR name='cfg_search_use_page_id'";
 if (!$database->query(sprintf($SQL,CAT_TABLE_PREFIX))) {
-    $errors[] = sprintf('[DELETE VALUES] %s', $backend->db()->get_error());
+    $errors[] = sprintf('[DELETE VALUES] %s', $backend->db()->getError());
 }
 
 // set default values for the CAT search_id

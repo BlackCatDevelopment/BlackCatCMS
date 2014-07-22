@@ -109,9 +109,9 @@ if((!$in_group) && !is_numeric(array_search($_bc_user->get_user_id(), $old_admin
 if ($section_id != 0) {
 	$sql  = "SELECT `module` FROM `%ssections` WHERE `page_id` = %d AND `section_id` = %d";
 	$res_sec = $backend->db()->query(sprintf($sql,CAT_TABLE_PREFIX,$page_id,$section_id));
-	if ($backend->db()->is_error())
+	if ($backend->db()->isError())
 	{
-		$backend->print_error($backend->db()->get_error());
+		$backend->print_error($backend->db()->getError());
 	}
 	if ($res_sec->numRows() == 0)
 	{

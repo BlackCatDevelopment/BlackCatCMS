@@ -65,8 +65,8 @@ if(isset($_POST['menu_link'])) {
 }
 
 // Check if there is a database error, otherwise say successful
-if($database->is_error()) {
-	$admin->print_error($database->get_error(), $js_back);
+if($database->isError()) {
+	$admin->print_error($database->getError(), $js_back);
 } else {
 	$admin->print_success($MESSAGE['PAGES']['SAVED'], CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
 }

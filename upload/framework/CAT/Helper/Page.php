@@ -145,7 +145,7 @@ if (!class_exists('CAT_Helper_Page'))
                 $result = self::$instance->db()->query(
                     'SELECT * FROM `:prefix:pages` ORDER BY `level` ASC, `position` ASC'
                 );
-                if( $result && $result->numRows()>0 )
+                if( $result && $result->rowCount()>0 )
                 {
                     $children_count = array();
                     $direct_parent  = 0;
@@ -193,7 +193,7 @@ if (!class_exists('CAT_Helper_Page'))
                             'SELECT * FROM `:prefix:pages_settings` WHERE page_id=:id',
                             array('id' => $row['page_id'])
                         );
-                        if( $set && $set->numRows()>0 )
+                        if( $set && $set->rowCount()>0 )
                         {
                             while ( false !== ( $set_row = $set->fetchRow(MYSQL_ASSOC) ) )
                             {
@@ -425,6 +425,8 @@ if (!class_exists('CAT_Helper_Page'))
         public static function createAccessFile($filename, $page_id)
         {
 
+            $filename = CAT_Helper_Directory::sanitizePath($filename);
+
             // check if $filename is a full path (may be 'link' db value)
             if(!preg_match('~^'.CAT_Helper_Directory::sanitizePath(CAT_PATH.PAGES_DIRECTORY).'~i',$filename))
                 $filename = CAT_Helper_Directory::sanitizePath(CAT_PATH.PAGES_DIRECTORY.'/'.dirname($filename).'/'.self::getFilename(basename($filename)).PAGE_EXTENSION);
@@ -563,7 +565,7 @@ if (!class_exists('CAT_Helper_Page'))
                 "SELECT `page_id` FROM `:prefix:pages` WHERE link=:link",
                 array('link'=>$link)
             );
-            if ($get_same_page->numRows() > 0)
+            if ($get_same_page->rowCount() > 0)
                 return true;
             // check access file
             if(
@@ -588,7 +590,7 @@ if (!class_exists('CAT_Helper_Page'))
                 CAT_TABLE_PREFIX, $page_id
             );
             $r = $database->query($q);
-            if($r->numRows())
+            if($r->rowCount())
             {
                 $row = $r->fetchRow();
                 if(isset($row['page_js_files']) && $row['page_js_files']!='')
@@ -1274,7 +1276,7 @@ if (!class_exists('CAT_Helper_Page'))
                      ;
 
             $results = self::getInstance()->db()->query($sql,array('id'=>$page_id));
-            if ($results->numRows())
+            if ($results->rowCount())
             {
                 $items = array();
                 while (($row = $results->fetchRow(MYSQL_ASSOC)) !== false)
@@ -1694,7 +1696,7 @@ if (!class_exists('CAT_Helper_Page'))
                     . '(":now2" > `publ_start` AND `publ_end`=0)',
                     array('now1'=>$now,'now2'=>$now)
                 );
-                if ( $sec->numRows() > 0 )
+                if ( $sec->rowCount() > 0 )
                     while ( false !== ( $section = $sec->fetchRow(MYSQL_ASSOC) ) )
                         self::$pages_sections[$section['page_id']][] = $section;
             }
@@ -1883,7 +1885,7 @@ if (!class_exists('CAT_Helper_Page'))
                         $result = CAT_Registry::getInstance()->db()->query(
                             'SELECT `value` FROM `:prefix:settings` WHERE `name`="maintenance_page"'
                         );
-                        if(is_resource($result) && $result->numRows()==1)
+                        if(is_resource($result) && $result->rowCount()==1)
                         {
                             $row = $result->fetchRow(MYSQL_ASSOC);
                             CAT_Registry::register('MAINTENANCE_PAGE',$row['maintenance_page'],true);
@@ -2060,7 +2062,7 @@ if (!class_exists('CAT_Helper_Page'))
                 $result = $this->db()->query(
                     'SELECT `value` FROM `:prefix:settings` WHERE `name`="maintenance_mode"'
                 );
-                if(is_resource($result)&&$result->numRows()==1)
+                if(is_resource($result)&&$result->rowCount()==1)
                 {
                     $row = $result->fetchRow(MYSQL_ASSOC);
                     CAT_Registry::register('MAINTENANCE_MODE',$row['maintenance_mode'],true);

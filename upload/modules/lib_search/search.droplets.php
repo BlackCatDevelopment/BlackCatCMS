@@ -56,7 +56,7 @@ function register_droplet_for_search($droplet_name, $page_id, $module_directory)
     
     $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplet' AND value='%s'", CAT_TABLE_PREFIX, $droplet_name);
     if (false === ($query = $database->query($SQL))) {
-        trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
+        trigger_error('[ %s ] %s', __FUNCTION__, $database->getError());
     }
     while (false !== ($droplet = $query->fetchRow(MYSQL_ASSOC))) {
         $value = unserialize($droplet['extra']);
@@ -73,7 +73,7 @@ function register_droplet_for_search($droplet_name, $page_id, $module_directory)
         $droplet_name,
         serialize(array('page_id' => $page_id, 'module_directory' => $module_directory)));
     if (!$database->query($SQL)) {
-        trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
+        trigger_error('[ %s ] %s', __FUNCTION__, $database->getError());
     }
     return true;
 } // register_droplet_for_search()
@@ -89,7 +89,7 @@ function unregister_droplet_for_search($droplet_name, $page_id) {
     global $database;
     $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplet' AND value='%s'", CAT_TABLE_PREFIX, $droplet_name);
     if (false === ($query = $database->query($SQL))) {
-        trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
+        trigger_error('[ %s ] %s', __FUNCTION__, $database->getError());
     }
     while (false !== ($droplet = $query->fetchRow(MYSQL_ASSOC))) {
         $value = unserialize($droplet['extra']);
@@ -97,7 +97,7 @@ function unregister_droplet_for_search($droplet_name, $page_id) {
             // the Droplet is registered for this page_id
             $SQL = sprintf("DELETE FROM %ssearch WHERE search_id='%s'", CAT_TABLE_PREFIX, $droplet['search_id']);
             if (!$database->query($SQL)) {
-                trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
+                trigger_error('[ %s ] %s', __FUNCTION__, $database->getError());
             }
             return true;
         }
@@ -115,7 +115,7 @@ function is_droplet_registered_for_search($droplet_name) {
    global $database;
    $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplet' AND value='%s'", CAT_TABLE_PREFIX, $droplet_name);
    if (false === ($query = $database->query($SQL))) {
-       trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
+       trigger_error('[ %s ] %s', __FUNCTION__, $database->getError());
    }
    if ($query->numRows() > 0) return true;
    return false; 
@@ -131,7 +131,7 @@ function get_droplet_page_ids_for_search($droplet_name) {
     global $database;
     $SQL = sprintf("SELECT * FROM %ssearch WHERE name='droplet' AND value='%s'", CAT_TABLE_PREFIX, $droplet_name);
     if (false === ($query = $database->query($SQL))) {
-        trigger_error('[ %s ] %s', __FUNCTION__, $database->get_error());
+        trigger_error('[ %s ] %s', __FUNCTION__, $database->getError());
     }
     $page_ids = array();
     while (false !== ($droplet = $query->fetchRow(MYSQL_ASSOC))) {

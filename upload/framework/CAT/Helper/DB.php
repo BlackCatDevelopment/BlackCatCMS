@@ -135,6 +135,16 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
             self::$conn = NULL;
         }   // end function disconnect()
 
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function lastInsertId()
+        {
+            return self::$conn->lastInsertId();
+        }   // end function lastInsertId()
+        
         public function prepare($statement,$driver_options=array())
         {
             $statement = str_replace(':prefix:',self::$prefix,$statement);

@@ -97,15 +97,15 @@ $text = umlauts_to_entities(strip_tags($content), strtoupper(DEFAULT_CHARSET), 0
  **/
 $query = "REPLACE INTO `".CAT_TABLE_PREFIX."mod_wysiwyg` VALUES ( '$section_id', $page_id, '$content', '$text' );";
 $backend->db()->query($query);
-if ($backend->db()->is_error())
-    trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $backend->db()->get_error()), E_USER_ERROR);
+if ($backend->db()->isError())
+    trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $backend->db()->getError()), E_USER_ERROR);
 
 $edit_page = CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id.'#'.SEC_ANCHOR.$section_id;
 
 // Check if there is a database error, otherwise say successful
-if($backend->db()->is_error())
+if($backend->db()->isError())
 {
-	$backend->print_error($backend->db()->get_error(), $js_back);
+	$backend->print_error($backend->db()->getError(), $js_back);
 }
 else
 {

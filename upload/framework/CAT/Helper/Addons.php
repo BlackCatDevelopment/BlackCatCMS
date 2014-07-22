@@ -156,7 +156,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 'SELECT * FROM `:prefix:addons` WHERE addon_id=:id',
                 array('id'=>$id)
             );
-            if ( $addon->numRows() > 0 )
+            if ( $addon->rowCount() > 0 )
                 return $addon->fetchRow();
             return NULL;
         }   // end function getAddonByID()
@@ -176,7 +176,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 'SELECT * FROM `:prefix:addons` WHERE directory=:dir',
                 array('dir'=>$directory)
             );
-            if ( $addon->numRows() > 0 )
+            if ( $addon->rowCount() > 0 )
             {
                 return $addon->fetchRow( MYSQL_ASSOC );
             }
@@ -250,7 +250,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     $where, $get_type, $get_function, htmlspecialchars($order)
                 )
             );
-            if ( $addons->numRows() > 0 )
+            if ( $addons->rowCount() > 0 )
             {
                 $counter = 1;
                 while ( $addon = $addons->fetchRow() )
@@ -1054,7 +1054,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         "SELECT `user_id` FROM `:prefix:users` WHERE language=:lang LIMIT 1",
                         array('lang'=>$addon_name)
                     );
-                    if ( $query_users->numRows() > 0 )
+                    if ( $query_users->rowCount() > 0 )
                     {
                         return self::getInstance()->lang()->translate( 'Cannot uninstall this language <span class="highlight_text">{{name}}</span> because it is in use!', array(
                              'name' => $addon_name
@@ -1068,15 +1068,15 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         "SELECT `section_id`, `page_id` FROM `:prefix:sections` WHERE module=:mod",
                         array('mod'=>$addon_name)
                     );
-                    if ( $info->numRows() > 0 )
+                    if ( $info->rowCount() > 0 )
                     {
                         $temp   = explode( ";", self::getInstance()->lang()->translate( 'this page;these pages' ) );
-                        $add    = $info->numRows() == 1 ? $temp[ 0 ] : $temp[ 1 ];
+                        $add    = $info->rowCount() == 1 ? $temp[ 0 ] : $temp[ 1 ];
                         $values = array(
                             'type' => self::getInstance()->lang()->translate( 'Module' ),
                             'type_name' => $type,
                             'pages_string' => $add,
-                            'count' => $info->numRows(),
+                            'count' => $info->rowCount(),
                             'name' => $addon_name
                         );
                         $pages  = array();
@@ -1116,11 +1116,11 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         "SELECT `page_id`, `page_title` FROM `:prefix:pages` WHERE template=:name order by page_title",
                         array('name'=>$addon_name)
                     );
-                    if ( $info->numRows() > 0 )
+                    if ( $info->rowCount() > 0 )
                     {
                         $msg_template_str  = 'Cannot uninstall template <span class="highlight_text">{{name}}</span> because it is still in use on {{pages}}:';
                         $temp              = explode( ';', self::getInstance()->lang()->translate( 'this page;these pages' ) );
-                        $add               = $info->numRows() == 1 ? $temp[ 0 ] : $temp[ 1 ];
+                        $add               = $info->rowCount() == 1 ? $temp[ 0 ] : $temp[ 1 ];
                         $page_template_str = "<li><a href='../pages/settings.php?page_id={{id}}'>{{title}}</a></li>";
 
                         $values = array(
@@ -1163,7 +1163,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 $stmt = self::getInstance()->db()->query(
                     'SELECT * FROM `:prefix:groups` WHERE group_id <> 1'
                 );
-                if ( $stmt->numRows() > 0 )
+                if ( $stmt->rowCount() > 0 )
                 {
                     while ( $row = $stmt->fetchRow( MYSQL_ASSOC ) )
                     {
@@ -1241,7 +1241,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         "SELECT COUNT(*) FROM `:prefix:addons` WHERE `type`='module' AND `directory`=:dir AND `function`=:func",
                         array('dir'=>$addon_info['module_directory'], 'func'=>$module_function)
                     );
-                    if ( $q->numRows() )
+                    if ( $q->rowCount() )
                     {
                         $sql = "UPDATE `:prefix:addons` SET `upgraded`=:time, ";
                         $do  = 'update';
@@ -1303,7 +1303,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             // get groups
             $stmt = $self->db()->query('SELECT * FROM `:prefix:groups` WHERE group_id <> 1');
 
-            if ( $stmt->numRows() > 0 )
+            if ( $stmt->rowCount() > 0 )
             {
 
                 $group_ids      = CAT_Helper_Validate::sanitizePost( 'group_id' );
@@ -1440,7 +1440,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 'SELECT * FROM `:prefix:addons` WHERE type=:type AND ( directory=:dir OR name=:name )',
                 array('type'=>$type, 'dir'=>$module, 'name'=>$module)
             );
-            if ( !is_object($q) || !$q->numRows() )
+            if ( !is_object($q) || !$q->rowCount() )
                 return false;
 
             // note: if there's more than one, the first match will be returned!
@@ -1472,7 +1472,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 'SELECT * FROM `:prefix:addons` WHERE type=:type AND ( directory=:dir OR name=:name ) LIMIT 1',
                 array('type'=>"module", 'dir'=>$module, 'name'=>$module)
             );
-            if ( !$q->numRows() )
+            if ( !$q->rowCount() )
                 return false;
             $row = $q->fetchRow();
             if ( $row['removable'] != 'Y' )
@@ -1538,7 +1538,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 'SELECT * FROM `:prefix:addons` WHERE directory=:dir',
                 array('dir'=>$module)
             );
-            if ( !$q->numRows() )
+            if ( !$q->rowCount() )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called for non existing module [$module] (path: [$filepath]) - not found in addons table!" );
                 self::$error = "sec_register_file() called for non existing module [$module] (path: [$filepath]) - not found in addons table!";
@@ -1551,7 +1551,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 'SELECT * FROM `:prefix:class_secure` WHERE module=:mod AND filepath=:path',
                 array('mod'=> $row['addon_id'], 'path'=>'/modules/'.$module.'/'.$filepath)
             );
-            if ( !$q->numRows() )
+            if ( !$q->rowCount() )
             {
                 $self->db()->query(
                     'REPLACE INTO `:prefix:class_secure` VALUES ( :id, :path )',

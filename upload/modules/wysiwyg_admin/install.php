@@ -71,7 +71,7 @@ $errors = array();
 
 foreach($jobs as $query) {
 	$database->query( $query );
-	if ( $database->is_error() ) $errors[] = $database->get_error();
+	if ( $database->isError() ) $errors[] = $database->getError();
 }
 
 /** 

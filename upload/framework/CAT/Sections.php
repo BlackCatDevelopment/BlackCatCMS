@@ -81,7 +81,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 
         	if ( !$self->db()->isError() )
         		// Get the section id
-        		return $self->db()->get_one("SELECT LAST_INSERT_ID()");
+        		return $self->db()->lastInsertId();
             else
                 return false;
         }   // end function addSection()
@@ -141,7 +141,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
                     CAT_TABLE_PREFIX, $page_id
                 ));
 
-	            if ($sec->numRows() == 0)
+	            if ($sec->rowCount() == 0)
 	            {
 	                return NULL;
 	            }
@@ -190,7 +190,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
                 'SELECT `module` FROM `%ssections` WHERE `section_id` = %d',
                 CAT_TABLE_PREFIX, $section_id
             ));
-        	if($q->numRows() == 0)
+        	if($q->rowCount() == 0)
                 return false;
         	return $q->fetchRow(MYSQL_ASSOC);
         }   // end function getSection()
@@ -246,7 +246,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
                 CAT_TABLE_PREFIX,
                 $page_id
             ));
-            if($res && $res->numRows())
+            if($res && $res->rowCount())
                 return true;
             return false;
         }   // end function isMenuLink()

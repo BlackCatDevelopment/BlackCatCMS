@@ -38,6 +38,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         private static $lasterror             = NULL;
         private static $errorstack            = array();
         private static $users                 = array();
+        private static $groups                = array();
 
         // user options (column names) added to the session on successful logon
         private static $sessioncols = array(
@@ -766,6 +767,29 @@ if ( ! class_exists( 'CAT_Users', false ) )
         {
             return self::$useroptions;
         }   // end function getExtendedOptions()
+
+        /**
+         * gets all available groups from the DB
+         *
+         * @access public
+         * @param  string  $order - column to order by, default 'name'
+         * @return array
+         **/
+        public static function getGroups($order='name')
+        {
+            $self   = self::getInstance();
+            if(count(self::$groups)) return self::$groups;
+            // get available groups
+            $query = $self->db()->query(
+                'SELECT `group_id`, `name` FROM `:prefix:groups` ORDER BY :order',
+                array('order'=>$order)
+            );
+            if ( $query->rowCount() )
+                while ( $row = $query->fetch() )
+                    self::$groups[$row['group_id']] = $row['name'];
+            return self::$groups;
+        }   // end function getGroups()
+        
 
         /**
          * save user's preferences

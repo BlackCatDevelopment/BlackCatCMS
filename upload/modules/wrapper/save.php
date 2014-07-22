@@ -61,9 +61,9 @@ if ( isset( $_POST[ 'url' ] ) )
 }
 
 // Check if there is a database error, otherwise say successful
-if ( $database->is_error() )
+if ( $database->isError() )
 {
-	$admin->print_error( $database->get_error(), $js_back );
+	$admin->print_error( $database->getError(), $js_back );
 }
 else
 {

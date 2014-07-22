@@ -371,7 +371,7 @@ if (!class_exists('CAT_Page', false))
                     'SELECT * FROM `%ssections` WHERE `page_id` = %d ORDER BY position ASC',
                     CAT_TABLE_PREFIX, $this->_page_id
                 ));
-                if ( $sec->numRows() > 0 )
+                if ( $sec->rowCount() > 0 )
                 {
                 	while ( false !== ( $section = $sec->fetchRow( MYSQL_ASSOC ) ) )
                 	{
@@ -446,7 +446,7 @@ if (!class_exists('CAT_Page', false))
                 CAT_TABLE_PREFIX,
                 $this->_page_id
             ));
-        	if($tpid->numRows() == 1)
+        	if($tpid->rowCount() == 1)
         	{
         		$res = $tpid->fetchRow();
         		$target_page_id = $res['target_page_id'];

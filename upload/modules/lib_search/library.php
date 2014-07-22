@@ -252,7 +252,7 @@ class CATSearch {
         
         $SQL = sprintf("SELECT * FROM %ssearch", CAT_TABLE_PREFIX);
         if (false ===($query = $database->query($SQL))) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error())); 
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->getError())); 
             return  false;
         }
         while (false !== ($field = $query->fetchRow(MYSQL_ASSOC))) {
@@ -277,8 +277,8 @@ class CATSearch {
         
         // get all module directories
         $query = $database->query("SELECT DISTINCT directory FROM " . CAT_TABLE_PREFIX . "addons WHERE type = 'module'");
-        if ($database->is_error()) { 
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error())); 
+        if ($database->isError()) { 
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->getError())); 
             return  false; 
         }
         if ($query->numRows() > 0) {
@@ -315,8 +315,8 @@ class CATSearch {
         
         // get all users
         $query = $database->query("SELECT user_id,username,display_name FROM " . CAT_TABLE_PREFIX . "users");
-        if ($database->is_error()) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        if ($database->isError()) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->getError()));
             return  false;
         }        
         // set a "unknown user"
@@ -574,8 +574,8 @@ class CATSearch {
         
         // Get the modules from module table
         $get_modules = $database->query(sprintf("SELECT DISTINCT module FROM %ssections WHERE module != '' ", CAT_TABLE_PREFIX));
-        if ($database->is_error()) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        if ($database->isError()) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->getError()));
             return false;
         }
         $modules = array();
@@ -588,7 +588,7 @@ class CATSearch {
         // get the modules for the Droplet search
         $SQL = sprintf("SELECT * FROM %ssearch WHERE name='cfg_search_droplet'", CAT_TABLE_PREFIX);
         if (false === ($get_droplets = $database->query($SQL))) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->getError()));
             return false;
         }
         $droplets = array();
@@ -682,7 +682,7 @@ class CATSearch {
                     foreach ($pids as $pid) {
                         $SQL = sprintf("SELECT * FROM %spages WHERE page_id='%s'", CAT_TABLE_PREFIX, $pid);
                         if (false === ($pages_query = $database->query($SQL))) {
-                            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+                            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->getError()));
                             return false;
                         }   
                         if ($pages_query->numRows() > 0) {
@@ -754,7 +754,7 @@ class CATSearch {
                         ('none','deleted') AND p.searching = '1' ".$this->search_path_SQL." ". 
                         $this->search_language_SQL." ORDER BY s.page_id, s.position ASC";
                     if (false === ($sections_query = $database->query($SQL))) {
-                        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+                        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->getError()));
                         return false;
                     }
                     if ($sections_query->numRows() > 0) {
@@ -857,7 +857,7 @@ class CATSearch {
             viewing_users FROM $table WHERE visibility NOT IN ('none','deleted') 
             AND searching = '1' ".$this->search_path_SQL." ".$this->search_language_SQL;
         if (false ===($query_pages = $database->query($SQL))) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->getError()));
             return false;
         }
         if ($query_pages->numRows() > 0) {

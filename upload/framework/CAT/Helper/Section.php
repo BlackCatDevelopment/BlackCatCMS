@@ -107,7 +107,7 @@ if (!class_exists('CAT_Helper_Section'))
                 array_push($opt,$now,$now);
             }
             $sec = self::getInstance()->db()->query(vsprintf($sql,$opt));
-            if($sec->numRows())
+            if($sec->rowCount())
             {
                 return $sec->fetchRow(MYSQL_ASSOC);
             }
@@ -126,7 +126,7 @@ if (!class_exists('CAT_Helper_Section'))
             $opt = array( CAT_TABLE_PREFIX, $section_id, $type );
             $sql = 'SELECT * FROM `%ssections` WHERE `section_id`=%d AND `module`="%s"';
             $sec = self::getInstance()->db()->query(vsprintf($sql,$opt));
-            if($sec->numRows())
+            if($sec->rowCount())
                 return true;
             return false;
         }   // end function hasType()
@@ -145,7 +145,7 @@ if (!class_exists('CAT_Helper_Section'))
             $opt = array( CAT_TABLE_PREFIX, $page_id, $type );
             $sql = 'SELECT `section_id` FROM `%ssections` WHERE `page_id`=%d AND `module`="%s"';
             $sec = self::getInstance()->db()->query(vsprintf($sql,$opt));
-            if($sec->numRows())
+            if($sec->rowCount())
                 return $sec->fetchRow(MYSQL_ASSOC);
             return false;
         }   // end function getSectionForPage()
@@ -163,7 +163,7 @@ if (!class_exists('CAT_Helper_Section'))
                 'SELECT page_id FROM `%ssections` WHERE `section_id`=%d',
                 CAT_TABLE_PREFIX, $section_id
             ));
-            if($sec->numRows())
+            if($sec->rowCount())
             {
                 $result = $sec->fetchRow(MYSQL_ASSOC);
                 return $result['page_id'];
