@@ -59,7 +59,7 @@ $settings = get_settings();
 
 global $val, $backend;
 $val = CAT_Helper_Validate::getInstance();
-$backend = CAT_Backend::getInstance('admintools','droplets');
+$backend = CAT_Backend::getInstance('admintools','droplets',false,false);
 
 if ( $val->get('_REQUEST','del','numeric') )
 {
@@ -233,7 +233,7 @@ function manage_droplet_backups()
                 'date' => strftime( '%c', $stat['ctime'] ),
                 'files' => count( $count ),
                 'listfiles' => implode( ", ", array_map( create_function( '$cnt', 'return $cnt["filename"];' ), $count ) ),
-                'download' => sanitize_url( CAT_URL . '/modules/droplets/export/' . basename( $file ) )
+                'download' => CAT_Helper_Validate::sanitize_url(CAT_URL.'/modules/droplets/export/'.basename($file))
             );
         }
     }
@@ -393,7 +393,7 @@ function export_droplets()
     // create zip
     $archive   = CAT_Helper_Zip::getInstance($temp_file)->config( 'removePath', $temp_dir );
     $file_list = $archive->create( $temp_dir );
-    if ( $file_list == 0 )
+    if ( $file_list == 0 && ! CAT_Helper_Validate::sanitizeGet('ajax'))
     {
         list_droplets( $backend->lang()->translate( "Packaging error" ) . ' - ' . $archive->errorInfo( true ) );
     }
@@ -405,7 +405,7 @@ function export_droplets()
         {
             mkdir( $export_dir, 0777 );
         }
-        if ( !copy( $temp_file, $export_dir.'/'.$filename.'.zip' ) )
+        if ( !copy( $temp_file, $export_dir.'/'.$filename.'.zip' ) && ! CAT_Helper_Validate::sanitizeGet('ajax') )
         {
             echo '<div class="drfail">',
                  $backend->lang()->translate('Unable to move the exported ZIP-File!'),
@@ -415,11 +415,14 @@ function export_droplets()
         else
         {
             unlink( $temp_file );
-            $download = sanitize_url(CAT_URL.'/modules/droplets/export/'.$filename.'.zip' );
+            $download = CAT_Helper_Validate::sanitize_url(CAT_URL.'/modules/droplets/export/'.$filename.'.zip' );
         }
     }
 
     CAT_Helper_Directory::removeDirectory( $temp_dir );
+
+    if(CAT_Helper_Validate::sanitizeGet('ajax'))
+        return true;
 
     return $backend->lang()->translate( 'Backup created' )
          . '<br /><br />'
@@ -532,6 +535,14 @@ function delete_droplets()
 
     }
 
+    if(CAT_Helper_Validate::sanitizeGet('ajax'))
+        echo json_encode(
+            array(
+                'success' => true,
+                'message' => 'Done'
+            )
+        );
+    else
     list_droplets( implode( "<br />", $errors ) );
     return;
 

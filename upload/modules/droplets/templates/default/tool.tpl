@@ -34,7 +34,7 @@
           </a>
           {/if}
           {if $can_delete}
-		  <a class="del" href="javascript: confirm_link('{translate( 'Are you sure?' )}','{$CAT_ADMIN_URL}/admintools/tool.php?tool=droplets&amp;del={$item.id}')">
+		  <a class="del" href="javascript: confirm_link('{translate('Do you really want to delete this droplet?')}','{$CAT_ADMIN_URL}/admintools/tool.php?tool=droplets&amp;del={$item.id}&amp;ajax=1',1)">
 		    <img src="{$IMGURL}/delete.png" title="{translate('Delete')}" />
 		  </a>
 		  {/if}

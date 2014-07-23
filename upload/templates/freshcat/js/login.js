@@ -30,6 +30,22 @@
 
 jQuery(document).ready(function(){
 
+    // check if SSL is available
+    if ("https:" != location.protocol) {
+        $.ajax(
+		{
+			type:		'POST',
+			url:		CAT_ADMIN_URL + '/login/ajax_check_ssl.php',
+            dataType:	'json',
+			cache:		false,
+            success:    function( data, textStatus, jqXHR  ) {
+                if ( data.success === true ) {
+                    window.location = location.href.replace('http','https');
+                }
+            }
+        });
+    }
+
 	$('label').inFieldLabels();
 
 	$('.fc_loader').addClass('hidden').fadeOut(0);

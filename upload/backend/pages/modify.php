@@ -75,6 +75,8 @@ if (!CAT_Helper_Page::getPagePermission($page_id, 'admin'))
     $backend->print_error('You do not have permissions to modify this page');
 }
 
+$parser->setGlobals('MOD_URL',CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
+
 $wysiwyg   = $val->get('_GET', 'wysiwyg', 'scalar');
 $sectionId = isset($wysiwyg) ? htmlspecialchars($wysiwyg) : NULL;
 

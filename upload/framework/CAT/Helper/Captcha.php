@@ -154,10 +154,6 @@ echo "</textarea>";
          **/
         private static function wbstyle($action='all', $style='', $sec_id='') {
             @include CAT_PATH.'/framework/CAT/Helper/Captcha/WB/captcha.php';
-#$fh = fopen(CAT_PATH.'/temp/captcha_'.time().'.txt','w');
-#fwrite($fh,"Action -$action-, Style -$style-, Sec -$sec_id-\n");
-#fwrite($fh,print_r(debug_backtrace(),1));
-#fclose($fh);
             return wb_call_captcha($action, $style, $sec_id);
         }   // end function wbstyle()
         

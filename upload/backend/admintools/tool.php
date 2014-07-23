@@ -40,7 +40,8 @@ if (defined('CAT_PATH')) {
     }
 }
 
-$backend  =  CAT_Backend::getInstance('admintools', 'admintools');
+$header   = ( CAT_Helper_Validate::sanitizeGet('ajax') ? false : true );
+$backend  =  CAT_Backend::getInstance('admintools', 'admintools', $header);
 $admin    =& $backend;
 $val      =  CAT_Helper_Validate::getInstance();
 $get_tool =  $val->sanitizeGet('tool',NULL,true);
@@ -92,10 +93,18 @@ if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php') )
             $backend->lang()->addFile(LANGUAGE.'.php', CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$tool['directory'].'/languages'));
     }
     // Cache the tool and add it to dwoo
+    if(!CAT_Helper_Validate::sanitizeGet('ajax'))
+    {
     ob_start();
-        require(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php');
+            require CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php');
         $tpl_data['TOOL'] = ob_get_contents();
     ob_clean(); // allow multiple buffering for csrf-magic
+    }
+    else
+    {
+        require CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php');
+        return;
+    }
     // Check whether icon is available for the admintool
     if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png') )
     {

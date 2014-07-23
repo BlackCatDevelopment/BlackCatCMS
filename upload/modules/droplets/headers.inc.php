@@ -64,11 +64,11 @@ elseif ( file_exists( CAT_PATH.'/modules/lib_jquery/plugins/SlimBox2' ) ) {
 		    'css' => array(
 				array(
 					'media'		=> 'screen',
-					'file'		=> '/modules/lib_jquery/plugins/FancyBox/jquery.fancybox-1.3.4.css',
+					'file'		=> '/modules/lib_jquery/plugins/SlimBox2/jquery-slimbox2.css',
 				)
 			),
 			'js' => array(
-                '/modules/lib_jquery/plugins/FancyBox/jquery.fancybox-1.3.4.pack.js',
+                '/modules/lib_jquery/plugins/Slimbox2/jquery-slimbox2-min.js',
 			),
 		),
 	);

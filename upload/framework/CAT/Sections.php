@@ -194,6 +194,22 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
         	return $q->fetch();
         }   // end function getSection()
         
+	    /**
+          *
+          * @access public
+          * @return
+          **/
+        public static function getSectionsByType($page_id,$type='wysiwyg',$limit=1)
+        {
+            $self = self::getInstance();
+            $SQL = "SELECT `section_id` FROM `:prefix:sections` "
+                 . "WHERE `page_id`=:id AND `module`=:type ORDER BY `position` ASC LIMIT :limit";
+            $params = array('id'=>$page_id, 'type'=>$type, 'limit'=>$limit);
+            $result = $self->db()->query($SQL,$params);
+            return $result->rowCount()
+                ?  $result->fetchAll()
+                :  false;
+         }   // end function getSectionsByType()
 	    
 	    /**
 	     * checks if a page has active sections
@@ -240,7 +256,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
             if(!self::$instance)
                 self::getInstance();
             $res = self::$instance->db()->query(
-                  'SELECT `module` FROM `%ssections` '
+                  'SELECT `module` FROM `:prefix:sections` '
                 . 'WHERE `page_id` = :id AND `module` = "menu_link"',
                 array('id'=>$page_id)
             );

@@ -133,6 +133,7 @@ $LANG = array(
     'by' => 'von',
     'Close' => 'Schließen',
     'Close & Reset' => 'Schließen & Zurücksetzen',
+    'Confirmation' => 'Bestätigung',
     'Count' => 'Anzahl',
     'CSRF check failed. Maybe a token timeout. Trying to reload page.' => 'CSRF Check fehlgeschlagen. Vielleicht ist das Token abgelaufen. Seite wird neu geladen.',
     'Done' => 'Fertig',

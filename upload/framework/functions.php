@@ -452,7 +452,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
      **/
     function sanitize_url( $href )
     {
-        return CAT_Helper_Validate::getInstance()->sanitize_url($href);
+        return CAT_Helper_Validate::sanitize_url($href);
     }   // end function sanitize_url()
 
     /**

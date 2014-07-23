@@ -95,19 +95,9 @@ if (!class_exists('CAT_Helper_Droplet')) {
             $og_type       = 'article';
             $exec_droplets = true;
 
-            // droplets with type 'header'
-            $SQL = sprintf(
-                  "SELECT `drop_module_dir`,`drop_droplet_name` FROM `%smod_droplets_extension` "
-                . "WHERE `drop_type`='header' AND `drop_page_id`='%d' LIMIT 1",
-                CAT_TABLE_PREFIX, $page_id
-            );
-            if (null == ($query = self::getInstance()->db()->query($SQL)))
-                return false;
-
-            // special header extensions
-            if ($query->rowCount() > 0)
+            $droplets      = self::getDropletsFromDB('header');
+            foreach($droplets as $droplet)
             {
-                $droplet = $query->fetchRow(MYSQL_ASSOC);
                 if (self::droplet_exists($droplet['drop_droplet_name'], $page_id))
                 {
                     // the droplet exists
@@ -137,16 +127,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 }
             }
 
-            // check if we have to load css or javascript files
-            $SQL = sprintf(
-                  "SELECT * FROM `%smod_droplets_extension` "
-                . "WHERE (`drop_type`='css' OR `drop_type`='javascript') AND `drop_page_id`='%d'",
-                CAT_TABLE_PREFIX, $page_id
-            );
-            if (null == ($query = self::getInstance()->db()->query($SQL)))
-                return false;
-
-            while (false !== ($droplet = $query->fetchRow(MYSQL_ASSOC)))
+            $droplets = self::getCSSJS();
+            foreach($droplets as $droplet)
             {
                 // go only ahead if the droplet exists
                 if (self::droplet_exists($droplet['drop_droplet_name']))
@@ -172,7 +154,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         if ($droplet['drop_type'] == 'css')
                             $load_css .= sprintf(' <link rel="stylesheet" type="text/css" href="%s" media="screen" />', $file);
                         else
-                            $load_js .= sprintf(' <script type="text/javascript" src="%s"></script>', $file);
+                            $load_js  .= sprintf(' <script type="text/javascript" src="%s"></script>', $file);
                     }
                 }
                 else
@@ -229,24 +211,18 @@ if (!class_exists('CAT_Helper_Droplet')) {
             }
 
             if (isset($config['og:droplets']))
-            {
                 if (trim(strtolower($config['og:droplets'])) == 'false')
                     $exec_droplets = false;
-            }
 
+            // try to get the first image from the content
             if (empty($image))
-            {
-                // try to get the first image from the content
                 if (false !== ($test = self::getFirstImageFromContent($page_id, $exec_droplets)))
                     $image = $test;
-            }
 
+            // if no image is available look if a image is defined in config.json
             if (empty($image))
-            {
-                // if no image is available look if a image is defined in config.json
                 if (isset($config['og:image']))
                     $image = $config['og:image'];
-            }
 
             if (!empty($image))
             {
@@ -324,11 +300,9 @@ if (!class_exists('CAT_Helper_Droplet')) {
         public static function droplet_exists($droplet_name)
         {
             $droplet_name = self::clear_droplet_name($droplet_name);
-            $SQL = sprintf(
-                "SELECT * FROM `%smod_droplets` WHERE `name`='%s'",
-                CAT_TABLE_PREFIX, $droplet_name
-            );
-            $result = self::getInstance()->db()->query($SQL);
+            $SQL          = "SELECT * FROM `:prefix:mod_droplets` WHERE `name`=:name";
+            $params       = array('name'=>$droplet_name);
+            $result       = self::getInstance()->db()->query($SQL,$params);
             if (is_object($result) && $result->rowCount() > 0)
                 return true;
             return false;
@@ -345,15 +319,18 @@ if (!class_exists('CAT_Helper_Droplet')) {
         public static function is_registered_droplet($droplet_name, $register_type, $page_id)
         {
             $droplet_name = self::clear_droplet_name($droplet_name);
-            $SQL = sprintf(
-                  "SELECT `drop_page_id` FROM `%smod_droplets_extension` "
-                . "WHERE `%s`='%s' AND `%s`='%s' AND `%s`='%s'",
-                CAT_TABLE_PREFIX,
-                self::field_droplet_name, $droplet_name,
-                self::field_type,         $register_type,
-                self::field_page_id,      $page_id
+            $SQL          = "SELECT `drop_page_id` FROM `:prefix:mod_droplets_extension` "
+                          . "WHERE :field1=:value1 AND :field2=:value2 AND :field3=:value3"
+                          ;
+            $params       = array(
+                'field2' => self::field_droplet_name,
+                'value1' => $droplet_name,
+                'field2' => self::field_type,
+                'value2' => $register_type,
+                'field3' => self::field_page_id,
+                'value3' => $page_id
             );
-            $check = self::getInstance()->db()->query($SQL)->fetchColumn();
+            $check = self::getInstance()->db()->query($SQL,$params)->fetchColumn();
             if(self::getInstance()->db()->isError() || !$check)
                 return false;
             $result = ($check == $page_id) ? true : false;
@@ -418,6 +395,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          */
         public static function register_droplet($droplet_name, $page_id, $module_directory, $register_type, $file='')
         {
+            $self = self::getInstance();
             // clear the droplet name
             $droplet_name = self::clear_droplet_name($droplet_name);
             // nothing to do if the droplet does not exists
@@ -429,14 +407,15 @@ if (!class_exists('CAT_Helper_Droplet')) {
             // clear the module directory
             $module_directory = CAT_Helper_Directory::sanitizePath($module_directory);
             // insert
-            $SQL = sprintf(
-                "INSERT INTO `%smod_droplets_extension` "
-                . "(`drop_droplet_name`,`drop_page_id`,`drop_module_dir`,`drop_type`,`drop_file`) "
-                . "VALUES ( '%s', '%s', '%s', '%s', '%s' )",
-                CAT_TABLE_PREFIX, $droplet_name, $page_id, $module_directory, $register_type, $file
+            $SQL = "INSERT INTO `:prefix:mod_droplets_extension` "
+                 . "(`drop_droplet_name`,`drop_page_id`,`drop_module_dir`,`drop_type`,`drop_file`) "
+                 . "VALUES ( '?', '?', '?', '?', '?' )"
+                 ;
+            $params = array(
+                $droplet_name, $page_id, $module_directory, $register_type, $file
             );
-            self::getInstance()->db()->query($SQL);
-            return self::getInstance()->db()->isError();
+            $self->db()->query($SQL,$params);
+            return $self->db()->isError();
         }   // end function register_droplet()
 
         /***********************************************************************
@@ -499,17 +478,22 @@ if (!class_exists('CAT_Helper_Droplet')) {
          * @param STR $droplet_name
          * @return BOOL
          */
-        public static function unregister_droplet($droplet_name, $register_type, $page_id) {
+        public static function unregister_droplet($droplet_name, $register_type, $page_id)
+        {
+            $self = self::getInstance();
             // clear Droplet name
             $droplet_name = self::clear_droplet_name($droplet_name);
             // delete the record
-            $SQL = sprintf(
-                  "DELETE FROM `%smod_droplets_extension` WHERE `drop_droplet_name`='%s' "
-                . "AND `drop_type`='%s' AND `drop_page_id`='%s'",
-                CAT_TABLE_PREFIX, $droplet_name, $register_type, $page_id
+            $SQL =  "DELETE FROM `:prefix:mod_droplets_extension` WHERE `drop_droplet_name`=:name "
+                 . "AND `drop_type`=:type AND `drop_page_id`=:id"
+                 ;
+            $params = array(
+                'name' => $droplet_name,
+                'type' => $register_type,
+                'id'   => $page_id
             );
-            self::getInstance()->db()->query($SQL);
-            if (!self::getInstance()->db()->isError())
+            $self->db()->query($SQL,$params);
+            if (!$self->db()->isError())
                 return false;
             return true;
         }   // end function unregister_droplet()
@@ -690,15 +674,15 @@ if (!class_exists('CAT_Helper_Droplet')) {
             if ( $with_code )
                 $fields .= ', `code`';
 
-            $query   = $self->db()->query(sprintf(
-                  "SELECT $fields FROM `%smod_droplets` AS t1 LEFT OUTER JOIN `%smod_droplets_permissions` AS t2 "
-                . "ON t1.id=t2.id ORDER BY name ASC",
-                CAT_TABLE_PREFIX,CAT_TABLE_PREFIX
-            ));
+            $query = $self->db()->query(
+                  "SELECT $fields FROM `:prefix:mod_droplets` AS t1 "
+                . "LEFT OUTER JOIN `:prefix:mod_droplets_permissions` AS t2 "
+                . "ON t1.id=t2.id ORDER BY `name` ASC"
+            );
 
             if ( $query->rowCount() )
             {
-                while ( $droplet = $query->fetchRow(MYSQL_ASSOC) )
+                while ( $droplet = $query->fetch() )
                 {
                     // the current user needs global edit permissions, or specific edit permissions to see this droplet
                     if ( !CAT_Helper_Droplet::is_allowed( 'modify_droplets', $groups ) )
@@ -748,41 +732,33 @@ if (!class_exists('CAT_Helper_Droplet')) {
          * @param INT $page_id
          * @return STR URL oder BOOL FALSE
          */
-        public static function getFirstImageFromContent($page_id, $exec_droplets=true) {
-
-            $img = array();
+        public static function getFirstImageFromContent($page_id, $exec_droplets=true)
+        {
+            $self = self::getInstance();
+            $img  = array();
             $__CAT_Helper_Droplets_content = '';
 
-            $SQL = sprintf(
-                "SELECT `section_id` FROM `%ssections` WHERE `page_id`='%d' AND `module`='wysiwyg' ORDER BY `position` ASC LIMIT 1",
-                CAT_TABLE_PREFIX, $page_id
-            );
-
-            $section_id = self::getInstance()->db()->query($SQL)->fetchColumn();
-            if (self::getInstance()->db()->isError()) {
-                return false;
+            $section = CAT_Sections::getSectionsByType($page_id);
+            if(count($section))
+            {
+                $SQL    = "SELECT `content` FROM `:prefix:mod_wysiwyg` WHERE `section_id`=:id";
+                $params = array('id'=>$section['section_id']);
+                $result = $self->db()->query($SQL)->fetchColumn();
+                if ($self->db()->isError())
+                    return false;
+                if (is_string($result))
+                    $__CAT_Helper_Droplets_content = self::unsanitizeText($result);
             }
-
-            $SQL = sprintf(
-                "SELECT `content` FROM `%smod_wysiwyg` WHERE `section_id`='%d'",
-                CAT_TABLE_PREFIX, $section_id
-            );
-            $result = self::getInstance()->db()->query($SQL)->fetchColumn();
-            if (self::getInstance()->db()->isError()) {
-                return false;
-            }
-            if (is_string($result))
-                $__CAT_Helper_Droplets_content = self::unsanitizeText($result);
 
             if (!empty($__CAT_Helper_Droplets_content))
             {
                 // scan content for images
-                if ($exec_droplets && file_exists(CAT_PATH .'/modules/droplets/droplets.php'))
+                if ($exec_droplets && file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH .'/modules/droplets/droplets.php')))
                 {
                     // we must process the droplets to get the real output content
                     $_SESSION['DROPLET_EXECUTED_BY_DROPLETS_EXTENSION'] = true;
                     ob_start();
-                        include_once(CAT_PATH .'/modules/droplets/droplets.php');
+                        include_once CAT_Helper_Directory::sanitizePath(CAT_PATH .'/modules/droplets/droplets.php');
                         if (function_exists('evalDroplets')) {
                             try {
                                 $__CAT_Helper_Droplets_content = evalDroplets($__CAT_Helper_Droplets_content);
@@ -845,16 +821,17 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         public static function deleteDroplet($id)
         {
+            $self  = self::getInstance();
             $error = NULL;
-            self::getInstance()->db()->query(
+            $self->db()->query(
                 "DELETE FROM `:prefix:mod_droplets` WHERE id = :id",
-                array('id'=>$id
-            ));
-            if ( self::getInstance()->db()->isError() )
+                array('id'=>$id)
+            );
+            if ( $self->db()->isError() )
             {
-                $error = $backend->lang()->translate(
+                $error = $self->lang()->translate(
                     'Unable to delete Droplet [{{id}}] - {{error}}',
-                    array( 'id' => $id, 'error' => self::getInstance()->db()->getError() )
+                    array( 'id' => $id, 'error' => $self->db()->getError() )
                 );
             }
             return $error;
@@ -921,11 +898,12 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         public static function updateDropletPerms($values)
         {
-            self::getInstance()->db()->query(
+            $self = self::getInstance();
+            $self->db()->query(
                 'REPLACE INTO `:prefix:mod_droplets_permissions` VALUES( :id, :edit, :view );',
                 $values
             );
-            return self::getInstance()->db()->isError() ? false : true;
+            return $self->db()->isError() ? false : true;
         }   // end function updateDropletPerms()
         
         /**
@@ -935,11 +913,12 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         public static function updateDropletSettings($attr,$newval)
         {
-            self::getInstance()->db()->query(
+            $self = self::getInstance();
+            $self->db()->query(
                 'UPDATE `:prefix:mod_droplets_settings` SET `value`=:val WHERE `attribute`=:attr',
                 array('val' => $newval, 'attr' => $key )
             );
-            return self::getInstance()->db()->isError() ? false : true;
+            return $self->db()->isError() ? false : true;
         }   // end function updateDropletSettings()
 
         /**
@@ -962,9 +941,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
             global $settings;
             // admin is always allowed to do all
             if ( CAT_Users::is_root() )
-            {
                 return true;
-            }
+
             if ( !array_key_exists( $perm, $settings ) )
             {
                 return false;
@@ -1015,6 +993,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         public static function installDroplet( $temp_file )
         {
+            $self       = self::getInstance();
             $temp_unzip = CAT_PATH.'/temp/droplets_unzip/';
             CAT_Helper_Directory::createDirectory( $temp_unzip );
 
@@ -1070,27 +1049,38 @@ if (!class_exists('CAT_Helper_Droplet')) {
                             // Already in the DB?
                             $stmt  = 'INSERT';
                             $id    = NULL;
-                    $found = CAT_Helper_Directory::getInstance()->db()->query("SELECT * FROM ".CAT_TABLE_PREFIX."mod_droplets WHERE name='$name'")->fetchColumn();
-                    if ( $found && $found > 0 ) {
+                    $found = $self->db()->query(
+                        "SELECT * FROM `:prefix:mod_droplets` WHERE name=:name", array('name'=>$name)
+                    );
+                    if ( $found->rowCount() && $found->fetchColumn() > 0 )
+                    {
                         $stmt = 'REPLACE';
                         $id   = $found;
                     }
                     // execute
-                    $q      = sprintf(
-                        "$stmt INTO `%smod_droplets` SET "
+                    $q = "$stmt INTO `:prefix:mod_droplets` SET "
                         . ( ($id) ? 'id='.$id.', ' : '' )
-                        . '`name`=\'%s\', `code`=\'%s\', `description`=\'%s\', '
-                        . '`modified_when`=%d, `modified_by`=\'%s\', '
-                        . '`active`=\'%s\', `comments`=\'%s\'',
-                        CAT_TABLE_PREFIX, $name, $code, $description, time(), CAT_Users::get_user_id(), 1, $usage
+                        . '`name`=:name, `code`=:code, `description`=:desc, '
+                        . '`modified_when`=:when, `modified_by`=:userid, '
+                        . '`active`=:active, `comments`=:usage'
+                        ;
+                    $params = array(
+                        'name'   => $name,
+                        'code'   => $code,
+                        'desc'   => $description,
+                        'when'   => time(),
+                        'userid' => CAT_Users::get_user_id(),
+                        'active' => 1,
+                        'usage'  => $usage
                     );
-                    $result = CAT_Helper_Directory::getInstance()->db()->query($q);
-                    if( ! CAT_Helper_Directory::getInstance()->db()->isError() ) {
+
+                    $result = $self->db()->query($q,$params);
+                    if( ! $self->db()->isError() ) {
                         $count++;
                         $imports[$name] = 1;
                     }
                     else {
-                        $errors[$name] = CAT_Helper_Directory::getInstance()->db()->getError();
+                        $errors[$name] = $self->db()->getError();
                     }
                 }
 
@@ -1098,7 +1088,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 if ( file_exists( $temp_unzip.'/data' ) ) {
                     // copy all files
                     CAT_Helper_Directory::copyRecursive( $temp_unzip.'/data', dirname(__FILE__).'/data/' );
-                   }
+                }
 
             }
 
@@ -1108,6 +1098,51 @@ if (!class_exists('CAT_Helper_Droplet')) {
             return array( 'count' => $count, 'errors' => $errors, 'imported' => $imports );
 
         }   // end function installDroplet()
+
+        /**
+         * get droplets of given type (example: 'header') from the DB
+         * returns array on success, false otherwise
+         *
+         * @access private
+         * @param  string  $type
+         * @return array
+         **/
+        private static function getDropletsFromDB($type)
+        {
+            global $page_id;
+            $SQL    = "SELECT `drop_module_dir`,`drop_droplet_name` "
+                    . "FROM `:prefix:mod_droplets_extension` "
+                    . "WHERE `drop_type`=:type AND `drop_page_id`=:id LIMIT 1"
+                    ;
+            $params = array('type'=>$type,'id'=>$page_id);
+            if (null == ($query = self::getInstance()->db()->query($SQL,$params)))
+                return false;
+            if ($query->rowCount() > 0)
+                return $query->fetchAll();
+            else
+                return false;
+        }   // end function getDropletsFromDB()
+
+        /**
+         *
+         * @access private
+         * @return
+         **/
+        private static function getCSSJS()
+        {
+            global $page_id;
+            $SQL = "SELECT * FROM `:prefix:mod_droplets_extension` "
+                 . "WHERE (`drop_type`='css' OR `drop_type`='javascript') AND `drop_page_id`=:id"
+                 ;
+            $params = array('type1'=>'css', 'type2'=>'javascript','id'=>$page_id);
+            if (null == ($query = self::getInstance()->db()->query($SQL,$params)))
+                return false;
+            if ($query->rowCount() > 0)
+                return $query->fetchAll();
+            else
+                return false;
+        }   // end function getDropletsForUse()
+        
 
         /**
          * evaluates the droplet code
@@ -1187,10 +1222,10 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         ));
 
                         // request the droplet code from database
-                        $codedata = $self->db()->query(sprintf(
-                            'SELECT `code` FROM `%smod_droplets` WHERE `name` LIKE "%s" AND `active` = 1',
-                            CAT_TABLE_PREFIX, $droplet_name
-                        ))->fetchColumn();
+                        $codedata = $self->db()->query(
+                            'SELECT `code` FROM `:prefix:mod_droplets` WHERE `name` LIKE :name AND `active` = 1',
+                            array('name'=>$droplet_name)
+                        )->fetchColumn();
 
                         $self->log()->LogDebug('code: '.$codedata);
 

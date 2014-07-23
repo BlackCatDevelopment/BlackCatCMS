@@ -28,8 +28,11 @@ require dirname(__FILE__).'/../../../modules/lib_doctrine/Doctrine/Common/ClassL
 
 if ( !class_exists( 'CAT_Helper_DB' ) )
 {
+    set_exception_handler(array("CAT_PDOExceptionHandler", "exceptionHandler"));
+
     class CAT_Helper_DB extends PDO
     {
+        public  static $trace    = false;
 
         private static $instance = NULL;
         private static $conn     = NULL;
@@ -119,7 +122,16 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     'user'     => CAT_DB_USERNAME,
                 );
                 if(CAT_DB_PORT !== '3306') $connectionParams['port'] = CAT_DB_PORT;
+                if(function_exists('xdebug_disable'))
+                    xdebug_disable();
+                try
+                {
                 self::$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+            }
+                catch( \PDO\PDOException $e )
+                {
+                    CAT_Object::printFatalError($e->message);
+                }
             }
             return self::$conn;
         }   // end function connect()
@@ -288,5 +300,84 @@ class CAT_PDOStatementDecorator
     public function fetchRow($type=PDO::FETCH_ASSOC)
     {
         return $this->pdo_stmt->fetch();
+    }
+}
+
+class CAT_PDOExceptionHandler
+{
+    /**
+     * exception handler; allows to remove paths from error messages and show
+     * optional stack trace if CAT_Helper_DB::$trace is true
+     **/
+    function exceptionHandler($exception) {
+
+        if(CAT_Helper_DB::$trace)
+        {
+            $traceline = "#%s %s(%s): %s(%s)";
+            $msg   = "Uncaught exception '%s' with message '%s'<br />"
+                   . "<div style=\"font-size:smaller;width:80%%;margin:5px auto;text-align:left;\">"
+                   . "in %s:%s<br />Stack trace:<br />%s<br />"
+                   . "thrown in %s on line %s</div>"
+                   ;
+            $trace = $exception->getTrace();
+            foreach ($trace as $key => $stackPoint) {
+                $trace[$key]['args'] = array_map('gettype', $trace[$key]['args']);
+            }
+            // build tracelines
+            $result = array();
+            foreach ($trace as $key => $stackPoint) {
+                $result[] = sprintf(
+                    $traceline,
+                    $key,
+                    ( isset($stackPoint['file']) ? $stackPoint['file'] : '-' ),
+                    ( isset($stackPoint['line']) ? $stackPoint['line'] : '-' ),
+                    $stackPoint['function'],
+                    implode(', ', $stackPoint['args'])
+                );
+            }
+            // trace always ends with {main}
+            $result[] = '#' . ++$key . ' {main}';
+            // write tracelines into main template
+            $msg = sprintf(
+                $msg,
+                get_class($exception),
+                $exception->getMessage(),
+                $exception->getFile(),
+                $exception->getLine(),
+                implode("<br />", $result),
+                $exception->getFile(),
+                $exception->getLine()
+            );
+        }
+        else
+        {
+            // template
+            $msg = "[DB] %s<br /><span style=\"font-size:smaller\">in %s:%s</span><br />";
+            // filter message
+            $message = $exception->getMessage();
+            preg_match('~SQLSTATE\[[^\]].+?\]\s+\[[^\]].+?\]\s+(.*)~i', $message, $match);
+            // filter path from file
+            $file    = $exception->getFile();
+            $file    = str_replace(
+                array(
+                    CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_doctrine'),
+                    CAT_Helper_Directory::sanitizePath(CAT_PATH)
+                ),
+                array(
+                    '[path to]',
+                    '[path to]'
+                ),
+                CAT_Helper_Directory::sanitizePath($file)
+            );
+            $msg     = sprintf(
+                $msg,
+                $match[1],
+                $file,
+                $exception->getLine()
+            );
+        }
+
+        // log or echo as you please
+        CAT_Object::printFatalError($msg);
     }
 }

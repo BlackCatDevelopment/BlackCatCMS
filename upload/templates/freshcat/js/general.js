@@ -49,6 +49,10 @@ if ( typeof jQuery != 'undefined' )
                         alert(cattranslate('CSRF check failed. Maybe a token timeout. Trying to reload page.'));
                         location.reload(true);
                     }
+                    else if(jqXHR.responseText.match(/ACCESS DENIED!/ig)) {
+                        alert(cattranslate('Access denied! Maybe a missing entry in database table class_secure.'));
+                        location.reload(true);
+                    }
                     else
                     {
                         alert('Uncaught AJAX Error.\n' + jqXHR.responseText);
@@ -328,16 +332,16 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 						{
 							// Check if there is a div.success_box in returned data that implements that the request was completely successful
 							return_success( jqXHR.process , data.message );
-							// check if a function afterSend is defined and call it if true
-							if ( typeof afterSend != 'undefined' && afterSend !== false )
-							{
-								afterSend.call(this, data);
-							}
 						}
 						else {
 							// return error
 							return_error( jqXHR.process , data.message );
 						}
+							// check if a function afterSend is defined and call it if true
+							if ( typeof afterSend != 'undefined' && afterSend !== false )
+							{
+								afterSend.call(this, data);
+							}
 					},
 					error:		function( data, textStatus, jqXHR )
 					{
@@ -531,13 +535,15 @@ function searchUsers( searchTerm )
 
 // Marked as deprecated!
 
-function confirm_link ( message, url )
+function confirm_link(message,url,json)
 {
 	var afterSend		= function()
 	{
 		location.reload(true);
 	};
-    dialog_confirm( message, false, url, false, 'GET', 'HTML', false, afterSend );
+    var ajaxDataType = 'HTML';
+    if(typeof json != 'undefined') ajaxDataType = 'JSON';
+    dialog_confirm( message, 'Confirmation', url, false, 'GET', ajaxDataType, false, afterSend );
 }
 
 jQuery(document).ready( function()

@@ -84,9 +84,7 @@ if (!class_exists('CAT_Helper_DateTime'))
         {
             $timezone_table     = CAT_Helper_DateTime::getTimezones();
             if ( in_array($tz, $timezone_table) )
-            {
             	return true;
-            }
             return false;
         }   // end function checkTZ()
 
@@ -128,7 +126,14 @@ if (!class_exists('CAT_Helper_DateTime'))
          **/
         public static function getDateTime($t=NULL)
         {
-            return strftime(sprintf('%s %s',self::getDefaultDateFormatShort(),self::getDefaultTimeFormat()),($t?$t:time()));
+            return strftime(
+                sprintf(
+                    '%s %s',
+                    self::getDefaultDateFormatShort(),
+                    self::getDefaultTimeFormat()
+                ),
+                ($t?$t:time())
+            );
         }   // end function getDateTime()
 
         /**

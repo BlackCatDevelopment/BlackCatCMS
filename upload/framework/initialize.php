@@ -100,7 +100,7 @@ if (($result = $database->query($sql)) && ($result->rowCount() > 0))
 }
 else
 {
-    die("No settings found in the database, please check your installation!");
+    CAT_Object::printFatalError("No settings found in the database, please check your installation!");
 }
     
 //**************************************************************************
