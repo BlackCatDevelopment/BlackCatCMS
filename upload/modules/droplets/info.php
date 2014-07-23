@@ -42,11 +42,11 @@ if (defined('CAT_PATH')) {
 $module_directory   = 'droplets';
 $module_name        = 'Droplets';
 $module_function    = 'tool';
-$module_version     = '3.3';
+$module_version     = '4.0';
 $module_platform    = '1.x';
 $module_author      = 'BlackCat Development';
 $module_license     = 'GNU General Public License';
-$module_description = 'This tool allows you to manage your local Droplets.';
+$module_description = 'This tool allows you to manage your Droplets.';
 
 $module_home        = 'http://blackcat-cms.org/';
 $module_guid        = 'FDAF7FBF-DE7F-4394-81DC-8D139EA3216C';

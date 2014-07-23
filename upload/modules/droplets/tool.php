@@ -58,7 +58,7 @@ global $settings;
 $settings = get_settings();
 
 global $val, $backend;
-$val = CAT_Helper_Validate::getInstance();
+$val     = CAT_Helper_Validate::getInstance();
 $backend = CAT_Backend::getInstance('admintools','droplets',false,false);
 
 if ( $val->get('_REQUEST','del','numeric') )
@@ -445,6 +445,7 @@ function import_droplets()
     }
 
     $problem = NULL;
+    $info    = NULL;
 
     if ( count( $_FILES ) )
     {
@@ -475,15 +476,21 @@ function import_droplets()
         }
         else
         {
-            list_droplets( $backend->lang()->translate( 'Successfully imported [{{count}}] Droplet(s)', array(
-                 'count' => $data
-            ) ) );
-            return;
+            $info    = $backend->lang()->translate(
+                'Successfully imported [{{count}}] Droplet(s)',
+                array('count' => $data)
+            );
+            if(CAT_Helper_Validate::sanitizeGet('save_and_back'))
+            {
+                list_droplets($info);
+                return;
+            }
         }
     }
 
     $parser->output( 'import.tpl', array(
-         'problem' => $problem
+         'problem' => $problem,
+         'info'    => $info
     ) );
 
 } // end function import_droplets()
@@ -543,7 +550,7 @@ function delete_droplets()
             )
         );
     else
-    list_droplets( implode( "<br />", $errors ) );
+        list_droplets( implode( "<br />", $errors ) );
     return;
 
 } // end function delete_droplets()
