@@ -110,7 +110,6 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
                 return true;
         	}
         }   // end function deleteSection()
-        
 
 	    /**
 	     * retrieves all active sections for a page
@@ -121,7 +120,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 	     * @param  boolean  $backend  default false
 	     * @return array()
 	     **/
-	    public static function getActiveSections( $page_id, $block = null, $backend = false )
+	    public static function getActiveSections($page_id=NULL, $block=null, $backend=false)
 	    {
             $active = ( isset(self::$active) && isset(self::$active[$page_id]) && is_array(self::$active[$page_id]) )
                     ? self::$active[$page_id]
@@ -129,50 +128,37 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 
 	        if (!$active)
 	        {
-
                 if(!self::$instance)
                     self::getInstance();
-
-	            // First, get all sections for this page
-	            $sec = self::$instance->db()->query(
-                      'SELECT `section_id`, `module`, `block`, `publ_start`, `publ_end` FROM `:prefix:sections` '
-                    . 'WHERE page_id = :id ORDER BY block, position',
-                    array('id'=>$page_id)
-                );
-
+                // get all sections for all pages
+                $q      = 'SELECT *'
+                        . ' FROM `:prefix:sections` '
+                        . ' ORDER BY block, position';
+	            $sec    = self::$instance->db()->query($q);
 	            if ($sec->rowCount() == 0)
-	            {
 	                return NULL;
-	            }
-
 	            while ($section = $sec->fetch())
 	            {
 	                // skip this section if it is out of publication-date
 	                $now = time();
 	                if (!(($now <= $section['publ_end'] || $section['publ_end'] == 0) && ($now >= $section['publ_start'] || $section['publ_start'] == 0)))
-	                {
 	                    continue;
-	                }
-	                self::$active[$page_id][$section['block']][] = $section;
+	                self::$active[$section['page_id']][$section['block']][] = $section;
 	            }
 	        }
 
+            // if a block is given
 	        if ( $block )
-	        {
 				return ( isset( self::$active[$page_id][$block] ) )
 					? self::$active[$page_id][$block]
 					: array();
-			}
 
+            // otherwise
 			$all = array();
 			foreach( self::$active[$page_id] as $block => $values )
-			{
 				foreach( $values as $value )
-				{
 			    	array_push( $all, $value );
-				}
-			}
-			
+
 			return $all;
 			
 	    }   // end function getActiveSections()
@@ -193,6 +179,23 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
                 return false;
         	return $q->fetch();
         }   // end function getSection()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getSections($page_id)
+        {
+            $self = self::getInstance();
+            $q    = $self->db()->query(
+                'SELECT * FROM `:prefix:sections` WHERE `page_id` = :page_id ORDER BY position ASC',
+                array('page_id'=>$page_id)
+            );
+            if($q->rowCount())
+                return $q->fetchAll();
+            return array();
+        }   // end function getSections()
         
 	    /**
           *
@@ -204,8 +207,8 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
             $limit  = ( isset($limit) && $limit && is_int($limit) )
                     ? $limit
                     : 1;
-            $self = self::getInstance();
-            $SQL = "SELECT `section_id` FROM `:prefix:sections` "
+            $self   = self::getInstance();
+            $SQL    = "SELECT `section_id` FROM `:prefix:sections` "
                     . "WHERE `page_id` = :page_id  AND `module` = :module ORDER BY `position` ASC LIMIT " . $limit;
             $params = array(
                 'page_id' => $page_id,
@@ -216,7 +219,46 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
                 ?  $result->fetchAll()
                 :  false;
          }   // end function getSectionsByType()
-	    
+
+        /**
+         * gets the first section for given $page_id that has a module of type $type
+         *
+         * @access public
+         * @param  integer  $page_id
+         * @param  string   $type
+         * @return mixed    result array containing the section_id on success,
+         *                  false otherwise (no such section)
+         **/
+        public static function getSectionForPage($page_id,$type=NULL)
+        {
+            $opt = array('page_id'=>$page_id, 'module'=>$type);
+            $sql = 'SELECT `section_id` FROM `:prefix:sections` WHERE `page_id`=:page_id AND `module`=:module';
+            $sec = self::getInstance()->db()->query($sql,$opt);
+            if($sec->rowCount())
+                return $sec->fetch();
+            return false;
+        }   // end function getSectionForPage()
+
+        /**
+         * gets the page_id for a given section
+         *
+         * @access public
+         * @param  integer $section_id
+         * @return integer
+         **/
+        public static function getPageForSection($section_id)
+        {
+            $sec = self::getInstance()->db()->query(
+                'SELECT `page_id` FROM `:prefix:sections` WHERE `section_id`=:id',
+                array('id'=>$section_id)
+            );
+            if($sec->rowCount())
+            {
+                $result = $sec->fetch();
+                return $result['page_id'];
+            }
+        }   // end function getPageForSection()
+
 	    /**
 	     * checks if a page has active sections
 	     *
@@ -251,6 +293,24 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 	    }
 
         /**
+         * checks if given section has given type
+         *
+         * @access public
+         * @param  integer  $section_id
+         * @param  string   $type (module)
+         * @return boolean
+         **/
+        public static function hasType($section_id,$type)
+        {
+            $opt = array('id'=>$section_id, 'mod'=>$type );
+            $sql = 'SELECT * FROM `:prefix:sections` WHERE `section_id`=:id AND `module`=:mod';
+            $sec = self::getInstance()->db()->query($sql,$opt);
+            if($sec->rowCount())
+                return true;
+            return false;
+        }   // end function hasType()
+
+        /**
          * checks if given page is of type menu_link
          *
          * @access public
@@ -270,7 +330,6 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
                 return true;
             return false;
         }   // end function isMenuLink()
-
 
 	}
 }

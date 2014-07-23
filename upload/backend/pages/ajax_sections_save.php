@@ -65,7 +65,7 @@ $section_id             = ( $delete_section_id )
 // =============== 
 // ! Get page id   
 // =============== 
-$page_id = CAT_Helper_Section::getSectionPage($section_id);
+$page_id = CAT_Sections::getPageForSection($section_id);
 if ( !$page_id )
 {
 	$ajax	= array(
@@ -143,7 +143,7 @@ if ( $add_module != '' )
 	$order		= new order(CAT_TABLE_PREFIX.'sections', 'position', 'section_id', 'page_id');
 	$position	= $order->get_new($page_id);
 
-    if(!CAT_Helper_Section::addSection($page_id, $module, $position, $add_to_block))
+    if(!CAT_Sections::addSection($page_id, $module, $add_to_block))
 		{
         $ajax	= array(
 			'message'	=> $backend->lang()->translate('Unable to add a section for module [{{module}}]',array('module'=>$module)),
@@ -159,7 +159,7 @@ if ( $add_module != '' )
 elseif ( $delete_section_id )
 {
 
-    $section = CAT_Helper_Section::getSection($delete_section_id);
+    $section = CAT_Sections::getSection($delete_section_id);
 	if(!$section || !is_array($section) || !count($section))
 	{
 		$ajax	= array(
@@ -179,10 +179,10 @@ elseif ( $delete_section_id )
 		require( CAT_PATH . '/modules/' . $section['module'] . '/delete.php');
 	}
 
-    if(!CAT_Helper_Section::deleteSection($delete_section_id))
+    if(!CAT_Sections::deleteSection($delete_section_id,$page_id))
 	{
 		$ajax	= array(
-			'message'	=> CAT_Helper_Section::getInstance()->db()->getError(),
+			'message'	=> $backend->db()->getError(),
 			'success'	=> false
 		);
 		print json_encode( $ajax );
@@ -226,7 +226,7 @@ elseif ( $update_section_id )
 	$hour_to		= is_numeric( $val->sanitizePost('hour_to') )	? $val->sanitizePost('hour_to')    : 0;
 	$minute_to		= is_numeric( $val->sanitizePost('minute_to') )	? $val->sanitizePost('minute_to')  : 0;
 
-    $section = CAT_Helper_Section::getSection($update_section_id);
+    $section = CAT_Sections::getSection($update_section_id);
 	if(!$section || !is_array($section) || !count($section))
 				{
 					$ajax	= array(
@@ -265,10 +265,10 @@ elseif ( $update_section_id )
 		$options['publ_start'] = $date_from;
 		$options['publ_end']   = $date_to;
 	}
-	if(!CAT_Helper_Section::updateSection($update_section_id,$options))
+	if(!CAT_Sections::updateSection($update_section_id,$options))
 	{
 		$ajax	= array(
-			'message'	=> $backend->lang()->translate('Unable to save section: '.CAT_Helper_Section::getInstance()->db()->getError()),
+			'message'	=> $backend->lang()->translate('Unable to save section: '.$backend->db()->getError()),
 			'success'	=> false
 		);
 		print json_encode( $ajax );
@@ -284,7 +284,7 @@ elseif ( $update_section_id )
 	#	print json_encode( $ajax );
 	#	exit();
 	#}
-	$updated_section	= CAT_Helper_Section::getSection($update_section_id);
+	$updated_section	= CAT_Sections::getSection($update_section_id);
 	$updated_block		= $parser->get_template_block_name(
 							CAT_Helper_Page::getPageTemplate($page_id), $updated_section['block'] ) .
 							' ('.$backend->lang()->translate('Block number').': '.$updated_section['block'].')';

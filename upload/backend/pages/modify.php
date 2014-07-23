@@ -115,7 +115,7 @@ $tpl_data['PAGE_HEADER'] = $backend->lang()->translate('Modify page');
 // =========================================================
 // ! Work-out if we should show the "manage sections" link
 // =========================================================
-$section_id                  = CAT_Helper_Section::getSectionForPage($page_id);
+$section_id                  = CAT_Sections::getSectionForPage($page_id);
 $tpl_data['MANAGE_SECTIONS'] = ($section_id || MANAGE_SECTIONS != 'enabled') ? false : true;
 
 // ===========================================================================

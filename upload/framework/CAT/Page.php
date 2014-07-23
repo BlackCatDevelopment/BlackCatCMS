@@ -161,6 +161,7 @@ if (!class_exists('CAT_Page', false))
             else
             {
                 $do_filter = false;
+
                 // use output filter (if any)
                 if(file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/blackcatFilter/filter.php')))
                 {
@@ -169,8 +170,9 @@ if (!class_exists('CAT_Page', false))
                     {
                         $this->log()->LogDebug('enabling output filters');
                         $do_filter = true;
+                    }
                 }
-                }
+
                 $this->setTemplate();
 
                 // including the template; it may calls different functions
@@ -287,6 +289,7 @@ if (!class_exists('CAT_Page', false))
             // the name of a file to be included
             if (!defined('PAGE_CONTENT') or $block != 1)
             {
+
                 // get active sections
                 $sections = CAT_Sections::getActiveSections($this->_page_id, $block);
                 if(is_array($sections) && count($sections))
@@ -366,22 +369,9 @@ if (!class_exists('CAT_Page', false))
          **/
         public function getSections() {
             if(!count($this->sections))
-            {
-                $sec = self::$helper->db()->query(sprintf(
-                    'SELECT * FROM `%ssections` WHERE `page_id` = %d ORDER BY position ASC',
-                    CAT_TABLE_PREFIX, $this->_page_id
-                ));
-                if ( $sec->rowCount() > 0 )
-                {
-                	while ( false !== ( $section = $sec->fetchRow( MYSQL_ASSOC ) ) )
-                	{
-                		$this->sections[] = $section;
-                    }
-                }
-            }
+                $this->sections = CAT_Sections::getSections($this->_page_id);
             return $this->sections;
         }   // end function getSections()
-        
 
         /**
          * Figure out which template to use

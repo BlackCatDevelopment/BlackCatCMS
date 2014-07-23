@@ -1691,15 +1691,18 @@ if (!class_exists('CAT_Helper_Page'))
             if(!count(self::$pages)) self::getInstance();
             if(!count(self::$pages_sections)||!isset(self::$pages_sections[$page_id]))
             {
-                self::$pages_sections = CAT_Helper_Section::getActiveSections($page_id);
+                $sections = CAT_Sections::getActiveSections($page_id);
+                foreach($sections as $s)
+                    self::$pages_sections[$s['page_id']][] = $s;
             }
+
             if($page_id)
-            return
-                  isset(self::$pages_sections[$page_id])
-                ? self::$pages_sections[$page_id]
-                : array();
-            else
-                return self::$pages_sections;
+                return
+                      isset(self::$pages_sections[$page_id])
+                    ? self::$pages_sections[$page_id]
+                    : array();
+                else
+                    return self::$pages_sections;
         }   // end function getSections()
 
         /**
@@ -2681,6 +2684,9 @@ if (!class_exists('CAT_Helper_Page'))
             if ($page_id && is_numeric($page_id))
             {
                 $sections     = self::getSections($page_id);
+echo "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
+print_r( $sections );
+echo "</textarea>";
                 $wysiwyg_seen = false;
                 self::$instance->log()->logDebug('sections:',$sections);
                 if (is_array($sections) && count($sections))
