@@ -342,16 +342,19 @@ if (!class_exists('CAT_Helper_Page'))
         public static function updatePage($page_id,$options)
         {
             if(!self::$instance) self::getInstance();
-            $sql	 = 'UPDATE `%spages` SET ';
+            $sql	 = 'UPDATE `:prefix:pages` SET ';
+            $params  = array('id'=>$page_id);
             foreach($options as $key => $value)
             {
                 if(is_array($value))
                     $value = implode(',',$value);
-                $sql .= '`'.$key.'` = \''.$value.'\', ';
+                $sql .= '`'.$key.'` = :'.$key.', ';
+                $params[$key] = $value;
+
             }
             $sql = preg_replace('~,\s*$~','',$sql);
-            $sql .= ' WHERE page_id=%d';
-            self::$instance->db()->query(sprintf($sql,CAT_TABLE_PREFIX,$page_id));
+            $sql .= ' WHERE page_id=:id';
+            self::$instance->db()->query($sql,$params);
             // reload pages list
             if(!self::$instance->db()->isError()) self::init(1);
             return
@@ -586,16 +589,12 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function getExtraHeaderFiles($page_id=NULL)
         {
-            global $database;
             $data = array(); //'js'=>array(),'css'=>array(),'code'=>''
-            $q    = sprintf(
-                'SELECT * FROM `%spages_headers` WHERE `page_id`="%d"',
-                CAT_TABLE_PREFIX, $page_id
-            );
-            $r = $database->query($q);
+            $q    = 'SELECT * FROM `:prefix:pages_headers` WHERE `page_id`=:page_id';
+            $r    = self::getInstance(1)->db()->query($q,array('page_id'=>$page_id));
             if($r->rowCount())
             {
-                $row = $r->fetchRow();
+                $row = $r->fetch();
                 if(isset($row['page_js_files']) && $row['page_js_files']!='')
                     $data['js'] = unserialize($row['page_js_files']);
                 if(isset($row['page_css_files']) && $row['page_css_files']!='')
@@ -620,7 +619,6 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function adminAddHeaderComponent($type,$file,$page_id=NULL)
         {
-            global $database;
             $data = self::getExtraHeaderFiles($page_id);
             if(isset($data[$type]) && is_array($data[$type]) && count($data[$type]) && in_array($file,$data[$type]))
             {
@@ -639,20 +637,23 @@ if (!class_exists('CAT_Helper_Page'))
                             : array();
                     array_push($new,CAT_Helper_Directory::sanitizePath('/modules/lib_jquery/plugins/'.$file));
                     $new = array_unique($new);
-                    $q   = count($data)
-                       ? sprintf(
-                             'UPDATE `%spages_headers` SET `page_%s_files`=\'%s\' WHERE `page_id`="%d"',
-                             CAT_TABLE_PREFIX, $type, serialize($new), $page_id
-                         )
-                       : sprintf(
-                             'REPLACE INTO `%spages_headers` ( `page_id`, `page_%s_files` ) VALUES ( "%d", \'%s\' )',
-                             CAT_TABLE_PREFIX, $type, $page_id, serialize($new)
-                         )
-                       ;
-                    $database->query($q);
+                    $params = array(
+                        'field'   => 'page_'.$type.'_files',
+                        'value'   => serialize($new),
+                        'page_id' => $page_id,
+                    );
+                    if(count($data))
+                    {
+                        $q = 'UPDATE `:prefix:pages_headers` SET :field=:value WHERE `page_id`=:page_id';
+                    }
+                    else
+                    {
+                        $q = 'REPLACE INTO `:prefix:pages_headers` ( `page_id`, :field ) VALUES ( :page_id, :value )';
+                    }
+                    self::getInstance(1)->db()->query($q,$params);
                     return array(
-                        'success' => ( $database->is_error() ? false                  : true ),
-                        'message' => ( $database->is_error() ? $database->get_error() : 'ok' )
+                        'success' => ( self::getInstance(1)->isError() ? false                  : true ),
+                        'message' => ( self::getInstance(1)->isError() ? self::getInstance(1)->getError() : 'ok' )
                     );
                 }
             }
@@ -663,7 +664,6 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function adminDelHeaderComponent($type,$file,$page_id=NULL)
         {
-            global $database;
             $data = self::getExtraHeaderFiles($page_id);
             if(!(is_array($data[$type]) && count($data[$type]) && in_array($file,$data[$type])))
                 return array( 'success' => true, 'message' => 'ok' );
@@ -672,18 +672,18 @@ if (!class_exists('CAT_Helper_Page'))
             }
             $q = count($data)
                ? sprintf(
-                     'UPDATE `%spages_headers` SET `page_%s_files`=\'%s\' WHERE `page_id`="%d"',
+                     'UPDATE `:prefix:pages_headers` SET `page_%s_files`=\'%s\' WHERE `page_id`="%d"',
                      CAT_TABLE_PREFIX, $type, serialize($data[$type]), $page_id
                  )
                : sprintf(
-                     'REPLACE INTO `%spages_headers` ( `page_id`, `page_%s_files` ) VALUES ( "%d", \'%s\' )',
+                     'REPLACE INTO `:prefix:pages_headers` ( `page_id`, `page_%s_files` ) VALUES ( "%d", \'%s\' )',
                      CAT_TABLE_PREFIX, $type, $page_id, serialize($data[$type])
                  )
                ;
-            $database->query($q);
+            self::getInstance(1)->db()->query($q);
             return array(
-                'success' => ( $database->is_error() ? false                  : true ),
-                'message' => ( $database->is_error() ? $database->get_error() : 'ok' )
+                'success' => ( self::getInstance(1)->isError() ? false                            : true ),
+                'message' => ( self::getInstance(1)->isError() ? self::getInstance(1)->getError() : 'ok' )
             );
         }   // end function adminDelHeaderComponent()
 
@@ -1691,17 +1691,7 @@ if (!class_exists('CAT_Helper_Page'))
             if(!count(self::$pages)) self::getInstance();
             if(!count(self::$pages_sections)||!isset(self::$pages_sections[$page_id]))
             {
-                // get all active sections
-                $now = time();
-                $sec = self::getInstance(true)->db()->query(
-                      'SELECT * FROM `:prefix:sections` '
-                    . 'WHERE ( ":now1" BETWEEN `publ_start` AND `publ_end`) OR '
-                    . '(":now2" > `publ_start` AND `publ_end`=0)',
-                    array('now1'=>$now,'now2'=>$now)
-                );
-                if ( $sec->rowCount() > 0 )
-                    while ( false !== ( $section = $sec->fetch() ) )
-                        self::$pages_sections[$section['page_id']][] = $section;
+                self::$pages_sections = CAT_Helper_Section::getActiveSections($page_id);
             }
             if($page_id)
             return
@@ -2370,7 +2360,7 @@ if (!class_exists('CAT_Helper_Page'))
         private static function _deletePage($page_id)
         {
 
-            global $wb, $admin, $backend, $database;
+            global $wb, $admin, $backend;
             $admin =& $backend;
 
             $self   = self::getInstance();

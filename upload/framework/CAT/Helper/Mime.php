@@ -58,13 +58,12 @@ if (!class_exists('CAT_Helper_Mime'))
         {
             $self = self::getInstance();
             $self->log()->LogDebug('getting known mimetypes from DB');
-            $res = $self->db()->query(sprintf(
-                'SELECT * FROM `%smimetypes` WHERE mime_suffixes IS NOT NULL AND mime_label IS NOT NULL',
-                CAT_TABLE_PREFIX
-            ));
+            $res = $self->db()->query(
+                'SELECT * FROM `:prefix:mimetypes` WHERE `mime_suffixes` IS NOT NULL AND `mime_label` IS NOT NULL'
+            );
             if($res)
             {
-                while(false!==($row=$res->fetchRow(MYSQL_ASSOC)))
+                while(false!==($row=$res->fetch()))
                 {
                     $self->log()->LogDebug('current row',$row);
                     $suffixes = explode('|',$row['mime_suffixes']);

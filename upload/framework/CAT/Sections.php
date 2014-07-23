@@ -201,10 +201,16 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
           **/
         public static function getSectionsByType($page_id,$type='wysiwyg',$limit=1)
         {
+            $limit  = ( isset($limit) && $limit && is_int($limit) )
+                    ? $limit
+                    : 1;
             $self = self::getInstance();
             $SQL = "SELECT `section_id` FROM `:prefix:sections` "
-                 . "WHERE `page_id`=:id AND `module`=:type ORDER BY `position` ASC LIMIT :limit";
-            $params = array('id'=>$page_id, 'type'=>$type, 'limit'=>$limit);
+                    . "WHERE `page_id` = :page_id  AND `module` = :module ORDER BY `position` ASC LIMIT " . $limit;
+            $params = array(
+                'page_id' => $page_id,
+                'module'  => $type,
+            );
             $result = $self->db()->query($SQL,$params);
             return $result->rowCount()
                 ?  $result->fetchAll()

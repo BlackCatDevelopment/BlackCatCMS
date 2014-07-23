@@ -73,15 +73,20 @@ if (!class_exists('CAT_Helper_Section'))
         public static function addSection($page_id, $module, $position, $add_to_block)
         {
             if(!self::$instance) self::getInstance(true);
-            self::$instance->db()->query(sprintf(
-                'INSERT INTO `%ssections` SET `page_id`=%d, `module`="%s", `position`=%d, `block`=%d;',
-                CAT_TABLE_PREFIX, $page_id, $module, $position, $add_to_block
-            ));
+            self::$instance->db()->query(
+                'INSERT INTO `:prefix:sections` SET `page_id`=:page_id, `module`=:module, `position`=:pos, `block`=:block_id',
+                array(
+                    'page_id'  => $page_id,
+                    'module'   => $module,
+                    'pos'      => $position,
+                    'block_id' => $add_to_block
+                )
+            );
         	if ( !self::$instance->db()->isError() )
         	{
-        		$section_id = self::$instance->db()->get_one("SELECT LAST_INSERT_ID()");
-        		if ( file_exists( CAT_PATH . '/modules/' . $module . '/add.php') )
-        			require( CAT_PATH . '/modules/' . $module . '/add.php');
+        		// $section_id = self::$instance->db()->lastInsertId();
+        		if ( file_exists( CAT_PATH.'/modules/'.$module.'/add.php') )
+        			require( CAT_PATH.'/modules/'.$module.'/add.php');
                 return true;
         	}
             return false;
@@ -97,20 +102,18 @@ if (!class_exists('CAT_Helper_Section'))
          **/
         public static function getSection($section_id, $active_only = false)
         {
-            $opt = array( CAT_TABLE_PREFIX, $section_id );
-            $sql = 'SELECT * FROM `%ssections` WHERE `section_id`=%d';
+            $sql    = 'SELECT * FROM `:prefix:sections` WHERE `section_id`=:id';
+            $params = array('id'=>$section_id);
             if($active_only)
             {
                 $now  = time();
-                $sql .= ' AND ( %d BETWEEN `publ_start` AND `publ_end`) OR '
-                     .  '( %d > `publ_start` AND `publ_end`=0 ) ';
-                array_push($opt,$now,$now);
+                $sql .= ' AND ( :time1 BETWEEN `publ_start` AND `publ_end`) OR '
+                     .  '( :time2 > `publ_start` AND `publ_end`=0 ) ';
+                $params['time1'] = $params['time2'] = $now;
             }
-            $sec = self::getInstance()->db()->query(vsprintf($sql,$opt));
+            $sec = self::getInstance()->db()->query($sql,$params);
             if($sec->rowCount())
-            {
-                return $sec->fetchRow(MYSQL_ASSOC);
-            }
+                return $sec->fetch();
             return false;
         }   // end function getSection()
 
@@ -123,13 +126,39 @@ if (!class_exists('CAT_Helper_Section'))
          **/
         public static function hasType($section_id,$type)
         {
-            $opt = array( CAT_TABLE_PREFIX, $section_id, $type );
-            $sql = 'SELECT * FROM `%ssections` WHERE `section_id`=%d AND `module`="%s"';
-            $sec = self::getInstance()->db()->query(vsprintf($sql,$opt));
+            $opt = array('id'=>$section_id, 'mod'=>$type );
+            $sql = 'SELECT * FROM `:prefix:sections` WHERE `section_id`=:id AND `module`=:mod';
+            $sec = self::getInstance()->db()->query($sql,$opt);
             if($sec->rowCount())
                 return true;
             return false;
         }   // end function hasType()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getActiveSections($page_id=NULL)
+        {
+            $result = array();
+            $now    = time();
+            $sql    = 'SELECT * FROM `:prefix:sections` '
+                    . 'WHERE ( :now1 BETWEEN `publ_start` AND `publ_end`) OR '
+                    . '      ( :now2 > `publ_start` AND `publ_end`=0)';
+            $params = array('now1'=>$now,'now2'=>$now);
+            if($page_id)
+            {
+                $sql .= ' AND `page_id`=:page_id';
+                $params['page_id'] = $page_id;
+            }
+            $sec = self::getInstance(true)->db()->query($sql,$params);
+            if ( $sec->rowCount() > 0 )
+                while ( false !== ( $section = $sec->fetch() ) )
+                    $result[$section['page_id']][] = $section;
+            return $result;
+        }   // end function getActiveSections()
+        
 
         /**
          * gets the first section for given $page_id that has a module of type $type
@@ -142,11 +171,11 @@ if (!class_exists('CAT_Helper_Section'))
          **/
         public static function getSectionForPage($page_id,$type=NULL)
         {
-            $opt = array( CAT_TABLE_PREFIX, $page_id, $type );
-            $sql = 'SELECT `section_id` FROM `%ssections` WHERE `page_id`=%d AND `module`="%s"';
-            $sec = self::getInstance()->db()->query(vsprintf($sql,$opt));
+            $opt = array('page_id'=>$page_id, 'module'=>$type);
+            $sql = 'SELECT `section_id` FROM `:prefix:sections` WHERE `page_id`=:page_id AND `module`=:module';
+            $sec = self::getInstance()->db()->query($sql,$opt);
             if($sec->rowCount())
-                return $sec->fetchRow(MYSQL_ASSOC);
+                return $sec->fetch();
             return false;
         }   // end function getSectionForPage()
 
@@ -159,13 +188,13 @@ if (!class_exists('CAT_Helper_Section'))
          **/
         public static function getSectionPage($section_id)
         {
-            $sec = self::getInstance()->db()->query(sprintf(
-                'SELECT page_id FROM `%ssections` WHERE `section_id`=%d',
-                CAT_TABLE_PREFIX, $section_id
-            ));
+            $sec = self::getInstance()->db()->query(
+                'SELECT `page_id` FROM `:prefix:sections` WHERE `section_id`=:id',
+                array('id'=>$section_id)
+            );
             if($sec->rowCount())
             {
-                $result = $sec->fetchRow(MYSQL_ASSOC);
+                $result = $sec->fetch();
                 return $result['page_id'];
             }
         }   // end function getSectionPage()
@@ -177,17 +206,16 @@ if (!class_exists('CAT_Helper_Section'))
          **/
         public static function updateSection($section_id, $options)
         {
-            $sql = 'UPDATE `%ssections` SET ';
+            $sql    = 'UPDATE `:prefix:sections` SET ';
+            $params = array( 'id' => $section_id );
             foreach($options as $key => $value)
             {
-                $sql .= $key.'="'.$value.'", ';
+                $sql .= '`'.$key.'`=:'.$key.', ';
+                $params[$key] = $value;
             }
             $sql  = preg_replace('~,\s*$~','',$sql);
-            $sql .= ' WHERE section_id = %d LIMIT 1';
-		    self::getInstance()->db()->query(sprintf(
-                $sql,
-                CAT_TABLE_PREFIX, $section_id
-            ));
+            $sql .= ' WHERE section_id = :id LIMIT 1';
+		    self::getInstance()->db()->query($sql,$params);
             return self::getInstance()->db()->isError()
                 ? false
                 : true;
@@ -201,16 +229,14 @@ if (!class_exists('CAT_Helper_Section'))
          **/
         public static function deleteSection($section_id)
         {
-        	self::getInstance()->db()->query(sprintf(
-                'DELETE FROM `%ssections` WHERE `section_id` = %d LIMIT 1',
-                CAT_TABLE_PREFIX, $section_id
-            ));
+        	self::getInstance()->db()->query(
+                'DELETE FROM `:prefix:sections` WHERE `section_id` = :id LIMIT 1',
+                array('id'=>$section_id)
+            );
             return self::getInstance()->db()->isError()
                 ? false
                 : true;
         }   // end function deleteSection()
-        
-
 
     }
 }

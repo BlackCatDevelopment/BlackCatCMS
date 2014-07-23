@@ -184,7 +184,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     $stmt = self::$conn->query($sql);
                 }
                 return new CAT_PDOStatementDecorator($stmt);
-            } catch ( Doctrine\DBAL\DBALException $e ) {
+            } catch ( \Doctrine\DBAL\DBALException $e ) {
                 $error = self::$conn->errorInfo();
                 $this->setError(sprintf(
                     '[DBAL Error #%d] %s<br /><b>Executed Query:</b><br /><i>%s</i><br />',
@@ -209,7 +209,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     $last = array_pop($logger->queries);
                     if(is_array($last) && count($last))
                     {
-                        trigger_error(sprintf(
+                        $this->setError(sprintf(
                             "SQL Error\n".
                             "    [SQL]      %s\n".
                             "    [PARAMS]   %s\n".
@@ -219,7 +219,8 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                             implode(', ',$last['params']),
                             implode(', ',$last['types']),
                             $last['executionMS']
-                        ), E_USER_ERROR);
+                        ));
+                        throw new Exception($this->getError());
                     }
                 }
             }

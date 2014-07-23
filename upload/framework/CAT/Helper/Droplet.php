@@ -95,74 +95,80 @@ if (!class_exists('CAT_Helper_Droplet')) {
             $og_type       = 'article';
             $exec_droplets = true;
 
-            $droplets      = self::getDropletsFromDB('header');
-            foreach($droplets as $droplet)
+            $droplets      = self::getDropletsFromDB($page_id,'header');
+            if(count($droplets))
             {
-                if (self::droplet_exists($droplet['drop_droplet_name'], $page_id))
+                foreach($droplets as $droplet)
                 {
-                    // the droplet exists
-                    if (file_exists(CAT_PATH.'/modules/'.$droplet['drop_module_dir'].'/droplet.extension.php'))
+                    if (self::droplet_exists($droplet['drop_droplet_name'], $page_id))
                     {
-                        // we have to use the header informations from the droplet!
-                        include(CAT_PATH.'/modules/'.$droplet['drop_module_dir'].'/droplet.extension.php');
-                        $user_func = $droplet['drop_module_dir'].'_droplet_header';
-                        if (function_exists($user_func))
+                        // the droplet exists
+                        if (file_exists(CAT_PATH.'/modules/'.$droplet['drop_module_dir'].'/droplet.extension.php'))
                         {
-                            $header = call_user_func($user_func, $page_id);
-                            if (is_array($header))
+                            // we have to use the header informations from the droplet!
+                            include(CAT_PATH.'/modules/'.$droplet['drop_module_dir'].'/droplet.extension.php');
+                            $user_func = $droplet['drop_module_dir'].'_droplet_header';
+                            if (function_exists($user_func))
                             {
-                                if (isset($header['title']) && !empty($header['title']))
-                                    $title       = $header['title'];
-                                if (isset($header['description']) && !empty($header['description']))
-                                    $description = $header['description'];
-                                if (isset($header['keywords']) && !empty($header['keywords']))
-                                    $keywords    = $header['keywords'];
+                                $header = call_user_func($user_func, $page_id);
+                                if (is_array($header))
+                                {
+                                    if (isset($header['title']) && !empty($header['title']))
+                                        $title       = $header['title'];
+                                    if (isset($header['description']) && !empty($header['description']))
+                                        $description = $header['description'];
+                                    if (isset($header['keywords']) && !empty($header['keywords']))
+                                        $keywords    = $header['keywords'];
+                                }
                             }
                         }
                     }
-                }
-                else {
-                    // the droplet does not exists, so unregister it to avoid an overhead
-                    self::unregister_droplet_header($droplet['drop_droplet_name'], $page_id);
+                    else {
+                        // the droplet does not exists, so unregister it to avoid an overhead
+                        self::unregister_droplet_header($droplet['drop_droplet_name'], $page_id);
+                    }
                 }
             }
 
-            $droplets = self::getCSSJS();
-            foreach($droplets as $droplet)
+            $droplets = self::getCSSJS($page_id);
+            if(count($droplets))
             {
-                // go only ahead if the droplet exists
-                if (self::droplet_exists($droplet['drop_droplet_name']))
+                foreach($droplets as $droplet)
                 {
-                    $checked      = false;
-                    // first check if there exists a custom.* file ...
-                    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.$droplet['drop_module_dir'].'/custom.'.$droplet['drop_file']);
-                    if (file_exists($file))
+                    // go only ahead if the droplet exists
+                    if (self::droplet_exists($droplet['drop_droplet_name']))
                     {
-                        $checked = true;
+                        $checked      = false;
+                        // first check if there exists a custom.* file ...
+                        $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.$droplet['drop_module_dir'].'/custom.'.$droplet['drop_file']);
+                        if (file_exists($file))
+                        {
+                            $checked = true;
+                        }
+                        else
+                        {
+                            // check for the regular file ...
+                            $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.$droplet['drop_module_dir'].'/'.$droplet['drop_file']);
+                            if (file_exists($file))
+                                $checked = true;
+                        }
+                        if ($checked)
+                        {
+                            // load the file
+                            $file = str_replace(CAT_Helper_Directory::sanitizePath(CAT_PATH), CAT_URL, $file);
+                            if ($droplet['drop_type'] == 'css')
+                                $load_css .= sprintf(' <link rel="stylesheet" type="text/css" href="%s" media="screen" />', $file);
+                            else
+                                $load_js  .= sprintf(' <script type="text/javascript" src="%s"></script>', $file);
+                        }
                     }
                     else
                     {
-                        // check for the regular file ...
-                        $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.$droplet['drop_module_dir'].'/'.$droplet['drop_file']);
-                        if (file_exists($file))
-                            $checked = true;
+                        // unregister the droplet to prevent overhead
+                        self::unregister_droplet($droplet['drop_droplet_name'], $droplet['drop_type'], $page_id);
+                        // also unregister droplet search
+                        self::unregister_droplet_search($droplet['drop_droplet_name'], $page_id);
                     }
-                    if ($checked)
-                    {
-                        // load the file
-                        $file = str_replace(CAT_Helper_Directory::sanitizePath(CAT_PATH), CAT_URL, $file);
-                        if ($droplet['drop_type'] == 'css')
-                            $load_css .= sprintf(' <link rel="stylesheet" type="text/css" href="%s" media="screen" />', $file);
-                        else
-                            $load_js  .= sprintf(' <script type="text/javascript" src="%s"></script>', $file);
-                    }
-                }
-                else
-                {
-                    // unregister the droplet to prevent overhead
-                    self::unregister_droplet($droplet['drop_droplet_name'], $droplet['drop_type'], $page_id);
-                    // also unregister droplet search
-                    self::unregister_droplet_search($droplet['drop_droplet_name'], $page_id);
                 }
             }
 
@@ -742,8 +748,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
             if(count($section))
             {
                 $SQL    = "SELECT `content` FROM `:prefix:mod_wysiwyg` WHERE `section_id`=:id";
-                $params = array('id'=>$section['section_id']);
-                $result = $self->db()->query($SQL)->fetchColumn();
+                $params = array('id'=>$section[0]['section_id']);
+                $result = $self->db()->query($SQL,$params)->fetchColumn();
                 if ($self->db()->isError())
                     return false;
                 if (is_string($result))
@@ -1101,15 +1107,15 @@ if (!class_exists('CAT_Helper_Droplet')) {
 
         /**
          * get droplets of given type (example: 'header') from the DB
-         * returns array on success, false otherwise
+         * returns array 
          *
          * @access private
+         * @param  integer $page_id
          * @param  string  $type
          * @return array
          **/
-        private static function getDropletsFromDB($type)
+        private static function getDropletsFromDB($page_id,$type)
         {
-            global $page_id;
             $SQL    = "SELECT `drop_module_dir`,`drop_droplet_name` "
                     . "FROM `:prefix:mod_droplets_extension` "
                     . "WHERE `drop_type`=:type AND `drop_page_id`=:id LIMIT 1"
@@ -1120,27 +1126,29 @@ if (!class_exists('CAT_Helper_Droplet')) {
             if ($query->rowCount() > 0)
                 return $query->fetchAll();
             else
-                return false;
+                return array();
         }   // end function getDropletsFromDB()
 
         /**
          *
          * @access private
-         * @return
+         * @return array
          **/
-        private static function getCSSJS()
+        private static function getCSSJS($page_id)
         {
-            global $page_id;
             $SQL = "SELECT * FROM `:prefix:mod_droplets_extension` "
-                 . "WHERE (`drop_type`='css' OR `drop_type`='javascript') AND `drop_page_id`=:id"
+                 . "WHERE (`drop_type`=:type1 OR `drop_type`=:type2) AND `drop_page_id`=:id"
                  ;
             $params = array('type1'=>'css', 'type2'=>'javascript','id'=>$page_id);
-            if (null == ($query = self::getInstance()->db()->query($SQL,$params)))
-                return false;
+            $query = self::getInstance()->db()->query($SQL,$params);
+            if(self::getInstance()->db()->isError())
+            {
+                return array();
+            }
             if ($query->rowCount() > 0)
                 return $query->fetchAll();
             else
-                return false;
+                return array();
         }   // end function getDropletsForUse()
         
 
