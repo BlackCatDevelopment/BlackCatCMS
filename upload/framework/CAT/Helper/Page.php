@@ -1689,12 +1689,8 @@ if (!class_exists('CAT_Helper_Page'))
         public static function getSections($page_id=NULL)
         {
             if(!count(self::$pages)) self::getInstance();
-            if(!count(self::$pages_sections)||!isset(self::$pages_sections[$page_id]))
-            {
-                $sections = CAT_Sections::getActiveSections($page_id);
-                foreach($sections as $s)
-                    self::$pages_sections[$s['page_id']][] = $s;
-            }
+            if(!count(self::$pages_sections))
+                self::$pages_sections = CAT_Sections::getActiveSections();
 
             if($page_id)
                 return
@@ -2684,29 +2680,29 @@ if (!class_exists('CAT_Helper_Page'))
             if ($page_id && is_numeric($page_id))
             {
                 $sections     = self::getSections($page_id);
-echo "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
-print_r( $sections );
-echo "</textarea>";
                 $wysiwyg_seen = false;
                 self::$instance->log()->logDebug('sections:',$sections);
                 if (is_array($sections) && count($sections))
                 {
                     global $current_section;
                     global $wysiwyg_seen;
-                    foreach ($sections as $section)
+                    foreach ($sections as $block_id => $item)
                     {
-                        $module = $section['module'];
-                        $file   = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$module.'/headers.inc.php');
-                        // find header definition file
-                        if (file_exists($file))
+                        foreach($item as $section)
                         {
-                            self::$instance->log()->logDebug(sprintf('loading headers.inc.php for module [%s]',$module));
-                            $current_section = $section['section_id'];
-                            self::_load_headers_inc($file, $for, 'modules/' . $module, $section);
-                        }
-                        array_push(CAT_Helper_Page::$css_search_path, '/modules/' . $module, '/modules/' . $module . '/css');
-                        array_push(CAT_Helper_Page::$js_search_path, '/modules/' . $module, '/modules/' . $module . '/js');
-                    } // foreach ($sections as $section)
+                            $module = $section['module'];
+                            $file   = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$module.'/headers.inc.php');
+                            // find header definition file
+                            if (file_exists($file))
+                            {
+                                self::$instance->log()->logDebug(sprintf('loading headers.inc.php for module [%s]',$module));
+                                $current_section = $section['section_id'];
+                                self::_load_headers_inc($file, $for, 'modules/' . $module, $section);
+                            }
+                            array_push(CAT_Helper_Page::$css_search_path, '/modules/' . $module, '/modules/' . $module . '/css');
+                            array_push(CAT_Helper_Page::$js_search_path, '/modules/' . $module, '/modules/' . $module . '/js');
+                        } // foreach ($sections as $section)
+                    }
                 } // if (count($sections))
 
                 // always add WYSIWYG headers, some modules may use show_wysiwyg_editor() later on

@@ -88,7 +88,7 @@ $results_array = CAT_Helper_Page::properties($page_id);
 // =========================================================
 // ! Get display name of person who last modified the page
 // =========================================================
-$user = CAT_Users::getInstance()->get_user_details($results_array['modified_by']);
+$user = CAT_Users::get_user_details($results_array['modified_by']);
 
 global $parser;
 $tpl_data = array();

@@ -330,7 +330,7 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 					{
 						if ( data.success === true || $(data).find('.fc_success_box').size() > 0 )
 						{
-							// Check if there is a div.success_box in returned data that implements that the request was completely successful
+							// Check if there is a div.fc_success_box in returned data that implements that the request was completely successful
 							return_success( jqXHR.process , data.message );
 						}
 						else {
@@ -405,7 +405,7 @@ function dialog_ajax( title, ajaxUrl, ajaxData, ajaxType, ajaxDataType, beforeSe
 		success:		function( data, textStatus, jqXHR )
 		{
 			return_success( jqXHR.process , data.message );
-			// Check if there is a div.success_box in returned data that implements that the request was completely successful
+			// Check if there is a div.fc_success_box in returned data that implements that the request was completely successful
 			if ( data.success === true )
 			{
 				// check if a function afterSend is defined and call it if true
@@ -473,7 +473,7 @@ function dialog_form( currentForm, beforeSend, afterSend, data_type, beforeSeria
 			},
 			success:		function( data, textStatus, jqXHR )
 			{
-				// Check if there is a div.success_box in returned data that implements that the request was completely successful
+				// Check if there is a div.fc_success_box in returned data that implements that the request was completely successful
 				if ( data.success === true )
 				{
 					return_success( jqXHR.process , data.message );

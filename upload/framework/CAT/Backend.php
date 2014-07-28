@@ -181,16 +181,16 @@ if (!class_exists('CAT_Backend', false))
                 // ==========================
                 $pages    = CAT_Helper_Page::getPages(true);
                 $sections = CAT_Helper_Page::getSections();
+
                 // create LI content for ListBuilder
                 foreach($pages as $i => $page)
                 {
                     if(isset($sections[$page['page_id']]) && count($sections[$page['page_id']]))
                     {
                         $page['page_title'] .= "\n".count($sections[$page['page_id']]).' '.$user->lang()->translate('active sections').':';
-                        foreach($sections[$page['page_id']] as $item)
-                        {
-                            $page['page_title'] .= "\n".$item['module'].' (ID:'.$item['section_id'].')';
-                        }
+                        foreach($sections[$page['page_id']] as $block_id => $section)
+                            foreach( $section as $item )
+                                $page['page_title'] .= "\n".$item['module'].' (ID:'.$item['section_id'].')';
                     }
                     $text = $parser->get(
                         'backend_pagetree_item',

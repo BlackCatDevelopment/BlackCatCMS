@@ -23,9 +23,12 @@ a:hover {
 	background-color: #ffccaa;
 	color: #000;
 }
-	.success {
+	.success, .fc_success_box {
 		background-color: #D0FFA0;
 	}
+    .fc_success_box span.icon.icon-info {
+        color: #5b9c14;
+    }
 	.warning {
 		border-width: 1px;
 	 	border-style: solid;
@@ -37,7 +40,7 @@ a:hover {
 .fc_invalid {
 	border-color: #ec0056;
 }
-.fc_valid {
+.fc_valid, .fc_success_box {
 	border-color: #5b9c14;
 }
 .page_tree_open_options > .fc_page_link > a {

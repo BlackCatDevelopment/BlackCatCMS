@@ -39,4 +39,6 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-include CAT_PATH.'/backend/addons/edit_module_files.php';
+function Dwoo_Plugin_edit_module_css( Dwoo $dwoo, $mod_dir ) {
+	CAT_Helper_Addons::getEditModuleCSSForm($mod_dir);
+}

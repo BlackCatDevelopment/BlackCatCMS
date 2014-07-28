@@ -126,8 +126,8 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     xdebug_disable();
                 try
                 {
-                self::$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-            }
+                    self::$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+                }
                 catch( \PDO\PDOException $e )
                 {
                     CAT_Object::printFatalError($e->message);
@@ -227,9 +227,6 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
             return false;
         }   // end function query()
 
-
-
-
         /**
          * check for DB error
          *
@@ -306,11 +303,15 @@ class CAT_PDOStatementDecorator
 
 class CAT_PDOExceptionHandler
 {
+    public function __call($method, $args)
+    {
+        return call_user_func_array(array($this, $method), $args);
+    }
     /**
      * exception handler; allows to remove paths from error messages and show
      * optional stack trace if CAT_Helper_DB::$trace is true
      **/
-    function exceptionHandler($exception) {
+    public static function exceptionHandler($exception) {
 
         if(CAT_Helper_DB::$trace)
         {
@@ -372,7 +373,7 @@ class CAT_PDOExceptionHandler
             );
             $msg     = sprintf(
                 $msg,
-                $match[1],
+                ( isset($match[1]) ? $match[1] : $message ),
                 $file,
                 $exception->getLine()
             );

@@ -19,9 +19,13 @@ textarea {
 
 textarea.fc_input_300,
 input[type=text].fc_input_300,
-input[type=password].fc_input_300.
-select.fc_input_300. {
+input[type=password].fc_input_300,
+select.fc_input_300 {
 	width:			300px;
+}
+textarea.fc_input_large {
+    width:          900px;
+    height:         400px;
 }
 input[type=file] {
 	margin-bottom:	5px;
@@ -108,3 +112,12 @@ span.fc_label_300 {
     width: 100%;
     padding:5px;
 }
+
+.edit_module_file {
+    display:inline-block;
+    width:260px;
+    margin-bottom:15px;
+}
+    button.edit_module_file {
+        width:250px;
+    }

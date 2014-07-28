@@ -1234,23 +1234,6 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     if ( !isset( $addon_info['module_function'] ) )
                         $addon_info['module_function'] = $addon_info['addon_function'];
 
-                    $module_function = strtolower( $addon_info['module_function'] );
-                    $do              = 'insert';
-                    // Check that it doesn't already exist
-                    $q = $self->db()->query(
-                        "SELECT COUNT(*) FROM `:prefix:addons` WHERE `type`='module' AND `directory`=:dir AND `function`=:func",
-                        array('dir'=>$addon_info['module_directory'], 'func'=>$module_function)
-                    );
-                    if ( $q->rowCount() )
-                    {
-                        $sql = "UPDATE `:prefix:addons` SET `upgraded`=:time, ";
-                        $do  = 'update';
-                    }
-                    else
-                    {
-                        $sql = "INSERT INTO `:prefix:addons` SET `installed`=:time', ";
-                    }
-
                     $options = array(
                         'time' => time(),
                         'dir'  => $addon_info['module_directory'],
@@ -1265,15 +1248,39 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         'guid' => ( isset( $addon_info['module_guid']     ) ? $addon_info['module_guid']     : '' ),
                     );
 
-                    $sql .= "`directory`=:dir, `name`=:name, `description`=:desc, " .
-                            "`type`=:type, `function`=:func, `version`=:ver, " .
-                            "`platform`=:plat, `author`=:auth, `license`=:lic, `guid`=:guid";
+                    $module_function = strtolower( $addon_info['module_function'] );
+                    $do              = 'insert';
+                    // Check that it doesn't already exist
+                    $q = $self->db()->query(
+                        "SELECT COUNT(*) FROM `:prefix:addons` WHERE `type`='module' AND `directory`=:dir AND `function`=:func",
+                        array('dir'=>$addon_info['module_directory'], 'func'=>$module_function)
+                    );
+                    if ( $q->rowCount() )
+                        $cnt = $q->fetchColumn();
+                    if($cnt > 0 )
+                    {
+                        $sql = "UPDATE `:prefix:addons` SET `upgraded`=:time, "
+                             . "`directory`=:dir, `name`=:name, `description`=:desc, "
+                             . "`type`=:type, `function`=:func, `version`=:ver, "
+                             . "`platform`=:plat, `author`=:auth, `license`=:lic, `guid`=:guid"
+                             ;
+                        $do  = 'update';
+                    }
+                    else
+                    {
+                        $sql = "INSERT INTO `:prefix:addons` VALUES "
+                             . "( NULL, :type, :dir, :name, :desc, :func, :ver, :guid, :plat, :auth, :lic, :insttime, :time, :removable, :bundled )";
+                        $options['insttime'] = time();
+                        $options['removable'] = 'Y';
+                        $options['bundled'] = 'N';
+                    }
 
                     if ( $do == 'update' )
                     {
                         $sql .= " WHERE `type`='module' AND `directory`=:dir2";
                         $options['dir2'] = $addon_info['module_directory'];
                     }
+
                     $self->db()->query($sql,$options);
 
                     if ( $self->db()->isError() )
@@ -1759,6 +1766,102 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             return $libs;
         } // end function getLibraries()
 
+// -----------------------------------------------------------------------------
+// methods moved from module.functions.php
+// -----------------------------------------------------------------------------
+
+        /**
+         * old name: edit_module_css()
+         *
+         * generates a form button (for both backend.css and frontend.css if
+         * available) to call the 'Edit CSS' functionality based on page_id,
+         * section_id and given mod_dir
+         *
+         * if $print is false (default), the result is returned, printed
+         * (=echoed) otherwise
+         *
+         * @access public
+         * @param  string  $mod_dir
+         * @param  boolean $print
+         * @return mixed
+         **/
+    	public static function getEditModuleCSSForm($mod_dir,$print=false)
+        {
+    		global $page_id, $section_id;
+    		if(!file_exists(CAT_PATH.'/backend/addons/edit_module_files.php')) return;
+    		if(!file_exists(CAT_PATH.'/modules/'.$mod_dir.'/info.php'))        return;
+            if(!$self->checkModulePermissions($mod_dir))                       return;
+            $buttons = array();
+            $content = '';
+            foreach(array('frontend.css','backend.css') as $file)
+                if(file_exists(CAT_PATH.'/modules/'.$mod_dir.'/'.$file))
+                    $buttons[] = $file;
+    		if(count($buttons))
+            {
+                foreach($buttons as $button)
+                {
+                    $content .= '
+        			<form class="edit_module_file" name="edit_module_file" action="'.CAT_URL.'/modules/edit_module_files.php" method="post">
+        				<input type="hidden" name="page_id" value="'.$page_id.'" />
+        				<input type="hidden" name="section_id" value="'.$section_id.'" />
+        				<input type="hidden" name="mod_dir" value="'.$mod_dir.'" />
+        				<input type="hidden" name="edit_file" value="'.$button.'" />
+        				<input type="hidden" name="action" value="edit" />
+        				<button type="submit" class="edit_module_file mod_'.$mod_dir.'_edit_css">'.
+                        self::getInstance()->lang()->translate('Edit').' '.$button.
+                        '</button>
+        			</form>
+                    ';
+                }
+                if($content)
+                    $content .= '<br style="clear:left;" />';
+                if($print)
+                    echo $content;
+                else
+                    return $content;
+            }
+        }   // end function getEditModuleCSSForm()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getEditModuleFilesButton($mod_dir,$print=false)
+        {
+            global $page_id, $section_id;
+            $self    = self::getInstance();
+            if(!$self->checkModulePermissions($mod_dir)) return;
+            $content = '';
+            $path    = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$mod_dir);
+            // find JS files
+            $js      = CAT_Helper_Directory::getInstance()
+                       ->maxRecursionDepth(5)
+                       ->setSuffixFilter(array('js'))
+                       ->scanDirectory($path,true,true,$path);
+            // find CSS files
+            $css     = CAT_Helper_Directory::getInstance()
+                       ->maxRecursionDepth(5)
+                       ->setSuffixFilter(array('css'))
+                       ->scanDirectory($path,true,true,$path);
+            if(count($js) || count($css))
+                $content = '
+                    <form style="float:right" method="post" action="'.CAT_URL.'/backend/addons/edit_module_files.php" name="edit_module_file">
+                		<input type="hidden" value="'.$page_id.'" name="page_id">
+                		<input type="hidden" value="'.$section_id.'" name="section_id">
+                		<input type="hidden" value="'.$mod_dir.'" name="mod_dir">
+                		<input type="submit" value="'.$self->lang()->translate('Edit module file(s)').'">
+                	</form>';
+            if($print)
+                echo $content;
+            else
+                return $content;
+        }   // end function getEditModuleFilesButton()
+        
+
+// -----------------------------------------------------------------------------
+// private methods
+// -----------------------------------------------------------------------------
         /**
          *
          * @access private

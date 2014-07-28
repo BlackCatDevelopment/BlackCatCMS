@@ -113,6 +113,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 
 	    /**
 	     * retrieves all active sections for a page
+	     * if $page_id is empty, all active sections are returned
 	     *
 	     * @access public
 	     * @param  integer  $page_id
@@ -122,11 +123,8 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 	     **/
 	    public static function getActiveSections($page_id=NULL, $block=null, $backend=false)
 	    {
-            $active = ( isset(self::$active) && isset(self::$active[$page_id]) && is_array(self::$active[$page_id]) )
-                    ? self::$active[$page_id]
-                    : NULL;
-
-	        if (!$active)
+            // cache data
+	        if (!self::$active)
 	        {
                 if(!self::$instance)
                     self::getInstance();
@@ -153,13 +151,18 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
 					? self::$active[$page_id][$block]
 					: array();
 
-            // otherwise
-			$all = array();
-			foreach( self::$active[$page_id] as $block => $values )
-				foreach( $values as $value )
-			    	array_push( $all, $value );
+            // if a page_id is given
+            if($page_id)
+            {
+    			$all = array();
+    			foreach( self::$active[$page_id] as $block => $values )
+    				foreach( $values as $value )
+    			    	array_push( $all, $value );
+    			return $all;
+            }
 
-			return $all;
+            // default
+            return self::$active;
 			
 	    }   // end function getActiveSections()
 	    

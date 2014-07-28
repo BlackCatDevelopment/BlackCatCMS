@@ -136,7 +136,7 @@ label {
 	width: 0px;
 	height: 0px;
 }
-.highlight, .warning, .success {
+.highlight, .warning, .success, .fc_success_box, .error_box {
 	display: inline-block;
 	padding-top: 5px;
 	padding-right: 15px;
@@ -144,9 +144,7 @@ label {
 	padding-left: 15px;
 	font-weight: bold;
 }
-	.success {
-	}
-	.warning {
+	.success, .warning, .fc_success_box, .error_box {
 		border-width: 1px;
 	 	border-style: solid;
 	}
@@ -218,6 +216,14 @@ label {
     padding-top:15px;
 }
 .fc_success_box {
+    padding: 20px 15px;
+}
+.fc_success_box span{
+    vertical-align: top;
+}
+.fc_success_box span.icon.icon-info {
+    font-size:3em;
+    margin-right:15px;
 }
 .fc_fallback {
     padding:10px 15px;
