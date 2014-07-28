@@ -105,7 +105,7 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
             while (
                      $caller 
                 && ! isset($caller['file'])
-                || ( isset($caller['class']) && $caller['class'] == 'CAT_Helper_I18n' )
+                || ( isset($caller['class']) && $caller['class'] == 'CAT_Helper_I18n' && $caller['function'] != 'getInstance' )
             ) {
                 $caller = array_shift($stack);
             }

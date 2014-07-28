@@ -24,6 +24,7 @@
  */
 
 define('CAT_DEBUG',false);
+define('CAT_PATH',dirname(__FILE__).'/../');
 
 global $depth;
 $depth = 0;
@@ -411,8 +412,10 @@ function show_step_globals( $step ) {
     include dirname(__FILE__).'/../framework/CAT/Helper/DateTime.php';
     $timezone_table = CAT_Helper_DateTime::getInstance()->getTimezones();
 
-    $lang_dir = "../languages/";
-    $lang_files = $dirh->setRecursion(false)->setSkipFiles(array('index'))->getPHPFiles($lang_dir,$lang_dir);
+    $lang_dir   = dirname(__FILE__)."/../languages/";
+    $lang_files = $dirh->setRecursion(false)
+                       ->setSkipFiles(array('index'))
+                       ->getPHPFiles($lang_dir,$lang_dir);
     $dirh->setRecursion(true); // reset
 
     // get language name
@@ -729,14 +732,15 @@ function show_step_finish() {
     $cat_path = $dirh->sanitizePath( dirname(__FILE__).'/..' );
     init_constants($cat_path);
     include $cat_path.'/framework/class.database.php';
-    $database = new database();
+    $database = CAT_Helper_DB::getInstance();
 
     // check if pages table exists
     $table_prefix = $config['table_prefix'];
-    $result = $database->query(sprintf(
-        'SHOW TABLES LIKE `%spages`;',
-        $table_prefix
-    ));
+    try
+    {
+        $result = $database->query(
+            'SHOW TABLES LIKE ":prefix:pages"'
+        );
     if ( ! is_object($result) || ! $result->numRows() ) {
         // do base installation first
         list( $result, $output ) = __do_install();
@@ -744,6 +748,10 @@ function show_step_finish() {
             write2log('< [show_step_finish()]');
             return array( true, $output );
         }
+    }
+    }
+    catch ( Exception $e )
+    {
     }
 
     $tpl = 'finish.tpl';
@@ -1263,6 +1271,9 @@ function init_constants($cat_path)
     if ( ! CAT_Registry::exists('LEPTON_URL')   ) { CAT_Registry::define('LEPTON_URL',$config['cat_url']); }
     if ( ! CAT_Registry::exists('LEPTON_PATH')  ) { CAT_Registry::define('LEPTON_PATH',$cat_path);            }
 
+    // user id
+    $_SESSION['USER_ID'] = 1;
+    $_SESSION['GROUP_ID'] = 1;
 }   // end function init_constants()
 
 /**
@@ -1697,17 +1708,16 @@ function __cat_check_db_config() {
     if ( !count( $errors ) )
     {
         // check database connection
-        $host = ( $database_port !== '3306' ) ? $database_host . ':' . $database_port : $database_host;
-        $ret  = @mysql_connect( $host, $database_username, $database_password );
-        if ( ! is_resource($ret) )
-        {
+        $connectionParams = array(
+            'DB_NAME'     => $database_name,
+            'DB_USERNAME' => $database_username,
+            'DB_PASSWORD' => $database_password,
+            'DB_HOST'     => $database_host,
+            'DB_PORT'     => $database_port,
+        );
+        $conn = CAT_Helper_DB::getInstance($connectionParams);
+        if(!$conn->check())
             $errors['global'] = $lang->translate('Unable to connect to the database! Please check your settings!');
-        }
-        // check if DB exists
-        if (!mysql_select_db($database_name, $ret))
-        {
-            $errors['installer_database_name'] = $lang->translate('The database does not exist! Please check your settings!');
-        }
     }
 
     return $errors;

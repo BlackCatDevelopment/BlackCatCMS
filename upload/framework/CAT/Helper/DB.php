@@ -49,7 +49,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
          * @access public
          * @return void
          **/
-    	public function __construct()
+    	public function __construct($opt=array())
         {
             self::$prefix = defined('CAT_TABLE_PREFIX') ? CAT_TABLE_PREFIX : '';
             if(!$this->classLoader)
@@ -57,7 +57,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                 $this->classLoader = new ClassLoader('Doctrine', dirname(__FILE__).'/../../../modules/lib_doctrine');
                 $this->classLoader->register();
             }
-            $this->connect();
+            $this->connect($opt);
         }   // end function __construct()
 
         /**
@@ -65,12 +65,32 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
          * @access public
          * @return
          **/
-        public static function getInstance()
+        public static function getInstance($opt=array())
         {
-            if(!self::$instance) self::$instance = new self();
+            if(!self::$instance) self::$instance = new self($opt);
             return self::$instance;
         }   // end function getInstance()
         
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function check()
+        {
+            if(self::$conn && is_object(self::$conn))
+            {
+                try {
+                    self::$conn->query('SHOW TABLES');
+                    return true;
+                }
+                catch ( Exception $e )
+                {
+                    return false;
+                }
+            }
+        }   // end function check()
+
         /**
          * accessor to current connection object
          **/
@@ -105,23 +125,23 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
          * @access public
          * @return object
          **/
-    	public static function connect()
+    	public static function connect($opt=array())
         {
             if(!self::$conn)
             {
                 $config = new \Doctrine\DBAL\Configuration();
                 $config->setSQLLogger(new Doctrine\DBAL\Logging\DebugStack());
-                if(!defined('CAT_DB_NAME'))
+                if(!defined('CAT_DB_NAME') && file_exists(dirname(__FILE__).'/../../../config.php'))
                     include dirname(__FILE__).'/../../../config.php';
                 $connectionParams = array(
                     'charset'  => 'utf8',
-                    'dbname'   => CAT_DB_NAME,
                     'driver'   => 'pdo_mysql',
-                    'host'     => CAT_DB_HOST,
-                    'password' => CAT_DB_PASSWORD,
-                    'user'     => CAT_DB_USERNAME,
+                    'dbname'   => (isset($opt['DB_NAME'])     ? $opt['DB_NAME']     : CAT_DB_NAME),
+                    'host'     => (isset($opt['DB_HOST'])     ? $opt['DB_HOST']     : CAT_DB_HOST),
+                    'password' => (isset($opt['DB_PASSWORD']) ? $opt['DB_PASSWORD'] : CAT_DB_PASSWORD),
+                    'user'     => (isset($opt['DB_USERNAME']) ? $opt['DB_USERNAME'] : CAT_DB_USERNAME),
+                    'port'     => (isset($opt['DB_PORT'])     ? $opt['DB_PORT']     : CAT_DB_PORT    ),
                 );
-                if(CAT_DB_PORT !== '3306') $connectionParams['port'] = CAT_DB_PORT;
                 if(function_exists('xdebug_disable'))
                     xdebug_disable();
                 try
@@ -130,6 +150,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                 }
                 catch( \PDO\PDOException $e )
                 {
+                    $this->setError($e->message);
                     CAT_Object::printFatalError($e->message);
                 }
             }
@@ -152,9 +173,9 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
          * @access public
          * @return
          **/
-        public function lastInsertId()
+        public function lastInsertId($seqname = NULL)
         {
-            return self::$conn->lastInsertId();
+            return self::$conn->lastInsertId($seqname);
         }   // end function lastInsertId()
         
         public function prepare($statement,$driver_options=array())

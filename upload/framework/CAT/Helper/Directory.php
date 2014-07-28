@@ -398,6 +398,14 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	        // bla/./bloo ==> bla/bloo
 	        $path       = preg_replace('~/\./~', '/', $path);
 
+            // relative path
+            if(strlen($path)>2 && !substr_compare($path,'..',0,2))
+            {
+                if(defined('CAT_PATH'))
+                    $path = substr_replace($path, CAT_PATH, 1, 2);
+            }
+
+
 	        // resolve /../
 	        // loop through all the parts, popping whenever there's a .., pushing otherwise.
 	        $parts      = array();
