@@ -455,19 +455,23 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
         return CAT_Helper_Validate::getInstance()->sanitize_url($href);
     }   // end function sanitize_url()
 
-    /*
-    urlencode function and rawurlencode are mostly based on RFC 1738.
-    However, since 2005 the current RFC in use for URIs standard is RFC 3986.
-    Here is a function to encode URLs according to RFC 3986.
-    */
-    if(!function_exists('url_encode')){
-    	function url_encode($string) {
-    	    $string = html_entity_decode($string,ENT_QUOTES,'UTF-8');
-    	    $entities = array('%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D');
-    	    $replacements = array('!', '*', "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]");
-    	    return str_replace($entities,$replacements, rawurlencode($string));
-    	}
-    }
+    /**
+     * replaces CAT_PATH with CAT_URL in given $url
+     * if CAT_URL is stored without a scheme (relative URI), the current
+     * scheme will be added before replacement
+     *
+     * @param  string $url
+     * @return string
+     **/
+    function uri_to_path($url)
+    {
+        $rel_parsed = parse_url(CAT_URL);
+        if(!array_key_exists('scheme',$rel_parsed ) || $rel_parsed['scheme']=='')
+            $find = (isset($_SERVER['HTTPS']) ? 'https:' : 'http:') . CAT_URL;
+        else
+            $find = CAT_URL;
+        return str_ireplace(sanitize_url($find),sanitize_path(CAT_PATH),sanitize_url($url));
+    }   // end function uri_to_path()
 
     /**
      * Scan a given directory for dirs and files.

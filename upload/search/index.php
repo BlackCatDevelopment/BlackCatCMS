@@ -40,9 +40,18 @@ if (defined('CAT_PATH')) {
 }
 
 // Required page details
-$page_id          = -1;
+$page_id          = 0;
 $page_description = '';
 $page_keywords    = '';
+define( 'PAGE_ID', 0 );
+define( 'ROOT_PARENT', 0 );
+define( 'PARENT', 0 );
+define( 'LEVEL', 0 );
+define( 'PAGE_TITLE', CAT_Helper_I18n::getInstance()->translate('Search') );
+define( 'MENU_TITLE', CAT_Helper_I18n::getInstance()->translate('Search') );
+define( 'MODULE', '' );
+define( 'VISIBILITY', 'public' );
+
 
 // load search library
 require_once CAT_PATH.'/modules/'.SEARCH_LIBRARY.'/library.php';

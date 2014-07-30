@@ -239,6 +239,50 @@ if (!class_exists('CAT_Helper_Page'))
                         $trail = explode(",", '0,'.self::$pages[self::$pages_by_id[$page_id]]['page_trail']);
                         array_pop($trail); // remove the current page
                     }
+
+                    // add 'virtual' page -1
+                    if(!isset(self::$pages_by_id['-1']))
+                    {
+                        #self::$pages_by_id['-1'] = 0;
+                        $virtual = array(
+                            'page_id' => '-1',
+                            'parent' => 0,
+                            'root_parent' => 0,
+                            'level' => -1,
+                            'link' => '',
+                            'target' => '_self',
+                            'page_title' => '',
+                            'menu_title' => '',
+                            'description' => '',
+                            'keywords' => '',
+                            'page_trail' => '',
+                            'template' => '',
+                            'visibility' => 'public',
+                            'position' => 0,
+                            'menu' => 0,
+                            'language' => '',
+                            'searching' => 0,
+                            'admin_groups' => 1,
+                            'admin_users' => '',
+                            'viewing_groups' => 1,
+                            'viewing_users' => '',
+                            'modified_when' => '',
+                            'modified_by' => 1,
+                            'page_groups' => '',
+                            'children' => 0,
+                            'is_parent' => false,
+                            'has_children' => false,
+                            'is_editable' => false,
+                            'is_in_trail' => false,
+                            'is_direct_parent' => false,
+                            'is_current' => false,
+                            'is_open' => false,
+                            'href' => '',
+                        );
+                        array_push(self::$pages,$virtual);
+                        self::$pages_by_id['-1'] = key(self::$pages);
+                    }
+
                 }       // end if($result)
             }
             CAT_Registry::register('CAT_HELPER_PAGE_INITIALIZED',true);
@@ -1163,10 +1207,9 @@ if (!class_exists('CAT_Helper_Page'))
             $description = NULL;
 
             // charset
-            if (isset($properties['default_charset']))
                 $output[] = CAT_Helper_Page::$space
                           . '<meta http-equiv="Content-Type" content="text/html; charset='
-                          . $properties['default_charset']
+                      . (isset($properties['default_charset']) ? $properties['default_charset'] : 'utf-8')
                           . '" />'
                           ;
 
@@ -2067,15 +2110,18 @@ if (!class_exists('CAT_Helper_Page'))
                             $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url($item) . '"></script>';
                             continue;
                         }
-                        if (!preg_match('#/modules/#i', $item))
+                        if (!preg_match('#/modules/#i', $item) && !preg_match('#/templates/#i', $item))
                         {
                             foreach ($check_paths as $subdir)
                             {
                                 if (!preg_match('#' . $subdir . '/#', $item))
                                 {
+                                    if(file_exists(sanitize_path(CAT_PATH.'/'.$subdir.'/'.$item)))
+                                    {
                                     $item = sanitize_path($subdir . '/' . $item);
                                 }
                             }
+                        }
                         }
                         $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . $item) . '"></script>';
                     }
@@ -2084,7 +2130,7 @@ if (!class_exists('CAT_Helper_Page'))
             }
             else
             {
-                $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . CAT_Helper_Validate::getInstance()->sanitize_url(CAT_URL . '/' . $arr) . '"></script>';
+                $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/' . $arr) . '"></script>';
             }
             self::$instance->log()->logDebug('JavaScripts',$static);
         } // end function _analyze_javascripts()
