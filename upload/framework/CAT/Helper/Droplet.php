@@ -329,7 +329,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                           . "WHERE :field1=:value1 AND :field2=:value2 AND :field3=:value3"
                           ;
             $params       = array(
-                'field2' => self::field_droplet_name,
+                'field1' => self::field_droplet_name,
                 'value1' => $droplet_name,
                 'field2' => self::field_type,
                 'value2' => $register_type,

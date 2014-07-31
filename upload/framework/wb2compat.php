@@ -27,13 +27,18 @@ define('WB2COMPAT',true);
 
 define('WB_SERVER_ADDR', CAT_SERVER_ADDR );
 define('WB_PATH', CAT_PATH);
+$rel_parsed = parse_url(CAT_URL);
+if(!array_key_exists('scheme',$rel_parsed ) || $rel_parsed['scheme']=='')
+    define('WB_URL', (isset($_SERVER['HTTPS']) ? 'https:' : 'http:') . CAT_URL);
+else
 define('WB_URL', CAT_URL);
 define('ADMIN_PATH', CAT_ADMIN_PATH);
 define('ADMIN_URL', CAT_ADMIN_URL);
+define('ADMIN_DIRECTORY',CAT_BACKEND_FOLDER);
 define('THEME_URL', defined('CAT_THEME_URL') ? CAT_THEME_URL : CAT_URL.'/templates/'.DEFAULT_THEME );
 define('LEPTON_SERVER_ADDR', CAT_SERVER_ADDR );
 define('LEPTON_PATH', CAT_PATH);
-define('LEPTON_URL', CAT_URL);
+define('LEPTON_URL', WB_URL);
 define('TABLE_PREFIX', CAT_TABLE_PREFIX );
 define('DB_TYPE', CAT_DB_TYPE);
 define('DB_HOST', CAT_DB_HOST);

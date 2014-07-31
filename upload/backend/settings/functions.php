@@ -142,7 +142,7 @@ function getPagesList($fieldname,$selected,$add_empty=false) {
         }
     }
     if($add_empty)
-        array_unshift($pages_list,array('page_id'=>-1,'parent'=>0,'level'=>0,'menu_title'=>CAT_Helper_Page::getInstance()->lang()->translate('[none (use internal)]')));
+        array_unshift($pages_list,array('page_id'=>0,'parent'=>0,'level'=>0,'is_open'=>false,'menu_title'=>CAT_Helper_Page::getInstance()->lang()->translate('[none (use internal)]')));
     return CAT_Helper_ListBuilder::getInstance(true)
            ->config(array('space' => '|-- '))
            ->dropdown( $fieldname, $pages_list, 0, $selected );

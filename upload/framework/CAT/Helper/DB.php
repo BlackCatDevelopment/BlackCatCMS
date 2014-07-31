@@ -231,15 +231,8 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     if(is_array($last) && count($last))
                     {
                         $this->setError(sprintf(
-                            "SQL Error\n".
-                            "    [SQL]      %s\n".
-                            "    [PARAMS]   %s\n".
-                            "    [TYPES]    %s\n".
-                            "    [TIME(MS)] %s",
-                            $last['sql'],
-                            implode(', ',$last['params']),
-                            implode(', ',$last['types']),
-                            $last['executionMS']
+                            "SQL Error:&nbsp;&nbsp;&nbsp;&nbsp;[SQL] %s\n",
+                            $last['sql']
                         ));
                         throw new Exception($this->getError());
                     }

@@ -239,6 +239,13 @@ if (!class_exists('CAT_Helper_Page'))
                         $trail = explode(",", '0,'.self::$pages[self::$pages_by_id[$page_id]]['page_trail']);
                         array_pop($trail); // remove the current page
                     }
+
+                    // add 'virtual' page -1
+                    if(!isset(self::$pages_by_id['-1']))
+                    {
+                        self::$pages_by_id['-1'] = 0;
+                    }
+
                 }       // end if($result)
             }
             CAT_Registry::register('CAT_HELPER_PAGE_INITIALIZED',true);
@@ -1309,10 +1316,9 @@ if (!class_exists('CAT_Helper_Page'))
             $description = NULL;
 
             // charset
-            if (isset($properties['default_charset']))
                 $output[] = CAT_Helper_Page::$space
                           . '<meta http-equiv="Content-Type" content="text/html; charset='
-                          . $properties['default_charset']
+                      . (isset($properties['default_charset']) ? $properties['default_charset'] : 'utf-8')
                           . '" />'
                           ;
 
@@ -2261,13 +2267,16 @@ if (!class_exists('CAT_Helper_Page'))
                             $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url($item) . '"></script>';
                             continue;
                         }
-                        if (!preg_match('#/modules/#i', $item))
+                        if (!preg_match('#/modules/#i', $item) && !preg_match('#/templates/#i', $item))
                         {
                             foreach ($check_paths as $subdir)
                             {
                                 if (!preg_match('#' . $subdir . '/#', $item))
                                 {
-                                    $item = CAT_Helper_Directory::sanitizePath($subdir . '/' . $item);
+                                    if(file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$subdir.'/'.$item)))
+                                    {
+                                        $item = $subdir.'/'.$item;
+                                    }
                                 }
                             }
                         }

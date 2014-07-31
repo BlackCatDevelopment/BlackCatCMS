@@ -201,6 +201,12 @@ if (!class_exists('CAT_Page', false))
 
                 $this->log()->LogDebug('print output');
 
+                if(!headers_sent())
+                {
+                    $properties  = self::properties($page_id);
+                    echo header('content-type:text/html; charset='.(isset($properties['default_charset']) ? $properties['default_charset'] : 'utf-8'));
+                }
+
                 echo $output;
             }
         }   // end function show()

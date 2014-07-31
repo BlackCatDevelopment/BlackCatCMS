@@ -201,22 +201,41 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
         }   // end function getSections()
         
 	    /**
+         * gets all sections of given type; if a page_id is given, for that
+         * page only, all sections of this type otherwise
           *
           * @access public
-          * @return
+         * @param  integer  $page_id (default NULL = all)
+         * @param  string   $type    (default 'wysiwyg')
+         * @param  integer  $limit   (default 1)
+         * @param  boolean  $all     (default false) skip sections out of pub time
+         * @return array
           **/
-        public static function getSectionsByType($page_id,$type='wysiwyg',$limit=1)
+        public static function getSectionsByType($page_id=NULL,$type='wysiwyg',$limit=1,$all=false)
         {
             $limit  = ( isset($limit) && $limit && is_int($limit) )
                     ? $limit
                     : 1;
+            $pub_sql = NULL;
+            $result  = NULL;
+            $params  = array();
+            if(!$all)
+            {
+                $now     = time();
+                $pub_sql = '(( :time1 BETWEEN `publ_start` AND `publ_end`) OR '
+                         . '( :time2 > `publ_start` AND `publ_end`=0)) '
+                         ;
+                $params  = array('time1'=>$now,'time2'=>$now);
+            }
             $self   = self::getInstance();
-            $SQL    = "SELECT `section_id` FROM `:prefix:sections` "
-                    . "WHERE `page_id` = :page_id  AND `module` = :module ORDER BY `position` ASC LIMIT " . $limit;
-            $params = array(
-                'page_id' => $page_id,
-                'module'  => $type,
-            );
+            $SQL    = "SELECT `section_id`, `page_id` FROM `:prefix:sections` "
+                    . "WHERE "
+                    . ( $page_id ? "`page_id` = :page_id  AND " : '' )
+                    . "`module` = :module AND `section_id`>0 "
+                    . ( $pub_sql ? ' AND '.$pub_sql : '' )
+                    . "ORDER BY `position` ASC LIMIT " . $limit;
+            $params['module'] = $type;
+            if($page_id) $params['page_id'] = $page_id;
             $result = $self->db()->query($SQL,$params);
             return $result->rowCount()
                 ?  $result->fetchAll()

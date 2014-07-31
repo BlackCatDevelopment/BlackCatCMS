@@ -1790,7 +1790,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
     		global $page_id, $section_id;
     		if(!file_exists(CAT_PATH.'/backend/addons/edit_module_files.php')) return;
     		if(!file_exists(CAT_PATH.'/modules/'.$mod_dir.'/info.php'))        return;
-            if(!$self->checkModulePermissions($mod_dir))                       return;
+            if(!self::checkModulePermissions($mod_dir))                        return;
             $buttons = array();
             $content = '';
             foreach(array('frontend.css','backend.css') as $file)
