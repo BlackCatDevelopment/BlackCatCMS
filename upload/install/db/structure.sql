@@ -188,6 +188,14 @@ CREATE TABLE IF NOT EXISTS `cat_page_langs` (
   UNIQUE KEY `page_id_lang_link_page_id` (`page_id`,`lang`,`link_page_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Links pages of different languages together';
 
+CREATE TABLE `cat_pages_headers` (
+	`page_id` INT(11) NOT NULL,
+	`page_js_files` TEXT NULL,
+	`page_css_files` TEXT NULL,
+	`page_js` TEXT NULL,
+	UNIQUE INDEX `page_id` (`page_id`)
+) COMMENT='header files' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `cat_search` (
   `search_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',

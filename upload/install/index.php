@@ -57,12 +57,15 @@ set_include_path (
         array(
             realpath(dirname(__FILE__).'/../framework'),
             realpath(dirname(__FILE__).'/../modules/lib_dwoo/dwoo'),
+            realpath(dirname(__FILE__).'/../modules/lib_doctrine'),
             get_include_path(),
         )
     )
 );
 function catcmsinstall_autoload($class) {
-    @include str_replace( '_', '/', $class ) . '.php';
+    $file = str_replace( '_', '/', $class ) . '.php';
+    if(file_exists($file))
+        @include $file;
 }
 spl_autoload_register('catcmsinstall_autoload',false,false);
 
@@ -1119,7 +1122,7 @@ function check_tables($database) {
     $requested_tables = array("class_secure","pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_droplets_settings","mod_droplets_permissions","mod_wysiwyg","mod_wysiwyg_admin_v2");
     for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
 
-    $result = mysql_query("SHOW TABLES FROM `".CAT_DB_NAME."`");
+    $result = $database->query("SHOW TABLES FROM `".CAT_DB_NAME."`");
 
     if(!is_resource($result)) {
         $errors['tables'] = 'Unable to check tables - no result from SHOW TABLES!';
@@ -1413,26 +1416,20 @@ function do_step($this_step,$skip=false) {
  * $database is the db handle
  **/
 function __cat_installer_import_sql($file,$database) {
-
     $errors = array();
     $import = file_get_contents($file);
     $import = preg_replace( "%/\*(.*)\*/%Us", ''              , $import );
     $import = preg_replace( "%^--(.*)\n%mU" , ''              , $import );
     $import = preg_replace( "%^$\n%mU"      , ''              , $import );
     $import = preg_replace( "%cat_%"        , CAT_TABLE_PREFIX, $import );
-
     foreach (split_sql_file($import, ';') as $imp){
         if ($imp != '' && $imp != ' ') {
             $ret = $database->query($imp);
-            if ( $database->is_error() )
-            {
-                $errors[] = $database->get_error();
-            }
+            if ( $database->isError() )
+                $errors[] = $database->getError();
         }
     }
-
     return $errors;
-
 }   // end function __cat_installer_import_sql()
 
 /**
