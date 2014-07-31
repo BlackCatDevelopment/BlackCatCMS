@@ -744,14 +744,14 @@ function show_step_finish() {
         $result = $database->query(
             'SHOW TABLES LIKE ":prefix:pages"'
         );
-    if ( ! is_object($result) || ! $result->numRows() ) {
-        // do base installation first
-        list( $result, $output ) = __do_install();
-        if ( ! $result ) {
-            write2log('< [show_step_finish()]');
-            return array( true, $output );
+        if ( ! is_object($result) || ! $result->numRows() ) {
+            // do base installation first
+            list( $result, $output ) = __do_install();
+            if ( ! $result ) {
+                write2log('< [show_step_finish()]');
+                return array( true, $output );
+            }
         }
-    }
     }
     catch ( Exception $e )
     {
@@ -808,6 +808,7 @@ function default_dir_mode($temp_dir) {
     if(is_writable($temp_dir)) {
         $dirname = $temp_dir.'/test_permissions/';
         mkdir($dirname);
+exit;
         $default_dir_mode = '0'.substr(sprintf('%o', fileperms($dirname)), -3);
         rmdir($dirname);
     } else {
@@ -1123,12 +1124,13 @@ function check_tables($database) {
     for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
 
     $result = $database->query("SHOW TABLES FROM `".CAT_DB_NAME."`");
-
-    if(!is_resource($result)) {
+    if(!is_object($result)) {
         $errors['tables'] = 'Unable to check tables - no result from SHOW TABLES!';
     }
     else {
-        for($i=0; $i < mysql_num_rows($result); $i++) $all_tables[] = mysql_table_name($result, $i);
+        $temp = $result->fetchAll(PDO::FETCH_NUM);
+        foreach($temp as $t)
+            $all_tables[] = $t[0];
         foreach($requested_tables as $temp_table) {
             if (!in_array($temp_table, $all_tables)) {
                 $missing_tables[] = $temp_table;

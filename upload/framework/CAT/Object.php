@@ -420,8 +420,9 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                         CAT_Registry::define('CAT_PATH',dirname(__FILE__).'/../..');
                     $debug_dir = CAT_PATH.'/temp/logs'
                                . ( $this->debugLevel == 7 ? '/debug_'.get_class($this) : '' );
+                    $debug_dir = CAT_Helper_Directory::sanitizePath($debug_dir);
                     if ( ! file_exists( $debug_dir ) )
-                        mkdir( $debug_dir, 0777 );
+                        CAT_Helper_Directory::createDirectory( $debug_dir, 0777 );
                     $this->logObj = CAT_Helper_KLogger::instance( $debug_dir, $this->debugLevel );
                 }
                 return $this->logObj;
