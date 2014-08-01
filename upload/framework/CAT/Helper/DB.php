@@ -286,6 +286,19 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
             $this->lasterror = $error;
         }   // end function setError
 
+        /**
+         * old function names wrap new ones
+         **/
+        public function get_one($sql,$type=PDO::FETCH_ASSOC)
+        {
+            return $this->query($sql)->fetchColumn();
+        }
+
+        public function is_error()  { return $this->isError();      }
+        public function get_error() { return $this->getError();     }
+        public function insert_id() { return $this->lastInsertId(); }
+        public function prompt_on_error($switch=true) { /* no longer supported */ }
+
     }
 }
 

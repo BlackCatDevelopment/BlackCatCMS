@@ -37,7 +37,7 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	class CAT_Helper_I18n extends CAT_Object
 	{
 	    protected      $_config
-            = array( 'defaultlang' => 'EN', 'langPath' => '/languages', 'workdir' => NULL, 'loglevel' => 7 );
+            = array( 'defaultlang' => 'EN', 'langPath' => '/languages', 'workdir' => NULL, 'loglevel' => 8 );
 	    // array to store language strings
 	    private static $_lang               = array();
 	    // default language

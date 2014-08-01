@@ -865,7 +865,9 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 if ( !file_exists( $temp_unzip . '/info.php' ) )
                 {
                     // check subfolders for info.php
-                    $info = CAT_Helper_Directory::getInstance()->maxRecursionDepth( 3 )->findFile( 'info.php', $temp_unzip );
+                    $info = CAT_Helper_Directory::getInstance(1)
+                            ->maxRecursionDepth(4)
+                            ->findFile('info.php',$temp_unzip);
                     if ( !$info )
                     {
                         $self->log()->LogDebug(sprintf('No info.php found, removing [%s]', $temp_unzip));

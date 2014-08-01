@@ -286,11 +286,12 @@ if (!class_exists('CAT_Helper_Validate'))
                     array_pop($parts);
                 elseif ($part!="")
                     $parts[] = $part;
-            $url = (
-                  ( is_array($rel_parsed) && array_key_exists( 'scheme', $rel_parsed ) )
-                ? $rel_parsed['scheme'] . '://' . $rel_parsed['host'] . ( isset($rel_parsed['port']) ? ':'.$rel_parsed['port'] : NULL )
-                : ""
-            ) . "/" . implode("/", $parts);
+            if( !is_array($rel_parsed) || !array_key_exists('scheme',$rel_parsed) )
+                $rel_parsed['scheme'] =  (isset($_SERVER['HTTPS']) ? 'https' : 'http');
+            $url = $rel_parsed['scheme'] . '://'
+                 . $rel_parsed['host']
+                 . ( isset($rel_parsed['port']) ? ':'.$rel_parsed['port'] : NULL )
+                 . "/" . implode("/", $parts);
             return $url;
         }   // end function sanitize_url()
 
