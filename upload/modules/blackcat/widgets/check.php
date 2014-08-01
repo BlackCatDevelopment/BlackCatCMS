@@ -68,30 +68,29 @@ if(!CAT_Helper_Validate::sanitizeGet('blackcat_refresh'))
 }
 
 if ( $doit ) {
-
     ini_set('include_path', CAT_PATH.'/modules/lib_zendlite');
-    include 'Zend/Http/Client.php';
-    $client = new Zend_Http_Client(
+    include CAT_PATH.'/modules/lib_zendlite/library.php';
+    $client = new Zend\Http\Client(
         $current['source'],
         array(
             'timeout'      => $current['timeout'],
-            'adapter'      => 'Zend_Http_Client_Adapter_Proxy',
+            'adapter'      => 'Zend\Http\Client\Adapter\Proxy',
             'proxy_host'   => $current['proxy_host'],
             'proxy_port'   => $current['proxy_port'],
         )
     );
-    $client->setCookieJar();
+    #$client->setCookieJar();
     $client->setHeaders(
         array(
             'Pragma' => 'no-cache',
             'Cache-Control' => 'no-cache',
-            'Accept-Encoding' => '',
+#            'Accept-Encoding' => '',
         )
     );
 
     try {
-        $response = $client->request( Zend_Http_Client::GET );
-        if ( $response->getStatus() != '200' ) {
+        $response = $client->send();
+        if ( $response->getStatusCode() != '200' ) {
             $error = "Unable to load source "
                    . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
                    . "Status: " . $response->getStatus() . " - " . $response->getMessage()
@@ -102,7 +101,7 @@ if ( $doit ) {
         }
         else
         {
-            $version = $response->getRawBody();
+            $version = $response->getContent();
         }
     } catch ( Zend_HTTP_Client_Adapter_Exception $e) {
         $error = "Unable to load source "
