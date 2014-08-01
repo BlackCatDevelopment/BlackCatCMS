@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
@@ -42,11 +42,11 @@ if (defined('CAT_PATH')) {
 $module_directory     = 'lib_zendlite';
 $module_name          = 'Zend LITE';
 $module_function      = 'library';
-$module_version       = '0.1';
+$module_version       = '2.0';
 $module_platform      = '1.x';
 $module_author        = 'Zend Framework by Zend Technologies; this module Black Cat Development';
 $module_license       = 'GNU General Public License';
-$module_description   = 'Some (!) Zend components for use with Black Cat CMS';
+$module_description   = 'Some (!) Zend 2 components for use with Black Cat CMS';
 $module_home          = 'http://framework.zend.com/';
 $module_guid          = 'A92FCDB7-3DAE-4E8D-A673-C2A3542776E0';
 

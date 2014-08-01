@@ -1,55 +1,29 @@
 <?php
-
 /**
- * Zend Framework
+ * Zend Framework (http://framework.zend.com/)
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://framework.zend.com/license/new-bsd
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@zend.com so we can send you a copy immediately.
- *
- * @category   Zend
- * @package    Zend_Http
- * @subpackage Client_Adapter
- * @version    $Id: Proxy.php 23775 2011-03-01 17:25:24Z ralph $
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-/**
- * @see Zend_Uri_Http
- */
-require_once 'Zend/Uri/Http.php';
-/**
- * @see Zend_Http_Client
- */
-require_once 'Zend/Http/Client.php';
-/**
- * @see Zend_Http_Client_Adapter_Socket
- */
-require_once 'Zend/Http/Client/Adapter/Socket.php';
+namespace Zend\Http\Client\Adapter;
+
+use Zend\Http\Client;
+use Zend\Http\Client\Adapter\Exception as AdapterException;
+use Zend\Http\Response;
+use Zend\Stdlib\ErrorHandler;
 
 /**
- * HTTP Proxy-supporting Zend_Http_Client adapter class, based on the default
+ * HTTP Proxy-supporting Zend\Http\Client adapter class, based on the default
  * socket based adapter.
  *
  * Should be used if proxy HTTP access is required. If no proxy is set, will
- * fall back to Zend_Http_Client_Adapter_Socket behavior. Just like the
+ * fall back to Zend\Http\Client\Adapter\Socket behavior. Just like the
  * default Socket adapter, this adapter does not require any special extensions
  * installed.
- *
- * @category   Zend
- * @package    Zend_Http
- * @subpackage Client_Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
+class Proxy extends Socket
 {
     /**
      * Parameters array
@@ -57,24 +31,45 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
      * @var array
      */
     protected $config = array(
-        'ssltransport'  => 'ssl',
-        'sslcert'       => null,
-        'sslpassphrase' => null,
-        'sslusecontext' => false,
-        'proxy_host'    => '',
-        'proxy_port'    => 8080,
-        'proxy_user'    => '',
-        'proxy_pass'    => '',
-        'proxy_auth'    => Zend_Http_Client::AUTH_BASIC,
-        'persistent'    => false
+        'ssltransport'       => 'ssl',
+        'sslcert'            => null,
+        'sslpassphrase'      => null,
+        'sslverifypeer'      => true,
+        'sslcapath'          => null,
+        'sslallowselfsigned' => false,
+        'sslusecontext'      => false,
+        'proxy_host'         => '',
+        'proxy_port'         => 8080,
+        'proxy_user'         => '',
+        'proxy_pass'         => '',
+        'proxy_auth'         => Client::AUTH_BASIC,
+        'persistent'         => false
     );
 
     /**
      * Whether HTTPS CONNECT was already negotiated with the proxy or not
      *
-     * @var boolean
+     * @var bool
      */
     protected $negotiated = false;
+
+    /**
+     * Set the configuration array for the adapter
+     *
+     * @param array $options
+     */
+    public function setOptions($options = array())
+    {
+        //enforcing that the proxy keys are set in the form proxy_*
+        foreach ($options as $k => $v) {
+            if (preg_match("/^proxy[a-z]+/", $k)) {
+                $options['proxy_' . substr($k, 5, strlen($k))] = $v;
+                unset($options[$k]);
+            }
+        }
+
+        parent::setOptions($options);
+    }
 
     /**
      * Connect to the remote server
@@ -84,13 +79,15 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
      *
      * @param string  $host
      * @param int     $port
-     * @param boolean $secure
+     * @param  bool $secure
+     * @throws AdapterException\RuntimeException
      */
     public function connect($host, $port = 80, $secure = false)
     {
         // If no proxy is set, fall back to Socket adapter
         if (! $this->config['proxy_host']) {
-            return parent::connect($host, $port, $secure);
+            parent::connect($host, $port, $secure);
+            return;
         }
 
         /* Url might require stream context even if proxy connection doesn't */
@@ -99,7 +96,7 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
         }
 
         // Connect (a non-secure connection) to the proxy server
-        return parent::connect(
+        parent::connect(
             $this->config['proxy_host'],
             $this->config['proxy_port'],
             false
@@ -110,41 +107,42 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
      * Send request to the proxy server
      *
      * @param string        $method
-     * @param Zend_Uri_Http $uri
-     * @param string        $http_ver
+     * @param \Zend\Uri\Uri $uri
+     * @param string        $httpVer
      * @param array         $headers
      * @param string        $body
+     * @throws AdapterException\RuntimeException
      * @return string Request as string
      */
-    public function write($method, $uri, $http_ver = '1.1', $headers = array(), $body = '')
+    public function write($method, $uri, $httpVer = '1.1', $headers = array(), $body = '')
     {
         // If no proxy is set, fall back to default Socket adapter
-        if (! $this->config['proxy_host']) return parent::write($method, $uri, $http_ver, $headers, $body);
+        if (! $this->config['proxy_host']) {
+            return parent::write($method, $uri, $httpVer, $headers, $body);
+        }
 
         // Make sure we're properly connected
         if (! $this->socket) {
-            require_once 'Zend/Http/Client/Adapter/Exception.php';
-            throw new Zend_Http_Client_Adapter_Exception("Trying to write but we are not connected");
+            throw new AdapterException\RuntimeException("Trying to write but we are not connected");
         }
 
         $host = $this->config['proxy_host'];
         $port = $this->config['proxy_port'];
 
-        if ($this->connected_to[0] != "tcp://$host" || $this->connected_to[1] != $port) {
-            require_once 'Zend/Http/Client/Adapter/Exception.php';
-            throw new Zend_Http_Client_Adapter_Exception("Trying to write but we are connected to the wrong proxy server");
+        if ($this->connectedTo[0] != "tcp://$host" || $this->connectedTo[1] != $port) {
+            throw new AdapterException\RuntimeException("Trying to write but we are connected to the wrong proxy server");
         }
 
         // Add Proxy-Authorization header
         if ($this->config['proxy_user'] && ! isset($headers['proxy-authorization'])) {
-            $headers['proxy-authorization'] = Zend_Http_Client::encodeAuthHeader(
+            $headers['proxy-authorization'] = Client::encodeAuthHeader(
                 $this->config['proxy_user'], $this->config['proxy_pass'], $this->config['proxy_auth']
             );
         }
 
         // if we are proxying HTTPS, preform CONNECT handshake with the proxy
         if ($uri->getScheme() == 'https' && (! $this->negotiated)) {
-            $this->connectHandshake($uri->getHost(), $uri->getPort(), $http_ver, $headers);
+            $this->connectHandshake($uri->getHost(), $uri->getPort(), $httpVer, $headers);
             $this->negotiated = true;
         }
 
@@ -157,9 +155,9 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
             if ($uri->getQuery()) {
                 $path .= '?' . $uri->getQuery();
             }
-            $request = "$method $path HTTP/$http_ver\r\n";
+            $request = "$method $path HTTP/$httpVer\r\n";
         } else {
-            $request = "$method $uri HTTP/$http_ver\r\n";
+            $request = "$method $uri HTTP/$httpVer\r\n";
         }
 
         // Add all headers to the request string
@@ -168,7 +166,7 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
             $request .= "$v\r\n";
         }
 
-        if(is_resource($body)) {
+        if (is_resource($body)) {
             $request .= "\r\n";
         } else {
             // Add the request body
@@ -176,15 +174,16 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
         }
 
         // Send the request
-        if (! @fwrite($this->socket, $request)) {
-            require_once 'Zend/Http/Client/Adapter/Exception.php';
-            throw new Zend_Http_Client_Adapter_Exception("Error writing request to proxy server");
+        ErrorHandler::start();
+        $test  = fwrite($this->socket, $request);
+        $error = ErrorHandler::stop();
+        if (!$test) {
+            throw new AdapterException\RuntimeException("Error writing request to proxy server", 0, $error);
         }
 
-        if(is_resource($body)) {
-            if(stream_copy_to_stream($body, $this->socket) == 0) {
-                require_once 'Zend/Http/Client/Adapter/Exception.php';
-                throw new Zend_Http_Client_Adapter_Exception('Error writing request to server');
+        if (is_resource($body)) {
+            if (stream_copy_to_stream($body, $this->socket) == 0) {
+                throw new AdapterException\RuntimeException('Error writing request to server');
             }
         }
 
@@ -195,13 +194,14 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
      * Preform handshaking with HTTPS proxy using CONNECT method
      *
      * @param string  $host
-     * @param integer $port
-     * @param string  $http_ver
+     * @param int $port
+     * @param string  $httpVer
      * @param array   $headers
+     * @throws AdapterException\RuntimeException
      */
-    protected function connectHandshake($host, $port = 443, $http_ver = '1.1', array &$headers = array())
+    protected function connectHandshake($host, $port = 443, $httpVer = '1.1', array &$headers = array())
     {
-        $request = "CONNECT $host:$port HTTP/$http_ver\r\n" .
+        $request = "CONNECT $host:$port HTTP/$httpVer\r\n" .
                    "Host: " . $this->config['proxy_host'] . "\r\n";
 
         // Add the user-agent header
@@ -219,26 +219,29 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
         $request .= "\r\n";
 
         // Send the request
-        if (! @fwrite($this->socket, $request)) {
-            require_once 'Zend/Http/Client/Adapter/Exception.php';
-            throw new Zend_Http_Client_Adapter_Exception("Error writing request to proxy server");
+        ErrorHandler::start();
+        $test  = fwrite($this->socket, $request);
+        $error = ErrorHandler::stop();
+        if (!$test) {
+            throw new AdapterException\RuntimeException("Error writing request to proxy server", 0, $error);
         }
 
         // Read response headers only
         $response = '';
         $gotStatus = false;
-        while ($line = @fgets($this->socket)) {
+        ErrorHandler::start();
+        while ($line = fgets($this->socket)) {
             $gotStatus = $gotStatus || (strpos($line, 'HTTP') !== false);
             if ($gotStatus) {
                 $response .= $line;
-                if (!chop($line)) break;
+                if (!rtrim($line)) break;
             }
         }
+        ErrorHandler::stop();
 
         // Check that the response from the proxy is 200
-        if (Zend_Http_Response::extractCode($response) != 200) {
-            require_once 'Zend/Http/Client/Adapter/Exception.php';
-            throw new Zend_Http_Client_Adapter_Exception("Unable to connect to HTTPS proxy. Server response: " . $response);
+        if (Response::extractCode($response) != 200) {
+            throw new AdapterException\RuntimeException("Unable to connect to HTTPS proxy. Server response: " . $response);
         }
 
         // If all is good, switch socket to secure mode. We have to fall back
@@ -251,14 +254,13 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
         );
 
         $success = false;
-        foreach($modes as $mode) {
+        foreach ($modes as $mode) {
             $success = stream_socket_enable_crypto($this->socket, true, $mode);
             if ($success) break;
         }
 
         if (! $success) {
-                require_once 'Zend/Http/Client/Adapter/Exception.php';
-                throw new Zend_Http_Client_Adapter_Exception("Unable to connect to" .
+                throw new AdapterException\RuntimeException("Unable to connect to" .
                     " HTTPS server through proxy: could not negotiate secure connection.");
         }
     }
