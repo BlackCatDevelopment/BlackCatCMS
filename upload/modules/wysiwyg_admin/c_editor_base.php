@@ -15,15 +15,14 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Modules
+ *   @category        CAT_Core
  *   @package         wysiwyg_admin
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
 	include(CAT_PATH.'/framework/class.secure.php');
 } else {
@@ -39,9 +38,6 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
-
-if ( !defined('CAT_PATH')) die(header('Location: ../../index.php'));
 
 $debug = false;
 if (true === $debug) {
@@ -52,10 +48,10 @@ if (true === $debug) {
 abstract class c_editor_base
 {
 
-    private $default_skin = NULL;
+    private $default_skin    = NULL;
     private $default_toolbar = NULL;
-    private $default_height = '250px';
-    private $default_width  = '100%';
+    private $default_height  = '250px';
+    private $default_width   = '100%';
 
     abstract public function getFilemanagerPath();
     abstract public function getSkinPath();

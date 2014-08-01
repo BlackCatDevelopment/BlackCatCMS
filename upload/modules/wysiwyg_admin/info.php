@@ -15,15 +15,14 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Modules
+ *   @category        CAT_Core
  *   @package         wysiwyg_admin
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
 if (defined('CAT_PATH')) {
 	include(CAT_PATH.'/framework/class.secure.php');
 } else {
@@ -39,14 +38,11 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
-
-if ( !defined('CAT_PATH')) die(header('Location: ../../index.php'));
 
 $module_directory	= 'wysiwyg_admin';
 $module_name		= 'WYSIWYG Admin';
 $module_function	= 'tool';
-$module_version		= '2.0';
+$module_version		= '2.1';
 $module_platform	= '2.x';
 $module_author		= 'Black Cat Development';
 $module_license		= '<a href="http://www.gnu.org/licenses/" target="_blank">GNU GPL</a>';

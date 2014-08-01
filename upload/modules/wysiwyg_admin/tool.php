@@ -15,10 +15,10 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Modules
+ *   @category        CAT_Core
  *   @package         wysiwyg_admin
  *
  */
@@ -38,7 +38,6 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-
 
 // backend only
 $backend = CAT_Backend::getInstance('admintools');
@@ -116,7 +115,6 @@ if(file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$cur
 $job = $val->sanitizePost('job');
 
 if ($job && $job=="save") {
-    $_POST = array_map("wysiwyg_admin_escape",$_POST);
     $new_width = $new_height = $new_skin = $new_toolbar = $new_plugins = $new_fm = NULL;
     // validate width and height
     foreach( array('width','height') as $key )
@@ -229,9 +227,18 @@ if ($job && $job=="save") {
     // only save changes if there were no errors
     if ( ! count($errors) )
     {
-        $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'width\', \''.$width.$width_unit.'\' )' );
-        $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'height\', \''.$height.$height_unit.'\' )' );
-        $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'enable_htmlpurifier\', \''.$enable_htmlpurifier.'\' )' );
+        $backend->db()->query(
+            'REPLACE INTO `:prefix:mod_wysiwyg_admin_v2` VALUES (?,?,?);',
+            array(WYSIWYG_EDITOR,'width',$width.$width_unit)
+        );
+        $backend->db()->query(
+            'REPLACE INTO `:prefix:mod_wysiwyg_admin_v2` VALUES (?,?,?);',
+            array(WYSIWYG_EDITOR,'height',$height.$height_unit)
+        );
+        $backend->db()->query(
+            'REPLACE INTO `:prefix:mod_wysiwyg_admin_v2` VALUES (?,?,?);',
+            array(WYSIWYG_EDITOR,'enable_htmlpurifier',$enable_htmlpurifier)
+        );
         // save additionals
         if(count($settings))
         {
@@ -249,25 +256,40 @@ if ($job && $job=="save") {
                 {
                     $value = $_POST[$item['name']];
                 }
-                $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \''.$item['name'].'\', \''.$value.'\' )' );
+                $backend->db()->query(
+                    'REPLACE INTO `:prefix:mod_wysiwyg_admin_v2` VALUES (?,?,?);',
+                    array(WYSIWYG_EDITOR,$item['name'],$value)
+                );
             }
         }
         // save plugins
         if($new_plugins)
         {
-            $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'plugins\', \''.$new_plugins.'\' )' );
+            $backend->db()->query(
+                'REPLACE INTO `:prefix:mod_wysiwyg_admin_v2` VALUES (?,?,?);',
+                array(WYSIWYG_EDITOR,'plugins',$new_plugins)
+            );
         }
         if($new_fm)
         {
-            $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'filemanager\', \''.$new_fm.'\' )' );
+            $backend->db()->query(
+                'REPLACE INTO `:prefix:mod_wysiwyg_admin_v2` VALUES (?,?,?);',
+                array(WYSIWYG_EDITOR,'filemanager',$new_fm)
+            );
         }
         if($new_toolbar)
         {
-            $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'toolbar\', \''.$new_toolbar.'\' )' );
+            $backend->db()->query(
+                'REPLACE INTO `:prefix:mod_wysiwyg_admin_v2` VALUES (?,?,?);',
+                array(WYSIWYG_EDITOR,'toolbar',$new_toolbar)
+            );
         }
         if($new_skin)
         {
-            $backend->db()->query( 'REPLACE INTO '.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2 VALUES ( \''.WYSIWYG_EDITOR.'\', \'skin\', \''.$new_skin.'\' )' );
+            $backend->db()->query(
+                'REPLACE INTO `:prefix:mod_wysiwyg_admin_v2` VALUES (?,?,?);',
+                array(WYSIWYG_EDITOR,'skin',$new_skin)
+            );
         }
         // reload settings
         $config       = wysiwyg_admin_config();
@@ -321,22 +343,15 @@ $parser->output(
     )
 );
 
-function wysiwyg_admin_escape($item) {
-    return is_scalar( $item )
-         ? mysql_real_escape_string($item)
-         : array_map("wysiwyg_admin_escape",$item)
-         ;
-}
-
 // get current settings
 function wysiwyg_admin_config() {
     global $backend;
-    $query  = "SELECT * from `".CAT_TABLE_PREFIX."mod_wysiwyg_admin_v2` where `editor`='".WYSIWYG_EDITOR."'";
-    $result = $backend->db()->query ($query );
+    $query  = "SELECT * from `:prefix:mod_wysiwyg_admin_v2` where `editor`='".WYSIWYG_EDITOR."'";
+    $result = $backend->db()->query($query);
     $config = array();
     if($result->numRows())
     {
-        while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+        while( false !== ( $row = $result->fetch() ) )
         {
             if ( substr_count( $row['set_value'], '#####' ) ) // array values
             {
