@@ -106,6 +106,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
             $lang  = CAT_Helper_I18n::getInstance();
             $self  = self::getInstance();
 
+            $redirect_url   = $val->sanitizePost('redirect');
+
             if ( ! self::is_authenticated() )
             {
 
@@ -244,6 +246,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
                 			$get_ip	= $_SERVER['REMOTE_ADDR'];
                             $query  = "UPDATE `:prefix:users` SET login_when=:when, login_ip=:ip WHERE user_id=:id";
                             $self->db()->query($query,array('when'=>$get_ts,'ip'=>$get_ip,'id'=>$user['user_id']));
+							if ($redirect_url)
+			            		return $redirect_url;
                             if ( self::getInstance()->checkPermission( 'start', 'start' ) )
                                 return CAT_ADMIN_URL.'/start/index.php?initial=true';
                             else
@@ -305,6 +309,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
             }
             else
             {
+            	if ($redirect_url)
+            		header( 'Location: '.$redirect_url );
                 if ( self::getInstance()->checkPermission( 'start', 'start' ) )
                     header( 'Location: '.CAT_ADMIN_URL.'/start/index.php' );
                 else
