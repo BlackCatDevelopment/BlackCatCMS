@@ -113,6 +113,7 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/backend/pages/lang_settings.php' ),
     ( 0, '/backend/pages/lang_settings_save.php' ),
     ( 0, '/backend/pages/modify.php' ),
+    ( 0, '/backend/pages/modify_headers.php' ),
     ( 0, '/backend/pages/move_down.php' ),
     ( 0, '/backend/pages/move_up.php' ),
     ( 0, '/backend/pages/restore.php' ),

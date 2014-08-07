@@ -52,18 +52,8 @@ $user->checkPermission('start','start',false);
 // ================================================ 
 // ! Check if installation directory still exists   
 // ================================================ 
-if( file_exists(CAT_PATH.'/install/') ) {
-	// Check if user is part of Adminstrators group
-	if( in_array (1, $user->get_groups_id() ) )
-	{
-		/** 
-         * Try to delete it - it's not needed anymore and may be dangerous
-		 */
-		if (function_exists('rm_full_dir') ) {
-			rm_full_dir(CAT_PATH.'/install/');
-		}
-	}
-}
+if( file_exists(CAT_PATH.'/install/') )
+    CAT_Helper_Directory::removeDirectory(CAT_PATH.'/install/');
 
 // exec initial_page
 if($val->sanitizeGet('initial') || ! $user->checkPermission('start','start') === true )

@@ -18,8 +18,8 @@
  *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Module
- *   @package         lib_jquery
+ *   @category        CAT_Modules
+ *   @package         lib_zendlite
  *
  */
 
@@ -39,14 +39,6 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$module_directory = 'lib_jquery';
-$module_name = 'jQuery / jQuery UI JavaScript Library';
-$module_function = 'library';
-$module_version = '2.3';
-$module_platform = '1.x';
-$module_author = 'BlackBird';
-$module_license = 'GNU General Public License';
-$module_description = 'This module installs the jQuery JavaScript Library and the jQuery UI Library. You may use it as a lib for your own JavaScripts.';
-$module_guid = '8FB09FFD-B11C-4B75-984E-F54082B4DEEA';
-
-?>
+require_once 'Zend/Loader/StandardAutoloader.php';
+$loader = new Zend\Loader\StandardAutoloader(array('autoregister_zf' => true, 'fallback_autoloader' => true));
+$loader->register();

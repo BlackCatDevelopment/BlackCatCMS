@@ -131,6 +131,7 @@ $LANG = array(
     'Administrators' => 'Administratoren',
     'Back' => 'Zurück',
     'by' => 'von',
+    'Cancel' => 'Abbrechen',
     'Close' => 'Schließen',
     'Close & Reset' => 'Schließen & Zurücksetzen',
     'Confirmation' => 'Bestätigung',
