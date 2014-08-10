@@ -49,6 +49,8 @@
 #content {
 	position: relative;
 	margin: auto;
+	display:	table;
+	table-layout:	fixed;
 	width: 960px;
 	border: 1px solid #9da8b2;
 	-webkit-box-shadow:	black 0px 0px 4px -1px;
