@@ -185,7 +185,7 @@ unset($submit_ok);
 $languages = CAT_Helper_Addons::get_addons(((isset($language)&&$language!==LANGUAGE)?$language:LANGUAGE),'language');
 
 global $parser;
-$parser->setPath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/'); // if there's a template for this in the current frontend template
+$parser->setPath( CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/templates/' . CAT_Registry::get('DEFAULT_THEME_VARIANT') ); // if there's a template for this in the current frontend template
 $parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to default dir
 $parser->output('account_preferences_form',
     array(

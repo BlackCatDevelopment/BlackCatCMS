@@ -48,7 +48,7 @@ $error    = CAT_Users::getInstance()->loginError();
 if ( $redirect ) header( 'Location: '.$redirect );
 
 global $parser;
-$parser->setPath(CAT_PATH.'/templates/'.DEFAULT_TEMPLATE.'/'); // if there's a template for this in the current frontend template
+$parser->setPath( CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/templates/' . CAT_Registry::get('DEFAULT_THEME_VARIANT') ); // if there's a template for this in the current frontend template
 $parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to default dir
 $parser->output('account_login_form',
     array(
