@@ -62,6 +62,12 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
 
             $use_smtp = false;
 
+			if ( $fromname != '' )
+			{
+				$fromaddress	= array(
+					$fromaddress => $fromname
+				);
+			}
             // Create the message
             try
             {
@@ -69,8 +75,8 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                     ->setSubject($subject)
                     ->setFrom($fromaddress)
                     ->setTo($toaddress)
-                    ->setBody($message)
-                    ->addPart($html, 'text/html');
+                    ->setBody($message);
+					if ( $html != '') Swift_Message::newInstance()->addPart($html, 'text/html');
             }
             catch(Exception $e)
             {
@@ -164,6 +170,7 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                 CAT_Helper_Mail::setError($e->getMessage());
                 return false;
             }
+
             return true;
         }   // end function sendMail()
     }
