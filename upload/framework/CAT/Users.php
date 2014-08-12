@@ -395,7 +395,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
         				// Setup email to send
         				$mail_to      = $email;
         				$mail_subject = $self->lang()->translate('Your login details...');
-        				$parser->setPath( CAT_PATH . '/account/templates/default/' );
+        				$parser->setPath(CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/');
+        				$parser->setFallbackPath( CAT_PATH . '/account/templates/default/' );
                         $mail_message = $parser->get('account_forgotpw_mail_body', array(
                             'LOGIN_DISPLAY_NAME'  => $results_array['display_name'],
                             'LOGIN_WEBSITE_TITLE' => WEBSITE_TITLE,
