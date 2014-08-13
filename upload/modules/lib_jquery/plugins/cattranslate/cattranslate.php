@@ -15,7 +15,10 @@
 $lang = CAT_Helper_I18n::getInstance(LANGUAGE);
 $val  = CAT_Helper_Validate::getInstance();
 $attr = $val->get('_REQUEST','attr');
+$msg  = $val->get('_REQUEST','msg');
 
+$msg  = htmlspecialchars($msg, ENT_XHTML, 'UTF-8');
+$attr = htmlspecialchars($attr, ENT_XHTML, 'UTF-8');
 if( file_exists(CAT_PATH.'/languages/'.$lang->getLang().'.php') ) {
     $lang->addFile( $lang->getLang().'.php', CAT_PATH.'/languages/' );
 }
@@ -32,10 +35,8 @@ if ( $mod ) {
 }
 
 if ( is_object($lang) ) {
-	echo '<data>'.$lang->translate( $val->get('_REQUEST','msg'), $attr ).'</data>';
+	echo '<data>'.$lang->translate($msg,$attr).'</data>';
 }
 else {
 	echo '<error>Unable to create I18n instance!</error>';
 }
-
-?>
