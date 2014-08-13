@@ -59,6 +59,8 @@ if (!class_exists('CAT_Backend', false))
                     header('Location: '.CAT_ADMIN_URL.'/login/index.php');
                     exit(0);
                 }
+    			elseif ( !defined('CAT_INSTALL_PROCESS') )
+    				$user->checkPermission($section_name, $section_permission,true);
                 self::$instance->section_name = $section_name;
                 global $parser;
                 self::initPaths();

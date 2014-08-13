@@ -513,7 +513,30 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
             // no perms at all!
             if ( $has == '' )
-                return false;
+                if ( $redirect )
+                {
+                    // cleanup session
+                    // delete most critical session variables manually
+                    foreach(array('USER_ID','GROUP_ID','GROUPS_ID','USERNAME','PAGE_PERMISSIONS','SYSTEM_PERMISSIONS') as $key)
+                        $_SESSION[$key] = null;
+
+                    // overwrite session array
+                    $_SESSION = array();
+
+                    // delete session cookie if set
+                    if (isset($_COOKIE[session_name()]))
+                        setcookie(session_name(), '', time() - 42000, '/');
+
+                    // delete the session itself
+                    session_destroy();
+
+                    // redirect to admin login
+                    die(header('Location: ' . CAT_ADMIN_URL . '/login/index.php'));
+                }
+                else
+                {
+                    return false;
+                }
 
             // backward compatibility; for now, we keep the old method, which
             // means storing a list of strings
