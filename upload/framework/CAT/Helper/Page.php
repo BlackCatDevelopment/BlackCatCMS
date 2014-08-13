@@ -243,44 +243,7 @@ if (!class_exists('CAT_Helper_Page'))
                     // add 'virtual' page -1
                     if(!isset(self::$pages_by_id['-1']))
                     {
-                        #self::$pages_by_id['-1'] = 0;
-                        $virtual = array(
-                            'page_id' => '-1',
-                            'parent' => 0,
-                            'root_parent' => 0,
-                            'level' => -1,
-                            'link' => '',
-                            'target' => '_self',
-                            'page_title' => '',
-                            'menu_title' => '',
-                            'description' => '',
-                            'keywords' => '',
-                            'page_trail' => '',
-                            'template' => '',
-                            'visibility' => 'public',
-                            'position' => 0,
-                            'menu' => 0,
-                            'language' => '',
-                            'searching' => 0,
-                            'admin_groups' => 1,
-                            'admin_users' => '',
-                            'viewing_groups' => 1,
-                            'viewing_users' => '',
-                            'modified_when' => '',
-                            'modified_by' => 1,
-                            'page_groups' => '',
-                            'children' => 0,
-                            'is_parent' => false,
-                            'has_children' => false,
-                            'is_editable' => false,
-                            'is_in_trail' => false,
-                            'is_direct_parent' => false,
-                            'is_current' => false,
-                            'is_open' => false,
-                            'href' => '',
-                        );
-                        array_push(self::$pages,$virtual);
-                        self::$pages_by_id['-1'] = key(self::$pages);
+                        self::$pages_by_id['-1'] = 0;
                     }
 
                 }       // end if($result)

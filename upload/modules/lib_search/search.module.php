@@ -680,41 +680,13 @@ function makeThumbnail($source, $target, $size) {
             $new_height = $size;
         }
         
-        // create new image of $new_width and $new_height
-        $new_image = imagecreatetruecolor($new_width, $new_height);
-        // Check if this image is PNG or GIF, then set if Transparent
-        if (($extension == 'gif') or ($extension == 'png')) {
-            imagealphablending($new_image, false);
-            imagesavealpha($new_image, true);
-            $transparent = imagecolorallocatealpha($new_image, 255, 255, 255, 127);
-            imagefilledrectangle($new_image, 0, 0, $new_width, $new_height, $transparent);
-        }
-        else {
-            // resample image
-            imagecopyresampled($new_image, $origin_image, 0, 0, 0, 0, $new_width, $new_height, $original_x, $original_y);
-        }
-    
-        switch ($extension) :
-        case 'gif':
-            imagegif($new_image, $target);
-            imagedestroy($origin_image);
-            imagedestroy($new_image);
-            break;
-        case 'jpg':
-        case 'jpeg':
-            imagejpeg($new_image, $target);
-            imagedestroy($origin_image);
-            imagedestroy($new_image);
-            break;
-        case 'png':
-            imagepng($new_image, $target);
-            imagedestroy($origin_image);
-            imagedestroy($new_image);
-            break;
-        default:
-            // unsupported image type
-            return false;
-        endswitch;
+        CAT_Helper_Image::getInstance()
+            ->make_thumb(
+                  $source,
+                  $target,
+                  $new_height,
+                  $new_width
+             );
     
         @chmod($target, 0755);
         return true;
