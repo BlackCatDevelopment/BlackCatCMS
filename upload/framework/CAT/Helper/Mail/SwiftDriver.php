@@ -76,7 +76,7 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                     ->setFrom($fromaddress)
                     ->setTo($toaddress)
                     ->setBody($message);
-					if ( $html != '') Swift_Message::newInstance()->addPart($html, 'text/html');
+					if ( $html != '') $message->addPart($html, 'text/html');
             }
             catch(Exception $e)
             {
