@@ -59,7 +59,7 @@ else
     // Check if the user has already submitted the form, otherwise show it
     if ( $email && $val->sanitize_email($email) )
     {
-        list($result,$message) = CAT_Users::handleForgot($email);
+        list($result,$message,$display_form) = CAT_Users::handleForgot($email);
         $ajax    = array(
             'message'    => $message,
             'success'    => $result

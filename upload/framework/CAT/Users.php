@@ -403,13 +403,24 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         $mail_message = $parser->get('account_forgotpw_mail_body', array(
                             'LOGIN_DISPLAY_NAME'  => $results_array['display_name'],
                             'LOGIN_WEBSITE_TITLE' => WEBSITE_TITLE,
+                            'SERVER_EMAIL'        => SERVER_EMAIL,
+                            'CATMAILER_DEFAULT_SENDERNAME'        => CATMAILER_DEFAULT_SENDERNAME,
+                            'LOGIN_NAME'          => $results_array['username'],
+                            'LOGIN_PASSWORD'      => $new_pass,
+                        ));
+                        $mail_message_html = $parser->get('account_forgotpw_mail_body_html', array(
+                            'LOGIN_DISPLAY_NAME'  => $results_array['display_name'],
+                            'LOGIN_WEBSITE_TITLE' => WEBSITE_TITLE,
+                            'SERVER_EMAIL'        => SERVER_EMAIL,
+                            'CATMAILER_DEFAULT_SENDERNAME'        => CATMAILER_DEFAULT_SENDERNAME,
                             'LOGIN_NAME'          => $results_array['username'],
                             'LOGIN_PASSWORD'      => $new_pass,
                         ));
 
+
         				// Try sending the email
                         $mailer = CAT_Helper_Mail::getInstance();
-        				if ( is_object($mailer) && $mailer->sendMail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message, CATMAILER_DEFAULT_SENDERNAME ) )
+        				if ( is_object($mailer) && $mailer->sendMail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message, CATMAILER_DEFAULT_SENDERNAME, $mail_message_html ) )
         				{
         					$message      = $self->lang()->translate('Your username and password have been sent to your email address');
         					$display_form = false;
@@ -436,7 +447,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         		$message = $val->lang()->translate('The email that you entered cannot be found in the database');
         	}
 
-            return array( $result, $message );
+            return array( $result, $message, $display_form );
 
         }   // end function handleForgot()
         
