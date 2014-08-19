@@ -39,7 +39,15 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-
+$local = array (
+	'pages'				=> 'backend_pages_modify.js',
+	'access'			=> 'backend_users_index.js',
+	'addons'			=> 'backend_addons.js',
+	'media'				=> 'backend_media.js',
+	'preferences'		=> 'backend_preferences.js',
+	'settings'			=> array('backend_pages_modify.js','backend_settings_index.js'),
+	'login_index'		=> 'login.js',
+);
 $mod_headers = array(
 	'backend' => array(
 		'meta' => array(
@@ -61,23 +69,24 @@ $mod_headers = array(
 		),
 		'js' => array(
 			array(
-				'all'			=> array( 'debug.js', 'jquery.fc_set_tab_list.js', 'jquery.fc_toggle_element.js', 'jquery.fc_resize_elements.js', 'jquery.fc_show_popup.js', 'general.js', 'pages_tree.js' ),
-				'individual'	=> array (
-				'pages'				=> 'backend_pages_modify.js',
-				'access'			=> 'backend_users_index.js',
-				'addons'			=> 'backend_addons.js',
-				'media'				=> 'backend_media.js',
-				'preferences'		=> 'backend_preferences.js',
-    				'settings'			=> array('backend_pages_modify.js','backend_settings_index.js'),
-    				'login_index'		=> 'login.js',
-				)
+                'debug.js', 'jquery.fc_set_tab_list.js', 'jquery.fc_toggle_element.js', 'jquery.fc_resize_elements.js', 'jquery.fc_show_popup.js', 'general.js', 'pages_tree.js',
 			)
 		)
 	)
 );
 
-if ( CAT_Registry::get('DEFAULT_THEME_VARIANT') == 'custom' ) {
-    $mod_headers['backend']['js'][0]['individual']['addons'] = '/custom/backend_addons.js';
+// get current backend section to add local JS
+$page = strtolower(CAT_Backend::getInstance()->section_name);
+if(isset($local[$page]))
+{
+    if(!is_array($local[$page])) $local[$page] = array($local[$page]);
+    $mod_headers['backend']['js'][0] = array_merge(
+        $mod_headers['backend']['js'][0],
+        $local[$page]
+    );
 }
 
-?>
+// check for custom JS for current backend page
+if ( CAT_Registry::get('DEFAULT_THEME_VARIANT') == 'custom' )
+    if(file_exists(dirname(__FILE__).'/templates/custom/backend_'.$page.'.js'))
+        $mod_headers['backend']['js'][0][] = '/custom/backend_'.$page.'.js';

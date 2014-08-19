@@ -38,3 +38,17 @@ if (defined('CAT_PATH')) {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
+
+// add files to class_secure
+$addons_helper = new CAT_Helper_Addons();
+foreach(
+	array(
+		'widgets/logs.php',
+	)
+	as $file
+) {
+	if ( false === $addons_helper->sec_register_file( 'blackcat', $file ) )
+	{
+		 error_log( "Unable to register file -$file-!" );
+    }
+}

@@ -184,6 +184,28 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
         } // end function getAddonDetails()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getAddonVariant($field_to_select,$field_to_check,$check_for,$tablename,$section_id)
+        {
+            $self = self::getInstance();
+            $q    = $self->db()->query(
+                  'SELECT :field_to_select: FROM `:prefix:'.$tablename.'` '
+                . 'WHERE `section_id`=:section_id '
+                . 'AND `:field_to_check:`=:check_for',
+                array(
+                    'field_to_select' => $field_to_select,
+                    'field_to_check'  => $field_to_check,
+                    'check_for'       => $check_for,
+                    'section_id'      => $section_id
+                )
+            );
+            return ( $self->db()->isError() ? NULL : $q->fetchColumn() );
+        }   // end function getAddonVariant()
+
+        /**
          * get_addons function.
          *
          * Function to get all addons

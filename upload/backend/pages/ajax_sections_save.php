@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -241,7 +241,7 @@ elseif ( $update_section_id )
 	#{
 	$options = array();
 	if($block) $options['block'] = $val->add_slashes($block);
-	if($name)  $options['name']  = mysql_real_escape_string($name);
+	if($name)  $options['name']  = $val->add_slashes($name);
 
 	$date_from
 		= ($day_from * $month_from * $year_from) > 0
@@ -274,16 +274,7 @@ elseif ( $update_section_id )
 		print json_encode( $ajax );
 		exit();
 	}
-	#}
-	#else
-	#{
-	#	$ajax	= array(
-	#		'message'	=> $backend->lang()->translate('You do not have permissions to modify this page'),
-	#		'success'	=> false
-	#	);
-	#	print json_encode( $ajax );
-	#	exit();
-	#}
+
 	$updated_section	= CAT_Sections::getSection($update_section_id);
 	$updated_block		= $parser->get_template_block_name(
 							CAT_Helper_Page::getPageTemplate($page_id), $updated_section['block'] ) .

@@ -854,7 +854,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
         {
             $self  = self::getInstance();
             $query = "INSERT INTO `:prefix:mod_droplets` VALUES "
-        		   . "('', :name, :code, :description, :time, :userid, :active, 1, 1, :wysiwyg, :comment )";
+        		   . "(NULL, :name, :code, :description, :time, :userid, :active, 1, 1, :wysiwyg, :comment )";
 
             // some defaults
             foreach(array('active','wysiwyg') as $key)

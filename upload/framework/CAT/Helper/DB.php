@@ -196,6 +196,23 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
             try {
                 if(is_array($bind))
                 {
+                    // allows to replace field names in statements
+                    // Example:
+                    // SELECT :field: FROM...
+                    // array('field'=>'myfield')
+                    // => SELECT `myfield` FROM...
+                    foreach($bind as $_field => $_value)
+                    {
+                        if(substr_count($sql,':'.$_field.':'))
+                        {
+                            $sql = preg_replace(
+                                '~(`?)(:'.$_field.':)(`?)~i',
+                                '`'.$_value.'`',
+                                $sql
+                            );
+                            unset($bind[$_field]);
+                        }
+                    }
                     $stmt = $this->prepare($sql);
                     $stmt->execute($bind);
                 }
@@ -230,10 +247,17 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     $last = array_pop($logger->queries);
                     if(is_array($last) && count($last))
                     {
-                        $this->setError(sprintf(
-                            "SQL Error:&nbsp;&nbsp;&nbsp;&nbsp;[SQL] %s\n",
+                        $err_msg = sprintf(
+                            "[SQL Error] %s<br />\n",
                             $last['sql']
-                        ));
+                        );
+                        if(is_array($bind))
+                            $err_msg .= "\n[PARAMS] "
+                                     .  var_export($bind,1);
+                        $this->setError($err_msg);
+                        if(isset($_REQUEST['_cat_ajax']))
+                            return $this->getError();
+                        else
                         throw new Exception($this->getError());
                     }
                 }

@@ -33,6 +33,7 @@ if (!class_exists('CAT_Helper_Mail_PHPMailerDriver', false)) {
         private static $settings;
         private static $transport;
         private static $mailer;
+        private static $debug = false;
 
         public function __construct()
         {
@@ -57,7 +58,8 @@ if (!class_exists('CAT_Helper_Mail_PHPMailerDriver', false)) {
                     // create the transport
                     if (isset(self::$settings['routine']) && self::$settings['routine'] == "smtp" && isset(self::$settings['smtp_host']) && strlen(self::$settings['smtp_host']) > 5) {
                         self::$instance->SMTPDebug = 0;
-                        self::$instance->IsSMTP();
+                        if(self::$debug) self::$instance->SMTPDebug = 1;
+//                        self::$instance->IsSMTP();
                         self::$instance->Host = self::$settings['smtp_host'];
                         if (isset(self::$settings['smtp_auth']) && isset(self::$settings['smtp_username']) && isset(self::$settings['smtp_password']) && self::$settings['smtp_auth'] == "true" && strlen(self::$settings['smtp_username']) > 1 && strlen(self::$settings['smtp_password']) > 1) {
                             self::$instance->SMTPAuth = true;
@@ -65,7 +67,7 @@ if (!class_exists('CAT_Helper_Mail_PHPMailerDriver', false)) {
                             self::$instance->Password = self::$settings['smtp_password'];
                         }
                         // check for SSL
-                        if (isset(self::$settings['smtp_ssl']) && self::$settings['smtp_ssl'] == 'true') {
+                        if (isset(self::$settings['smtp_ssl']) && self::$settings['smtp_ssl'] === true) {
                             $transports = stream_get_transports();
                             if (in_array('ssl', $transports)) {
                                 self::$instance->SMTPSecure = 'ssl';

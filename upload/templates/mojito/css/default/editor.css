@@ -27,13 +27,11 @@ html {
 	font-family: "HelveticaNeue-Light", "HelveticaNeue", Helvetica, Arial, Verdana, sans-serif;
 	height: 100%;
 	background-position: center top;
-	background-image: url(images/main_background.png);
 	background-color: white;
 	background-repeat: repeat;
 }
 body {
 	background-position: 0 top;
-	background-image: url(images/header_back.png);
 	background-repeat: repeat-x;
 	height: 100%;
 	font-weight: 400;

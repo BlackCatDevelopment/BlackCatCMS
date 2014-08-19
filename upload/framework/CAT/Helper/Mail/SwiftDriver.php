@@ -32,11 +32,9 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
         private static $settings;
         private static $transport;
         private static $mailer;
+        private static $debug = false;
 
-        public function __construct()
-        {
-            //parent::__construct();
-        }
+        public function __construct() {}
 
         /**
          * singleton pattern
@@ -62,12 +60,6 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
 
             $use_smtp = false;
 
-			if ( $fromname != '' )
-			{
-				$fromaddress	= array(
-					$fromaddress => $fromname
-				);
-			}
             // Create the message
             try
             {
@@ -75,8 +67,8 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                     ->setSubject($subject)
                     ->setFrom($fromaddress)
                     ->setTo($toaddress)
-                    ->setBody($message);
-					if ( $html != '') Swift_Message::newInstance()->addPart($html, 'text/html');
+                    ->setBody($message)
+                    ->addPart($html, 'text/html');
             }
             catch(Exception $e)
             {
@@ -126,6 +118,13 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                         }
                     }
                     self::$transport = Swift_SmtpTransport::newInstance(self::$settings['smtp_host'],$port,$tp);
+
+                    if(self::$debug)
+                    {
+                        $logger = new Swift_Plugins_Loggers_EchoLogger();
+                        self::$transport->registerPlugin(new Swift_Plugins_LoggerPlugin($logger));
+                    }
+
                     $use_smtp = true;
                 }
                 else

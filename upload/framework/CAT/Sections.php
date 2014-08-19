@@ -90,6 +90,32 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
          * @access public
          * @return
          **/
+        public static function updateSection($section_id, $options)
+        {
+            $sql    = 'UPDATE `:prefix:sections` SET ';
+            $params = array('id'=>$section_id);
+            foreach($options as $key => $value)
+            {
+                $sql .= $key.' = :'.$key.', ';
+                $params[$key] = $value;
+            }
+            $sql  = preg_replace('~,\s*$~','',$sql);
+            $sql .= ' WHERE section_id = :id LIMIT 1';
+
+		    self::getInstance()->db()->query(
+                $sql,
+                $params
+            );
+            return self::getInstance()->db()->is_error()
+                ? false
+                : true;
+        }   // end function updateSection()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
         public static function deleteSection($section_id,$page_id)
         {
             $self = self::getInstance();
@@ -175,7 +201,7 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
         {
             $self = self::getInstance();
         	$q = $self->db()->query(
-                'SELECT `module` FROM `:prefix:sections` WHERE `section_id` = :id',
+                'SELECT * FROM `:prefix:sections` WHERE `section_id` = :id',
                 array('id'=>$section_id)
             );
         	if($q->rowCount() == 0)

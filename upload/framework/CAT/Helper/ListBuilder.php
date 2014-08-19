@@ -218,6 +218,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             $isopen_key = $self->_config['__is_open_key'];
             $link_key   = $self->_config['__link_key'];
             $auto_link  = $self->_config['__auto_link'];
+            $current    = $self->_config['__is_current_key'];
             $space      = $self->_config['space'];
             $is_first   = true;
             $is_last    = false;
@@ -241,6 +242,15 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
 
             while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
             {
+
+                $is_current
+                    = (
+                           ( isset($option['value'][$current]) && $option['value'][$current] == true )
+                        || ( isset($selected) && $selected == $option['value'][$id_key] )
+                      )
+                    ? true
+                    : false;
+
                 if ( $option === false ) // no more children
                 {
                     $parent = array_pop($parent_stack);
@@ -272,7 +282,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                     else
                     {
                         // HTML for menu item containing children (open)
-                        $output[] = $tab.$self->startLI($option['value'][$id_key],$level,true,$is_first,$is_last,$is_open)
+                        $output[] = $tab.$self->startLI($option['value'][$id_key],$level,true,$is_first,$is_last,$is_open,$is_current)
                                //. "<span>$text</span>";
                                   . ( ($auto_link&&$link_key) ? '<a href="'.CAT_Helper_Page::getLink($option['value'][$id_key]).'">' : '' )
                                   . $text
@@ -292,7 +302,6 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                             : 0;
                     $tab    = str_repeat( $space, $level );
                     $text   = $option['value'][$title_key];
-                    $is_current = ( ( isset($selected) && $selected == $option['value'][$id_key] ) ? true : false );
                     if($type=='select')
                     {
                     // mark selected
@@ -304,7 +313,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                     }
                     else
                     {
-                        $output[] = $tab.$self->startLI($option['value'][$id_key],$level,false,$is_first,$is_last,$is_current)
+                        $output[] = $tab.$self->startLI($option['value'][$id_key],$level,false,$is_first,$is_last,false,$is_current)
                                   . ( ($auto_link&&$link_key) ? '<a href="'.CAT_Helper_Page::getLink($option['value'][$id_key]).'">' : '' )
                                   . $text
                                   . ( ($auto_link&&$link_key) ? '</a>' : '' )
@@ -445,7 +454,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          *
          *
          **/
-        function startLI($id,$level,$has_children=false,$is_first=false,$is_last=false,$is_open=false)
+        function startLI($id,$level,$has_children=false,$is_first=false,$is_last=false,$is_open=false,$is_current=false)
         {
             $self  = self::getInstance(false);
             $id    = ( isset($self->_config['__li_id_prefix']) )
@@ -462,6 +471,10 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             $class .= ( $is_open )
                    ?  ' '.$self->_config['__li_is_open_class']
                    :  ' '.$self->_config['__li_is_closed_class'];
+            $class .= ( $is_current )
+                   ?  ' '.$self->_config['__li_is_current_class']
+                   : '';
+
             $start = str_replace(
                 array( '%%id%%', '%%class%%' ),
                 array( $id     , $class ),
@@ -502,6 +515,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
 	            '__hidden_key'          => 'hidden',
                 '__editable_key'        => 'editable',
                 '__is_open_key'         => 'is_open',
+                '__is_current_key'      => 'is_current',
                 '__select_class'        => '',
                 '__list_open'           => '<ul id="%%id%%" class="%%class%%">',
                 '__list_close'          => '</ul>',
@@ -519,6 +533,7 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 '__li_has_child_class'  => 'has_child',
                 '__li_is_open_class'    => 'item_open',
                 '__li_is_closed_class'  => 'item_closed',
+                '__li_is_current_class' => 'current',
                 '__no_html'             => false,
                 '__auto_link'           => false,
 			    'space'                 => '    ',
