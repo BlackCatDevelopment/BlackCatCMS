@@ -48,7 +48,6 @@ if ( !FRONTEND_LOGIN ) // no frontend login, no forgot form
 
 $val          = CAT_Helper_Validate::getInstance();
 $email        = $val->sanitizePost('email',NULL,true);
-$display_form = true;
 $msg_class    = 'info';
 
 global $parser;
@@ -77,7 +76,7 @@ if(count(CAT_Helper_Addons::getLibraries('mail'))==0)
 
 // Check if the user has already submitted the form, otherwise show it
 if ( $email && $val->sanitize_email($email) )
-    list($result,$message,$display_form) = CAT_Users::handleForgot($email);
+    list($result,$message ) = CAT_Users::handleForgot($email);
 else
 	$email = '';
 
@@ -90,7 +89,7 @@ $parser->output('account_forgot_form',
     array(
         'message_class' => $msg_class,
         'email'         => $email,
-        'display_form'  => $display_form,
+        'display_form'  => $result === true ? false : true,
         'message'       => $message,
     )
 );

@@ -344,11 +344,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
             global $parser;
 
-        	$email   = strip_tags($email);
-            $self    = self::getInstance();
-            $val     = CAT_Helper_Validate::getInstance();
-            $message = '';
-            $result  = false;
+        	$email   		= strip_tags($email);
+            $self    		= self::getInstance();
+            $val     		= CAT_Helper_Validate::getInstance();
+            $message 		= '';
+            $result  		= false;
 
         	// Check if the email exists in the database
         	$results = $self->db()->query(
@@ -423,7 +423,6 @@ if ( ! class_exists( 'CAT_Users', false ) )
         				if ( is_object($mailer) && $mailer->sendMail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message, CATMAILER_DEFAULT_SENDERNAME, $mail_message_html ) )
         				{
         					$message      = $self->lang()->translate('Your username and password have been sent to your email address');
-        					$display_form = false;
                             $result       = true;
         				}
         				else
@@ -447,7 +446,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         		$message = $val->lang()->translate('The email that you entered cannot be found in the database');
         	}
 
-            return array( $result, $message, $display_form );
+            return array( $result, $message );
 
         }   // end function handleForgot()
         
