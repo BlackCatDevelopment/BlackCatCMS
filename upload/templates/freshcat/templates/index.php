@@ -15,14 +15,13 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         freshcat
  *
  */
-
 if (defined('CAT_PATH')) {	
 	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
