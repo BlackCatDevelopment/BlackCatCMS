@@ -65,19 +65,19 @@ if (!class_exists('CAT_Helper_Mail_PHPMailerDriver', false)) {
                             self::$instance->Password = self::$settings['smtp_password'];
                         }
                         // check for SSL
-                        if (isset(self::$settings['smtp_ssl']) && self::$settings['smtp_ssl'] == true) {
+                        if (isset(self::$settings['smtp_ssl']) && self::$settings['smtp_ssl'] === true) {
                             $transports = stream_get_transports();
                             if (in_array('ssl', $transports)) {
-                                $mail->SMTPSecure = 'ssl';
+                                self::$instance->SMTPSecure = 'ssl';
                                 if (isset(self::$settings['smtp_ssl_port']) && self::$settings['smtp_ssl_port'] != '')
-                                    $mail->Port = self::$settings['smtp_ssl_port'];
+                                    self::$instance->Port = self::$settings['smtp_ssl_port'];
                                 else
-                                    $mail->Port = 587; // default port
+                                    self::$instance->Port = 587; // default port
                             }
                         }
                         // timeout
                         if (isset(self::$settings['smtp_timeout']) && self::$settings['smtp_timeout'] != '')
-                            $mail->Timeout = self::$settings['smtp_timeout'];
+                            self::$instance->Timeout = self::$settings['smtp_timeout'];
                     } else {
                         // use PHP mail() function for outgoing mails send by Website Baker
                         self::$instance->IsMail();
