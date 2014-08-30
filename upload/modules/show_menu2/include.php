@@ -594,6 +594,12 @@ function show_menu2(
                 	continue;
 				}
 
+                // 4. all pages not visible to this user ( if a registered user is in a viewing group is already checked by isVisible() - previous elseif should be deprecated)
+                else if ( !CAT_Helper_Page::isVisible($page['page_id']) &&
+                			$page['visibility'] == 'registered') {
+                	continue;
+				}
+
                 $idx = $page['parent'];
 
                 // mark our current page as being on the current path
