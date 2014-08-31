@@ -284,7 +284,15 @@ if (!class_exists('CAT_Page', false))
                 }
                 else
                 {
-                self::$helper->printFatalError('You are not allowed to view this page!');
+                	// if Frontend-Login redirect user to login form and after login back to current page
+                	if ( FRONTEND_LOGIN )
+                	{
+						header("HTTP/1.1 401 Unauthorized");
+						header("Location: " . LOGIN_URL .  '?redirect=' . $_SERVER['PHP_SELF'] );
+						exit();
+                	} else {
+						self::$helper->printFatalError('You are not allowed to view this page!');
+                	}
                 }
             }
             // check if page has active sections
