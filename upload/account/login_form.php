@@ -47,6 +47,9 @@ $error    = CAT_Users::getInstance()->loginError();
 
 if ( $redirect ) header( 'Location: '.$redirect );
 
+$redirect_url	= $val->sanitizeGet('redirect') != '' ?
+		$val->sanitizeGet('redirect') : $val->sanitizePost('redirect');
+
 global $parser;
 $parser->setPath( CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/templates/' . CAT_Registry::get('DEFAULT_THEME_VARIANT') ); // if there's a template for this in the current frontend template
 $parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to default dir
@@ -55,6 +58,6 @@ $parser->output('account_login_form',
         'message'            => $error,
         'username_fieldname' => $username_fieldname,
         'password_fieldname' => $password_fieldname,
-        'redirect_url'       => ( $redirect ? $redirect : '' ),
+        'redirect_url'       => ( $redirect_url ? $redirect_url : '' ),
     )
 );
