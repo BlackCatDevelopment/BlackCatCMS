@@ -48,6 +48,7 @@ if ( !FRONTEND_LOGIN ) // no frontend login, no forgot form
 
 $val          = CAT_Helper_Validate::getInstance();
 $email        = $val->sanitizePost('email',NULL,true);
+$display_form = true;
 $msg_class    = 'info';
 
 global $parser;
@@ -89,7 +90,7 @@ $parser->output('account_forgot_form',
     array(
         'message_class' => $msg_class,
         'email'         => $email,
-        'display_form'  => $result === true ? false : true,
+        'display_form'  => $display_form,
         'message'       => $message,
     )
 );

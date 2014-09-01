@@ -20,7 +20,7 @@
         <ul id="fc_list_overview" class="fc_group_list">
 {foreach $addons as addon}
             {if $addon.name}
-            <li class="fc_module_item fc_type_{$addon.type}s fc_border fc_gradient1 fc_gradient_hover{if $addon.is_installed === false} fc_not_installed{/if}">
+            <li class="fc_module_item fc_type_{$addon.type}s fc_border fc_gradient1 fc_gradient_hover{if $addon.bundled == 'Y'} fc_isbundled{/if}{if $addon.is_installed === false} fc_not_installed{/if}">
                 {if $addon.icon}<img src="{$addon.icon}" alt="{$addon.directory}" />
                 {elseif $addon.type == 'templates'}<span class="icon-color-palette"></span>{elseif $addon.type == 'languages'}<span class="icon-comments"></span>{else}<span class="icon-puzzle"></span>{/if}
                 <span class="fc_groups_name"> {$addon.name}</span>

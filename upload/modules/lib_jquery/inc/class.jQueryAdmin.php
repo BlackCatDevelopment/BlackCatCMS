@@ -2,8 +2,7 @@
 
 /*******************************************************************************
     Library Admin
-    jQuery / jQuery UI Library
-    (c) 2010 Bianka Martinovic - All rights reserved
+    (c) 2010 - 2014 Bianka Martinovic - All rights reserved
     http://www.webbird.de/
 *******************************************************************************/
 
@@ -52,17 +51,17 @@ class jQueryAdmin extends LibraryUtils {
      * once
      **/
     public function showUIComponents( $item, $type, $selected ) {
-        $info = file_get_contents( dirname(__FILE__).'/../jquery-ui/ui/info.txt');
         $html = '<input type="checkbox" name="ui[]" id="ui"'
               . ( ( is_array($selected) && isset($selected['jquery-ui.min.js']) ) ? 'checked="checked"' : '' )
               . ' /> '
               . $this->lang()->translate('Use jQuery UI')
-              . '<span style="float: right;"><a class="tt" href="#" target="_blank" '
-              .  'rel="lyteframe" rev="width: 800px; height: 600px; scrolling: auto;"'
-              .  '>'
+              . '<span style="float: right;"><a class="tt" href="#" target="_blank" >'
               .  '<img src="'.LA_IMG_URL.'/info.png" alt="Info" />'
               .  '<span class="tooltip"><span class="top"></span><span class="middle">'
-              .  $info
+              . $this->lang()->translate(
+                  'For a list of available components, please visit'
+                )
+              . ' http://jqueryui.com/'
               .  '</span><span class="bottom"></span></span>'
               .  '</a></span>';
         return $html;
@@ -83,11 +82,6 @@ class jQueryAdmin extends LibraryUtils {
                                   'core'      => 'jquery-ui.min.js',
                                   'method'    => 'showUIComponents',
                              ),
-                'external' => array(
-                                  'label'     => 'External',
-                                  'subdir'    => 'jquery-ui/external',
-                                  'regexp'    => '/^(?:(jquery)\.)(.*)\.js$/',
-                              ),
                 'themes'   => array(
                                   'label'     => 'Themes',
                                   'subdir'    => 'jquery-ui/themes',

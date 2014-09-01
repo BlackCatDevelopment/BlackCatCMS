@@ -44,7 +44,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
         // database handle
         protected static $db      = NULL;
         // KLogger object handle
-        private   $logObj;
+        protected        $logObj  = NULL;
         
         // Log levels
         const EMERG  = 0;  // Emergency: system is unusable
@@ -417,12 +417,16 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                 if ( ! is_object( $this->logObj ) )
                 {
                     if ( ! CAT_Registry::exists('CAT_PATH',false) )
-                        CAT_Registry::define('CAT_PATH',dirname(__FILE__).'/../..');
+                        CAT_Registry::define('CAT_PATH',dirname(__FILE__).'/../..',1);
                     $debug_dir = CAT_PATH.'/temp/logs'
                                . ( $this->debugLevel == 7 ? '/debug_'.get_class($this) : '' );
+                    if(get_class($this) != 'CAT_Helper_Directory')
                     $debug_dir = CAT_Helper_Directory::sanitizePath($debug_dir);
                     if ( ! file_exists( $debug_dir ) )
+                        if(get_class($this) != 'CAT_Helper_Directory')
                         CAT_Helper_Directory::createDirectory( $debug_dir, 0777 );
+                        else
+                            mkdir($debug_dir,0777);
                     $this->logObj = CAT_Helper_KLogger::instance( $debug_dir, $this->debugLevel );
                 }
                 return $this->logObj;

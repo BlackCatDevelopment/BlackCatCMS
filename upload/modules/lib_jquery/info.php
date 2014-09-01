@@ -23,22 +23,6 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
-} else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
-}
-
 $module_directory = 'lib_jquery';
 $module_name = 'jQuery / jQuery UI JavaScript Library';
 $module_function = 'library';
@@ -48,5 +32,3 @@ $module_author = 'BlackBird';
 $module_license = 'GNU General Public License';
 $module_description = 'This module installs the jQuery JavaScript Library and the jQuery UI Library. You may use it as a lib for your own JavaScripts.';
 $module_guid = '8FB09FFD-B11C-4B75-984E-F54082B4DEEA';
-
-?>

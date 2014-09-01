@@ -73,8 +73,8 @@ abstract class c_editor_base
     public function getFilemanager()
     {
         $fm_path = $this->getFilemanagerPath();
-        $d  = CAT_Helper_Directory::getInstance();
-        $fm = $d->setRecursion(true)->maxRecursionDepth(1)->findFiles('info.php',$fm_path,$fm_path.'/');
+        $d  = CAT_Helper_Directory::getInstance(1);
+        $fm = $d->maxRecursionDepth(1)->findFiles('info.php',$fm_path,$fm_path.'/');
         $r  = array();
         $d->maxRecursionDepth();
         if ( is_array($fm) && count($fm) )

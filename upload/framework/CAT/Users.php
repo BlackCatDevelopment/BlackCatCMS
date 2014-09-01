@@ -423,6 +423,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         				if ( is_object($mailer) && $mailer->sendMail( SERVER_EMAIL, $mail_to, $mail_subject, $mail_message, CATMAILER_DEFAULT_SENDERNAME, $mail_message_html ) )
         				{
         					$message      = $self->lang()->translate('Your username and password have been sent to your email address');
+        					$display_form = false;
                             $result       = true;
         				}
         				else

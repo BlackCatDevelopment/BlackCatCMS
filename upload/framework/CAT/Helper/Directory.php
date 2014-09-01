@@ -41,7 +41,10 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
         protected static $current_depth = 0;
         protected static $is_win        = NULL;
 
-        protected      $_config = array( 'loglevel' => 8 );
+        protected $_config
+			= array(
+                 'loglevel'             => 8,
+			);
         protected      $debugLevel = 8;
 
         private static $instance;
@@ -389,7 +392,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		public static function sanitizePath( $path )
 		{
             $self       = self::getInstance();
-            $self->log()->logDebug('sanitizePath '.$path);
+            $self->log()->logDebug('> sanitizePath '.$path);
 		    // remove / at end of string; this will make sanitizePath fail otherwise!
 		    $path       = preg_replace( '~/{1,}$~', '', $path );
 		    // make all slashes forward
@@ -417,11 +420,11 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	            }
 	            elseif ($part!="")
 	            {
-                    $self->log()->logDebug('checking part -'.$part."- encoding -", mb_detect_encoding($part,'UTF-8',true));
+                    #$self->log()->logDebug('checking part -'.$part."- encoding -", mb_detect_encoding($part,'UTF-8',true));
                     $part = ( IS_WIN && mb_detect_encoding($part,'UTF-8',true) )
                           ? utf8_decode($part)
                           : $part;
-                    $self->log()->logDebug("adding part -$part-\n");
+                    #$self->log()->logDebug("adding part -$part-\n");
 	                $parts[] = $part;
 	            }
 	        }
@@ -431,7 +434,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	        if ( ! preg_match( '/^[a-z]\:/i', $new_path ) ) {
 				$new_path = '/' . $new_path;
 			}
-            $self->log()->logDebug('returning path: -'.$new_path.'-'."\n");
+            $self->log()->logDebug('< returning path: -'.$new_path.'-'."\n");
 	        return $new_path;
 		
 		}   // end function sanitizePath()
@@ -466,7 +469,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 
 			$dirs = array();
             $self = self::getInstance();
-            $self->log()->logDebug('scanning dir: '.$dir);
+            $self->log()->logDebug('> scanning dir: '.$dir);
 
             if(!self::$is_win)
             {
@@ -535,7 +538,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                         if ( is_dir( $dir.'/'.$file ) ) {
                             $self->log()->logDebug('It\'s a directory');
                             if ( ! $files_only ) {
-                                $self->log()->logDebug("$dir/$file - replace -$remove_prefix-");
+                                $self->log()->logDebug("\$files_only is false, adding to \$dirs: $dir/$file - replace -$remove_prefix-");
                                 $current = str_ireplace( $remove_prefix, '', $dir.'/'.$file );
                                 $dirs[]  = $current;
                             }

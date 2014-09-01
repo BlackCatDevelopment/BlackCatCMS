@@ -59,7 +59,7 @@ if (!class_exists('CAT_Helper_Mail_PHPMailerDriver', false)) {
                     if (isset(self::$settings['routine']) && self::$settings['routine'] == "smtp" && isset(self::$settings['smtp_host']) && strlen(self::$settings['smtp_host']) > 5) {
                         self::$instance->SMTPDebug = 0;
                         if(self::$debug) self::$instance->SMTPDebug = 1;
-//                        self::$instance->IsSMTP();
+                        self::$instance->IsSMTP();
                         self::$instance->Host = self::$settings['smtp_host'];
                         if (isset(self::$settings['smtp_auth']) && isset(self::$settings['smtp_username']) && isset(self::$settings['smtp_password']) && self::$settings['smtp_auth'] == "true" && strlen(self::$settings['smtp_username']) > 1 && strlen(self::$settings['smtp_password']) > 1) {
                             self::$instance->SMTPAuth = true;

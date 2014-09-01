@@ -170,6 +170,36 @@ if (!class_exists('CAT_Helper_Validate'))
         }   // end function dump()
 
         /**
+         * replaces CAT_PATH with CAT_URL in given $url
+         * if CAT_URL is stored without a scheme (relative URI), the current
+         * scheme will be added before replacement
+         *
+         * @access public
+         * @param  string $url
+         * @return string
+         **/
+        public static function uri2path($url)
+        {
+            return str_ireplace(self::sanitize_url(getURI($url)),sanitize_path(CAT_PATH),self::sanitize_url($url));
+        }   // end function uri2path(()
+
+        /**
+         * if CAT_URL does not contain a scheme (scheme relative URL), the
+         * appropriate scheme is added here
+         *
+         * @access public
+         * @param  string  $url
+         * @return string
+         **/
+        public static function getURI($url)
+        {
+            $rel_parsed = parse_url($url);
+            if(!array_key_exists('scheme',$rel_parsed ) || $rel_parsed['scheme']=='')
+                $url = (isset($_SERVER['HTTPS']) ? 'https:' : 'http:') . $url;
+            return $url;
+        }   // end function getURI()
+
+        /**
          * Get POST data
          *
          * TODO: add sanitize/validate
