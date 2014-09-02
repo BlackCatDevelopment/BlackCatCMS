@@ -23,10 +23,28 @@
  *
  */
 
+if (defined('WB_PATH')) {
+    if (defined('CAT_PATH')) include(CAT_PATH.'/framework/class.secure.php');
+    elseif (defined('LEPTON_PATH')) include(LEPTON_PATH.'/framework/class.secure.php');
+}
+else {
+    $root = "../";
+    $level = 1;
+    while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+        $root .= "../";
+        $level += 1;
+    }
+    if (file_exists($root.'/framework/class.secure.php')) {
+        include($root.'/framework/class.secure.php');
+    } else {
+        trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+    }
+}
+
 $module_directory = 'lib_jquery';
 $module_name = 'jQuery / jQuery UI JavaScript Library';
 $module_function = 'library';
-$module_version = '2.3';
+$module_version = '2.4';
 $module_platform = '1.x';
 $module_author = 'BlackBird';
 $module_license = 'GNU General Public License';

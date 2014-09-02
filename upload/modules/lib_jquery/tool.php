@@ -23,9 +23,11 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
-} else {
+if (defined('WB_PATH')) {
+    if (defined('CAT_PATH')) include(CAT_PATH.'/framework/class.secure.php');
+    elseif (defined('LEPTON_PATH')) include(LEPTON_PATH.'/framework/class.secure.php');
+}
+else {
 	$root = "../";
 	$level = 1;
 	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
@@ -61,7 +63,7 @@ include dirname(__FILE__).'/library_info.php';
   <p>Please note: This is a library module which has no Admin Tool functionality.
   If you need an Admin Tool to manage your jQuery Plugins, please install
   <a href="http://www.websitebakers.com/pages/libs/libraryadmin.php">LibraryAdmin</a>.</p>
-  <p>Hinweis: Dies ist ein Bibliotheksmodul ohne Admin Tool Funktionalität.
-  Wenn Sie ein Admin Tool benötigen, um Ihre jQuery Plugins zu verwalten, installieren
+  <p>Hinweis: Dies ist ein Bibliotheksmodul ohne Admin Tool Funktionalit&#228;t.
+  Wenn Sie ein Admin Tool ben&#246;tigen, um Ihre jQuery Plugins zu verwalten, installieren
   Sie bitte <a href="http://www.websitebakers.com/pages/libs/libraryadmin.php">LibraryAdmin</a>.</p>
 </div>
