@@ -22,7 +22,7 @@
  */
 
 @import url(reset.css);
-@import url(basic.css);
+@import url(index.css);
 
 img {
 	border-width: 0px;

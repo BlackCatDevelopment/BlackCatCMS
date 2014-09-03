@@ -65,6 +65,7 @@ $LANG = array(
     'Precheck result' => 'Ergebnis',
     'PHP Settings' => 'PHP Einstellungen (php.ini)',
 	'Precheck failed' => 'Prüfung fehlgeschlagen',
+    'Pre installation check successful' => 'Vor-Installationsprüfung erfolgreich',
     'Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.'
 		=> 'Installation fehlgeschlagen. Ihr System erfüllt nicht die definierten Voraussetzungen. Bitte korrigieren Sie die unten angegebenen Probleme und versuchen Sie es dann erneut.',
   	'Writable' => 'Schreibbar',
