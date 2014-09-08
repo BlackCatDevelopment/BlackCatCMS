@@ -17,6 +17,17 @@
 
             <hr />
 
+			<label class="fc_label_250" for="fc_er_level">{translate('PHP Error Reporting Level')}:</label>
+			<select name="er_level" id="fc_er_level">
+				<option value="">{translate('Please select')}...</option>
+				{foreach $er_levels er}
+				<option value="{$er.VALUE}"{if $er.SELECTED} selected="selected"{/if}>{$er.NAME}</option>
+				{/foreach}
+			</select>
+			<div class="clear_sp"></div>
+
+            <hr />
+
 			<label class="fc_label_250" for="fc_page_level_limit" title="{translate('Maximum depth of page tree')}">{translate('Page level limit')}:</label>
 			<select name="page_level_limit" id="fc_page_level_limit">
 				{for count 0 10 1}

@@ -78,7 +78,6 @@ switch($region)
     case 'backend':
         $tpl_data['backends']  = getTemplateList('backend');
         $tpl_data['wysiwyg']   = CAT_Helper_Addons::get_addons( CAT_Registry::get('WYSIWYG_EDITOR'), 'module', 'wysiwyg' );
-        $tpl_data['er_levels'] = getErrorLevels();
         $tpl_data['variants']  = array();
         $info = CAT_Helper_Addons::checkInfo(CAT_PATH.'/templates/'.CAT_Registry::get('DEFAULT_THEME'));
         if(isset($info['module_variants']) && is_array($info['module_variants']) && count($info['module_variants'])) {
@@ -86,6 +85,7 @@ switch($region)
         }
         break;
     case 'system':
+        $tpl_data['er_levels'] = getErrorLevels();
         $tpl_data['PAGES_LIST'] = getPagesList('maintenance_page', CAT_Registry::get('MAINTENANCE_PAGE'));
         $tpl_data['ERR_PAGES_LIST'] = getPagesList('err_page_404', CAT_Registry::get('ERR_PAGE_404'));
         break;

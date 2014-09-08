@@ -24,14 +24,6 @@
 
 			{if $DISPLAY_ADVANCED}
 			<hr />
-			<label class="fc_label_300" for="fc_er_level">{translate('PHP Error Reporting Level')}:</label>
-			<select name="er_level" id="fc_er_level">
-				<option value="">{translate('Please select')}...</option>
-				{foreach $er_levels er}
-				<option value="{$er.VALUE}"{if $er.SELECTED} selected="selected"{/if}>{$er.NAME}</option>
-				{/foreach}
-			</select>
-			<div class="clear_sp"></div>
 
 			<label class="fc_label_300" for="fc_redirect_timer">{translate('Redirect after')}:</label>
 			<input type="text" name="redirect_timer" id="fc_redirect_timer" value="{$values.redirect_timer}" /> ms
