@@ -851,7 +851,8 @@ if (!class_exists('CAT_Helper_Page'))
                 {
                     if ( ! isset($seen[$item['file']]) )
                     {
-                    // make sure we have an URI (CAT_URL included)
+                        $seen[$item['file']]	= true;
+                        // make sure we have an URI (CAT_URL included)
                         if(!preg_match('~^http(s)?://~i',$item['file']))
                         {
                             if ( ! preg_match( '~^/~', $item['file'] ) )
@@ -863,6 +864,7 @@ if (!class_exists('CAT_Helper_Page'))
                         {
                             $file = $item['file'];
                         }
+<<<<<<< HEAD
                         $line = '<link rel="stylesheet" type="text/css" href="'.$file.'" '
                               .  'media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />'
                               . "\n"
@@ -877,6 +879,10 @@ if (!class_exists('CAT_Helper_Page'))
                         $output[] = $line;
                 }
                     $seen[$item['file']] = 1;
+=======
+                        $output .= '<link rel="stylesheet" type="text/css" href="' . $file . '" media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
+                    }
+>>>>>>> 05c5a8c56a02ff5fdf9c983cc0adf6e8c87fd839
                 }
             }
             return implode('',$output);
