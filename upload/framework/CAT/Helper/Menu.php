@@ -43,6 +43,7 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
          * map menu options to ListBuilder keys
          **/
         private static $_lbmap = array(
+            'prefix'     => '__li_css_prefix',
             'first'      => '__li_first_item_class',
             'last'       => '__li_last_item_class',
             'child'      => '__li_has_child_class',
@@ -102,6 +103,20 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
             // use ListBuilder to create the menu
             return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($menu,$root_id);
         }   // end function breadcrumbMenu()
+        
+        /**
+         * creates a full menu with all visible pages (like a sitemap)
+         *
+         * @access public
+         * @return
+         **/
+        public static function fullMenu(array &$options = array())
+        {
+            self::analyzeOptions($options);
+            $self       = self::getInstance();
+            $pages      = CAT_Helper_Page::getPages();
+            return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($pages,0);
+        }   // end function fullMenu()
         
 
         /**

@@ -158,7 +158,8 @@ if (!class_exists('CAT_Helper_Page'))
                         $row['is_in_trail']      = false;
                         $row['is_direct_parent'] = false;
                         $row['is_current']       = false;
-                        $row['is_open'] = isset( $_COOKIE[ session_name() . 'pageid_'.$row['page_id']] ) ? true : false; // for page tree
+                        $row['is_open']          = false;
+                        $row['be_tree_is_open']  = isset( $_COOKIE[ session_name() . 'pageid_'.$row['page_id']] ) ? true : false; // for page tree
                         $row['href']             = CAT_URL . PAGES_DIRECTORY . $row['link'] . PAGE_EXTENSION;
 
                         // mark editable pages by checking user perms and page
@@ -224,9 +225,6 @@ if (!class_exists('CAT_Helper_Page'))
                             self::$pages[$i]['is_parent'] = true;
                             self::$pages[$i]['has_children'] = true;
                         }
-                        // mark pages in current trail
-                        #if(isset($page_id) && in_array($page['page_id'],$trail))
-                        #    self::$pages[$i]['is_in_trail'] = true;
                         if($direct_parent && $page['page_id'] == $direct_parent)
                             self::$pages[$i]['is_direct_parent'] = true;
                     }
@@ -238,6 +236,9 @@ if (!class_exists('CAT_Helper_Page'))
                         // mark parents
                         $trail = explode(",", '0,'.self::$pages[self::$pages_by_id[$page_id]]['page_trail']);
                         array_pop($trail); // remove the current page
+                        foreach($trail as $id)
+                            if(isset(self::$pages_by_id[$id]) && isset(self::$pages[self::$pages_by_id[$id]]))
+                                self::$pages[self::$pages_by_id[$id]]['is_in_trail'] = true;
                     }
 
                     // add 'virtual' page -1
@@ -826,7 +827,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function getCSS($for='frontend')
         {
-            $output = NULL;
+            $output = array();
             if (count(CAT_Helper_Page::$css))
             {
                 // check for template variants
@@ -862,12 +863,23 @@ if (!class_exists('CAT_Helper_Page'))
                         {
                             $file = $item['file'];
                         }
-                        $output .= '<link rel="stylesheet" type="text/css" href="' . $file . '" media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
+                        $line = '<link rel="stylesheet" type="text/css" href="'.$file.'" '
+                              .  'media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />'
+                              . "\n"
+                              ;
+                        if(isset($item['conditional']) && $item['conditional'] != '')
+                        {
+                            $line = '<!--[if '.$item['conditional'].']>'."\n"
+                                  . $line
+                                  . '<![endif]-->'."\n"
+                                  ;
+                        }
+                        $output[] = $line;
                 }
                     $seen[$item['file']] = 1;
                 }
             }
-            return $output;
+            return implode('',$output);
         } // end function getCSS()
 
 
@@ -1092,7 +1104,6 @@ if (!class_exists('CAT_Helper_Page'))
                 }
             }
 
-            // get droplets
             $droplets_config = CAT_Helper_Droplet::getDropletsForHeader($page_id);
 
             // return the results
@@ -1308,7 +1319,7 @@ if (!class_exists('CAT_Helper_Page'))
          * @access public
          * @return HTML
          **/
-        public static function getMeta($droplets_config=array())
+        public static function getDefaultMeta($droplets_config=array())
         {
             global $page_id;
 
@@ -1330,6 +1341,10 @@ if (!class_exists('CAT_Helper_Page'))
                 $title = $droplets_config['title'];
             elseif(isset($properties['title']))
                 $title = $properties['title'];
+            elseif(defined('WEBSITE_TITLE'))
+                $title = WEBSITE_TITLE;
+            else
+                $title = '-';
             if($title)
                 $output[] = CAT_Helper_Page::$space . '<title>' . $title . '</title>';
 
@@ -1357,8 +1372,23 @@ if (!class_exists('CAT_Helper_Page'))
             if(isset($droplets_config['meta']))
                 $output[] = $droplets_config['meta'];
 
-            return implode("\n", $output) . "\n";
+            return $output;
 
+        } // end function getDefaultMeta()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getMeta($droplets_config=array())
+        {
+            $meta = self::getDefaultMeta($droplets_config);
+            self::$meta = array_merge(
+                $meta,
+                self::$meta
+            );
+            return implode("\n",array_unique(self::$meta));
         } // end function getMeta()
 
         /**
@@ -2337,6 +2367,26 @@ if (!class_exists('CAT_Helper_Page'))
         } // end function _analyze_jquery_components()
 
         /**
+         *
+         * @access private
+         * @return
+         **/
+        private static function _analyze_meta(&$arr)
+        {
+            if (is_array($arr))
+            {
+                foreach($arr as $el)
+                {
+                    $str = '<meta ';
+                    foreach($el as $key => $val)
+                        $str .= $key.'="'.$val.'" ';
+                    $str .= '/>';
+                    self::$meta[] = $str;
+                }
+            }
+        }   // end function _analyze_meta()
+
+        /**
          * really deletes a page
          *
          * @access private
@@ -2593,6 +2643,11 @@ if (!class_exists('CAT_Helper_Page'))
             // analyze
             if (isset($mod_headers[$for]) && is_array($mod_headers[$for]) && count($mod_headers[$for]))
             {
+                // ----- META -----
+                if (isset($mod_headers[$for]['meta']) && is_array($mod_headers[$for]['meta']) && count($mod_headers[$for]['meta']))
+                {
+                    self::_analyze_meta($mod_headers[$for]['meta']);
+                }
                 // ----- CSS -----
                 if (isset($mod_headers[$for]['css']) && is_array($mod_headers[$for]['css']) && count($mod_headers[$for]['css']))
                 {

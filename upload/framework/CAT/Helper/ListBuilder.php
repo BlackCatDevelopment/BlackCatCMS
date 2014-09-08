@@ -462,6 +462,9 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                    : $id;
             $class = $self->_config['__li_css_prefix']
                    . $self->_config['__li_class'];
+            $class .= (isset($self->_config['__li_level_css']) && $self->_config['__li_level_css'] === true)
+                   ? ' '.$self->_config['__li_level_class'].'_'.$level
+                   : '';
             $class .= ( $has_children )
                    ?  ' '.$self->_config['__li_has_child_class']
                    : '';
@@ -525,7 +528,8 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
                 '__ul_class'            => 'ui-sortable',
                 '__ul_level_css'        => false,
                 '__li_class'            => 'tree_item',
-                '__li_level_css'        => false,
+                '__li_level_css'        => true,
+                '__li_level_class'      => 'level',
                 '__li_css_prefix'       => NULL,
                 '__li_id_prefix'        => NULL,
                 '__li_first_item_class' => 'first_item',
