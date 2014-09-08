@@ -850,7 +850,8 @@ if (!class_exists('CAT_Helper_Page'))
                 {
                     if ( ! isset($seen[$item['file']]) )
                     {
-                    // make sure we have an URI (CAT_URL included)
+                        $seen[$item['file']]	= true;
+                        // make sure we have an URI (CAT_URL included)
                         if(!preg_match('~^http(s)?://~i',$item['file']))
                         {
                             if ( ! preg_match( '~^/~', $item['file'] ) )
@@ -863,8 +864,7 @@ if (!class_exists('CAT_Helper_Page'))
                             $file = $item['file'];
                         }
                         $output .= '<link rel="stylesheet" type="text/css" href="' . $file . '" media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
-                }
-                    $seen[$item['file']] = 1;
+                    }
                 }
             }
             return $output;
