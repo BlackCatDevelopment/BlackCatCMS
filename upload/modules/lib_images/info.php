@@ -43,7 +43,7 @@ if (defined('CAT_PATH')) {
 $module_directory     = 'lib_images';
 $module_name          = 'class.Images.php for BlackCat CMS';
 $module_function      = 'library';
-$module_version       = '0.3';
+$module_version       = '0.3.1';
 $module_platform      = '1.x';
 $module_author        = 'class.Images.php - Manuel Reinhard; this module - Black Cat Development';
 $module_license       = 'GNU General Public License';
