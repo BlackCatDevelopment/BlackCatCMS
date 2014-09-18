@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
@@ -52,15 +52,15 @@ $_bc_filter_onload = array();
 function executeFilters(&$content)
 {
     // get active filters
-    $res = CAT_Helper_Page::getInstance()->db()->query(sprintf(
-        'SELECT * FROM %smod_filter WHERE filter_active="Y"',
-        CAT_TABLE_PREFIX
-    ));
+    $res = CAT_Helper_Page::getInstance()->db()->query(
+        'SELECT * FROM `:prefix:mod_filter` WHERE filter_active=:active',
+        array('active'=>'Y')
+    );
 
     if(is_object($res) && $res->numRows())
     {
         $filter = array();
-        while( false !== ( $row = $res->fetchRow(MYSQL_ASSOC) ) )
+        while( false !== ( $row = $res->fetch() ) )
         {
             $filter[] = $row;
         }
@@ -68,7 +68,7 @@ function executeFilters(&$content)
         {
             if($f['filter_code']=='' && $f['module_name']!='')
             {
-                $inc_file = sanitize_path(CAT_PATH.'/modules/'.$f['module_name'].'/filter/'.$f['filter_name'].'.php');
+                $inc_file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$f['module_name'].'/filter/'.$f['filter_name'].'.php');
                 if(file_exists($inc_file))
                 {
                     include_once $inc_file;
@@ -167,26 +167,29 @@ function register_filter_onload($code)
 function register_filter($filter_name,$module_directory,$filter_description=NULL,$filter_code=NULL)
 {
     $backend = CAT_Backend::getInstance('addons','modules_install');
-    $SQL     = sprintf("SELECT * FROM `%smod_output_filter` WHERE module_name='%s'", CAT_TABLE_PREFIX, $module_directory);
+    $SQL     = sprintf("SELECT * FROM `:prefix:mod_filter` WHERE module_name='%s'", $module_directory);
     if (false !== ($data = $backend->db()->get_one($SQL, MYSQL_ASSOC)))
     {
         if (empty($data))
         {
-            $SQL = sprintf(
-                "INSERT INTO `%smod_filter` SET
-                filter_name='%s', module_name='%s', filter_description='%s',
-                filter_code='%s', filter_active='Y'",
-            CAT_TABLE_PREFIX, $filter_name, $module_directory, $filter_description, $filter_code
+            $SQL = "INSERT INTO `:prefix:mod_filter` SET "
+                 . "filter_name=:filter, module_name=:module, "
+                 . "filter_description=:desc, filter_code=:code, "
+                 . "filter_active=:active";
+            $params = array(
+                'filter' => $filter_name,
+                'module' => $module_directory,
+                'desc'   => $filter_description,
+                'code'   => $filter_code,
+                'active' => 'Y',
             );
-            if (!$backend->db()->query($SQL))
+            if (!$backend->db()->query($SQL,$params))
             {
-                trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->getError()));
                 return false;
             }
         }
     }
     else {
-        trigger_error(sprintf("[%s] %s", __FUNCTION__, $backend->db()->getError()));
         return false;
     }
     return true;
@@ -202,12 +205,12 @@ function register_filter($filter_name,$module_directory,$filter_description=NULL
 function unregister_filter($filter_name, $module_directory)
 {
     $backend = CAT_Backend::getInstance('addons','modules_uninstall');
-    $SQL     = sprintf(
-        "DELETE FROM `%smod_filter` WHERE filter_name='%s' AND module_name='%s'",
-        CAT_TABLE_PREFIX, $filter_name, $module_directory
+    $SQL     = "DELETE FROM `:prefix:mod_filter` WHERE filter_name=:filter AND module_name=:module";
+    $params  = array(
+        'filter' => $filter_name,
+        'module' => $module_directory
     );
-    if (!$backend->db()->query($SQL)) {
-        trigger_error(sprintf('[%s] %s', __FUNCTION__, $backend->db()->getError()));
+    if (!$backend->db()->query($SQL,$params)) {
         return false;
     }
     return true;
@@ -223,10 +226,12 @@ function unregister_filter($filter_name, $module_directory)
 function is_filter_registered($filter_name, $module_directory)
 {
     $backend = CAT_Backend::getInstance('addons', 'modules_install');
-    $SQL = "SELECT `filter_name` FROM `".CAT_TABLE_PREFIX."mod_filter` WHERE ".
-        "`filter_name`='$filter_name' AND `module_name`='$module_directory'";
+    $SQL     = sprintf(
+        "SELECT `filter_name` FROM `:prefix:mod_filter` WHERE ".
+        "`filter_name`='%s' AND `module_name`='%s'",
+        $filter_name, $module_directory
+    );
     if (false === ($name = $backend->db()->get_one($SQL, MYSQL_ASSOC))) {
-        trigger_error(sprintf('[%s] %s', __FUNCTION__, $backend->db()->getError()));
         return false;
     }
     return ($name == $filter_name);

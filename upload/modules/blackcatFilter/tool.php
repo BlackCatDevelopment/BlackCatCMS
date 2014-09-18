@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
@@ -71,7 +71,7 @@ if ( $val->sanitizePost('filter_add') )
 
     if(!count($errors))
     {
-        if(isset($_FILES['filter_file']))
+        if(isset($_FILES['filter_file']) && isset($_FILES['filter_file']['error']) && $_FILES['filter_file']['error'] != 4) // 4 = no file
         {
             $file = CAT_Helper_Upload::getInstance($_FILES['filter_file']);
             $file->no_script = false;
@@ -92,10 +92,16 @@ if ( $val->sanitizePost('filter_add') )
     }
     else
     {
-        $backend->db()->query(sprintf(
-            "INSERT INTO `%smod_filter` VALUES ( '%s', '%s', '%s', '%s', '%s' )",
-            CAT_TABLE_PREFIX, $data['name'], $data['module_name'], $data['description'], $data['code'], $data['active']
-        ));
+        $backend->db()->query(
+            "INSERT INTO `:prefix:mod_filter` VALUES ( :name, :module, :desc, :code, :active )",
+            array(
+                'name' => $data['name'],
+                'module' => $data['module_name'],
+                'desc'   => $data['description'],
+                'code'   => $data['code'],
+                'active' => $data['active']
+            )
+        );
         if($backend->db()->isError())
             $errors[] = $backend->db()->getError();
     }
@@ -103,14 +109,11 @@ if ( $val->sanitizePost('filter_add') )
 
 // get available filters
 $filters = array();
-$result  = $backend->db()->query(sprintf(
-    "SELECT * FROM `%smod_filter`",
-    CAT_TABLE_PREFIX
-));
+$result  = $backend->db()->query("SELECT * FROM `:prefix:mod_filter`");
 
 if($result->numRows())
 {
-    while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+    while( false !== ( $row = $result->fetch() ) )
     {
         $filters[] = $row;
     }
