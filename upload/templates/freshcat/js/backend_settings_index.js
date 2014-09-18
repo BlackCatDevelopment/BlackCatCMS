@@ -53,7 +53,7 @@ function create_guid(URL) {
     }
 }
 
-jQuery(document).ready(function(){
+jQuery(document).ready(function($){
 	$('#fc_list_overview li').fc_set_tab_list();
     var set_cookie	= SESSION + "_settings_open";
     $('#fc_list_overview li').click( function()
@@ -84,7 +84,7 @@ jQuery(document).ready(function(){
 			}
 		});
     });
-    if($.cookie(set_cookie).length) {
+    if(typeof $.cookie(set_cookie) != 'undefined' && $.cookie(set_cookie).length) {
         $('#fc_list_overview li').find('input[value="' + $.cookie(set_cookie) +'"]').click();
     }
 

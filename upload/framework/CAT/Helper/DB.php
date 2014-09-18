@@ -28,11 +28,11 @@ require dirname(__FILE__).'/../../../modules/lib_doctrine/Doctrine/Common/ClassL
 
 if ( !class_exists( 'CAT_Helper_DB' ) )
 {
-    set_exception_handler(array("CAT_PDOExceptionHandler", "exceptionHandler"));
+    //set_exception_handler(array("CAT_PDOExceptionHandler", "exceptionHandler"));
 
     class CAT_Helper_DB extends PDO
     {
-        public  static $trace    = false;
+        public  static $exc_trace = false;
 
         private static $instance = NULL;
         private static $conn     = NULL;
@@ -127,6 +127,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
          **/
     	public static function connect($opt=array())
         {
+            self::setExceptionHandler();
             if(!self::$conn)
             {
                 $config = new \Doctrine\DBAL\Configuration();
@@ -154,6 +155,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     CAT_Object::printFatalError($e->message);
                 }
             }
+            self::restoreExceptionHandler();
             return self::$conn;
         }   // end function connect()
 
@@ -193,6 +195,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
     	public function query($sql,$bind=array())
         {
             $this->setError(NULL);
+            $prevhandler = set_exception_handler(array("CAT_PDOExceptionHandler", "exceptionHandler"));
             try {
                 if(is_array($bind))
                 {
@@ -258,7 +261,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                         if(isset($_REQUEST['_cat_ajax']))
                             return $this->getError();
                         else
-                        throw new Exception($this->getError());
+                            throw new \PDOException($this->getError());
                     }
                 }
             }
@@ -311,6 +314,37 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
         }   // end function setError
 
         /**
+         * set exception handler to internal one; make sure that this is not
+         * done more than once by checking prev handler
+         *
+         * @access protected
+         * @return void
+         **/
+        protected static function setExceptionHandler()
+        {
+            $prevhandler = set_exception_handler(array("CAT_PDOExceptionHandler", "exceptionHandler"));
+            if(isset($prevhandler[0]) && $prevhandler[0] == 'CAT_PDOExceptionHandler')
+                restore_exception_handler();
+        }   // end function setExceptionHandler()
+
+        /**
+         * reset exception handler to previous one
+         *
+         * @access protected
+         * @return void
+         **/
+        protected static function restoreExceptionHandler()
+        {
+            // set dummy handler to get prev
+            $prev = set_exception_handler(function(){});
+            // reset
+            restore_exception_handler();
+            // if the previous one was ours...
+            if(isset($prev[0]) && $prev[0] == 'CAT_PDOExceptionHandler')
+                restore_exception_handler();
+        }   // end function restoreExceptionHandler()
+
+        /***********************************************************************
          * old function names wrap new ones
          **/
         public function get_one($sql,$type=PDO::FETCH_ASSOC)
@@ -362,9 +396,10 @@ class CAT_PDOExceptionHandler
      * exception handler; allows to remove paths from error messages and show
      * optional stack trace if CAT_Helper_DB::$trace is true
      **/
-    public static function exceptionHandler($exception) {
+    public static function exceptionHandler($exception)
+    {
 
-        if(CAT_Helper_DB::$trace)
+        if(CAT_Helper_DB::$exc_trace === true)
         {
             $traceline = "#%s %s(%s): %s(%s)";
             $msg   = "Uncaught exception '%s' with message '%s'<br />"
@@ -373,12 +408,15 @@ class CAT_PDOExceptionHandler
                    . "thrown in %s on line %s</div>"
                    ;
             $trace = $exception->getTrace();
-            foreach ($trace as $key => $stackPoint) {
+
+            foreach ($trace as $key => $stackPoint)
+            {
                 $trace[$key]['args'] = array_map('gettype', $trace[$key]['args']);
             }
             // build tracelines
             $result = array();
-            foreach ($trace as $key => $stackPoint) {
+            foreach ($trace as $key => $stackPoint)
+            {
                 $result[] = sprintf(
                     $traceline,
                     $key,
@@ -405,28 +443,13 @@ class CAT_PDOExceptionHandler
         else
         {
             // template
-            $msg = "[DB] %s<br /><span style=\"font-size:smaller\">in %s:%s</span><br />";
+            $msg = "[DB Exception] %s<br />";
             // filter message
             $message = $exception->getMessage();
             preg_match('~SQLSTATE\[[^\]].+?\]\s+\[[^\]].+?\]\s+(.*)~i', $message, $match);
-            // filter path from file
-            $file    = $exception->getFile();
-            $file    = str_replace(
-                array(
-                    CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_doctrine'),
-                    CAT_Helper_Directory::sanitizePath(CAT_PATH)
-                ),
-                array(
-                    '[path to]',
-                    '[path to]'
-                ),
-                CAT_Helper_Directory::sanitizePath($file)
-            );
             $msg     = sprintf(
                 $msg,
-                ( isset($match[1]) ? $match[1] : $message ),
-                $file,
-                $exception->getLine()
+                ( isset($match[1]) ? $match[1] : $message )
             );
         }
 

@@ -55,6 +55,9 @@ include CAT_PATH.'/framework/class.frontend.php';
 $wb = new frontend();
 // keep SM2 quiet
 $wb->extra_where_sql = "visibility != 'none' AND visibility != 'hidden' AND visibility != 'deleted'";
+// some modules may use $wb->page_id
+if(isset($page_id))
+    $wb->page_id=$page_id;
 include CAT_PATH.'/framework/frontend.functions.php';
 // -----------------------------------------------------------------------------
 

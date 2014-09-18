@@ -39,18 +39,26 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
 			= array(
                  'loglevel'             => 7,
 			);
+
         /**
-         * map menu options to ListBuilder keys
+         * map menu options to wbList keys
          **/
         private static $_lbmap = array(
-            'prefix'     => '__li_css_prefix',
-            'first'      => '__li_first_item_class',
-            'last'       => '__li_last_item_class',
-            'child'      => '__li_has_child_class',
-            'current'    => '__li_is_open_class',
-            'closed'     => '__li_is_closed_class',
-            'list-class' => '__ul_class',
+            'prefix'     => 'css_prefix',
+            'first'      => 'first_li_class',
+            'last'       => 'last_li_class',
+            'child'      => 'has_child_li_class',
+            'current'    => 'current_li_class',
+            'open'       => 'is_open_li_class',
+            'closed'     => 'is_closed_li_class',
+            'list-class' => 'ul_class',
         );
+
+        /**
+         * wbList accessor
+         **/
+        private static $list = NULL;
+
         /**
          * holds local instance
          **/
@@ -76,9 +84,32 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
         }   // end function __call()
 
         /**
+         * initialize wbList, so we don't need to do this more than once
          *
          * @access public
-         * @return
+         * @return object
+         **/
+        public static function init_list()
+        {
+            if(!is_object(self::$list))
+                self::$list = \wblib\wbList::getInstance(
+                    array(
+                        '__id_key'    => 'page_id',
+                        '__title_key' => 'menu_title',
+                    )
+                );
+            return self::$list;
+        }    // end function init_list()
+
+        /**
+         * Create a breadcrumb (path to current list item)
+         *
+         * @access public
+         * @param  integer $id           - page ID
+         * @param  integer $max_level    - max. level to show, default 999
+         * @param  boolean $show_current - wether to include current page, default false
+         * @param  array   $options      - optional array of additional options
+         * @return string  HTML
          **/
         public static function breadcrumbMenu($id=NULL,$max_level=999,$show_current=false,array &$options = array())
         {
@@ -100,8 +131,9 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
             }
 
             $root_id = ( $pg['level'] > 0 ? $pg['page_id'] : 0 );
-            // use ListBuilder to create the menu
-            return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($menu,$root_id);
+            // use wbList to create the menu
+            //return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($menu,$root_id);
+            return self::$list->buildList($menu,array('root_id'=>$root_id));
         }   // end function breadcrumbMenu()
         
         /**
@@ -112,12 +144,12 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
          **/
         public static function fullMenu(array &$options = array())
         {
+            global $page_id;
             self::analyzeOptions($options);
             $self       = self::getInstance();
             $pages      = CAT_Helper_Page::getPages();
-            return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($pages,0);
+            return self::$list->buildList($pages,array('selected'=>$page_id));
         }   // end function fullMenu()
-        
 
         /**
          * creates a sub menu for given page_id (children of that page)
@@ -130,7 +162,7 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
          *
          * @access public
          * @param  integer $id           - parent page; default: current page
-         * @param  mixed   $max_level - see above; default: 999 (unlimited)
+         * @param  mixed   $max_level    - see above; default: 999 (unlimited)
          * @param  boolean $show_current - show current page in the menu; default: false
          * @return string  HTML
          **/
@@ -156,7 +188,8 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
                 $menu[] = CAT_Helper_Page::properties($sid);
 
             // use ListBuilder to create the menu
-            return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($menu,$id);
+            //return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($menu,$id);
+            return self::$list->buildList($menu,array('root_id'=>$id));
         }   // end function subMenu()
 
         /**
@@ -183,18 +216,15 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
                 {
                     if(false!==($i=self::isInMenu($id,$menu)))
                     {
-                        $menu[$i]['is_open'] = true;
+                        $menu[$i]['is_open']    = true;
                         $menu[$i]['is_current'] = true;
                         $selected = $menu[$i]['page_id'];
                         break;
                     }
                 }
             }
-            return CAT_Helper_ListBuilder::getInstance(false)->config(
-                    array(
-                        '__auto_link' => true,
-                    )
-                )->tree($menu,0,$selected);
+            //return CAT_Helper_ListBuilder::getInstance(false)->config(array('__auto_link' => true))->tree($menu,0,$selected);
+            return self::$list->buildList($menu,array('root_id'=>0,'selected'=>$selected));
         }   // end function siblingsMenu()
 
         /**
@@ -243,7 +273,8 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
                     $lbopt[self::$_lbmap[$key]] = $value;
             }
             // pass options to Listbuilder
-            CAT_Helper_ListBuilder::getInstance()->config($lbopt);
+            //CAT_Helper_ListBuilder::getInstance()->config($lbopt);
+            return self::init_list()->set($lbopt);
         }   // end function analyzeOptions()
         
         /**

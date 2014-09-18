@@ -69,6 +69,9 @@ CAT_Registry::register('CAT_CORE', 'Black Cat CMS', true);
 CAT_Registry::register('URL_HELP', 'http://blackcat-cms.org/', true);
 CAT_Registry::register('IS_WIN'  , (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? true : false, true);
 
+// Default exception handler
+set_exception_handler(array("CAT_ExceptionHandler", "exceptionHandler"));
+
 // Create database class
 // note: we still use the old class here, because there are still some core files
 // that use methods like get_one()

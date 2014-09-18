@@ -46,7 +46,7 @@ $SQL = 'CREATE TABLE IF NOT EXISTS `%ssearch` ('
     . ' `search_id` INT NOT NULL auto_increment,'
     . ' `name` VARCHAR(255) NOT NULL DEFAULT \'\' ,'
     . ' `value` TEXT NOT NULL ,'
-    . ' `extra` TEXT NOT NULL ,'
+    . ' `extra` TEXT NULL ,'
     . ' PRIMARY KEY (`search_id`) '
     . ' )';
 if (!$backend->db()->query(sprintf($SQL,CAT_TABLE_PREFIX))) {

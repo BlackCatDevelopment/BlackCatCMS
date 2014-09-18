@@ -161,6 +161,13 @@ if($res && $res->numRows())
 $database->query(sprintf(
     'DROP TABLE IF EXISTS `%spages_load`;', CAT_TABLE_PREFIX
 ));
+
+$res = $database->query(sprintf(
+    'SELECT `value` FROM `%ssettings` WHERE `name`="%s"',
+    CAT_TABLE_PREFIX, 'cat_default_date_format'
+));
+if(!$res || !$res->numRows())
+{
 // date and time formats; the wb2compat.php will create the ones for WB
 $database->query(sprintf(
     'UPDATE `%ssettings` SET `name`="cat_default_date_format" WHERE `name`="default_date_format"',
@@ -170,6 +177,15 @@ $database->query(sprintf(
     'UPDATE `%ssettings` SET `name`="cat_default_time_format" WHERE `name`="default_time_format"',
     CAT_TABLE_PREFIX
 ));
+    $database->query(sprintf(
+        'INSERT INTO `%ssettings` VALUES (NULL,"%s","%s")',
+        CAT_TABLE_PREFIX, 'default_date_format','d.m.Y'
+    ));
+    $database->query(sprintf(
+        'INSERT INTO `%ssettings` VALUES (NULL,"%s","%s")',
+        CAT_TABLE_PREFIX,'default_time_format','H:i:s'
+    ));
+}
 // delete search droplet setting as it is no longer used
 $database->query(sprintf(
     'DELETE FROM `%ssearch` WHERE `name`="cfg_search_droplet"',

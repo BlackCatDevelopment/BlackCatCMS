@@ -227,16 +227,10 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
             $this->logger->logCrit( "The template [$_tpl] does not exists in one of the possible template paths!", $paths );
             // the template does not exists, so at least prompt an error
             $br = "\n";
-            trigger_error(
-                CAT_Helper_I18n::getInstance()->translate(
-                    "The template [{{ tpl }}] does not exists in one of the possible template paths!{{ paths }}",
-                    array(
-                        'tpl'   => $_tpl,
-                        'paths' => ( $this->te->_config['show_paths_on_error']
-                                ? $br.$br.CAT_Helper_I18n::getInstance()->translate('Searched paths').':'.$br.implode($br,$paths).$br
-                                : NULL )
-                    )
-                ), E_USER_ERROR
+            CAT_Object::printFatalError(
+                "Unable to render the page",
+                NULL,true,
+                $paths
             );
         }   // end function findTemplate()
 

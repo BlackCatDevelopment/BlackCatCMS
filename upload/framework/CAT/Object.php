@@ -200,14 +200,26 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
             if (true === is_array($message))
                 $message = implode("<br />", $message);
 
+            if($file)
+            {
+                $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',2);
+                $logger->logFatal(sprintf(
+                    'Fatal error with message [%s] emitted in [%s] line [%s] method [%s]',
+                    $message,$file,$line,$function
+                ));
+                if($args) $logger->logFatal(var_export($args,1));
+            }
+
             $message = CAT_Object::lang()->translate($message);
 
             // avoid "headers already sent" error
             if ( ! headers_sent() && $print_header )
             {
                 $print_footer = true;
-                if(!is_object($parser))
+                if (!is_object($parser) || ( !CAT_Backend::isBackend() && !defined('CAT_PAGE_CONTENT_DONE')) )
+                {
                     self::err_page_header();
+            }
             }
 
             if (!is_object($parser) || ( !CAT_Backend::isBackend() && !defined('CAT_PAGE_CONTENT_DONE')) )
@@ -218,16 +230,6 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
                      ":<br />",
                      CAT_Object::lang()->translate($message),
                      "<br /><br />";
-                if($file)
-                    echo '<span style="font-size: smaller;">',
-                         CAT_Object::lang()->translate('Source'),
-                         ' [ ',
-                         $file,
-                         ' : ',
-                         $line,
-                         ' : ',
-                         $function,
-                         ' ]</span><br /><br />';
                 echo CAT_Object::lang()->translate("We're sorry!");
             }
             else
