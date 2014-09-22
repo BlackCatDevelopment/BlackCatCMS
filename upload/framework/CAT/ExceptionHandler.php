@@ -90,9 +90,11 @@ class CAT_ExceptionHandler
             $message = $exception->getMessage();
             $message = str_replace(
                 array(
-                    CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_doctrine'),
+                    CAT_Helper_Directory::sanitizePath(CAT_PATH),
+                    str_replace('/','\\',CAT_Helper_Directory::sanitizePath(CAT_PATH)),
                 ),
                 array(
+                    '[path to]',
                     '[path to]',
                 ),
                 $message
@@ -102,5 +104,61 @@ class CAT_ExceptionHandler
 
         // log or echo as you please
         CAT_Object::printFatalError($msg);
+    }
+    public static function errorHandler($error_level, $error_message, $error_file, $error_line, $error_context)
+    {
+        $error = "lvl: " . $error_level . " | msg:" . $error_message . " | file:" . $error_file . " | ln:" . $error_line;
+        switch ($error_level) {
+            case E_ERROR:
+            case E_CORE_ERROR:
+            case E_COMPILE_ERROR:
+            case E_PARSE:
+                $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',2);
+                $logger->logFatal($error);
+                break;
+            case E_USER_ERROR:
+            case E_RECOVERABLE_ERROR:
+                $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',3);
+                $logger->logError($error);
+                break;
+            case E_WARNING:
+            case E_CORE_WARNING:
+            case E_COMPILE_WARNING:
+            case E_USER_WARNING:
+                $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',4);
+                $logger->logWarn($error);
+                break;
+            case E_NOTICE:
+            case E_USER_NOTICE:
+                $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',6);
+                $logger->logInfo($error);
+                break;
+            case E_STRICT:
+                $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',7);
+                $logger->logDebug($error);
+                break;
+            default:
+                $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',4);
+                $logger->logWarn($error);
+                break;
+        }
+    }
+    public static function shutdownHandler() //will be called when php script ends.
+    {
+        $lasterror = error_get_last();
+        switch ($lasterror['type'])
+        {
+            case E_ERROR:
+            case E_CORE_ERROR:
+            case E_COMPILE_ERROR:
+            case E_USER_ERROR:
+            case E_RECOVERABLE_ERROR:
+            case E_CORE_WARNING:
+            case E_COMPILE_WARNING:
+            case E_PARSE:
+                $error = "[SHUTDOWN] lvl:" . $lasterror['type'] . " | msg:" . $lasterror['message'] . " | file:" . $lasterror['file'] . " | ln:" . $lasterror['line'];
+                $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',2);
+                $logger->logFatal($error);
+        }
     }
 }

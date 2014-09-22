@@ -180,7 +180,7 @@ if (!class_exists('CAT_Helper_Validate'))
          **/
         public static function uri2path($url)
         {
-            return str_ireplace(self::sanitize_url(getURI($url)),sanitize_path(CAT_PATH),self::sanitize_url($url));
+            return str_ireplace(self::sanitize_url(self::getURI(CAT_URL)),sanitize_path(CAT_PATH),self::sanitize_url($url));
         }   // end function uri2path(()
 
         /**

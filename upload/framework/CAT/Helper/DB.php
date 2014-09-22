@@ -195,7 +195,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
     	public function query($sql,$bind=array())
         {
             $this->setError(NULL);
-            $prevhandler = set_exception_handler(array("CAT_PDOExceptionHandler", "exceptionHandler"));
+            self::setExceptionHandler();
             try {
                 if(is_array($bind))
                 {
@@ -224,6 +224,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     $sql  = str_replace(':prefix:',self::$prefix,$sql);
                     $stmt = self::$conn->query($sql);
                 }
+                self::restoreExceptionHandler();
                 return new CAT_PDOStatementDecorator($stmt);
             } catch ( \Doctrine\DBAL\DBALException $e ) {
                 $error = self::$conn->errorInfo();
@@ -242,6 +243,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
 					$sql
                 ));
             }
+            self::restoreExceptionHandler();
             if($this->isError())
             {
                 $logger = self::$conn->getConfiguration()->getSQLLogger();

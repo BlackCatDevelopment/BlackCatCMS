@@ -199,6 +199,7 @@ $LANG = array(
         => 'Das Template [{{ tpl }}] wurde in keinem der Template-Pfade gefunden!',
     'Unable to {{ action }} {{ type }} {{ module }}!'
         => 'Fehler bei Aktion {{ action }}, {{ type }} {{ module }}!',
+    'Unable to render the page' => 'Fehler beim Darstellen der Seite',
     'Username or password incorrect' => 'Der Benutzername oder das Passwort ist nicht korrekt.',
     'Username too long (max.: {{ length }})' => 'Benutzername zu lang (max.: {{ length }})',
     'Username too short (min.: {{ length }})' => 'Benutzername zu kurz (min.: {{ length }})',

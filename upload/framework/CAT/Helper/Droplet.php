@@ -1051,7 +1051,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
                     $code = implode( '', $lines );
                             // replace 'evil' chars in code
                             $tags = array('<?php', '?>' , '<?');
-                            $code = addslashes(str_replace($tags, '', $code));
+                    //$code = addslashes(str_replace($tags, '', $code));
+                    $code = str_replace($tags,'',$code);
                             // Already in the DB?
                             $stmt  = 'INSERT';
                             $id    = NULL;

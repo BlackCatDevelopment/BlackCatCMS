@@ -25,6 +25,14 @@
  *
  */
 
+// error configuration for production environment
+ini_set('display_startup_errors', 'off');
+ini_set('display_errors', 'off');
+ini_set('html_errors', 'off');
+ini_set('docref_root', 0);
+ini_set('docref_ext', 0);
+ini_set('error_reporting', '-1');
+ini_set('log_errors_max_len', 0);
 
 $starttime = array_sum(explode(" ",microtime()));
 
@@ -46,6 +54,13 @@ else
 	header('Location: '.$target_url);
 	exit(); // make sure that the code below will not be executed
 }
+
+require dirname(__FILE__).'/framework/CAT/ExceptionHandler.php';
+
+// register exception/error handlers
+set_exception_handler(array("CAT_ExceptionHandler", "exceptionHandler"));
+set_error_handler(array("CAT_ExceptionHandler", "errorHandler"));
+register_shutdown_function(array("CAT_ExceptionHandler", "shutdownHandler"));
 
 global $wb, $admin;
 

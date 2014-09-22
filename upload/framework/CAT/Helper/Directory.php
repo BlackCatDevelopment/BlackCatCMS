@@ -367,7 +367,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             require_once(CAT_PATH . '/framework/functions-utf8.php');
             $string = entities_to_7bit($string);
             // remove all bad characters
-            $bad    = array('\'', '"', '`', '!', '@', '#', '$', '%', '^', '&', '*', '=', '+', '|', '/', '\\', ';', ':', ',', '?');
+            $bad    = array('\'', '"', '`', '!', '@', '#', '$', '%', '^', '&', '*', '=', '+', '|', '/', '\\', ';', ':', ',', '?','(',')');
             $string = str_replace($bad, '', $string);
             // replace multiple dots in filename to single dot and (multiple) dots at the end of the filename to nothing
             $string = preg_replace(array('/\.+/', '/\.+$/'), array('.', ''), $string);
