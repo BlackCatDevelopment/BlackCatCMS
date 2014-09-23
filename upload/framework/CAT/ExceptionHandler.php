@@ -109,6 +109,9 @@ class CAT_ExceptionHandler
     {
         $error = "lvl: " . $error_level . " | msg:" . $error_message . " | file:" . $error_file . " | ln:" . $error_line;
         switch ($error_level) {
+            case E_DEPRECATED: // ignore
+            case E_USER_DEPRECATED:
+                break;
             case E_ERROR:
             case E_CORE_ERROR:
             case E_COMPILE_ERROR:

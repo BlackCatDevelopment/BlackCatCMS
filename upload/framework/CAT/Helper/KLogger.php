@@ -115,6 +115,7 @@ class CAT_Helper_KLogger
         'writefail'   => 'The file could not be written to. Check that appropriate permissions have been set.',
         'opensuccess' => 'The log file was opened successfully.',
         'openfail'    => 'The file could not be opened. Check permissions.',
+        'stale'       => 'Stale file handle, trying to open it again',
     );
     
     /**
@@ -229,8 +230,26 @@ class CAT_Helper_KLogger
      */
     public function __destruct()
     {
-        if ($this->_fileHandle) {
-            fclose($this->_fileHandle);
+        if ($this->_fileHandle && is_resource($this->_fileHandle) && get_resource_type($this->_fileHandle)=='stream')
+        {
+            if(count($this->_messageQueue)>1)
+            {
+                fwrite($this->_fileHandle,"-----CLOSING HANDLE; KLOGGER MESSAGE QUEUE-----\n");
+                fwrite($this->_fileHandle,var_export($this->_messageQueue,1));
+            }
+            $stat   = fstat($this->_fileHandle);
+            $locked = false;
+            // check if another process has locked the file
+            if (flock($this->_fileHandle, LOCK_EX))
+                flock($this->_fileHandle, LOCK_UN); // release the lock
+            else
+                $locked = true;
+            $res = fclose($this->_fileHandle);
+            if(is_array($stat) && count($stat) && isset($stat['size']) && $stat['size'] == 0) // remove empty log files
+            {
+                if(!$locked && file_exists($this->_logFilePath))
+                    @unlink($this->_logFilePath);        // remove the file
+            }
         }
     }
     /**
@@ -427,8 +446,18 @@ class CAT_Helper_KLogger
     {
         if ($this->_logStatus == self::STATUS_LOG_OPEN
             && $this->_severityThreshold != self::OFF) {
+            if(get_resource_type($this->_fileHandle) !== 'stream') {
+                $this->_messageQueue[] = $this->_messages['stale'];
+                if (false !== ($this->_fileHandle = fopen($this->_logFilePath, 'a'))) {
             if (fwrite($this->_fileHandle, $line) === false) {
                 $this->_messageQueue[] = $this->_messages['writefail'];
+                    }
+                }
+            }
+            else {
+                if (fwrite($this->_fileHandle, $line) === false) {
+                    $this->_messageQueue[] = $this->_messages['writefail'];
+                }
             }
         }
     }

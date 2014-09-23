@@ -68,8 +68,6 @@ class wb
     public function __construct()
     {
   		$this->lang  = CAT_Helper_I18n::getInstance(LANGUAGE);
-
-        set_error_handler( array('wb','cat_error_handler') );
     }   // end constructor
 
     public function __call($method, $arguments)
@@ -86,83 +84,6 @@ class wb
             $this->lang  = CAT_Helper_I18n::getInstance(LANGUAGE);
         return $this->lang;
         }
-
-    /**
-     * custom error handler
-     **/
-    public static function cat_error_handler($errno,$errstr,$errfile=NULL,$errline=NULL,array $errcontext)
-    {
-        if (!(error_reporting() & $errno))
-        {
-            return;
-        }
-        // check for AJAX call
-        if ( CAT_Helper_Validate::get('_REQUEST','_cat_ajax') )
-        {
-            return;
-        }
-        global $parser;
-        // replace path in $errfile and $errstr to protect the data
-        $errfile = str_ireplace( array(CAT_PATH,'\\'), array('/abs/path/to','/'), $errfile );
-        $errstr  = str_ireplace( array(CAT_PATH,'\\'), array('/abs/path/to','/'), $errstr  );
-        $output  = NULL;
-        $fatal   = false;
-        switch ($errno)
-        {
-            case E_USER_ERROR:
-                $output = "<b>Black Cat CMS ERROR</b><br />\n"
-                        . "&nbsp;&nbsp;[ERRNO:$errno] $errstr<br />\n"
-                        . "&nbsp;&nbsp;Fatal error on line $errline in file $errfile<br />"
-                        . "&nbsp;&nbsp;PHP Version " . PHP_VERSION . " (" . PHP_OS . ")<br />\n"
-                        . "Aborting...<br />\n";
-                $fatal  = true;
-                break;
-
-            case E_USER_WARNING:
-                $output = "<b>Black Cat CMS WARNING</b><br />\n&nbsp;&nbsp;[$errno] $errstr<br />\n";
-                break;
-
-            case E_USER_NOTICE:
-                $output = "<b>Black Cat CMS NOTICE</b><br />\n&nbsp;&nbsp;[$errno] $errstr<br />\n";
-                break;
-
-            default:
-                $output = "<b>Black Cat CMS NOTICE</b><br />\n&nbsp;&nbsp;Unknown error type:<br />\n&nbsp;&nbsp;[$errno] $errstr<br />\n";
-                break;
-        }   // end switch
-        if ( defined('CAT_DEBUG') && true === CAT_DEBUG )
-        {
-                $output .= "<textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">"
-                        .  print_r( debug_backtrace(),1 )."</textarea>";
-        }
-        if ( $fatal )
-    {
-            if ( !headers_sent() ) {
-                echo header('content-type:text/html');
-    }
-            if ( is_object($parser) )
-    {
-    			$parser->setPath(CAT_THEME_PATH . '/templates');
-    			$parser->setFallbackPath(CAT_THEME_PATH . '/templates');
-    			$parser->output('error_page.lte', array( 'MESSAGE' => $output, 'LINK' => '' ));
-                }
-            else {
-                echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-  <meta http-equiv="content-type" content="text/html; charset=windows-1250">
-  <title>Black Cat CMS Error Message</title>
-  </head>
-  <body>', $output, '</body></html>';
-            }
-            exit;
-        }
-        else
-        {
-            echo $output;
-    }
-        return false;
-    }   // end error handler
 
     // Escape backslashes for use with mySQL LIKE strings
     public function escape_backslashes($input)

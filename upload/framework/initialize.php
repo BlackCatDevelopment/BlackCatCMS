@@ -41,7 +41,6 @@ if (defined('CAT_PATH')) {
 }
 
 ini_set('default_charset','UTF-8');
-ini_set('display_errors',0);
 
 //**************************************************************************
 // add framework subdir to include path
@@ -114,16 +113,6 @@ CAT_Registry::register('ER_LEVELS', array(
     '6143' => 'E_ALL',
     '8191' => htmlentities('E_ALL&E_STRICT'), // for programmers
 ));
-
-//**************************************************************************
-// set error-reporting
-//**************************************************************************
-if (is_numeric(ER_LEVEL))
-{
-    error_reporting(ER_LEVEL);
-    if (ER_LEVEL > 0)
-        ini_set('display_errors', 1);
-}
 
 //**************************************************************************
 //**************************************************************************

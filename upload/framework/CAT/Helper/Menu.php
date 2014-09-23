@@ -37,7 +37,7 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
          **/
 	    protected $_config
 			= array(
-                 'loglevel'             => 7,
+                 'loglevel'             => 8,
 			);
 
         /**

@@ -33,7 +33,6 @@ if (!class_exists('CAT_Helper_Template'))
     {
 
         protected $debuglevel      = CAT_Helper_KLogger::CRIT;
-        protected $logger          = NULL;
         protected $_config         = array( 'loglevel' => CAT_Helper_KLogger::CRIT );
         private   static $_drivers = array();
         private   static $_driver  = NULL;
@@ -55,12 +54,6 @@ if (!class_exists('CAT_Helper_Template'))
             ) {
                 $this->setPath( $this->workdir.'/templates' );
             }
-
-            if ( ! class_exists('CAT_Helper_KLogger',false) ) {
-                include dirname(__FILE__).'/../../../framework/CAT/Helper/KLogger.php';
-    		}
-            $this->logger = new CAT_Helper_KLogger( CAT_PATH.'/temp', $this->debuglevel );
-
         }   // end function __construct()
 
         /**

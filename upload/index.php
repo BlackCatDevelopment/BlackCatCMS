@@ -25,6 +25,8 @@
  *
  */
 
+$starttime = array_sum(explode(" ",microtime()));
+
 // error configuration for production environment
 ini_set('display_startup_errors', 'off');
 ini_set('display_errors', 'off');
@@ -34,13 +36,19 @@ ini_set('docref_ext', 0);
 ini_set('error_reporting', '-1');
 ini_set('log_errors_max_len', 0);
 
-$starttime = array_sum(explode(" ",microtime()));
-
 // Include config file
 $config_file = dirname(__FILE__).'/config.php';
 if(file_exists($config_file))
 {
 	require_once($config_file);
+    if(defined('CAT_ENVIRONMENT') && CAT_ENVIRONMENT == 'development')
+    {
+        ini_set('display_startup_errors', 'on');
+        ini_set('display_errors', 'on');
+        ini_set('html_errors', 'on');
+        ini_set('error_reporting', E_ALL & E_STRICT);
+        ini_set('log_errors_max_len', 1024);
+    }
 }
 else
 {

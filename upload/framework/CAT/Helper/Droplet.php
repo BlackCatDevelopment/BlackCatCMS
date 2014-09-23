@@ -56,10 +56,11 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         public static function getInstance()
         {
+            if(!defined('CR'))   define('CR',chr(13));
+            if(!defined('LF'))   define('LF',chr(10));
+            if(!defined('CRLF')) define('CRLF',chr(13)+chr(10));
             if (!self::$instance)
-            {
                 self::$instance = new self();
-            }
             return self::$instance;
         }   // end function getInstance()
 
@@ -590,11 +591,11 @@ if (!class_exists('CAT_Helper_Droplet')) {
                     }
                 }
             }
-            $inString = @ini_set('log_errors', false);
-            $token = @ini_set('display_errors', true);
+            $inString = @ini_set('log_errors', 'off');
+            $err_set = @ini_set('display_errors','on');
             ob_start();
             $braces || $code = "if(0){{$code}\n}";
-            if (eval($code) === false) {
+            if (@eval($code) === false) {
                 if ($braces) {
                     $braces = PHP_INT_MAX;
                 } else {
@@ -613,7 +614,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 ob_end_clean();
                 $code = true;
             }
-            @ini_set('display_errors', $token);
+            @ini_set('display_errors', $err_set);
             @ini_set('log_errors', $inString);
             return $code;
         }   // end function check_syntax()
@@ -1168,7 +1169,10 @@ if (!class_exists('CAT_Helper_Droplet')) {
             $wb_page_data =& $__CAT_Helper_Droplets_content;
             self::getInstance()->log()->LogDebug('evaluating: '.$_x_codedata);
             extract( $_x_varlist, EXTR_SKIP );
-            return ( eval( $_x_codedata ) );
+            if(self::check_syntax($_x_codedata)===true)
+            {
+                return @eval($_x_codedata);
+            }
         }   // end function do_eval()
 
         /**

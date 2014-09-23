@@ -67,7 +67,7 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
         public function __call($method, $args)
         {
             if ( ! method_exists( $this->te, $method ) )
-                $this->logger->logCrit('No such method: ['.$method.']');
+                $this->log()->logCrit('No such method: ['.$method.']');
             switch(count($args))
             {
                 case 0:
@@ -100,7 +100,7 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
          public function setPath ( $path, $context = 'frontend' )
          {
             $path = CAT_Helper_Directory::sanitizePath($path);
-            $this->logger->logDebug(sprintf('context [%s] path [%s]', $context, $path ));
+            $this->log()->logDebug(sprintf('context [%s] path [%s]', $context, $path ));
             if ( file_exists( $path ) )
             {
                 $this->te->paths[$context]  = $path;
@@ -111,7 +111,7 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
             }
             else
             {
-                $this->logger->logWarn( 'unable to set template path: does not exist!', $path );
+                $this->log()->logWarn( 'unable to set template path: does not exist!', $path );
                 return false;
             }
         }   // end function setPath()
@@ -128,14 +128,14 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
         public function setFallbackPath ( $path, $context = 'frontend' )
         {
             $path = CAT_Helper_Directory::sanitizePath($path);
-            $this->logger->logDebug(sprintf('context [%s] fallback path [%s]', $context, $path ));
+            $this->log()->logDebug(sprintf('context [%s] fallback path [%s]', $context, $path ));
             if ( file_exists( $path ) ) {
                 $this->te->paths[$context.'_fallback'] = $path;
             return true;
             }
             else
             {
-                $this->logger->logWarn( 'unable to set fallback template path: does not exist!', $path );
+                $this->log()->logWarn( 'unable to set fallback template path: does not exist!', $path );
                 return false;
             }
         }   // end function setFallbackPath()
@@ -224,7 +224,7 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
                     return $file;
                 }
             }
-            $this->logger->logCrit( "The template [$_tpl] does not exists in one of the possible template paths!", $paths );
+            $this->log()->logCrit( "The template [$_tpl] does not exists in one of the possible template paths!", $paths );
             // the template does not exists, so at least prompt an error
             $br = "\n";
             CAT_Object::printFatalError(

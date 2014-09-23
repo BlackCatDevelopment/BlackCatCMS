@@ -39,6 +39,7 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
         public    $path            = NULL;
         public    $fallback_path   = NULL;
         public    static $_globals = array();
+        protected $logger          = NULL;
 
         public function __construct()
         {
@@ -47,10 +48,12 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
             $compiled_path = CAT_PATH.'/temp/compiled';
             if (!file_exists($compiled_path)) mkdir($compiled_path, 0755, true);
             parent::__construct( $compiled_path, $cache_path );
+            // we need our own logger instance here as the driver does not
+            // inherit from CAT_Object
             if ( ! class_exists('CAT_Helper_KLogger',false) ) {
                 include dirname(__FILE__).'/../../../framework/CAT/Helper/KLogger.php';
     		}
-            $this->logger = new CAT_Helper_KLogger( CAT_PATH.'/temp', $this->debuglevel );
+            $this->logger = new CAT_Helper_KLogger( CAT_PATH.'/temp/logs', $this->debuglevel );
         }   // end function __construct()
 
         public function output($_tpl, $data = array(), Dwoo_ICompiler $compiler = NULL)
