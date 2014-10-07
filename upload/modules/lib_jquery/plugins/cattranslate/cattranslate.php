@@ -4,7 +4,7 @@
  *   @author          Black Cat Development
  *   @copyright       2013, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         lib_jquery
  *
@@ -17,8 +17,17 @@ $val  = CAT_Helper_Validate::getInstance();
 $attr = $val->get('_REQUEST','attr');
 $msg  = $val->get('_REQUEST','msg');
 
-$msg  = htmlspecialchars($msg, ENT_XHTML, 'UTF-8');
-$attr = htmlspecialchars($attr, ENT_XHTML, 'UTF-8');
+if( version_compare(phpversion(),'5.4','<') )
+{
+    $msg  = htmlspecialchars($msg, ENT_QUOTES, 'UTF-8');
+    $attr = htmlspecialchars($attr, ENT_QUOTES, 'UTF-8');
+}
+else
+{
+    $msg  = htmlspecialchars($msg, ENT_XHTML, 'UTF-8');
+    $attr = htmlspecialchars($attr, ENT_XHTML, 'UTF-8');
+}
+
 if( file_exists(CAT_PATH.'/languages/'.$lang->getLang().'.php') ) {
     $lang->addFile( $lang->getLang().'.php', CAT_PATH.'/languages/' );
 }
@@ -38,5 +47,5 @@ if ( is_object($lang) ) {
 	echo '<data>'.$lang->translate($msg,$attr).'</data>';
 }
 else {
-	echo '<error>Unable to create I18n instance!</error>';
+	echo '<data>'.$msg.'</data>';
 }
