@@ -14,13 +14,11 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
+ *   @author          Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Module
+ *   @category        CAT_Modules
  *   @package         wrapper
  *
  */
@@ -41,17 +39,20 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$module_directory = 'wrapper';
-$module_name = 'Wrapper';
-$module_function = 'page';
-$module_version = '2.7.5';
-$module_platform = '2.x';
-$module_author = 'Ryan Djurovich, Dietrich Roland Pehlke, Black Cat Development (last)';
-$module_license = 'GNU General Public License';
+$module_directory   = 'wrapper';
+$module_name        = 'Wrapper';
+$module_function    = 'page';
+$module_version     = '3.0';
+$module_platform    = '2.x';
+$module_author      = 'Ryan Djurovich, Dietrich Roland Pehlke, Black Cat Development (last)';
+$module_license     = 'GNU General Public License';
 $module_description = 'This module allows you to wrap your site around another using an inline frame';
-$module_guid      = 'a5830654-06f3-402a-9d25-a03c53fc5574';
+$module_guid        = 'a5830654-06f3-402a-9d25-a03c53fc5574';
 
 /**
+ *  3.0     2014-10-07  - added changes for BlackCat CMS v1.1, so this will no
+ *                        longer work with WB, LEPTON or BC 1.0.x
+ *
  *  2.7.5   2013-10-23  - allow to use CSS (%) for width and height
  *
  *  2.7.4   2013-10-23  - fix for BlackCat CMS

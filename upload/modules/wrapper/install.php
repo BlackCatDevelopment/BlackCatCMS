@@ -14,13 +14,11 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
+ *   @author          Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Module
+ *   @category        CAT_Modules
  *   @package         wrapper
  *
  */
@@ -41,21 +39,17 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-if(defined('CAT_URL')) {
-	
-	// Create table
-	// $database->query("DROP TABLE IF EXISTS `".CAT_TABLE_PREFIX."mod_wrapper`");
-	$mod_wrapper = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_wrapper` ('
-		. ' `section_id` INT NOT NULL DEFAULT \'0\','
-		. ' `page_id` INT NOT NULL DEFAULT \'0\','
-		. ' `url` TEXT NOT NULL,'
-		. ' `height` INT NOT NULL DEFAULT \'0\','
-		. ' `width` INT NOT NULL DEFAULT \'0\','
-		. ' `wtype` VARCHAR(50) NOT NULL DEFAULT \'0\','
-		. ' PRIMARY KEY ( `section_id` ) '
-		. ' )';
-	$database->query($mod_wrapper);
-}
+// Create table
+$mod_wrapper = 'CREATE TABLE IF NOT EXISTS `'.CAT_TABLE_PREFIX.'mod_wrapper` ('
+	. ' `section_id` INT NOT NULL DEFAULT \'0\','
+	. ' `page_id` INT NOT NULL DEFAULT \'0\','
+	. ' `url` TEXT NULL,'
+	. ' `height` VARCHAR(50) NOT NULL DEFAULT \'400px\','
+	. ' `width` VARCHAR(50) NOT NULL DEFAULT \'100%\','
+	. ' `wtype` VARCHAR(50) NOT NULL DEFAULT \'object\','
+	. ' PRIMARY KEY ( `section_id` ) '
+	. ' )';
+$database->query($mod_wrapper);
 
 // add files to class_secure
 $addons_helper = new CAT_Helper_Addons();

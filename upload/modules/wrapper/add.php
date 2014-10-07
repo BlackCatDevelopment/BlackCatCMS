@@ -14,13 +14,11 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
+ *   @author          Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Module
+ *   @category        CAT_Modules
  *   @package         wrapper
  *
  */
@@ -44,6 +42,8 @@ if (defined('CAT_PATH')) {
 global $database, $page_id, $section_id;
 
 // Insert an extra row into the database
-$database->query("INSERT INTO ".CAT_TABLE_PREFIX."mod_wrapper (`page_id`, `section_id`, `height`, `width`, `url`) VALUES ('$page_id', '$section_id', '400px', '100%', '')");
-
-?>
+$database->query(
+     "INSERT INTO `:prefix:mod_wrapper` (`section_id`, `page_id`, `url`, `height`, `width`, `wtype`) "
+    ."VALUES (:section, :page_id, '', '400px', '100%', 'object')",
+    array('page_id'=>$page_id,'section'=>$section_id)
+);

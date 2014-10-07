@@ -54,6 +54,11 @@ if ( ! CAT_Helper_Addons::versionCompare( $module_version, '2.7.5', '>=' ) ) {
 	CHANGE COLUMN `height` `height` VARCHAR(50) NOT NULL DEFAULT \'400\' AFTER `url`,
 	CHANGE COLUMN `width` `width` VARCHAR(50) NOT NULL DEFAULT \'100%\' AFTER `height`;');
 }
+if ( ! CAT_Helper_Addons::versionCompare( $module_version, '2.7.5', '>=' ) ) {
+    $database->query('ALTER TABLE `'.CAT_TABLE_PREFIX.'mod_wrapper`
+	CHANGE COLUMN `url` `url` TEXT NULL;');
+}
+
 
 // remove old template files
 $ltes = CAT_Helper_Directory::getInstance()->findFiles( '.*\.lte', dirname(__FILE__).'/htt' );

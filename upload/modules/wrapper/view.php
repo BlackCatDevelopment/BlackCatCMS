@@ -41,14 +41,14 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-global $parser;
+global $database, $parser, $section_id;
 
 // get url
-$get_settings   = $database->query(sprintf(
-    "SELECT `url`,`height`,`width`,`wtype` FROM `%smod_wrapper` WHERE section_id = '%d'",
-    CAT_TABLE_PREFIX, $section_id
-));
-$fetch_settings = $get_settings->fetchRow();
+$get_settings   = $database->query(
+    "SELECT `url`,`height`,`width`,`wtype` FROM `:prefix:mod_wrapper` WHERE `section_id` = :section",
+    array('section'=>$section_id)
+);
+$fetch_settings = $get_settings->fetch();
 $url            = $fetch_settings['url'];
 
 if ( !isset($fetch_settings['wtype']) || ($fetch_settings['wtype']) == '' ) {
@@ -56,13 +56,12 @@ if ( !isset($fetch_settings['wtype']) || ($fetch_settings['wtype']) == '' ) {
 }
 
 if ( !file_exists(CAT_PATH.'/modules/wrapper/htt/'.$fetch_settings['wtype'].'.tpl') ) {
-	echo "ERROR: No such type!<br />";
+	$fetch_settings['wtype'] = 'iframe';
 }
-else {
-	$data = array(
-	    'MOD_WRAPPER' => $MOD_WRAPPER,
-	    'SETTINGS'    => $fetch_settings
-	);
-	$parser->setPath( CAT_PATH.'/modules/wrapper/htt' );
-	$parser->output( $fetch_settings['wtype'].'.tpl', $data );
-}
+
+$data = array(
+    'MOD_WRAPPER' => $MOD_WRAPPER,
+    'SETTINGS'    => $fetch_settings
+);
+$parser->setPath( CAT_PATH.'/modules/wrapper/htt' );
+$parser->output( $fetch_settings['wtype'].'.tpl', $data );

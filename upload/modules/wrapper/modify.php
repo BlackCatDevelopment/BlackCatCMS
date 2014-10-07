@@ -14,13 +14,11 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
+ *   @author          Black Cat Development
+ *   @copyright       2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Module
+ *   @category        CAT_Modules
  *   @package         wrapper
  *
  */
@@ -42,21 +40,19 @@ if (defined('CAT_PATH')) {
 }
 
 // Get page content
-$query        = "SELECT url,height,width,wtype FROM " . CAT_TABLE_PREFIX . "mod_wrapper WHERE section_id = '$section_id'";
-$get_settings = $database->query( $query );
-$settings     = $get_settings->fetchRow( MYSQL_ASSOC );
-$url          = ( $settings[ 'url' ] );
+$query        = "SELECT `url`,`height`,`width`,`wtype` FROM `:prefix:mod_wrapper` WHERE `section_id` = :section";
+$get_settings = $database->query($query,array('section'=>$section_id));
+$settings     = $get_settings->fetch();
+$url          = $settings['url'];
 
 // Insert vars
 $data = array(
-	'PAGE_ID' => $page_id,
+	'PAGE_ID'    => $page_id,
 	'SECTION_ID' => $section_id,
-	'CAT_URL' => CAT_URL,
-	'URL' => $url,
-	'settings' => $settings,
+	'CAT_URL'    => CAT_URL,
+	'URL'        => $url,
+	'settings'   => $settings,
 );
 
 $parser->setPath( CAT_PATH.'/modules/wrapper/htt' );
 $parser->output( 'modify.tpl', $data );
-
-?>

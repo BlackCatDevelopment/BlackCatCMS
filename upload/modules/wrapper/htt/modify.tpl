@@ -1,7 +1,8 @@
-<form action="{$CAT_URL}/modules/wrapper/save.php" method="post">
+<form action="{$CAT_URL}/modules/wrapper/save.php" method="post" class="ajax">
 	<input type="hidden" name="page_id" value="{$PAGE_ID}" />
 	<input type="hidden" name="section_id" value="{$SECTION_ID}" />
-	<table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <input type="hidden" name="_cat_ajax" value="1" />
+ 	<table cellpadding="0" cellspacing="0" border="0" width="100%">
 		<tr>
 			<td align="left" width="50">
 				{$TEXT.TYPE}:
@@ -18,7 +19,7 @@
 				{$TEXT.URL}:
 			</td>
 			<td>
-				<input type="text" name="url" value="{$URL}" style="width:90%;" />
+				<input type="text" name="url" value="{$URL}" style="min-width:350px;" />
 			</td>
 		</tr>
 		<tr>
