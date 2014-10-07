@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 $template_directory			= 'freshcat';
 $template_name				= 'FreshCat Backend Theme';
 $template_function			= 'theme';
-$template_version			= '0.7.6';
+$template_version			= '0.7.7';
 $template_platform			= '1.x';
 $template_author			= 'Matthias Glienke, creativecat';
 $template_license			= '<a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>';

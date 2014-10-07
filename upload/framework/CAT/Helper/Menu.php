@@ -27,6 +27,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
     @include dirname(__FILE__).'/../Object.php';
 }
 
+include dirname(__FILE__).'/../../wblib/wbList.php';
+
 if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
 	class CAT_Helper_Menu extends CAT_Object
 	{

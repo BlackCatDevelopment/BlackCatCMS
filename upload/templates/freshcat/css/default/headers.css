@@ -29,7 +29,7 @@
 
 	#fc_side_choose {
 		display:		inline-block;
-		width:			235px;
+		width:			140px;
 		padding:		0px 10px;
 		float:			left;
 		line-height:	48px;
@@ -141,3 +141,7 @@
 }
 
 .icon-logo_bc{margin-right:5px;}
+
+@media screen and (min-width: 64.063em) {
+    #fc_side_choose{width:235px;}
+}

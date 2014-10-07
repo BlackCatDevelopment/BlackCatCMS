@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
@@ -39,14 +39,64 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-// AJAX call
+// view
 if(CAT_Helper_Validate::sanitizePost('file'))
 {
     $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'.CAT_Helper_Validate::sanitizePost('file'));
     if(file_exists($file))
     {
         $lines = file($file);
-        echo implode('',$lines);
+        $output = implode('<br />',$lines);
+        $output = str_replace(
+            array(
+                'INFO',
+                'WARN',
+                'CRIT'
+            ),
+            array(
+                '<span style="color:#006600">INFO</span>',
+                '<span style="color:#FF6600">WARN</span>',
+                '<span style="color:#990000;font-weight:900;">CRIT</span>',
+            ),
+            $output
+        );
+        echo $output;
+    }
+    else
+    {
+        echo CAT_Helper_Validate::getInstance()->lang()->translate("File not found")
+            . ": ".str_ireplace( array(str_replace('\\','/',CAT_PATH),'\\'), array('/abs/path/to','/'), $file );
+    }
+    exit;
+}
+// download
+if(CAT_Helper_Validate::sanitizeGet('dl'))
+{
+    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'.CAT_Helper_Validate::sanitizeGet('dl'));
+    if(file_exists($file))
+    {
+        $zip = CAT_Helper_Zip::getInstance(pathinfo($file,PATHINFO_DIRNAME).'/'.pathinfo($file,PATHINFO_FILENAME).'.zip');
+        $zip->config('removePath',pathinfo($file,PATHINFO_DIRNAME))
+            ->create(array($file));
+        if(!$zip->errorCode() == 0)
+        {
+            echo CAT_Helper_Validate::getInstance()->lang()->translate("Unable to pack the file")
+                . ": ".str_ireplace( array( str_replace('\\','/',CAT_PATH),'\\'), array('/abs/path/to','/'), $file );
+        }
+        else
+        {
+            $filename = pathinfo($file,PATHINFO_DIRNAME).'/'.pathinfo($file,PATHINFO_FILENAME).'.zip';
+            header("Pragma: public"); // required
+            header("Expires: 0");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Cache-Control: private",false); // required for certain browsers
+            header("Content-Type: application/zip");
+            header("Content-Disposition: attachment; filename=\"".basename($filename)."\";" );
+            header("Content-Transfer-Encoding: binary");
+            header("Content-Length: ".filesize($filename));
+            readfile("$filename");
+            exit;
+        }
     }
     else
     {
@@ -56,6 +106,7 @@ if(CAT_Helper_Validate::sanitizePost('file'))
     exit;
 }
 
+// remove
 if(CAT_Helper_Validate::sanitizePost('remove'))
 {
     $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'.CAT_Helper_Validate::sanitizePost('remove'));
@@ -96,16 +147,16 @@ $files = CAT_Helper_Directory::getInstance()
 if(count($files))
     foreach($files as $f)
         if(filesize($f)!==0)
-            $list[] = $f;
+            $list[] = array('file'=>$f,'size'=>filesize($f));
 
 if(count($list))
 {
     foreach(array_values($list) as $f)
     {
-        $file = str_ireplace(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'),'',CAT_Helper_Directory::sanitizePath($f));
+        $file = str_ireplace(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'),'',CAT_Helper_Directory::sanitizePath($f['file']));
         if(substr($file,0,1)=="/")
             $file = substr_replace($file,'',0,1);
-        $logs[] = $file;
+        $logs[] = array('file'=>$file,'size'=>CAT_Helper_Directory::byte_convert($f['size']));
     }
 }
 else

@@ -53,8 +53,7 @@ $local = array (
 $mod_headers = array(
 	'backend' => array(
 		'meta' => array(
-			array(
-			)
+			array( 'name' => 'viewport', 'content' => 'width=device-width, initial-scale=1' ),
 		),
 		'css' => array(
 			array(

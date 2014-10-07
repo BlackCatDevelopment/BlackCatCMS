@@ -245,11 +245,13 @@ class CAT_Helper_KLogger
             else
                 $locked = true;
             $res = fclose($this->_fileHandle);
-            if(is_array($stat) && count($stat) && isset($stat['size']) && $stat['size'] == 0) // remove empty log files
-            {
-                if(!$locked && file_exists($this->_logFilePath))
-                    @unlink($this->_logFilePath);        // remove the file
-            }
+#            if(is_array($stat) && count($stat) && isset($stat['size']) && $stat['size'] == 0) // remove empty log files
+#            {
+#                if(!$locked && file_exists($this->_logFilePath) && is_writable($this->_logFilePath))
+#                {
+#                    @unlink($this->_logFilePath);        // remove the file
+#                }
+#            }
         }
     }
     /**

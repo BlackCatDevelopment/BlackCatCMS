@@ -1,15 +1,19 @@
 <div id="bclogs">
     {if $logs}
-    <table>
+    <table style="width:90%;margin:0 auto;">
     {foreach $logs item}
     <tr>
-        <td><a style="margin-right:20px" class="bcshowlog" href="{$CAT_URL}/modules/blackcat/widgets/logs.php?file={$item}">{$item}</a></td>
-        <td><a href="{$CAT_URL}/modules/blackcat/widgets/logs.php?remove={$item}" class="bclogremove icon-remove"><span style="display:none">{$item}</span></a></td>
+        <td><a style="margin-right:20px" class="bcshowlog" href="{$CAT_URL}/modules/blackcat/widgets/logs.php?file={$item.file}">{$item.file}</a></td>
+        <td>{$item.size}</td>
+        <td>
+            <a href="{$CAT_URL}/modules/blackcat/widgets/logs.php?dl={$item.file}" class="bclogdl icon-download"><span style="display:none">{$item.file}</span></a>
+            <a href="{$CAT_URL}/modules/blackcat/widgets/logs.php?remove={$item.file}" class="bclogremove icon-remove"><span style="display:none">{$item.file}</span></a>
+        </td>
     </tr>
     {/foreach}
     </table>
     {/if}
-    <div id="bclogdialog" title="{translate('Log')}:" style="display:none;max-height:400px;overflow:auto;"></div>
+    <div id="bclogdialog" title="{translate('Log')}:" style="display:none;max-height:400px;overflow:auto;font-size:10px;"></div>
 </div>
 
 <script charset=windows-1250 type="text/javascript">

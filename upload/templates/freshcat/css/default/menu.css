@@ -30,7 +30,7 @@
 	#fc_menu li {
 		float:				left;
 		padding:			0px;
-		margin:				0px 5px;
+		margin:				0px;
 		list-style-type:	none;
 	}
 
@@ -80,3 +80,7 @@
 		#fc_menu li a.icon-fc_access:before {
 			content:		"\e015";
 		}
+
+@media screen and (min-width: 64.063em) {
+    #fc_menu li{margin:0px 5px;}
+}

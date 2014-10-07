@@ -27,7 +27,7 @@
 #fc_lists_overview {
 	position:		absolute;
 	left:			0px;
-	width:			260px;
+	width:			156px;
 	line-height:	2em;
 }
 
@@ -38,7 +38,7 @@
 	border-right:	1px solid #9da8b2;
 }
 	.fc_all_forms {
-		margin-left:	260px;
+		margin-left:	156px;
 		border-left:	1px solid #9da8b2;
 	}
 	form .fc_all_forms {
@@ -73,12 +73,12 @@
 		margin:			0px;
 		padding:		0px 10px;
 		font-size:		1.6em;
-		line-height:	1em;
+		line-height:	0.8em;
 		cursor:			pointer;
 	}
 	#fc_list_overview.fc_group_list li {
-		padding-top:		10px;
-		padding-bottom:		10px;
+		padding-top:		3px;
+		padding-bottom:		3px;
 	}
 
 		#fc_list_overview li span {
@@ -254,4 +254,16 @@
 
 div.fc_modifyUser {
     width: 80%;
+}
+
+div#fc_lists_overview.fc_addons ul#fc_list_overview.fc_group_list li.fc_module_item span.icon-puzzle,
+div#fc_lists_overview.fc_addons ul#fc_list_overview.fc_group_list li.fc_module_item img{display:none;}
+
+@media screen and (min-width: 64.063em) {
+    #fc_lists_overview {width:260px;}
+    .fc_all_forms {margin-left:260px;}
+    #fc_list_overview li {line-height:1em;}
+    div#fc_lists_overview.fc_addons ul#fc_list_overview.fc_group_list li.fc_module_item span.icon-puzzle,
+    div#fc_lists_overview.fc_addons ul#fc_list_overview.fc_group_list li.fc_module_item img{display:inline;}
+    #fc_list_overview.fc_group_list li {padding-top:10px;padding-bottom:10px;}
 }

@@ -27,7 +27,7 @@
 	left:				0px;
 	z-index:			2;
 	min-height:			400px;
-	width:				250px;
+	width:				150px; /* for smaller screens */
 	border-right:		1px solid #9da8b2;
 	line-height:		2em;
 }
@@ -159,3 +159,7 @@
 		margin-top:		1.4em;
 		width:			auto;
 	}
+
+@media screen and (min-width: 64.063em) {
+    #fc_sidebar{width:250px;}
+}
