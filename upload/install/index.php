@@ -1464,6 +1464,9 @@ function __do_install() {
     // remove trailing /
     $config_cat_url = rtrim( $config['cat_url'], '/' );
 
+    // remove scheme
+    $config_cat_url = preg_replace('~^https?:~i','',$config_cat_url);
+
     $config_content = "" .
 "<?php\n".
 "\n".

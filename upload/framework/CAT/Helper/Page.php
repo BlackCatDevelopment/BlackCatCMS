@@ -857,7 +857,7 @@ if (!class_exists('CAT_Helper_Page'))
                         {
                             if ( ! preg_match( '~^/~', $item['file'] ) )
                                 $item['file'] = '/' . $item['file'];
-                    $file = (preg_match('#' . CAT_URL . '#i', $item['file']) ? $item['file'] : CAT_URL . '/' . $item['file']);
+                            $file = (preg_match('#' . CAT_URL . '#i', $item['file']) ? $item['file'] : CAT_URL . '/' . $item['file']);
                             $file = $val->sanitize_url($file);
                         }
                         else
@@ -876,10 +876,10 @@ if (!class_exists('CAT_Helper_Page'))
                                   ;
                         }
                         $output[] = $line;
-                }
-                    $seen[$item['file']] = 1;
-                        $output .= '<link rel="stylesheet" type="text/css" href="' . $file . '" media="' . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
                     }
+                    $seen[$item['file']] = 1;
+                    $output[] = '<link rel="stylesheet" type="text/css" href="' . $file . '" media="'
+                              . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
                 }
             }
             return implode('',$output);
@@ -1333,8 +1333,8 @@ if (!class_exists('CAT_Helper_Page'))
             $description = NULL;
 
             // charset
-                $output[] = CAT_Helper_Page::$space
-                          . '<meta http-equiv="Content-Type" content="text/html; charset='
+            $output[] = CAT_Helper_Page::$space
+                      . '<meta http-equiv="Content-Type" content="text/html; charset='
                       . (isset($properties['default_charset']) ? $properties['default_charset'] : 'utf-8')
                           . '" />'
                           ;
@@ -1528,7 +1528,7 @@ if (!class_exists('CAT_Helper_Page'))
                             return $set[$type][$key][0];
                         return $set[$type][$key];
                     }
-        }
+                }
                 else
                 {
                     return ( isset($set[$type]) ? $set[$type] : NULL );
@@ -2257,8 +2257,8 @@ if (!class_exists('CAT_Helper_Page'))
                 // if the path contains 'modules' or 'templates', we presume
                 // that it's a complete path
                 // same for entries starting with 'http(s)'
-                                        if (
-                        preg_match('/^http(s)?:/', $item, $m1) // abs. URL
+                if (
+                       preg_match('/^http(s)?:/', $item, $m1) // abs. URL
                     || preg_match('#/(modules|templates)/#i', $item, $m2)
                                         ) {
                     $self->log()->logDebug('m1',$m1);
@@ -2793,8 +2793,5 @@ if (!class_exists('CAT_Helper_Page'))
         {
         
         }   // end function _set_current()
-        
-
-
     }
 }

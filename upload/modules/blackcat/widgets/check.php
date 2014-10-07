@@ -39,6 +39,13 @@ if (defined('CAT_PATH')) {
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
+require CAT_PATH.'/framework/CAT/ExceptionHandler.php';
+
+// register exception/error handlers
+set_exception_handler(array("CAT_ExceptionHandler", "exceptionHandler"));
+set_error_handler(array("CAT_ExceptionHandler", "errorHandler"));
+register_shutdown_function(array("CAT_ExceptionHandler", "shutdownHandler"));
+
 include dirname(__FILE__).'/../data/config.inc.php';
 
 $widget_name = 'Version check';
@@ -79,12 +86,10 @@ if ( $doit ) {
             'proxy_port'   => $current['proxy_port'],
         )
     );
-    #$client->setCookieJar();
     $client->setHeaders(
         array(
             'Pragma' => 'no-cache',
             'Cache-Control' => 'no-cache',
-#            'Accept-Encoding' => '',
         )
     );
 
@@ -103,7 +108,7 @@ if ( $doit ) {
         {
             $version = $response->getContent();
         }
-    } catch ( Zend_HTTP_Client_Adapter_Exception $e) {
+    } catch ( Exception $e ) {
         $error = "Unable to load source "
                . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
            . $e->getMessage()
