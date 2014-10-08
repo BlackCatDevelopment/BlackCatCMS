@@ -290,7 +290,11 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
          **/
         public function getError()
         {
+            // show detailed error message only to global admin
+            if(CAT_Users::is_authenticated() && CAT_Users::is_root())
             return $this->lasterror;
+            else
+                return "An internal error occured. We're sorry for inconvenience.";
         }   // end function getError()
 
         /**
@@ -454,6 +458,15 @@ class CAT_PDOExceptionHandler
                 ( isset($match[1]) ? $match[1] : $message )
             );
         }
+
+        try {
+            $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',2);
+            $logger->logFatal(sprintf(
+                'Exception with message [%s] emitted in [%s] line [%s]',
+                $exception->getMessage(),$exception->getFile(),$exception->getLine()
+            ));
+            $logger->logFatal($msg);
+        } catch ( Exception $e ) {}
 
         // log or echo as you please
         CAT_Object::printFatalError($msg);

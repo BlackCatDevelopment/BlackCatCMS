@@ -306,6 +306,7 @@ if (!class_exists('CAT_Helper_Validate'))
                 $address = filter_var($address, FILTER_SANITIZE_URL);
             // href="http://..." ==> href isn't relative
             $rel_parsed = parse_url($address);
+            if(!isset($rel_parsed['path']) || $rel_parsed['path'] == '') return '';
             $path       = $rel_parsed['path'];
             $path       = preg_replace('~/\./~', '/', $path); // bla/./bloo ==> bla/bloo
             // resolve /../

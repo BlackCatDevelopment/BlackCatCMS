@@ -2601,7 +2601,7 @@ if (!class_exists('CAT_Helper_Page'))
          * @param  string  $section
          * @return void
          **/
-        private static function _load_footers_inc($file, $for, $path_prefix, $section)
+        private static function _load_footers_inc($file, $for, $path_prefix, $section=NULL)
         {
             // reset array
             $mod_footers = array();

@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2014, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
@@ -42,19 +42,19 @@ if (defined('CAT_PATH')) {
 $backend = CAT_Backend::getInstance('Addons','module_install',false,false);
 $errors  = array();
 
-$SQL = 'CREATE TABLE IF NOT EXISTS `%ssearch` ('
+$SQL = 'CREATE TABLE IF NOT EXISTS `:prefix:search` ('
     . ' `search_id` INT NOT NULL auto_increment,'
     . ' `name` VARCHAR(255) NOT NULL DEFAULT \'\' ,'
     . ' `value` TEXT NOT NULL ,'
     . ' `extra` TEXT NULL ,'
     . ' PRIMARY KEY (`search_id`) '
     . ' )';
-if (!$backend->db()->query(sprintf($SQL,CAT_TABLE_PREFIX))) {
+if (!$backend->db()->query($SQL)) {
     $errors[] = sprintf('[CREATE TABLE] %s', $backend->db()->getError());
 }
 
 // delete existing configuration settings
-$SQL = "DELETE FROM `%ssearch` WHERE name='header' OR name='footer'"
+$SQL = "DELETE FROM `:prefix:search` WHERE name='header' OR name='footer'"
     ." OR name='results_header' OR name='results_loop' OR name='results_footer'"
     ." OR name='no_results' OR name='cfg_enable_old_search' OR name='cfg_enable_flush'"
     ." OR name='module_order' OR name='max_excerpt' OR name='time_limit'"
@@ -64,26 +64,26 @@ $SQL = "DELETE FROM `%ssearch` WHERE name='header' OR name='footer'"
     ." OR name='cfg_search_images' OR name='cfg_thumbs_width' OR name='cfg_content_image'"
     ." OR name='cfg_search_library' OR name='cfg_search_droplet'"
     ." OR name='cfg_search_use_page_id'";
-if (!$database->query(sprintf($SQL,CAT_TABLE_PREFIX))) {
+if (!$database->query($SQL)) {
     $errors[] = sprintf('[DELETE VALUES] %s', $backend->db()->getError());
 }
 
 // set default values for the CAT search_id
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('module_order', 'wysiwyg')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('max_excerpt', '15')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('time_limit', '0')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_keywords', 'true')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_description', 'true')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_non_public_content', 'false')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_link_non_public_content', '')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_show_description', 'true')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('template', '')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_images', 'true')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_thumbs_width', '100')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_content_image', 'first')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_library', 'lib_search')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_droplet', 'CAT_SearchResults')",CAT_TABLE_PREFIX));
-$backend->db()->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_use_page_id', '-1')",CAT_TABLE_PREFIX));
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('module_order', 'wysiwyg')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('max_excerpt', '15')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('time_limit', '0')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_search_keywords', 'true')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_search_description', 'true')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_search_non_public_content', 'false')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_link_non_public_content', '')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_show_description', 'true')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('template', '')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_search_images', 'true')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_thumbs_width', '100')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_content_image', 'first')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_search_library', 'lib_search')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_search_droplet', 'CAT_SearchResults')");
+$backend->db()->query("INSERT INTO `:prefix:search` (name, value) VALUES ('cfg_search_use_page_id', '-1')");
 
 // import droplets
 $inst_dir   = sanitize_path(dirname(__FILE__).'/install');

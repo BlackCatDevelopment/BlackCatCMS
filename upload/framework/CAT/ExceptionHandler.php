@@ -101,10 +101,18 @@ class CAT_ExceptionHandler
             );
             $msg = "[$exc_class] $message";
         }
-
-        // log or echo as you please
+        // log
+        $logger->logFatal($msg);
+        // show detailed error information to admin only
+        if(CAT_Users::is_authenticated() && CAT_Users::is_root())
         CAT_Object::printFatalError($msg);
+        else
+            CAT_Object::printFatalError("An internal error occured. We're sorry for inconvenience.");
     }
+
+    /**
+     * global error handler; allows to log the error
+     **/
     public static function errorHandler($error_level, $error_message, $error_file, $error_line, $error_context)
     {
         $error = "lvl: " . $error_level . " | msg:" . $error_message . " | file:" . $error_file . " | ln:" . $error_line;
@@ -146,6 +154,10 @@ class CAT_ExceptionHandler
                 break;
         }
     }
+
+    /**
+     * global shutdown handler; allows to log errors that caused a shutdown
+     **/
     public static function shutdownHandler() //will be called when php script ends.
     {
         $lasterror = error_get_last();

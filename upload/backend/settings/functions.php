@@ -77,22 +77,19 @@ function getSearchSettings()
 {
     $backend = CAT_Backend::getInstance('Settings', 'settings_advanced');
     $data = array();
-    if (
-        (
-             ($res_search = $backend->db()->query(sprintf('SELECT * FROM `%ssearch` WHERE `extra` = \'\' ',CAT_TABLE_PREFIX)))
-          && ($res_search->numRows() > 0)
-        )
-    ) {
-        while ( $row = $res_search->fetchRow() )
+    $res_search = $backend->db()->query('SELECT * FROM `:prefix:search` WHERE `extra`="" OR `extra` IS NULL');
+    if(!$backend->db()->isError() && is_object($res_search))
+    {
+        foreach ($res_search->fetchAll() as $row)
         {
             $data[$row['name']]
                 = htmlspecialchars(($row['value']));
         }
     }
-    $r = $backend->db()->query(sprintf('SELECT `value` FROM `%ssettings` WHERE `name` = \'%s\' ',CAT_TABLE_PREFIX, 'search'));
-    if($r->numRows())
+    $r = $backend->db()->query('SELECT `value` FROM `:prefix:settings` WHERE `name`=:name',array('name'=>'search'));
+    if($r->rowCount())
     {
-        $row = $r->fetchRow(MYSQL_ASSOC);
+        $row = $r->fetch();
         $data['search'] = $row['value'];
     }
     return $data;

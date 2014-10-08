@@ -101,8 +101,13 @@ switch($region)
         break;
     case 'searchblock':
         $tpl_data['search']           = getSearchSettings();
-        $tpl_data['search_templates'] = CAT_Helper_Addons::get_addons( $tpl_data['search']['template'] , 'template', 'template' );#
-        $tpl_data['PAGES_LIST']       = getPagesList('search_cfg_search_use_page_id', $tpl_data['search']['cfg_search_use_page_id'], true);
+        $tpl_data['search_templates'] = isset($tpl_data['search']['template'])
+                                      ? CAT_Helper_Addons::get_addons( $tpl_data['search']['template'] , 'template', 'template' )
+                                      : array();
+        $s_selected                   = isset($tpl_data['search']['cfg_search_use_page_id'])
+                                      ? $tpl_data['search']['cfg_search_use_page_id']
+                                      : '';
+        $tpl_data['PAGES_LIST']       = getPagesList('search_cfg_search_use_page_id', $s_selected, true);
         break;
     case 'server':
         $tpl_data['WORLD_WRITEABLE_SELECTED'] = (CAT_Registry::get('STRING_FILE_MODE') == '0666' && CAT_Registry::get('STRING_DIR_MODE') == '0777')  ? true : false;

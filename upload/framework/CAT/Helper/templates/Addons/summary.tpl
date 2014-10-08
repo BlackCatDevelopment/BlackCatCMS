@@ -1,4 +1,4 @@
-    <h1>{translate('Precheck result for addon')} [{$addon}]</h1>
+    <h1>{translate('Precheck result')}</h1>
 	<h2{if $fail} style="color:#c00;"{/if}>{$heading}</h2>
 	<p>{$message}</p>
 
