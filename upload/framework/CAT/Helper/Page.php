@@ -878,8 +878,6 @@ if (!class_exists('CAT_Helper_Page'))
                         $output[] = $line;
                     }
                     $seen[$item['file']] = 1;
-                    $output[] = '<link rel="stylesheet" type="text/css" href="' . $file . '" media="'
-                              . (isset($item['media']) ? $item['media'] : 'all') . '" />' . "\n";
                 }
             }
             return implode('',$output);
@@ -1594,14 +1592,21 @@ if (!class_exists('CAT_Helper_Page'))
          * @access public
          * @return
          **/
-        public static function getPagesForLevel($level)
+        public static function getPagesForLevel($level,$menu_no=NULL)
         {
             if(!count(self::$pages)) self::getInstance();
             $pages = array();
             foreach(self::$pages as $pg)
             {
+                // check level and visibility
                 if ( $pg['level'] == $level  && self::isVisible($pg['page_id']) )
+                {
+                    // optional: check for given menu number
+                    if(!$menu_no || $pg['menu'] == $menu_no)
+                    {
                     $pages[] = $pg;
+            }
+                }
             }
             return $pages;
         }   // end function getPagesForLevel()

@@ -29,7 +29,8 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 
 include dirname(__FILE__).'/../../wblib/wbList.php';
 
-if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
+if ( ! class_exists( 'CAT_Helper_Menu', false ) )
+{
 	class CAT_Helper_Menu extends CAT_Object
 	{
         /**
@@ -66,6 +67,11 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
          **/
         private static $instance;
 
+        /**
+         * menu number (if a template has several menus)
+         **/
+        private static $menu_no = NULL;
+
         public static function getInstance($reset=false)
         {
             if (!self::$instance)
@@ -98,6 +104,7 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
                     array(
                         '__id_key'    => 'page_id',
                         '__title_key' => 'menu_title',
+                        'create_level_css' => 'false',
                     )
                 );
             return self::$list;
@@ -149,7 +156,10 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
             global $page_id;
             self::analyzeOptions($options);
             $self       = self::getInstance();
-            $pages      = CAT_Helper_Page::getPages();
+            $pages      = self::$menu_no
+                        ? CAT_Helper_Page::getPagesForMenu(self::$menu_no)
+                        : CAT_Helper_Page::getPages()
+                        ;
             return self::$list->buildList($pages,array('selected'=>$page_id));
         }   // end function fullMenu()
 
@@ -208,7 +218,7 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
             if($id===0)    $id = CAT_Helper_Page::getRootParent($page_id);
             self::analyzeOptions($options);
             $level    = CAT_Helper_Page::properties($id,'level');
-            $menu     = CAT_Helper_Page::getPagesForLevel($level);
+            $menu     = CAT_Helper_Page::getPagesForLevel($level,self::$menu_no);
             $selected = $id;
             // if current page is not in the menu...
             if(!self::isInMenu($id,$menu))
@@ -250,14 +260,17 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
         
 
         /**
+         * analyzes the given options and configures the ListBuilder
          *
          * @access private
-         * @return
+         * @param  array   $options
+         * @return object
          **/
         private static function analyzeOptions(array &$options = array())
         {
-            $fixed = array();
-            $lbopt = array();
+            $fixed         = array(); // reset temp array
+            $lbopt         = array(); // reset list builder options
+            self::$menu_no = NULL;    // reset current menu number
             while ( $opt = array_shift($options) )
             {
                 if(preg_match('~^(.+?)\:$~',$opt,$m))
@@ -271,8 +284,15 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) ) {
             }
             foreach($fixed as $key => $value)
             {
+                if($key=='menu')
+                {
+                    self::$menu_no = $value;
+                    continue;
+                }
                 if(isset(self::$_lbmap[$key]))
+                {
                     $lbopt[self::$_lbmap[$key]] = $value;
+                }
             }
             // pass options to Listbuilder
             //CAT_Helper_ListBuilder::getInstance()->config($lbopt);

@@ -224,8 +224,10 @@ if($type=='template')
     $contents  = file_get_contents($full.'/index.php');
     $contents .= "
 \$dwoodata	= array(); // if you need to set some additional template vars, add them here
+global \$page_id;
 \$variant = CAT_Helper_Page::getPageSettings(\$page_id,'internal','template_variant');
-if(!\$variant)
+if ( \$variant == '' ) \$variant = DEFAULT_TEMPLATE_VARIANT;
+if ( \$variant == '' || !file_exists(CAT_PATH.'/templates/bootstrap/templates/'.\$variant.'/index.tpl' ) )
     \$variant = 'default';
 \$parser->setPath(CAT_TEMPLATE_DIR.'/templates/'.\$variant);
 \$parser->setFallbackPath(CAT_TEMPLATE_DIR.'/templates/default');
