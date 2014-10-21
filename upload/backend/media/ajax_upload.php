@@ -41,7 +41,7 @@ if (defined('CAT_PATH')) {
 // ================================= 
 // ! Include the WB functions file   
 // ================================= 
-include_once( sanitize_path ( CAT_PATH . '/framework/functions.php' ) );
+include_once( CAT_Helper_Directory::sanitizePath ( CAT_PATH . '/framework/functions.php' ) );
 $backend = CAT_Backend::getInstance('Media','media',false);
 $dirh    = CAT_Helper_Directory::getInstance();
 $val     = CAT_Helper_Validate::getInstance();
@@ -65,7 +65,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
 {
     if ( $val->sanitizePost('folder_path') != '' )
     {
-        $file_path     = sanitize_path( CAT_PATH . $val->sanitizePost('folder_path') );
+        $file_path     = $dirh->sanitizePath( CAT_PATH . $val->sanitizePost('folder_path') );
     }
     else
     {
@@ -149,7 +149,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
                             if ( $unzip_file != '' )
                             {
                                 $archive = CAT_Helper_Zip::getInstance( $current->file_dst_pathname );
-                                $archive->config( 'Path', sanitize_path( $file_path ) );
+                                $archive->config( 'Path', $dirh->sanitizePath( $file_path ) );
                                 $archive->extract();
                                 if ( $archive->errorInfo() != 0 )
                                 {

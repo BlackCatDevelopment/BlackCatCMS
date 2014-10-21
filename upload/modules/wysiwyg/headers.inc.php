@@ -41,5 +41,5 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-$file = sanitize_path(dirname(__FILE__).'/../'.WYSIWYG_EDITOR.'/headers.inc.php');
+$file = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/../'.WYSIWYG_EDITOR.'/headers.inc.php');
 if ( file_exists($file) ) @require $file;

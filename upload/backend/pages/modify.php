@@ -181,7 +181,7 @@ foreach ($sections as $section)
                 $tpl_data['blocks'][$bcnt]['modified_by']        = $section['modified_by'] ? (CAT_Users::get_user_details($section['modified_by'], 'display_name') ? CAT_Users::get_user_details($section['modified_by'], 'display_name') : '') . ' (' . CAT_Users::get_user_details($section['modified_by'], 'username') . ')' : '';
 
                 // load language file (if any)
-                $langfile = sanitize_path(CAT_PATH . '/modules/' . $module . '/languages/' . LANGUAGE . '.php');
+                $langfile = CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/languages/' . LANGUAGE . '.php');
                 if (file_exists($langfile))
                 {
                     if (!$backend->lang()->checkFile($langfile, 'LANG', true))
@@ -189,7 +189,7 @@ foreach ($sections as $section)
                         include $langfile;
                     else
                     // modern language file
-                        $backend->lang()->addFile(LANGUAGE . '.php', sanitize_path(CAT_PATH . '/modules/' . $module . '/languages'));
+                        $backend->lang()->addFile(LANGUAGE . '.php', CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/languages'));
                 }
 
                 // ======================================================

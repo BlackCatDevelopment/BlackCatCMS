@@ -44,16 +44,13 @@ if (defined('CAT_PATH')) {
 /**
  * this method may be called by modules to handle a droplet upload
  **/
-function droplets_upload( $input ) {
-
-	if ( ! function_exists('sanitize_path') ) {
-	    @require CAT_PATH.'/framework/functions.php';
-	}
+function droplets_upload( $input )
+{
 
     // Set temp vars
-    $temp_dir   = sanitize_path( CAT_PATH.'/temp/' );
-    $temp_file  = sanitize_path( $temp_dir . $_FILES[$input]['name'] );
-    $temp_unzip = sanitize_path( CAT_PATH.'/temp/unzip/' );
+    $temp_dir   = CAT_Helper_Directory::sanitizePath( CAT_PATH.'/temp/' );
+    $temp_file  = CAT_Helper_Directory::sanitizePath( $temp_dir . $_FILES[$input]['name'] );
+    $temp_unzip = CAT_Helper_Directory::sanitizePath( CAT_PATH.'/temp/unzip/' );
     $errors     = array();
 
     // Try to upload the file to the temp dir

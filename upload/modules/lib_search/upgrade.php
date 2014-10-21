@@ -40,8 +40,8 @@ if (defined('CAT_PATH')) {
 }
 
 // import droplets
-$inst_dir   = sanitize_path(dirname(__FILE__).'/install');
-$temp_unzip = sanitize_path(CAT_PATH.'/temp/unzip/' );
+$inst_dir   = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/install');
+$temp_unzip = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/unzip/' );
 $dirh       = CAT_Helper_Directory::getInstance();
 $files      = $dirh->getFiles($inst_dir);
 

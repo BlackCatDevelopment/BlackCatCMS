@@ -50,7 +50,7 @@ header('Content-type: application/json');
 // ==================
 // ! Get user input   
 // ================== 
-$file_path		= sanitize_path( ($val->strip_slashes($val->sanitizePost('file_path')) ) );
+$file_path		= CAT_Helper_Directory::sanitizePath( ($val->strip_slashes($val->sanitizePost('file_path')) ) );
 $rename_file 	= $val->strip_slashes($val->sanitizePost('rename_file'));
 $new_name		= trim( $val->strip_slashes($val->sanitizePost('new_name')) );
 $new_extension	= trim( $val->strip_slashes($val->sanitizePost('extension')) );
@@ -74,7 +74,7 @@ else
 	// ================================ 
 	if ( is_writable(CAT_PATH . $file_path) )
 	{
-		$file = sanitize_path( CAT_PATH . $file_path . '/' . $rename_file );
+		$file = CAT_Helper_Directory::sanitizePath( CAT_PATH . $file_path . '/' . $rename_file );
 		
 		// Check if a new extension were sent
 		if ( $new_extension == '' && !is_dir( $file ) )
@@ -90,7 +90,7 @@ else
 		// ========================================== 
 		// ! Combine path, filenames and extensions   
 		// ========================================== 
-		$new_rename	= sanitize_path( CAT_PATH . $file_path . '/' . $new_name . $new_extension );
+		$new_rename	= CAT_Helper_Directory::sanitizePath( CAT_PATH . $file_path . '/' . $new_name . $new_extension );
 
 		// ================================= 
 		// ! Try to rename the file/folder   

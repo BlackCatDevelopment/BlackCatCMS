@@ -55,7 +55,7 @@ $doit  = true;
 
 if(!CAT_Helper_Validate::sanitizeGet('blackcat_refresh'))
 {
-    $file = sanitize_path(dirname(__FILE__).'/../data/.last');
+    $file = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/../data/.last');
     if ( file_exists($file) )
     {
         $fh = @fopen($file,'r');
@@ -124,7 +124,7 @@ if ( $doit ) {
         }
     }
 
-    $fh   = @fopen(sanitize_path(dirname(__FILE__).'/../data/.last'),'w');
+    $fh   = @fopen(CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/../data/.last'),'w');
     if ( is_resource($fh) ) {
     fputs($fh,time().'|'.$version);
     fclose($fh);

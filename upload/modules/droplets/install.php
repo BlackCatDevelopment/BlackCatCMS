@@ -128,8 +128,8 @@ if ( ! class_exists( 'CAT_Helper_Directory' ) ) {
 if ( ! function_exists( 'droplets_import' ) ) {
 	@include dirname(__FILE__).'/include.php';
 }
-$inst_dir   = sanitize_path( dirname(__FILE__).'/install' );
-$temp_unzip = sanitize_path( CAT_PATH.'/temp/unzip/' );
+$inst_dir   = CAT_Helper_Directory::sanitizePath( dirname(__FILE__).'/install' );
+$temp_unzip = CAT_Helper_Directory::sanitizePath( CAT_PATH.'/temp/unzip/' );
 $dirh       = CAT_Helper_Directory::getInstance();
 $files      = $dirh->scanDirectory( $inst_dir, true, true, $inst_dir.'/', array('zip') );
 
@@ -148,11 +148,11 @@ if ( is_array($files) && count($files) ) {
 // if it's an upgrade from the old droplets module...
 if ( $is_upgrade ) {
 
-	require sanitize_path( CAT_PATH . '/framework/LEPTON/Helper/Zip.php' );
+	require CAT_Helper_Directory::sanitizePath( CAT_PATH . '/framework/LEPTON/Helper/Zip.php' );
 
 	// create backup copy
-	$temp_file = sanitize_path( CAT_PATH . '/temp/droplets_module_backup.zip' );
-	$temp_dir  = sanitize_path( CAT_PATH . '/modules/droplets'                );
+	$temp_file = CAT_Helper_Directory::sanitizePath( CAT_PATH . '/temp/droplets_module_backup.zip' );
+	$temp_dir  = CAT_Helper_Directory::sanitizePath( CAT_PATH . '/modules/droplets'                );
 	
     $zip1 = new CAT_Helper_Zip($temp_file);
 	$zip1->config( 'removePath', $temp_dir );
@@ -170,9 +170,9 @@ if ( $is_upgrade ) {
 	@mkdir( CAT_PATH.'/modules/droplets', 0755 );
 	
 	// unpack the compatibility files
-	$temp_file = sanitize_path( CAT_PATH . '/modules/droplets/install/droplets.zip' );
+	$temp_file = CAT_Helper_Directory::sanitizePath( CAT_PATH . '/modules/droplets/install/droplets.zip' );
 	$zip2 = new CAT_Helper_Zip($temp_file);
-	$zip2->config( 'Path', sanitize_path( CAT_PATH.'/modules/droplets' ) );
+	$zip2->config( 'Path', CAT_Helper_Directory::sanitizePath( CAT_PATH.'/modules/droplets' ) );
 	$zip2->extract( $temp_file );
 	
 }

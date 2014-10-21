@@ -52,12 +52,12 @@ if(!defined('WYSIWYG_EDITOR') || WYSIWYG_EDITOR == '')
     $admin->print_error('No WYSIWYG editor set, please set one first (Settings -&gt; Backend settings -&gt; WYSIWYG Editor)',NULL,false);
 
 // check for config driver
-$cfg_file = sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
+$cfg_file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
 if(file_exists($cfg_file))
 {
     require $cfg_file;
 }
-elseif(file_exists(sanitize_path(dirname(__FILE__)."/driver/".WYSIWYG_EDITOR."/c_editor.php")))
+elseif(file_exists(CAT_Helper_Directory::sanitizePath(dirname(__FILE__)."/driver/".WYSIWYG_EDITOR."/c_editor.php")))
 {
     require_once( dirname(__FILE__)."/driver/".WYSIWYG_EDITOR."/c_editor.php");
 }
@@ -66,9 +66,9 @@ else {
 }
 
 // check for language file
-if (file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages/'.LANGUAGE.'.php')))
+if (file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages/'.LANGUAGE.'.php')))
 {
-    $backend->lang()->addFile(LANGUAGE.'.php',sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages'));
+    $backend->lang()->addFile(LANGUAGE.'.php',CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/languages'));
 }
 
 $config       = wysiwyg_admin_config();
@@ -104,7 +104,7 @@ $enable_htmlpurifier = ( isset($config['enable_htmlpurifier'])
                      ? $config['enable_htmlpurifier']
                      : false );
 
-if(file_exists(sanitize_path(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')))
+if(file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')))
 {
     $preview = '<img src="'
              . sanitize_url(CAT_URL.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')
