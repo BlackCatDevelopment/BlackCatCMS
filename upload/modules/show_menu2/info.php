@@ -9,7 +9,7 @@
  * @author          Brofield,LEPTON Project
  * @copyright       2006-2010 Brofield
  * @copyright       2010-2012, LEPTON Project
- * @link            http://www.LEPTON-cms.org/sm2/
+ * @link            http://code.jellycan.com/files/show_menu2-README.txt
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
  *
@@ -45,7 +45,7 @@ $module_platform = '2.x';
 $module_author = 'Brodie Thiesfield, Aldus, erpe';
 $module_license = 'GNU General Public License';
 $module_license_terms = '-';
-$module_description = 'A code snippet providing a complete replacement for the built-in menu functions. See <a href="http://lepton-cms.com/sm2/" target="_blank">documentation</a> for details or view the <a href="' .LEPTON_URL .'/modules/show_menu2/README.en.txt" target="_blank">readme</a> file.';
+$module_description = 'A code snippet providing a complete replacement for the built-in menu functions. See <a href="http://code.jellycan.com/files/show_menu2-README.txt" target="_blank">readme</a> for details.';
 $module_guid      = 'b859d102-881d-4259-b91d-b5a1b57ab100';
 
 /**
