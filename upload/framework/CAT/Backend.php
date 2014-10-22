@@ -471,8 +471,8 @@ if (!class_exists('CAT_Backend', false))
             // ===================================
             // ! initialize template search path
             // ===================================
-            $parser->setPath(CAT_THEME_PATH.'/templates','backend');
-            $parser->setFallbackPath(CAT_THEME_PATH.'/templates','backend');
+            $parser->setPath(CAT_THEME_PATH.'/templates/default','backend');
+            $parser->setFallbackPath(CAT_THEME_PATH.'/templates/default','backend');
 
             if(file_exists(CAT_THEME_PATH.'/templates/default'))
             {

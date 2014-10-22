@@ -40,6 +40,8 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+require_once dirname(__FILE__).'/../../config.php';
+require_once dirname(__FILE__).'/../../framework/functions.php';
 $backend = CAT_Backend::getInstance('Addons', 'addons', false);
 $users   = CAT_Users::getInstance();
 
@@ -236,8 +238,6 @@ $addon = array_merge(
 $tpl_data['token_name'] = $GLOBALS['csrf']['input-name'];
 $tpl_data['token']      = csrf_get_tokens();
 
-require_once dirname(__FILE__).'/../../config.php';
-require_once dirname(__FILE__).'/../../framework/functions.php';
 
 $result  = true;
 $message = NULL;
