@@ -23,17 +23,7 @@
 <!doctype html>
 <html>
 <head>
-	<title>{page_title}</title>
-
-	<meta http-equiv="Content-Type" content="text/html; charset={default_charset}">
-	<meta name="robots" content="noindex">
-
-	<meta name="description" content="{page_description}">
-	<meta name="keywords" content="{page_keywords}">
-
-	<link rel="shortcut icon" href="{template_dir}/css/images/favicon.ico" type="image/x-icon">
-
-
+	<link rel="shortcut icon" href="{template_dir}/css/default/images/favicon.ico" type="image/x-icon">
 	{get_page_headers}
 
 	<!--[if lte IE 8]>
@@ -63,15 +53,12 @@
 
 		<nav id="main_nav">
 			{show_menu(1, SM2_ROOT, SM2_START, SM2_ALL|SM2_XHTML_STRICT, '<li>[ac][menu_title]</a>', '</li>', '<ul>', '</ul>')}
-            {if $FRONTEND_LOGIN}
-            {include login.tpl}
-            {/if}
 		</nav>
+        {if $FRONTEND_LOGIN}{include login.tpl}{/if}
 	</header>
 	<section id="content" class="gradient_gray br_all">
-		{if check_section(2)}
-		<header id="content_header" class="gradient_gray br_top">
-			<div class="right">{language_menu()}</div>
+		{if check_block(2)}
+		<header id="content_header" class="br_top">
 			{page_header}
 			{page_content(2)}
 		</header>
@@ -79,10 +66,11 @@
 
 		<aside id="sidebar" class="{if !check_section(2)}br_left{else}br_bottomleft{/if}">
 			{show_menu(1, SM2_ROOT, SM2_ALL, SM2_ALL|SM2_XHTML_STRICT, '<li class="sib_[sib] [class]">[ac][menu_title]</a>', '</li>', '<ul class="hauptnavigation menu-[level]">', '</ul>')}
+            <div id="langmenu">{language_menu()}</div>
 		</aside>
 
 		<section id="content_main" class="{if !check_section(2)}br_right{else}br_bottomright{/if}">
-			{if !check_section(2)}{page_header}{/if}
+			{if !check_block(2)}{page_header}{/if}
 			{page_content(1)}
 		</section>
 

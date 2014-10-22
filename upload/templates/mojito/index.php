@@ -42,7 +42,10 @@ if (defined('CAT_PATH')) {
 $dwoodata	= array();
 $variant = CAT_Helper_Page::getPageSettings($page_id,'internal','template_variant');
 if(!$variant)
-    $variant = 'default';
+    $variant = ( defined('DEFAULT_TEMPLATE_VARIANT') && DEFAULT_TEMPLATE_VARIANT != '' )
+             ? DEFAULT_TEMPLATE_VARIANT
+             : 'default';
+
 $parser->setPath(CAT_TEMPLATE_DIR.'/templates/'.$variant);
 $parser->setFallbackPath(CAT_TEMPLATE_DIR.'/templates/default');
 $parser->output('index.tpl',$dwoodata);

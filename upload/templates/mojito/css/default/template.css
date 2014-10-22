@@ -60,10 +60,9 @@
 	#content_header {
 		position: relative;
 		padding: 1em 2em;
-		-webkit-box-shadow: 10px 10px 5px #687a8a inset;
+/* 		-webkit-box-shadow: 10px 10px 5px #687a8a inset;
 		-moz-box-shadow: -5px 10px 5px #687a8a inset;
-		box-shadow: 0px -8px 5px -10px #687a8a inset;
-	}
+		box-shadow: 0px -8px 5px -10px #687a8a inset; */	}
 
 		#fork_me {
 			position: absolute;
