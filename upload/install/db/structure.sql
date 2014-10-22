@@ -178,7 +178,7 @@ CREATE TABLE `cat_pages_settings` (
 	`set_name` VARCHAR(50) NOT NULL,
 	`set_value` TINYTEXT NOT NULL,
 	UNIQUE INDEX `set_type_set_name` (`page_id`, `set_type`, `set_name`),
-	CONSTRAINT `page_id` FOREIGN KEY (`page_id`) REFERENCES `cat_pages` (`page_id`)
+	CONSTRAINT `cat_page_id` FOREIGN KEY (`page_id`) REFERENCES `cat_pages` (`page_id`)
 ) COMMENT='Additional settings for pages' ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cat_page_langs` (
@@ -290,8 +290,8 @@ CREATE TABLE `cat_user_has_group` (
 	`group_id` INT(11) UNSIGNED NOT NULL,
 	INDEX `FK_cat_user_has_group_cat_users` (`user_id`),
 	INDEX `FK_cat_user_has_group_cat_groups` (`group_id`),
-	CONSTRAINT `FK_cat_user_has_group_cat_groups` FOREIGN KEY (`group_id`) REFERENCES `cat_groups` (`group_id`),
-	CONSTRAINT `FK_cat_user_has_group_cat_users` FOREIGN KEY (`user_id`) REFERENCES `cat_users` (`user_id`)
+	CONSTRAINT `cat_FK_cat_user_has_group_cat_groups` FOREIGN KEY (`group_id`) REFERENCES `cat_groups` (`group_id`),
+	CONSTRAINT `cat_FK_cat_user_has_group_cat_users` FOREIGN KEY (`user_id`) REFERENCES `cat_users` (`user_id`)
 )
 COMMENT='Maps users to groups'
 COLLATE='utf8_general_ci'

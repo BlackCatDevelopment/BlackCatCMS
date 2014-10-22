@@ -809,7 +809,7 @@ function default_dir_mode($temp_dir) {
     if(is_writable($temp_dir)) {
         $dirname = $temp_dir.'/test_permissions/';
         mkdir($dirname);
-exit;
+//exit;
         $default_dir_mode = '0'.substr(sprintf('%o', fileperms($dirname)), -3);
         rmdir($dirname);
     } else {
@@ -1419,6 +1419,7 @@ function do_step($this_step,$skip=false) {
  * $database is the db handle
  **/
 function __cat_installer_import_sql($file,$database) {
+write2log($file);
     $errors = array();
     $import = file_get_contents($file);
     $import = preg_replace( "%/\*(.*)\*/%Us", ''              , $import );
@@ -1427,11 +1428,13 @@ function __cat_installer_import_sql($file,$database) {
     $import = preg_replace( "%cat_%"        , CAT_TABLE_PREFIX, $import );
     foreach (split_sql_file($import, ';') as $imp){
         if ($imp != '' && $imp != ' ') {
+write2log($imp);
             $ret = $database->query($imp);
             if ( $database->isError() )
                 $errors[] = $database->getError();
         }
     }
+write2log(var_export($errors,1));
     return $errors;
 }   // end function __cat_installer_import_sql()
 

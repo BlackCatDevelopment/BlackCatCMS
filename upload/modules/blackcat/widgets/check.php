@@ -106,7 +106,7 @@ if ( $doit ) {
         }
         else
         {
-            $version = $response->getContent();
+            $version = $response->getBody();
         }
     } catch ( Exception $e ) {
         $error = "Unable to load source "
