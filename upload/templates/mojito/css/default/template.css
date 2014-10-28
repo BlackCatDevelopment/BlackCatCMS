@@ -26,7 +26,6 @@
 @import url('basic.css');
 @import url('menu.css');
 @import url('search.box.css');
-@import url('login.form.css');
 
 #main_header {
 	margin: auto;
@@ -49,8 +48,6 @@
 #content {
 	position: relative;
 	margin: auto;
-	display:	table;
-	table-layout:	fixed;
 	width: 960px;
 	border: 1px solid #9da8b2;
 	-webkit-box-shadow:	black 0px 0px 4px -1px;
@@ -60,9 +57,10 @@
 	#content_header {
 		position: relative;
 		padding: 1em 2em;
-/* 		-webkit-box-shadow: 10px 10px 5px #687a8a inset;
+		-webkit-box-shadow: 10px 10px 5px #687a8a inset;
 		-moz-box-shadow: -5px 10px 5px #687a8a inset;
-		box-shadow: 0px -8px 5px -10px #687a8a inset; */	}
+		box-shadow: 0px -8px 5px -10px #687a8a inset;
+	}
 
 		#fork_me {
 			position: absolute;
