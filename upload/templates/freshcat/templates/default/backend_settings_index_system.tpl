@@ -1,5 +1,5 @@
 			{if $DISPLAY_ADVANCED}
-            <div class="fc_gradient_red" style="width:300px;float:right;">
+            <div class="fc_gradient_red" style="width:300px;float:right;padding:3px 5px;">
                 {translate('If you enable maintenance mode, your complete site will be OFFLINE!')}
             </div>
 
@@ -7,17 +7,17 @@
                 <strong>{translate('Maintenance mode')}</strong><br /><strong></strong>
                 <div class="fc_settings_label" id="fc_page_down">
                     <input type="checkbox" class="fc_checkbox_jq" name="maintenance_mode" id="fc_maintenance_mode" value="on" {if $values.maintenance_mode == 'on'} checked="checked"{/if} />
-                    <label for="fc_maintenance_mode">{translate('Maintenance mode')}</label>
+                    <label for="fc_maintenance_mode" title="{translate('In maintenance mode, only the page you choose here will be exposed to the visitor. All other pages are redirected to the maintenance page.')}">{translate('Maintenance mode')}</label>
                 </div>
             </div>
 
-            <label class="fc_label_250" for="fc_maintenance_page">{translate('Page to show in maintenance mode')}</label>
+            <label class="fc_label_250" for="fc_maintenance_page" title="{translate('This is the only page the visitor sees in maintenance mode. This page should have setting [hidden].')}">{translate('Page to show in maintenance mode')}</label>
             {$PAGES_LIST}
             <div class="clear_sp"></div>
 
             <hr />
 
-			<label class="fc_label_250" for="fc_er_level">{translate('PHP Error Reporting Level')}:</label>
+			<label class="fc_label_250" for="fc_er_level" title="{translate('Sets which PHP errors are reported. For development, use E_ALL&E_STRICT. For production, use E_NONE.')}">{translate('PHP Error Reporting Level')}:</label>
 			<select name="er_level" id="fc_er_level">
 				<option value="">{translate('Please select')}...</option>
 				{foreach $er_levels er}

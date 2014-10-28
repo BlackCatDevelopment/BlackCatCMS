@@ -5,6 +5,7 @@
 <div id="fc_footer" class="fc_gradient1 fc_border">
 	{if $permissions.pages}
 	<div id="fc_sidebar_footer">
+        {$WEBSITE_TITLE}
 		{*<span class="icon-plus fc_gradient1 fc_gradient_hover fc_side_add" title="{translate('Add Page')}"></span>*}
 	</div>
 	{/if}
@@ -18,6 +19,7 @@
 			<ul class="fc_gradient1 fc_border fc_shadow_small fc_br_top">
 				<li><span>{$CAT_CORE}:</span> {$CAT_VERSION} {if $CAT_BUILD}(Build {$CAT_BUILD}){/if}</li>
 				<li><span>{$THEME_NAME}:</span> {$THEME_VERSION}</li>
+                <li><span>{translate('Website title')}:</span> {$WEBSITE_TITLE}</li>
 				{foreach $system_information as info}
 				<li><span>{$info.name}:</span> {$info.status}</li>
 				{/foreach}
