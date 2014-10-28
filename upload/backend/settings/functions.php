@@ -720,10 +720,14 @@ function check_frontend_signup($value,$oldvalue) {
 }
 
 function check_use_short_urls($value,$oldvalue) {
-    if( ($value || $value=='true') && (!$oldvalue || $oldvalue=='false') )
+    if( ($value && $value=='true') )
+    {
         create_htaccess();
-    if( (!$value || $value=='false') && ($oldvalue || $oldvalue=='true') && file_exists(CAT_PATH.'/.htaccess') )
+        return true;
+    }
+    if( (!$value || $value=='false') && file_exists(CAT_PATH.'/.htaccess') )
         unlink(CAT_PATH.'/.htaccess');
+    return false;
 }
 
 /**
@@ -731,17 +735,20 @@ function check_use_short_urls($value,$oldvalue) {
  **/
 function create_htaccess()
 {
+    // filter document root from CAT_PATH
+    $server_path = CAT_Helper_Directory::sanitizePath(CAT_PATH);
+    $server_path = str_replace(CAT_Helper_Directory::sanitizePath($_SERVER['DOCUMENT_ROOT']),'',$server_path);
     $content = '    RewriteEngine On
     # If called directly - redirect to short url version
-    RewriteCond %{REQUEST_URI} !/'.PAGES_DIRECTORY.'/intro.php
-    RewriteCond %{REQUEST_URI} /'.PAGES_DIRECTORY.'
+    RewriteCond %{REQUEST_URI} !'.PAGES_DIRECTORY.'/intro.php
+    RewriteCond %{REQUEST_URI} '.PAGES_DIRECTORY.'
     RewriteRule ^'.PAGES_DIRECTORY.'/(.*)'.PAGE_EXTENSION.'$ /$1/ [R=301,L]
 
-    # Send the request to the short.php for processing
-    RewriteCond %{REQUEST_URI} !^/('.PAGES_DIRECTORY.'|'.CAT_BACKEND_FOLDER.'|framework|include|languages|media|account|search|temp|templates/.*)$
+# Send the request to the index.php for processing
+    RewriteCond %{REQUEST_URI} !^/('.str_replace('/','',PAGES_DIRECTORY).'|'.CAT_BACKEND_FOLDER.'|framework|include|languages|media|account|search|temp|templates/.*)$
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^([\/\sa-zA-Z0-9._-]+)$ '.CAT_PATH.'/index.php?$1 [QSA,L]
+    RewriteRule ^([\/\sa-zA-Z0-9._-]+)$ '.$server_path.'/index.php?$1 [QSA,L]
     ';
     $fh = fopen(CAT_PATH.'/.htaccess','w');
     if(is_resource($fh) && $fh)

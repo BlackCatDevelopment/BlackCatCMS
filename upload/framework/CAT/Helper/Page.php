@@ -559,7 +559,7 @@ if (!class_exists('CAT_Helper_Page'))
                 array('id'=>$page_id, 'lang'=>$lang)
             );
             return
-                  $self->db()->isError()
+                  self::$instance->db()->isError()
                 ? false
                 : true
                 ;
