@@ -223,14 +223,21 @@ class SM2_Formatter
     // find and replace all keywords
     function format2(&$aCurrItem) {
         if (!is_string($aCurrItem)) return '';
-        return preg_replace(
+        global $self;
+        $self = $this;
+        return preg_replace_callback(
             '@\[('.
                 'a|ac|/a|li|/li|ul|/ul|menu_title|'.
 				'page_title|url|target|page_id|'.
                 'parent|level|sib|sibCount|class|description|keywords|'.
                 SM2_CONDITIONAL.
-            ')\]@e', 
-            '$this->replace("\1")', $aCurrItem);
+            ')\]@',
+            create_function(
+                '$m',
+                'global $self; return $self->replace($m[1]);'
+            ),
+            $aCurrItem
+        );
     }
     
     // replace the keywords

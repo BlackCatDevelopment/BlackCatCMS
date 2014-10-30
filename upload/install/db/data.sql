@@ -98,6 +98,7 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/backend/pages/ajax_add_page.php' ),
     ( 0, '/backend/pages/ajax_delete_page.php' ),
     ( 0, '/backend/pages/ajax_get_dropdown.php' ),
+    ( 0, '/backend/pages/ajax_headers.php' ),
     ( 0, '/backend/pages/ajax_page_settings.php' ),
     ( 0, '/backend/pages/ajax_recreate_af.php' ),
     ( 0, '/backend/pages/ajax_reorder.php' ),
