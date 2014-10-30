@@ -86,33 +86,33 @@ if (!class_exists('CAT_Page', false))
                 CAT_Registry::register(strtoupper($key),$value,true);
                 $parser->setGlobals(strtoupper($key),$value);
             }
-    		// Work-out if any possible in-line search boxes should be shown
-    		if(SEARCH == 'public') {
-    			CAT_Registry::register('SHOW_SEARCH', true,true);
-    		} elseif(SEARCH == 'private' AND VISIBILITY == 'private') {
-    			CAT_Registry::register('SHOW_SEARCH', true,true);
-    		} elseif(SEARCH == 'private' AND CAT_User::getInstance()->is_authenticated() == true) {
-    			CAT_Registry::register('SHOW_SEARCH', true,true);
-    		} elseif(SEARCH == 'registered' AND CAT_User::getInstance()->is_authenticated() == true) {
-    			CAT_Registry::register('SHOW_SEARCH', true,true);
-    		} else {
-    			CAT_Registry::register('SHOW_SEARCH', false,true);
-    		}
+            // Work-out if any possible in-line search boxes should be shown
+            if(SEARCH == 'public') {
+                CAT_Registry::register('SHOW_SEARCH', true,true);
+            } elseif(SEARCH == 'private' AND VISIBILITY == 'private') {
+                CAT_Registry::register('SHOW_SEARCH', true,true);
+            } elseif(SEARCH == 'private' AND CAT_User::getInstance()->is_authenticated() == true) {
+                CAT_Registry::register('SHOW_SEARCH', true,true);
+            } elseif(SEARCH == 'registered' AND CAT_User::getInstance()->is_authenticated() == true) {
+                CAT_Registry::register('SHOW_SEARCH', true,true);
+            } else {
+                CAT_Registry::register('SHOW_SEARCH', false,true);
+            }
             $parser->setGlobals('SHOW_SEARCH',SHOW_SEARCH);
-    		// Work-out if menu should be shown
-    		if(!defined('SHOW_MENU')) {
-    			CAT_Registry::register('SHOW_MENU', true,true);
-    		}
-    		// Work-out if login menu constants should be set
-    		if(FRONTEND_LOGIN) {
+            // Work-out if menu should be shown
+            if(!defined('SHOW_MENU')) {
+                CAT_Registry::register('SHOW_MENU', true,true);
+            }
+            // Work-out if login menu constants should be set
+            if(FRONTEND_LOGIN) {
                 $constants = array(
-    		        'LOGIN_URL'       => CAT_URL.'/account/login.php',
-    		        'LOGOUT_URL'      => CAT_URL.'/account/logout.php',
-    		        'FORGOT_URL'      => CAT_URL.'/account/forgot.php',
-    		        'PREFERENCES_URL' => CAT_URL.'/account/preferences.php',
-    		        'SIGNUP_URL'      => CAT_URL.'/account/signup.php',
+                    'LOGIN_URL'       => CAT_URL.'/account/login.php',
+                    'LOGOUT_URL'      => CAT_URL.'/account/logout.php',
+                    'FORGOT_URL'      => CAT_URL.'/account/forgot.php',
+                    'PREFERENCES_URL' => CAT_URL.'/account/preferences.php',
+                    'SIGNUP_URL'      => CAT_URL.'/account/signup.php',
                 );
-    			// Set login menu constants
+                // Set login menu constants
                 CAT_Registry::register($constants,NULL,true);
                 $parser->setGlobals( array(
                     'username_fieldname' => CAT_Helper_Validate::getInstance()->createFieldname('username_'),
@@ -120,7 +120,7 @@ if (!class_exists('CAT_Page', false))
                     'redirect_url'       => ((isset($_SESSION['HTTP_REFERER']) && $_SESSION['HTTP_REFERER'] != '') ? $_SESSION['HTTP_REFERER'] : CAT_URL ),
                 ));
                 $parser->setGlobals($constants);
-    		}
+            }
         }   // end function init()
 
         /**
@@ -284,15 +284,15 @@ if (!class_exists('CAT_Page', false))
                 }
                 else
                 {
-                	// if Frontend-Login redirect user to login form and after login back to current page
-                	if ( FRONTEND_LOGIN )
-                	{
-						header("HTTP/1.1 401 Unauthorized");
-						header("Location: " . LOGIN_URL .  '?redirect=' . $_SERVER['PHP_SELF'] );
-						exit();
-                	} else {
-						self::$helper->printFatalError('You are not allowed to view this page!');
-                	}
+                    // if Frontend-Login redirect user to login form and after login back to current page
+                    if ( FRONTEND_LOGIN )
+                    {
+                        header("HTTP/1.1 401 Unauthorized");
+                        header("Location: " . LOGIN_URL .  '?redirect=' . $_SERVER['PHP_SELF'] );
+                        exit();
+                    } else {
+                        self::$helper->printFatalError('You are not allowed to view this page!');
+                    }
                 }
             }
             // check if page has active sections
@@ -326,12 +326,9 @@ if (!class_exists('CAT_Page', false))
                             $langfile = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$module.'/languages/'.LANGUAGE.'.php');
                             if ( file_exists($langfile) )
                             {
-                                if ( ! $this->lang()->checkFile($langfile, 'LANG', true ))
-                                // old fashioned language file
-                                require $langfile;
-                            else
                                 // modern language file
-                            $this->lang()->addFile(LANGUAGE . '.php', CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/languages'));
+                                if ( $this->lang()->checkFile($langfile, 'LANG', true ))
+                                    $this->lang()->addFile(LANGUAGE . '.php', CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/languages'));
                             }
                             // set template path
                             if (file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/' . $module . '/templates')))
@@ -395,25 +392,25 @@ if (!class_exists('CAT_Page', false))
          **/
         public function setTemplate()
         {
-    		if(!defined('TEMPLATE'))
+            if(!defined('TEMPLATE'))
             {
                 $prop = $this->getProperties();
                 // page has it's own template
-    			if(isset($prop['template']) && $prop['template'] != '') {
-    				if(file_exists(CAT_PATH.'/templates/'.$prop['template'].'/index.php')) {
-    					CAT_Registry::register('TEMPLATE', $prop['template'], true);
-    				} else {
-    					CAT_Registry::register('TEMPLATE', DEFAULT_TEMPLATE, true);
-    				}
+                if(isset($prop['template']) && $prop['template'] != '') {
+                    if(file_exists(CAT_PATH.'/templates/'.$prop['template'].'/index.php')) {
+                        CAT_Registry::register('TEMPLATE', $prop['template'], true);
+                    } else {
+                        CAT_Registry::register('TEMPLATE', DEFAULT_TEMPLATE, true);
+                    }
                 // use global default
-    			} else {
-    				CAT_Registry::register('TEMPLATE', DEFAULT_TEMPLATE, true);
-    			}
-    		}
+                } else {
+                    CAT_Registry::register('TEMPLATE', DEFAULT_TEMPLATE, true);
+                }
+            }
             $dir = '/templates/'.TEMPLATE;
-    		// Set the template dir (which is, in fact, the URL, but for backward
+            // Set the template dir (which is, in fact, the URL, but for backward
             // compatibility, we have to keep this irritating name)
-    		CAT_Registry::register('TEMPLATE_DIR', CAT_URL.$dir, true);
+            CAT_Registry::register('TEMPLATE_DIR', CAT_URL.$dir, true);
             // This is the REAL dir
             CAT_Registry::register('CAT_TEMPLATE_DIR', CAT_PATH.$dir, true);
         }   // end function setTemplate()
@@ -443,48 +440,48 @@ if (!class_exists('CAT_Page', false))
 
         private function showMenuLink()
         {
-       	    // get target_page_id
+               // get target_page_id
             $tpid = self::$helper->db()->query(sprintf(
                   'SELECT * FROM `%smod_menu_link` '
                 . 'WHERE `page_id` = %d',
                 CAT_TABLE_PREFIX,
                 $this->_page_id
             ));
-        	if($tpid->rowCount() == 1)
-        	{
-        		$res = $tpid->fetchRow();
-        		$target_page_id = $res['target_page_id'];
-        		$redirect_type = $res['redirect_type'];
-        		$anchor = ($res['anchor'] != '0' ? '#'.(string)$res['anchor'] : '');
-        		$extern = $res['extern'];
-        		// set redirect-type
-        		if($redirect_type == 301) {
-        			@header('HTTP/1.1 301 Moved Permanently', TRUE, 301);
-        		}
-        		if($target_page_id == -1)
-        		{
-        			if($extern != '')
-        			{
-        				$target_url = $extern.$anchor;
-        				header('Location: '.$target_url);
-        				exit;
-        			}
-        		}
-        		else
-        		{
-        			// get link of target-page
+            if($tpid->rowCount() == 1)
+            {
+                $res = $tpid->fetchRow();
+                $target_page_id = $res['target_page_id'];
+                $redirect_type = $res['redirect_type'];
+                $anchor = ($res['anchor'] != '0' ? '#'.(string)$res['anchor'] : '');
+                $extern = $res['extern'];
+                // set redirect-type
+                if($redirect_type == 301) {
+                    @header('HTTP/1.1 301 Moved Permanently', TRUE, 301);
+                }
+                if($target_page_id == -1)
+                {
+                    if($extern != '')
+                    {
+                        $target_url = $extern.$anchor;
+                        header('Location: '.$target_url);
+                        exit;
+                    }
+                }
+                else
+                {
+                    // get link of target-page
                     $target_page = $target_page_link = self::$helper->properties($target_page_id);
-        			$target_page_link = ( isset($target_page['link']) )
+                    $target_page_link = ( isset($target_page['link']) )
                                       ? $target_page['link']
                                       : NULL;
-        			if($target_page_link != NULL)
-        			{
-        				$target_url = CAT_URL.PAGES_DIRECTORY.$target_page_link.PAGE_EXTENSION.$anchor;
-        				header('Location: '.$target_url);
-        				exit;
-        			}
-        		}
-        	}
+                    if($target_page_link != NULL)
+                    {
+                        $target_url = CAT_URL.PAGES_DIRECTORY.$target_page_link.PAGE_EXTENSION.$anchor;
+                        header('Location: '.$target_url);
+                        exit;
+                    }
+                }
+            }
         }   // end function showMenuLink()
 
 
