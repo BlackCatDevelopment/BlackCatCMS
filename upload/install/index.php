@@ -1613,7 +1613,7 @@ function __cat_check_db_config() {
     }
     else
     {
-        if ( preg_match( $regexp, $config['database_host'], $match ) )
+        if ( preg_match('~(?:(?:(?:(?:[a-zA-Z0-9][-a-zA-Z0-9]{0,61})?[a-zA-Z0-9])[.])*(?:[a-zA-Z][-a-zA-Z0-9]{0,61}[a-zA-Z0-9]|[a-zA-Z])[.]?)~', $config['database_host'], $match ) )
         {
             $database_host = $match[0];
         }

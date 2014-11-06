@@ -104,6 +104,7 @@ $LANG = array(
     'Please note: May remove existing tables and data'
 		=> 'Hinweis: Dies entfernt eventuell vorhandene Tabellen und Daten',
 	'Yes' => 'Ja',
+    'Invalid database hostname!' => 'Ungültiger Datenbank-Servername!',
 	'Invalid database password!' => 'Datenbankkennwort fehlt oder ist falsch!',
 	'Only characters a-z, A-Z, 0-9, - and _ allowed in database name. Please note that a database name must not be composed of digits only.'
 	    => 'Nur die Zeichen a-z, A-Z, 0-9, - und _ sind erlaubt. Bitte beachten, dass ein Datenbankname nicht ausschließlich aus Zahlen bestehen darf.',
