@@ -256,7 +256,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                             "[SQL Error] %s<br />\n",
                             $last['sql']
                         );
-                        if(is_array($bind))
+                        if(is_array($bind) && count($bind))
                             $err_msg .= "\n[PARAMS] "
                                      .  var_export($bind,1);
                         $this->setError($err_msg);

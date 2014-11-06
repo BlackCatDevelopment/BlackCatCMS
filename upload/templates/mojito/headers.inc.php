@@ -65,6 +65,10 @@ $mod_headers = array(
 
 global $page_id;
 $variant  = CAT_Helper_Page::getPageSettings($page_id,'internal','template_variant');
+if(!$variant)
+    $variant = ( defined('DEFAULT_TEMPLATE_VARIANT') && DEFAULT_TEMPLATE_VARIANT != '' )
+             ? DEFAULT_TEMPLATE_VARIANT
+             : 'default';
 
 if ( $variant != 'default' && file_exists(CAT_PATH.'/templates/mojito/css/'.$variant.'/template.css') ) {
     $mod_headers['frontend']['css'] = array(

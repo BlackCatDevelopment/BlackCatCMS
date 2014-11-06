@@ -44,7 +44,7 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
 			);
 
         /**
-         * map menu options to wbList keys
+         * map menu options (globals) to wbList keys
          **/
         private static $_lbmap = array(
             'prefix'     => 'css_prefix',
@@ -55,6 +55,10 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
             'open'       => 'is_open_li_class',
             'closed'     => 'is_closed_li_class',
             'list-class' => 'ul_class',
+            'ul-class'   => 'ul_class', // alias
+            // this one will be handled different, as it is not a global
+            'list-id'    => 'ul_id',
+            'ul-id'      => 'ul_id',    // alias
         );
 
         /**
@@ -154,13 +158,13 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
         public static function fullMenu(array &$options = array())
         {
             global $page_id;
-            self::analyzeOptions($options);
+            $ul_id      = self::analyzeOptions($options);
             $self       = self::getInstance();
             $pages      = self::$menu_no
                         ? CAT_Helper_Page::getPagesForMenu(self::$menu_no)
                         : CAT_Helper_Page::getPages()
                         ;
-            return self::$list->buildList($pages,array('selected'=>$page_id));
+            return self::$list->buildList($pages,array('selected'=>$page_id,'ul_id'=>$ul_id));
         }   // end function fullMenu()
 
         /**
@@ -295,8 +299,8 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
                 }
             }
             // pass options to Listbuilder
-            //CAT_Helper_ListBuilder::getInstance()->config($lbopt);
-            return self::init_list()->set($lbopt);
+            self::init_list()->set($lbopt);
+            return isset($lbopt['ul_id']) ? $lbopt['ul_id'] : NULL;
         }   // end function analyzeOptions()
         
         /**

@@ -540,23 +540,23 @@ function saveSettings($settings) {
         }
         if ( $value !== '' || in_array($key,$allow_empty_values) )
         {
-            $check  = $database->query(sprintf(
-                'SELECT `value` FROM `%ssettings` WHERE `name`="%s"',
-                CAT_TABLE_PREFIX, $key
-            ));
+            $check  = $database->query(
+                'SELECT `value` FROM `:prefix:settings` WHERE `name`=:name',
+                array('name'=>$key)
+            );
             if(!$check->numRows())
             {
-                $database->query(sprintf(
-                    'INSERT INTO `%ssettings` VALUES ( NULL, "%s", "%s" )',
-                    CAT_TABLE_PREFIX, $key, $value
-                ));
+                $database->query(
+                    'INSERT INTO `:prefix:settings` VALUES ( NULL, :name, :value )',
+                    array('value'=>$value,'name'=>$key)
+                );
             }
             else
             {
-                $database->query(sprintf(
-                    'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
-                    CAT_TABLE_PREFIX, $value, $key
-                ));
+                $database->query(
+                    'UPDATE `:prefix:settings` SET `value`=:value WHERE `name`=:name',
+                    array('value'=>$value,'name'=>$key)
+                );
             }
             if($database->is_error())
                 $err_msg[] =  CAT_Users::getInstance()->lang()->translate(

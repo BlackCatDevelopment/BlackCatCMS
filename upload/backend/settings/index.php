@@ -51,6 +51,7 @@ require_once dirname(__FILE__).'/functions.php';
 $tpl      = 'backend_settings_index_seo';
 // add default form
 $tpl_data['INDEX'] = $parser->get($tpl, array( 'values' => getSettingsTable() ) );
+$tpl_data['MAINTENANCE_MODE'] = CAT_Registry::get('MAINTENANCE_MODE');
 
 // ==================== 
 // ! Parse the site   

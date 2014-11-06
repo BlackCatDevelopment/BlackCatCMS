@@ -428,14 +428,11 @@ if ( ! class_exists( 'wbList', false ) )
                             self::log(sprintf('showing children for element [%s]',$option['value'][$title_key]),7);
                             // are we going to show next level?
                             $first_child = $children[$option['value'][$id_key]][0];
-#                            if ( $first_child[$level_key] <= $maxlevel ) {
-#                                $li_css .= ' ' . self::$defaults['is_open_li_class'];
-#                            }
                             // HTML for menu item containing children (open)
                             $out[] = $tab.self::itemStart( $li_css, $space )
                                    . $text;
                             // open sub list
-                            $out[] = $tab . "\t" . self::listStart( $space, $ul_id, $option['value'][$level_key] );
+                            $out[] = $tab . "\t" . self::listStart( $space, NULL, $option['value'][$level_key] );
                             array_push( $parent_stack, $option['value'][$p_key] );
                             $parent = $option['value'][$id_key];
                         }
@@ -751,17 +748,11 @@ if ( ! class_exists( 'wbList', false ) )
                         .  $suffix;
             }
 
+            // if an ID was passed, we do not create one and do not add a number
             $id      = $ul_id;
-            if ( self::$defaults['unique_id'] !== false ) {
-                if ( empty($id) ) {
-                    $id  = self::$defaults['ul_id_prefix'].self::getID();
-                }
-                else {
-                    $id .= '_' . self::getID();
-                }
+            if ( empty($id) && self::$defaults['unique_id'] !== false ) {
+                $id  = self::$defaults['ul_id_prefix'].self::getID();
             }
-
-            //$this->last_ul_id = $id;
 
             $output = $space
                     . str_replace(
