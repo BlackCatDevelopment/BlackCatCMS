@@ -86,6 +86,7 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/backend/groups/ajax_save_group.php' ),
     ( 0, '/backend/groups/index.php' ),
     ( 0, '/backend/login/ajax_index.php' ),
+    ( 0, '/backend/login/ajax_check_ssl.php' ),
     ( 0, '/backend/login/forgot/index.php' ),
     ( 0, '/backend/login/forgot/ajax_forgot.php' ),
     ( 0, '/backend/login/index.php' ),

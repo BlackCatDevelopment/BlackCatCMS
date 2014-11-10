@@ -65,3 +65,15 @@ $ltes = CAT_Helper_Directory::getInstance()->findFiles( '.*\.lte', dirname(__FIL
 if(count($ltes))
     foreach($ltes as $file)
         @unlink($file);
+
+// add files to class_secure
+$addons_helper = new CAT_Helper_Addons();
+foreach(
+    array( 'save.php' )
+    as $file
+) {
+    if ( false === $addons_helper->sec_register_file( 'wrapper', $file ) )
+    {
+         error_log( "Unable to register file -$file-!" );
+    }
+}

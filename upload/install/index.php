@@ -444,9 +444,9 @@ function show_step_globals( $step ) {
     }
 
     // generate a GUID prefix
-    if ( !isset( $config['installer_guid_prefix' ] ) ) {
+    if ( !isset( $config['guid_prefix'] ) ) {
         // VERY simple algorithm, no need for something more creative
-        $config['installer_guid_prefix'] = implode('',array_rand(array_flip(array_merge(range('a','z'),range('A','Z'),range('0','9'))),4));
+        $config['guid_prefix'] = implode('',array_rand(array_flip(array_merge(range('a','z'),range('A','Z'),range('0','9'))),4));
     }
 
     // operating system
@@ -475,6 +475,8 @@ function show_step_globals( $step ) {
             'installer_default_language'        => $config['default_language'],
             'editors'                           => findWYSIWYG(),
             'installer_default_wysiwyg'         => $config['default_wysiwyg'],
+            'installer_ssl'                     => ( isset($config['ssl']) ? $config['ssl'] : sslCheck() ) ,
+            'installer_guid_prefix'             => $config['guid_prefix'],
             'is_linux'                           => $osl,
             'is_windows'                         => $osw,
             'errors'                            => $step['errors'],
@@ -1499,15 +1501,17 @@ function __do_install() {
 "define('CAT_ADMIN_PATH', CAT_PATH.'/'.CAT_BACKEND_PATH);\n".
 "define('CAT_ADMIN_URL', CAT_URL.'/'.CAT_BACKEND_PATH);\n".
 "\n".
+"// if you have problems with SSL, set this to 'false' or delete the following line\n".
+"define('CAT_BACKEND_REQ_SSL', ".(sslCheck() ? 'true' : 'false').");\n\n".
 ( (isset($config['no_validate_admin_password']) && $config['no_validate_admin_password'] == "true") ? "define('ALLOW_SHORT_PASSWORDS',true);\n\n" : '' ).
 "if (!defined('CAT_INSTALL')) require_once(CAT_PATH.'/framework/initialize.php');\n".
 "\n".
 "// WB2/Lepton backward compatibility\n".
 "include_once CAT_PATH.'/framework/wb2compat.php';\n".
-"\n".
-"?>";
+"\n";
 
     $config_filename = $cat_path.'/config.php';
+    write2log('trying to create '.$config_filename);
 
     // Check if the file exists and is writable first.
     if(($handle = @fopen($config_filename, 'w')) === false) {
@@ -1828,6 +1832,33 @@ function split_sql_file($sql, $delimiter)
    }
 
    return $output;
+}
+
+function sslCheck()
+{
+    if(isset($_SERVER['OPENSSL_CONF']) && preg_match('~SSL~',$_SERVER['SERVER_SOFTWARE']))
+    {
+        write2log('Seems SSL is available, try to open a socket');
+        try {
+            $SSL_Check = @fsockopen("ssl://".$_SERVER['HTTP_HOST'], 443, $errno, $errstr, 30);
+            if (!$SSL_Check) {
+                write2log(sprintf('fsockopen failed, SSL not available for [%s]',$_SERVER['HTTP_HOST']));
+                return false;
+            } else {
+                write2log(sprintf('fsockopen succeeded, SSL seems to be available for [%s]',$_SERVER['HTTP_HOST']));
+                fclose($SSL_Check);
+                return true;
+            }
+        } catch( Exception $e ) {
+            write2log(sprintf('exception caught: %s',$e->getMessage()));
+            return false;
+        }
+    }
+    else
+    {
+        write2log('No SSL in $_SERVER array');
+        return false;
+    }
 }
 
 function write2log($msg)

@@ -193,10 +193,18 @@ $database->query(sprintf(
 ));
 
 /*******************************************************************************
-    1.0.3 TO 1.1
+    1.0.3/1.0.4 TO 1.1
 *******************************************************************************/
 $database->query(sprintf(
+    'REPLACE INTO `%sclass_secure` VALUES( "0", "/backend/pages/ajax_headers.php" )',
+    CAT_TABLE_PREFIX
+));
+$database->query(sprintf(
     'REPLACE INTO `%sclass_secure` VALUES( "0", "/backend/pages/modify_headers.php" )',
+    CAT_TABLE_PREFIX
+));
+$database->query(sprintf(
+    'REPLACE INTO `%sclass_secure` VALUES ( "0", "/backend/login/ajax_check_ssl.php" )',
     CAT_TABLE_PREFIX
 ));
 

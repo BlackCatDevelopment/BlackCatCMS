@@ -48,5 +48,7 @@ if ( strpos( $sapi, 'apache' ) !== FALSE || strpos( $sapi, 'nsapi' ) !== FALSE )
 }
 
 $PRECHECK['CUSTOM_CHECKS']  = array(
-    'AddDefaultCharset unset' => array( 'REQUIRED' => 0, 'ACTUAL' => ( !$e_adc ? 0 : $e_adc ), 'STATUS' => ( !$e_adc ? true : false ) )
+    'AddDefaultCharset unset' => array( 'REQUIRED' => 0, 'ACTUAL' => ( !$e_adc ? 0 : $e_adc ), 'STATUS' => ( !$e_adc ? true : false ) ),
+    // method sslCheck() is defined in index.php
+    'SSL (optional)'          => array( 'REQUIRED' => 0, 'ACTUAL' => sslCheck()              , 'STATUS' => sslCheck()                 ),
 );

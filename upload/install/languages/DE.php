@@ -90,6 +90,10 @@ $LANG = array(
     'optional Add-On!' => 'optionales Add-On!',
     'Please do not forget to check this Add-On at the [Optional] step! The WYSIWYG Editor will not work otherwise!'
         => 'Vergessen Sie nicht, dieses Add-On im Schritt [Optional] zu installieren! Der WYSIWYG Editor wird sonst nicht funktionieren!',
+    'The installer has detected that SSL (https) seems to be available on this host. We recommend to use it for the backend to protect your data. Unfortunately, SSL detection is not reliable, so you may have to deactivate it later in your config.php.'
+        => 'Der Installer hat festgestellt, daß auf diesem Server SSL (https) verfügbar ist. Wir empfehlen, das Backend über https zu betreiben, um die Daten zu schützen. Unglücklicherweise ist der SSL-Check aber nicht 100% sicher, daher kann es sein, daß SSL später trotzdem in der config.php deaktiviert werden muß.',
+    'Use SSL for Backend'
+        => 'SSL für das Backend verwenden',
 // ----- db -----
     'Please enter your MySQL database server details below'
         => 'Bitte geben Sie Ihre Datenbankeinstellungen ein',

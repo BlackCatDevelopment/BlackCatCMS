@@ -35,7 +35,17 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
- 
+// add files to class_secure
+$addons_helper = new CAT_Helper_Addons();
+foreach(
+    array( 'save.php' )
+    as $file
+) {
+    if ( false === $addons_helper->sec_register_file( 'wysiwyg', $file ) )
+    {
+         error_log( "Unable to register file -$file-!" );
+    }
+}
 
 
 ?>
