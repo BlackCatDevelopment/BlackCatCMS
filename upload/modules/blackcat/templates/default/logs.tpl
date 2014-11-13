@@ -7,7 +7,7 @@
         <td>{$item.size}</td>
         <td>
             <a href="{$CAT_URL}/modules/blackcat/widgets/logs.php?dl={$item.file}" class="bclogdl icon-download"><span style="display:none">{$item.file}</span></a>
-            <a href="{$CAT_URL}/modules/blackcat/widgets/logs.php?remove={$item.file}" class="bclogremove icon-remove"><span style="display:none">{$item.file}</span></a>
+            {if $item.removable === true}<a href="{$CAT_URL}/modules/blackcat/widgets/logs.php?remove={$item.file}" class="bclogremove icon-remove"><span style="display:none">{$item.file}</span></a>{/if}
         </td>
     </tr>
     {/foreach}

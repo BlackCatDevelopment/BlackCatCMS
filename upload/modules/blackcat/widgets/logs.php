@@ -135,6 +135,8 @@ if(count($files))
             unlink($f);
 
 $widget_name = 'Logfiles';
+$current     = strftime('%Y-%m-%d');
+
 $logs  = array();
 $list  = array();
 $files = CAT_Helper_Directory::getInstance()
@@ -156,7 +158,11 @@ if(count($list))
         $file = str_ireplace(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'),'',CAT_Helper_Directory::sanitizePath($f['file']));
         if(substr($file,0,1)=="/")
             $file = substr_replace($file,'',0,1);
-        $logs[] = array('file'=>$file,'size'=>CAT_Helper_Directory::byte_convert($f['size']));
+        if(pathinfo($f['file'],PATHINFO_BASENAME) == 'log_'.$current.'.txt')
+            $removable = false;
+        else
+            $removable = true;
+        $logs[] = array('file'=>$file,'size'=>CAT_Helper_Directory::byte_convert($f['size']),'removable'=>$removable);
     }
 }
 else
