@@ -23,11 +23,44 @@
  *
  */
 
+define('CAT_LOGIN_PHASE',1);
+
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
+} else {
+	$root = "../";
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= "../";
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
+}
+
 // while this is not really 'secure' (as $_SERVER can be hacked), it's still
-// bettern than nothing...
+// better than nothing...
+if(!defined('CAT_BACKEND_REQ_SSL') || CAT_BACKEND_REQ_SSL === false)
+{
+    echo json_encode( array( 'success' => false ) );
+    exit;
+}
 if(isset($_SERVER['OPENSSL_CONF']) && preg_match('~SSL~',$_SERVER['SERVER_SOFTWARE']))
 {
+    try {
+        $SSL_Check = @fsockopen("ssl://".$_SERVER['HTTP_HOST'], 443, $errno, $errstr, 30);
+        if (!$SSL_Check) {
+            echo json_encode( array( 'success' => false ) );
+        } else {
+            fclose($SSL_Check);
     echo json_encode( array( 'success' => true ) );
+        }
+    } catch( Exception $e ) {
+        echo json_encode( array( 'success' => false ) );
+    }
 }
 else
 {
