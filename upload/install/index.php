@@ -137,7 +137,7 @@ $bundled = array(
     'DE'             , 'EN'
 );
 $mandatory = array(
-    'droplets', 'lib_csrfmagic', 'lib_dwoo', 'lib_jquery', 'lib_pclzip', 'show_menu2', 'wysiwyg', 'wysiwyg_admin'
+    'droplets', 'lib_csrfmagic', 'lib_doctrine', 'lib_dwoo', 'lib_jquery', 'lib_pclzip', 'show_menu2', 'wysiwyg', 'wysiwyg_admin'
 );
 
 // *****************************************************************************
@@ -222,7 +222,7 @@ if ( file_exists( dirname(__FILE__).'/instdata.tmp' ) )
     $config = unserialize( $file );
 }
 else {
-    $config = array();
+    $config = array('ssl_available' => sslCheck());
 }
 
 // set timezone default
@@ -480,6 +480,7 @@ function show_step_globals( $step ) {
             'is_linux'                           => $osl,
             'is_windows'                         => $osw,
             'errors'                            => $step['errors'],
+            'ssl_available'                     => ( isset($config['ssl_available']) ? $config['ssl_available'] : sslCheck() ) ,
         )
     );
 
@@ -498,6 +499,10 @@ function check_step_globals() {
     if ( ! isset($config['cat_url']) || $config['cat_url'] == '' )
     {
         $errors['installer_cat_url'] = $lang->translate('Please insert the base URL!');
+    }
+    if ( ! isset($config['ssl']) || $config['ssl'] == '' )
+    {
+        $config['ssl'] = false;
     }
     write2log('< [check_step_globals()]');
     return array(
@@ -1502,7 +1507,7 @@ function __do_install() {
 "define('CAT_ADMIN_URL', CAT_URL.'/'.CAT_BACKEND_PATH);\n".
 "\n".
 "// if you have problems with SSL, set this to 'false' or delete the following line\n".
-"define('CAT_BACKEND_REQ_SSL', ".(sslCheck() ? 'true' : 'false').");\n\n".
+"define('CAT_BACKEND_REQ_SSL', ".( (isset($config['ssl']) && $config['ssl']) ? 'true' : 'false').");\n\n".
 ( (isset($config['no_validate_admin_password']) && $config['no_validate_admin_password'] == "true") ? "define('ALLOW_SHORT_PASSWORDS',true);\n\n" : '' ).
 "if (!defined('CAT_INSTALL')) require_once(CAT_PATH.'/framework/initialize.php');\n".
 "\n".

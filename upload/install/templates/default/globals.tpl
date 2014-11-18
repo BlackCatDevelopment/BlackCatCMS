@@ -35,11 +35,11 @@
         {if $errors.installer_cat_url}<br /><span>{$errors.installer_cat_url}</span>{/if}
       </td>
 	</tr>
-{if $installer_ssl === true}
+{if $ssl_available === true}
     <tr{if $errors.installer_ssl} class="fail"{/if}>
       <td><label for="installer_ssl">{translate('Use SSL for Backend')}</label></td>
       <td>
-        <input type="checkbox" tabindex="2" name="installer_ssl" id="installer_ssl" value="true"{if $installer_ssl} checked="checked"{/if} />
+        <input type="checkbox" tabindex="2" name="installer_ssl" id="installer_ssl" value="true"{if $installer_ssl==true} checked="checked"{/if} />
         {if $errors.installer_ssl}<br /><span>{$errors.installer_ssl}</span>{/if}
         <span style="font-size: 10px; color: #666666;">{translate('The installer has detected that SSL (https) seems to be available on this host. We recommend to use it for the backend to protect your data. Unfortunately, SSL detection is not reliable, so you may have to deactivate it later in your config.php.')}</span>
       </td>
