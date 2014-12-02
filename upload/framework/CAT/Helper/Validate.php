@@ -304,6 +304,10 @@ if (!class_exists('CAT_Helper_Validate'))
         {
             if($use_filter)
                 $address = filter_var($address, FILTER_SANITIZE_URL);
+            // fix for protocol relative URLs
+            if (substr($address, 0, 2) == "//") 
+                $address = (isset($_SERVER['HTTPS']) ? 'https:' : 'http:')
+                         . $address;
             // href="http://..." ==> href isn't relative
             $rel_parsed = parse_url($address);
             if(!isset($rel_parsed['path']) || $rel_parsed['path'] == '') return '';

@@ -56,10 +56,10 @@
 		</nav>
 	</header>
 	<section id="content" class="gradient_gray br_all">
-		{if check_block(2)}
+		{if check_section(2)}
 		<header id="content_header" class="gradient_gray br_top">
 			<div class="right">{language_menu()}</div>
-			{page_header}
+			{page_header()}
 			{page_content(2)}
 		</header>
 		{/if}
@@ -70,7 +70,7 @@
 		</aside>
 
 		<section id="content_main" class="{if !check_section(2)}br_right{else}br_bottomright{/if}">
-			{if !check_block(2)}{page_header}{/if}
+			{if !check_section(2)}{page_header}{/if}
 			{page_content(1)}
 		</section>
 
