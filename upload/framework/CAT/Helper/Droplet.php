@@ -1060,10 +1060,10 @@ if (!class_exists('CAT_Helper_Droplet')) {
                     $found = $self->db()->query(
                         "SELECT * FROM `:prefix:mod_droplets` WHERE name=:name", array('name'=>$name)
                     );
-                    if ( $found->rowCount() && $found->fetchColumn() > 0 )
+                    if ( $found->rowCount() )
                     {
                         $stmt = 'REPLACE';
-                        $id   = $found;
+                        $id   = $found->fetchColumn();
                     }
                     // execute
                     $q = "$stmt INTO `:prefix:mod_droplets` SET "
