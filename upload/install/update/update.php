@@ -106,13 +106,14 @@ $lang->db()->query(sprintf(
 if(file_exists(CAT_PATH."/templates/freshcat/css/images/login/beta_state.png"))
     unlink(CAT_PATH."/templates/freshcat/css/images/login/beta_state.png");
 
+// ----- moved for Version 1.1 (mysql strict mode) -----
 // run lib_search upgrade
-if(file_exists(CAT_PATH.'/modules/lib_search/upgrade.php'))
-    include CAT_PATH.'/modules/lib_search/upgrade.php';
-
+//if(file_exists(CAT_PATH.'/modules/lib_search/upgrade.php'))
+//    include CAT_PATH.'/modules/lib_search/upgrade.php';
 // run droplets upgrade
-if(file_exists(CAT_PATH.'/modules/droplets/upgrade.php'))
-    include CAT_PATH.'/modules/droplets/upgrade.php';
+//if(file_exists(CAT_PATH.'/modules/droplets/upgrade.php'))
+//    include CAT_PATH.'/modules/droplets/upgrade.php';
+// ----- moved for Version 1.1 (mysql strict mode) -----
 
 // run wrapper install script
 if(file_exists(CAT_PATH.'/modules/wrapper/install.php'))
@@ -195,6 +196,8 @@ $database->query(sprintf(
 /*******************************************************************************
     1.0.3/1.0.4 TO 1.1
 *******************************************************************************/
+
+// add new files
 $database->query(sprintf(
     'REPLACE INTO `%sclass_secure` VALUES( "0", "/backend/pages/ajax_headers.php" )',
     CAT_TABLE_PREFIX
@@ -207,6 +210,74 @@ $database->query(sprintf(
     'REPLACE INTO `%sclass_secure` VALUES ( "0", "/backend/login/ajax_check_ssl.php" )',
     CAT_TABLE_PREFIX
 ));
+
+$res = $database->query(sprintf(
+    'SELECT `filepath` FROM `%sclass_secure` WHERE `filepath`="%s"',
+    CAT_TABLE_PREFIX, '/modules/blackcat/widgets/logs.php'
+));
+if(!$res || !$res->numRows())
+{
+    $mod_id_h = $database->query(sprintf(
+        'SELECT `addon_id` FROM `%saddons` WHERE `directory`="%s"',
+        CAT_TABLE_PREFIX, 'blackcat'
+    ));
+    $mod_id = $mod_id_h->fetchColumn();
+    $database->query(sprintf(
+        'INSERT INTO `%sclass_secure` VALUES ( "%d", "/modules/blackcat/widgets/logs.php" )',
+        CAT_TABLE_PREFIX, $mod_id
+    ));
+}
+
+// alter table 'search'; no need to check this first
+$database->query(sprintf(
+    'ALTER TABLE `%ssearch` CHANGE COLUMN `extra` `extra` TEXT NULL',
+    CAT_TABLE_PREFIX
+));
+
+// alter table 'droplets'; no need to check this first
+$database->query(sprintf(
+    'ALTER TABLE `%smod_droplets` CHANGE COLUMN `modified_by` `modified_by` INT(11) NULL DEFAULT "0"',
+    CAT_TABLE_PREFIX
+));
+
+// run droplets upgrade
+if(file_exists(CAT_PATH.'/modules/droplets/upgrade.php'))
+    include CAT_PATH.'/modules/droplets/upgrade.php';
+// run lib_search upgrade
+if(file_exists(CAT_PATH.'/modules/lib_search/upgrade.php'))
+    include CAT_PATH.'/modules/lib_search/upgrade.php';
+
+// Installer for Doctrine
+$mod_id = $database->query(sprintf(
+    'SELECT `addon_id` FROM `%saddons` WHERE `directory`="%s"',
+    CAT_TABLE_PREFIX, 'lib_doctrine'
+));
+if(!$res || !$res->numRows())
+{
+    include CAT_PATH.'/modules/lib_doctrine/install.php';
+}
+
+// update droplet EditThisPage
+//CAT_Helper_Droplet::installDroplet(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/droplets/install/droplet_EditThisPage.zip'));
+
+// new table for header files
+$res = $database->query(sprintf(
+    'show tables like "%spages_headers"',
+    CAT_TABLE_PREFIX
+));
+if(!$res || !$res->numRows())
+{
+    $database->query(sprintf(
+        'CREATE TABLE IF NOT EXISTS `%spages_headers` (
+          `page_id` int(11) NOT NULL,
+          `page_js_files` text,
+          `page_css_files` text,
+          `page_js` text,
+          UNIQUE KEY `page_id` (`page_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT="header files";',
+        CAT_TABLE_PREFIX
+    ));
+}
 
 /*******************************************************************************
     ALL VERSIONS: update version info

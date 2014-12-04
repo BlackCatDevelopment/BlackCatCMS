@@ -31,7 +31,8 @@ $depth = 0;
 
 // check wether to call update.php or start installation
 if (file_exists('../config.php') && file_exists(dirname(__FILE__).'/update/update.php') && ! file_exists(dirname(__FILE__).'/steps.tmp')) {
-    include dirname(__FILE__).'/update/update.php';
+    $url = pathinfo($_SERVER['SCRIPT_NAME'],PATHINFO_DIRNAME);
+    header('Location: '.$url.'/update/update.php');
     exit();
 }
 
