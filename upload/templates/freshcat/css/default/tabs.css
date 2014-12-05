@@ -1,0 +1,49 @@
+/**
+ * Tabs object.
+ *
+ * 1. Tables (kinda) for layout!
+ * 2. This is the magic bit; make all children occupy equal width.
+ * 3. Required to make the tabs fill their container.
+ * 4. Make each tab pack up horizontally.
+ * 5. Ensure the hit area covers the whole tab.
+ *
+ * http://jsfiddle.net/csswizardry/zfSt4/
+ **/
+.tabs {
+    margin:  0;
+    padding: 0;
+    list-style: none;
+    display: table; /* [1] */
+    table-layout: fixed; /* [2] */
+    width: 100%; /* [3] */
+}
+
+    .tabs__item {
+        display: table-cell; /* [4] */
+    }
+
+        .tabs__link {
+            display: block; /* [5] */
+        }
+
+
+/**
+ * Primary nav. Extends `.tabs`.
+ *
+ * 1. Stop tabs’ corners leaking out beyond our 4px round.
+ */
+.primary-nav {
+    text-align: center;
+    overflow: hidden; /* [1] */
+}
+    .primary-nav a {
+        padding: 1em;
+        font-weight: bold;
+        text-decoration: none;
+        border-right: 1px solid #9da8b2;
+        border-bottom: 1px solid #9da8b2;
+    }
+    .primary-nav a:hover,.primary-nav a.current {
+        background-color: #9da8b2;
+        color:#fff;
+    }

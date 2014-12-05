@@ -165,7 +165,7 @@ jQuery(document).ready(function(){
 			{
 				if ( data.success === true )
 				{
-                    $('div#addon_details').html(data.content);
+                    $('div#addons_main_content').html(data.content);
                     jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
 				}
 				else {
@@ -175,10 +175,65 @@ jQuery(document).ready(function(){
 		});
     });
 
-    $('#fc_add_new_module_button').click(
-        function(e) {
-            $('#fc_add_new_module').toggle('slow');
-            e.preventDefault();
+    // ----- TABS -----
+    $('#fc_addons_upload').unbind('click').bind('click',function() {
+        $('ul.primary-nav > li').find('a').removeClass('current');
+        $('ul.primary-nav > li#tab_item_1').find('a').addClass('current');
+        $.ajax(
+		{
+			type:		'GET',
+            data:       { tpl: 'backend_addons_index_upload' },
+			url:		CAT_ADMIN_URL + '/addons/ajax_get_template.php',
+			dataType:	'html',
+			cache:		false,
+			success:	function( data, textStatus, jqXHR )
+			{
+                $('div#addons_main_content').html(data);
         }
-    );
+		});
+    });
+
+    $('#fc_addons_create').unbind('click').bind('click',function() {
+        $('ul.primary-nav > li').find('a').removeClass('current');
+        $('ul.primary-nav > li#tab_item_3').find('a').addClass('current');
+        $.ajax(
+		{
+			type:		'GET',
+            data:       { tpl: 'backend_addons_index_create' },
+			url:		CAT_ADMIN_URL + '/addons/ajax_get_template.php',
+			dataType:	'html',
+			cache:		false,
+			success:	function( data, textStatus, jqXHR )
+			{
+                $('div#addons_main_content').html(data);
+			}
+		});
+    });
+
+    $('#fc_addons_catalog').unbind('click').bind('click',function() {
+        $('ul.primary-nav > li').find('a').removeClass('current');
+        $('ul.primary-nav > li#tab_item_2').find('a').addClass('current');
+        $.ajax(
+		{
+			type:		'POST',
+			url:		CAT_ADMIN_URL + '/addons/ajax_get_catalog.php',
+			dataType:	'json',
+			cache:		false,
+            beforeSend:	function( data )
+    		{
+    			data.process	= set_activity();
+    		},
+			success:	function( data, textStatus, jqXHR )
+			{
+				if ( data.success === true )
+				{
+                    $('div#addons_main_content').html(data.content);
+                    jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
+				}
+				else {
+					return_error( jqXHR.process , data.message);
+				}
+			}
+		});
+    });
 });

@@ -1,0 +1,10 @@
+.fc_table{margin:15px;background-color:#fff;}
+.fc_table th{padding:15px;font-size:1.2em;}
+.fc_table td{border-bottom:1px solid #9da8b2;padding:15px;}
+.fc_addon_name{font-size:1.2em;font-weight:900;}
+.fc_addon_version{font-size:1.2em;}
+.fc_addon_installdate{font-size:0.9em;font-style:italic;}
+.fc_addon_update{font-weight:900;color:#0c0;}
+.fc_addon_old{font-weight:900;color:#fc0;}
+.fc_addon_icon-alarm{font-size:22px;color:#c00;font-weight:900;}
+.fc_addon_buttons button{line-height:1em;-webkit-border-radius: 3px;-moz-border-radius: 3px;-khtml-border-radius: 3px;border-radius: 3px;-moz-box-shadow: 3px 3px 3px #ccc;-webkit-box-shadow: 3px 3px 3px #ccc;box-shadow: 3px 3px 3px #ccc;}

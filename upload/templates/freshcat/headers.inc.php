@@ -87,6 +87,12 @@ if(isset($local[$page]))
     );
 }
 
+if($page=='addons')
+{
+    array_push($mod_headers['backend']['css'], array('file'=>'templates/freshcat/css/default/tabs.css'));
+    array_push($mod_headers['backend']['css'], array('file'=>'templates/freshcat/css/default/addons.css'));
+}
+
 // check for custom JS for current backend page
 if ( CAT_Registry::get('DEFAULT_THEME_VARIANT') == 'custom' )
     if(file_exists(dirname(__FILE__).'/templates/custom/backend_'.$page.'.js'))

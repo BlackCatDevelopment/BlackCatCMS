@@ -715,8 +715,8 @@ $LANG = array(
     'Module type' => 'Modultyp',
     'Module seems to be not installed yet.' => 'Das Modul ist offenbar noch nicht installiert.',
     'No install.php found! The module cannot be installed!' => 'Keine install.php gefunden! Das Modul kann nicht installiert werden!',
-    'Please fill out the form to create a new addon. An empty directory with an info.php file will be created for you to start your work.'
-        => 'Bitte das Formular vollständig ausfüllen, um ein neues Addon zu erzeugen. Ein leeres Verzeichnis und eine info.php werden als Basis für die weitere Arbeit angelegt.',
+    'Please fill out the form to create a new addon. A new directory with the basic files will be created to start with.'
+        => 'Bitte das Formular vollständig ausfüllen, um ein neues Addon zu erzeugen. Ein Verzeichnis mit den notwendigen Dateien wird als Basis für die weitere Arbeit angelegt.',
     'Uninstall Addon' => 'Addon deinstallieren',
     'Uninstalled successfully' => 'Erfolgreich deinstalliert',
     'Unknown' => 'Unbekannt',
@@ -727,6 +727,16 @@ $LANG = array(
     'You can set permissions for each group to use this addon.' => 'Es können für jede Gruppe Berechtigungen für dieses Addon gesetzt werden.',
     'When modules are uploaded via FTP (not recommended), the module installation functions install, upgrade or uninstall will not be executed automatically. Those modules may not work correct or do not uninstall properly.'
         => 'Wenn Module via FTP hochgeladen werden (nicht empfohlen), werden die Funktionen zur Installation, zum Upgrade oder zur Deinstallation nicht automatisch ausgeführt. Diese Module funktionieren eventuell nicht richtig oder lassen sich nicht deinstallieren.',
+// ----- v1.2 -----
+    'Action' => 'Aktion',
+    'Create new' => 'Neu erstellen',
+    'Current version' => 'Aktuelle Version',
+    'Install' => 'Installieren',
+    'Installed version' => 'Installierte Version',
+    'Show Catalog' => 'Katalog',
+    'Uninstall' => 'Deinstallieren',
+    'Update available!' => 'Update verfügbar!',
+    'Upload and install' => 'Hochladen und installieren',
 );
 
 // include old lang files
