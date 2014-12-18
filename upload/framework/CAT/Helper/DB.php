@@ -243,7 +243,6 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
 					$sql
                 ));
             }
-            self::restoreExceptionHandler();
             if($this->isError())
             {
                 $logger = self::$conn->getConfiguration()->getSQLLogger();
@@ -264,9 +263,11 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                             return $this->getError();
                         else
                             throw new \PDOException($this->getError());
+                            #CAT_Object::printFatalError($this->getError());
                     }
                 }
             }
+            self::restoreExceptionHandler();
             return false;
         }   // end function query()
 

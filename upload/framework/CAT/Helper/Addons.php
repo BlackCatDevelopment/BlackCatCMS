@@ -1757,7 +1757,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
          **/
         public static function getLibraries( $type = NULL )
         {
-            $dir  = self::$dirh->sanitizePath( CAT_PATH . '/modules' );
+            $dir  = CAT_Helper_Directory::sanitizePath( CAT_PATH . '/modules' );
             $libs = array();
             if ( $handle = opendir( $dir ) )
             {

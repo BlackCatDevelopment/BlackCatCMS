@@ -825,7 +825,7 @@ if (!class_exists('CAT_Helper_Page'))
          * @access public
          * @return HTML
          **/
-        public static function getCSS($for='frontend')
+        public static function getCSS($for='frontend',$as_array=false)
         {
             $output = array();
             if (count(CAT_Helper_Page::$css))
@@ -847,7 +847,7 @@ if (!class_exists('CAT_Helper_Page'))
                 }
                 $val = CAT_Helper_Validate::getInstance();
                 $seen = array();
-                foreach (CAT_Helper_Page::$css as $item)
+                while( NULL !== ( $item = array_shift(CAT_Helper_Page::$css) ) )
                 {
                     if ( ! isset($seen[$item['file']]) )
                     {
@@ -877,9 +877,10 @@ if (!class_exists('CAT_Helper_Page'))
                         }
                         $output[] = $line;
                     }
-                    $seen[$item['file']] = 1;
+                    $seen[$item['file']] = $file;
                 }
             }
+            if($as_array) return array_values($seen);
             return implode('',$output);
         } // end function getCSS()
 
@@ -1051,6 +1052,18 @@ if (!class_exists('CAT_Helper_Page'))
                 '/modules/'.CAT_Registry::get('SEARCH_LIBRARY').'/templates/default/'
             );
 
+            // Javascript search path
+            array_push(
+                CAT_Helper_Page::$js_search_path,
+                '/templates/'.$tpl,
+                '/templates/'.$tpl.'/js',
+                // for skinnables
+                '/templates/'.$tpl.'/templates/default',
+                '/templates/'.$tpl.'/templates/default/js',
+                // page
+                CAT_Registry::get('PAGES_DIRECTORY').'/js/'
+            );
+
             // -----------------------------------------------------------------
             // -----             get extra header files                    -----
             // -----------------------------------------------------------------
@@ -1197,6 +1210,25 @@ if (!class_exists('CAT_Helper_Page'))
                 $static =& CAT_Helper_Page::$js;
             else
                 $static =& CAT_Helper_Page::$f_js;
+
+            // if there was some CSS added meanwhile...
+            if($for == 'footer' && count(CAT_Helper_Page::$css))
+            {
+                $arr = CAT_Helper_Page::$css;
+                CAT_Helper_Page::$css = array();
+                self::_analyze_css($arr); // fixes paths
+                $css = self::getCSS(NULL,true);
+                $js  = '<script type="text/javascript">';
+                foreach($css as $item)
+                {
+                    $js .= '$("head").append("<link rel=\"stylesheet\" href=\"'
+                        .  $item['file'] . '\" type=\"text/css\" media=\"'
+                        .  ( isset($item['media']) ? $item['media'] : 'screen,projection' )
+                        .  '\" />");';
+                }
+                $js .= '</script>';
+                $static[] = $js;
+            }
 
             if (is_array($static) && count($static))
                 return implode("\n", $static) . "\n";
