@@ -1338,10 +1338,10 @@ if (!class_exists('CAT_Helper_Page'))
                           ;
 
             // page title
-            if(isset($droplets_config['title']))
-                $title = $droplets_config['title'];
-            elseif(isset($properties['title']))
-                $title = $properties['title'];
+            if(isset($droplets_config['page_title']))
+                $title = $droplets_config['page_title'];
+            elseif(isset($properties['page_title']))
+                $title = $properties['page_title'];
             elseif(defined('WEBSITE_TITLE'))
                 $title = WEBSITE_TITLE;
             else
