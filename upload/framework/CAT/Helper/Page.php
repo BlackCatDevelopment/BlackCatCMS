@@ -1222,9 +1222,7 @@ if (!class_exists('CAT_Helper_Page'))
                 foreach($css as $item)
                 {
                     $js .= '$("head").append("<link rel=\"stylesheet\" href=\"'
-                        .  $item['file'] . '\" type=\"text/css\" media=\"'
-                        .  ( isset($item['media']) ? $item['media'] : 'screen,projection' )
-                        .  '\" />");';
+                        .  $item . '\" type=\"text/css\" media=\"screen,projection\" />");';
                 }
                 $js .= '</script>';
                 $static[] = $js;
@@ -1248,6 +1246,15 @@ if (!class_exists('CAT_Helper_Page'))
                 $static =& CAT_Helper_Page::$jquery;
             else
                 $static =& CAT_Helper_Page::$f_jquery;
+
+            if($for == 'footer' && count(CAT_Helper_Page::$css))
+            {
+                if(!CAT_Helper_Page::$jquery_core)
+                {
+                    array_unshift($static, CAT_Helper_Page::$space . '<script type="text/javascript" src="' . CAT_Helper_Validate::sanitize_url(CAT_URL . '/modules/lib_jquery/jquery-core/jquery-core.min.js') . '"></script>' . "\n");
+                    CAT_Helper_Page::$jquery_core = true;
+                }
+            }
 
             if (count($static))
                 return implode($static);
