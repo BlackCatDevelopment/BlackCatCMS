@@ -387,7 +387,7 @@ if (!class_exists('CAT_Helper_Page'))
                 if(is_array($value))
                     $value = implode(',',$value);
                 self::$instance->db()->query(
-                    'REPLACE INTO `:prefix:pages_settings` VALUES( ":id", ":type", ":k", ":v" )',
+                    'REPLACE INTO `:prefix:pages_settings` VALUES( :id, :type, :k, :v )',
                     array( 'id'=>$page_id,'type'=>'internal','k'=>$key,'v'=>$value)
                 );
             }
@@ -831,6 +831,9 @@ if (!class_exists('CAT_Helper_Page'))
             if (count(CAT_Helper_Page::$css))
             {
                 // check for template variants
+/*
+I think this is needed here, is it?
+frontend.css and template.css are added in _get_css()
                 $key    = 'DEFAULT_TEMPLATE_VARIANT';
                 $subkey = 'DEFAULT_TEMPLATE';
                 $file   = 'template';
@@ -845,6 +848,7 @@ if (!class_exists('CAT_Helper_Page'))
                 {
                     array_push(CAT_Helper_Page::$css, array('file'=>'templates/'.CAT_Registry::get($subkey).'/css/'.CAT_Registry::get($key).'/'.$file.'.css'));
                 }
+*/
                 $val = CAT_Helper_Validate::getInstance();
                 $seen = array();
                 while( NULL !== ( $item = array_shift(CAT_Helper_Page::$css) ) )
