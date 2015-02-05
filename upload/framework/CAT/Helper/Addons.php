@@ -1246,7 +1246,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
             // load info.php again to have current values
             if ( !count( $addon_info ) && file_exists( $addon_dir . '/info.php' ) )
-                $addon_info = self::checkInfo( $addondir );
+                $addon_info = self::checkInfo( $addon_dir );
 
             $self->log()->logDebug( 'addon info:', $addon_info );
 
