@@ -44,7 +44,7 @@ else {
 $module_directory = 'lib_jquery';
 $module_name = 'jQuery / jQuery UI JavaScript Library';
 $module_function = 'library';
-$module_version = '2.4';
+$module_version = '2.5';
 $module_platform = '1.x';
 $module_author = 'BlackBird';
 $module_license = 'GNU General Public License';

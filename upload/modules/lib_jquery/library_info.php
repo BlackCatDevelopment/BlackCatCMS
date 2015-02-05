@@ -45,8 +45,8 @@ global $lib_info;
 $lib_info = array(
     'library_path'    => 'lib_jquery',
     'library_name'    => 'jQuery',
-    'library_version' => '2.1.1',
-    'library_info'    => 'Includes jQuery Core v1.11.1 and v2.1.1 (default), jQuery UI 1.11.0, UI Theme "base"',
+    'library_version' => '2.1.3',
+    'library_info'    => 'Includes jQuery Core v1.11.1 and v2.1.3 (default), jQuery UI 1.11.0, UI Theme "base"',
     'library_class'   => 'jQueryAdmin',
     'preset_suffix'   => 'jquery',
     'scan_dirs'       => array(
