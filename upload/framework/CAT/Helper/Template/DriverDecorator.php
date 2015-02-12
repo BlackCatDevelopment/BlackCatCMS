@@ -210,21 +210,28 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
                     $paths[] = $value;
             // remove doubles
             $paths = array_unique($paths);
+            $this->log()->logDebug('template search paths:',$paths);
+
             // (re-)set suffix filter
             $this->dirh->setSuffixFilter(array('tpl','htt','lte'));
 
-            foreach ( $paths as $dir ) {
+            foreach ( $paths as $dir )
+            {
                 if($has_suffix && file_exists($dir.'/'.$_tpl))
+                {
                     $file = $dir.'/'.$_tpl;
+                }
                 else
+                {
                     $file = $this->dirh->findFile($_tpl,$dir,true);
+                }
                 if ( $file )
                 {
                     $this->seen[$this->te->paths['current'] . $_tpl] = $file;
                     return $file;
                 }
             }
-            $this->log()->logCrit( "The template [$_tpl] does not exists in one of the possible template paths!", $paths );
+            $this->log()->logCrit( "The template [$_tpl] does not exist in one of the possible template paths!", $paths );
             // the template does not exists, so at least prompt an error
             $br = "\n";
             CAT_Object::printFatalError(
