@@ -88,6 +88,9 @@ switch($region)
     case 'searchblock':
         saveSearch($backend);
         break;
+    case 'headers':
+        saveHeaderfiles($backend);
+        break;
 }
 
 if(count($err_msg)) {

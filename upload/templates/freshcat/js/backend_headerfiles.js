@@ -28,6 +28,68 @@
 jQuery(document).ready(function($)
 {
 
+    function saveHeaderfiles(page_id,use_core,use_ui)
+    {
+        if(page_id=='') { page_id = '0'; }
+//alert('page_id ['+page_id+'] use_core ['+use_core+'] use_ui ['+use_ui+']');
+        $.ajax(
+		{
+			type:		'POST',
+			url:		CAT_ADMIN_URL + '/pages/ajax_headers.php',
+			dataType:	'json',
+			data:		{
+                page_id    : page_id,
+                save       : 1,
+                use_core   : use_core,
+                use_ui     : use_ui,
+                '_cat_ajax': 1
+            },
+			cache:		false,
+			beforeSend:	function( data )
+			{
+				data.process	= set_activity( 'Saving...' );
+			},
+			success:	function( data, textStatus, jqXHR  )
+			{
+                $('.popup').dialog('destroy').remove();
+                if ( data.success === true )
+				{
+					location.reload(true);
+				}
+				else {
+					return_error( jqXHR.process , data.message );
+				}
+            }
+        });
+    }
+
+    // toggle checkboxes
+    $('#fc_use_ui').unbind('click').click(function(e) {
+        e.preventDefault();
+        var page_id = $('#fc_headers_pageid').text();
+        if($(this).is(':checked')) {
+            $('#fc_use_core').prop('checked', true);
+        }
+        saveHeaderfiles(page_id,$('#fc_use_core').is(':checked'),$('#fc_use_ui').is(':checked'));
+    });
+    $('#fc_use_core').unbind('click').click(function(e) {
+        e.preventDefault();
+        var page_id = $('#fc_headers_pageid').text();
+        if($(this).not(':checked')) {
+            $('#fc_use_ui').prop('checked', false);
+        }
+        saveHeaderfiles(page_id,$('#fc_use_core').is(':checked'),$('#fc_use_ui').is(':checked'));
+    });
+    if($('form#settings.ajax_form ul#fc_pages_headerfiles_js ul.ui-sortable').children().length)
+    {
+        $('#fc_use_core').prop('checked', true);
+    }
+
+    if($('form#settings.ajax_form ul#fc_pages_headerfiles_js ul.ui-sortable').children().length)
+    {
+        $('#fc_use_core').prop('checked', true);
+    }
+
     // add jQuery plugin
     if($('button.fcAddPlugin').length) {
         $('button.fcAddPlugin').unbind('click').click(function(e) {

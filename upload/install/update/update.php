@@ -280,6 +280,20 @@ if(!$res || !$res->numRows())
 }
 
 /*******************************************************************************
+    1.1 TO 1.1.1
+*******************************************************************************/
+
+$database->query(sprintf(
+    'ALTER TABLE `%spages_headers`
+	ADD COLUMN `use_core` ENUM(\'Y\',\'N\') NULL AFTER `page_js`,
+	ADD COLUMN `use_ui` ENUM(\'Y\',\'N\') NULL AFTER `use_core`;',
+    CAT_TABLE_PREFIX
+));
+
+
+
+
+/*******************************************************************************
     ALL VERSIONS: update version info
 *******************************************************************************/
 $database->query(sprintf(

@@ -356,6 +356,27 @@ function saveDatetime($backend) {
 }
 
 /**
+ * this only saves the jQuery core and UI settings, as the plugins are saved
+ * at once via AJAX
+ **/
+function saveHeaderfiles($backend) {
+    $data = CAT_Helper_Page::getExtraHeaderFiles(0);
+    if(CAT_Helper_Validate::sanitizePost('use_core')=='on')
+        $use_core = 'Y';
+    else
+        $use_core = 'N';
+    if(CAT_Helper_Validate::sanitizePost('use_ui')=='on')
+        $use_ui = 'Y';
+    else
+        $use_ui = 'N';
+    if(count($data))
+        $query  = 'UPDATE `:prefix:pages_headers` SET `use_core`=:value1, `use_ui`=:value2 WHERE `page_id`=:page_id';
+    else
+        $query  = 'INSERT INTO `:prefix:pages_headers` ( `page_id`, `use_core`, `use_ui` ) VALUES ( :page_id, :value1, :value2 )';
+    CAT_Helper_Page::getInstance(1)->db()->query($query,array('page_id'=>0,'value1'=>$use_core,'value2'=>$use_ui));
+}   // end function saveHeaderfiles()
+
+/**
  *
  **/
 function saveMail($backend) {

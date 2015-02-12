@@ -609,6 +609,8 @@ if (!class_exists('CAT_Helper_Page'))
                     $data['css'] = unserialize($row['page_css_files']);
                 if(isset($row['page_js']) && $row['page_js']!='')
                     $data['code'] = $row['page_js'];
+                $data['use_core'] = $row['use_core'];
+                $data['use_ui']   = $row['use_ui'];
             }
             return $data;
         }   // end function getExtraHeaderFiles()
@@ -2361,8 +2363,23 @@ frontend.css and template.css are added in _get_css()
          **/
         private static function _analyze_jquery_components(&$arr, $for = 'frontend', $section = NULL)
         {
+            global $page_id;
+
             $static =& CAT_Helper_Page::$jquery;
             $val    =  CAT_Helper_Validate::getInstance();
+
+            $set    = self::getInstance()->db()->query(
+                'SELECT `use_core`, `use_ui` FROM `:prefix:pages_headers` WHERE `page_id`=:id OR `page_id`=0',
+                array('id' => $page_id)
+            );
+            if($set->rowCount())
+            {
+                while(false!==($row = $set->fetch()))
+                {
+                    if($row['use_ui'] == 'Y') $arr['ui']     = true;
+                    if($row['use_core'] == 'Y') $arr['core'] = true;
+                }
+            }
 
             // make sure that we load the core if needed, even if the
             // author forgot to set the flags
