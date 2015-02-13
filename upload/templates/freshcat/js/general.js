@@ -27,7 +27,7 @@ if ( typeof jQuery != 'undefined' )
         error: function( jqXHR, textStatus, errorThrown )
         {
             console.log( 'Status code: ' + jqXHR.status + " - Text status: " + textStatus + " - error: " + errorThrown );
-            console.log(dump(jqXHR));
+            //console.log(dump(jqXHR));
             if (jqXHR.status === 0) {
                 alert('Not connected.\n Verify Network.');
             } else if (jqXHR.status == 404) {

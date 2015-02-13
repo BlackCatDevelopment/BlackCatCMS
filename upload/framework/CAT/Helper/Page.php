@@ -834,7 +834,7 @@ if (!class_exists('CAT_Helper_Page'))
             {
                 // check for template variants
 /*
-I think this is needed here, is it?
+I think this is not needed here, is it?
 frontend.css and template.css are added in _get_css()
                 $key    = 'DEFAULT_TEMPLATE_VARIANT';
                 $subkey = 'DEFAULT_TEMPLATE';
