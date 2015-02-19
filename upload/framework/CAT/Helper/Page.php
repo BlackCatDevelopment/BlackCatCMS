@@ -1378,7 +1378,10 @@ frontend.css and template.css are added in _get_css()
             // charset
             $output[] = CAT_Helper_Page::$space
                       . '<meta http-equiv="Content-Type" content="text/html; charset='
-                      . (isset($properties['default_charset']) ? $properties['default_charset'] : 'utf-8')
+                      . ( isset($properties['default_charset']) && $properties['default_charset'] != ''
+                      ? $properties['default_charset'] :
+                      ( defined('DEFAULT_CHARSET') ? DEFAULT_CHARSET : 'utf-8' )
+                      )
                           . '" />'
                           ;
 
