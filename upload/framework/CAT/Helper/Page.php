@@ -1388,10 +1388,10 @@ frontend.css and template.css are added in _get_css()
             // page title
             if(isset($droplets_config['page_title']))
                 $title = $droplets_config['page_title'];
+            elseif(defined('WEBSITE_TITLE'))
+                $title = WEBSITE_TITLE . (isset($properties['page_title']) ? ' - ' . $properties['page_title'] : '' );
             elseif(isset($properties['page_title']))
                 $title = $properties['page_title'];
-            elseif(defined('WEBSITE_TITLE'))
-                $title = WEBSITE_TITLE;
             else
                 $title = '-';
             if($title)
