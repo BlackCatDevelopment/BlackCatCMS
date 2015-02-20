@@ -1381,17 +1381,20 @@ frontend.css and template.css are added in _get_css()
             // charset
             $output[] = CAT_Helper_Page::$space
                       . '<meta http-equiv="Content-Type" content="text/html; charset='
-                      . (isset($properties['default_charset']) ? $properties['default_charset'] : 'utf-8')
+                      . ( isset($properties['default_charset']) && $properties['default_charset'] != ''
+                      ? $properties['default_charset'] :
+                      ( defined('DEFAULT_CHARSET') ? DEFAULT_CHARSET : 'utf-8' )
+                      )
                           . '" />'
                           ;
 
             // page title
             if(isset($droplets_config['page_title']))
                 $title = $droplets_config['page_title'];
+            elseif(defined('WEBSITE_TITLE'))
+                $title = WEBSITE_TITLE . (isset($properties['page_title']) ? ' - ' . $properties['page_title'] : '' );
             elseif(isset($properties['page_title']))
                 $title = $properties['page_title'];
-            elseif(defined('WEBSITE_TITLE'))
-                $title = WEBSITE_TITLE;
             else
                 $title = '-';
             if($title)
