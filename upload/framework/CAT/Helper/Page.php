@@ -1235,7 +1235,10 @@ frontend.css and template.css are added in _get_css()
             }
 
             if (is_array($static) && count($static))
+            {
+                $static = array_unique($static);
                 return implode("\n", $static) . "\n";
+            }
 
             return NULL;
         } // end function getJavaScripts()
