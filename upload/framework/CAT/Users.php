@@ -140,9 +140,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
                     if ( ! self::$loginerror )
                     {
-                        $query  = 'SELECT * FROM `:prefix:users` WHERE `username`=:name AND `password`=:pw AND `active` = 1';
-                        $result = $self->db()->query($query,array('name'=>$name,'pw'=>md5($pw)));
-                		if ( $result->rowCount() == 1 )
+                        $query  = 'SELECT * FROM `:prefix:users` WHERE `username`=:name AND `password`=:pw';
+                        $qAct		= 'SELECT `active` FROM `:prefix:users` WHERE `username` = :name AND `password` = :pw';
+                        $result		= $self->db()->query($query,array('name'=>$name,'pw'=>md5($pw)));
+                        $active		= $self->db()->query($qAct,array('name'=>$name,'pw'=>md5($pw)));
+
+                		if ( $active && $result->rowCount() == 1 )
                         {
                             // get default user preferences
                             $prefs = self::getDefaultUserOptions();
@@ -255,7 +258,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         }
                         else
                         {
-                            self::setLoginError($lang->translate('Invalid credentials'));
+	                        if ( !$active && $result->rowCount() == 1 )
+		                        self::setLoginError($lang->translate('Your account has been disabled. Please contact the administrator.'));
+	                        else
+	                            self::setLoginError($lang->translate('Invalid credentials'));
                         }
                     }
 
@@ -469,6 +475,24 @@ if ( ! class_exists( 'CAT_Users', false ) )
             );
             return $self->db()->isError();
         }   // end function disableAccount()
+
+        /**
+         * enable user account; if $user_id is not an int, it is used as name
+         *
+         * @access public
+         * @param  mixed  $user_id
+         * @return void
+         **/
+        public static function enableAccount($user_id)
+        {
+            $self  = self::getInstance();
+            $self->db()->query(
+                'UPDATE `:prefix:users` SET active = 1 WHERE `'
+                . ( is_numeric($user_id) ? 'user_id' : 'username' )
+                . "` = :id",array('id'=>$user_id)
+            );
+            return $self->db()->isError();
+        }   // end function enableAccount()
 
         /**
          * checks if the current user has the given permission; uses db table
