@@ -2343,10 +2343,11 @@ frontend.css and template.css are added in _get_css()
                     if(file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$add_to_path.'/'.$item)))
                                 {
                         $self->log()->logDebug('matched by check_paths');
-                        $ref[] = CAT_Helper_Page::$space
+                        array_push( CAT_Helper_Page::$js_search_path, $add_to_path.'/'.$item);
+                        /*$ref[] = CAT_Helper_Page::$space
                                . '<script type="text/javascript" src="'
                                . $val->sanitize_url(CAT_URL.'/'.$add_to_path.'/'.$item)
-                               . '"></script>';
+                               . '"></script>';*/
                         continue;
                     }
                 }
