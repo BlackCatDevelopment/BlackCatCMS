@@ -225,6 +225,7 @@ $LANG = array(
     'The password you entered was too short' => 'Das angegebene Passwort ist zu kurz!',
     'The username you entered was too short' => 'Der eingegebene Benutzername war zu kurz',
     'Invalid credentials' => 'Die Logindaten sind ungültig',
+    'Your account has been disabled. Please contact the administrator.' => 'Ihr Account wurde deaktiviert. Bitte kontaktieren Sie den Administrator.',
 // ----- BACKEND -----
     'Welcome to Black Cat CMS Administration' => 'Willkommen im Black Cat CMS Administrationsbereich',
     'This is your dashboard. At the moment, it is not possible to change the widgets shown here or to set permissions. This will be done in next version of BlackCat CMS.'
