@@ -240,13 +240,6 @@ $database->query(sprintf(
     CAT_TABLE_PREFIX
 ));
 
-// run droplets upgrade
-if(file_exists(CAT_PATH.'/modules/droplets/upgrade.php'))
-    include CAT_PATH.'/modules/droplets/upgrade.php';
-// run lib_search upgrade
-if(file_exists(CAT_PATH.'/modules/lib_search/upgrade.php'))
-    include CAT_PATH.'/modules/lib_search/upgrade.php';
-
 // Installer for Doctrine
 $mod_id = $database->query(sprintf(
     'SELECT `addon_id` FROM `%saddons` WHERE `directory`="%s"',
@@ -291,7 +284,16 @@ $database->query(sprintf(
 ));
 
 
+/*******************************************************************************
+    ALL VERSIONS
+*******************************************************************************/
 
+// run droplets upgrade
+if(file_exists(CAT_PATH.'/modules/droplets/upgrade.php'))
+    include CAT_PATH.'/modules/droplets/upgrade.php';
+// run lib_search upgrade
+if(file_exists(CAT_PATH.'/modules/lib_search/upgrade.php'))
+    include CAT_PATH.'/modules/lib_search/upgrade.php';
 
 /*******************************************************************************
     ALL VERSIONS: update version info
