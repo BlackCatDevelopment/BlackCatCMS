@@ -39,23 +39,41 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-include_once dirname(__FILE__).'/functions.inc.php';
+define('CURRENT_URL',$_SERVER['SCRIPT_NAME']);
+define('GITHUB_URL','https://raw.githubusercontent.com/BlackCatDevelopment/bcExtensionsCatalog/master/catalog.json');
+define('PROXYHOST','proxy.materna.de');
+define('PROXYPORT','8080');
 
-$backend = CAT_Backend::getInstance('Addons', 'addons', false);
-$users   = CAT_Users::getInstance();
-
-header('Content-type: application/json');
-
-if ( !$users->checkPermission('Addons','addons') )
+function update_catalog()
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate("Sorry, but you don't have the permissions for this action"),
-		'success'	=> false
-	);
-	print json_encode($ajax);
-	exit();
+    $ch   = init_client(GITHUB_URL);
+    $data = curl_exec($ch);
+    if(curl_error($ch))
+    {
+        print json_encode(array('success'=>false,'message'=>trim(curl_error($ch))));
+        exit();
+    }
+    $fh = fopen( CAT_PATH.'/temp/catalog.json', 'w' );
+    fwrite($fh,$data);
+    fclose($fh);
 }
 
-update_catalog();
-
-print json_encode(array('success'=>true,'message'=>'Success'));
+function init_client($url)
+{
+    $headers = array(
+        'User-Agent: php-curl'
+    );
+    $connection = curl_init();
+    curl_setopt($connection, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($connection, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($connection, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($connection, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($connection, CURLOPT_MAXREDIRS, 2);
+    curl_setopt($connection, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($connection, CURLOPT_URL, $url);
+    if(defined('PROXYHOST'))
+        curl_setopt($connection, CURLOPT_PROXY, PROXYHOST);
+    if(defined('PROXYPORT'))
+        curl_setopt($connection, CURLOPT_PROXYPORT, PROXYPORT);
+    return $connection;
+}

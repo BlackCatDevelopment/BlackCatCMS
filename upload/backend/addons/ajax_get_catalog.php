@@ -39,9 +39,22 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-
+include_once dirname(__FILE__).'/functions.inc.php';
 
 // read catalog
+if(!file_exists(CAT_PATH."/temp/catalog.json"))
+{
+    update_catalog();
+}
+
+if(!file_exists(CAT_PATH."/temp/catalog.json"))
+{
+    echo json_encode(array(
+        'success' => false,
+        'content' => 'Unable to get the catalog!',
+    ));
+}
+
 $string    = file_get_contents(CAT_PATH."/temp/catalog.json");
 $catalog   = json_decode($string,true);
 
