@@ -160,5 +160,26 @@ elseif($val->sanitizePost('order')!='')
         exit();
     }
 }
+elseif($val->sanitizePost('save')!='')
+{
+    $data = CAT_Helper_Page::getExtraHeaderFiles($page_id);
+    if(count($data))
+        $q = 'UPDATE `:prefix:pages_headers` SET `use_core`=:use_core, `use_ui`=:use_ui WHERE `page_id`=:page_id';
+    else
+        $q = 'INSERT INTO `:prefix:pages_headers` ( `page_id`, `use_core`, `use_ui` ) VALUES ( :page_id, :use_core, :use_ui )';
+    $database->query(
+        $q,
+        array(
+            'use_core' => ($val->sanitizePost('use_core')=='true'?'Y':'N'),
+            'use_ui'   => ($val->sanitizePost('use_ui')=='true'?'Y':'N'),
+            'page_id'  => $page_id
+        )
+    );
+    print json_encode(array(
+        'success' => $database->is_error() ? false : true,
+        'message' => $database->is_error() ? $database->get_error() : 'Success'
+    ));
+    exit();
+}
 
 

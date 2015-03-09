@@ -85,7 +85,8 @@ echo json_encode(array(
         'backend_addons_index_catalog',
         array(
             'addons'=>$catalog['modules'],
-            'permissions'=>$permissions
+            'permissions'=>$permissions,
+            'catalog_version'=>(isset($catalog['version']) ? $catalog['version'] : NULL),
         )
     ),
 ));

@@ -15,12 +15,12 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2014, Black Cat Development
+ *   @copyright       2014, 2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
- *   @review          21.07.2014 18:19:14
+ *   @review          05.03.2015 14:59:28
  *
  */
 
@@ -57,8 +57,8 @@ if ( !$users->checkPermission('Addons','addons') )
 	exit();
 }
 
-$module = CAT_Helper_Validate::sanitizePost('module');
-$type   = CAT_Helper_Validate::sanitizePost('type');
+$module = CAT_Helper_Validate::sanitizeGet('module');
+$type   = CAT_Helper_Validate::sanitizeGet('type');
 
 if(CAT_Helper_Addons::isModuleInstalled($module,NULL,$type))
 {

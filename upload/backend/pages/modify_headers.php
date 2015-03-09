@@ -74,6 +74,9 @@ $tpl_data['MODIFIED_WHEN']		  = ($page['modified_when'] != 0)
                                   : false;
 $tpl_data['page_js']              = isset($files['js'])  ? $files['js']  : '';
 $tpl_data['page_css']             = isset($files['css']) ? $files['css'] : '';
+$tpl_data['use_core']             = isset($files['use_core']) ? $files['use_core'] : NULL;
+$tpl_data['use_ui']               = isset($files['use_ui'])   ? $files['use_ui']   : NULL;
+
 $tpl_data['jquery_plugins']       = CAT_Helper_Directory::getInstance()
                                     ->maxRecursionDepth(0)
                                     ->scanDirectory(CAT_PATH.'/modules/lib_jquery/plugins',false,false,CAT_PATH.'/modules/lib_jquery/plugins/');
@@ -85,6 +88,20 @@ $tpl_data['css_files']            = CAT_Helper_Directory::getInstance()
                                     ->maxRecursionDepth(5)
                                     ->setSuffixFilter(array('css'))
                                     ->scanDirectory(CAT_PATH.'/modules/lib_jquery/plugins',true,true,CAT_PATH.'/modules/lib_jquery/plugins');
+
+// CSS files in CKEditor (if installed); useful for Font Awesome integration, for example
+if(CAT_Helper_Addons::isModuleInstalled('ckeditor4','0.21'))
+{
+    $plugin_css = CAT_Helper_Directory::getInstance()
+                ->maxRecursionDepth(5)
+                ->setSuffixFilter(array('css'))
+                ->setSkipDirs(array('codemirror','codesnippet'))
+                ->scanDirectory(CAT_PATH.'/modules/ckeditor4/ckeditor/plugins',true,true,CAT_PATH.'/modules/ckeditor4/ckeditor/plugins');
+    if(count($plugin_css))
+    {
+        $tpl_data['ckeditor_files'] = $plugin_css;
+    }
+}
 
 $backend->print_header();
 
