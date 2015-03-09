@@ -101,7 +101,7 @@ jQuery(document).ready(function($){
             dataType:	'json',
             beforeSend:	function( data )
     		{
-    			data.process	= set_activity( 'Save name' );
+    			data.process	= set_activity( 'Saving settings' );
     		},
             success:	function( data, textStatus, jqXHR )
 			{

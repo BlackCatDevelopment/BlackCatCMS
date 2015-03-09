@@ -609,6 +609,8 @@ if (!class_exists('CAT_Helper_Page'))
                     $data['css'] = unserialize($row['page_css_files']);
                 if(isset($row['page_js']) && $row['page_js']!='')
                     $data['code'] = $row['page_js'];
+                $data['use_core'] = $row['use_core'];
+                $data['use_ui']   = $row['use_ui'];
             }
             return $data;
         }   // end function getExtraHeaderFiles()
@@ -637,13 +639,18 @@ if (!class_exists('CAT_Helper_Page'))
             }
             else
             {
-                $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_jquery/plugins/'.$file);
-                if(file_exists($path))
+                $paths = array(
+                    CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_jquery/plugins/'),
+                    CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/ckeditor4/ckeditor/plugins/')
+                );
+                foreach($paths as $path)
+                {
+                    if(file_exists($path.$file))
                 {
                     $new    = ( isset($data[$type]) && is_array($data[$type]) && count($data[$type]) )
                             ? $data[$type]
                             : array();
-                    array_push($new,CAT_Helper_Directory::sanitizePath('/modules/lib_jquery/plugins/'.$file));
+                        array_push($new,CAT_Helper_Validate::path2uri($path).$file);
                     $new = array_unique($new);
                     $params = array(
                         'field'   => 'page_'.$type.'_files',
@@ -665,6 +672,11 @@ if (!class_exists('CAT_Helper_Page'))
                     );
                 }
             }
+            }
+            return array(
+                'success' => false,
+                'message' => $val->lang()->translate('Unable to add the file').' '.$file,
+            );
         }   // end function adminAddHeaderComponent()
 
         /**
@@ -825,12 +837,15 @@ if (!class_exists('CAT_Helper_Page'))
          * @access public
          * @return HTML
          **/
-        public static function getCSS($for='frontend')
+        public static function getCSS($for='frontend',$as_array=false)
         {
             $output = array();
             if (count(CAT_Helper_Page::$css))
             {
                 // check for template variants
+/*
+I think this is not needed here, is it?
+frontend.css and template.css are added in _get_css()
                 $key    = 'DEFAULT_TEMPLATE_VARIANT';
                 $subkey = 'DEFAULT_TEMPLATE';
                 $file   = 'template';
@@ -845,6 +860,7 @@ if (!class_exists('CAT_Helper_Page'))
                 {
                     array_push(CAT_Helper_Page::$css, array('file'=>'templates/'.CAT_Registry::get($subkey).'/css/'.CAT_Registry::get($key).'/'.$file.'.css'));
                 }
+*/
                 $val = CAT_Helper_Validate::getInstance();
                 $seen = array();
                 foreach (CAT_Helper_Page::$css as $item)
@@ -880,6 +896,7 @@ if (!class_exists('CAT_Helper_Page'))
                     $seen[$item['file']] = 1;
                 }
             }
+            if($as_array) return array_values($seen);
             return implode('',$output);
         } // end function getCSS()
 
@@ -1051,6 +1068,18 @@ if (!class_exists('CAT_Helper_Page'))
                 '/modules/'.CAT_Registry::get('SEARCH_LIBRARY').'/templates/default/'
             );
 
+            // Javascript search path
+            array_push(
+                CAT_Helper_Page::$js_search_path,
+                '/templates/'.$tpl,
+                '/templates/'.$tpl.'/js',
+                // for skinnables
+                '/templates/'.$tpl.'/templates/default',
+                '/templates/'.$tpl.'/templates/default/js',
+                // page
+                CAT_Registry::get('PAGES_DIRECTORY').'/js/'
+            );
+
             // -----------------------------------------------------------------
             // -----             get extra header files                    -----
             // -----------------------------------------------------------------
@@ -1198,8 +1227,28 @@ if (!class_exists('CAT_Helper_Page'))
             else
                 $static =& CAT_Helper_Page::$f_js;
 
+            // if there was some CSS added meanwhile...
+            if($for == 'footer' && count(CAT_Helper_Page::$css))
+            {
+                $arr = CAT_Helper_Page::$css;
+                CAT_Helper_Page::$css = array();
+                self::_analyze_css($arr); // fixes paths
+                $css = self::getCSS(NULL,true);
+                $js  = '<script type="text/javascript">';
+                foreach($css as $item)
+                {
+                    $js .= '$("head").append("<link rel=\"stylesheet\" href=\"'
+                        .  $item . '\" type=\"text/css\" media=\"screen,projection\" />");';
+                }
+                $js .= '</script>';
+                $static[] = $js;
+            }
+
             if (is_array($static) && count($static))
+            {
+                $static = array_unique($static);
                 return implode("\n", $static) . "\n";
+            }
 
             return NULL;
         } // end function getJavaScripts()
@@ -1216,6 +1265,15 @@ if (!class_exists('CAT_Helper_Page'))
                 $static =& CAT_Helper_Page::$jquery;
             else
                 $static =& CAT_Helper_Page::$f_jquery;
+
+            if($for == 'footer' && count(CAT_Helper_Page::$css))
+            {
+                if(!CAT_Helper_Page::$jquery_core)
+                {
+                    array_unshift($static, CAT_Helper_Page::$space . '<script type="text/javascript" src="' . CAT_Helper_Validate::sanitize_url(CAT_URL . '/modules/lib_jquery/jquery-core/jquery-core.min.js') . '"></script>' . "\n");
+                    CAT_Helper_Page::$jquery_core = true;
+                }
+            }
 
             if (count($static))
                 return implode($static);
@@ -1333,17 +1391,20 @@ if (!class_exists('CAT_Helper_Page'))
             // charset
             $output[] = CAT_Helper_Page::$space
                       . '<meta http-equiv="Content-Type" content="text/html; charset='
-                      . (isset($properties['default_charset']) ? $properties['default_charset'] : 'utf-8')
+                      . ( isset($properties['default_charset']) && $properties['default_charset'] != ''
+                      ? $properties['default_charset'] :
+                      ( defined('DEFAULT_CHARSET') ? DEFAULT_CHARSET : 'utf-8' )
+                      )
                           . '" />'
                           ;
 
             // page title
-            if(isset($droplets_config['title']))
-                $title = $droplets_config['title'];
-            elseif(isset($properties['title']))
-                $title = $properties['title'];
+            if(isset($droplets_config['page_title']))
+                $title = $droplets_config['page_title'];
             elseif(defined('WEBSITE_TITLE'))
-                $title = WEBSITE_TITLE;
+                $title = WEBSITE_TITLE . (isset($properties['page_title']) ? ' - ' . $properties['page_title'] : '' );
+            elseif(isset($properties['page_title']))
+                $title = $properties['page_title'];
             else
                 $title = '-';
             if($title)
@@ -2295,10 +2356,11 @@ if (!class_exists('CAT_Helper_Page'))
                     if(file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$add_to_path.'/'.$item)))
                                 {
                         $self->log()->logDebug('matched by check_paths');
-                        $ref[] = CAT_Helper_Page::$space
+                        array_push( CAT_Helper_Page::$js_search_path, $add_to_path.'/'.$item);
+                        /*$ref[] = CAT_Helper_Page::$space
                                . '<script type="text/javascript" src="'
                                . $val->sanitize_url(CAT_URL.'/'.$add_to_path.'/'.$item)
-                               . '"></script>';
+                               . '"></script>';*/
                         continue;
                     }
                 }
@@ -2318,8 +2380,23 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         private static function _analyze_jquery_components(&$arr, $for = 'frontend', $section = NULL)
         {
+            global $page_id;
+
             $static =& CAT_Helper_Page::$jquery;
             $val    =  CAT_Helper_Validate::getInstance();
+
+            $set    = self::getInstance()->db()->query(
+                'SELECT `use_core`, `use_ui` FROM `:prefix:pages_headers` WHERE `page_id`=:id OR `page_id`=0',
+                array('id' => $page_id)
+            );
+            if($set->rowCount())
+            {
+                while(false!==($row = $set->fetch()))
+                {
+                    if($row['use_ui'] == 'Y') $arr['ui']     = true;
+                    if($row['use_core'] == 'Y') $arr['core'] = true;
+                }
+            }
 
             // make sure that we load the core if needed, even if the
             // author forgot to set the flags

@@ -10,13 +10,13 @@
 			{/if}
 		</div>
 		<div class="clear"></div>
-	</div>
+	</div><br />
 
     <div class="fc_info" style="margin-left:15px;">
     {translate('You can manage Javascript- and CSS-Files resp. jQuery plugins to be loaded into the page header here.')}<br />
     {translate('Please note that there is a bunch of files that is loaded automatically, so there\'s no need to add them here.')}<br />
     {translate('These settings are page based, to manage global settings, goto Settings -> Header files.')}
-    </div>
+    </div><br /><br />
 
 {include('backend_manage_headerfiles.tpl')}
 

@@ -317,7 +317,9 @@ if (!class_exists('CAT_Page', false))
                         // make a anchor for every section.
                         if (defined('SEC_ANCHOR') && SEC_ANCHOR != '')
                         {
-                            echo '<a class="section_anchor" id="' . SEC_ANCHOR . $section_id . '"></a>';
+                            echo '<a class="section_anchor" id="' . SEC_ANCHOR . $section_id . '"'
+                               . ( (isset($section['name']) && $section['name'] != 'no name') ? 'title="'.$section['name'].'"' : '' )
+                               . '></a>';
                         }
                         // check if module exists - feature: write in errorlog
                         if (file_exists(CAT_PATH . '/modules/' . $module . '/view.php'))

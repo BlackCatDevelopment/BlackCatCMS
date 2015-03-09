@@ -273,7 +273,12 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
 	        @require_once dirname(__FILE__).'/CAT/Helper/Addons.php';
         }
 		$addons_helper = new CAT_Helper_Addons();
-		return $addons_helper->installModule($directory, $install, true);
+        $addons_helper->loadModuleIntoDB($directory,'install');
+	    if($install == true) {
+			if(file_exists($directory.'/install.php')) {
+				require($directory.'/install.php');
+			}
+		}
     }   // end function load_module()
 
     /**

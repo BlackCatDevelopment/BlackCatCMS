@@ -143,6 +143,10 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     'user'     => (isset($opt['DB_USERNAME']) ? $opt['DB_USERNAME'] : CAT_DB_USERNAME),
                     'port'     => (isset($opt['DB_PORT'])     ? $opt['DB_PORT']     : CAT_DB_PORT    ),
                 );
+                if(function_exists('xdebug_is_enabled'))
+                    $xdebug_state = xdebug_is_enabled();
+                else
+                    $xdebug_state = false;
                 if(function_exists('xdebug_disable'))
                     xdebug_disable();
                 try
@@ -154,6 +158,8 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     $this->setError($e->message);
                     CAT_Object::printFatalError($e->message);
                 }
+                if(function_exists('xdebug_enable') && $xdebug_state)
+                    xdebug_enable();
             }
             self::restoreExceptionHandler();
             return self::$conn;
@@ -229,21 +235,22 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
             } catch ( \Doctrine\DBAL\DBALException $e ) {
                 $error = self::$conn->errorInfo();
                 $this->setError(sprintf(
-                    '[DBAL Error #%d] %s<br /><b>Executed Query:</b><br /><i>%s</i><br />',
+                    '[DBAL Error #%d] %s<br /><strong>Executed Query:</strong><br /><i>%s</i><br /><strong>Exception:</strong><br /><i>%s</i><br />',
 					$error[1],
 					$error[2],
-					$sql
+					$sql,
+                    $e->getMessage()
                 ));
             } catch ( \PDOException $e ) {
                 $error = self::$conn->errorInfo();
                 $this->setError(sprintf(
-                    '[PDO Error #%d] %s<br /><b>Executed Query:</b><br /><i>%s</i><br />',
+                    '[PDO Error #%d] %s<br /><b>Executed Query:</b><br /><i>%s</i><br /><strong>Exception:</strong><br /><i>%s</i><br />',
 					$error[1],
 					$error[2],
-					$sql
+					$sql,
+                    $e->getMessage()
                 ));
             }
-            self::restoreExceptionHandler();
             if($this->isError())
             {
                 $logger = self::$conn->getConfiguration()->getSQLLogger();
@@ -264,9 +271,11 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                             return $this->getError();
                         else
                             throw new \PDOException($this->getError());
+                            #CAT_Object::printFatalError($this->getError());
                     }
                 }
             }
+            self::restoreExceptionHandler();
             return false;
         }   // end function query()
 

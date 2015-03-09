@@ -37,7 +37,6 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                            'loglevel' => 4
                        );
         protected      $debugLevel = 4;
-        private static $dirh;
         private static $error = NULL;
         private static $instance = NULL;
         private static $states = array(
@@ -116,9 +115,6 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
         public function __construct()
         {
-            // we need our own instance here, because this helper is used by
-            // the installer
-            self::$dirh = new CAT_Helper_Directory();
         }   // end constructor
 
         public function __call( $method, $args )
@@ -1246,7 +1242,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
             // load info.php again to have current values
             if ( !count( $addon_info ) && file_exists( $addon_dir . '/info.php' ) )
-                $addon_info = self::checkInfo( $addondir );
+                $addon_info = self::checkInfo( $addon_dir );
 
             $self->log()->logDebug( 'addon info:', $addon_info );
 
@@ -1551,14 +1547,14 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 return false;
             }
             // this will remove ../.. from $filepath
-            $filepath = self::$dirh->sanitizePath( $filepath );
+            $filepath = CAT_Helper_Directory::sanitizePath( $filepath );
             if ( !is_dir( CAT_PATH . '/modules/' . $module ) )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called for non existing module [$module] (path: [$filepath])" );
                 self::$error = "sec_register_file() called for non existing module [$module] (path: [$filepath])";
                 return false;
             }
-            if ( !file_exists( self::$dirh->sanitizePath( CAT_PATH . '/modules/' . $module . '/' . $filepath ) ) )
+            if ( !file_exists( CAT_Helper_Directory::sanitizePath( CAT_PATH . '/modules/' . $module . '/' . $filepath ) ) )
             {
                 self::getInstance()->log()->logCrit( "sec_register_file() called for non existing file [$filepath] (module: [$module])" );
                 self::$error = "sec_register_file() called for non existing file [$filepath] (module: [$module])";
@@ -1757,7 +1753,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
          **/
         public static function getLibraries( $type = NULL )
         {
-            $dir  = self::$dirh->sanitizePath( CAT_PATH . '/modules' );
+            $dir  = CAT_Helper_Directory::sanitizePath( CAT_PATH . '/modules' );
             $libs = array();
             if ( $handle = opendir( $dir ) )
             {

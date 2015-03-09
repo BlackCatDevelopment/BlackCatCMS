@@ -28,7 +28,7 @@ define('WB2COMPAT',true);
 define('WB_SERVER_ADDR', CAT_SERVER_ADDR );
 define('WB_PATH', CAT_PATH);
 $rel_parsed = parse_url(CAT_URL);
-if(!array_key_exists('scheme',$rel_parsed ) || $rel_parsed['scheme']=='')
+if(!is_array($rel_parsed) || ( array_key_exists('scheme',$rel_parsed ) && $rel_parsed['scheme']=='' ) )
     define('WB_URL', (isset($_SERVER['HTTPS']) ? 'https:' : 'http:') . CAT_URL);
 else
 define('WB_URL', CAT_URL);

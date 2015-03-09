@@ -214,6 +214,7 @@ if (!class_exists('CAT_Backend', false))
                     '__li_id_prefix'       => 'pageid_',
                     '__li_css_prefix'      => 'fc_page_',
                     '__li_has_child_class' => 'fc_expandable',
+                    '__is_open_key'        => 'be_tree_is_open',
                     '__li_is_open_class'   => 'fc_tree_open',
                     '__li_is_closed_class' => 'fc_tree_close',
                     '__title_key'          => 'text',
@@ -426,6 +427,10 @@ if (!class_exists('CAT_Backend', false))
          **/
         public function print_error($message, $redirect = 'index.php', $print_header = true)
         {
+            if(isset($_REQUEST['_cat_ajax']))
+            {
+                echo json_encode(array('message'=>$message,'success'=>false));
+            }
             CAT_Object::printError($message,$redirect,$print_header);
             self::print_footer();
             exit();

@@ -184,6 +184,19 @@ if (!class_exists('CAT_Helper_Validate'))
         }   // end function uri2path(()
 
         /**
+         * replaces CAT_URL with CAT_PATH in given $path
+         *
+         * @access public
+         * @param  string $path
+         * @return string
+         **/
+        public static function path2uri($path)
+        {
+            return str_ireplace(CAT_Helper_Directory::sanitizePath(CAT_PATH),self::sanitize_url(self::getURI(CAT_URL)),CAT_Helper_Directory::sanitizePath($path));
+        }   // end function path2uri(()
+
+
+        /**
          * if CAT_URL does not contain a scheme (scheme relative URL), the
          * appropriate scheme is added here
          *

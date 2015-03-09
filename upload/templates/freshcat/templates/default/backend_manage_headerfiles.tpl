@@ -2,14 +2,26 @@
         $.getScript( "{$CAT_URL}/templates/freshcat/js/backend_headerfiles.js" );
     </script>
 
-    <div class="fc_text_right">
+    <div class="fc_settings_max left" style="margin-left:15px;">
+        <div class="fc_settings_label" id="fc_page_down">
+            <input type="checkbox" class="fc_checkbox_jq" name="use_core" id="fc_use_core" value="on" {if $use_core == 'Y'} checked="checked"{/if} />
+            <label for="fc_use_core" title="{translate('The jQuery Core will be added automatically if any jQuery Plugin is activated.')}">{translate('Use jQuery')}</label>
+        </div>
+
+        <div class="fc_settings_label" id="fc_page_down">
+            <input type="checkbox" class="fc_checkbox_jq" name="use_ui" id="fc_use_ui" value="on" {if $use_ui == 'Y'} checked="checked"{/if} />
+            <label for="fc_use_ui" title="{translate('If you wish to use UI components like Accordion or Tabs, check this.')}">{translate('Use jQuery UI')}</label>
+        </div>
+    </div>
+
+    <div class="fc_text_right right">
         <button class="fcAdd fcAddPlugin fc_gradient_blue fc_br_all icon icon-plus">
             {translate('Add jQuery Plugin')}
         </button>
         <button class="fcAdd fcDelPlugin fc_gradient_blue fc_br_all icon icon-minus">
             {translate('Remove jQuery Plugin')}
         </button>
-    </div><br style="clear:right;" />
+    </div><br style="clear:both;" />
 
     <ul id="fc_pages_headerfiles_js">
         <li class="fc_module_block">
@@ -85,6 +97,15 @@
     <div id="dlgAddCSS" style="display:none;">
         {translate('Please select')}
         <select name="">
+        {if $css_files}
+        <optgroup label="{translate('jQuery Plugins')}">
         {foreach $css_files dir}<option value="{$dir}">{$dir}</option>{/foreach}
+        </optgroup>
+        {/if}
+        {if $ckeditor_files}
+        <optgroup label="{translate('CKEditor Plugins')}">
+        {foreach $ckeditor_files dir}<option value="{$dir}">{$dir}</option>{/foreach}
+        </optgroup>
+        {/if}
         </select>
     </div>

@@ -225,6 +225,7 @@ $LANG = array(
     'The password you entered was too short' => 'Das angegebene Passwort ist zu kurz!',
     'The username you entered was too short' => 'Der eingegebene Benutzername war zu kurz',
     'Invalid credentials' => 'Die Logindaten sind ungültig',
+    'Your account has been disabled. Please contact the administrator.' => 'Ihr Account wurde deaktiviert. Bitte kontaktieren Sie den Administrator.',
 // ----- BACKEND -----
     'Welcome to Black Cat CMS Administration' => 'Willkommen im Black Cat CMS Administrationsbereich',
     'This is your dashboard. At the moment, it is not possible to change the widgets shown here or to set permissions. This will be done in next version of BlackCat CMS.'
@@ -599,6 +600,7 @@ $LANG = array(
     'Please note: this is only recommended for testing environments' => 'Bitte beachten: Nur für Testumgebungen empfohlen',
     'Redirect after' => 'Weiterleitung nach',
     'Redirect link (URL) for non-public content' => 'Redirect link (URL) für nicht-öffentliche Inhalte',
+    'Saving settings' => 'Speichere Einstellungen',
     'Search for images' => 'Nach Bildern suchen',
     'Search for page descriptions' => 'Seitenbeschreibungen einbeziehen',
     'Search for page keywords' => 'Schlüsselworte in Suche einbeziehen',
@@ -615,6 +617,8 @@ $LANG = array(
     'Standard page: Template for search result' => 'Standardseite: Template für Suchergebnisse',
     'Use HTMLPurifier to clean output' => 'Mit HTMLPurifier filtern',
     'Use image from content page in search result' => 'Bild aus Inhalt in Suchergebnis verwenden',
+    'Use jQuery' => 'jQuery verwenden',
+    'Use jQuery UI' => 'jQuery UI verwenden',
     'Use short URLs (Apache webserver only, requires mod_rewrite!)' => 'Kurze URLs verwenden (nur Apache Webserver, erfordert mod_rewrite!)',
     'Variant' => 'Variante (Skin)',
     'Website footer' => 'Webseite Fußzeile',
@@ -729,6 +733,7 @@ $LANG = array(
         => 'Wenn Module via FTP hochgeladen werden (nicht empfohlen), werden die Funktionen zur Installation, zum Upgrade oder zur Deinstallation nicht automatisch ausgeführt. Diese Module funktionieren eventuell nicht richtig oder lassen sich nicht deinstallieren.',
 // ----- v1.2 -----
     'Action' => 'Aktion',
+    'Avail. since' => 'Verfügb. seit',
     'Create new' => 'Neu erstellen',
     'Current version' => 'Aktuelle Version',
     'Install' => 'Installieren',
