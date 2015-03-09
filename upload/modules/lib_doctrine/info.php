@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013 - 2015 Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
@@ -43,11 +43,11 @@ if (defined('CAT_PATH')) {
 $module_directory     = 'lib_doctrine';
 $module_name          = 'Doctrine DBAL for BlackCat CMS';
 $module_function      = 'library';
-$module_version       = '0.1';
+$module_version       = '0.2';
 $module_platform      = '1.x';
 $module_author        = 'Doctrine Project see http://www.doctrine-project.org/about.html; this module created Black Cat Development';
 $module_license       = 'GNU General Public License';
-$module_description   = 'Doctrine DBAL v2.3.4 for use with BlackCat CMS';
+$module_description   = 'Doctrine DBAL v2.5.1 for use with BlackCat CMS; includes Doctrine Common v2.4.2';
 $module_home          = 'http://www.doctrine-project.org/';
 $module_guid          = '52BD02E9-EC8E-4B43-813C-B89448D32150';
 

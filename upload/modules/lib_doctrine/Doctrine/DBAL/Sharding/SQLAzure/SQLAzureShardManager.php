@@ -37,7 +37,7 @@ class SQLAzureShardManager implements ShardManager
     private $federationName;
 
     /**
-     * @var bool
+     * @var boolean
      */
     private $filteringEnabled;
 
@@ -52,7 +52,7 @@ class SQLAzureShardManager implements ShardManager
     private $distributionType;
 
     /**
-     * @var Connection
+     * @var \Doctrine\DBAL\Connection
      */
     private $conn;
 
@@ -62,7 +62,9 @@ class SQLAzureShardManager implements ShardManager
     private $currentDistributionValue;
 
     /**
-     * @param Connection $conn
+     * @param \Doctrine\DBAL\Connection $conn
+     *
+     * @throws \Doctrine\DBAL\Sharding\ShardingException
      */
     public function __construct(Connection $conn)
     {
@@ -84,11 +86,11 @@ class SQLAzureShardManager implements ShardManager
         $this->federationName = $params['sharding']['federationName'];
         $this->distributionKey = $params['sharding']['distributionKey'];
         $this->distributionType = $params['sharding']['distributionType'];
-        $this->filteringEnabled = (isset($params['sharding']['filteringEnabled'])) ? (bool)$params['sharding']['filteringEnabled'] : false;
+        $this->filteringEnabled = (isset($params['sharding']['filteringEnabled'])) ? (bool) $params['sharding']['filteringEnabled'] : false;
     }
 
     /**
-     * Get name of the federation
+     * Gets the name of the federation.
      *
      * @return string
      */
@@ -98,7 +100,7 @@ class SQLAzureShardManager implements ShardManager
     }
 
     /**
-     * Get the distribution key
+     * Gets the distribution key.
      *
      * @return string
      */
@@ -108,7 +110,7 @@ class SQLAzureShardManager implements ShardManager
     }
 
     /**
-     * Get the Doctrine Type name used for the distribution
+     * Gets the Doctrine Type name used for the distribution.
      *
      * @return string
      */
@@ -118,14 +120,15 @@ class SQLAzureShardManager implements ShardManager
     }
 
     /**
-     * Enabled/Disable filtering on the fly.
+     * Sets Enabled/Disable filtering on the fly.
      *
-     * @param bool $flag
+     * @param boolean $flag
+     *
      * @return void
      */
     public function setFilteringEnabled($flag)
     {
-        $this->filteringEnabled = (bool)$flag;
+        $this->filteringEnabled = (bool) $flag;
     }
 
     /**
@@ -188,6 +191,7 @@ class SQLAzureShardManager implements ShardManager
                       FROM sys.federation_member_distributions d
                       INNER JOIN sys.federations f ON f.federation_id = d.federation_id
                       WHERE f.name = " . $this->conn->quote($this->federationName);
+
         return $this->conn->fetchAll($sql);
     }
 
@@ -221,9 +225,11 @@ class SQLAzureShardManager implements ShardManager
     }
 
     /**
-     * Split Federation at a given distribution value.
+     * Splits Federation at a given distribution value.
      *
      * @param mixed $splitDistributionValue
+     *
+     * @return void
      */
     public function splitFederation($splitDistributionValue)
     {
@@ -235,4 +241,3 @@ class SQLAzureShardManager implements ShardManager
         $this->conn->exec($sql);
     }
 }
-
