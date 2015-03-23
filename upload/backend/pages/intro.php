@@ -41,21 +41,22 @@ if (defined('CAT_PATH')) {
 
 $backend  = CAT_Backend::getInstance('Pages', 'pages_intro');
 $val      = CAT_Helper_Validate::getInstance();
-
-// Get page content
 $filename		= CAT_PATH . PAGES_DIRECTORY . '/intro' . PAGE_EXTENSION;
+$content  = '';
 
+// ===========================================================================
+// ! get current page content
+// ===========================================================================
 if ( file_exists( $filename ) )
 {
 	$handle		= fopen($filename, "r");
 	$content	= fread($handle, filesize($filename));
 	fclose( $handle );
 }
-else
-{
-	$content = '';
-}
 
+// ===========================================================================
+// ! check for WYSIWYG editor
+// ===========================================================================
 if ( $val->sanitizeGet('wysiwyg') != 'no' )
 {
 	if ( !defined( 'WYSIWYG_EDITOR' ) || WYSIWYG_EDITOR == 'none' || !file_exists( CAT_PATH . '/modules/' . WYSIWYG_EDITOR . '/include.php' ) )
@@ -68,19 +69,16 @@ if ( $val->sanitizeGet('wysiwyg') != 'no' )
 	else
 	{
 		$id_list		= array('content');
-		require( CAT_PATH . '/modules/' . WYSIWYG_EDITOR . '/include.php' );
+        require CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php';
 	}
 }
-// =========================================================================== 
-// ! Create the controller, it is reusable and can render multiple templates 	
-// =========================================================================== 
+
 global $parser;
 $tpl_data = array();
 
 ob_start();
 	show_wysiwyg_editor('content','content',$content,'100%','500px');
 	$tpl_data['intro_page_content']	= ob_get_contents();
-//ob_end_clean();
 ob_clean(); // allow multiple buffering for csrf-magic
 
 // ==================== 
@@ -90,5 +88,3 @@ $parser->output('backend_pages_intro', $tpl_data);
 
 // Print admin footer
 $backend->print_footer();
-
-?>
