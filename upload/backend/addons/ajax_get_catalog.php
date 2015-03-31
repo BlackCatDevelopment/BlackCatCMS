@@ -55,8 +55,7 @@ if(!file_exists(CAT_PATH."/temp/catalog.json"))
     ));
 }
 
-$string    = file_get_contents(CAT_PATH."/temp/catalog.json");
-$catalog   = json_decode($string,true);
+$catalog = get_catalog();
 
 // get installed
 $modules   = CAT_Helper_Addons::get_addons('module');
