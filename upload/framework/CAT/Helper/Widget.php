@@ -52,9 +52,18 @@ if (!class_exists('CAT_Helper_Widget'))
         }
 
         /**
+         * retrieves widgets found in the file system
+         *
+         * result array format:
+         *     [] = array(
+         *              'module_name'      => <Name>,
+         *              'module_directory' => <Path>,
+         *              'widget_path'      => <Path>,
+         *              'widget_file'      => <File>
+         *          )
          *
          * @access public
-         * @return
+         * @return array
          **/
         public static function getWidgets()
         {
@@ -64,59 +73,106 @@ if (!class_exists('CAT_Helper_Widget'))
             $widget_name  = NULL;
             $addonh       = CAT_Helper_Addons::getInstance();
             $base         = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules');
-            foreach( $widgets as $widget )
+            foreach( $widgets as $w_path )
             {
-                $path = pathinfo(CAT_Helper_Directory::sanitizePath($widget),PATHINFO_DIRNAME);
-                $info = $content = NULL;
+                $path     = pathinfo(CAT_Helper_Directory::sanitizePath($w_path),PATHINFO_DIRNAME);
+                $infopath = $path;
                 // check if path is deeper than CAT_PATH/modules/<module>
                 if ( count(explode('/',str_ireplace( $base.'/', '', $path ))) > 1 )
                 {
-                    $temp = explode('/',str_ireplace( $base.'/', '', $path ));
-                    $path = $base.'/'.$temp[0];
+                    $temp     = explode('/',str_ireplace( $base.'/', '', $path ));
+                    $infopath = $base.'/'.$temp[0];
                 }
-                if ( file_exists($path.'/info.php') )
+                if ( file_exists($infopath.'/info.php') )
                 {
-                    $info = $addonh->checkInfo($path);
+                    $info = $addonh->checkInfo($infopath);
                 }
-                if ( file_exists($path.'/languages/'.LANGUAGE.'.php') )
+                if ( file_exists($infopath.'/languages/'.LANGUAGE.'.php') )
                 {
-                    $addonh->lang()->addFile(LANGUAGE.'.php', $path.'/languages/');
+                    $addonh->lang()->addFile(LANGUAGE.'.php', $infopath.'/languages/');
                 }
-                ob_start();
-                    $widget_name  = NULL;
-                    include($widget);
-                    $content = ob_get_contents();
-                ob_clean();
-                $_chw_data[$widget] = array_merge( ( is_array($info) ? $info : array() ), array('content'=>$content) );
-                if($widget_name)
-                    $_chw_data[$widget]['module_name'] .= ' - '.$widget_name;
+                $widget = array(
+                    'module_name'      => $info['module_name'],
+                    'module_directory' => $info['module_directory'],
+                    'widget_fullpath'  => $path,
+                    'widget_path'      => str_replace(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules'),'',$path),
+                    'widget_file'      => pathinfo(CAT_Helper_Directory::sanitizePath($w_path),PATHINFO_BASENAME)
+                );
+                $_chw_data[] = $widget;
             }
-
             return $_chw_data;
         }   // end function getWidgets()
         
         /**
-         * scans modules for widgets
+         * scans modules (=paths) for widgets
          *
          * @access public
          * @return array
          **/
         public static function findWidgets()
         {
-            // find files called widget.php
-            $widgets     = CAT_Helper_Directory::getInstance()->maxRecursionDepth(2)->setSkipFiles(array('index.php'))->findFiles( 'widget.php', CAT_PATH.'/modules' );
-            // find files in directory called widgets
-            $directories = CAT_Helper_Directory::getInstance()->maxRecursionDepth(2)->findDirectories( 'widgets', CAT_PATH.'/modules' );
+            // find files called 'widget.php'
+            $widgets     = CAT_Helper_Directory::getInstance()
+                           ->maxRecursionDepth(2)
+                           ->setSkipFiles(array('index.php'))
+                           ->findFiles('widget.php', CAT_PATH.'/modules');
+            if(count($widgets)) sort($widgets);
+
+            // find files in directory called 'widgets'
+            $directories = CAT_Helper_Directory::getInstance()
+                           ->maxRecursionDepth(2)
+                           ->findDirectories('widgets', CAT_PATH.'/modules');
             if(count($directories))
             {
+                sort($directories);
                 if(!is_array($widgets)) $widgets = array();
                 foreach($directories as $dir)
                 {
-                    $widgets = array_merge($widgets, CAT_Helper_Directory::getInstance()->setSkipFiles(array('index.php'))->getPHPFiles($dir));
+                    $files = CAT_Helper_Directory::getInstance()
+                             ->setSkipFiles(array('index.php'))
+                             ->getPHPFiles($dir);
+                    sort($files);
+                    $widgets = array_merge(
+                        $widgets,
+                        $files
+                    );
                 }
             }
             return $widgets;
         }   // end function findWidgets()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function render($widget)
+        {
+            if(!isset($widget['isHidden']) || !$widget['isHidden'])
+            {
+                // scan for info.php
+                $root = explode('/',$widget['widget_path']);
+                $info = CAT_Helper_Addons::checkInfo(CAT_PATH.'/modules/'.$root[1]);
+                if(is_array($info) && count($info) && isset($info['module_name']))
+                {
+                    $widget['module_name'] = $info['module_name'];
+                }
+                if ( file_exists(CAT_PATH.'/modules/'.$root[1].'/languages/'.LANGUAGE.'.php') )
+                {
+                    self::getInstance()->lang()->addFile(LANGUAGE.'.php', CAT_PATH.'/modules/'.$root[1].'/languages/');
+                }
+                ob_start();
+                    $widget_name  = NULL;
+                    include(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$widget['widget_path']));
+                    $content = ob_get_contents();
+                ob_clean();
+
+                $widget['content'] = $content;
+                if($widget_name) $widget['module_name'] .= ' - '.$widget_name;
+            }
+            return $widget;
+        }   // end function render()
+        
 
     }
 

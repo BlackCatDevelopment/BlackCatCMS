@@ -48,7 +48,7 @@ register_shutdown_function(array("CAT_ExceptionHandler", "shutdownHandler"));
 
 include dirname(__FILE__).'/../data/config.inc.php';
 
-$widget_name = 'Version check';
+$widget_name = CAT_Object::lang()->translate('Version check');
 $error = $version = $newer = $last = $last_version = NULL;
 $debug = false;
 $doit  = true;

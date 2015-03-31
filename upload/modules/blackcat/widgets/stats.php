@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 include dirname(__FILE__).'/../data/config.inc.php';
 
 $data        = array();
-$widget_name = 'Statistics';
+$widget_name = CAT_Object::lang()->translate('Statistics');
 $number      = ( $current['last_edited_count'] > 0 && $current['last_edited_count'] < 50 )
              ? $current['last_edited_count']
              : 10;

@@ -134,7 +134,7 @@ if(count($files))
         if(filemtime($f)<(time()-24*60*60)&&filesize($f)==0)
             unlink($f);
 
-$widget_name = 'Logfiles';
+$widget_name = CAT_Object::lang()->translate('Logfiles');
 $current     = strftime('%Y-%m-%d');
 
 $logs  = array();
