@@ -23,6 +23,8 @@
  *
  */
 
+if (!class_exists('CAT_ExceptionHandler', false))
+{
 class CAT_ExceptionHandler
 {
     public function __call($method, $args)
@@ -174,6 +176,7 @@ class CAT_ExceptionHandler
                 $error = "[SHUTDOWN] lvl:" . $lasterror['type'] . " | msg:" . $lasterror['message'] . " | file:" . $lasterror['file'] . " | ln:" . $lasterror['line'];
                 $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',2);
                 $logger->logFatal($error);
+            }
         }
     }
 }

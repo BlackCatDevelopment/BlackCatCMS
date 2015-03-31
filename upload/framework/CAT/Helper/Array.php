@@ -92,6 +92,32 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
         }   // end function ArrayEncodeUTF8()
 
         /**
+         * filters an multidimensional array by given key, returns the filtered
+         * elements
+         *
+         * This means, all elements that have a key $key with value $value will
+         * be removed from &$array and returned as result
+         *
+         * @access public
+         * @param  array  $array (reference!)
+         * @param  string $key
+         * @param  string $value
+         * @return array
+         **/
+        public static function ArrayFilterByKey(&$array, $key, $value)
+        {
+            $result = array();
+            foreach ($array as $k => $elem) {
+                if ($elem[$key] == $value) {
+                    $result[] = $array[$k];
+                    unset($array[$k]);
+                }
+            }
+            return $result;
+        }   // end function ArrayFilterByKey()
+        
+
+        /**
          * removes an element from an array
          *
          * @access public
@@ -115,7 +141,7 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
          *
          * @access public
          * @param  array   $array          - array to sort
-         * @param  mixed   $index          -
+         * @param  mixed   $index          - key to sort by
          * @param  string  $order          - 'asc' (default) || 'desc'
          * @param  boolean $natsort        - default: false
          * @param  boolean $case_sensitive - sort case sensitive; default: false
@@ -197,7 +223,7 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
             {
                 if ( is_array($val) )
                 {
-                    $out[$key] = $this->ArrayUniqueRecursive($val);
+                    $out[$key] = self::ArrayUniqueRecursive($val);
                 }
                 elseif ( ! isset( $set[$val] ) )
                 {

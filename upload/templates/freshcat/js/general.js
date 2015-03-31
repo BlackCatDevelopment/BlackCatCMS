@@ -172,6 +172,11 @@ function return_error( process_div, message )
 		$('#fc_admin_header').prepend('<div class="fc_popup" />');
 	}
 
+    if(typeof message == 'undefined' || message == '')
+    {
+        message = 'Unknown error';
+    }
+
 	// add error message to popup
 	$('.fc_popup').html(message);
 
@@ -342,10 +347,6 @@ function dialog_confirm( message, title, ajaxUrl, ajaxData, ajaxType, ajaxDataTy
 							{
 								afterSend.call(this, data);
 							}
-					},
-					error:		function( data, textStatus, jqXHR )
-					{
-						return_error( jqXHR.process , data.message );
 					}
 				});
 			},

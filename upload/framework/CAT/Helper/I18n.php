@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013 - 2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -33,7 +33,8 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
     @include dirname(__FILE__).'/Directory.php';
 }
 
-if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
+if ( ! class_exists( 'CAT_Helper_I18n', false ) )
+{
 	class CAT_Helper_I18n extends CAT_Object
 	{
 	    protected      $_config
@@ -483,7 +484,7 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	     *
 	     *
 	     **/
-	    private function getBrowserLangs( $strict_mode = true )
+	    public function getBrowserLangs($strict_mode=true)
 	    {
 
             if ( ! isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) )
@@ -509,21 +510,15 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 
 	            // invalid syntax
 	            if ( !$res )
-	            {
 	                continue;
-	            }
 
 	            // get language code
 	            $lang_code = explode( '-', $matches[ 1 ] );
 
 	            if ( isset( $matches[ 2 ] ) )
-	            {
 	                $lang_quality = (float) $matches[ 2 ];
-	            }
 	            else
-	            {
 	                $lang_quality = 1.0;
-	            }
 
 	            while ( count( $lang_code ) )
 	            {
@@ -533,9 +528,8 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	                );
 	                // don't use abbreviations in strict mode
 	                if ( $strict_mode )
-	                {
 	                    break;
-	                }
+
 	                array_pop( $lang_code );
 	            }
 	        }
@@ -545,9 +539,7 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	        $langs  = $sorter->ArraySort( $browser_langs, 'qual', 'desc', true );
 	        $ret    = array();
 	        foreach ( $langs as $lang )
-	        {
 	            $ret[] = $lang[ 'lang' ];
-	        }
 
 	        return $ret;
 
@@ -556,5 +548,3 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) ) {
 	}
 
 }
-
-?>

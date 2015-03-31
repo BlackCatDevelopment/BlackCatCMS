@@ -144,11 +144,25 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
         {
             if (!headers_sent())
             {
-                // set header to 403
                 header($_SERVER['SERVER_PROTOCOL'] . " 403 Forbidden");
+                if(isset($_REQUEST['_cat_ajax']))
+                {
+                    header('Content-type: application/json');
             }
+            }
+            if(isset($_REQUEST['_cat_ajax']))
+            {
+                echo json_encode(array(
+                    'success' => false,
+                    'message' => 'ACCESS DENIED!  - Invalid call of ' . $_SERVER['SCRIPT_NAME']
+                ));
+                exit;
+            }
+            else
+            {
             // stop program execution
             exit('<p><strong style="color:#f00;">ACCESS DENIED!</strong> - Invalid call of <i>' . $_SERVER['SCRIPT_NAME'] . '</i></p>');
+            }
         }
     }
 
