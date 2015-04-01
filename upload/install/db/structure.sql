@@ -195,6 +195,8 @@ CREATE TABLE `cat_pages_headers` (
 	`page_js_files` TEXT NULL,
 	`page_css_files` TEXT NULL,
 	`page_js` TEXT NULL,
+	`use_core` ENUM('Y','N') NULL,
+	`use_ui` ENUM('Y','N') NULL,
 	UNIQUE INDEX `page_id` (`page_id`)
 ) COMMENT='header files' ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
