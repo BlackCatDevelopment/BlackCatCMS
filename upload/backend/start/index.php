@@ -112,7 +112,7 @@ foreach(
 // ============
 // ! Widgets
 // ============
-$tpl_data['dashboard'] = CAT_Helper_Dashboard::getDashboard();
+$tpl_data['dashboard'] = CAT_Helper_Dashboard::getDashboard('backend');
 
 // ==================== 
 // ! Parse the site   

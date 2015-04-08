@@ -65,18 +65,23 @@ if (!class_exists('CAT_Helper_Widget'))
          * @access public
          * @return array
          **/
-        public static function getWidgets()
+        public static function getWidgets($module=NULL)
         {
             global $parser;
+
+            if($module == 'backend') $module = NULL;
+
             $_chw_data    = array();
-            $widgets      = self::findWidgets();
+            $widgets      = self::findWidgets($module);
             $widget_name  = NULL;
             $addonh       = CAT_Helper_Addons::getInstance();
             $base         = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules');
+
             foreach( $widgets as $w_path )
             {
                 $path     = pathinfo(CAT_Helper_Directory::sanitizePath($w_path),PATHINFO_DIRNAME);
                 $infopath = $path;
+
                 // check if path is deeper than CAT_PATH/modules/<module>
                 if ( count(explode('/',str_ireplace( $base.'/', '', $path ))) > 1 )
                 {
@@ -91,6 +96,7 @@ if (!class_exists('CAT_Helper_Widget'))
                 {
                     $addonh->lang()->addFile(LANGUAGE.'.php', $infopath.'/languages/');
                 }
+
                 $widget = array(
                     'module_name'      => $info['module_name'],
                     'module_directory' => $info['module_directory'],
@@ -102,34 +108,88 @@ if (!class_exists('CAT_Helper_Widget'))
             }
             return $_chw_data;
         }   // end function getWidgets()
-        
+
+        /**
+         * reads the widgets.config.php (if available) and returns the
+         * $widget_config array
+         *
+         * note: only the first widgets.config.php will be loaded!
+         *
+         * @access public
+         * @param  string  $module
+         * @return mixed   array or NULL
+         **/
+        public static function getWidgetConfig($module=NULL)
+        {
+            $widget_path = CAT_PATH.'/modules';
+            if($module && $module!='backend') $widget_path .= '/'.$module;
+
+            $directories = CAT_Helper_Directory::getInstance()
+                           ->maxRecursionDepth(2)
+                           ->findDirectories('widgets', $widget_path);
+
+            if(count($directories))
+            {
+                sort($directories);
+                foreach($directories as $dir)
+                {
+                    if(file_exists($dir.'/widgets.config.php'))
+                    {
+                        $widget_config = array();
+                        require $dir.'/widgets.config.php';
+                        return $widget_config;
+                    }
+                }
+            }
+
+            return NULL;
+        }   // end function getWidgetConfig()
+
         /**
          * scans modules (=paths) for widgets
          *
          * @access public
          * @return array
          **/
-        public static function findWidgets()
+        public static function findWidgets($module=NULL,$list=NULL)
         {
+            $widget_path = CAT_PATH.'/modules';
+            if(!$module)           $module       = 'backend';
+            if($module!='backend') $widget_path .= '/'.$module;
+
             // find files called 'widget.php'
             $widgets     = CAT_Helper_Directory::getInstance()
                            ->maxRecursionDepth(2)
                            ->setSkipFiles(array('index.php'))
-                           ->findFiles('widget.php', CAT_PATH.'/modules');
+                           ->findFiles('widget.php', $widget_path);
+
             if(count($widgets)) sort($widgets);
 
             // find files in directory called 'widgets'
             $directories = CAT_Helper_Directory::getInstance()
                            ->maxRecursionDepth(2)
-                           ->findDirectories('widgets', CAT_PATH.'/modules');
+                           ->findDirectories('widgets', $widget_path);
+
             if(count($directories))
             {
                 sort($directories);
                 if(!is_array($widgets)) $widgets = array();
                 foreach($directories as $dir)
                 {
+// *****************************************************************************
+// TODO: Es wäre eleganter, das mit getWidgetConfig() zusammen zu legen
+// *****************************************************************************
+                    if(file_exists($dir.'/widgets.config.php'))
+                    {
+                        $widget_config = array();
+                        require $dir.'/widgets.config.php';
+                        if($module=='backend' && isset($widget_config['allow_global_dashboard']) && $widget_config['allow_global_dashboard'] === false)
+                        {
+                            continue;
+                        }
+                    }
                     $files = CAT_Helper_Directory::getInstance()
-                             ->setSkipFiles(array('index.php'))
+                             ->setSkipFiles(array('index.php','widgets.config.php'))
                              ->getPHPFiles($dir);
                     sort($files);
                     $widgets = array_merge(
@@ -138,13 +198,28 @@ if (!class_exists('CAT_Helper_Widget'))
                     );
                 }
             }
+
+            // remove widgets that are already visible
+            if($list && is_array($list))
+            {
+                $basepath = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules');
+                for($i=count($widgets)-1;$i>=0;$i--)
+                {
+                     $path = str_ireplace($basepath,'',$widgets[$i]);
+                     $item = CAT_Helper_Array::ArrayFilterByKey($list,'widget_path',$path);
+                     if($item) unset($widgets[$i]);
+                }
+            }
+
             return $widgets;
         }   // end function findWidgets()
 
         /**
+         * executes the given widget and adds it's output to 'content' key
          *
          * @access public
-         * @return
+         * @param  array  $widget
+         * @return array
          **/
         public static function render($widget)
         {
@@ -162,13 +237,17 @@ if (!class_exists('CAT_Helper_Widget'))
                     self::getInstance()->lang()->addFile(LANGUAGE.'.php', CAT_PATH.'/modules/'.$root[1].'/languages/');
                 }
                 ob_start();
-                    $widget_name  = NULL;
+                    $widget_settings = array();
                     include(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$widget['widget_path']));
                     $content = ob_get_contents();
                 ob_clean();
 
                 $widget['content'] = $content;
-                if($widget_name) $widget['module_name'] .= ' - '.$widget_name;
+
+                if(isset($widget_settings) && is_array($widget_settings))
+                {
+                    $widget['settings'] = $widget_settings;
+                }
             }
             return $widget;
         }   // end function render()

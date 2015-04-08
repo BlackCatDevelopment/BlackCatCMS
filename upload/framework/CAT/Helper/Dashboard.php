@@ -324,13 +324,22 @@ if (!class_exists('CAT_Helper_Dashboard'))
          * @access public
          * @return
          **/
-        public static function renderDashboard($module=NULL)
+        public static function renderDashboard($module=NULL,$direct_output=false)
         {
             global $parser;
-            $config   = CAT_Helper_Dashboard::getDashboard($module);
+            $config = self::getDashboard($module);
             $parser->setPath(CAT_PATH.'/framework/CAT/Helper/Dashboard');
-            $parser->output('dashboard.tpl',array('dashboard'=>$config,'module'=>$module));
-            $parser->resetPath();
+            if($direct_output)
+            {
+                $parser->output('dashboard.tpl',array('dashboard'=>$config,'module'=>$module));
+                $parser->resetPath();
+            }
+            else {
+                $content = $parser->get('dashboard.tpl',array('dashboard'=>$config,'module'=>$module));
+                $parser->resetPath();
+                return $content;
+            }
+            
         }   // end function renderDashboard()
 
         /**

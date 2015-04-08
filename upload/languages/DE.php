@@ -738,6 +738,10 @@ $LANG = array(
     'When modules are uploaded via FTP (not recommended), the module installation functions install, upgrade or uninstall will not be executed automatically. Those modules may not work correct or do not uninstall properly.'
         => 'Wenn Module via FTP hochgeladen werden (nicht empfohlen), werden die Funktionen zur Installation, zum Upgrade oder zur Deinstallation nicht automatisch ausgeführt. Diese Module funktionieren eventuell nicht richtig oder lassen sich nicht deinstallieren.',
 // ----- v1.2 -----
+// ----- dashboard -----
+    'Do you really want to remove this widget from your dashboard?' => 'Wollen Sie dieses Widget wirklich vom Dashboard entfernen?',
+    'Remove widget' => 'Widget entfernen',
+// ----- addons catalog -----
     'Action' => 'Aktion',
     'Avail. since' => 'Verfügb. seit',
     'Create new' => 'Neu erstellen',

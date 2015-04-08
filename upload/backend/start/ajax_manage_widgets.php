@@ -42,29 +42,9 @@ if (defined('CAT_PATH')) {
 header('Content-type: application/json');
 
 $backend = CAT_Backend::getInstance('start','start',false,false);
-$user    = CAT_Users::getInstance();
-
-$action = CAT_Helper_Validate::sanitizePost('action');
-switch($action) {
-    case 'hide':
-        CAT_Helper_Dashboard::hideWidget(CAT_Helper_Validate::sanitizePost('widget'));
-        break;
-    case 'show':
-        CAT_Helper_Dashboard::showWidget(CAT_Helper_Validate::sanitizePost('widget'));
-        break;
-    case 'reorder':
-        // column is 0-based in the HTML, but 1-based in the code
-        CAT_Helper_Dashboard::reorderColumn(
-            (CAT_Helper_Validate::sanitizePost('column')+1),
-            CAT_Helper_Validate::sanitizePost('order')
-        );
-        break;
-    case 'move':
-        CAT_Helper_Dashboard::moveWidget(CAT_Helper_Validate::sanitizePost('items'));
-        break;
-}
+$result  = CAT_Helper_Dashboard::manageWidgets();
 
 echo json_encode(array(
-    'success' => true,
-    'message' => 'ok'
+    'success' => $result,
+    'message' => ( $result ? 'Success' : 'Error' )
 ));
