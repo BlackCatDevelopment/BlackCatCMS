@@ -324,6 +324,29 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
         }   // end function sqlImport()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public function getLastStatement($bind)
+        {
+            $statement = NULL;
+            $params    = array();
+            $logger    = self::$conn->getConfiguration()->getSQLLogger();
+            if(count($logger->queries))
+            {
+                $last = array_pop($logger->queries);
+                if(is_array($last) && count($last))
+                {
+                    $statement = $last['sql'];
+                    if(is_array($bind) && count($bind))
+                        $params = var_export($bind,1);
+                }
+            }
+            return array($statement, $params);
+        }   // end function getLastStatement()
+
+        /**
          * check for DB error
          *
          * @access public

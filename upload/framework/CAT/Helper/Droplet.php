@@ -327,7 +327,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
         {
             $droplet_name = self::clear_droplet_name($droplet_name);
             $SQL          = "SELECT `drop_page_id` FROM `:prefix:mod_droplets_extension` "
-                          . "WHERE :field1=:value1 AND :field2=:value2 AND :field3=:value3"
+                          . "WHERE :field1:=:value1 AND :field2:=:value2 AND :field3:=:value3"
                           ;
             $params       = array(
                 'field1' => self::field_droplet_name,
@@ -416,7 +416,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
             // insert
             $SQL = "INSERT INTO `:prefix:mod_droplets_extension` "
                  . "(`drop_droplet_name`,`drop_page_id`,`drop_module_dir`,`drop_type`,`drop_file`) "
-                 . "VALUES ( '?', '?', '?', '?', '?' )"
+                 . "VALUES ( ?, ?, ?, ?, ? )"
                  ;
             $params = array(
                 $droplet_name, $page_id, $module_directory, $register_type, $file

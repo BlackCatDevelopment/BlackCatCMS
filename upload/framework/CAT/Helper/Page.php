@@ -863,7 +863,7 @@ frontend.css and template.css are added in _get_css()
 */
                 $val = CAT_Helper_Validate::getInstance();
                 $seen = array();
-                foreach (CAT_Helper_Page::$css as $item)
+                while( NULL !== ( $item = array_shift(CAT_Helper_Page::$css) ) )
                 {
                     if ( ! isset($seen[$item['file']]) )
                     {
@@ -893,7 +893,7 @@ frontend.css and template.css are added in _get_css()
                         }
                         $output[] = $line;
                     }
-                    $seen[$item['file']] = 1;
+                    $seen[$item['file']] = $file;
                 }
             }
             if($as_array) return array_values($seen);

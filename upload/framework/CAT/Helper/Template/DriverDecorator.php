@@ -94,7 +94,7 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
          * @access public
          * @return
          **/
-        public static function resetPath($context='frontend')
+        public function resetPath($context='frontend')
         {
             if(CAT_Backend::isBackend()) $context = 'backend';
             $this->log()->logDebug(sprintf('resetting path to [%s], context [%s]',$this->last,$context));
