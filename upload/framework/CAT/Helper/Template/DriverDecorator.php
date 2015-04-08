@@ -44,6 +44,7 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
         );
         public  $template_block;
         protected $_config = array( 'loglevel' => CAT_Helper_KLogger::CRIT );
+        protected $last    = NULL;
 
         public function __construct( $obj )
         {
@@ -89,6 +90,22 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
         }
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function resetPath($context='frontend')
+        {
+            if(CAT_Backend::isBackend()) $context = 'backend';
+            $this->log()->logDebug(sprintf('resetting path to [%s], context [%s]',$this->last,$context));
+            if(!$this->last) return;
+            $this->te->paths[$context]  = $this->last;
+            $this->te->paths['current'] = $this->last;
+            if(isset($this->te->paths[$context.'_fallback']))
+                    $this->te->paths[$context.'_fallback'] = $this->last;
+        }   // end function resetPath()
+
+        /**
          * set current template search path
          *
          * @access public
@@ -99,10 +116,14 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
          **/
          public function setPath ( $path, $context = 'frontend' )
          {
+            if(CAT_Backend::isBackend()) $context = 'backend';
             $path = CAT_Helper_Directory::sanitizePath($path);
+            $this->last = NULL;
             $this->log()->logDebug(sprintf('context [%s] path [%s]', $context, $path ));
             if ( file_exists( $path ) )
             {
+                if(isset($this->te->paths[$context]))
+                    $this->last = $this->te->paths[$context];
                 $this->te->paths[$context]  = $path;
                 $this->te->paths['current'] = $path;
                 if(!isset($this->te->paths[$context.'_fallback']))
