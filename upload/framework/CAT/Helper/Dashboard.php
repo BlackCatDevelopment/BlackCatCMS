@@ -196,7 +196,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
                     );
                     break;
                 case 'move':
-                    $result = CAT_Helper_Dashboard::moveWidget(CAT_Helper_Validate::sanitizePost('items'),$module);
+                    $result = CAT_Helper_Dashboard::moveWidget(CAT_Helper_Validate::sanitizePost('widget'),CAT_Helper_Validate::sanitizePost('items'),$module);
                     break;
                 case 'remove':
                     $result = CAT_Helper_Dashboard::removeWidget(CAT_Helper_Validate::sanitizePost('widget'),$module);
@@ -256,10 +256,12 @@ if (!class_exists('CAT_Helper_Dashboard'))
          *     );
          *
          * @access public
-         * @param  array  $items
+         * @param  string $widget - the widget to be moved
+         * @param  array  $items  - current items
+         * @param  string $module - module name or 'backend'
          * @return
          **/
-        public static function moveWidget($items,$module=NULL)
+        public static function moveWidget($widget,$items,$module=NULL)
         {
             // get current config
             $config  = self::getDashboardConfig($module);
@@ -270,17 +272,10 @@ if (!class_exists('CAT_Helper_Dashboard'))
             $target_column  = ($items['target']['column']+1);
             $target_widgets = CAT_Helper_Array::ArrayFilterByKey($config['widgets'],'column',$target_column);
             // filter moved element from source column
-            $filter         = $items['source']['items'];
-            foreach ($source_widgets as $i => $element)
-            {
-                if(!in_array($element['widget_path'],$filter))
-                {
-                    unset($source_widgets[$i]);
-                    break;
-                }
-            }
+            $element        = CAT_Helper_Array::ArrayFilterByKey($source_widgets,'widget_path',$widget);
             if(is_array($element))
             {
+                $element = $element[0];
                 // move element to target
                 $element['column'] = $target_column;
                 $target_widgets[]  = $element;
@@ -290,12 +285,10 @@ if (!class_exists('CAT_Helper_Dashboard'))
                     $source_widgets,
                     $target_widgets
                 );
-                if(self::saveDashboardConfig($config))
+                if(self::saveDashboardConfig($config,$module))
                 {
                     // reorder target
-                    self::reorderColumn($items['target']['column']+1,$items['target']['items']);
-                    // reorder source
-                    self::reorderColumn($items['source']['column']+1,$items['source']['items']);
+                    self::reorderColumn($target_column,$items['target']['items'],$module);
                 }
             }
         }   // end function moveWidget()
@@ -349,7 +342,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
          **/
         public static function reorderColumn($column,$order,$module=NULL)
         {
-            $config  = self::getDashboardConfig();
+            $config  = self::getDashboardConfig($module);
             $widgets = CAT_Helper_Array::ArrayFilterByKey($config['widgets'],'column',$column);
             usort($widgets, function($a, $b) use ($order) {
                 return array_search($a['widget_path'], $order) - array_search($b['widget_path'], $order);

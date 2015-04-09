@@ -108,7 +108,7 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
         {
             $result = array();
             foreach ($array as $k => $elem) {
-                if ($elem[$key] == $value) {
+                if (isset($elem[$key]) && $elem[$key] == $value) {
                     $result[] = $array[$k];
                     unset($array[$k]);
                 }
