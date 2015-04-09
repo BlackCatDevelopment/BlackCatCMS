@@ -1,8 +1,11 @@
 ul.fc_widgets{float:left;}
+ul.fc_widgets.empty{padding:25px;display:block;margin-top:15px;}
+ul.fc_widgets.empty:hover{border:1px dashed #ccc;}
 li.fc_widget_wrapper{margin:10px;background-color:white;border:1px solid #ccc;-webkit-border-radius: 5px;-moz-border-radius: 5px;-khtml-border-radius: 5px;border-radius: 5px;box-shadow:inset 0 0 5px #aaa;-moz-box-shadow: 3px 3px 3px #aaa;-webkit-box-shadow: 3px 3px 3px #aaa;box-shadow: 3px 3px 3px #aaa;}
 li.fc_widget_wrapper div.fc_widget_title{padding:10px;font-size:1.1em;background:none repeat scroll 0 0 #f2f2f2;border-bottom:1px solid #cccccc;-webkit-border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-khtml-border-radius:5px 5px 0 0x;border-radius:5px 5px 0 0;}
 li.fc_widget_wrapper div.fc_widget_title .fc_widget_top{font-size:1.1em;color:#808080;cursor: pointer;}
 li.fc_widget_wrapper div.fc_widget_content{padding:10px;}
 li.fc_widget_wrapper div.fc_widget_top{display:none;float:right;text-align:right;width:100px;}
-li.fc_widget_wrapper div.fc_widget_top div{display:inline-block;margin-left:5px;}
+li.fc_widget_wrapper div.fc_widget_top div{display:inline-block;padding:0 5px 0 5px;}
+ul.fc_widgets li .icon:hover{color:#c00;font-size:1.2em;transition: font-size .3s linear;}
 .fc_dashboard_sortable .sortable-placeholder{border:1px dashed #aaa;margin-left:11px;margin-right:9px;}
