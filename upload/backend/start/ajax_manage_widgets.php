@@ -41,7 +41,42 @@ if (defined('CAT_PATH')) {
 
 header('Content-type: application/json');
 
-$backend = CAT_Backend::getInstance('start','start',false,false);
+$section_name = 'Start';
+$section_permission = 'start';
+
+$module = CAT_Helper_Validate::sanitizePost('module');
+if($module)
+{
+    // get the module type to evaluate the section name
+    $properties = CAT_Helper_Addons::getAddonDetails($module);
+    if($properties['type'] != 'module')
+    {
+        echo json_encode(array(
+            'success' => false,
+            'message' => CAT_Helper_Validate::getInstance()->lang()->translate('You sent an invalid value')
+        ));
+        exit;
+    }
+    switch($properties['function'])
+    {
+        case 'tool':
+            $section_name = 'admintools';
+            $section_permission = 'admintools';
+            break;
+        case 'page':
+            $section_name = 'pages';
+            $section_permission = 'pages';
+            break;
+        default:
+            echo json_encode(array(
+                'success' => false,
+                'message' => 'Invalid type '.$properties['type']
+            ));
+            exit;
+    }
+}
+
+$backend = CAT_Backend::getInstance($section_name,$section_permission,false,false);
 $result  = CAT_Helper_Dashboard::manageWidgets();
 
 echo json_encode(array(
