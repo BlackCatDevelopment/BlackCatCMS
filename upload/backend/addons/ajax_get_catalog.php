@@ -80,6 +80,7 @@ foreach( $catalog['modules'] as $i => $m)
                 'update'       => CAT_Helper_Addons::versionCompare($m['version'],$modules[$installed[$m['directory']]]['version'],'>'),
             )
         );
+        $catalog['modules'][$i]['is_removable']   = ( ($catalog['modules'][$i]['installed_data']['removable']=='N') ? false : true );
     }
 }
 

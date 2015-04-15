@@ -318,6 +318,34 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
 
         /**
          *
+         * @access public
+         * @return
+         **/
+        public static function json_success($message,$exit=true)
+        {
+            echo json_encode(array(
+                'success' => true,
+                'message' => self::lang()->translate($message)
+            ));
+            if($exit) exit();
+        }   // end function json_success()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function json_error($message,$exit=true)
+        {
+            echo json_encode(array(
+                'success' => false,
+                'message' => self::lang()->translate($message)
+            ));
+            if($exit) exit();
+        }   // end function json_error()
+
+        /**
+         *
          * @access private
          * @return
          **/

@@ -45,13 +45,29 @@ if (!class_exists('CAT_Helper_GitHub'))
          * @param  string  $url - optional
          * @return object  curl connection
          **/
-        public static function curl_init($url=NULL)
+        public static function init_curl($url=NULL)
         {
             if(self::$ch) return self::$ch;
-            $headers = array(
+            self::$ch = curl_init();
+            self::resetOpt();
+            if($url)
+                curl_setopt(self::$ch, CURLOPT_URL, $url);
+            return self::$ch;
+        }   // end function init_curl()
+
+        /**
+         * reset curl options to defaults
+         *
+         * @access public
+         * @return
+         **/
+        public static function reset_curl()
+        {
+            if(self::$ch) curl_close(self::$ch);
+            self::$ch = curl_init();
+            $headers  = array(
                 'User-Agent: php-curl'
             );
-            self::$ch = curl_init();
             curl_setopt(self::$ch, CURLOPT_FOLLOWLOCATION, true    );
             curl_setopt(self::$ch, CURLOPT_RETURNTRANSFER, true    );
             curl_setopt(self::$ch, CURLOPT_SSL_VERIFYHOST, false   );
@@ -62,19 +78,41 @@ if (!class_exists('CAT_Helper_GitHub'))
                 curl_setopt(self::$ch, CURLOPT_PROXY, GITHUB_PROXY);
             if(defined('GITHUB_PROXY_PORT'))
                 curl_setopt(self::$ch, CURLOPT_PROXYPORT, GITHUB_PROXY_PORT);
-            if($url)
-                curl_setopt(self::$ch, CURLOPT_URL, $url);
             return self::$ch;
-        }   // end function curl_init()
+        }   // end function reset_curl()
 
         /**
          *
          * @access public
          * @return
          **/
-        public static function getZip($dlurl,$path)
+        public static function getRelease($org,$repo)
         {
-            $ch   = self::curl_init();
+            $releases   = self::retrieve($org,$repo,'releases');
+            $latest     = array();
+            if(is_array($releases) && count($releases))
+            {
+                foreach($releases as $r)
+                {
+                    if($r['prerelease']==1) continue;
+                    $latest = $r;
+                    break;
+                }
+                if(is_array($latest)) {
+                    return $latest;
+                }
+            }
+            return false;
+        }   // end function getRelease()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getZip($dlurl,$path,$filename)
+        {
+            $ch   = self::init_curl();
             curl_setopt($ch, CURLOPT_URL, $dlurl);
             $data = curl_exec($ch);
             if(curl_error($ch))
@@ -101,7 +139,7 @@ if (!class_exists('CAT_Helper_GitHub'))
             }
 
             if(!is_dir($path)) mkdir($path,0770);
-            $file = pathinfo($dlurl,PATHINFO_BASENAME);
+            $file = $filename.'.zip';
             $fd   = fopen($path.'/'.$file, 'w');
             fwrite($fd, $data);
             fclose($fd);
@@ -125,23 +163,31 @@ if (!class_exists('CAT_Helper_GitHub'))
          **/
         public static function retrieve($org,$repo,$url)
         {
+            $ch   = self::reset_curl(); // fresh connection
             $url  = sprintf('https://api.github.com/repos/%s/%s/%s',
                     $org, $repo, $url);
             try {
                 //echo "retrieve url: $url<br />";
-                curl_setopt($connection,CURLOPT_URL,$url);
-                $result = json_decode(curl_exec($connection), true);
+                curl_setopt($ch,CURLOPT_URL,$url);
+                $result = json_decode(curl_exec($ch), true);
                 if(isset($result['documentation_url']))
                     self::printError( "GitHub Error: ", $result['message'], "<br />URL: $url<br />" );
                 return $result;
             } catch ( Exception $e ) {
                 self::printError( "CUrl error: ", $e->getMessage(), "<br />" );
             }
-        }
+        }   // end function retrieve()
 
+        /**
+         * get the size of a remote file
+         *
+         * @access public
+         * @param  string  $url
+         * @return string
+         **/
         public static function retrieve_remote_file_size($url)
         {
-             $ch = self::curl_init();
+             $ch = self::init_curl();
              curl_setopt($ch, CURLOPT_HEADER, TRUE);
              curl_setopt($ch, CURLOPT_NOBODY, TRUE);
              curl_setopt($ch, CURLOPT_URL, $url);
@@ -180,7 +226,6 @@ if (!class_exists('CAT_Helper_GitHub'))
             self::$curl_error = $error;
         }   // end function setError()
         
-
     } // class CAT_Helper_GitHub
 
 } // if class_exists()

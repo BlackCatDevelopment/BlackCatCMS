@@ -47,7 +47,7 @@ if(!defined('LANGUAGE_LOADED')) {
 // Set the language information
 $language_code        = 'DE';
 $language_name        = 'Deutsch';
-$language_version     = '1.1';
+$language_version     = '1.2';
 $language_platform    = '1.x';
 $language_author      = 'Black Cat Development';
 $language_license     = 'GNU General Public License';
@@ -738,6 +738,7 @@ $LANG = array(
     'When modules are uploaded via FTP (not recommended), the module installation functions install, upgrade or uninstall will not be executed automatically. Those modules may not work correct or do not uninstall properly.'
         => 'Wenn Module via FTP hochgeladen werden (nicht empfohlen), werden die Funktionen zur Installation, zum Upgrade oder zur Deinstallation nicht automatisch ausgeführt. Diese Module funktionieren eventuell nicht richtig oder lassen sich nicht deinstallieren.',
 // ----- v1.2 -----
+    'Loading' => 'Lade',
 // ----- dashboard -----
     'Do you really want to remove this widget from your dashboard?' => 'Wollen Sie dieses Widget wirklich vom Dashboard entfernen?',
     'Remove widget' => 'Widget entfernen',
@@ -746,11 +747,15 @@ $LANG = array(
     'Avail. since' => 'Verfügb. seit',
     'Create new' => 'Neu erstellen',
     'Current version' => 'Aktuelle Version',
+    'Install...' => 'Installiere...',
     'Install' => 'Installieren',
     'Installed version' => 'Installierte Version',
     'Show Catalog' => 'Katalog',
     'Uninstall' => 'Deinstallieren',
+    'Uninstall...' => 'Deinstalliere...',
+    'Update...' => 'Aktualisiere...',
     'Update available!' => 'Update verfügbar!',
+    'Updating catalog...' => 'Aktualisiere Katalog...',
     'Upload and install' => 'Hochladen und installieren',
     'You need to have BlackCat CMS Version {{ version }} installed for this addon. You have {{ version2 }}.' => 'Für dieses Addon muß BlackCat CMS Version {{ version }} installiert sein. Installiert ist {{ version2 }}.',
 );

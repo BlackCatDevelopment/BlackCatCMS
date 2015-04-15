@@ -242,7 +242,7 @@ function set_activity( title )
 	process.slideUp(0,function()
 	{
 		// ...fill it with the title and a loader and show it
-		process.html('<div class="fc_process_title">' + title + '</div><div class="loader" />').slideDown(300);
+		process.html('<div class="fc_process_title">' + cattranslate(title) + '</div><div class="loader" />').slideDown(300);
 	});
 
 	// Return the div.process to hide update it after successful ajax

@@ -31,19 +31,19 @@
             <td>
                 {if $addon.is_installed}
                     <span class="fc_addon_version{if $addon.installed_data.update == true} fc_addon_old{/if}">{$addon.installed_data.version}</span><br />
-                    <span class="fc_addon_installdate">{$addon.installed_data.install_date}</span>
+                    <span class="fc_addon_installdate">{$addon.installed_data.install_date}</span><br />
                 {/if}
             </td>
             <td class="fc_addon_buttons">
                 <span class="fc_addon_directory" style="display:none;">{$addon.directory}</span>
                 {if ! $addon.is_installed && $permissions.MODULES_INSTALL == true}
-                <button class="fc_catalog_install">{translate('Install')}</button>
+                <button class="fc_catalog_install fc_gradient1" style="width:85px;">{translate('Install')}</button>
                 {/if}
                 {if $addon.installed_data.update == true && $permissions.MODULES_INSTALL == true}
-                <button class="fc_catalog_update">{translate('Update')}</button>
+                <button class="fc_catalog_update fc_gradient_blue" style="width:85px;">{translate('Update')}</button>
                 {/if}
-                {if $addon.is_installed && $addon.removable == 'Y' && $permissions.MODULES_UNINSTALL}
-                <button>{translate('Uninstall')}</button>
+                {if $addon.is_removable && $addon.is_installed && $permissions.MODULES_UNINSTALL}
+                <button class="fc_catalog_uninstall fc_gradient_red" style="width:85px;">{translate('Uninstall')}</button>
                 {/if}
             </td>
         </tr>
@@ -61,7 +61,7 @@
     			cache:		false,
                 beforeSend:	function( data )
         		{
-        			data.process	= set_activity();
+        			data.process	= set_activity('Updating catalog...');
         		},
     			success:	function( data, textStatus, jqXHR )
     			{
@@ -85,14 +85,13 @@
     			cache:		false,
                 beforeSend:	function( data )
         		{
-        			data.process	= set_activity();
+        			data.process	= set_activity('Install...');
         		},
     			success:	function( data, textStatus, jqXHR )
     			{
     				if ( data.success === true )
     				{
-                        $('div#addons_main_content').html(data.content);
-                        jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
+                        location.reload();
     				}
     				else {
     					return_error( jqXHR.process , data.message);
@@ -109,14 +108,36 @@
     			cache:		false,
                 beforeSend:	function( data )
         		{
-        			data.process	= set_activity();
+        			data.process	= set_activity('Update...');
         		},
     			success:	function( data, textStatus, jqXHR )
     			{
     				if ( data.success === true )
     				{
-                        $('div#addons_main_content').html(data.content);
-                        jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
+                        location.reload();
+    				}
+    				else {
+    					return_error( jqXHR.process , data.message);
+    				}
+    			}
+    		});
+        });
+        $('.fc_catalog_uninstall').unbind('click').bind('click',function() {
+            $.ajax({
+    			type:		'GET',
+    			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
+    			dataType:	'json',
+                data:       { directory: $(this).parent().parent().find('.fc_addon_directory').text(), action: 'uninstall' },
+    			cache:		false,
+                beforeSend:	function( data )
+        		{
+        			data.process	= set_activity('Uninstall...');
+        		},
+    			success:	function( data, textStatus, jqXHR )
+    			{
+    				if ( data.success === true )
+    				{
+                        location.reload();
     				}
     				else {
     					return_error( jqXHR.process , data.message);
