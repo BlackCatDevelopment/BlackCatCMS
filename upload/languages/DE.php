@@ -752,6 +752,7 @@ $LANG = array(
     'Uninstall' => 'Deinstallieren',
     'Update available!' => 'Update verfügbar!',
     'Upload and install' => 'Hochladen und installieren',
+    'You need to have BlackCat CMS Version {{ version }} installed for this addon. You have {{ version2 }}.' => 'Für dieses Addon muß BlackCat CMS Version {{ version }} installiert sein. Installiert ist {{ version2 }}.',
 );
 
 // include old lang files

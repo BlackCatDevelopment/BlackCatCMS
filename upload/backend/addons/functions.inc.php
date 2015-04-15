@@ -39,10 +39,7 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-define('CURRENT_URL',$_SERVER['SCRIPT_NAME']);
-define('GITHUB_URL','https://raw.githubusercontent.com/BlackCatDevelopment/bcExtensionsCatalog/master/catalog.json');
-define('PROXYHOST','proxy.materna.de');
-define('PROXYPORT','8080');
+#define('CURRENT_URL',$_SERVER['SCRIPT_NAME']);
 
 function get_catalog()
 {
@@ -56,7 +53,7 @@ function get_catalog()
 
 function update_catalog()
 {
-    $ch   = init_client(GITHUB_URL);
+    $ch   = CAT_Helper_GitHub::curl_init(GITHUB_CATALOG_LOCATION);
     $data = curl_exec($ch);
     if(curl_error($ch))
     {
@@ -68,23 +65,3 @@ function update_catalog()
     fclose($fh);
 }
 
-function init_client($url=NULL)
-{
-    $headers = array(
-        'User-Agent: php-curl'
-    );
-    $connection = curl_init();
-    curl_setopt($connection, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($connection, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($connection, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($connection, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($connection, CURLOPT_MAXREDIRS, 2);
-    curl_setopt($connection, CURLOPT_HTTPHEADER, $headers);
-    if(defined('PROXYHOST'))
-        curl_setopt($connection, CURLOPT_PROXY, PROXYHOST);
-    if(defined('PROXYPORT'))
-        curl_setopt($connection, CURLOPT_PROXYPORT, PROXYPORT);
-    if($url)
-        curl_setopt($connection, CURLOPT_URL, $url);
-    return $connection;
-}

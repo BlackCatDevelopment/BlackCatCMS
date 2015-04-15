@@ -39,6 +39,7 @@ DROP TABLE IF EXISTS `cat_class_secure`;
 DROP TABLE IF EXISTS `cat_mod_wysiwyg_admin_v2`;
 DROP TABLE IF EXISTS `cat_mod_droplets_extension`;
 
+
 CREATE TABLE IF NOT EXISTS `cat_addons` (
   `addon_id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(128) NOT NULL DEFAULT '',
@@ -312,6 +313,17 @@ CREATE TABLE IF NOT EXISTS `cat_mod_droplets_extension` (
 	PRIMARY KEY (`drop_id`)
 );
 
+CREATE TABLE IF NOT EXISTS `cat_dashboard` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`user_id` INT(11) NOT NULL DEFAULT '0',
+    `module` VARCHAR(50) NULL DEFAULT '0',
+	`layout` VARCHAR(10) NOT NULL,
+	`widgets` TEXT NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `id_user_id_module` (`user_id`, `module`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
 
 /*!40014 SET FOREIGN_KEY_CHECKS=1 */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

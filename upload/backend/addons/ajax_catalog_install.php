@@ -39,10 +39,11 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$backend = CAT_Backend::getInstance('Addons', 'modules_install', false, false);
-$module  = CAT_Helper_Validate::sanitizeGet('name');
+$backend     = CAT_Backend::getInstance('Addons', 'modules_install', false, false);
+$module_name = CAT_Helper_Validate::sanitizeGet('directory');
+$action      = CAT_Helper_Validate::sanitizeGet('action');
 
-if(CAT_Helper_Addons::isModuleInstalled($module))
+if($action=='install' && CAT_Helper_Addons::isModuleInstalled($module_name))
 {
     echo json_encode(array(
         'success' => false,
@@ -56,9 +57,98 @@ $catalog = get_catalog();
 
 foreach($catalog['modules'] as $module)
 {
-    if($module['directory'] == $module)
+    if($module['directory'] == $module_name)
     {
+        // Check requirements
+        if(isset($module['require']) && isset($module['require']['core']) && isset($module['require']['core']['release']))
+        {
+            if(!CAT_Helper_Addons::versionCompare(CAT_VERSION,$module['require']['core']['release']))
+            {
+                echo json_encode(array(
+                    'success' => false,
+                    'message' => $backend->lang()->translate(
+                        'You need to have BlackCat CMS Version {{ version }} installed for this addon. You have {{ version2 }}.',
+                        array('version'=>$module['require']['core']['release'],'version2'=>CAT_VERSION)
+                    )
+                ));
+                exit();
+            }
+        }
+        // check for download location
+        if(!isset($module['github']) || !isset($module['github']['organization']) || !isset($module['github']['repository']))
+        {
+            echo json_encode(array(
+                'success' => false,
+                'message' => $backend->lang()->translate(
+                    'Unable to download the module. No download location set.'
+                )
+            ));
+            exit();
+        }
+        // try download
+        $dlurl = sprintf('https://github.com/%s/%s/archive/master.zip',
+                         $module['github']['organization'],
+                         $module['github']['repository']);
+        if(CAT_Helper_GitHub::getZip($dlurl,CAT_PATH.'/temp')!==true)
+        {
+            echo json_encode(array(
+                'success' => false,
+                'message' => $backend->lang()->translate(
+                    'Unable to download the module. Error: {{ error }}',
+                    array('error'=>CAT_Helper_GitHub::getError())
+                )
+            ));
+            exit();
+        }
+        // try install / update
+        switch($action)
+        {
+            case 'install':
+                if(CAT_Helper_Addons::installModule( CAT_PATH.'/temp/master.zip', true, true ))
+                {
+                    echo json_encode(array(
+                        'success' => true,
+                        'message' => $backend->lang()->translate(
+                            'Installed successfully'
+                        )
+                    ));
+                    exit();
+                }
+                else
+                {
+                    // error is already printed by the helper
+                    echo json_encode(array(
+                        'success' => false,
+                        'message' => $backend->lang()->translate(
+                            'Unable to install the module!'
+                        )
+                    ));
+                    exit();
+                }
+                break;
+            case 'update':
+                break;
+            default:
+                echo json_encode(array(
+                    'success' => false,
+                    'message' => $backend->lang()->translate(
+                        'Unknown action'
+                    )
+                ));
+                exit();
+                break;
+        }
     }
 }
+
+// not found
+echo json_encode(array(
+    'success' => false,
+    'message' => $backend->lang()->translate(
+        'Unable to download the module. {{ error }}',
+        array('error'=>'Not found')
+    )
+));
+exit();
 
 exit;

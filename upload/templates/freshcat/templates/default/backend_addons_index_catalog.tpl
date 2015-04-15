@@ -35,11 +35,12 @@
                 {/if}
             </td>
             <td class="fc_addon_buttons">
+                <span class="fc_addon_directory" style="display:none;">{$addon.directory}</span>
                 {if ! $addon.is_installed && $permissions.MODULES_INSTALL == true}
                 <button class="fc_catalog_install">{translate('Install')}</button>
                 {/if}
                 {if $addon.installed_data.update == true && $permissions.MODULES_INSTALL == true}
-                <button>{translate('Update')}</button>
+                <button class="fc_catalog_update">{translate('Update')}</button>
                 {/if}
                 {if $addon.is_installed && $addon.removable == 'Y' && $permissions.MODULES_UNINSTALL}
                 <button>{translate('Uninstall')}</button>
@@ -80,7 +81,31 @@
     			type:		'GET',
     			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
     			dataType:	'json',
-                data:       { name: $(this).parent().parent().find('.fc_addon_name').text() },
+                data:       { directory: $(this).parent().parent().find('.fc_addon_directory').text(), action: 'install' },
+    			cache:		false,
+                beforeSend:	function( data )
+        		{
+        			data.process	= set_activity();
+        		},
+    			success:	function( data, textStatus, jqXHR )
+    			{
+    				if ( data.success === true )
+    				{
+                        $('div#addons_main_content').html(data.content);
+                        jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
+    				}
+    				else {
+    					return_error( jqXHR.process , data.message);
+    				}
+    			}
+    		});
+        });
+        $('.fc_catalog_update').unbind('click').bind('click',function() {
+            $.ajax({
+    			type:		'GET',
+    			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
+    			dataType:	'json',
+                data:       { directory: $(this).parent().parent().find('.fc_addon_directory').text(), action: 'update' },
     			cache:		false,
                 beforeSend:	function( data )
         		{
