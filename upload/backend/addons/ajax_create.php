@@ -15,12 +15,12 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2014, Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
- *   @review          21.07.2014 18:18:26
+ *   @review          15.04.2015 18:00:59
  *
  */
 
@@ -40,11 +40,13 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// TODO: Auf die richtige function mappen, also etwa module -> page
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 $backend = CAT_Backend::getInstance('Addons', 'modules_install', false);
 $users   = CAT_Users::getInstance();
 $val     = CAT_Helper_Validate::getInstance();
-$success = false;
-$message = '';
 
 header('Content-type: application/json');
 
@@ -54,188 +56,122 @@ if ( !$users->checkPermission('Addons','modules_install') )
     printResult();
 }
 
-$type    = $val->sanitizePost('new_moduletype');
-$name    = $val->sanitizePost('new_modulename');
-$dir     = $val->sanitizePost('new_moduledir');
-$desc    = $val->sanitizePost('new_moduledesc');
-$author  = $val->sanitizePost('new_moduleauthor');
-$func    = 'page';
-$pre     = 'module_';
-$full    = '';
+$type     = $val->sanitizePost('new_moduletype');
+$name     = $val->sanitizePost('new_modulename');
+$dir      = $val->sanitizePost('new_moduledir');
+$desc     = $val->sanitizePost('new_moduledesc');
+$author   = $val->sanitizePost('new_moduleauthor');
+$headinc  = $val->sanitizePost('new_headersinc');
+$jquery   = $val->sanitizePost('new_usejquery');
+$ui       = $val->sanitizePost('new_usejqueryui');
+$precheck = $val->sanitizePost('new_precheck');
+$func     = 'page';
+$pre      = 'module_';
+$full     = '';
 
 if(!$type || !$name || !$dir || !$desc)
 {
-	$message = $backend->lang()->translate("Incomplete data, please fill out all fields!");
-    printResult();
+	CAT_Object::json_error('Incomplete data, please fill out all fields!');
 }
 
-// directory must not exist
-$err = NULL;
-if( $type != 'language' )
-{
-    if( $type == 'template' )
-    {
-        $full = CAT_PATH.'/templates/'.$dir;
-        if( file_exists($full) )
-            $err = $backend->lang()->translate('A template with the same directory name already exists');
-    }
-    else
-    {
-        $full = CAT_PATH.'/modules/'.$dir;
-        if( file_exists($full) )
-            $err = $backend->lang()->translate('A module with the same directory name already exists');
-    }
-}
-else
-{
-    $dir  = strtoupper($dir);
-    $full = CAT_PATH.'/languages/'.$dir.'.php';
-    if( file_exists($full) )
-        $err = $backend->lang()->translate('A language file with the same name already exists');
-}
+// addon must not exist!
+module_create_check_dir($type,$dir);
 
-if($err)
-{
-	$message = $err;
-    printResult();
-}
-
-// map module type to correct settings
-switch ( $type ) {
-    case 'tool':
-        $func = 'tool';
-        $type = 'module';
-        break;
-    case 'library':
-        $func = 'library';
-        $type = 'module';
-        break;
-    case 'wysiwyg':
-        $func = 'wysiwyg';
-        $type = 'module';
-        break;
-    case 'template':
-        $pre  = 'template_';
-        $func = 'template';
-        break;
-    case 'language':
-        $func = 'language';
-        $pre  = 'language_';
-        break;
-    case 'module':
-        $func = 'page';
-        break;
-}
-
-$info = array(
-    $pre.'name'        => $name,
-    $pre.'directory'   => $dir,
-    $pre.'type'        => $type,
-    $pre.'function'    => $func,
-    $pre.'description' => $desc,
-    $pre.'version'     => '0.1',
-    $pre.'platform'    => '1.x',
-    $pre.'author'      => $author,
-    $pre.'guid'        => CAT_Object::createGUID(),
-    $pre.'license'     => 'GNU General Public License',
+$files_needed = array(
+    'module'   => array( 'index.php', 'install.php', 'upgrade.php', 'view.php', 'modify.php', 'add.php', 'delete.php', 'save.php', 'search.php', 'css/frontend.css', 'css/backend.css', 'languages/DE.php' ),
+    'library'  => array( 'index.php', 'install.php', 'upgrade.php' ),
+    'tool'     => array( 'index.php', 'install.php', 'upgrade.php', 'tool.php', 'css/frontend.css', 'css/backend.css', 'languages/DE.php' ),
+    'template' => array( 'index.php', 'templates/default/index.tpl' ),
+    'wysiwyg'  => array( 'index.php', 'c_editor.php' ),
+);
+$dirs_needed = array(
+    'module'   => array( 'languages', 'templates', 'templates/default', 'css', 'js' ),
+    'library'  => array( 'vendor' ),
+    'tool'     => array( 'languages', 'templates', 'templates/default', 'css', 'js' ),
+    'template' => array( 'languages', 'templates', 'templates/default', 'css', 'js' ),
+    'wysiwyg'  => array( ),
+);
+$info_prefix = array(
+    'module'   => 'module_',
+    'library'  => 'module_',
+    'tool'     => 'module_',
+    'template' => 'template_',
+    'language' => 'language_',
+    'wysiwyg'  => 'module_',
+);
+$type_path   = array(
+    'module'   => 'modules',
+    'library'  => 'modules',
+    'tool'     => 'modules',
+    'template' => 'templates',
+    'language' => 'languages',
+    'wysiwyg'  => 'modules',
 );
 
-if($type == 'language')
-{
-    $info[$pre.'code'] = $dir;
-}
-
-// create directories
+// ----- create directories -----
 if( $type != 'language' )
 {
+    $full = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type_path[$type].'/'.$dir);
+    // base
     if(!CAT_Helper_Directory::createDirectory($full))
     {
-        $message = $backend->lang()->translate('Directory could not be created!');
-        printResult();
+        CAT_Object::json_error('Directory could not be created!'." ($full)");
     }
-    foreach(array('templates','css','js') as $sub)
+    // subdirs
+    foreach($dirs_needed[$type] as $sub)
         CAT_Helper_Directory::createDirectory($full.'/'.$sub);
-    if($type != 'module')
-        CAT_Helper_Directory::createDirectory($full.'/languages');
+    // create index.php
     CAT_Helper_Directory::recursiveCreateIndex($full);
 }
-
-// create info.php
-if ( $type !== 'language' )
-    $fh = fopen($full.'/info.php','w');
 else
-    $fh = fopen($full,'w');
-
-if(!$fh)
 {
-    $message = $backend->lang()->translate('Unable to create info.php!');
-    printResult();
-}
-writeHeader($fh,$name,$author,$type);
-foreach($info as $key => $value )
-{
-    if($type=='language' && $key == 'language_directory') continue;
-    fwrite($fh,'$'.$key.' = "'.$value.'";'."\n");
-}
-if($type == 'language')
-{
-    fwrite($fh,'
-$LANG = array(
-
-);
-');
-}
-fclose($fh);
-
-if($type=='language')
-{
-    $fh = fopen(CAT_PATH.'/languages/old/'.$dir.'.php','w');
-    writeHeader($fh,$name,$author,$type);
-    fwrite($fh,'$MENU = array();'."\n");
-    fwrite($fh,'$TEXT = array();'."\n");
-    fwrite($fh,'$HEADING = array();'."\n");
-    fwrite($fh,'$MESSAGE = array();'."\n");
-    fwrite($fh,'$OVERVIEW = array();'."\n");
-fclose($fh);
+    $full = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/languages/'.$dir.'.php');
 }
 
-// create some more default files
-if($type=='module')
+// ----- create info.php -----
+$info = module_create_info($full,$type,$name,$dir,$func,$desc,$author);
+
+// ----- create files -----
+if(in_array($type,array('module','template')) && $headinc == 'Y')
+    $files_needed[$type][] = 'headers.inc.php';
+if($precheck == 'Y')
+    $files_needed[$type][] = 'precheck.php';
+
+if( $type != 'language' )
 {
-    $files = array('index','install','uninstall','upgrade');
-    if($func=='tool')
-        array_push($files,'tool');
-    else
-        array_push($files,'add','view','modify');
-    foreach($files as $n)
+    foreach($files_needed[$type] as $file)
     {
-        $fh = fopen($full.'/'.$n.'.php','w');
+        $fh = fopen($full.'/'.$file,'w');
         if($fh)
         {
-            writeHeader($fh,$name,$author,$type);
+            module_create_writeHeader($fh,$name,$author,$type);
+            if(function_exists('code_for_'.str_replace('.','_',$file)))
+            {
+                $func = 'code_for_'.str_replace('.','_',$file);
+                $func($fh,$type);
+            }
             fclose($fh);
         }
     }
 }
 
-// if it's a template...
+// ----- if it's a template... -----
 if($type=='template')
 {
     $contents  = file_get_contents($full.'/index.php');
-    $contents .= "
-\$dwoodata	= array(); // if you need to set some additional template vars, add them here
-global \$page_id;
-\$variant = CAT_Helper_Page::getPageSettings(\$page_id,'internal','template_variant');
-if ( \$variant == '' ) \$variant = DEFAULT_TEMPLATE_VARIANT;
-if ( \$variant == '' || !file_exists(CAT_PATH.'/templates/bootstrap/templates/'.\$variant.'/index.tpl' ) )
-    \$variant = 'default';
-\$parser->setPath(CAT_TEMPLATE_DIR.'/templates/'.\$variant);
-\$parser->setFallbackPath(CAT_TEMPLATE_DIR.'/templates/default');
-\$parser->output('index.tpl',\$dwoodata);
-";
+    $contents .= '
+$dwoodata	= array(); // if you need to set some additional template vars, add them here
+global $page_id;
+$variant  = CAT_Helper_Page::getPageSettings($page_id,\'internal\',\'template_variant\');
+if(!$variant)
+    $variant = ( defined(\'DEFAULT_TEMPLATE_VARIANT\') && DEFAULT_TEMPLATE_VARIANT != \'\' )
+             ? DEFAULT_TEMPLATE_VARIANT
+             : \'default\';
+$parser->setPath(CAT_TEMPLATE_DIR.\'/templates/\'.$variant);
+$parser->setFallbackPath(CAT_TEMPLATE_DIR.\'/templates/default\');
+$parser->output(\'index.tpl\',$dwoodata);
+';
     file_put_contents($full.'/index.php', $contents);
-    CAT_Helper_Directory::createDirectory($full.'/templates/default');
-    CAT_Helper_Directory::recursiveCreateIndex($full.'/templates');
 }
 
 // insert module into DB
@@ -248,22 +184,92 @@ $info['addon_function'] = $type;
 
 CAT_Helper_Addons::loadModuleIntoDB( $dir, 'install', $info);
 
-$success = true;
-$message = $backend->lang()->translate('Module created successfully!');
-printResult();
+CAT_Object::json_success('Module created successfully!');
 
-function printResult()
+/**
+ * checks if addon dir / file already exists
+ **/
+function module_create_check_dir($type,$dir)
 {
-    global $message, $success;
-   	$ajax	= array(
-		'message'	=> $message,
-		'success'	=> $success
-	);
-	print json_encode( $ajax );
-	exit();
+    $err = false;
+    if( $type != 'language' )
+    {
+        if( $type == 'template' )
+        {
+            $full = CAT_PATH.'/templates/'.$dir;
+            if( file_exists($full) )
+                $err = 'A template with the same directory name already exists';
+        }
+        else
+        {
+            $full = CAT_PATH.'/modules/'.$dir;
+            if( file_exists($full) )
+                $err = 'A module with the same directory name already exists';
+        }
+    }
+    else
+    {
+        $dir  = strtoupper($dir);
+        $full = CAT_PATH.'/languages/'.$dir.'.php';
+        if( file_exists($full) )
+            $err = 'A language file with the same name already exists';
+    }
+    if($err) CAT_Object::json_error($err);
+    else     return true;
 }
 
-function writeHeader($fh,$name,$author,$type)
+function module_create_info($full,$type,$name,$dir,$func,$desc,$author)
+{
+    global $info_prefix;
+    // data for info.php
+    $pre  = $info_prefix[$type];
+    $info = array(
+        $pre.'name'        => $name,
+        $pre.'directory'   => $dir,
+        $pre.'type'        => $type,
+        $pre.'function'    => $func,
+        $pre.'description' => $desc,
+        $pre.'version'     => '0.1',
+        $pre.'platform'    => '1.x',
+        $pre.'author'      => $author,
+        $pre.'guid'        => CAT_Object::createGUID(),
+        $pre.'license'     => 'GNU General Public License',
+    );
+    if($type == 'language')
+    {
+        $info[$pre.'code'] = $dir;
+    }
+
+    // create info.php
+    if ( $type !== 'language' )
+        $fh = fopen($full.'/info.php','w');
+    else
+        $fh = fopen($full,'w');
+
+    if(!$fh)
+    {
+        CAT_Object::json_error('Unable to create info.php!');
+    }
+    module_create_writeHeader($fh,$name,$author,$type);
+    foreach($info as $key => $value )
+    {
+        if($type=='language' && $key == 'language_directory') continue;
+        fwrite($fh,'$'.$key.' = "'.$value.'";'."\n");
+    }
+    if($type == 'language')
+    {
+        fwrite($fh,'
+    $LANG = array(
+
+    );
+    ');
+    }
+    fclose($fh);
+
+    return $info;
+}
+
+function module_create_writeHeader($fh,$name,$author,$type)
 {
     fwrite($fh,'<'.'?'.'php
 
@@ -305,6 +311,101 @@ if (defined(\'CAT_PATH\')) {
     }
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can\'t include class.secure.php!", $_SERVER[\'SCRIPT_NAME\']), E_USER_ERROR);
 }
+
+');
+}   // end function module_create_writeHeader()
+
+function code_for_headers_inc_php($fh,$type)
+{
+    global $jquery, $ui;
+    $use_jquery = ( $jquery && $jquery == 'Y' ) ? 'true' : 'false';
+    $use_ui     = ( $ui     && $ui     == 'Y' ) ? 'true' : 'false';
+    switch($type)
+    {
+        case 'module':
+            fwrite($fh,'
+$mod_headers = array(
+    \'backend\'    => array(
+        \'js\'     => array(),
+        \'css\'    => array(),
+        \'jquery\' => array( \'core\' => '.$use_jquery.', \'ui\' => '.$use_ui.' ),
+        \'meta\'   => array(),
+    ),
+    \'frontend\' => array(
+        \'js\'  => array(),
+        \'css\' => array(),
+    ),
+);
+');
+            break;
+        case 'template':
+            fwrite($fh,'
+$mod_headers = array(
+    \'frontend\' => array(
+        \'js\'  => array(),
+        \'css\' => array(),
+        \'jquery\' => array( \'core\' => '.$use_jquery.', \'ui\' => '.$use_ui.' ),
+    ),
+);
+
+global $page_id;
+$variant  = CAT_Helper_Page::getPageSettings($page_id,\'internal\',\'template_variant\');
+if(!$variant)
+    $variant = ( defined(\'DEFAULT_TEMPLATE_VARIANT\') && DEFAULT_TEMPLATE_VARIANT != \'\' )
+             ? DEFAULT_TEMPLATE_VARIANT
+             : \'default\';
+
+');
+            break;
+    }
+}
+
+function code_for_c_editor_php($fh,$type)
+{
+    fwrite($fh,'
+require CAT_Helper_Directory::sanitizePath(realpath(dirname(__FILE__).\'/../wysiwyg_admin/c_editor_base.php\'));
+final class c_editor extends c_editor_base
+{
+    protected static $default_skin   = \'\';
+    protected static $editor_package = \'standard\';
+
+    public function getFilemanagerPath()
+    {
+    }
+
+    public function getSkinPath()
+    {
+    }
+
+    public function getPluginsPath()
+    {
+    }
+
+    public function getToolbars()
+    {
+    }
+
+    public function getAdditionalSettings()
+    {
+    }
+
+    public function getAdditionalPlugins()
+    {
+    }
+
+}
+');
+}
+
+function code_for_precheck_php($fh,$type)
+{
+    fwrite($fh,'
+
+// if your module requires a particular core version, insert it here:
+// $PRECHECK[\'CAT_VERSION\'] = \'\';
+
+// if your module requires particular addons, insert them here:
+// $PRECHECK[\'CAT_ADDONS\']  = array();
 
 ');
 }

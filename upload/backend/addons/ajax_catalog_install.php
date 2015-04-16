@@ -77,8 +77,8 @@ foreach($catalog['modules'] as $module)
                     if(!CAT_Helper_Addons::isModuleInstalled($mod))
                     {
                         CAT_Object::json_error($backend->lang()->translate(
-                            'You need to have BlackCat CMS Version {{ version }} installed for this addon. You have {{ version2 }}.',
-                            array('version'=>$module['require']['core']['release'],'version2'=>CAT_VERSION)
+                            'You need to have addon {{ addon }} version {{ version }} installed for this addon.',
+                            array('addon'=>$mod,'version'=>$req['release'])
                         ));
                     }
                 }

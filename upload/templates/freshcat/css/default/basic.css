@@ -94,6 +94,10 @@ label {
 	text-align: left;
 }
 
+tt {
+    font-family: 'Courier New', Courier, 'Andale Mono', monospace;
+}
+
 
 /**
  * Define basic classes
