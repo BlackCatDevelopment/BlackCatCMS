@@ -51,11 +51,7 @@ if($module)
     $properties = CAT_Helper_Addons::getAddonDetails($module);
     if($properties['type'] != 'module')
     {
-        echo json_encode(array(
-            'success' => false,
-            'message' => CAT_Helper_Validate::getInstance()->lang()->translate('You sent an invalid value')
-        ));
-        exit;
+        CAT_Object::json_error('You sent an invalid value');
     }
     switch($properties['function'])
     {
@@ -68,18 +64,11 @@ if($module)
             $section_permission = 'pages';
             break;
         default:
-            echo json_encode(array(
-                'success' => false,
-                'message' => 'Invalid type '.$properties['type']
-            ));
-            exit;
+            CAT_Object::json_error('Invalid type '.$properties['type']);
     }
 }
 
 $backend = CAT_Backend::getInstance($section_name,$section_permission,false,false);
 $result  = CAT_Helper_Dashboard::manageWidgets();
 
-echo json_encode(array(
-    'success' => $result,
-    'message' => ( $result ? 'Success' : 'Error' )
-));
+CAT_Object::json_result($result,( $result ? 'Success' : 'Error' ));

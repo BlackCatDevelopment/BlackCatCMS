@@ -33,6 +33,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
     class CAT_Helper_Dashboard extends CAT_Object
     {
         private static $instance;
+        private static $not_on_dashboard = array();
 
         public static function getInstance()
         {
@@ -118,7 +119,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
             }
             else
             {
-                $not_on_dashboard = CAT_Helper_Widget::findWidgets($module,$config['widgets']);
+                self::$not_on_dashboard[$module] = CAT_Helper_Widget::findWidgets($module,$config['widgets']);
             }
             return $config;
         }   // end function getDashboardConfig()
@@ -147,7 +148,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
             {
                 $layout = explode('-',$config['layout']);
                 $cols   = count($layout);
-                $percol = ceil(count($widgets)/$cols);
+                $percol = floor(count($widgets)/$cols);
                 foreach(range(1,$cols) as $column)
                 {
                     $col   = array_splice($widgets,0,$percol);
@@ -161,13 +162,57 @@ if (!class_exists('CAT_Helper_Dashboard'))
                         );
                     }
                 }
+                if(count($widgets)) //
+                {
+                    $col = 1;
+                    foreach($widgets as $item)
+                    {
+                        $config['widgets'][] = array(
+                            'column'      => $col,
+                            'widget_path' => $item['widget_path'].'/'.$item['widget_file'],
+                            'isHidden'    => false,
+                            'isMinimized' => false
+                        );
+                        $col++;
+                    }
+                }
             }
             return $config;
         }   // end function getDefaultDashboardConfig()
 
         /**
+         * get widgets not shown on the current dashboard (removed before)
+         *
+         * @access public
+         * @return
+         **/
+        public static function getNotShown($module=NULL)
+        {
+            if(!$module) $module = 'backend';
+            if(isset(self::$not_on_dashboard[$module]))
+            {
+                $list = array();
+                $base = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules');
+                foreach(array_values(self::$not_on_dashboard[$module]) as $item)
+                {
+                    ob_start();
+                        $widget_settings = array();
+                        include(CAT_Helper_Directory::sanitizePath($item));
+                    ob_clean();
+                    $list[] = array(
+                        'path'  => str_replace($base,'',$item),
+                        'title' => $widget_settings['widget_title']
+                    );
+                }
+                return $list;
+            }
+            return false;
+        }   // end function getNotShown()
+        
+
+        /**
          * allows to manage the widgets on a dashboard: hide/show, reorder,
-         * move
+         * move from one column to another
          *
          * @access public
          * @param  string  $module
@@ -179,7 +224,6 @@ if (!class_exists('CAT_Helper_Dashboard'))
             $action  = CAT_Helper_Validate::sanitizePost('action');
             $result  = false;
             $module  = CAT_Helper_Validate::sanitizePost('module');
-
             switch($action) {
                 case 'hide':
                     $result = CAT_Helper_Dashboard::hideWidget(CAT_Helper_Validate::sanitizePost('widget'),$module);
@@ -201,10 +245,60 @@ if (!class_exists('CAT_Helper_Dashboard'))
                 case 'remove':
                     $result = CAT_Helper_Dashboard::removeWidget(CAT_Helper_Validate::sanitizePost('widget'),$module);
                     break;
+                case 'add':
+                    $result = CAT_Helper_Dashboard::addWidget(CAT_Helper_Validate::sanitizePost('widget'),$module);
+                    break;
+                case 'reset':
+                    $result = self::resetDashboard($module);
+                    break;
             }
             return $result;
         }   // end function manageWidgets()
         
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function addWidget($widget,$module=NULL)
+        {
+            $config  = self::getDashboardConfig($module);
+            $item    = CAT_Helper_Array::ArrayFilterByKey($config['widgets'],'widget_path',$widget);
+            if(!is_array($item) || !count($item)) // already there
+            {
+                $layout = explode('-',$config['layout']);
+                $cols   = count($layout);
+                $column = 1;
+                // get the settings
+                ob_start();
+                    $widget_settings = array();
+                    include(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$widget));
+                ob_clean();
+                // preferred column?
+                if(isset($widget_settings['preferred_column']))
+                {
+                    if($widget_settings['preferred_column'] > $cols)
+                    {
+                        $column = $cols;
+                    }
+                    else
+                    {
+                        $column = $widget_settings['preferred_column'];
+                    }
+                }
+                $config['widgets'][] = array(
+                    'column'      => $column,
+                    'widget_path' => $widget,
+                    'isHidden'    => false,
+                    'isMinimized' => false
+                );
+                return self::saveDashboardConfig($config,$module);
+            }
+            else
+            {
+                return false;
+            }
+        }   // end function addWidget()
 
         /**
          * hide (minimize) the widget
@@ -307,7 +401,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
             $item    = CAT_Helper_Array::ArrayFilterByKey($config['widgets'],'widget_path',$widget);
             if(is_array($item))
             {
-                return self::saveDashboardConfig($config);
+                return self::saveDashboardConfig($config,$module);
             }
             return false;
         }   // end function removeWidget()
@@ -321,14 +415,15 @@ if (!class_exists('CAT_Helper_Dashboard'))
         {
             global $parser;
             $config = self::getDashboard($module);
+            $hidden = self::getNotShown($module);
             $parser->setPath(CAT_PATH.'/framework/CAT/Helper/Dashboard');
             if($direct_output)
             {
-                $parser->output('dashboard.tpl',array('dashboard'=>$config,'module'=>$module));
+                $parser->output('dashboard.tpl',array('dashboard'=>$config,'module'=>$module,'addable'=>$hidden));
                 $parser->resetPath();
             }
             else {
-                $content = $parser->get('dashboard.tpl',array('dashboard'=>$config,'module'=>$module));
+                $content = $parser->get('dashboard.tpl',array('dashboard'=>$config,'module'=>$module,'addable'=>$hidden));
                 $parser->resetPath();
                 return $content;
             }
@@ -366,7 +461,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
                 array( CAT_Users::get_user_id(), $module )
             );
             $config = self::getDefaultDashboardConfig($module);
-            self::saveDashboardConfig($config,$module);
+            return self::saveDashboardConfig($config,$module);
         }   // end function resetDashboard()
         
 

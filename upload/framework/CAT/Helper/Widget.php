@@ -101,7 +101,7 @@ if (!class_exists('CAT_Helper_Widget'))
                     'module_name'      => $info['module_name'],
                     'module_directory' => $info['module_directory'],
                     'widget_fullpath'  => $path,
-                    'widget_path'      => str_replace(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules'),'',$path),
+                    'widget_path'      => str_replace($base,'',$path),
                     'widget_file'      => pathinfo(CAT_Helper_Directory::sanitizePath($w_path),PATHINFO_BASENAME)
                 );
                 $_chw_data[] = $widget;
@@ -149,6 +149,8 @@ if (!class_exists('CAT_Helper_Widget'))
          * scans modules (=paths) for widgets
          *
          * @access public
+         * @param  string  $module - 'backend' or module name
+         * @param  array   $list   - optional list of widgets to filter out
          * @return array
          **/
         public static function findWidgets($module=NULL,$list=NULL)

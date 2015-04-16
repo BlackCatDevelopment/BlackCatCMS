@@ -1,3 +1,19 @@
+{if $addable}
+<div style="width:100%;text-align:right;">
+    <form>
+        <input type="hidden" name="dashboard_add_widget_module" id="dashboard_add_widget_module" value="{$module}" />
+        <label for="dashboard_add_widget">{translate('Add widget')}</label>
+        <select name="dashboard_add_widget" id="dashboard_add_widget">
+            {foreach $addable item}
+            <option value="{$item.path}">{$item.title}</option>
+            {/foreach}
+        </select>
+        <button id="dashboard_add_widget_submit">{translate('Insert')}</button>
+        <button id="dashboard_reset">{translate('Reset Dashboard')}</button>
+    </form>
+</div>
+{/if}
+
 {foreach $dashboard.columns col name='outer'}
     <ul style="width:{$col.width}%;" class="fc_widgets fc_dashboard_sortable" id="dashboard_col_{$.foreach.outer.index}" data-module="{$module}">
     {foreach $col.widgets key widget name='inner'}

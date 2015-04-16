@@ -25,11 +25,17 @@ jQuery(document).ready(function($) {
                     'module': module,
                     'widget': $(this).data('widget')
                 };
+                var undf;
+                afterSend = function( data, textStatus, jqXHR ) { location.reload(); };
                 dialog_confirm(
                     cattranslate('Do you really want to remove this widget from your dashboard?'),
                     cattranslate('Remove widget'),
                     CAT_ADMIN_URL + '/start/ajax_manage_widgets.php',
-                    data
+                    data,
+                    'POST',
+                    'JSON',
+                    undf,
+                    afterSend
                 );
                 break;
             case 'close':
@@ -47,6 +53,21 @@ jQuery(document).ready(function($) {
                 });
                 break;
         }
+    });
+    // add widget
+    $('#dashboard_add_widget_submit').unbind('click').bind('click',function(event) {
+        event.preventDefault();
+        var data = {
+            'action' : 'add',
+            'module' : $('input#dashboard_add_widget_module').val(),
+            'widget' : $('select#dashboard_add_widget').val(),
+            _cat_ajax: 1
+        };
+        $.ajax({
+            type: 'POST',
+            url : CAT_ADMIN_URL + '/start/ajax_manage_widgets.php',
+            data: data
+        });
     });
     // manage widgets (move, reorder)
     var lists = $('.fc_dashboard_sortable').sortable({
@@ -95,5 +116,24 @@ jQuery(document).ready(function($) {
             $(this).removeClass('empty');
         }
     });
-
+    // reset dashboard
+    $('#dashboard_reset').unbind('click').bind('click',function(event) {
+        event.preventDefault();
+        var data = {
+            'action': 'reset',
+            'module': module
+        };
+        var undf;
+        afterSend = function( data, textStatus, jqXHR ) { location.reload(); };
+        dialog_confirm(
+            cattranslate('Do you really want to reset your dashboard? This will delete all your settings!'),
+            cattranslate('Reset Dashboard'),
+            CAT_ADMIN_URL + '/start/ajax_manage_widgets.php',
+            data,
+            'POST',
+            'JSON',
+            undf,
+            afterSend
+        );
+    });
 });

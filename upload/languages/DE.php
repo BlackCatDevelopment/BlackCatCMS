@@ -704,7 +704,7 @@ $LANG = array(
     'Execute install.php manually' => 'install.php manuell ausführen',
     'Execute upgrade.php manually' => 'upgrade.php manuell ausführen',
     'Function' => 'Funktion',
-    "If you're adding a language, a language file will be created in the languages subfolder." => 'Beim Anlegen einer Sprache wird eine Sprachdatei im languages-Unterverzeichnis erzeugt.',
+    "If you're adding a language, a language file will be created in the <tt>languages</tt> subfolder." => 'Beim Anlegen einer Sprache wird eine Sprachdatei im <tt>languages</tt>-Unterverzeichnis erzeugt.',
     'If you upgrade a module, those settings will have no effect on current permissions.' => 'Bei einem Update haben die hier gesetzten Rechte keine Auswirkungen.',
     'Incomplete data, please fill out all fields!' => 'Unvollständige Daten, bitte alle Felder ausfüllen!',
     'Install addon' => 'Erweiterung installieren',
@@ -738,13 +738,20 @@ $LANG = array(
     'When modules are uploaded via FTP (not recommended), the module installation functions install, upgrade or uninstall will not be executed automatically. Those modules may not work correct or do not uninstall properly.'
         => 'Wenn Module via FTP hochgeladen werden (nicht empfohlen), werden die Funktionen zur Installation, zum Upgrade oder zur Deinstallation nicht automatisch ausgeführt. Diese Module funktionieren eventuell nicht richtig oder lassen sich nicht deinstallieren.',
 // ----- v1.2 -----
+    'Create headers.inc.php' => 'Datei headers.inc.php erzeugen',
+    'Create precheck.php' => 'Datei precheck.php erzeugen',
     'Loading' => 'Lade',
 // ----- dashboard -----
+    'Add widget' => 'Widget hinzufügen',
     'Do you really want to remove this widget from your dashboard?' => 'Wollen Sie dieses Widget wirklich vom Dashboard entfernen?',
+    'Do you really want to reset your dashboard? This will delete all your settings!' => 'Soll das Dashboard wirklich zurückgesetzt werden? Hiermit werden alle Einstellungen gelöscht!',
+    'Insert' => 'Einfügen',
+    'Reset Dashboard' => 'Dashboard zurücksetzen',
     'Remove widget' => 'Widget entfernen',
 // ----- addons catalog -----
     'Action' => 'Aktion',
     'Avail. since' => 'Verfügb. seit',
+    'Catalog version' => 'Katalog Version',
     'Create new' => 'Neu erstellen',
     'Current version' => 'Aktuelle Version',
     'Install...' => 'Installiere...',
@@ -757,6 +764,7 @@ $LANG = array(
     'Update available!' => 'Update verfügbar!',
     'Updating catalog...' => 'Aktualisiere Katalog...',
     'Upload and install' => 'Hochladen und installieren',
+    'You need to have addon {{ addon }} version {{ version }} installed for this addon.' => 'Für dieses Addon muß das Addon {{ addon }} Version {{ version }} installiert sein.',
     'You need to have BlackCat CMS Version {{ version }} installed for this addon. You have {{ version2 }}.' => 'Für dieses Addon muß BlackCat CMS Version {{ version }} installiert sein. Installiert ist {{ version2 }}.',
 );
 
