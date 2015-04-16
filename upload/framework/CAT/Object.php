@@ -323,11 +323,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          **/
         public static function json_success($message,$exit=true)
         {
-            echo json_encode(array(
-                'success' => true,
-                'message' => self::lang()->translate($message)
-            ));
-            if($exit) exit();
+            json_result(true,$message,$exit);
         }   // end function json_success()
         
         /**
@@ -337,12 +333,24 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          **/
         public static function json_error($message,$exit=true)
         {
+            json_result(false,$message,$exit);
+        }   // end function json_error()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function json_result($success,$message,$exit=true)
+        {
+            if(!headers_sent())
+                header('Content-type: application/json');
             echo json_encode(array(
-                'success' => false,
+                'success' => $success,
                 'message' => self::lang()->translate($message)
             ));
             if($exit) exit();
-        }   // end function json_error()
+        }   // end function json_result()
 
         /**
          *
