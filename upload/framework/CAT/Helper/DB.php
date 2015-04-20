@@ -328,7 +328,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
          * @access public
          * @return
          **/
-        public function getLastStatement($bind)
+        public function getLastStatement($bind=NULL)
         {
             $statement = NULL;
             $params    = array();

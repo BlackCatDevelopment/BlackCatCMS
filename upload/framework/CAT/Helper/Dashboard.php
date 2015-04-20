@@ -130,14 +130,15 @@ if (!class_exists('CAT_Helper_Dashboard'))
          * @access public
          * @return array
          **/
-        public static function getDefaultDashboardConfig($module=NULL)
+        public static function getDefaultDashboardConfig($module=NULL,$preferred_layout='50-50')
         {
             // note: widgets are sorted by path / filename
             $widgets = CAT_Helper_Widget::getWidgets($module);
-            $config  = array('layout'=>'50-50');
+            $config  = array('layout'=>$preferred_layout);
 
             if($module) {
                 $cfg = CAT_Helper_Widget::getWidgetConfig($module);
+                if($preferred_layout) unset($cfg['layout']);
                 if(is_array($cfg))
                 {
                     $config = array_merge($config,$cfg);
@@ -452,7 +453,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
          * @access public
          * @return
          **/
-        public static function resetDashboard($module=NULL)
+        public static function resetDashboard($module=NULL,$preferred_layout='50-50')
         {
             $self     = self::getInstance();
             if(!$module || $module == '') $module = 'backend';
@@ -460,7 +461,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
                 'DELETE FROM `:prefix:dashboard` WHERE `user_id`=? AND `module`=?',
                 array( CAT_Users::get_user_id(), $module )
             );
-            $config = self::getDefaultDashboardConfig($module);
+            $config = self::getDefaultDashboardConfig($module,$preferred_layout);
             return self::saveDashboardConfig($config,$module);
         }   // end function resetDashboard()
         
@@ -494,5 +495,19 @@ if (!class_exists('CAT_Helper_Dashboard'))
 
             return ( $self->db()->isError() ? false : true );
         }   // end function saveDashboardConfig()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function supportedLayouts()
+        {
+            return array(
+               '33-33-33' => '3 columns, fixed width',
+               '50-50'    => '2 columns, fixed width',
+            );
+        }   // end function supportedLayouts()
+        
     }
 }
