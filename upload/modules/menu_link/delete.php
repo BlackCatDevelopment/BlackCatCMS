@@ -41,7 +41,6 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+global $database;
 $table = CAT_TABLE_PREFIX ."mod_menu_link";
 $database->query("DELETE FROM `$table` WHERE section_id = '$section_id'");
-
-?>
