@@ -323,7 +323,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          **/
         public static function json_success($message,$exit=true)
         {
-            json_result(true,$message,$exit);
+            self::json_result(true,$message,$exit);
         }   // end function json_success()
         
         /**
@@ -333,7 +333,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
          **/
         public static function json_error($message,$exit=true)
         {
-            json_result(false,$message,$exit);
+            self::json_result(false,$message,$exit);
         }   // end function json_error()
 
         /**

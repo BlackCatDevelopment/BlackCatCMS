@@ -56,18 +56,24 @@ if ( !$users->checkPermission('Addons','modules_install') )
     printResult();
 }
 
-$type     = $val->sanitizePost('new_moduletype');
+$type     = 'module';
+$func     = $val->sanitizePost('new_moduletype');
 $name     = $val->sanitizePost('new_modulename');
 $dir      = $val->sanitizePost('new_moduledir');
 $desc     = $val->sanitizePost('new_moduledesc');
 $author   = $val->sanitizePost('new_moduleauthor');
 $headinc  = $val->sanitizePost('new_headersinc');
+$footinc  = $val->sanitizePost('new_footersinc');
 $jquery   = $val->sanitizePost('new_usejquery');
 $ui       = $val->sanitizePost('new_usejqueryui');
 $precheck = $val->sanitizePost('new_precheck');
-$func     = 'page';
 $pre      = 'module_';
 $full     = '';
+
+if($func=='template')
+    $type = 'template';
+if($func=='language')
+    $type = 'language';
 
 if(!$type || !$name || !$dir || !$desc)
 {
@@ -78,9 +84,9 @@ if(!$type || !$name || !$dir || !$desc)
 module_create_check_dir($type,$dir);
 
 $files_needed = array(
-    'module'   => array( 'index.php', 'install.php', 'upgrade.php', 'view.php', 'modify.php', 'add.php', 'delete.php', 'save.php', 'search.php', 'css/frontend.css', 'css/backend.css', 'languages/DE.php' ),
+    'module'   => array( 'index.php', 'install.php', 'upgrade.php', 'uninstall.php', 'view.php', 'modify.php', 'add.php', 'delete.php', 'save.php', 'search.php', 'css/frontend.css', 'css/backend.css', 'languages/DE.php', 'templates/default/index.tpl' ),
     'library'  => array( 'index.php', 'install.php', 'upgrade.php' ),
-    'tool'     => array( 'index.php', 'install.php', 'upgrade.php', 'tool.php', 'css/frontend.css', 'css/backend.css', 'languages/DE.php' ),
+    'tool'     => array( 'index.php', 'install.php', 'upgrade.php', 'uninstall.php', 'tool.php', 'css/frontend.css', 'css/backend.css', 'languages/DE.php', 'templates/default/tool.tpl' ),
     'template' => array( 'index.php', 'templates/default/index.tpl' ),
     'wysiwyg'  => array( 'index.php', 'c_editor.php' ),
 );
@@ -111,14 +117,14 @@ $type_path   = array(
 // ----- create directories -----
 if( $type != 'language' )
 {
-    $full = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type_path[$type].'/'.$dir);
+    $full = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type_path[$func].'/'.$dir);
     // base
     if(!CAT_Helper_Directory::createDirectory($full))
     {
         CAT_Object::json_error('Directory could not be created!'." ($full)");
     }
     // subdirs
-    foreach($dirs_needed[$type] as $sub)
+    foreach($dirs_needed[$func] as $sub)
         CAT_Helper_Directory::createDirectory($full.'/'.$sub);
     // create index.php
     CAT_Helper_Directory::recursiveCreateIndex($full);
@@ -131,20 +137,26 @@ else
 // ----- create info.php -----
 $info = module_create_info($full,$type,$name,$dir,$func,$desc,$author);
 
-// ----- create files -----
+// ----- create extra files -----
 if(in_array($type,array('module','template')) && $headinc == 'Y')
-    $files_needed[$type][] = 'headers.inc.php';
+    $files_needed[$func][] = 'headers.inc.php';
+if(in_array($type,array('module','template')) && $footinc == 'Y')
+    $files_needed[$func][] = 'footers.inc.php';
 if($precheck == 'Y')
-    $files_needed[$type][] = 'precheck.php';
+    $files_needed[$func][] = 'precheck.php';
 
 if( $type != 'language' )
 {
-    foreach($files_needed[$type] as $file)
+    foreach($files_needed[$func] as $file)
     {
-        $fh = fopen($full.'/'.$file,'w');
+        $ext = pathinfo($file,PATHINFO_EXTENSION);
+        $fh  = fopen($full.'/'.$file,'w');
         if($fh)
         {
-            module_create_writeHeader($fh,$name,$author,$type);
+            if($ext !== 'css')
+            {
+                module_create_writeHeader($fh,$name,$author,$type);
+            }
             if(function_exists('code_for_'.str_replace('.','_',$file)))
             {
                 $func = 'code_for_'.str_replace('.','_',$file);
@@ -314,6 +326,34 @@ if (defined(\'CAT_PATH\')) {
 
 ');
 }   // end function module_create_writeHeader()
+
+function code_for_footers_inc_php($fh,$type)
+{
+    switch($type)
+    {
+        case 'module':
+            fwrite($fh,'
+$mod_footers = array(
+    \'backend\'    => array(
+        \'js\'     => array(),
+    ),
+    \'frontend\' => array(
+        \'js\'  => array(),
+    ),
+);
+');
+            break;
+        case 'template':
+            fwrite($fh,'
+$mod_footers = array(
+    \'frontend\' => array(
+        \'js\'  => array(),
+    ),
+);
+');
+            break;
+    }
+}
 
 function code_for_headers_inc_php($fh,$type)
 {

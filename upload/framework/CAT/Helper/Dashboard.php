@@ -130,14 +130,14 @@ if (!class_exists('CAT_Helper_Dashboard'))
          * @access public
          * @return array
          **/
-        public static function getDefaultDashboardConfig($module=NULL,$preferred_layout='50-50')
+        public static function getDefaultDashboardConfig($module=NULL,$preferred_layout=NULL)
         {
             // note: widgets are sorted by path / filename
             $widgets = CAT_Helper_Widget::getWidgets($module);
-            $config  = array('layout'=>$preferred_layout);
+            $config  = array('layout'=>(isset($preferred_layout) ? $preferred_layout : '50-50'));
 
             if($module) {
-                $cfg = CAT_Helper_Widget::getWidgetConfig($module);
+                $cfg = CAT_Helper_Widget::getGlobalWidgetConfig($module);
                 if($preferred_layout) unset($cfg['layout']);
                 if(is_array($cfg))
                 {
@@ -196,13 +196,16 @@ if (!class_exists('CAT_Helper_Dashboard'))
                 $base = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules');
                 foreach(array_values(self::$not_on_dashboard[$module]) as $item)
                 {
-                    ob_start();
                         $widget_settings = array();
                         include(CAT_Helper_Directory::sanitizePath($item));
-                    ob_clean();
+                    $root = explode('/',str_replace(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'),'',$item));
+                    if(file_exists(CAT_PATH.'/modules/'.$root[1].'/languages/'.LANGUAGE.'.php') )
+                    {
+                        self::getInstance()->lang()->addFile(LANGUAGE.'.php', CAT_PATH.'/modules/'.$root[1].'/languages/');
+                    }
                     $list[] = array(
                         'path'  => str_replace($base,'',$item),
-                        'title' => $widget_settings['widget_title']
+                        'title' => self::getInstance()->lang()->translate($widget_settings['widget_title'])
                     );
                 }
                 return $list;

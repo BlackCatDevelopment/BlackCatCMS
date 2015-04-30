@@ -110,6 +110,22 @@ if (!class_exists('CAT_Helper_Widget'))
         }   // end function getWidgets()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getWidgetConfig($item)
+        {
+            $widget_settings = array();
+            try {
+                ob_start();
+                    include(CAT_Helper_Directory::sanitizePath($item));
+                ob_clean();
+            } catch ( Exception $e ) {}
+            return $widget_settings;
+        }   // end function getWidgetConfig()
+        
+        /**
          * reads the widgets.config.php (if available) and returns the
          * $widget_config array
          *
@@ -119,7 +135,7 @@ if (!class_exists('CAT_Helper_Widget'))
          * @param  string  $module
          * @return mixed   array or NULL
          **/
-        public static function getWidgetConfig($module=NULL)
+        public static function getGlobalWidgetConfig($module=NULL)
         {
             $widget_path = CAT_PATH.'/modules';
             if($module && $module!='backend') $widget_path .= '/'.$module;
@@ -143,7 +159,7 @@ if (!class_exists('CAT_Helper_Widget'))
             }
 
             return NULL;
-        }   // end function getWidgetConfig()
+        }   // end function getGlobalWidgetConfig()
 
         /**
          * scans modules (=paths) for widgets
@@ -185,6 +201,7 @@ if (!class_exists('CAT_Helper_Widget'))
                     {
                         $widget_config = array();
                         require $dir.'/widgets.config.php';
+                        // check global setting
                         if($module=='backend' && isset($widget_config['allow_global_dashboard']) && $widget_config['allow_global_dashboard'] === false)
                         {
                             continue;
@@ -194,6 +211,15 @@ if (!class_exists('CAT_Helper_Widget'))
                              ->setSkipFiles(array('index.php','widgets.config.php'))
                              ->getPHPFiles($dir);
                     sort($files);
+                    // check local settings
+                    for($i=count($files)-1;$i>=0;$i--)
+                    {
+                        $widget_config = self::getWidgetConfig($files[$i]);
+                        if(isset($widget_config['allow_global_dashboard']) && $widget_config['allow_global_dashboard'] === false)
+                        {
+                            unset($files[$i]);
+                        }
+                    }
                     $widgets = array_merge(
                         $widgets,
                         $files
@@ -238,17 +264,22 @@ if (!class_exists('CAT_Helper_Widget'))
                 {
                     self::getInstance()->lang()->addFile(LANGUAGE.'.php', CAT_PATH.'/modules/'.$root[1].'/languages/');
                 }
-                ob_start();
+                if(file_exists(CAT_PATH.'/modules/'.$root[1].'/css/backend.css'))
+                {
+                    CAT_Helper_Page::addCSS(CAT_URL.'/modules/'.$root[1].'/css/backend.css','backend');
+                }
                     $widget_settings = array();
-                    include(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$widget['widget_path']));
-                    $content = ob_get_contents();
-                ob_clean();
-
-                $widget['content'] = $content;
-
+                $temp            = explode('/',CAT_Helper_Directory::sanitizePath($widget['widget_path']));
+                while( ($module_dir = array_shift($temp)) == '' ) { /* just skip */ }
+                $function_name   = 'render_widget_'.$module_dir.'_'.pathinfo($widget['widget_path'],PATHINFO_FILENAME);
+                include CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$widget['widget_path']);
+                if(function_exists($function_name))
+                {
+                    $widget['content'] = $function_name();
                 if(isset($widget_settings) && is_array($widget_settings))
                 {
                     $widget['settings'] = $widget_settings;
+                    }
                 }
             }
             return $widget;

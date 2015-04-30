@@ -1,4 +1,5 @@
 jQuery(document).ready(function($) {
+    var afterSend = function( data, textStatus, jqXHR ) { location.reload(); };
     // get the module name; defaults to 'backend' (global dashboard)
     var module = 'backend';
     if( typeof $('ul.fc_widgets').data('module') != 'undefined' && $('ul.fc_widgets').data('module').length) {
@@ -26,7 +27,6 @@ jQuery(document).ready(function($) {
                     'widget': $(this).data('widget')
                 };
                 var undf;
-                afterSend = function( data, textStatus, jqXHR ) { location.reload(); };
                 dialog_confirm(
                     cattranslate('Do you really want to remove this widget from your dashboard?'),
                     cattranslate('Remove widget'),
@@ -66,7 +66,8 @@ jQuery(document).ready(function($) {
         $.ajax({
             type: 'POST',
             url : CAT_ADMIN_URL + '/start/ajax_manage_widgets.php',
-            data: data
+            data   : data,
+            success: afterSend
         });
     });
     // manage widgets (move, reorder)
@@ -124,7 +125,6 @@ jQuery(document).ready(function($) {
             'module': module
         };
         var undf;
-        afterSend = function( data, textStatus, jqXHR ) { location.reload(); };
         dialog_confirm(
             cattranslate('Do you really want to reset your dashboard? This will delete all your settings!'),
             cattranslate('Reset Dashboard'),

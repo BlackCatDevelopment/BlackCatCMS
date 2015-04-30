@@ -26,6 +26,8 @@
                 <input type="checkbox" id="fc_new_precheck" name="new_precheck" value="Y" /><br />
             <label class="fc_label_200" for="fc_new_headersinc">{translate('Create headers.inc.php')}</label>
                 <input type="checkbox" id="fc_new_headersinc" name="new_headersinc" value="Y" /><br />
+            <label class="fc_label_200" for="fc_new_footersinc">{translate('Create footers.inc.php')}</label>
+                <input type="checkbox" id="fc_new_footersinc" name="new_footersinc" value="Y" /><br />
             <label class="fc_label_200" for="fc_new_usejquery">{translate('Use jQuery')}</label>
                 <input type="checkbox" id="fc_new_usejquery" name="new_usejquery" value="Y" /><br />
             <label class="fc_label_200" for="fc_new_usejqueryui">{translate('Use jQuery UI')}</label>
