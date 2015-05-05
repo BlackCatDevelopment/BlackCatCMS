@@ -2480,7 +2480,7 @@ frontend.css and template.css are added in _get_css()
         private static function _deletePage($page_id)
         {
 
-            global $wb, $admin, $backend;
+            global $wb, $admin, $backend, $database;
             $admin =& $backend;
 
             $self   = self::getInstance();
