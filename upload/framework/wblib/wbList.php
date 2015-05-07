@@ -28,7 +28,7 @@ namespace wblib;
  * @copyright  Copyright (c) 2014 BlackBird Webprogrammierung
  * @license    GNU LESSER GENERAL PUBLIC LICENSE Version 3
  */
-if ( ! class_exists( 'wbList', false ) )
+if(!class_exists('wblib\wbList',false))
 {
     class wbList {
 
@@ -286,9 +286,7 @@ if ( ! class_exists( 'wbList', false ) )
             $type       = ( isset($options['type'])                ? $options['type']                : 'ul'  );
             $selected   = ( isset($options['selected'])            ? $options['selected']            : ''    );
             $p_key      = self::$defaults['__parent_key'];
-            $id_key     = self::$defaults['__id_key'];
             $children   = array();
-            $trail      = array();
 
             if ( count( self::$open_nodes ) )
                 self::log( 'open nodes:'.var_export(self::$open_nodes,1)      , 7 );
@@ -297,23 +295,12 @@ if ( ! class_exists( 'wbList', false ) )
 
             // create a list of children for each page
             foreach ( $list as $item ) {
-                if ( isset($item[$hidden]) ) { // sort out hidden elements
+                if ( isset($item[$hidden]) ) {
                     continue;
                 }
                 $children[$item[$p_key]][] = $item;
             }
             self::log('children list: '.str_replace(' ', '    ',var_export($children,1)),7);
-
-            // get trail to current page; this allows to add a css class for
-            // items that are in the current trail
-            if(isset($options['selected']))
-            {
-                $items = self::getTrail($children,$options['selected']);
-                foreach($items as $i => $item)
-                {
-                    $trail[$item[$id_key]] = 1;
-                }
-            }
 
             // loop will be false if the root has no children (i.e., an empty menu!)
             $loop      = !empty( $children[$root_id] );
@@ -323,6 +310,7 @@ if ( ! class_exists( 'wbList', false ) )
             $ul_id      = ( isset($options['ul_id'])    ? $options['ul_id']    : NULL                     );
             $space      = ( isset($options['space'])    ? $options['space']    : self::$defaults['space'] );
             $maxlevel   = ( isset($options['maxlevel']) ? $options['maxlevel'] : 999                      );
+            $id_key     = self::$defaults['__id_key'];
             $level_key  = self::$defaults['__level_key'];
             $href_key   = self::$defaults['__href_key'];
             $title_key  = self::$defaults['__title_key'];
@@ -380,10 +368,8 @@ if ( ! class_exists( 'wbList', false ) )
                     $text        = $option['value'][$title_key];
                     $is_open     = isset($option['value'][$isopen_key]) ? $option['value'][$isopen_key] : false;
                     $is_selected = ( isset($selected) && $selected == $option['value'][$id_key] );
-                    $is_in_trail = ( isset($trail[$option['value'][$id_key]]) ? true : false );
 
                     $tab     = str_repeat( $space, ( count( $parent_stack ) + 1 ) * 2 - 1 );
-//($id,$level,$is_selected=false,$has_children=false,$is_first=false,$is_last=false,$is_open=false,$is_in_trail=false,$for='li')
                     $li_css  = self::getListItemCSS(
                         $option['value'][$id_key],
                         $option['value'][$level_key],
@@ -391,8 +377,7 @@ if ( ! class_exists( 'wbList', false ) )
                         true,
                         $isfirst,
                         $islast,
-                        $is_open,
-                        $is_in_trail
+                        $is_open
                     );
 
                     if ( isset( $option['value'][$href_key] ) )
@@ -428,11 +413,14 @@ if ( ! class_exists( 'wbList', false ) )
                             self::log(sprintf('showing children for element [%s]',$option['value'][$title_key]),7);
                             // are we going to show next level?
                             $first_child = $children[$option['value'][$id_key]][0];
+#                            if ( $first_child[$level_key] <= $maxlevel ) {
+#                                $li_css .= ' ' . self::$defaults['is_open_li_class'];
+#                            }
                             // HTML for menu item containing children (open)
                             $out[] = $tab.self::itemStart( $li_css, $space )
                                    . $text;
                             // open sub list
-                            $out[] = $tab . "\t" . self::listStart( $space, NULL, $option['value'][$level_key] );
+                            $out[] = $tab . "\t" . self::listStart( $space, $ul_id, $option['value'][$level_key] );
                             array_push( $parent_stack, $option['value'][$p_key] );
                             $parent = $option['value'][$id_key];
                         }
@@ -748,11 +736,17 @@ if ( ! class_exists( 'wbList', false ) )
                         .  $suffix;
             }
 
-            // if an ID was passed, we do not create one and do not add a number
             $id      = $ul_id;
-            if ( empty($id) && self::$defaults['unique_id'] !== false ) {
+            if ( self::$defaults['unique_id'] !== false ) {
+                if ( empty($id) ) {
                 $id  = self::$defaults['ul_id_prefix'].self::getID();
             }
+                else {
+                    $id .= '_' . self::getID();
+                }
+            }
+
+            //$this->last_ul_id = $id;
 
             $output = $space
                     . str_replace(

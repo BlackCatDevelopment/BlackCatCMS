@@ -57,8 +57,8 @@ if ( !$users->checkPermission('Addons','addons') )
 	exit();
 }
 
-$module = CAT_Helper_Validate::sanitizeGet('module');
-$type   = CAT_Helper_Validate::sanitizeGet('type');
+$module = CAT_Helper_Validate::get('_REQUEST','module');
+$type   = CAT_Helper_Validate::get('_REQUEST','type');
 
 if(CAT_Helper_Addons::isModuleInstalled($module,NULL,$type))
 {

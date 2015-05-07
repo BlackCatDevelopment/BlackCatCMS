@@ -224,6 +224,7 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
             $level    = CAT_Helper_Page::properties($id,'level');
             $menu     = CAT_Helper_Page::getPagesForLevel($level,self::$menu_no);
             $selected = $id;
+            $parent   = CAT_Helper_Page::properties($id,'parent');
             // if current page is not in the menu...
             if(!self::isInMenu($id,$menu))
             {
@@ -240,7 +241,7 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
                 }
             }
             //return CAT_Helper_ListBuilder::getInstance(false)->config(array('__auto_link' => true))->tree($menu,0,$selected);
-            return self::$list->buildList($menu,array('root_id'=>0,'selected'=>$selected));
+            return self::$list->buildList($menu,array('root_id'=>$parent,'selected'=>$selected));
         }   // end function siblingsMenu()
 
         /**

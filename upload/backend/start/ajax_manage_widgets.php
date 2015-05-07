@@ -49,7 +49,7 @@ $module = CAT_Helper_Validate::sanitizePost('module');
 
 if($module)
 {
-    if($module != 'backend')
+    if($module != 'global')
     {
         // get the module type to evaluate the section name
         $properties = CAT_Helper_Addons::getAddonDetails($module);

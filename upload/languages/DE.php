@@ -737,6 +737,7 @@ $LANG = array(
     'You can set permissions for each group to use this addon.' => 'Es können für jede Gruppe Berechtigungen für dieses Addon gesetzt werden.',
     'When modules are uploaded via FTP (not recommended), the module installation functions install, upgrade or uninstall will not be executed automatically. Those modules may not work correct or do not uninstall properly.'
         => 'Wenn Module via FTP hochgeladen werden (nicht empfohlen), werden die Funktionen zur Installation, zum Upgrade oder zur Deinstallation nicht automatisch ausgeführt. Diese Module funktionieren eventuell nicht richtig oder lassen sich nicht deinstallieren.',
+// -----------------------------------------------------------------------------
 // ----- v1.2 -----
     'Create headers.inc.php' => 'Datei headers.inc.php erzeugen',
     'Create precheck.php' => 'Datei precheck.php erzeugen',
@@ -766,6 +767,16 @@ $LANG = array(
     'Upload and install' => 'Hochladen und installieren',
     'You need to have addon {{ addon }} version {{ version }} installed for this addon.' => 'Für dieses Addon muß das Addon {{ addon }} Version {{ version }} installiert sein.',
     'You need to have BlackCat CMS Version {{ version }} installed for this addon. You have {{ version2 }}.' => 'Für dieses Addon muß BlackCat CMS Version {{ version }} installiert sein. Installiert ist {{ version2 }}.',
+// ----- session -----
+    'Your session is about to expire!' => 'Ihre Session läuft bald ab!',
+    'Keep me signed in' => 'Angemeldet bleiben',
+    'Sign me out' => 'Abmelden',
+    'Your session has expired!' => 'Ihre Session ist abgelaufen!',
+    'Please enter your login details to log in again.' => 'Bitte geben Sie Ihre Benutzerdaten ein, um sich erneut anzumelden',
+    'Please enter your login details!' => 'Bitte geben Sie Ihre Benutzerdaten ein!',
+    'You will be logged out in' => 'Sie werden abgemeldet in:',
+    'seconds' => 'Sekunden',
+    'Remaining session time' => 'Verbleibende Sessionzeit',
 );
 
 // include old lang files

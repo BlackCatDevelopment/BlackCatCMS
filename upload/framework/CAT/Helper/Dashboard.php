@@ -98,7 +98,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
         public static function getDashboardConfig($module=NULL)
         {
             $self     = self::getInstance();
-            if(!$module) $module = 'backend';
+            if(!$module) $module = 'global';
 
             $data     = $self->db()->query(
                 'SELECT * FROM `:prefix:dashboard` WHERE `user_id`=? AND `module`=?',
@@ -117,10 +117,10 @@ if (!class_exists('CAT_Helper_Dashboard'))
                 $config = self::getDefaultDashboardConfig($module);
                 self::saveDashboardConfig($config,$module);
             }
-            else
-            {
+            #else
+            #{
                 self::$not_on_dashboard[$module] = CAT_Helper_Widget::findWidgets($module,$config['widgets']);
-            }
+            #}
             return $config;
         }   // end function getDashboardConfig()
 
@@ -189,7 +189,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
          **/
         public static function getNotShown($module=NULL)
         {
-            if(!$module) $module = 'backend';
+            if(!$module) $module = 'global';
             if(isset(self::$not_on_dashboard[$module]))
             {
                 $list = array();
@@ -205,7 +205,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
                     }
                     $list[] = array(
                         'path'  => str_replace($base,'',$item),
-                        'title' => self::getInstance()->lang()->translate($widget_settings['widget_title'])
+                        'title' => $root[1] . ' &gt; ' . self::getInstance()->lang()->translate($widget_settings['widget_title'])
                     );
                 }
                 return $list;
@@ -356,7 +356,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
          * @access public
          * @param  string $widget - the widget to be moved
          * @param  array  $items  - current items
-         * @param  string $module - module name or 'backend'
+         * @param  string $module - module name or 'global'
          * @return
          **/
         public static function moveWidget($widget,$items,$module=NULL)
@@ -459,7 +459,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
         public static function resetDashboard($module=NULL,$preferred_layout='50-50')
         {
             $self     = self::getInstance();
-            if(!$module || $module == '') $module = 'backend';
+            if(!$module || $module == '') $module = 'global';
             $self->db()->query(
                 'DELETE FROM `:prefix:dashboard` WHERE `user_id`=? AND `module`=?',
                 array( CAT_Users::get_user_id(), $module )
@@ -474,7 +474,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
          *
          * @access public
          * @param  array   $config - config to save
-         * @param  string  $module - for which module ('backend' for BE)
+         * @param  string  $module - for which module ('global' for BE)
          * @return boolean
          **/
         public static function saveDashboardConfig($config,$module=NULL)
@@ -489,7 +489,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
             if(!isset($config['layout']))  $config['layout']  = '50-50';
 
             if(!$module)
-                $module = 'backend';
+                $module = 'global';
 
             $self->db()->query(
                 $action . ' INTO `:prefix:dashboard` (`user_id`,`module`,`layout`,`widgets`) VALUES( ?, ?, ?, ? )',

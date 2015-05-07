@@ -21,6 +21,14 @@
  *
  */
 
+function toTimeString(seconds) {
+  return (new Date(seconds * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
+}
+function TimeStringToSecs(hms) {
+    var a = hms.split(':'); // split it at the colons
+    return (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+}
+
 if ( typeof jQuery != 'undefined' )
 {
     jQuery.ajaxSetup({

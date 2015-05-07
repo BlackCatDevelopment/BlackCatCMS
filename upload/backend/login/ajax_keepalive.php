@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2014, Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -39,28 +39,21 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-// this is not really needed, but just to be really really secure...
-foreach(array_keys($_SESSION) as $key)
-    unset($_SESSION[$key]);
+// in fact, we do nothing here, this is just to keep the current session alive
 
-// overwrite session array
-$_SESSION = array();
-
-// delete session cookie if set
-if (isset($_COOKIE[session_name()])) {
-    setcookie(session_name(), '', time() - 3600, '/');
-}
-
-if(!isset($_POST['_cat_ajax']) && session_id() !== '') {
-    @session_destroy();
-}
-
-// redirect to admin login
-if(!isset($_POST['_cat_ajax']))
+// this is to catch irregular attempts
+if(!CAT_Users::is_authenticated())
 {
-    die(header('Location: '.CAT_ADMIN_URL.'/login/index.php'));
+    // destroy current session
+    foreach(array_keys($_SESSION) as $key)
+        unset($_SESSION[$key]);
+    $_SESSION = array();
+    if (isset($_COOKIE[session_name()])) {
+        setcookie(session_name(), '', time() - 3600, '/');
+    }
+    session_destroy();
 }
-else {
-    header('Content-type: application/json');
-    CAT_Object::json_success('ok');
-}
+
+header('Content-type: application/json');
+CAT_Object::json_success('ok');
+exit();

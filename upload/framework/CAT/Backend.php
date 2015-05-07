@@ -368,6 +368,8 @@ if (!class_exists('CAT_Backend', false))
             $data['CAT_VERSION']          = CAT_Registry::get('CAT_VERSION');
             $data['CAT_BUILD']            = CAT_Registry::get('CAT_BUILD');
             $data['CAT_CORE']             = CAT_Registry::get('CAT_CORE');
+            $t = ini_get('session.gc_maxlifetime');
+            $data['SESSION_TIME'] = sprintf('%02d:%02d:%02d', ($t/3600),($t/60%60), $t%60);
             $data['permissions']['pages'] = CAT_Users::checkPermission('pages','pages') ? true : false;
 
             $self = ( isset($this) && is_object($this) ) ? $this : self::getInstance();

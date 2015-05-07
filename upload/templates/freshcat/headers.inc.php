@@ -70,7 +70,7 @@ $mod_headers = array(
 		),
 		'js' => array(
 			array(
-                'debug.js', 'jquery.fc_set_tab_list.js', 'jquery.fc_toggle_element.js', 'jquery.fc_resize_elements.js', 'jquery.fc_show_popup.js', 'general.js', 'pages_tree.js',
+                'debug.js', 'jquery.fc_set_tab_list.js', 'jquery.fc_toggle_element.js', 'jquery.fc_resize_elements.js', 'jquery.fc_show_popup.js', 'general.js', 'pages_tree.js', 'session.js'
 			)
 		)
 	)

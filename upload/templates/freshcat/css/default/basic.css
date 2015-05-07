@@ -366,3 +366,10 @@ div#testmail_result{
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: #9da8b2;
 }
+
+#sessionTimeoutDialog span.icon.icon-warning{
+    float:left;display:inline-block;font-size:9em;color:#c00;margin-right:0.1em;margin-top:0.4em;
+    text-shadow: 3px 3px 3px #000;
+}
+#sessionTimeoutDialog .ui-dialog-content{line-height:300px;}
+#fc_dlg_timer{display:inline;font-size:30px;font-style:bold;}

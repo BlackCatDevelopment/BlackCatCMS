@@ -52,7 +52,6 @@ if ( CAT_Helper_Validate::getInstance()->fromSession('ATTEMPTS') > MAX_ATTEMPTS 
 }
 else
 {
-    #CAT_Helper_Protect::getInstance()->enableCSRFMagic();
     $redirect = CAT_Users::getInstance()->handleLogin();
     $error    = CAT_Users::getInstance()->loginError();
     $ajax	= array(

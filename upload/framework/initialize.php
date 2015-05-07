@@ -151,13 +151,27 @@ if (!defined('SESSION_STARTED'))
 {
     session_name(APP_NAME.'sessionid');
 	$cookie_settings = session_get_cookie_params();
+/* old session lifetime handling
 	session_set_cookie_params(
         3 * 3600, // three hours
-        $cookie_settings["path"], $cookie_settings["domain"], (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'), // secure-bool
+        $cookie_settings["path"],
+        $cookie_settings["domain"],
+        (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'), // secure-bool
 		true    // http only
 	);
     unset($cookie_settings);
+*/
 	session_start();
+// new handling; will extend the session lifetime on each action
+    setcookie(
+        session_name(),
+        session_id(),
+        time()+ini_get('session.gc_maxlifetime'),
+        $cookie_settings["path"],
+        $cookie_settings["domain"],
+        (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'),
+        true
+    );
     CAT_Registry::register('SESSION_STARTED', true, true);
 }
 if (defined('ENABLED_ASP') && ENABLED_ASP && !isset($_SESSION['session_started']))
