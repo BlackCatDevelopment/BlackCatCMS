@@ -7,7 +7,7 @@
             <input type="hidden" name="_cat_ajax" value="1" />
             <label class="fc_label_200" for="fc_new_moduletype">{translate('Module type')}</label>
                 <select name="new_moduletype" id="fc_new_moduletype">
-                    <option value="module">{translate('Module (Page)')}</option>
+                    <option value="page">{translate('Module (Page)')}</option>
                     <option value="tool">{translate('Admin-Tool')}</option>
                     <option value="template">{translate('Template')}</option>
                     <option value="library">{translate('Library')}</option>

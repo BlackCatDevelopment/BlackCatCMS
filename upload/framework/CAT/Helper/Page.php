@@ -2314,8 +2314,7 @@ frontend.css and template.css are added in _get_css()
                     $val = CAT_Helper_Validate::getInstance();
 
             foreach ($arr as $index => $item)
-                    {
-#echo "INDEX $index ITEM ", var_export($item,1), "<br />";
+            {
 
                 if(is_array($item))
                     continue;

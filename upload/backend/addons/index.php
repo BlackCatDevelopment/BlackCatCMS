@@ -102,6 +102,8 @@ if( $users->checkPermission('addons','modules_install') )
         {
             foreach( $new as $dir )
             {
+                // skip paths starting with __ (sometimes used for deactivating addons)
+                if(substr($dir,0,2) == '__') continue;
                 $info = $addon->checkInfo(CAT_PATH.'/'.$type.'/'.$dir);
                 if ( $info )
                 {

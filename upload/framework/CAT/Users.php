@@ -936,7 +936,26 @@ if ( ! class_exists( 'CAT_Users', false ) )
             return $users;
         }   // end function getMembers()
         
-
+        /**
+         * returns the appropriate subfolder under 'media' or false if the
+         * user is not allowed to access 'media'
+         *
+         * @access public
+         * @param  boolean  $check_perm - if to check perm or not
+         * @return
+         **/
+        public static function getMediaFolder($check_perm = true)
+        {
+            if($check_perm && !self::checkPermission('media','media',false)===true)
+                return false;
+            $folder
+                = (self::get_user_id() == 1 || (HOME_FOLDERS && self::get_home_folder()=='') || !HOME_FOLDERS)
+                ? MEDIA_DIRECTORY
+                : CAT_Helper_Directory::sanitizePath(MEDIA_DIRECTORY.'/'.self::get_home_folder());
+            if(!file_exists(CAT_PATH.'/'.$folder))
+                CAT_Helper_Directory::createDirectory(CAT_PATH.'/'.$folder);
+            return $folder;
+        }   // end function getMediaFolder()
 
 /*******************************************************************************
  * MOVED METHODS
