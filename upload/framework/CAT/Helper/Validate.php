@@ -326,6 +326,7 @@ if (!class_exists('CAT_Helper_Validate'))
             if(!isset($rel_parsed['path']) || $rel_parsed['path'] == '') return '';
             $path       = $rel_parsed['path'];
             $path       = preg_replace('~/\./~', '/', $path); // bla/./bloo ==> bla/bloo
+            if(!isset($rel_parsed['host']) ) $rel_parsed['host'] = CAT_URL;
             // resolve /../
             // loop through all the parts, popping whenever there's a .., pushing otherwise.
             $parts      = array();
