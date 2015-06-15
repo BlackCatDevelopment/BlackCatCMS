@@ -39,10 +39,15 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+// protect
+$backend = CAT_Backend::getInstance('Start','start',false,false);
+if(!CAT_Users::is_authenticated()) exit; // just to be _really_ sure...
+
 // view
 if(CAT_Helper_Validate::sanitizePost('file'))
 {
-    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'.CAT_Helper_Validate::sanitizePost('file'));
+    $date = CAT_Helper_Validate::sanitizePost('file');
+    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/logs/log_'.$date.'.txt');
     if(file_exists($file))
     {
         $lines = file($file);
@@ -72,7 +77,8 @@ if(CAT_Helper_Validate::sanitizePost('file'))
 // download
 if(CAT_Helper_Validate::sanitizeGet('dl'))
 {
-    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'.CAT_Helper_Validate::sanitizeGet('dl'));
+    $date = CAT_Helper_Validate::sanitizeGet('dl');
+    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/logs/log_'.$date.'.txt');
     if(file_exists($file))
     {
         $zip = CAT_Helper_Zip::getInstance(pathinfo($file,PATHINFO_DIRNAME).'/'.pathinfo($file,PATHINFO_FILENAME).'.zip');
@@ -109,7 +115,8 @@ if(CAT_Helper_Validate::sanitizeGet('dl'))
 // remove
 if(CAT_Helper_Validate::sanitizePost('remove'))
 {
-    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'.CAT_Helper_Validate::sanitizePost('remove'));
+    $date = CAT_Helper_Validate::sanitizePost('remove');
+    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/logs/log_'.$date.'.txt');
     if(file_exists($file))
     {
         unlink($file);
@@ -134,7 +141,7 @@ if(count($files))
         if(filemtime($f)<(time()-24*60*60)&&filesize($f)==0)
             unlink($f);
 
-$widget_name = 'Logfiles';
+        $widget_name = CAT_Object::lang()->translate('Logfiles');
 $current     = strftime('%Y-%m-%d');
 
 $logs  = array();
@@ -162,7 +169,7 @@ if(count($list))
             $removable = false;
         else
             $removable = true;
-        $logs[] = array('file'=>$file,'size'=>CAT_Helper_Directory::byte_convert($f['size']),'removable'=>$removable);
+        $logs[] = array('file'=>$file,'size'=>CAT_Helper_Directory::byte_convert($f['size']),'removable'=>$removable,'date'=>str_ireplace(array('log_','logs/','.txt'),'',$file));
     }
 }
 else

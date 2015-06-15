@@ -3,11 +3,11 @@
     <table style="width:90%;margin:0 auto;">
     {foreach $logs item}
     <tr>
-        <td><a style="margin-right:20px" class="bcshowlog" href="{$CAT_URL}/modules/blackcat/widgets/logs.php?file={$item.file}">{$item.file}</a></td>
+        <td><a style="margin-right:20px" class="bcshowlog" href="{$CAT_URL}/modules/blackcat/widgets/logs.php?file={$item.date}" data-file="{$item.date}">{$item.file}</a></td>
         <td>{$item.size}</td>
         <td>
-            <a href="{$CAT_URL}/modules/blackcat/widgets/logs.php?dl={$item.file}" class="bclogdl icon-download"><span style="display:none">{$item.file}</span></a>
-            {if $item.removable === true}<a href="{$CAT_URL}/modules/blackcat/widgets/logs.php?remove={$item.file}" class="bclogremove icon-remove"><span style="display:none">{$item.file}</span></a>{/if}
+            <a href="{$CAT_URL}/modules/blackcat/widgets/logs.php?dl={$item.date}" class="bclogdl icon-download"><span style="display:none">{$item.file}</span></a>
+            {if $item.removable === true}<a href="{$CAT_URL}/modules/blackcat/widgets/logs.php?remove={$item.date}" class="bclogremove icon-remove" data-file="{$item.date}"><span style="display:none">{$item.file}</span></a>{/if}
         </td>
     </tr>
     {/foreach}
@@ -35,7 +35,8 @@
 				type:	 'POST',
 				url:	 CAT_URL + '/modules/blackcat/widgets/logs.php',
 				data:	 {
-                    remove: $(e.target).text()
+                    remove: $(e.target).data("file"),
+                    _cat_ajax: true
                 },
 				cache:	 false,
                 success: function( data, textStatus, jqXHR )
@@ -55,7 +56,7 @@
 				type:	 'POST',
 				url:	 CAT_URL + '/modules/blackcat/widgets/logs.php',
 				data:	 {
-                    file: $(e.target).text()
+                    file: $(e.target).data("file")
                 },
 				cache:	 false,
                 success: function( data, textStatus, jqXHR )

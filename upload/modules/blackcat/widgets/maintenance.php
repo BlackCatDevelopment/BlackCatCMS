@@ -39,6 +39,11 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+// protect
+$backend = CAT_Backend::getInstance('Start','start',false,false);
+if(!CAT_Users::is_authenticated()) exit; // just to be _really_ sure...
+// there's no real need to protect this widget, just to handle all widgets...
+
 $pg          = CAT_Helper_Page::getInstance();
 $widget_name = $pg->lang()->translate('Maintenance mode');
 

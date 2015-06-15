@@ -39,6 +39,10 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+// protect
+$backend = CAT_Backend::getInstance('Start','start',false,false);
+if(!CAT_Users::is_authenticated()) exit; // just to be _really_ sure...
+
 include dirname(__FILE__).'/../data/config.inc.php';
 
 $data        = array();
