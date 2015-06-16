@@ -39,19 +39,37 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$pg          = CAT_Helper_Page::getInstance();
-$widget_name = $pg->lang()->translate('Maintenance mode');
+// protect
+$backend = CAT_Backend::getInstance('Start','start',false,false);
+if(!CAT_Users::is_authenticated()) exit; // just to be _really_ sure...
+// there's no real need to protect this widget, just to handle all widgets...
 
-if(CAT_Registry::get('MAINTENANCE_MODE') == true) {
-    echo '<span style="color:#c00;font-weight:900;">',
-         '<span class="icon icon-warning" style="font-size:2em;margin-right:5px;"></span>',
-         $pg->lang()->translate('Please note: The system is in maintenance mode!'),
-         '</span><br /><span style="font-style:italic;margin-left:2.5em;font-size:0.9em;">',
-         $pg->lang()->translate('To disable, go to Settings -> System settings -> Maintenance mode -> set to "off".'),
-         '</span>';
-}
-else
+
+$widget_settings = array(
+    'allow_global_dashboard' => true,
+    'widget_title'           => CAT_Helper_I18n::getInstance()->translate('Maintenance mode'),
+    'preferred_column'       => 3
+);
+
+if(!function_exists('render_widget_blackcat_maintenance'))
 {
-    echo '<span class="icon icon-checkmark" style="font-size:1.2em;margin-right:5px;"></span>',
-         $pg->lang()->translate('Maintenance mode is off.');
+    function render_widget_blackcat_maintenance()
+    {
+        $pg          = CAT_Helper_Page::getInstance();
+
+        if(CAT_Registry::get('MAINTENANCE_MODE') == true) {
+            $content = '<span style="color:#c00;font-weight:900;">'.
+                       '<span class="icon icon-warning" style="font-size:2em;margin-right:5px;"></span>'.
+                       $pg->lang()->translate('Please note: The system is in maintenance mode!').
+                       '</span><br /><span style="font-style:italic;margin-left:2.5em;font-size:0.9em;">'.
+                       $pg->lang()->translate('To disable, go to Settings -> System settings -> Maintenance mode -> set to "off".').
+                       '</span>';
+        }
+        else
+        {
+            $content = '<span class="icon icon-checkmark" style="font-size:1.2em;margin-right:5px;"></span>'.
+                       $pg->lang()->translate('Maintenance mode is off.');
+        }
+        return $content;
+    }
 }

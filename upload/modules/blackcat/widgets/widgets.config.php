@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013 - 2015 Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
@@ -28,31 +28,18 @@ if (defined('CAT_PATH')) {
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
     include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
-    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));        $dir = $_SERVER['DOCUMENT_ROOT'];
+    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));    $dir = $_SERVER['DOCUMENT_ROOT'];
     $inc = false;
     foreach ($subs as $sub) {
-            if (empty($sub)) continue; $dir .= '/'.$sub;
-            if (file_exists($dir.'/framework/class.secure.php')) {
-                    include($dir.'/framework/class.secure.php'); $inc = true;        break;
-            }
+        if (empty($sub)) continue; $dir .= '/'.$sub;
+        if (file_exists($dir.'/framework/class.secure.php')) {
+            include($dir.'/framework/class.secure.php'); $inc = true;    break;
+        }
     }
     if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 
-$widget_settings = array(
+$widget_config = array(
     'allow_global_dashboard' => true,
-    'widget_title'           => CAT_Helper_I18n::getInstance()->translate('Help links'),
-    'preferred_column'       => 3
+    'layout'                 => '33-33-33',
 );
-
-if(!function_exists('render_widget_blackcat_help'))
-{
-    function render_widget_blackcat_help()
-    {
-        return "
-    <span style=\"width:80px;display:inline-block;\">Wiki:</span> <a href=\"http://wiki.blackcat-cms.org\" target=\"_blank\">http://wiki.blackcat-cms.org</a><br />
-    <span style=\"width:80px;display:inline-block;\">Forum:</span> <a href=\"http://forum.blackcat-cms.org\" target=\"_blank\">http://forum.blackcat-cms.org</a><br />
-    <span style=\"width:80px;display:inline-block;\">Homepage:</span> <a href=\"http://blackcat-cms.org\" target=\"_blank\">http://blackcat-cms.org</a><br />
-    ";
-    }
-}

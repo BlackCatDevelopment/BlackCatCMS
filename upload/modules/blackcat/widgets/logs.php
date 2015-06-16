@@ -39,138 +39,160 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-// view
-if(CAT_Helper_Validate::sanitizePost('file'))
+// protect
+$backend = CAT_Backend::getInstance('Start','start',false,false);
+if(!CAT_Users::is_authenticated()) exit; // just to be _really_ sure...
+
+$widget_settings = array(
+    'allow_global_dashboard'    => true,
+    'auto_add_global_dashboard' => true,
+    'widget_title'              => CAT_Helper_I18n::getInstance()->translate('Logs'),
+    'preferred_column'          => 3
+);
+
+if(!function_exists('render_widget_blackcat_logs'))
 {
-    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'.CAT_Helper_Validate::sanitizePost('file'));
-    if(file_exists($file))
+    function render_widget_blackcat_logs()
     {
-        $lines = file($file);
-        $output = implode('<br />',$lines);
-        $output = str_replace(
-            array(
-                'INFO',
-                'WARN',
-                'CRIT'
-            ),
-            array(
-                '<span style="color:#006600">INFO</span>',
-                '<span style="color:#FF6600">WARN</span>',
-                '<span style="color:#990000;font-weight:900;">CRIT</span>',
-            ),
-            $output
-        );
-        echo $output;
-    }
-    else
-    {
-        echo CAT_Helper_Validate::getInstance()->lang()->translate("File not found")
-            . ": ".str_ireplace( array(str_replace('\\','/',CAT_PATH),'\\'), array('/abs/path/to','/'), $file );
-    }
-    exit;
-}
-// download
-if(CAT_Helper_Validate::sanitizeGet('dl'))
-{
-    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'.CAT_Helper_Validate::sanitizeGet('dl'));
-    if(file_exists($file))
-    {
-        $zip = CAT_Helper_Zip::getInstance(pathinfo($file,PATHINFO_DIRNAME).'/'.pathinfo($file,PATHINFO_FILENAME).'.zip');
-        $zip->config('removePath',pathinfo($file,PATHINFO_DIRNAME))
-            ->create(array($file));
-        if(!$zip->errorCode() == 0)
+        // view
+        if(CAT_Helper_Validate::sanitizePost('file'))
         {
-            echo CAT_Helper_Validate::getInstance()->lang()->translate("Unable to pack the file")
-                . ": ".str_ireplace( array( str_replace('\\','/',CAT_PATH),'\\'), array('/abs/path/to','/'), $file );
-        }
-        else
-        {
-            $filename = pathinfo($file,PATHINFO_DIRNAME).'/'.pathinfo($file,PATHINFO_FILENAME).'.zip';
-            header("Pragma: public"); // required
-            header("Expires: 0");
-            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-            header("Cache-Control: private",false); // required for certain browsers
-            header("Content-Type: application/zip");
-            header("Content-Disposition: attachment; filename=\"".basename($filename)."\";" );
-            header("Content-Transfer-Encoding: binary");
-            header("Content-Length: ".filesize($filename));
-            readfile("$filename");
+    $date = CAT_Helper_Validate::sanitizePost('file');
+    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/logs/log_'.$date.'.txt');
+            if(file_exists($file))
+            {
+                $lines  = file($file);
+                $output = implode('<br />',$lines);
+                $output = str_replace(
+                    array(
+                        'INFO',
+                        'WARN',
+                        'CRIT'
+                    ),
+                    array(
+                        '<span style="color:#006600">INFO</span>',
+                        '<span style="color:#FF6600">WARN</span>',
+                        '<span style="color:#990000;font-weight:900;">CRIT</span>',
+                    ),
+                    $output
+                );
+                echo $output;
+            }
+            else
+            {
+                echo CAT_Helper_Validate::getInstance()->lang()->translate("File not found")
+                    . ": ".str_ireplace( array(str_replace('\\','/',CAT_PATH),'\\'), array('/abs/path/to','/'), $file );
+            }
             exit;
         }
-    }
-    else
-    {
-        echo CAT_Helper_Validate::getInstance()->lang()->translate("File not found")
-            . ": ".str_ireplace( array(str_replace('\\','/',CAT_PATH),'\\'), array('/abs/path/to','/'), $file );
-    }
-    exit;
-}
+        // download
+        if(CAT_Helper_Validate::sanitizeGet('dl'))
+        {
+    $date = CAT_Helper_Validate::sanitizeGet('dl');
+    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/logs/log_'.$date.'.txt');
+            if(file_exists($file))
+            {
+                $zip = CAT_Helper_Zip::getInstance(pathinfo($file,PATHINFO_DIRNAME).'/'.pathinfo($file,PATHINFO_FILENAME).'.zip');
+                $zip->config('removePath',pathinfo($file,PATHINFO_DIRNAME))
+                    ->create(array($file));
+                if(!$zip->errorCode() == 0)
+                {
+                    echo CAT_Helper_Validate::getInstance()->lang()->translate("Unable to pack the file")
+                        . ": ".str_ireplace( array( str_replace('\\','/',CAT_PATH),'\\'), array('/abs/path/to','/'), $file );
+                }
+                else
+                {
+                    $filename = pathinfo($file,PATHINFO_DIRNAME).'/'.pathinfo($file,PATHINFO_FILENAME).'.zip';
+                    header("Pragma: public"); // required
+                    header("Expires: 0");
+                    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+                    header("Cache-Control: private",false); // required for certain browsers
+                    header("Content-Type: application/zip");
+                    header("Content-Disposition: attachment; filename=\"".basename($filename)."\";" );
+                    header("Content-Transfer-Encoding: binary");
+                    header("Content-Length: ".filesize($filename));
+                    readfile("$filename");
+                    exit;
+                }
+            }
+            else
+            {
+                echo CAT_Helper_Validate::getInstance()->lang()->translate("File not found")
+                    . ": ".str_ireplace( array(str_replace('\\','/',CAT_PATH),'\\'), array('/abs/path/to','/'), $file );
+            }
+            exit;
+        }
 
-// remove
-if(CAT_Helper_Validate::sanitizePost('remove'))
-{
-    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'.CAT_Helper_Validate::sanitizePost('remove'));
-    if(file_exists($file))
-    {
-        unlink($file);
-    }
-    else
-    {
-        echo CAT_Helper_Validate::getInstance()->lang()->translate("File not found")
-            . ": ".str_ireplace( array( str_replace('\\','/',CAT_PATH),'\\'), array('/abs/path/to','/'), $file );
-    }
-    exit;
-}
+        // remove
+        if(CAT_Helper_Validate::sanitizePost('remove'))
+        {
+    $date = CAT_Helper_Validate::sanitizePost('remove');
+    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/logs/log_'.$date.'.txt');
+            if(file_exists($file))
+            {
+                unlink($file);
+            }
+            else
+            {
+                echo CAT_Helper_Validate::getInstance()->lang()->translate("File not found")
+                    . ": ".str_ireplace( array( str_replace('\\','/',CAT_PATH),'\\'), array('/abs/path/to','/'), $file );
+            }
+            exit;
+        }
 
-// clean up log files (older than 24 hours and size 0)
-$files = CAT_Helper_Directory::findFiles('log_\d{4}-\d{2}-\d{2}\.txt',CAT_PATH.'/temp');
-if(count($files))
-    foreach($files as $f)
-        if(filemtime($f)<(time()-24*60*60)&&filesize($f)==0)
-            unlink($f);
-$files = CAT_Helper_Directory::findFiles('log_\d{4}-\d{2}-\d{2}\.txt',CAT_PATH.'/temp/logs');
-if(count($files))
-    foreach($files as $f)
-        if(filemtime($f)<(time()-24*60*60)&&filesize($f)==0)
-            unlink($f);
+        // clean up log files (older than 24 hours and size 0)
+        $files = CAT_Helper_Directory::findFiles('log_\d{4}-\d{2}-\d{2}\.txt',CAT_PATH.'/temp');
+        if(count($files))
+            foreach($files as $f)
+                if(filemtime($f)<(time()-24*60*60)&&filesize($f)==0)
+                    unlink($f);
+        $files = CAT_Helper_Directory::findFiles('log_\d{4}-\d{2}-\d{2}\.txt',CAT_PATH.'/temp/logs');
+        if(count($files))
+            foreach($files as $f)
+                if(filemtime($f)<(time()-24*60*60)&&filesize($f)==0)
+                    unlink($f);
 
-$widget_name = CAT_Object::lang()->translate('Logfiles');
-$current     = strftime('%Y-%m-%d');
+        $widget_name = CAT_Object::lang()->translate('Logfiles');
+        $current     = strftime('%Y-%m-%d');
 
-$logs  = array();
-$list  = array();
-$files = CAT_Helper_Directory::getInstance()
-         ->maxRecursionDepth(2)
-         ->setSuffixFilter(array('txt'))
-         ->setSkipDirs(array('cache','compiled'))
-         ->setSkipFiles(array('index.php'))
-         ->findFiles('log_\d{4}-\d{2}-\d{2}\.txt',CAT_PATH.'/temp');
+        $logs  = array();
+        $list  = array();
+        $files = CAT_Helper_Directory::getInstance()
+                 ->maxRecursionDepth(2)
+                 ->setSuffixFilter(array('txt'))
+                 ->setSkipDirs(array('cache','compiled'))
+                 ->setSkipFiles(array('index.php'))
+                 ->findFiles('log_\d{4}-\d{2}-\d{2}\.txt',CAT_PATH.'/temp');
 
-if(count($files))
-    foreach($files as $f)
-        if(filesize($f)!==0)
-            $list[] = array('file'=>$f,'size'=>filesize($f));
+        if(count($files))
+            foreach($files as $f)
+                if(filesize($f)!==0)
+                    $list[] = array('file'=>$f,'size'=>filesize($f));
 
-if(count($list))
-{
-    foreach(array_values($list) as $f)
-    {
-        $file = str_ireplace(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'),'',CAT_Helper_Directory::sanitizePath($f['file']));
-        if(substr($file,0,1)=="/")
-            $file = substr_replace($file,'',0,1);
-        if(pathinfo($f['file'],PATHINFO_BASENAME) == 'log_'.$current.'.txt')
-            $removable = false;
+        if(count($list))
+        {
+            foreach(array_values($list) as $f)
+            {
+                $file = str_ireplace(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/'),'',CAT_Helper_Directory::sanitizePath($f['file']));
+                if(substr($file,0,1)=="/")
+                    $file = substr_replace($file,'',0,1);
+                if(pathinfo($f['file'],PATHINFO_BASENAME) == 'log_'.$current.'.txt')
+                    $removable = false;
+                else
+                    $removable = true;
+        $logs[] = array('file'=>$file,'size'=>CAT_Helper_Directory::byte_convert($f['size']),'removable'=>$removable,'date'=>str_ireplace(array('log_','logs/','.txt'),'',$file));
+            }
+        }
         else
-            $removable = true;
-        $logs[] = array('file'=>$file,'size'=>CAT_Helper_Directory::byte_convert($f['size']),'removable'=>$removable);
+        {
+            return CAT_Helper_Directory::getInstance()->lang()->translate('No logfiles');
+        }
+
+        global $parser;
+        $parser->setPath(dirname(__FILE__).'/../templates/default');
+        return $parser->get('logs.tpl',array('logs'=>$logs));
     }
 }
-else
-{
-    echo CAT_Helper_Directory::getInstance()->lang()->translate('No logfiles (or all empty)');
-}
 
-global $parser;
-$parser->setPath(dirname(__FILE__).'/../templates/default');
-$parser->output('logs.tpl',array('logs'=>$logs));
-
+if(CAT_Helper_Validate::sanitizePost('_cat_ajax')==true)
+    render_widget_blackcat_logs();

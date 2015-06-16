@@ -39,77 +39,52 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$max         = 5;
+// protect
+$backend = CAT_Backend::getInstance('Start','start',false,false);
+if(!CAT_Users::is_authenticated()) exit; // just to be _really_ sure...
+// there's no real need to protect this widget, just to handle all widgets...
 
-$pg          = CAT_Helper_Page::getInstance();
-$widget_name = $pg->lang()->translate('Forum News');
-$tpl_data    = array();
 
-$dom = new DOMDocument();
-$dom->loadXML(_loadURL('http://forum.blackcat-cms.org/feed.php?f=2'));
+$widget_settings = array(
+    'allow_global_dashboard' => true,
+    'widget_title'           => CAT_Helper_I18n::getInstance()->translate('Forum News'),
+    'preferred_column'       => 3
+);
 
-$items = $dom->getElementsByTagName('entry');
-$cnt   = 0;
-
-foreach($items as $item)
+if(!function_exists('render_widget_blackcat_forennews'))
 {
-    if($item->childNodes->length)
+    function render_widget_blackcat_forennews()
     {
-        if(substr(str_replace('News • ','',$item->getElementsByTagName('title')->item(0)->textContent),0,3) == 'Re:') continue;
-        $tpl_data[] = array(
-            'published' => $item->getElementsByTagName('published')->item(0)->textContent,
-            'link'      => $item->getElementsByTagName('link')->item(0)->getAttribute('href'),
-            'title'     => str_replace('News • ','',$item->getElementsByTagName('title')->item(0)->textContent),
-        );
-        $cnt++;
-        if($cnt == $max) break;
-    }
-}
+        require_once dirname(__FILE__).'/../functions.inc.php';
 
-global $parser;
-$parser->setPath(dirname(__FILE__).'/../templates/default');
-$parser->output('news.tpl',array('news'=>$tpl_data));
+        $max         = 5;
+        $pg          = CAT_Helper_Page::getInstance();
+        $widget_name = $pg->lang()->translate('Forum News');
+        $tpl_data    = array();
 
-function _loadURL($url) {
-    include dirname(__FILE__).'/../data/config.inc.php';
-    ini_set('include_path', CAT_PATH.'/modules/lib_zendlite');
-    include CAT_PATH.'/modules/lib_zendlite/library.php';
-    $client = new Zend\Http\Client(
-        $url,
-        array(
-            'timeout'      => $current['timeout'],
-            'adapter'      => 'Zend\Http\Client\Adapter\Proxy',
-            'proxy_host'   => $current['proxy_host'],
-            'proxy_port'   => $current['proxy_port'],
-        )
-    );
-    $client->setHeaders(
-        array(
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'no-cache',
-        )
-    );
+        $dom = new DOMDocument();
+        $dom->loadXML(_loadURL('http://forum.blackcat-cms.org/feed.php?f=2'));
 
-    try {
-        $response = $client->send();
-        if ( $response->getStatusCode() != '200' ) {
-            $error = "Unable to load source "
-                   . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
-                   . "Status: " . $response->getStatus() . " - " . $response->getMessage()
-                   . ( ( $debug ) ? "<br />".var_dump($client->getLastRequest()) : NULL )
-                   . "<br />"
-                   ;
-        }
-        else
+        $items = $dom->getElementsByTagName('entry');
+        $cnt   = 0;
+
+        foreach($items as $item)
         {
-            return $response->getBody();
+            if($item->childNodes->length)
+            {
+                if(substr(str_replace('News • ','',$item->getElementsByTagName('title')->item(0)->textContent),0,3) == 'Re:') continue;
+                $tpl_data[] = array(
+                    'published' => $item->getElementsByTagName('published')->item(0)->textContent,
+                    'link'      => $item->getElementsByTagName('link')->item(0)->getAttribute('href'),
+                    'title'     => str_replace('News • ','',$item->getElementsByTagName('title')->item(0)->textContent),
+                );
+                $cnt++;
+                if($cnt == $max) break;
+            }
         }
-    } catch ( Exception $e ) {
-        $error = "Unable to load source "
-               . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
-           . $e->getMessage()
-           . "<br />"
-           ;
+
+        global $parser;
+        $parser->setPath(dirname(__FILE__).'/../templates/default');
+        return $parser->get('news.tpl',array('news'=>$tpl_data));
     }
-    echo $error;
 }

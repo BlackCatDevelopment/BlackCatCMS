@@ -39,31 +39,43 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-include dirname(__FILE__).'/../data/config.inc.php';
+// protect
+$backend = CAT_Backend::getInstance('Start','start',false,false);
+if(!CAT_Users::is_authenticated()) exit; // just to be _really_ sure...
 
-$data        = array();
-$widget_name = CAT_Object::lang()->translate('Statistics');
-$number      = ( $current['last_edited_count'] > 0 && $current['last_edited_count'] < 50 )
-             ? $current['last_edited_count']
-             : 10;
-
-// format installation date and time
-$data['installation_time']
-    = CAT_Helper_DateTime::getDateTime(INSTALLATION_TIME);
-
-// get page statistics (count by visibility)
-$pg = CAT_Helper_Page::getPagesByVisibility();
-foreach( array_keys($pg) as $key )
-{
-    $data['visibility'][$key] = count($pg[$key]);
-}
-
-// get last edited
-$data['latest'] = CAT_Helper_Page::getLastEdited($number);
-
-global $parser;
-$parser->setPath(dirname(__FILE__).'/../templates/default');
-$parser->output(
-    'stats.tpl',
-    $data
+$widget_settings = array(
+    'allow_global_dashboard' => true,
+    'widget_title'           => CAT_Helper_I18n::getInstance()->translate('Statistics'),
+    'preferred_column'       => 3
 );
+
+if(!function_exists('render_widget_blackcat_stats'))
+{
+    function render_widget_blackcat_stats()
+    {
+        include dirname(__FILE__).'/../data/config.inc.php';
+
+        $data        = array();
+        $number      = ( $current['last_edited_count'] > 0 && $current['last_edited_count'] < 50 )
+                     ? $current['last_edited_count']
+                     : 10;
+
+        // format installation date and time
+        $data['installation_time']
+            = CAT_Helper_DateTime::getDateTime(INSTALLATION_TIME);
+
+        // get page statistics (count by visibility)
+        $pg = CAT_Helper_Page::getPagesByVisibility();
+        foreach( array_keys($pg) as $key )
+        {
+            $data['visibility'][$key] = count($pg[$key]);
+        }
+
+        // get last edited
+        $data['latest'] = CAT_Helper_Page::getLastEdited($number);
+
+        global $parser;
+        $parser->setPath(dirname(__FILE__).'/../templates/default');
+        return $parser->get('stats.tpl',$data);
+    }
+}
