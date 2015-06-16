@@ -57,5 +57,11 @@ if ( !$users->checkPermission('Addons','addons') )
 }
 
 update_catalog();
+$catalog = get_catalog();
 
-print json_encode(array('success'=>true,'message'=>'Success'));
+print json_encode(array(
+    'success'=>true,
+    'message'=>'Success',
+    'catalog_version'=>(isset($catalog['version']) ? $catalog['version'] : NULL)
+));
+

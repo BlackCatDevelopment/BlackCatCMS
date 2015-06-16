@@ -49,7 +49,7 @@ if (!class_exists('CAT_Helper_GitHub'))
         {
             if(self::$ch) return self::$ch;
             self::$ch = curl_init();
-            self::resetOpt();
+            self::reset_curl();
             if($url)
                 curl_setopt(self::$ch, CURLOPT_URL, $url);
             return self::$ch;

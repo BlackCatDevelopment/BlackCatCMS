@@ -1,5 +1,5 @@
 <p class="fc_gradient1" style="text-align:right;border-bottom:1px solid #000;">
-    {if $catalog_version}{translate('Catalog version')}: {$catalog_version}{/if}
+    {if $catalog_version}{translate('Catalog version')}: <span id="fc_addons_catalog_version">{$catalog_version}</span>{/if}
     <button id="fc_addons_update_catalog">{translate('Update')}</button>
 </p><div class="clear_sp"></div>
 
@@ -68,6 +68,7 @@
     				if ( data.success === true )
     				{
                         $('div#addons_main_content').html(data.content);
+                        $('span#fc_addons_catalog_version').text(data.catalog_version);
                         jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
     				}
     				else {

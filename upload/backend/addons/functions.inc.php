@@ -53,7 +53,7 @@ function get_catalog()
 
 function update_catalog()
 {
-    $ch   = CAT_Helper_GitHub::curl_init(GITHUB_CATALOG_LOCATION);
+    $ch   = CAT_Helper_GitHub::init_curl(GITHUB_CATALOG_LOCATION);
     $data = curl_exec($ch);
     if(curl_error($ch))
     {

@@ -217,6 +217,7 @@ jQuery(document).ready(function(){
 		{
 			type:		'POST',
 			url:		CAT_ADMIN_URL + '/addons/ajax_get_catalog.php',
+            data:       { _cat_ajax: 1 },
 			dataType:	'json',
 			cache:		false,
             beforeSend:	function( data )
