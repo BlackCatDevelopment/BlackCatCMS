@@ -164,7 +164,17 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
                         ? CAT_Helper_Page::getPagesForMenu(self::$menu_no)
                         : CAT_Helper_Page::getPages()
                         ;
-            return self::$list->buildList($pages,array('selected'=>$page_id,'ul_id'=>$ul_id));
+            // if the current page is the root page and it's visibility is 'hidden'...
+            if(CAT_Helper_Page::properties($page_id,'level') == 0 && !CAT_Helper_Page::isVisible($page_id))
+            {
+                // filter out the current page
+                CAT_Helper_Array::ArrayFilterByKey($pages,'page_id',$page_id);
+                $page    = reset($pages);
+                $page_id = $page['page_id'];
+            }
+            // get the current parent as root page
+            $root_id = CAT_Helper_Page::properties($page_id,'parent');
+            return self::$list->buildList($pages,array('root_id'=>$root_id,'selected'=>$page_id,'ul_id'=>$ul_id));
         }   // end function fullMenu()
 
         /**
@@ -199,6 +209,17 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
                 $subpages = CAT_Helper_Page::getPagesByParent($id);
             else
                 $subpages = CAT_Helper_Page::getSubPages($id);
+
+            // if there's only one sub page and it's invisible, skip to next level
+            if(count($subpages)==1)
+            {
+                // we have to check for 'hidden' here because isVisible() will
+                // return true for this case if given page is current page
+                if(!CAT_Helper_Page::isVisible($subpages[0]) || CAT_Helper_Page::properties($subpages[0],'visibility') == 'hidden')
+                {
+                    return self::subMenu($subpages[0],$max_level,$show_current,$options);
+                }
+            }
 
             foreach($subpages as $sid)
                 $menu[] = CAT_Helper_Page::properties($sid);

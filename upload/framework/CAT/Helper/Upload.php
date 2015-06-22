@@ -609,7 +609,11 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
                 $this->log()->logDebug( 'source is an uploaded file' );
                 if ($this->uploaded)
                 {
-                    $this->file_src_error        = trim($file['error']);
+                    $this->file_src_error = (
+                        isset($file['error'][0])
+                        ? trim($file['error'][0])
+                        : ( isset($file['error']) ? trim($file['error']) : NULL )
+                    );
                     switch($this->file_src_error)
                     {
                         case UPLOAD_ERR_OK:

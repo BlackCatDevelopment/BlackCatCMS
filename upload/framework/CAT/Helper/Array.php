@@ -75,6 +75,24 @@ if ( ! class_exists( 'CAT_Helper_Array' ) )
         }   // end function filter_callback()
 
         /**
+         * allows to reorder the $_FILES array if the 'multiple' attribute
+         * was set on the file upload field; see
+         * http://de1.php.net/manual/de/reserved.variables.files.php#109958
+         * for details
+         *
+         * @access public
+         * @param  array  $vector
+         * @return array
+         **/
+        public function ArrayDiverse($vector) {
+            $result = array();
+            foreach($vector as $key1 => $value1)
+                foreach($value1 as $key2 => $value2)
+                    $result[$key2][$key1] = $value2;
+            return $result;
+        }   // end function ArrayDiverse()
+
+        /**
          * encode all entries of an multidimensional array into utf8
          * http://de1.php.net/manual/de/function.json-encode.php#100492
          *

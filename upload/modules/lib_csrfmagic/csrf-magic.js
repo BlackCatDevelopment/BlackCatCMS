@@ -45,7 +45,12 @@ CsrfMagic.prototype = {
             delete this.csrf_purportedLength;
         }
         delete this.csrf_isPost;
+        if(typeof data == 'object') {
+            data[csrfMagicName] = csrfMagicToken;
+            return this.csrf_send(data);
+        } else {
         return this.csrf_send(prepend + data);
+        }
     },
     csrf_send: function(data) {
         return this.csrf.send(data);
@@ -86,6 +91,10 @@ CsrfMagic.prototype._updateProps = function() {
     }
 }
 CsrfMagic.process = function(base) {
+    if(typeof base == 'object') {
+        base[csrfMagicName] = csrfMagicToken;
+        return base;
+    }
     var prepend = csrfMagicName + '=' + csrfMagicToken;
     if (base) return prepend + '&' + base;
     return prepend;
