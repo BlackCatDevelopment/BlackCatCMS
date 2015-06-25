@@ -71,8 +71,12 @@ function executeFilters(&$content)
                 $inc_file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$f['module_name'].'/filter/'.$f['filter_name'].'.php');
                 if(file_exists($inc_file))
                 {
+                    // fix for defect filters; if no content is available after
+                    // the execution, reset to the content before
+                    $old_content = $content;
                     include_once $inc_file;
                     $f['filter_name']($content);
+                    if(!$content) $content = $old_content;
                 }
             }
         }
