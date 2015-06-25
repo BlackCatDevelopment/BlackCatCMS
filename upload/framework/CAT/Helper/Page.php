@@ -928,6 +928,17 @@ frontend.css and template.css are added in _get_css()
                     }
                 }
             }
+            // no page so far, return first visible page on level 0
+            foreach( $ordered as $page )
+            {
+                if (
+                       $page['level'] == 0
+                    && $page['visibility'] == 'public'
+                    && self::isActive($page['page_id'])
+                ) {
+                    return $page['page_id'];
+                }
+            }
         } // end function getDefaultPage()
 
         /**

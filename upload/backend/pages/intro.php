@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  * @license			http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -40,50 +40,22 @@ if (defined('CAT_PATH')) {
 }
 
 $backend  = CAT_Backend::getInstance('Pages', 'pages_intro');
-$val      = CAT_Helper_Validate::getInstance();
-$filename		= CAT_PATH . PAGES_DIRECTORY . '/intro' . PAGE_EXTENSION;
-$content  = '';
-
-// ===========================================================================
-// ! get current page content
-// ===========================================================================
-if ( file_exists( $filename ) )
-{
-	$handle		= fopen($filename, "r");
-	$content	= fread($handle, filesize($filename));
-	fclose( $handle );
-}
-
-// ===========================================================================
-// ! check for WYSIWYG editor
-// ===========================================================================
-if ( $val->sanitizeGet('wysiwyg') != 'no' )
-{
-	if ( !defined( 'WYSIWYG_EDITOR' ) || WYSIWYG_EDITOR == 'none' || !file_exists( CAT_PATH . '/modules/' . WYSIWYG_EDITOR . '/include.php' ) )
-	{
-		function show_wysiwyg_editor( $name, $id, $content, $width, $height )
-		{
-			echo '<textarea name="' . $name . '" id="' . $id . '" style="width: ' . $width . '; height: ' . $height . ';">' . $content . '</textarea>';
-		}
-	}
-	else
-	{
-		$id_list		= array('content');
-        require CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php';
-	}
-}
-
-global $parser;
 $tpl_data = array();
 
-ob_start();
-	show_wysiwyg_editor('content','content',$content,'100%','500px');
-	$tpl_data['intro_page_content']	= ob_get_contents();
-ob_clean(); // allow multiple buffering for csrf-magic
+// get used languages (languages that have visible pages)
+$tpl_data['pages'] = CAT_Helper_I18n::getUsedLangs();
 
-// ==================== 
-// ! Parse the site   
-// ==================== 
+// get current settings
+$tpl_data['values'] = array(
+    'intro_forward_by_lang' => 'false',
+    'intro_forward_by_domain' => 'true',
+);
+$tpl_data['domains'] = array(
+    'wblib2' => 5,
+    'default' => 1,
+);
+
+
 $parser->output('backend_pages_intro', $tpl_data);
 
 // Print admin footer

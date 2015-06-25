@@ -421,7 +421,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 	            elseif ($part!="")
 	            {
                     #$self->log()->logDebug('checking part -'.$part."- encoding -", mb_detect_encoding($part,'UTF-8',true));
-                    $part = ( IS_WIN && mb_detect_encoding($part,'UTF-8',true) )
+                    $part = ( self::$is_win && mb_detect_encoding($part,'UTF-8',true) )
                           ? utf8_decode($part)
                           : $part;
                     #$self->log()->logDebug("adding part -$part-\n");

@@ -545,6 +545,25 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) )
 
 	    } // end getBrowserLangs()
 
+        /**
+         * looks for used languages by analyzing the pages
+         *
+         * @access public
+         * @return
+         **/
+        public static function getUsedLangs($guest_only=true)
+        {
+            $vis   = ( $guest_only ? 'public' : NULL );
+            $pages = CAT_Helper_Page::getPagesByVisibility($vis);
+            $langs = array();
+            foreach($pages as $id)
+            {
+                $lang = CAT_Helper_Page::properties($id,'language');
+                if(!isset($langs[$lang])) $langs[$lang] = array();
+                $langs[$lang][] = array('page_id'=>$id, 'menu_title'=>CAT_Helper_Page::properties($id,'menu_title'));
 	}
+            return $langs;
+        }   // end function getUsedLangs()
 
+}
 }

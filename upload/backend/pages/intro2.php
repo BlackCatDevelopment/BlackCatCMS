@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -40,23 +40,61 @@ if (defined('CAT_PATH')) {
 }
 
 $backend  = CAT_Backend::getInstance('Pages', 'pages_intro');
-$val      = CAT_Helper_Validate::getInstance();
+$data     = $_REQUEST;
+$content  = NULL;
 
-// Get posted content
-if(!$val->sanitizePost('content')) {
-	header("Location: intro".PAGE_EXTENSION."");
-	exit(0);
-} else {
-	$content = $val->sanitizePost('content');
+if(isset($data['intro_forward_by']))
+{
+    switch($data['intro_forward_by'])
+    {
+        case 'lang':
+            $lang_map = array();
+            foreach(array_keys($data) as $key)
+            {
+                if(preg_match('~^intro_page_for_([a-z][a-z])$~i',$key,$m))
+                {
+                    $lang_map[strtolower($m[1]).'-?.*'] = $data[$key];
+                }
+            }
+            if(isset($data['intro_page_for_default']))
+            {
+                $lang_map['default'] = $data['intro_page_for_default'];
+            }
+            if(!isset($lang_map['default']))
+            {
+                $lang_map['default'] = CAT_Helper_Page::getDefaultPage();
+            }
+            $content = str_ireplace(
+                '%map%',
+                var_export($lang_map,1),
+                cat_intro_page_content_langswitch()
+            );
+            break;
+        case 'domain':
+            if(!isset($data['domains']) || !isset($data['pages'])) break;
+            if(!is_array($data['domains']) && is_scalar($data['domains'])) $data['domains'] = array($data['domains']);
+            if(!is_array($data['pages'])   && is_scalar($data['pages']))   $data['pages']   = array($data['pages']);
+            if(count($data['domains']) != count($data['pages']))   break;
+            $domain_map = array();
+            for($i=0;$i<count($data['domains']);$i++)
+            {
+                $domain_map[$data['domains'][$i]] = $data['pages'][$i];
+            }
+            $content = str_ireplace(
+                '%map%',
+                var_export($domain_map,1),
+                cat_intro_page_content_domainswitch()
+            );
+            break;
+    }
 }
 
-if (strlen($content) == 0) {
-	$backend->print_error( $backend->lang()->translate('Sorry, an empty intro page cannot be saved!'), "intro.php");
-} else {
-	// Write new content
+if($content)
+{
 	$filename = CAT_PATH.PAGES_DIRECTORY.'/intro'.PAGE_EXTENSION;
 	$handle = fopen($filename, 'w');
 	if(is_writable($filename)) {
+        $content  = '<'.'?'.'php'."\n".$content;
 		if(fwrite($handle, $content)) {
 			fclose($handle);
 			$backend->print_success($backend->lang()->translate('Intro page saved'), 'intro.php');
@@ -71,3 +109,54 @@ if (strlen($content) == 0) {
 
 // Print admin footer
 $backend->print_footer();
+
+function cat_intro_page_content_langswitch()
+{
+    return '
+
+require_once "../config.php";
+
+$cat_intro_lang_to_page_map = array(
+    %map%
+);
+$page_id      = NULL;
+require dirname(__FILE__)."/../framework/CAT/Helper/I18n.php";
+require dirname(__FILE__)."/../framework/CAT/Helper/Page.php";
+$lang         = new CAT_Helper_I18n();
+$langs        = $lang->getBrowserLangs();
+foreach($langs as $l)
+{
+    foreach(array_keys($cat_intro_lang_to_page_map) as $m)
+    {
+        if(preg_match("~$m~i",$l,$match))
+        {
+            $page_id = $cat_intro_lang_to_page_map[$m];
+            break 2;
+        }
+    }
+}
+if(!$page_id) $page_id = $cat_intro_lang_to_page_map["default"];
+$properties = CAT_Helper_Page::getPage($page_id);
+echo header("Location: ".$properties["href"]);
+exit();
+';
+}
+
+function cat_intro_page_content_domainswitch()
+{
+    return '
+$cat_intro_domain_to_page_map = array(
+    %map%
+);
+$page_id      = NULL;
+$domain       = $_SERVER["HTTP_HOST"];
+if(array_key_exists($domain,$cat_intro_domain_to_page_map))
+{
+    $page_id = $cat_intro_domain_to_page_map[$key];
+}
+if(!$page_id) $page_id = CAT_Helper_Page::getDefaultPage();
+$properties = CAT_Helper_Page::getPage($page_id);
+echo header("Location: ".$properties["href"]);
+exit();
+';
+}
