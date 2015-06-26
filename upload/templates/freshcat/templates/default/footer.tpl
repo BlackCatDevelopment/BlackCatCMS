@@ -15,7 +15,7 @@
 		<!-- Please note: the above reference to the GNU GPL should not be removed, as it provides a link for users to read about warranty, etc. 
 		<a href="{$URL_HELP}" title="Black Cat CMS Bundle" target="_blank">Black Cat CMS Bundle</a> is released under several different licenses.-->
 		<div id="fc_footer_info">
-            <span id="">{translate('Remaining session time')}: <span id="fc_session_counter">{$SESSION_TIME}</span></span>
+            <span>{translate('Remaining session time')}: <span id="fc_session_counter">{$SESSION_TIME}</span></span>
 			<span id="fc_showFooter_info" class="icon-logo_bc fc_gradient1 fc_gradient_hover fc_border_all"> {translate('System information')}</span>
 			<ul class="fc_gradient1 fc_border fc_shadow_small fc_br_top">
 				<li><span>{$CAT_CORE}:</span> {$CAT_VERSION} {if $CAT_BUILD}(Build {$CAT_BUILD}){/if}</li>

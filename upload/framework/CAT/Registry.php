@@ -137,11 +137,13 @@ if (!class_exists('CAT_Registry', false))
             if(!$return_value)
             {
                 if($require && $require == 'array')
+                {
                     if($default && is_array($default))
                         return $default;
-            else
+                    else
                         return array();
-                return NULL;
+                }
+                return ( $default ? $default : NULL );
             }
             return $return_value;
         }   // end function get()
