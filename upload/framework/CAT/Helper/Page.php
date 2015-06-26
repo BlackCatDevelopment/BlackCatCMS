@@ -2204,9 +2204,9 @@ frontend.css and template.css are added in _get_css()
                 case 'deleted':
                     $show_it = false;
                     break;
-                // shown if called, but not in menu
+                // shown if called, but not in menu; skip intro page (selectPage(true))
                 case 'hidden':
-                    if(self::selectPage()==$page_id)
+                    if(self::selectPage(true)==$page_id)
                         $show_it = true;
                     break;
                 // always visible
