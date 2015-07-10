@@ -179,9 +179,10 @@ require_once dirname(__FILE__)."' . ( count($count) > 0 ? str_repeat('/..',count
 $cat_intro_domain_to_page_map = %map%;
 $page_id      = NULL;
 $domain       = $_SERVER["HTTP_HOST"];
-if(array_key_exists($domain,$cat_intro_domain_to_page_map))
+$domain_parts = explode(".",$domain);
+if(isset($domain_parts[0]) && array_key_exists($domain_parts[0],$cat_intro_domain_to_page_map))
 {
-    $page_id = $cat_intro_domain_to_page_map[$key];
+    $page_id = $cat_intro_domain_to_page_map[$domain_parts[0]];
 }
 if(!$page_id) $page_id = CAT_Helper_Page::getDefaultPage();
 $properties = CAT_Helper_Page::getPage($page_id);

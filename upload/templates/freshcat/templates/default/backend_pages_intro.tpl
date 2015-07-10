@@ -4,7 +4,8 @@
 </div>
 <div class="fc_info" style="margin:5px">
 {translate('The intro page will be created automatically if you enable one or more options.')}<br />
-{translate('Please note: At the moment, the two global options (by language / by sub domain) are mutually exclusive. If you need a more enhanced solution, please let us know.')}
+{translate('Please note: At the moment, the two global options (by language / by sub domain) are mutually exclusive.')}<br />
+{translate('If you choose the option "Disabled" and save, the intro.php will be deleted!')}
 </div>
 <div id="fc_main_content">
 	<div class="fc_module_block fc_active">

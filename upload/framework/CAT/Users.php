@@ -1369,7 +1369,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         : 5;
             $max_length = CAT_Registry::exists('AUTH_MAX_PASS_LENGTH')
                         ? CAT_Registry::get('AUTH_MAX_PASS_LENGTH')
-                        : 20;
+                        : 128;
 
 	        // ----- check length -----
 	        if (

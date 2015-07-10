@@ -1010,6 +1010,55 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             self::$instance->showHidden(false);
         }   // end function reset()
 
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function decrypt($file,$passphrase)
+        {
+            // Turn a human readable passphrase
+            // into a reproducible iv/key pair
+            $iv = substr(md5("\x1B\x3C\x58".$passphrase, true), 0, 8);
+            $key = substr(md5("\x2D\xFC\xD8".$passphrase, true) .
+            md5("\x2D\xFC\xD9".$passphrase, true), 0, 24);
+            $opts = array('iv' => $iv, 'key' => $key, 'mode' => 'stream');
+            // Open the file
+            $fp = fopen($file,'rb');
+            // Add the Mcrypt stream filter
+            // We use Triple DES here, but you
+            // can use other encryption algorithm here
+            stream_filter_append($fp, 'mdecrypt.tripledes', STREAM_FILTER_READ, $opts);
+            // Read the file contents
+            $contents=fread($fp,filesize($file));
+        }   // end function decrypt()
+        
+
+        /**
+         *
+         * @access protected
+         * @return
+         **/
+        public static function encrypt($file,$passphrase,$data)
+        {
+            // Turn a human readable passphrase
+            // into a reproducible iv/key pair
+            $iv  = substr(md5("\x1B\x3C\x58".$passphrase, true), 0, 8);
+            $key = substr(md5("\x2D\xFC\xD8".$passphrase, true) .
+            md5("\x2D\xFC\xD9".$passphrase, true), 0, 24);
+            $opts = array('iv' => $iv, 'key' => $key, 'mode' => 'stream');
+            // Open the file
+            $fp = fopen($file,'wb');
+            // Add the Mcrypt stream filter
+            // We use Triple DES here, but you
+            // can use other encryption algorithm here
+            stream_filter_append($fp, 'mcrypt.tripledes', STREAM_FILTER_WRITE, $opts);
+            // Wrote some contents to the file
+            fwrite($fp,$data);
+            // Close the file
+            fclose($fp);
+        }   // end function encrypt()
+
 		/**
 		 *
 		 *
