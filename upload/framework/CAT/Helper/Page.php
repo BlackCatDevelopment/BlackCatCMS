@@ -386,10 +386,20 @@ if (!class_exists('CAT_Helper_Page'))
             {
                 if(is_array($value))
                     $value = implode(',',$value);
+                if(is_null($value))
+                {
                 self::$instance->db()->query(
-                    'REPLACE INTO `:prefix:pages_settings` VALUES( ":id", ":type", ":k", ":v" )',
-                    array( 'id'=>$page_id,'type'=>'internal','k'=>$key,'v'=>$value)
+                        'DELETE FROM `:prefix:pages_settings` WHERE `set_type`=? AND `set_name`=? AND `page_id`=?',
+                        array( 'internal',$key,$page_id )
                 );
+            }
+                else
+                {
+                    self::$instance->db()->query(
+                        'REPLACE INTO `:prefix:pages_settings` VALUES( ?, ?, ?, ? )',
+                        array( $page_id,'internal',$key,$value)
+                    );
+                }
             }
         }   // end function updatePageSettings()
         
