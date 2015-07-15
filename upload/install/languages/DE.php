@@ -194,6 +194,8 @@ $LANG = array(
     'guid_prefix' => 'GUID Präfix',
     'no_validate_db_password' => 'Datenbankkennwort nicht prüfen',
     'optional_addon' => 'Optionale Add-Ons',
+    'ssl_available' => 'SSL verfügbar',
+    'ssl' => 'SSL aktiviert',
 
 );
 

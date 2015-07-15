@@ -540,12 +540,62 @@ function show_step_db( $step ) {
  * check the db connection
  **/
 function check_step_db() {
+    global $admin, $dirh, $config;
     write2log('> [check_step_db()]');
     // do not check if back button was clicked
     if ( isset($_REQUEST['btn_back']) ) {
         return array( true, array() );
     }
     $errors = __cat_check_db_config();
+    if(!count($errors))
+    {
+        $cat_path = $dirh->sanitizePath( dirname(__FILE__).'/..' );
+        $db_config_content = "
+;<?php
+;die(); // For further security
+;/*
+
+[CAT_DB]
+TYPE=mysql
+HOST=".$config['database_host']."
+PORT=".$config['database_port']."
+USERNAME=".$config['database_username']."
+PASSWORD=".$config['database_password']."
+NAME=".$config['database_name']."
+
+;*/
+;?>
+";
+        // save database settings; we generate a file name here
+        $db_settings_file = $cat_path.'/framework/CAT/Helper/DB/'.$admin->createGUID('').'.bc.php';
+        write2log('trying to create '.$db_settings_file);
+        if(($handle = @fopen($db_settings_file, 'w')) === false) {
+            write2log('< [check_step_db()] (cannot create database settings file '.$db_settings_file.')');
+            return array(
+                false,
+                $lang->translate(
+                    "Cannot open the configuration file ({{ file }})",
+                    array( 'file' => $db_settings_file )
+                )
+            );
+        } else {
+            if (fwrite($handle, $db_config_content, strlen($db_config_content) ) === FALSE) {
+                write2log('< [check_step_db()] (cannot write to database settings file)');
+                fclose($handle);
+                return array(
+                    false,
+                    $lang->translate(
+                        "Cannot write to the configuration file ({{ file }})",
+                        array( 'file' => $db_config_content )
+                    )
+                );
+            }
+            write2log('created database settings file ['.pathinfo($db_settings_file,PATHINFO_BASENAME).']');
+            // Close file
+            fclose($handle);
+        }
+
+    }
     write2log('< [check_step_db()]');
     return array(
         ( count($errors) ? false : true ),
@@ -666,6 +716,9 @@ function show_step_postcheck() {
         if ( preg_match( '~optional_addon~i', $key ) ) {
             $config[$key] = count($config[$key]);
         }
+        if ( $key == 'ssl_available' ) {
+            $config[$key] = ( $config[$key] == 1 ? 'true' : 'false' );
+        }
     }
     $output = $parser->get(
         'postcheck.tpl',
@@ -764,6 +817,8 @@ function show_step_finish() {
     }
     catch ( Exception $e )
     {
+        write2log('Unable to retrieve the database tables! ['.$database->getError()."]");
+        return array( false, NULL );
     }
 
     $tpl = 'finish.tpl';
@@ -1132,7 +1187,7 @@ function check_tables($database) {
     $requested_tables = array("class_secure","pages","page_langs","sections","settings","users","groups","addons","search","mod_droplets","mod_droplets_settings","mod_droplets_permissions","mod_wysiwyg","mod_wysiwyg_admin_v2");
     for($i=0;$i<count($requested_tables);$i++) $requested_tables[$i] = $table_prefix.$requested_tables[$i];
 
-    $result = $database->query("SHOW TABLES FROM `".CAT_DB_NAME."`");
+    $result = $database->query("SHOW TABLES FROM `"._CAT_DB_NAME."`");
     if(!is_object($result)) {
         $errors['tables'] = 'Unable to check tables - no result from SHOW TABLES!';
     }
@@ -1273,7 +1328,7 @@ function init_constants($cat_path)
         if ( ! CAT_Registry::exists( strtoupper($key) ) )
         {
             if ( ! is_scalar($value) ) { continue; }
-            CAT_Registry::define( str_replace( 'DATABASE_', 'CAT_DB_', strtoupper($key) ),$value);
+            CAT_Registry::define( str_replace( 'DATABASE_', '_CAT_DB_', strtoupper($key) ),$value);
         }
     }
     if ( ! CAT_Registry::exists('CAT_TABLE_PREFIX') )   { CAT_Registry::define('CAT_TABLE_PREFIX',TABLE_PREFIX);              }
@@ -1511,23 +1566,6 @@ function __do_install() {
 "include_once CAT_PATH.'/framework/wb2compat.php';\n".
 "\n";
 
-    $db_config_content = "
-;<?php
-;die(); // For further security
-;/*
-
-[CAT_DB]
-TYPE=mysql
-HOST=".$config['database_host']."
-PORT=".$config['database_port']."
-USERNAME=".$config['database_username']."
-PASSWORD=".$config['database_password']."
-NAME=".$config['database_name']."
-
-;*/
-;?>
-";
-
     $config_filename = $cat_path.'/config.php';
     write2log('trying to create '.$config_filename);
 
@@ -1550,34 +1588,6 @@ NAME=".$config['database_name']."
                 $lang->translate(
                     "Cannot write to the configuration file ({{ file }})",
                     array( 'file' => $config_filename )
-                )
-            );
-        }
-        // Close file
-        fclose($handle);
-    }
-
-    // save database settings; we generate a file name here
-    $db_settings_file = $cat_path.'/framework/CAT/Helper/DB/'.$admin->createGUID('').'.bc.php';
-    write2log('trying to create '.$db_settings_file);
-    if(($handle = @fopen($db_settings_file, 'w')) === false) {
-        write2log('< [__do_install()] (cannot create database settings file)');
-        return array(
-            false,
-            $lang->translate(
-                "Cannot open the configuration file ({{ file }})",
-                array( 'file' => $db_settings_file )
-            )
-        );
-    } else {
-        if (fwrite($handle, $db_config_content, strlen($db_config_content) ) === FALSE) {
-            write2log('< [__do_install()] (cannot write to database settings file)');
-            fclose($handle);
-            return array(
-                false,
-                $lang->translate(
-                    "Cannot write to the configuration file ({{ file }})",
-                    array( 'file' => $db_config_content )
                 )
             );
         }

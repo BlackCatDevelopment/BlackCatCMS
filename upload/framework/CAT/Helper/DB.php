@@ -372,20 +372,16 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
         public static function getConfig(&$opt=array())
         {
             // find file
-            // note: bc.php as suffix filter does not work!
+            // note: .bc.php as suffix filter does not work!
             $configfiles = CAT_Helper_Directory::scanDirectory(dirname(__FILE__).'/DB',true,true,NULL,array('php'));
             if(!is_array($configfiles) || !count($configfiles))
             {
                 CAT_Object::printFatalError('Missing database configuration');
             }
-            if(count($configfiles)>1)
-            {
-                CAT_Object::printFatalError('Database configuration error');
-            }
             // the first file with suffix .bc.php will be used
             foreach($configfiles as $file)
             {
-                if(!substr_compare($file,'.bc.php',-1,7))
+                if(substr_compare($file,'.bc.php',-1,7))
                 {
                     break;
                 }
