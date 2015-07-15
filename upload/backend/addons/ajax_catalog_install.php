@@ -110,14 +110,14 @@ foreach($catalog['modules'] as $module)
         {
             case 'install':
             case 'update':
-                if(CAT_Helper_Addons::installModule( CAT_PATH.'/temp/'.$module_name.'.zip', false, true ))
+                if(CAT_Helper_Addons::installModule( CAT_PATH.'/temp/'.$module_name.'.zip', true, false ))
                 {
                     CAT_Object::json_success('Installed successfully');
                 }
                 else
                 {
                     // error is already printed by the helper
-                    CAT_Object::json_error('Unable to install the module!');
+                    CAT_Object::json_error('Unable to install the module: ' . CAT_Helper_Addons::getError() );
                 }
                 break;
             case 'uninstall':

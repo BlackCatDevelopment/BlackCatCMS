@@ -15,16 +15,18 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2015, Black Cat Development
  *   @link            http://www.blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         lib_dwoo
  *
- *   Usage: cat_sitemap(<PAGE_ID>[, <max. depth>])
+ *   Usage: cat_sitemap([option: value, option: value, ... ])
  *
- *   Shows sitemap for page <PAGE_ID> (children of that page)
- *   Optional max. depth allows to restrict number of sublevels zu be shown
+ *   Shows sitemap; in fact, this is just an alias for cat_fullmenu which sets
+ *   the menu_number param to NULL to show all pages
+ *
+ *   Please note: The interface (=how to call this) changed with BC v1.2!
  *
  */
 
@@ -50,11 +52,5 @@ function Dwoo_Plugin_cat_sitemap()
     $attr = func_get_args();
     // first attr is $Dwoo
     array_shift($attr);
-    // second attr is $page_id
-    $page_id = array_shift($attr);
-    // third attr is the max depth
-    $max_level = array_shift($attr);
-    // fourth is a boolean
-    $show_parent = array_shift($attr);
-    return CAT_Helper_Menu::Sitemap($page_id,$max_level,$show_parent,$attr);
+    return CAT_Helper_Menu::fullMenu(NULL,$attr);
 }

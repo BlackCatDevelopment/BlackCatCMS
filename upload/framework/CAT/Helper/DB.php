@@ -132,16 +132,18 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
             {
                 $config = new \Doctrine\DBAL\Configuration();
                 $config->setSQLLogger(new Doctrine\DBAL\Logging\DebugStack());
-                if(!defined('CAT_DB_NAME') && file_exists(dirname(__FILE__).'/../../../config.php'))
-                    include dirname(__FILE__).'/../../../config.php';
+                if(!defined('CAT_DB_NAME') && ( !count($opt) || !isset($opt['DB_NAME']) ) )
+                {
+                    $opt = self::getConfig($opt);
+                }
                 $connectionParams = array(
                     'charset'  => 'utf8',
                     'driver'   => 'pdo_mysql',
-                    'dbname'   => (isset($opt['DB_NAME'])     ? $opt['DB_NAME']     : CAT_DB_NAME),
-                    'host'     => (isset($opt['DB_HOST'])     ? $opt['DB_HOST']     : CAT_DB_HOST),
-                    'password' => (isset($opt['DB_PASSWORD']) ? $opt['DB_PASSWORD'] : CAT_DB_PASSWORD),
-                    'user'     => (isset($opt['DB_USERNAME']) ? $opt['DB_USERNAME'] : CAT_DB_USERNAME),
-                    'port'     => (isset($opt['DB_PORT'])     ? $opt['DB_PORT']     : CAT_DB_PORT    ),
+                    'dbname'   => (isset($opt['DB_NAME'])     ? $opt['DB_NAME']     : 'blackcat' ),
+                    'host'     => (isset($opt['DB_HOST'])     ? $opt['DB_HOST']     : 'localhost'),
+                    'password' => (isset($opt['DB_PASSWORD']) ? $opt['DB_PASSWORD'] : ''         ),
+                    'user'     => (isset($opt['DB_USERNAME']) ? $opt['DB_USERNAME'] : 'root'     ),
+                    'port'     => (isset($opt['DB_PORT'])     ? $opt['DB_PORT']     : 3306       ),
                 );
                 if(function_exists('xdebug_is_enabled'))
                     $xdebug_state = xdebug_is_enabled();
@@ -160,6 +162,21 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                 }
                 if(function_exists('xdebug_enable') && $xdebug_state)
                     xdebug_enable();
+                if(isset($opt['DB_PREFIX']))
+                {
+                    self::$prefix = $opt['DB_PREFIX'];
+                    define('CAT_TABLE_PREFIX',self::$prefix);
+                }
+                if(defined('WB2COMPAT') && WB2COMPAT === true)
+                {
+                    define('DB_TYPE', $opt['DB_TYPE']);
+                    define('DB_HOST', $opt['DB_HOST']);
+                    define('DB_PORT', $opt['DB_PORT']);
+                    define('DB_USERNAME', $opt['DB_USERNAME']);
+                    ##define('DB_PASSWORD', CAT_DB_PASSWORD);
+                    define('DB_NAME', $opt['DB_NAME']);
+
+                }
             }
             self::restoreExceptionHandler();
             return self::$conn;
@@ -222,6 +239,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                             unset($bind[$_field]);
                         }
                     }
+                    $sql  = str_replace(':prefix:',self::$prefix,$sql);
                     $stmt = $this->prepare($sql);
                     $stmt->execute($bind);
                 }
@@ -345,6 +363,49 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
             }
             return array($statement, $params);
         }   // end function getLastStatement()
+
+        /**
+         *
+         * @access protected
+         * @return
+         **/
+        public static function getConfig(&$opt=array())
+        {
+            // find file
+            // note: bc.php as suffix filter does not work!
+            $configfiles = CAT_Helper_Directory::scanDirectory(dirname(__FILE__).'/DB',true,true,NULL,array('php'));
+            if(!is_array($configfiles) || !count($configfiles))
+            {
+                CAT_Object::printFatalError('Missing database configuration');
+            }
+            if(count($configfiles)>1)
+            {
+                CAT_Object::printFatalError('Database configuration error');
+            }
+            // the first file with suffix .bc.php will be used
+            foreach($configfiles as $file)
+            {
+                if(!substr_compare($file,'.bc.php',-1,7))
+                {
+                    break;
+                }
+            }
+            // read the file
+            $configuration = parse_ini_file($file);
+            if(!is_array($configuration) || !count($configuration))
+            {
+                CAT_Object::printFatalError('Database configuration error');
+            }
+            foreach($configuration as $key => $value)
+            {
+                if(!isset($opt['DB_'.$key]))
+                {
+                    $opt['DB_'.$key] = $value;
+                }
+            }
+            return $opt;
+        }   // end function getConfig()
+        
 
         /**
          * check for DB error

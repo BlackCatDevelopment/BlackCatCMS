@@ -4,19 +4,19 @@
     <input type="hidden" name="id" value="{$id}" />
     <fieldset>
         <legend>{translate('Common options')}</legend>
-        <label for="skin">{translate('Skin')}</label>
+        <label for="skin">{translate('Skin')}</label><span style="display:inline-block;width:21px;"></span>
         {if is_array($skins)}
               <select name="skin" id="skin">
-            {foreach $skins as skin}
+              {foreach $skins as skin}
                 <option value="{$skin}"{if $skin == $current_skin} selected="selected"{/if}>{$skin}</option>
-            {/foreach}
+              {/foreach}
           </select>
               <div id="wysiwyg_admin_skin_preview">
                   {translate('Skin preview')}<br />
                   {$preview}
               </div>
             {/if}<br />
-        <label for="toolbar">{translate('Editor Toolbar')}</label>
+        <label for="toolbar">{translate('Editor Toolbar')}</label><span style="display:inline-block;width:21px;"></span>
         {if is_array($toolbars)}
           <select name="toolbar" id="toolbar">
             {foreach $toolbars as toolbar}
@@ -26,15 +26,15 @@
         {else}
           {if is_scalar($toolbars)}{$toolbars}{/if}
             {/if}<br />
-        <label for="width">{translate('Editor width')}</label>
-            <input type="text" name="width" value="{$width}" />
+        <label for="width">{translate('Editor width')}</label><span style="display:inline-block;width:21px;"></span>
+            <input type="text" name="width" value="{$width}" class="small" />
             <input type="radio" id="width_unit_em" name="width_unit" value="em" {$width_unit_em} /> em
             <input type="radio" id="width_unit_px" name="width_unit" value="px" {$width_unit_px} /> px
             <input type="radio" id="width_unit_proz" name="width_unit" value="%" {$width_unit_proz} /> %
             <br />
             {if $errors.width}<span class="error">{$errors.width}</span><br />{/if}
-        <label for="height">{translate('Editor height')}</label>
-            <input type="text" name="height" value="{$height}" />
+        <label for="height">{translate('Editor height')}</label><span style="display:inline-block;width:21px;"></span>
+            <input type="text" name="height" value="{$height}" class="small" />
             <input type="radio" id="height_unit_em" name="height_unit" value="em" {$height_unit_em} /> em
             <input type="radio" id="height_unit_px" name="height_unit" value="px" {$height_unit_px} /> px
             <input type="radio" id="height_unit_proz" name="height_unit" value="%" {$height_unit_proz} /> %
@@ -53,23 +53,25 @@
     <fieldset>
         <legend>{translate('Additional options')}</legend>
         {foreach $settings as set}{assign "$set.name" val}
-        {if ! isset($set.requires} || isset($plugins_checked[$set.requires])}
-        <label for="{$set.name}">{$set.name}</label>
-            <span class="settings">
-            {if $set.type == 'boolean'}
-            <input type="radio" name="{$set.name}" value="true" {if $config.$val == 'true' || ( $config.$val == '' && $set.default == 'true' )}checked="checked"{/if} /> true
-            <input type="radio" name="{$set.name}" value="false" {if $config.$val == 'false' || ( $config.$val == '' && $set.default == 'false' )}checked="checked"{/if} /> false
-            {else}
-            {if $set.type == 'select'}{assign $set.options options}
-            <select name="{$set.name}" id="{$set.name}">
-            {foreach $options as opt}<option value="{$opt}"{if $opt == $config.$val} selected="selected"{/if}>{$opt}</option>{/foreach}
-            </select>
-          {else}
-            <input type="text" name="{$set.name}" value="{if $config.$val == ''}{$set.default}{else}{$config.$val}{/if}" />
-            {/if}{/if}
-            </span>
-            <span class="infotext">{translate($set.name)}</span><br />
-        {/if}
+        {if $set.type == 'legend'}<div class="legend" id="{$set.name}">{$set.label}</div>
+        {elseif $set.type == 'infotext'}<div class="info">{$set.label}</div>
+        {else}
+            {if ! isset($set.requires} || isset($plugins_checked[$set.requires])}
+            <label for="{$set.name}" title="{translate($set.name)}">{translate($set.label)}</label>{if isset($set.help)}<a class="tooltip" href="#"><span class="icon icon-info"></span></a><div class="tooltiptext">{translate($set.help)}</div>{else}<span style="display:inline-block;width:21px;"></span>{/if}
+                <span class="settings">
+                    {if $set.type == 'boolean'}
+                    <input type="radio" name="{$set.name}" value="true" {if $config.$val == 'true' || ( $config.$val == '' && $set.default == 'true' )}checked="checked"{/if} /> true
+                    <input type="radio" name="{$set.name}" value="false" {if $config.$val == 'false' || ( $config.$val == '' && $set.default == 'false' )}checked="checked"{/if} /> false
+                    {else}
+                    {if $set.type == 'select'}{assign $set.options options}
+                    <select name="{$set.name}" id="{$set.name}">
+                    {foreach $options as opt}<option value="{$opt}"{if $opt == $config.$val} selected="selected"{/if}>{$opt}</option>{/foreach}
+                    </select>
+                  {else}
+                    <input type="text" name="{$set.name}" value="{if $config.$val == ''}{$set.default}{else}{$config.$val}{/if}" />
+                    {/if}{/if}
+                </span><br />
+            {/if}{* inner *}{/if}{* type legend *}
         {/foreach}
     </fieldset>
     {/if}
@@ -78,7 +80,7 @@
     <fieldset id="plugins">
         <legend>{translate('Additional plugins')}</legend>
         {foreach $plugins as plugin}
-        <input type="checkbox" name="plugins[]" id="plugins" value="{$plugin}" {if isset($plugins_checked[$plugin])}checked="checked"{/if}/> {$plugin}<br />
+        <input type="checkbox" name="plugins[]" id="plugins_{$plugin}" value="{$plugin}" {if isset($plugins_checked[$plugin])}checked="checked"{/if}/> {$plugin}<br />
         {/foreach}
     </fieldset>
     {/if}

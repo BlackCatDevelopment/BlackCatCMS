@@ -975,9 +975,9 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                         if ( $remove_zip_on_error )
                             CAT_Helper_Directory::removeDirectory( $zipfile );
                         if ( !$silent )
-                            self::printError( 'Already installed' );
+                            self::printError( 'Same or newer version already installed' );
                         else
-                            self::$error = 'already installed';
+                            self::$error = 'Same or newer version already installed (installed: '.$previous_info['module_version'].'; to install: '.$addon_info['module_version'].')';
                         return false;
                     }
                 }
@@ -1740,10 +1740,16 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             }
         } // end function checkInfo()
 
+        /**
+         * returns the last error
+         *
+         * @access public
+         * @return string
+         **/
         public static function getError()
         {
             return self::getInstance()->lang()->translate( self::$error );
-        }
+        }   // end function getError()
 
         /**
          * find available libraries; path names must begin with 'lib_'

@@ -605,7 +605,7 @@ if (!class_exists('CAT_Helper_Page'))
          * @access public
          * @return
          **/
-        public static function getExtraHeaderFiles($page_id=NULL)
+        public static function getExtraHeaderFiles($page_id=NULL,$db_only=false)
         {
             $data = array(); //'js'=>array(),'css'=>array(),'code'=>''
             $q    = 'SELECT * FROM `:prefix:pages_headers` WHERE `page_id`=:page_id';
@@ -622,6 +622,36 @@ if (!class_exists('CAT_Helper_Page'))
                 $data['use_core'] = $row['use_core'];
                 $data['use_ui']   = $row['use_ui'];
             }
+            if($db_only) return $data;
+            // add jQuery plugins
+            $data['jquery_plugins'] = CAT_Helper_Directory::getInstance()
+                                    ->maxRecursionDepth(0)
+                                    ->scanDirectory(CAT_PATH.'/modules/lib_jquery/plugins',false,false,CAT_PATH.'/modules/lib_jquery/plugins/');
+            $data['js_files']       = CAT_Helper_Directory::getInstance()
+                                    ->maxRecursionDepth(5)
+                                    ->setSuffixFilter(array('js'))
+                                    ->scanDirectory(CAT_PATH.'/modules/lib_jquery/plugins',true,true,CAT_PATH.'/modules/lib_jquery/plugins');
+            $data['css_files']      = CAT_Helper_Directory::getInstance()
+                                    ->maxRecursionDepth(5)
+                                    ->setSuffixFilter(array('css'))
+                                    ->scanDirectory(CAT_PATH.'/modules/lib_jquery/plugins',true,true,CAT_PATH.'/modules/lib_jquery/plugins');
+
+            // add WYSIWYG editor CSS files
+            if(defined('WYSIWYG_EDITOR') && WYSIWYG_EDITOR != '')
+            {
+                $cfg_file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
+                if(file_exists($cfg_file))
+                {
+                    require $cfg_file;
+                    $c = new c_editor();
+                    $css = $c->getFrontendCSS();
+                    if(count($css))
+                    {
+                        $data['wysiwyg_files'] = $css;
+                    }
+                }
+            }
+
             return $data;
         }   // end function getExtraHeaderFiles()
 
@@ -639,20 +669,30 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function adminAddHeaderComponent($type,$file,$page_id=NULL)
         {
-            $data = self::getExtraHeaderFiles($page_id);
+            $data = self::getExtraHeaderFiles($page_id,true);
+            $self = self::getInstance();
             if(isset($data[$type]) && is_array($data[$type]) && count($data[$type]) && in_array($file,$data[$type]))
             {
                 return array(
                     'success' => false,
-                    'message' => $val->lang()->translate('The file is already listed')
+                    'message' => $self->lang()->translate('The file is already listed')
                 );
             }
             else
             {
                 $paths = array(
                     CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_jquery/plugins/'),
-                    CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/ckeditor4/ckeditor/plugins/')
                 );
+                if(defined('WYSIWYG_EDITOR') && WYSIWYG_EDITOR != '')
+                {
+                    $cfg_file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
+                    if(file_exists($cfg_file))
+                    {
+                        require $cfg_file;
+                        $c        = new c_editor();
+                        array_push($paths, CAT_Helper_Directory::sanitizePath($c->getPluginsPath()));
+                    }
+                }
                 foreach($paths as $path)
                 {
                     if(file_exists($path.$file))
@@ -676,6 +716,7 @@ if (!class_exists('CAT_Helper_Page'))
                         $q = 'INSERT INTO `:prefix:pages_headers` ( `page_id`, :field: ) VALUES ( :page_id, :value )';
                     }
                     self::getInstance(1)->db()->query($q,$params);
+
                     return array(
                         'success' => ( self::getInstance(1)->isError() ? false                  : true ),
                         'message' => ( self::getInstance(1)->isError() ? self::getInstance(1)->getError() : 'ok' )
@@ -685,7 +726,7 @@ if (!class_exists('CAT_Helper_Page'))
             }
             return array(
                 'success' => false,
-                'message' => $val->lang()->translate('Unable to add the file').' '.$file,
+                'message' => $self->lang()->translate('Unable to add the file').' '.$file,
             );
         }   // end function adminAddHeaderComponent()
 
@@ -2605,6 +2646,13 @@ frontend.css and template.css are added in _get_css()
             if (!file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_jquery/plugins/'.$item)))
             {
                 $dir = pathinfo($item,PATHINFO_FILENAME);
+                if (file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_jquery/plugins/'.$dir.'/'.$item)))
+                {
+                    $item = $dir.'/'.$item;
+                    return $item;
+                }
+                // minimized?
+                $item = pathinfo($item,PATHINFO_FILENAME).'.min.js';
                 if (file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_jquery/plugins/'.$dir.'/'.$item)))
                 {
                     $item = $dir.'/'.$item;

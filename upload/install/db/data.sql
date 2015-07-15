@@ -38,6 +38,8 @@ INSERT INTO `cat_settings` (name, value) VALUES
     ('home_folders', 'true'),
     ('homepage_redirection', 'false'),
     ('initial_page', 'false'),
+    ('intro_forward_by', 'disabled'),
+    ('intro_forward_by_domain_settings', ''),
     ('intro_page', 'false'),
     ('maintenance_mode', 'true'),
     ('maintenance_page', '3'),

@@ -27,7 +27,7 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
     @include dirname(__FILE__).'/../Object.php';
 }
 
-include CAT_PATH.'/modules/lib_wblib/wblib/wbList.php';
+require_once CAT_PATH.'/modules/lib_wblib/wblib/wbList.php';
 
 if ( ! class_exists( 'CAT_Helper_Menu', false ) )
 {
@@ -42,40 +42,37 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
 			= array(
                  'loglevel'             => 8,
 			);
-
-        /**
-         * map menu options (globals) to wbList keys
-         **/
-        private static $_lbmap = array(
-            'prefix'     => 'css_prefix',
-            'first'      => 'first_li_class',
-            'last'       => 'last_li_class',
-            'child'      => 'has_child_li_class',
-            'current'    => 'current_li_class',
-            'open'       => 'is_open_li_class',
-            'closed'     => 'is_closed_li_class',
-            'list-class' => 'ul_class',
-            'ul-class'   => 'ul_class', // alias
-            // this one will be handled different, as it is not a global
-            'list-id'    => 'ul_id',
-            'ul-id'      => 'ul_id',    // alias
-        );
-
-        /**
-         * wbList accessor
-         **/
-        private static $list = NULL;
-
         /**
          * holds local instance
          **/
         private static $instance;
+        /**
+         * wbList accessor
+         **/
+        private static $list            = NULL;
+        /**
+         * this maps SM2 classes to wbList settings
+         **/
+        private static $sm2_classes     = array(
+            'menu-current' => 'current_li_class',
+            'menu_current' => 'current_li_class',
+        );
+        /**
+         * this maps some settings to shorter aliases
+         **/
+        private static $alias_map       = array(
+            'prefix'       => 'css_prefix',
+            'first'        => 'first_li_class',
+            'last'         => 'last_li_class',
+            'child'        => 'has_child_li_class',
+            'current'      => 'current_li_class',
+            'open'         => 'is_open_li_class',
+            'closed'       => 'is_closed_li_class',
+        );
 
         /**
-         * menu number (if a template has several menus)
+         * create a singular instance (for object oriented use)
          **/
-        private static $menu_no = NULL;
-
         public static function getInstance($reset=false)
         {
             if (!self::$instance)
@@ -87,6 +84,9 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
             return self::$instance;
         }   // end function getInstance()
 
+        /**
+         * for object oriented use
+         **/
         public function __call($method, $args)
             {
             if ( ! isset($this) || ! is_object($this) )
@@ -103,247 +103,188 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
          **/
         public static function init_list()
         {
-            if(!is_object(self::$list))
-                self::$list = \wblib\wbList::getInstance(
-                    array(
-                        '__id_key'    => 'page_id',
-                        '__title_key' => 'menu_title',
-                        'create_level_css' => 'false',
-                    )
-                );
+            if(!is_object(self::$list)) {
+                self::$list = \wblib\wbList::getInstance();
+            }
+            // reset list to defaults
+            self::$list->reset();
+            self::$list->set(
+                array(
+                    '__id_key'         => 'page_id',
+                    '__title_key'      => 'menu_title',
+                    '__current_key'    => 'is_current',
+                    'create_level_css' => false,
+                )
+            );
             return self::$list;
         }    // end function init_list()
 
         /**
-         * Create a breadcrumb (path to current list item)
+         * creates a breadcrumb menu (path to current page)
          *
          * @access public
-         * @param  integer $id           - page ID
-         * @param  integer $max_level    - max. level to show, default 999
-         * @param  boolean $show_current - wether to include current page, default false
-         * @param  array   $options      - optional array of additional options
-         * @return string  HTML
+         * @param  integer  $pid     - page_id
+         * @param  array    $options - optional
+         * @return string
          **/
-        public static function breadcrumbMenu($id=NULL,$max_level=999,$show_current=false,array &$options = array())
+        public static function breadcrumbMenu(array &$options = array())
         {
-            global $page_id;
-            if($id===NULL) $id = $page_id;
-            if($id===0)    $id = CAT_Helper_Page::getRootParent($page_id);
-            self::analyzeOptions($options);
+            self::checkPageId($pid);
+            self::checkOptions($options);
+            $self = self::getInstance();
+            $self->log()->LogDebug(sprintf('create a breadcrumbMenu for page with id [%s]',$pid));
+            $self->log()->LogDebug('options:',$options);
             $menu       = array();
-            $level      = CAT_Helper_Page::properties($id,'level');
-            $level_diff = self::analyzeLevel($id,$max_level);
-            $subpages   = array_reverse(CAT_Helper_Page::getPageTrail($id,false,true));
-
+            // get the level of the current page
+            $level    = CAT_Helper_Page::properties($pid,'level');
+            // get the path
+            $subpages = array_reverse(CAT_Helper_Page::getPageTrail($pid,false,true));
+            // add the pages to the menu
             foreach($subpages as $id)
             {
                 $pg = CAT_Helper_Page::properties($id);
-                if ( $max_level !== 999 && $pg['level'] < $max_level )
-                    break;
                 $menu[] = $pg;
             }
-
-            $root_id = ( $pg['level'] > 0 ? $pg['page_id'] : 0 );
-            // use wbList to create the menu
-            //return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($menu,$root_id);
-            return self::$list->buildList($menu,array('root_id'=>$root_id));
+            // check if the current page should be shown
+            if(!isset($options['show_current']) || !$options['show_current'])
+                array_shift($menu); // remove last item = current page
+            $self->log()->LogDebug('pages:',$menu);
+            // set root id to the root parent to make the listbuilder work
+            $options['root_id'] = CAT_Helper_Page::getRootParent($pid);
+            // return the menu
+            return self::$list->buildList($menu,$options);
         }   // end function breadcrumbMenu()
         
         /**
          * creates a full menu with all visible pages (like a sitemap)
          *
          * @access public
-         * @return
+         * @param  integer  $menu_number - default NULL means all pages
+         * @param  array    $options     - optional
+         * @return string
          **/
-        public static function fullMenu(array &$options = array())
+        public static function fullMenu($menu_number=NULL,array &$options = array())
         {
-            global $page_id;
-            $ul_id      = self::analyzeOptions($options);
-            $self       = self::getInstance();
-            $pages      = self::$menu_no
-                        ? CAT_Helper_Page::getPagesForMenu(self::$menu_no)
-                        : CAT_Helper_Page::getPages()
-                        ;
-            // if the current page is the root page and it's visibility is 'hidden'...
-            if(CAT_Helper_Page::properties($page_id,'level') == 0 && !CAT_Helper_Page::isVisible($page_id))
-            {
-                // filter out the current page
-                CAT_Helper_Array::ArrayFilterByKey($pages,'page_id',$page_id);
-                $page    = reset($pages);
-                $page_id = $page['page_id'];
-            }
-            // get the current parent as root page
-            $root_id = CAT_Helper_Page::properties($page_id,'parent');
-            return self::$list->buildList($pages,array('root_id'=>$root_id,'selected'=>$page_id,'ul_id'=>$ul_id));
+            $pid = NULL;
+            self::checkPageId($pid);
+            self::checkOptions($options);
+            $menu = $menu_number
+                  ? CAT_Helper_Page::getPagesForMenu($menu_number)
+                  : CAT_Helper_Page::getPages()
+                  ;
+            $options['root_id'] = CAT_Helper_Page::getRootParent($pid);
+            return self::$list->buildList($menu,$options);
         }   // end function fullMenu()
 
         /**
-         * creates a sub menu for given page_id (children of that page)
+         * creates a siblings menu for given page_id (pages on same level)
          *
-         * $max_level may be:
-         *   + absolute maximal level to be shown (i.e. '7')
-         *     example: level for $page_id is 5, $max_level is 7 = show 2 levels
-         *   + relative level to be shown (i.e. '+2')
-         *     example: level for $page_id is 5, $max_level is '+3' = show 3 levels
+         * the menu number is derived from the given page
          *
          * @access public
-         * @param  integer $id           - parent page; default: current page
-         * @param  mixed   $max_level    - see above; default: 999 (unlimited)
-         * @param  boolean $show_current - show current page in the menu; default: false
-         * @return string  HTML
+         * @param  integer  $pid     - page id
+         * @param  array    $options - optional
+         * @return string
          **/
-        public static function subMenu($id=NULL,$max_level=999,$show_current=false,array &$options = array())
+        public static function siblingsMenu($pid=NULL,array &$options = array())
         {
-            global $page_id;
-            if($id===NULL) $id = $page_id;
-            if($id===0)    $id = CAT_Helper_Page::getRootParent($page_id);
-            self::analyzeOptions($options);
-
-            $self       = self::getInstance();
-            $menu       = array();
-            $level_diff = self::analyzeLevel($id,$max_level);
-
-            $self->log()->LogDebug(sprintf('levels to show [%d]',$level_diff));
-
-            if($level_diff==1)
-                $subpages = CAT_Helper_Page::getPagesByParent($id);
-            else
-                $subpages = CAT_Helper_Page::getSubPages($id);
-
-            // if there's only one sub page and it's invisible, skip to next level
-            if(count($subpages)==1)
+            self::checkPageId($pid);
+            self::checkOptions($options);
+            $self = self::getInstance();
+            $self->log()->LogDebug(sprintf('create a siblingsmenu for page with id [%s]',$pid));
+            $self->log()->LogDebug('options:',$options);
+            // get the menu number
+            $menu_no  = CAT_Helper_Page::properties($pid,'menu');
+            // get the level of the current/given page
+            $level    = CAT_Helper_Page::properties($pid,'level');
+            // pages
+            $menu     = CAT_Helper_Page::getPagesForLevel($level,$menu_no);
+            $self->log()->LogDebug('pages:',$menu);
+            // set root id to the parent page to make the listbuilder work
+            $options['root_id'] = CAT_Helper_Page::properties($pid,'parent');
+            // return the menu
+            return self::$list->buildList($menu,$options);
+        }   // end function siblingsMenu()
+        
+        /**
+         * creates a sub menu for given page_id (children of that page)
+         *
+         * @access public
+         * @param  integer  $pid     - page id
+         * @param  array    $options - optional
+         * @return string
+         **/
+        public static function subMenu($pid=NULL,array &$options = array())
+        {
+            self::checkPageId($pid);
+            self::checkOptions($options);
+            // get the pages
+            $pages = CAT_Helper_Page::getSubPages($pid);
+            // add current page to menu
+            $menu  = array(CAT_Helper_Page::properties($pid));
+            if(isset($options['levels']))
             {
-                // we have to check for 'hidden' here because isVisible() will
-                // return true for this case if given page is current page
-                if(!CAT_Helper_Page::isVisible($subpages[0]) || CAT_Helper_Page::properties($subpages[0],'visibility') == 'hidden')
-                {
-                    return self::subMenu($subpages[0],$max_level,$show_current,$options);
-                }
+                $maxlevel = $menu[0]['level'] + $options['levels'];
+                if(!$maxlevel) $maxlevel = 1;
+                self::$list->set('maxlevel',$maxlevel);
             }
-
-            foreach($subpages as $sid)
+            // add the pages
+            foreach($pages as $sid)
                 $menu[] = CAT_Helper_Page::properties($sid);
-
-            // use ListBuilder to create the menu
-            //return CAT_Helper_ListBuilder::getInstance()->config('__auto_link',true)->tree($menu,$id);
-            return self::$list->buildList($menu,array('root_id'=>$id));
+            // set the root id to the current page
+            $options['root_id'] = $pid;
+            // return the menu
+            return self::$list->buildList($menu,$options);
         }   // end function subMenu()
 
         /**
-         * creates a menu of siblings for given page_id
+         * analyzes the passed options and converts them for wbList
+         * initializes wbList with the given options
          *
-         * @access public
-         * @param  integer $page_id
-         * @return string
+         * @access protected
+         * @param  array     $options
+         * @return void
          **/
-        public static function siblingsMenu($id=NULL,$max_level=999,$show_current=false,array &$options = array())
+        protected static function checkOptions(array &$options = array())
         {
-            global $page_id;
-            if($id===NULL) $id = $page_id;
-            if($id===0)    $id = CAT_Helper_Page::getRootParent($page_id);
-            self::analyzeOptions($options);
-            $level    = CAT_Helper_Page::properties($id,'level');
-            $menu     = CAT_Helper_Page::getPagesForLevel($level,self::$menu_no);
-            $selected = $id;
-            $parent   = CAT_Helper_Page::properties($id,'parent');
-            // if current page is not in the menu...
-            if(!self::isInMenu($id,$menu))
-            {
-                $trail = CAT_Helper_Page::getPageTrail($page_id,false,true);
-                foreach($trail as $id)
-                {
-                    if(false!==($i=self::isInMenu($id,$menu)))
-                    {
-                        $menu[$i]['is_open']    = true;
-                        $menu[$i]['is_current'] = true;
-                        $selected = $menu[$i]['page_id'];
-                        break;
-                    }
-                }
-            }
-            //return CAT_Helper_ListBuilder::getInstance(false)->config(array('__auto_link' => true))->tree($menu,0,$selected);
-            return self::$list->buildList($menu,array('root_id'=>$parent,'selected'=>$selected));
-        }   // end function siblingsMenu()
-
-        /**
-         *
-         * @access private
-         * @return
-         **/
-        private static function isInMenu($id,&$menu)
-        {
-            $found   = false;
-            foreach($menu as $i => $item)
-            {
-                if($item['page_id']===$id)
-                {
-                    $found = $i;
-                    break;
-                }
-            }
-            return $found;
-        }   // end function isInMenu()
-        
-
-        /**
-         * analyzes the given options and configures the ListBuilder
-         *
-         * @access private
-         * @param  array   $options
-         * @return object
-         **/
-        private static function analyzeOptions(array &$options = array())
-        {
-            $fixed         = array(); // reset temp array
-            $lbopt         = array(); // reset list builder options
-            self::$menu_no = NULL;    // reset current menu number
+            $lbopt = array();
             while ( $opt = array_shift($options) )
             {
                 if(preg_match('~^(.+?)\:$~',$opt,$m))
                 {
+                    $key   = $m[1];
                     $value = array_shift($options);
-                    $fixed[$m[1]] = $value;
+                    if(array_key_exists($key,self::$sm2_classes))
+                        $key = self::$sm2_classes[$key];
+                    if(array_key_exists($key,self::$alias_map))
+                        $key = self::$alias_map[$key];
+                    $lbopt[str_replace('-','_',$key)] = $value;
                     continue;
                 }
                 list($key,$value) = explode( ':', $opt );
-                $fixed[$key] = $value;
+                if(array_key_exists($key,self::$sm2_classes))
+                    $key = self::$sm2_classes[$key];
+                if(array_key_exists($key,self::$alias_map))
+                    $key = self::$alias_map[$key];
+                $lbopt[str_replace('-','_',$key)] = $value;
             }
-            foreach($fixed as $key => $value)
-            {
-                if($key=='menu')
-                {
-                    self::$menu_no = $value;
-                    continue;
-                }
-                if(isset(self::$_lbmap[$key]))
-                {
-                    $lbopt[self::$_lbmap[$key]] = $value;
-                }
-            }
-            // pass options to Listbuilder
             self::init_list()->set($lbopt);
-            return isset($lbopt['ul_id']) ? $lbopt['ul_id'] : NULL;
-        }   // end function analyzeOptions()
-        
+            $options = $lbopt;
+        }   // end function checkOptions()
+
         /**
+         * makes sure that we have a valid page id; the visibility does not
+         * matter here
          *
-         * @access private
-         * @return
+         * @access protected
+         * @param  integer   $id (reference!)
+         * @return void
          **/
-        private static function analyzeLevel($page_id,$max_level=999)
+        protected static function checkPageId(&$pid=NULL)
         {
-            $level = CAT_Helper_Page::properties($page_id,'level');
-            // figure out max depth to show
-            if( $max_level!==999 )
-            {
-                // handle '+X' $max_level value
-                if( preg_match('~^\+(\d+)$~',$max_level,$m) )
-                    $max_level  = $level + $m[1];
-                    return ( $max_level - $level );
-            }
-            return 999;
-        }   // end function analyzeLevel()
-        
-        
+            global $page_id;
+            if($pid===NULL) $pid = $page_id;
+            if($pid===0)    $pid = CAT_Helper_Page::getRootParent($page_id);
+        }   // end function checkPageId()
     }
 }

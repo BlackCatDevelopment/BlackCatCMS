@@ -15,15 +15,17 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2015, Black Cat Development
  *   @link            http://www.blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         lib_dwoo
  *
- *   Usage: cat_levelmenu(<PAGE_ID>)
+ *   Usage: cat_siblingsmenu(<PAGE_ID>[, option: value, option: value, ... ])
  *
  *   Shows a menu of siblings of <PAGE_ID>
+ *
+ *   Please note: The interface (=how to call this) changed with BC v1.2!
  *
  */
 
@@ -50,9 +52,5 @@ function Dwoo_Plugin_cat_siblingsmenu() {
     array_shift($attr);
     // second attr is $page_id
     $page_id = array_shift($attr);
-    // third attr is the max depth
-    $max_level = array_shift($attr);
-    // fourth is a boolean
-    $show_parent = array_shift($attr);
-    return CAT_Helper_Menu::siblingsMenu($page_id,$max_level,$show_parent,$attr);
+    return CAT_Helper_Menu::siblingsMenu($page_id,$attr);
 }

@@ -151,17 +151,11 @@ switch($region)
         $tpl_data['use_ui']               = isset($files['use_ui'])   ? $files['use_ui']   : NULL;
         $tpl_data['page_js']              = isset($files['js'])  ? $files['js']  : '';
         $tpl_data['page_css']             = isset($files['css']) ? $files['css'] : '';
-        $tpl_data['jquery_plugins']       = CAT_Helper_Directory::getInstance()
-                                            ->maxRecursionDepth(0)
-                                            ->scanDirectory(CAT_PATH.'/modules/lib_jquery/plugins',false,false,CAT_PATH.'/modules/lib_jquery/plugins/');
-        $tpl_data['js_files']             = CAT_Helper_Directory::getInstance()
-                                            ->maxRecursionDepth(5)
-                                            ->setSuffixFilter(array('js'))
-                                            ->scanDirectory(CAT_PATH.'/modules/lib_jquery/plugins',true,true,CAT_PATH.'/modules/lib_jquery/plugins');
-        $tpl_data['css_files']            = CAT_Helper_Directory::getInstance()
-                                            ->maxRecursionDepth(5)
-                                            ->setSuffixFilter(array('css'))
-                                            ->scanDirectory(CAT_PATH.'/modules/lib_jquery/plugins',true,true,CAT_PATH.'/modules/lib_jquery/plugins');
+        // header files
+        $tpl_data['wysiwyg_files']        = isset($files['wysiwyg_files'])  ? $files['wysiwyg_files']  : NULL;
+        $tpl_data['jquery_plugins']       = isset($files['jquery_plugins']) ? $files['jquery_plugins'] : NULL;
+        $tpl_data['js_files']             = isset($files['js_files'])       ? $files['js_files']       : NULL;
+        $tpl_data['css_files']            = isset($files['css_files'])      ? $files['css_files']      : NULL;
         break;
 
 }

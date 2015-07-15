@@ -40,13 +40,7 @@ define('THEME_PATH', WB_PATH.'/templates/'.DEFAULT_THEME);
 define('LEPTON_SERVER_ADDR', CAT_SERVER_ADDR );
 define('LEPTON_PATH', CAT_PATH);
 define('LEPTON_URL', WB_URL);
-define('TABLE_PREFIX', CAT_TABLE_PREFIX );
-define('DB_TYPE', CAT_DB_TYPE);
-define('DB_HOST', CAT_DB_HOST);
-define('DB_PORT', CAT_DB_PORT);
-define('DB_USERNAME', CAT_DB_USERNAME);
-define('DB_PASSWORD', CAT_DB_PASSWORD);
-define('DB_NAME', CAT_DB_NAME);
+define('TABLE_PREFIX', CAT_TABLE_PREFIX);
 define('WB_PREPROCESS_PREG', '/\[wblink([0-9]+)\]/isU' );
 define('WBMAILER_DEFAULT_SENDERNAME', CATMAILER_DEFAULT_SENDERNAME );
 // define WB_VERSION for backward compatibility

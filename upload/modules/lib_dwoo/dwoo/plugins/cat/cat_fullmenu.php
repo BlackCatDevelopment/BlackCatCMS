@@ -15,15 +15,19 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2015, Black Cat Development
  *   @link            http://www.blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         lib_dwoo
  *
- *   Usage: cat_levelmenu(<PAGE_ID>)
+ *   Usage: cat_fullmenu(<MENU_NUMBER>[, option: value, option: value, ... ])
  *
- *   Shows a menu of siblings of <PAGE_ID>
+ *   Shows all visible pages of the given menu; if no menu number ist passed
+ *   (you can use NULL if you need to pass additional options) the menu will
+ *   contain _all_ visible pages
+ *
+ *   Please note: The interface (=how to call this) changed with BC v1.2!
  *
  */
 
@@ -46,6 +50,9 @@ if (defined('CAT_PATH')) {
 
 function Dwoo_Plugin_cat_fullmenu(Dwoo $dwoo) {
     $attr = func_get_args();
-    array_shift($attr); // first attr is $Dwoo
-    return CAT_Helper_Menu::fullMenu($attr);
+    // first attr is $Dwoo
+    array_shift($attr);
+    // second attr is menu number
+    $menu_number = array_shift($attr);
+    return CAT_Helper_Menu::fullMenu($menu_number,$attr);
 }

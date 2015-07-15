@@ -102,9 +102,9 @@
         {foreach $css_files dir}<option value="{$dir}">{$dir}</option>{/foreach}
         </optgroup>
         {/if}
-        {if $ckeditor_files}
-        <optgroup label="{translate('CKEditor Plugins')}">
-        {foreach $ckeditor_files dir}<option value="{$dir}">{$dir}</option>{/foreach}
+        {if $wysiwyg_files}
+        <optgroup label="{translate('WYSIWYG Editor Plugins')}">
+        {foreach $wysiwyg_files dir}<option value="{$dir}">{$dir}</option>{/foreach}
         </optgroup>
         {/if}
         </select>

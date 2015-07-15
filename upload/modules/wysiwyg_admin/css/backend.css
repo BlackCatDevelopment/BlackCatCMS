@@ -1,69 +1,16 @@
-/**
- *
- *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
- *   @link            http://blackcat-cms.org
- *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Modules
- *   @package         wysiwyg_admin
- *
- */
-
-form#wysiwyg_admin {
-    margin: 5px;
-}
-form#wysiwyg_admin fieldset,
-form#wysiwyg_admin .buttons {
-    border: 1px solid #ccc;
-    padding: 5px;
-    margin: 5px;
-}
-form#wysiwyg_admin legend {
-    margin-left: 25px;
-    padding: auto 5px;
-    font-size: 1.2em;
-    font-weight: 900;
-}
-form#wysiwyg_admin label {
-    width: 200px;
-    display: inline-block;
-    text-align: right;
-    margin: 5px 5px;
-}
-form#wysiwyg_admin span.indent{
-    padding-left: 213px;
-    display: inline-block;
-}
-form#wysiwyg_admin input[type=text],
-form#wysiwyg_admin select,
-form#wysiwyg_admin .settings,
-form#wysiwyg_admin .error {
-    width: 200px;
-    display: inline-block;
-}
-form#wysiwyg_admin input,
-form#wysiwyg_admin select {
-    line-height: 1em !important;
-    min-height: 1em !important;
-}
-
-form#wysiwyg_admin #wysiwyg_admin_skin_preview {
-    float: right;
-}
-form#wysiwyg_admin .buttons{
-    border: 1px solid #ccc;
-}
-form#wysiwyg_admin .error {
-    margin-left: 210px;
-    color: #f00;
-}
-
-form#wysiwyg_admin fieldset#plugins {
-    width: 40%;
-    float: left;
-}
-form#wysiwyg_admin fieldset#filemanager label { text-align:left; margin: 0;}
-form#wysiwyg_admin fieldset#filemanager {
-    width: 40%;
-    float: left;
-}
+form#wysiwyg_admin{margin:5px;}
+form#wysiwyg_admin div.legend{border-bottom:1px solid #aaa;margin-top:10px;font-weight:900;}
+form#wysiwyg_admin fieldset,form#wysiwyg_admin .buttons{border:1px solid #ccc;padding:5px;margin:5px;}
+form#wysiwyg_admin legend{margin-left:25px;padding:auto 5px;font-size:1.2em;font-weight:900;}
+form#wysiwyg_admin label{width:200px;display:inline-block;text-align:right;margin:5px 5px;}
+form#wysiwyg_admin span.indent{padding-left:213px;display:inline-block;}
+form#wysiwyg_admin input[type=text],form#wysiwyg_admin select,form#wysiwyg_admin .settings,form#wysiwyg_admin .error{width:300px;}
+form#wysiwyg_admin input.small{width:50px;}
+form#wysiwyg_admin #wysiwyg_admin_skin_preview{float:right;}
+form#wysiwyg_admin .buttons{border:1px solid #ccc;}
+form#wysiwyg_admin .error{margin-left:210px;color:#f00;}
+form#wysiwyg_admin fieldset#plugins{width:40%;float:left;}
+form#wysiwyg_admin fieldset#filemanager label{text-align:left;margin:0;}
+form#wysiwyg_admin fieldset#filemanager{width:40%;float:left;}
+form#wysiwyg_admin div.tooltiptext{display:none;}
+form#wysiwyg_admin span.icon{vertical-align:top;margin-right:5px;}

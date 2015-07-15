@@ -59,13 +59,17 @@ $mod_headers = array(
 			array(
 				'media'		=> 'screen',
 				'file'		=> 'templates/freshcat/css/default/index.css'
-			)
+			),
+            array(
+				'media'		=> 'screen',
+				'file'		=> 'modules/lib_jquery/plugins/qtip2/qtip2.min.css'
+			),
 		),
 		'jquery' => array(
 			array(
 				'core'			=> true,
 				'ui'			=> true,
-				'all'			=> array ( 'jquery.highlight', 'jquery.cookies', 'tag-it', 'jquery.form' , 'jquery.livesearch' , 'jquery.smarttruncation', 'cattranslate' )
+				'all'			=> array ( 'jquery.highlight', 'jquery.cookies', 'tag-it', 'qtip2', 'jquery.form' , 'jquery.livesearch' , 'jquery.smarttruncation', 'cattranslate' )
 			)
 		),
 		'js' => array(

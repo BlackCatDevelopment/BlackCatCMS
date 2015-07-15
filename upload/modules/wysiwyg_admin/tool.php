@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2014, Black Cat Development
+ *   @copyright       2014, 2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -79,6 +79,7 @@ $errors       = array();
 $width_unit   = $height_unit = '%';
 $width        = $c->getWidth($config);
 $height       = $c->getHeight($config);
+
 if(preg_match('~(\d+)(.*)~',$width,$match))
 {
     $width = $match[1];
@@ -90,14 +91,14 @@ if(preg_match('~(\d+)(.*)~',$height,$match))
     $height_unit = $match[2];
 }
 
-$skins        = $c->getSkins($c->getSkinPath());
-$current_skin = $c->getSkin($config);
-$settings     = $c->getAdditionalSettings();
-$plugins      = $c->getAdditionalPlugins();
-$filemanager  = $c->getFilemanager();
-$toolbars     = $c->getToolbars();
-$preview      = NULL;
-$plugins_checked = array();
+$skins               = $c->getSkins($c->getSkinPath());
+$current_skin        = $c->getSkin($config);
+$settings            = $c->getAdditionalSettings();
+$plugins             = $c->getAdditionalPlugins();
+$filemanager         = $c->getFilemanager();
+$toolbars            = $c->getToolbars();
+$preview             = NULL;
+$plugins_checked     = array();
 $filemanager_checked = array();
 
 $enable_htmlpurifier = ( isset($config['enable_htmlpurifier'])
@@ -107,14 +108,15 @@ $enable_htmlpurifier = ( isset($config['enable_htmlpurifier'])
 if(file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')))
 {
     $preview = '<img src="'
-             . sanitize_url(CAT_URL.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')
+             . $val->sanitize_url(CAT_URL.'/modules/'.WYSIWYG_EDITOR.'/images/'.$current_skin.'.png')
              . '" alt="'.$current_skin.'" title="'.$current_skin.'" />';
 }
 
 // something to save?
 $job = $val->sanitizePost('job');
 
-if ($job && $job=="save") {
+if ($job && $job=="save")
+{
     $new_width = $new_height = $new_skin = $new_toolbar = $new_plugins = $new_fm = NULL;
     // validate width and height
     foreach( array('width','height') as $key )
@@ -184,15 +186,17 @@ if ($job && $job=="save") {
     // check additionals
     if(count($settings))
     {
-        foreach($settings as $item)
+        for($i=count($settings)-1;$i>=0;$i--)
         {
-            if ( ! isset($_POST[$item['name']]) ) $_POST[$item['name']] = $item['default'];
+            // remove legends as they are not saved
+            $item = $settings[$i];
+            if($item['type'] == 'legend') unset($settings[$i]);
+            if ( ! isset($_POST[$item['name']]) && isset($item['default']) ) $_POST[$item['name']] = $item['default'];
             if ( $item['type'] == 'boolean' && ( $_POST[$item['name']] != 'true' && $_POST[$item['name']] != 'false' ) )
             {
                 $errors[$item['name']] = $backend->lang()->translate('Invalid boolean value!');
                 continue;
             }
-            
         }
     }
     // check plugins
@@ -239,6 +243,7 @@ if ($job && $job=="save") {
             'REPLACE INTO `:prefix:mod_wysiwyg_admin_v2` VALUES (?,?,?);',
             array(WYSIWYG_EDITOR,'enable_htmlpurifier',$enable_htmlpurifier)
         );
+
         // save additionals
         if(count($settings))
         {
@@ -314,31 +319,31 @@ $parser->setPath(dirname(__FILE__)."/templates/default");
 $parser->output(
     'tool',
     array(
-        'width_unit_em'    => '',
-        'width_unit_px'    => '',
-        'width_unit_proz'  => '',
-        'height_unit_em'   => '',
-        'height_unit_px'   => '',
-        'height_unit_proz' => '',
-        'action'           => CAT_ADMIN_URL.'/admintools/tool.php?tool=wysiwyg_admin',
-        'id'               => WYSIWYG_EDITOR,
-        'skins'            => $skins,
-        'toolbars'         => $toolbars,
-        'current_toolbar'  => $c->getToolbar($config),
-        'width'            => $width,
-        'height'           => $height,
-        'current_skin'     => $c->getSkin($config),
-        'preview'          => $preview,
-        'settings'         => $settings,
-        'config'           => $config,
-        'errors'           => $errors,
-        'plugins'          => $plugins,
-        'filemanager'      => $filemanager,
-        'plugins_checked'  => $plugins_checked,
+        'width_unit_em'       => '',
+        'width_unit_px'       => '',
+        'width_unit_proz'     => '',
+        'height_unit_em'      => '',
+        'height_unit_px'      => '',
+        'height_unit_proz'    => '',
+        'action'              => CAT_ADMIN_URL.'/admintools/tool.php?tool=wysiwyg_admin',
+        'id'                  => WYSIWYG_EDITOR,
+        'skins'               => $skins,
+        'toolbars'            => $toolbars,
+        'current_toolbar'     => $c->getToolbar($config),
+        'width'               => $width,
+        'height'              => $height,
+        'current_skin'        => $c->getSkin($config),
+        'preview'             => $preview,
+        'settings'            => $settings,
+        'config'              => $config,
+        'errors'              => $errors,
+        'plugins'             => $plugins,
+        'filemanager'         => $filemanager,
+        'plugins_checked'     => $plugins_checked,
         'filemanager_checked' => $filemanager_checked,
         'htmlpurifier'        => CAT_Helper_Addons::isModuleInstalled('lib_htmlpurifier'),
         'enable_htmlpurifier' => $enable_htmlpurifier,
-        'width_unit_'.($width_unit=='%'?'proz':$width_unit) => 'checked="checked"',
+        'width_unit_'. ($width_unit=='%' ?'proz':$width_unit)  => 'checked="checked"',
         'height_unit_'.($height_unit=='%'?'proz':$height_unit) => 'checked="checked"',
     )
 );

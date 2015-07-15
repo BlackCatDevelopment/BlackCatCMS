@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2014, Black Cat Development
+ *   @copyright       2014, 2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 $module_directory	= 'wysiwyg_admin';
 $module_name		= 'WYSIWYG Admin';
 $module_function	= 'tool';
-$module_version		= '2.1';
+$module_version		= '2.2';
 $module_platform	= '2.x';
 $module_author		= 'Black Cat Development';
 $module_license		= '<a href="http://www.gnu.org/licenses/" target="_blank">GNU GPL</a>';

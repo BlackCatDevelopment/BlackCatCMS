@@ -15,16 +15,19 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2015, Black Cat Development
  *   @link            http://www.blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         lib_dwoo
  *
- *   Usage: cat_submenu(<PAGE_ID>[, <max. depth>])
+ *   Usage: cat_submenu(<PAGE_ID>[, option: value, option: value, ... ])
  *
  *   Shows submenu for page <PAGE_ID> (children of that page)
- *   Optional max. depth allows to restrict number of sublevels zu be shown
+ *   If no page_id is given (set NULL if you need to pass additional options)
+ *   the current page will be used
+ *
+ *   Please note: The interface (=how to call this) changed with BC v1.2!
  *
  */
 
@@ -52,9 +55,5 @@ function Dwoo_Plugin_cat_submenu()
     array_shift($attr);
     // second attr is $page_id
     $page_id = array_shift($attr);
-    // third attr is the max depth
-    $max_level = array_shift($attr);
-    // fourth is a boolean
-    $show_parent = array_shift($attr);
-    return CAT_Helper_Menu::subMenu($page_id,$max_level,$show_parent,$attr);
+    return CAT_Helper_Menu::subMenu($page_id,$attr);
 }

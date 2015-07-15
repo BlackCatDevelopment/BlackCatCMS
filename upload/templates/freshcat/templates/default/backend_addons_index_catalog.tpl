@@ -37,13 +37,13 @@
             <td class="fc_addon_buttons">
                 <span class="fc_addon_directory" style="display:none;">{$addon.directory}</span>
                 {if ! $addon.is_installed && $permissions.MODULES_INSTALL == true}
-                <button class="fc_catalog_install fc_gradient1" style="width:85px;">{translate('Install')}</button>
+                <button class="fc_catalog_install fc_gradient1" style="min-width:85px;">{translate('Install')}</button>
                 {/if}
                 {if $addon.installed_data.update == true && $permissions.MODULES_INSTALL == true}
-                <button class="fc_catalog_update fc_gradient_blue" style="width:85px;">{translate('Update')}</button>
+                <button class="fc_catalog_update fc_gradient_blue" style="min-width:85px;">{translate('Update')}</button>
                 {/if}
                 {if $addon.is_removable && $addon.is_installed && $permissions.MODULES_UNINSTALL}
-                <button class="fc_catalog_uninstall fc_gradient_red" style="width:85px;">{translate('Uninstall')}</button>
+                <button class="fc_catalog_uninstall fc_gradient_red" style="min-width:85px;">{translate('Uninstall')}</button>
                 {/if}
             </td>
         </tr>

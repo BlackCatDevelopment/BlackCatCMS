@@ -45,88 +45,90 @@ if (true === $debug) {
 	error_reporting(E_ALL|E_STRICT);
 }
 
-abstract class c_editor_base
+if(!class_exists('c_editor_base',false))
 {
-
-    private $default_skin    = NULL;
-    private $default_toolbar = NULL;
-    private $default_height  = '250px';
-    private $default_width   = '100%';
-
-    abstract public function getFilemanagerPath();
-    abstract public function getSkinPath();
-    abstract public function getPluginsPath();
-    abstract public function getToolbars();
-    abstract public function getAdditionalSettings();
-    abstract public function getAdditionalPlugins();
-
-    private function get($name,&$config)
+    abstract class c_editor_base
     {
-        if(isset($config[$name]))
-        {
-            $val = $config[$name];
-#            unset($config[$name]);
-            return $val;
-        }
-    }
 
-    public function getFilemanager()
-    {
-        $fm_path = $this->getFilemanagerPath();
-        $d  = CAT_Helper_Directory::getInstance(1);
-        $fm = $d->maxRecursionDepth(1)->findFiles('info.php',$fm_path,$fm_path.'/');
-        $r  = array();
-        $d->maxRecursionDepth();
-        if ( is_array($fm) && count($fm) )
+        private $default_skin    = NULL;
+        private $default_toolbar = NULL;
+        private $default_height  = '250px';
+        private $default_width   = '100%';
+
+        abstract public function getFilemanagerPath();
+        abstract public function getSkinPath();
+        abstract public function getPluginsPath();
+        abstract public function getToolbars();
+        abstract public function getAdditionalSettings();
+        abstract public function getAdditionalPlugins();
+        abstract public function getFrontendCSS();
+
+        private function get($name,&$config)
         {
-            foreach( $fm as $file )
+            if(isset($config[$name]))
             {
-                $filemanager_name = $filemanager_dirname = $filemanager_version = $filemanager_sourceurl = $filemanager_registerfiles = $filemanager_include = NULL;
-                @include $fm_path.$file;
-                $r[$filemanager_dirname] = array(
-                    'name' => $filemanager_name,
-                    'version' => $filemanager_version,
-                    'url' => $filemanager_sourceurl,
-                    'inc' => $filemanager_include,
-                    'dir' => $filemanager_dirname,
-                );
+                $val = $config[$name];
+    #            unset($config[$name]);
+                return $val;
             }
         }
-        return $r;
-    }
 
-    public function getHeight(&$config)
-    {
-        $val = $this->get('height',$config);
-        return ( $val != '' ) ? $val : $this->default_height;
-    }
+        public function getFilemanager()
+        {
+            $fm_path = $this->getFilemanagerPath();
+            $d  = CAT_Helper_Directory::getInstance(1);
+            $fm = $d->maxRecursionDepth(1)->findFiles('info.php',$fm_path,$fm_path.'/');
+            $r  = array();
+            $d->maxRecursionDepth();
+            if ( is_array($fm) && count($fm) )
+            {
+                foreach( $fm as $file )
+                {
+                    $filemanager_name = $filemanager_dirname = $filemanager_version = $filemanager_sourceurl = $filemanager_registerfiles = $filemanager_include = NULL;
+                    @include $fm_path.$file;
+                    $r[$filemanager_dirname] = array(
+                        'name' => $filemanager_name,
+                        'version' => $filemanager_version,
+                        'url' => $filemanager_sourceurl,
+                        'inc' => $filemanager_include,
+                        'dir' => $filemanager_dirname,
+                    );
+                }
+            }
+            return $r;
+        }
 
-    public function getWidth(&$config)
-    {
-        $val = $this->get('width',$config);
-        return ( $val != '' ) ? $val : $this->default_width;
-    }
+        public function getHeight(&$config)
+        {
+            $val = $this->get('height',$config);
+            return ( $val != '' ) ? $val : $this->default_height;
+        }
 
-    public function getSkin(&$config)
-    {
-        $val = $this->get('skin',$config);
-        return ( $val != '' ) ? $val : $this->default_skin;
-    }
+        public function getWidth(&$config)
+        {
+            $val = $this->get('width',$config);
+            return ( $val != '' ) ? $val : $this->default_width;
+        }
 
-    public function getToolbar(&$config)
-    {
-        $val = $this->get('toolbar',$config);
-        return ( $val != '' ) ? $val : $this->default_toolbar;
-    }
+        public function getSkin(&$config)
+        {
+            $val = $this->get('skin',$config);
+            return ( $val != '' ) ? $val : $this->default_skin;
+        }
 
-    public function getSkins($skin_path)
-    {
-        $d = CAT_Helper_Directory::getInstance();
-        $d->setRecursion(false);
-        $skins = $d->getDirectories($skin_path,$skin_path.'/');
-        $d->setRecursion(true);
-        return $skins;
+        public function getToolbar(&$config)
+        {
+            $val = $this->get('toolbar',$config);
+            return ( $val != '' ) ? $val : $this->default_toolbar;
+        }
+
+        public function getSkins($skin_path)
+        {
+            $d = CAT_Helper_Directory::getInstance();
+            $d->setRecursion(false);
+            $skins = $d->getDirectories($skin_path,$skin_path.'/');
+            $d->setRecursion(true);
+            return $skins;
+        }
     }
 }
-
-?>
