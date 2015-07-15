@@ -1493,12 +1493,7 @@ function __do_install() {
 "define('CAT_BACKEND_FOLDER', 'backend');\n".
 "// *****************************************************************************\n".
 "define('CAT_BACKEND_PATH', CAT_BACKEND_FOLDER );\n".
-"define('CAT_DB_TYPE', 'mysql');\n".
-"define('CAT_DB_HOST', '".$config['database_host']."');\n".
-"define('CAT_DB_PORT', '".$config['database_port']."');\n".
-"define('CAT_DB_USERNAME', '".$config['database_username']."');\n".
-"define('CAT_DB_PASSWORD', '".$config['database_password']."');\n".
-"define('CAT_DB_NAME', '".$config['database_name']."');\n".
+"\n".
 "define('CAT_TABLE_PREFIX', '".$config['table_prefix']."');\n".
 "\n".
 "define('CAT_SERVER_ADDR', '".$server_addr."');\n".
@@ -1515,6 +1510,23 @@ function __do_install() {
 "// WB2/Lepton backward compatibility\n".
 "include_once CAT_PATH.'/framework/wb2compat.php';\n".
 "\n";
+
+    $db_config_content = "
+;<?php
+;die(); // For further security
+;/*
+
+[CAT_DB]
+TYPE=mysql
+HOST=".$config['database_host']."
+PORT=".$config['database_port']."
+USERNAME=".$config['database_username']."
+PASSWORD=".$config['database_password']."
+NAME=".$config['database_name']."
+
+;*/
+;?>
+";
 
     $config_filename = $cat_path.'/config.php';
     write2log('trying to create '.$config_filename);
@@ -1538,6 +1550,34 @@ function __do_install() {
                 $lang->translate(
                     "Cannot write to the configuration file ({{ file }})",
                     array( 'file' => $config_filename )
+                )
+            );
+        }
+        // Close file
+        fclose($handle);
+    }
+
+    // save database settings; we generate a file name here
+    $db_settings_file = $cat_path.'/framework/CAT/Helper/DB/'.$admin->createGUID('').'.bc.php';
+    write2log('trying to create '.$db_settings_file);
+    if(($handle = @fopen($db_settings_file, 'w')) === false) {
+        write2log('< [__do_install()] (cannot create database settings file)');
+        return array(
+            false,
+            $lang->translate(
+                "Cannot open the configuration file ({{ file }})",
+                array( 'file' => $db_settings_file )
+            )
+        );
+    } else {
+        if (fwrite($handle, $db_config_content, strlen($db_config_content) ) === FALSE) {
+            write2log('< [__do_install()] (cannot write to database settings file)');
+            fclose($handle);
+            return array(
+                false,
+                $lang->translate(
+                    "Cannot write to the configuration file ({{ file }})",
+                    array( 'file' => $db_config_content )
                 )
             );
         }
