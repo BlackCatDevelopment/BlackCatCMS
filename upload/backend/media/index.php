@@ -83,33 +83,49 @@ else {
 // ======================================== 
 // ! Get contents for the intitial folder   
 // ======================================== 
-$dir = scan_current_dir(CAT_PATH.'/'.$tpl_data['initial_folder']);
+$current_folder = CAT_PATH.'/'.$tpl_data['initial_folder'];
+$folders        = $dirh->setRecursion(false)
+                ->getDirectories($current_folder,$current_folder.'/');
+$files          = $dirh->setRecursion(false)
+                ->scanDirectory(
+                    $current_folder,
+                    true,                // $with_files
+                    true,                // $files_only
+                    $current_folder.'/', // $remove_prefix
+                    array_merge(         // $suffixes
+                        $allowed_img_types,
+                        explode('|',$tpl_data['allowed_file_types'])
+                    )
+                  );
 
 // ============================= 
 // ! Add folders to $tpl_data   
 // ============================= 
-if(isset($dir['path']) && is_array($dir['path']))
+if(is_array($folders) && count($folders))
 {
-    foreach($dir['path'] as $counter => $folder)
+    foreach(array_values($folders) as $folder)
     {
-        $tpl_data['folders'][$counter]['NAME'] = $folder;
+        $tpl_data['folders'][]['NAME'] = $folder;
     }
 }
 // ================================================ 
 // ! Add files and infos about them to $tpl_data   
 // ================================================ 
-if(isset($dir['filename']) && is_array($dir['filename']))
+if(is_array($files) && count($files))
 {
-    foreach($dir['filename'] as $counter => $file)
+    foreach(array_values($files) as $file)
     {
         $file_path                                   = $dirh->sanitizePath(CAT_PATH . $tpl_data['initial_folder'].'/'.$file);
-        $tpl_data['files'][$counter]['FILETYPE']     = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
-        $tpl_data['files'][$counter]['show_preview'] = ( in_array( strtolower($tpl_data['files'][$counter]['FILETYPE']), $allowed_img_types ) ) ? true : false;
-        $tpl_data['files'][$counter]['FILESIZE']     = $dirh->getSize($file_path,true);
-        $tpl_data['files'][$counter]['FILEDATE']     = date (CAT_DEFAULT_DATE_FORMAT, filemtime($file_path));
-        $tpl_data['files'][$counter]['FILETIME']     = date (CAT_DEFAULT_TIME_FORMAT, filemtime($file_path));
-        $tpl_data['files'][$counter]['FULL_NAME']    = $file;
-        $tpl_data['files'][$counter]['NAME']         = substr($file , 0 , -( strlen($tpl_data['files'][$counter]['FILETYPE'])+1 ) );
+        $file_type = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+        $tpl_data['files'][] = array(
+            'FILETYPE'     => $file_type,
+            'show_preview' => ( in_array($file_type,$allowed_img_types) ) ? true : false,
+            'FILESIZE'     => $dirh->getSize($file_path,true),
+            'FILEDATE'     => CAT_Helper_DateTime::getDateTime(filemtime($file_path)),
+            'FILETIME'     => CAT_Helper_DateTime::getDateTime(filemtime($file_path)),
+            'FULL_NAME'    => $file,
+            'NAME'         => pathinfo($file,PATHINFO_FILENAME)
+        );
     }
 }
 
@@ -130,5 +146,3 @@ $parser->output('backend_media_index', $tpl_data);
 // ! Print admin footer   
 // ====================== 
 $backend->print_footer();
-
-?>

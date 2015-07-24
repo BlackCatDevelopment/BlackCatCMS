@@ -103,6 +103,7 @@ if(!$users->get_permission($addon['directory'],$addon['type']))
 	exit();
 }
 
+// check permissions
 $tpl_data = array( 'permissions' => array() );
 
 // Insert permissions values
@@ -110,6 +111,8 @@ $tpl_data['permissions']['ADVANCED']          = $users->checkPermission('addons'
 $tpl_data['permissions']['MODULES_VIEW']      = $users->checkPermission('addons', 'modules_view')      ? true : false;
 $tpl_data['permissions']['MODULES_INSTALL']   = $users->checkPermission('addons', 'modules_install')   ? true : false;
 $tpl_data['permissions']['MODULES_UNINSTALL'] = $users->checkPermission('addons', 'modules_uninstall') ? true : false;
+// check module usage
+$tpl_data['usage'] = CAT_Helper_Addons::getModuleUsage($addon['directory']);
 
 // get header info
 $info = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$addon['type'].'s/'.$addon['directory'].'/info.php');

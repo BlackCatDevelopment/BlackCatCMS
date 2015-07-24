@@ -39,14 +39,45 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+$backend = CAT_Backend::getInstance('Addons', 'addons');
 // Check if user uploaded a file
 if (!isset($_FILES['userfile']) || $_FILES['userfile']['size'] == 0)
 {
+    if(isset($_FILES['userfile']) && isset($_FILES['userfile']['error']))
+    {
+        switch($_FILES['userfile']['error'])
+        {
+            case UPLOAD_ERR_INI_SIZE:
+                $error = 'File upload error (the uploaded file exceeds the upload_max_filesize directive in php.ini).';
+                break;
+            case UPLOAD_ERR_FORM_SIZE:
+                $error = 'File upload error (the uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form).';
+                break;
+            case UPLOAD_ERR_PARTIAL:
+                $error = 'File upload error (the uploaded file was only partially uploaded).';
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                $error = 'File upload error (no file was uploaded).';
+                break;
+            case @UPLOAD_ERR_NO_TMP_DIR:
+                $error = 'File upload error (missing a temporary folder).';
+                break;
+            case @UPLOAD_ERR_CANT_WRITE:
+                $error = 'File upload error (failed to write file to disk).';
+                break;
+            case @UPLOAD_ERR_EXTENSION:
+                $error = 'File upload error (file upload stopped by extension).';
+                break;
+            default:
+                $error = 'File upload error (unknown error code) ('.$this->file_src_error.')';
+                break;
+        }
+        $backend->print_error($error);
+    }
 	header("Location: index.php");
 	exit(0);
 }
 
-$backend = CAT_Backend::getInstance('Addons', 'addons');
 
 // Check if module dir is writable (doesn't make sense to go on if not)
 if ( !(is_writable(CAT_PATH.'/modules/') && is_writable(CAT_PATH.'/templates/') && is_writable(CAT_PATH.'/languages/')) )
