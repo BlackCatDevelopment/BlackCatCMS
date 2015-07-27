@@ -162,7 +162,7 @@ elseif($val->sanitizePost('order')!='')
 }
 elseif($val->sanitizePost('save')!='')
 {
-    $data = CAT_Helper_Page::getExtraHeaderFiles($page_id);
+    $data = CAT_Helper_Page::getExtraHeaderFiles($page_id,true);
     if(count($data))
         $q = 'UPDATE `:prefix:pages_headers` SET `use_core`=:use_core, `use_ui`=:use_ui WHERE `page_id`=:page_id';
     else

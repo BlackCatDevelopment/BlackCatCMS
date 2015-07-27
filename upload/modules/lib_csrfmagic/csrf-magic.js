@@ -91,7 +91,7 @@ CsrfMagic.prototype._updateProps = function() {
     }
 }
 CsrfMagic.process = function(base) {
-    if(typeof base == 'object') {
+    if(typeof base == 'object' && base != null) {
         base[csrfMagicName] = csrfMagicToken;
         return base;
     }

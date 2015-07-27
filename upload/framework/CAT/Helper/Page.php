@@ -1743,9 +1743,14 @@ frontend.css and template.css are added in _get_css()
         {
             if(!count(self::$pages)) self::getInstance();
             if(substr($path,0,1)!='/') $path = '/'.$path;
+            $path_without_suffix = str_replace('.'.pathinfo($path,PATHINFO_EXTENSION),'',$path);
             foreach(self::$pages as $pg)
-                if($pg['link']==$path)
+            {
+                if($pg['link']==$path || $pg['link']==$path_without_suffix)
+                {
                     return $pg['page_id'];
+                }
+            }
             return NULL;
         }   // end function getPageByPath()
 

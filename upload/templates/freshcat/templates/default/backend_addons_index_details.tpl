@@ -28,6 +28,16 @@
     			<div class="clear"></div>
     			<hr />
 			{/if}
+
+        {if count($usage)}
+            <div style="float:right;">
+                {translate('This module is used on the following pages')}:<br />
+                {foreach $usage item}
+                <a href="{$item.page_link}">{$item.menu_title}</a><br />
+                {/foreach}
+            </div>
+        {/if}
+
 			<p>
 			<span class="fc_label_200">{translate('Version')}:</span>{$addon.version}<br />
 			<span class="fc_label_200">{translate('Author')}:</span>{$addon.author}<br />
@@ -43,6 +53,7 @@
     			<hr />
     			<div class="clear_sp"></div>
 			{/if}
+        <br style="clear:right" />
 {/if}
 
 {if $permissions.MODULES_INSTALL && ! $addon.is_installed}

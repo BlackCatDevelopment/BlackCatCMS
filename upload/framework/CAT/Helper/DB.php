@@ -399,6 +399,9 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
                     $opt['DB_'.$key] = $value;
                 }
             }
+            // add table prefix
+            if(defined('TABLE_PREFIX'))
+                $opt['TABLE_PREFIX'] = TABLE_PREFIX;
             return $opt;
         }   // end function getConfig()
         
@@ -521,7 +524,7 @@ class CAT_PDOStatementDecorator
     }
     public function fetchRow($type=PDO::FETCH_ASSOC)
     {
-        return $this->pdo_stmt->fetch();
+        return $this->pdo_stmt->fetch($type);
     }
 }
 

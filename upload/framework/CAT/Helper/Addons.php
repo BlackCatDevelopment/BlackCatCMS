@@ -1084,28 +1084,22 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
                 case 'modules':
                     // check if the module is still in use
-                    $info = self::getInstance()->db()->query(
-                        "SELECT `section_id`, `page_id` FROM `:prefix:sections` WHERE module=:mod",
-                        array('mod'=>$addon_name)
-                    );
-                    if ( $info->rowCount() > 0 )
+                    $usage  = self::getModuleUsage($addon_name);
+                    if(count($usage))
                     {
                         $temp   = explode( ";", self::getInstance()->lang()->translate( 'this page;these pages' ) );
-                        $add    = $info->rowCount() == 1 ? $temp[ 0 ] : $temp[ 1 ];
+                        $add    = count($usage) == 1 ? $temp[0] : $temp[1];
                         $values = array(
                             'type' => self::getInstance()->lang()->translate( 'Module' ),
                             'type_name' => $type,
                             'pages_string' => $add,
-                            'count' => $info->rowCount(),
+                            'count'        => count($usage),
                             'name' => $addon_name
                         );
                         $pages  = array();
-                        while ( false != ( $data = $info->fetchRow( MYSQL_ASSOC ) ) )
+                        foreach($usage as $i => $data)
                         {
-                            // skip negative page id's
-                            if ( substr( $data['page_id'], 0, 1 ) == '-' )
-                                continue;
-                            $pages[] = sprintf( '<a href="%s">%s</a>', CAT_Helper_Page::getLink( $data['page_id'] ), CAT_Helper_Page::properties( $data['page_id'], 'menu_title' ) );
+                            $pages[] = sprintf( '<a href="%s">%s</a>', $data['page_link'], $data['menu_title'] );
                         }
                         $values['pages'] = implode( '<br />', $pages );
                         return self::getInstance()->lang()->translate( 'Cannot uninstall module <span class="highlight_text">{{name}}</span> because it is in use on {{pages_string}}:<br /><br />{{pages}}', $values );
@@ -1381,6 +1375,35 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
         } // end function setModulePermissions()
 
+        /**
+         * gets the sections and pages a module is used on
+         *
+         * @access public
+         * @param  string  $addon_name
+         * @return
+         **/
+        public static function getModuleUsage($addon_name)
+        {
+            $info = self::getInstance()->db()->query(
+                "SELECT `section_id`, `page_id` FROM `:prefix:sections` WHERE module=:mod",
+                array('mod'=>$addon_name)
+            );
+            if ( $info->rowCount() > 0 )
+            {
+                $usage = $info->fetchAll(PDO::FETCH_ASSOC);
+                for($i=count($usage)-1; $i>=0; $i--)
+                {
+                    // skip negative page id's
+                    if ( substr( $usage[$i]['page_id'], 0, 1 ) == '-' )
+                        unset($usage[$i]);
+                    $usage[$i]['page_link']  = CAT_Helper_Page::getLink($usage[$i]['page_id']);
+                    $usage[$i]['menu_title'] = CAT_Helper_Page::properties($usage[$i]['page_id'],'menu_title');
+                }
+                return $usage;
+            }
+            return array();
+        }   // end function getModuleUsage()
+        
 
         /**
          *  Try to get the current version of a given Modul.

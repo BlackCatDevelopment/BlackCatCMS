@@ -734,6 +734,7 @@ $LANG = array(
     'No install.php found! The module cannot be installed!' => 'Keine install.php gefunden! Das Modul kann nicht installiert werden!',
     'Please fill out the form to create a new addon. A new directory with the basic files will be created to start with.'
         => 'Bitte das Formular vollständig ausfüllen, um ein neues Addon zu erzeugen. Ein Verzeichnis mit den notwendigen Dateien wird als Basis für die weitere Arbeit angelegt.',
+    'This module is used on the following pages' => 'Dieses Modul wird auf den folgenden Seiten verwendet',
     'Uninstall Addon' => 'Addon deinstallieren',
     'Uninstalled successfully' => 'Erfolgreich deinstalliert',
     'Unknown' => 'Unbekannt',

@@ -172,7 +172,11 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
                   ? CAT_Helper_Page::getPagesForMenu($menu_number)
                   : CAT_Helper_Page::getPages()
                   ;
-            $options['root_id'] = CAT_Helper_Page::getRootParent($pid);
+// -----------------------------------------------------------------------------
+// ----- !!!FIX ME!!! ----------------------------------------------------------
+            //$options['root_id'] = CAT_Helper_Page::getRootParent($pid);
+            $options['root_id'] = 0;
+// -----------------------------------------------------------------------------
             return self::$list->buildList($menu,$options);
         }   // end function fullMenu()
 
