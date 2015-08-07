@@ -1,0 +1,64 @@
+# deny access to some specific files
+<Files ~ "^.*\.(LOG|log|bak|bk|LCK|txt|TXT)$">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</Files>
+# Disable the Server Signature
+ServerSignature Off
+# Rewrite Engine
+RewriteEngine On
+########## Begin - File injection protection, by SigSiu.net
+RewriteCond %{REQUEST_METHOD} GET
+RewriteCond %{QUERY_STRING} [a-zA-Z0-9_]=http:// [OR]
+RewriteCond %{QUERY_STRING} [a-zA-Z0-9_]=(\.\.//?)+ [OR]
+RewriteCond %{QUERY_STRING} [a-zA-Z0-9_]=/([a-z0-9_.]//?)+ [NC]
+RewriteRule .* - [F]
+########## End - File injection protection
+########## Begin - Query string attacks
+RewriteCond %{QUERY_STRING} (javascript:).*(\;) [NC,OR]
+RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3) [NC,OR]
+RewriteCond %{QUERY_STRING} (\\|\.\./|`|=\'$|=%27$) [NC,OR]
+#proc/self/environ? no way!
+RewriteCond %{QUERY_STRING} proc\/self\/environ [NC,OR]
+# SQL injection attacks
+RewriteCond %{QUERY_STRING} ^.*(;|<|>|'|"|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark|or|if).* [NC,OR]
+# reference to localhost/loopback/127.0.0.1 in the Query String
+RewriteCond %{QUERY_STRING} ^.*(localhost|loopback|127\.0\.0\.1).* [NC,OR]
+# use of illegal or unsafe characters in the Query String variable
+RewriteCond %{QUERY_STRING} ^.*(<|>|'|%0A|%0D|%27|%3C|%3E|%00).* [NC]
+RewriteCond %{QUERY_STRING} (base64_encode|mosconfig) [NC,OR]
+RewriteCond %{QUERY_STRING} (boot\.ini|echo.*kae|etc/passwd) [NC,OR]
+RewriteCond %{QUERY_STRING} (GLOBALS|REQUEST)(=|\[|%) [NC]
+RewriteRule .* - [F]
+########## End - Query string attacks
+
+# Prevent use of specified methods in HTTP Request
+RewriteCond %{REQUEST_METHOD} ^(HEAD|TRACE|DELETE|TRACK) [NC,OR]
+# Block out use of illegal or unsafe characters in the HTTP Request
+RewriteCond %{THE_REQUEST} ^.*(\\r|\\n|%0A|%0D).* [NC,OR]
+# Block out use of illegal or unsafe characters in the Referer Variable of the HTTP Request
+RewriteCond %{HTTP_REFERER} ^(.*)(<|>|'|%0A|%0D|%27|%3C|%3E|%00).* [NC,OR]
+# Block out use of illegal or unsafe characters in any cookie associated with the HTTP Request
+RewriteCond %{HTTP_COOKIE} ^.*(<|>|'|%0A|%0D|%27|%3C|%3E|%00).* [NC,OR]
+# Block out use of illegal characters in URI or use of malformed URI
+RewriteCond %{REQUEST_URI} ^/(,|;|:|<|>|">|"<|/|\\\.\.\\).{0,9999}.* [NC,OR]
+# Block out  use of empty User Agent Strings
+# NOTE - disable this rule if your site is integrated with Payment Gateways such as PayPal!
+RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
+# Block out  use of illegal or unsafe characters in the User Agent variable
+RewriteCond %{HTTP_USER_AGENT} ^.*(<|>|'|%0A|%0D|%27|%3C|%3E|%00).* [NC,OR]
+RewriteRule ^/page/(.*).php$ /$1/ [R=301,L]
+
+########## Begin - BlackCat CMS short url
+# If called directly - redirect to short url version
+RewriteCond %{REQUEST_URI} !/page/intro.php
+RewriteCond %{REQUEST_URI} /page
+RewriteRule ^/page/(.*).php$ /$1/ [R=301,L]
+
+# Send the request to the index.php for processing
+RewriteCond %{REQUEST_URI} !^/(page|backend|framework|include|languages|media|account|search|temp|templates/.*)$
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([\/\sa-zA-Z0-9._-]+)$ /blackcat/bcwa11/index.php?$1 [QSA,L]
+########## End - BlackCat CMS short url

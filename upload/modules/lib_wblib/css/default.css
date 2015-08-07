@@ -1,0 +1,4 @@
+.fbform fieldset{padding:15px;width:100%;min-width:1024px;}
+.fbform label,.fbform span.fblabel{width:40%;display:inline-block;text-align:right;margin-right:10px;}
+.fbform label.ui-button{width:auto;}
+.fbform button{padding:5px 15px;}
