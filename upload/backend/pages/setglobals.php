@@ -39,32 +39,23 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-function Dwoo_Plugin_show_edit_area( Dwoo $dwoo, $name, $id, $content, $width = '100%', $height = '350px' ) {
-    if ( !function_exists( 'show_edit_area' ) )
-	{
-        // find code editor (we support EditArea and ACE for now)
-        foreach(array('ace_editor','edit_area') as $path)
-        {
-            $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$path.'/include.php');
-            if(file_exists($file))
-            {
-    		    @require_once($file);
-                break;
-            }
-        }
-	}
-    if ( function_exists( 'show_edit_area' ) )
-	{
-	    ob_start();
-	    show_edit_area( $name, $id, $content, $width, $height );
-	    $content = ob_get_clean();
-	    echo $content;
-    }
-    else
-    {
-        echo sprintf('<textarea name="%s" id="%s" style="width:%s;height:%s;">%s</textarea>',
-                     $name, $id, $width, $height, $content );
-    }
-}
+function setglobals($page_id)
+{
+    global $parser;
+    $page     = CAT_Helper_Page::properties($page_id);
+    $user     = CAT_Users::get_user_details($page['modified_by']);
+    $parser->setGlobals(array(
+        'PAGE_TITLE'           => $page['page_title'],
+        'MENU_TITLE'           => $page['menu_title'],
+        'PAGE_ID'              => $page['page_id'],
+        'PAGE_LINK'            => CAT_Helper_Page::getLink($page['page_id']),
+        'MODIFIED_BY'          => $user['display_name'],
+        'MODIFIED_BY_USERNAME' => $user['username'],
+        'MODIFIED_WHEN'        => (
+              ($page['modified_when'] != 0)
+            ? ($modified_ts = CAT_Helper_DateTime::getDateTime($page['modified_when']))
+            : false
+        ),
+    ));
 
-?>
+}

@@ -747,7 +747,14 @@ function check_use_short_urls($value,$oldvalue) {
         return true;
     }
     if( (!$value || $value=='false') && file_exists(CAT_PATH.'/.htaccess') )
+    {
+        // check if the contents are changed
+        $content = get_htaccess_content();
+        $hash    = sha1($content);
+        $check   = sha1_file(CAT_PATH.'/.htaccess');
+        if($hash == $check)
         unlink(CAT_PATH.'/.htaccess');
+    }
     return false;
 }
 
@@ -756,10 +763,26 @@ function check_use_short_urls($value,$oldvalue) {
  **/
 function create_htaccess()
 {
+    $file = '.htaccess';
+    if(file_exists(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/.htaccess'))) {
+        $file = 'htaccess_BlackCatCMS.txt';
+    }
+    $content = get_htaccess_content();
+    $fh = fopen(CAT_PATH.'/'.$file,'w');
+    if(is_resource($fh) && $fh)
+    {
+        fwrite($fh,$content);
+        fclose($fh);
+    }
+}
+
+function get_htaccess_content()
+{
     // filter document root from CAT_PATH
     $server_path = CAT_Helper_Directory::sanitizePath(CAT_PATH);
     $server_path = str_replace(CAT_Helper_Directory::sanitizePath($_SERVER['DOCUMENT_ROOT']),'',$server_path);
-    $content = '    RewriteEngine On
+
+    return '    RewriteEngine On
     # If called directly - redirect to short url version
     RewriteCond %{REQUEST_URI} !'.PAGES_DIRECTORY.'/intro.php
     RewriteCond %{REQUEST_URI} '.PAGES_DIRECTORY.'
@@ -770,11 +793,16 @@ function create_htaccess()
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^([\/\sa-zA-Z0-9._-]+)$ '.$server_path.'/index.php?$1 [QSA,L]
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Important note!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# The path above should be relative to your DOCUMENT_ROOT. If it\'s not, the
+# redirection will not work! So please check the path!
+#
+# Example:
+#    URL  - http://www.yourdomain.com/blackcatcms/index.php
+#    path - /blackcatcms/index.php
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ';
-    $fh = fopen(CAT_PATH.'/.htaccess','w');
-    if(is_resource($fh) && $fh)
-    {
-        fwrite($fh,$content);
-        fclose($fh);
-    }
 }

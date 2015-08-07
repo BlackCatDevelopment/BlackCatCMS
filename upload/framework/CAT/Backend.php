@@ -39,6 +39,7 @@ if (!class_exists('CAT_Backend', false))
 
         protected      $_config         = array( 'loglevel' => 8 );
         private static $instance        = array();
+        private static $form            = NULL;
 
         /**
          * get instance; forwards to login page if the user is not logged in
@@ -104,6 +105,24 @@ if (!class_exists('CAT_Backend', false))
                 $self->lang()->translate('Users')       => 'users/index.php',
             );
         }   // end function getPages()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getForms($section)
+        {
+            if(!self::$form)
+            {
+                self::$form = \wblib\wbForms::getInstance();
+                self::$form->set('wblib_url',CAT_URL.'/modules/lib_wblib/wblib');
+                self::$form->set('lang_path',CAT_PATH.'/languages');
+            }
+            self::$form->loadFile('inc.forms.php',CAT_PATH.'/'.CAT_BACKEND_PATH.'/'.$section.'/inc');
+            return self::$form;
+        }   // end function getForms()
+        
 
         /**
          * prints the top of the backend page

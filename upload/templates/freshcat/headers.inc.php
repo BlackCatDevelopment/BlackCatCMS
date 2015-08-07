@@ -74,7 +74,7 @@ $mod_headers = array(
 		),
 		'js' => array(
 			array(
-                'debug.js', 'jquery.fc_set_tab_list.js', 'jquery.fc_toggle_element.js', 'jquery.fc_resize_elements.js', 'jquery.fc_show_popup.js', 'general.js', 'pages_tree.js', 'session.js'
+                'backend.js'
 			)
 		)
 	)
@@ -94,6 +94,11 @@ if(isset($local[$page]))
 if($page=='addons')
 {
     array_push($mod_headers['backend']['css'], array('file'=>'templates/freshcat/css/default/tabs.css'));
+    if(CAT_Helper_Addons::isModuleInstalled('lib_dropzone'))
+    {
+        $mod_headers['backend']['js'][0][] = '/modules/lib_dropzone/vendor/dropzone.min.js';
+        array_push($mod_headers['backend']['css'], array('file'=>'modules/lib_dropzone/vendor/dropzone.min.css'));
+    }
     array_push($mod_headers['backend']['css'], array('file'=>'templates/freshcat/css/default/addons.css'));
 }
 
@@ -101,3 +106,33 @@ if($page=='addons')
 if ( CAT_Registry::get('DEFAULT_THEME_VARIANT') == 'custom' )
     if(file_exists(dirname(__FILE__).'/templates/custom/backend_'.$page.'.js'))
         $mod_headers['backend']['js'][0][] = '/custom/backend_'.$page.'.js';
+
+// disable UI theme and tooltips, as the BC Backend already uses qtip2
+\wblib\wbFormsJQuery::set('load_ui_theme',false);
+\wblib\wbFormsJQuery::set('disable_tooltips',true);
+// default class for labels
+\wblib\wbFormsElementLabel::setClass('fc_label_250');
+// prefix for generated IDs (you can explicitly set the id attribute in inc.forms.php)
+\wblib\wbFormsElementLabel::setIDPrefix('fc_');
+// override some other wbForms defaults
+\wblib\wbFormsElementCheckbox::setClass('fc_checkbox_jq');
+\wblib\wbFormsElementFieldset::setClass('');
+\wblib\wbFormsElementInfo::setClass('');
+\wblib\wbFormsElementButton::setClass('');
+// this template is also used for checkboxes
+\wblib\wbFormsElementRadio::setTemplate('
+    <div class="fc_settings_label"%title%>
+       %is_required%<input%type%%name%%id%%class%%style%%value%%required%%checked%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% />
+       %label%
+    </div>
+'
+);
+// outer "wrapper" to checkbox groups; also used for radiogroups
+\wblib\wbFormsElementCheckboxgroup::setTemplate(
+    '
+    <span class="fc_label_250">%label_span%</span>
+    <div class="fc_settings_max left">
+    %options%
+    </div><div class="clear"></div>
+    '
+);

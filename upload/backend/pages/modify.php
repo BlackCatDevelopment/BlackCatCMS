@@ -96,21 +96,14 @@ $tpl_data = array();
 // ============================
 // ! Include page info script
 // ============================
-$tpl_data['PAGE_ID']    = $results_array['page_id'];
-$tpl_data['PAGE_TITLE'] = $results_array['page_title'];
-$tpl_data['MENU_TITLE'] = $results_array['menu_title'];
-$tpl_data['PAGE_LINK']  = CAT_Helper_Page::getLink($results_array['page_id']);
+include dirname(__FILE__).'/setglobals.php';
+setglobals($page_id);
 
-$tpl_data['MODIFIED_BY']          = $user['display_name'];
-$tpl_data['MODIFIED_BY_USERNAME'] = $user['username'];
-$tpl_data['MODIFIED_WHEN']        = ($results_array['modified_when'] != 0) ? $modified_ts = CAT_Helper_DateTime::getDateTime($results_array['modified_when']) : false;
-
+$tpl_data['CUR_TAB']        = 'modify';
+$tpl_data['PAGE_HEADER']    = $backend->lang()->translate('Modify page');
 $tpl_data['SECTION_BLOCKS'] = SECTION_BLOCKS;
 $tpl_data['SEC_ANCHOR']     = SEC_ANCHOR;
 $tpl_data['DATE_FORMAT']    = CAT_DATE_FORMAT;
-
-$tpl_data['CUR_TAB']     = 'modify';
-$tpl_data['PAGE_HEADER'] = $backend->lang()->translate('Modify page');
 
 // =========================================================
 // ! Work-out if we should show the "manage sections" link

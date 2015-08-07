@@ -1,5 +1,5 @@
 <br /><br />
-        <form class="ajaxForm fc_list_forms" style="margin-left:10px;" id="fc_add_new_module" action="ajax_create.php" method="post">
+        <form class="fc_list_forms" style="margin-left:10px;" id="fc_add_new_module" action="ajax_create.php" method="post">
             <div class="fc_info">
                 {translate('Please fill out the form to create a new addon. A new directory with the basic files will be created to start with.')}<br />
                 {translate("If you're adding a language, a language file will be created in the <tt>languages</tt> subfolder.")}
@@ -32,10 +32,14 @@
                 <input type="checkbox" id="fc_new_usejquery" name="new_usejquery" value="Y" /><br />
             <label class="fc_label_200" for="fc_new_usejqueryui">{translate('Use jQuery UI')}</label>
                 <input type="checkbox" id="fc_new_usejqueryui" name="new_usejqueryui" value="Y" /><br />
-                
-<br /><br />
+            <br /><br />
             <p class="submit_settings fc_gradient1" style="margin-left:-10px;text-align:left;">
                 <input type="submit" id="fc_new_submit" value="{translate('Save')}" />
                 <input type="reset" name="reset" value="{translate('Reset')}" />
             </p>
         </form>
+        <script type="text/javascript">
+        //<![CDATA[
+        dialog_form(jQuery('form#fc_add_new_module'));
+        //]]>
+        </script>

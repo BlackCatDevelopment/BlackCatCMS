@@ -6,7 +6,13 @@
                 </p>
                 <div class="clear_sp"></div>
                 <p>
-                    <input type="file" name="userfile" />
+                    <div class="fallback">
+                        <input type="file" name="userfile" />
+                    </div>
+                    <div id="fc_dropzone" style="display:none;">
+                        <span>{translate('Click or drag & drop your file to the area below')}</span>
+                        <div class="dropzone"></div>
+                    </div>
                 </p>
                 {if $groups.viewers}
                 <hr />
@@ -34,3 +40,41 @@
                     <input type="reset" name="reset" value="{translate('Reset')}" />
                 </p>
             </form>
+            <script type="text/javascript">
+            //<![CDATA[
+                if(typeof Dropzone != 'undefined') {
+                    Dropzone.autoDiscover = false;
+                    var fcDropzone = new Dropzone("div.dropzone", {
+                        url: "ajax_install.php",
+                        params: {
+                            _cat_ajax: 1,
+                            __csrf_magic: $('input[name="__csrf_magic"]').val()
+                        },
+                        maxFiles: 1,
+                        acceptedFiles: '.zip',
+                        autoProcessQueue: false,
+                        addRemoveLinks: true,
+                        dictRemoveFile: cattranslate('Remove file'),
+                        dictDefaultMessage: '',
+                        paramName: "userfile",
+                        init: function() {
+                            jQuery("input[type=submit]").unbind('click').on("click", function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                fcDropzone.processQueue();
+                            });
+                            this.on('success', function (file, response) {
+                                if(response.success === false) {
+                                    file.previewElement.classList.add("dz-error");
+                                    var jQ = jQuery(jQuery.parseHTML(response.message));
+                                    jQuery('div.dz-error-message').html(jQuery(jQ).find('div.fc_error_box').html());
+                                    return false;
+                                }
+                            });
+                        }
+                    });
+                    jQuery("div#fc_dropzone").show();
+                    jQuery("div.fallback").hide();
+                }
+            //]]>
+            </script>

@@ -332,6 +332,7 @@ $LANG = array(
     'There is already a page for this language!' => 'Für diese Sprache ist bereits eine Seite vorhanden!',
     'These settings are page based, to manage global settings, goto Settings -> Header files.' => 'Diese Einstellungen sind seitenbasiert, globale Einstellungen können unter Einstellungen -> Kopfdateien vorgenommen werden.',
     'This page is used if no page is found for the browser language, or the browser language cannot be determined' => 'Diese Seite wird verwendet wenn für die Browsersprache keine Seite konfiguriert ist, oder die Browsersprache nicht ermittelt werden konnte',
+    'This will delete the intro page!' => 'Die Einstiegsseite wird gelöscht!',
     'Title' => 'Seitentitel',
     'Top frame' => 'Top Frame',
     'Type' => 'Typ',
@@ -372,7 +373,7 @@ $LANG = array(
     'By default, wrong login attempts are only saved in the session. To lock the user account after the max. attempts are reached, use the appropriate security setting. (Security -> Disable user accounts when max login attempts is reached)' => 'Standardmäßig werden fehlerhafte Loginversuche nur in der Session gespeichert. Um das Benutzerkonto automatisch zu sperren, die entsprechende Sicherheitseinstellung verwenden. (Sicherheit -> Benutzerkonto deaktivieren, wenn die max. Anzahl Anmeldeversuche überschritten wurde).',
     'Check mime type of uploaded files' => 'MIME Typ bei hochgeladenen Dateien prüfen',
     'Choose a backend theme.' => 'Backend-Layout auswählen',
-    'Choose a template variant here. Available variants are defined in the template\'s info.php. (For example, a variant containing a slider for homepage / showcase pages and a variant without for normal pages.)' => 'Hier eine Template-Variante auswählen. Die verfügbaren Varianten sind in der info.php des Templates definiert. (Z.B. eine Variante mit Slider für die Homepage oder Showcase-Seiten und eine ohne für normale Seiten.)',
+    'Choose a template variant here. Available variants are defined in the template\'s info.php.' => 'Hier eine Template-Variante auswählen. Die verfügbaren Varianten sind in der info.php des Templates definiert.',
     'Default MIME type' => 'Standard MIME Typ',
     'for better security, choose 16 or more' => 'für erhöhte Sicherheit 16 oder mehr verwenden',
     'Frontend settings' => 'Frontend Einstellungen',
@@ -628,6 +629,8 @@ $LANG = array(
     'SMTP username' => 'SMTP Benutzerkennung',
     'SMTP password' => 'SMTP Kennwort',
     'Standard page: Template for search result' => 'Standardseite: Template für Suchergebnisse',
+    'The file [.htaccess] already exists! BlackCat will save the suggested Rewrite Rules into file [htaccess_BlackCatCMS.txt]. You will have to add them manually or rename that file to [.htaccess].'
+        => 'Die Datei [.htaccess] existiert bereits! BlackCat speichert die empfohlenen Rewrite Regeln in die Datei [htaccess_BlackCatCMS.txt]. Sie müssen sie manuell hinzufügen oder diese Datei in [.htaccess] umbenennen.',
     'Use HTMLPurifier to clean output' => 'Mit HTMLPurifier filtern',
     'Use image from content page in search result' => 'Bild aus Inhalt in Suchergebnis verwenden',
     'Use jQuery' => 'jQuery verwenden',
@@ -655,6 +658,7 @@ $LANG = array(
     'Unable to find info.php' => 'info.php nicht gefunden',
     'Invalid installation file. Wrong extension. Please check the ZIP format.'
         => 'Ungültige Installationsdatei. Falsche Dateiendung. Bitte das ZIP Format prüfen.',
+    'Module created successfully' => 'Modul erfolgreich angelegt',
     'Not installed yet' => 'Noch nicht installiert',
     'Pre installation check failed' => 'Prüfung der Installationsvoraussetzungen fehlgeschlagen',
     'Pre installation check successful' => 'Prüfung der Installationsvoraussetzungen erfolgreich',
@@ -747,6 +751,7 @@ $LANG = array(
         => 'Wenn Module via FTP hochgeladen werden (nicht empfohlen), werden die Funktionen zur Installation, zum Upgrade oder zur Deinstallation nicht automatisch ausgeführt. Diese Module funktionieren eventuell nicht richtig oder lassen sich nicht deinstallieren.',
 // -----------------------------------------------------------------------------
 // ----- v1.2 -----
+    'Create footers.inc.php' => 'Datei footers.inc.php erzeugen',
     'Create headers.inc.php' => 'Datei headers.inc.php erzeugen',
     'Create precheck.php' => 'Datei precheck.php erzeugen',
     'Loading' => 'Lade',
@@ -785,6 +790,38 @@ $LANG = array(
     'You will be logged out in' => 'Sie werden abgemeldet in:',
     'seconds' => 'Sekunden',
     'Remaining session time' => 'Verbleibende Sessionzeit',
+// ----- seo -----
+    '0.5 - Default priority' => '0.5 - Standardpriorität',
+    '1 - Highest priority' => '1 - Höchste Priorität',
+    'A canonical link element is an HTML element that helps to prevent duplicate content issues by specifying the &quot;canonical&quot; or &quot;preferred&quot; version of a web page.'
+        => 'Ein kanonischer Link ist ein HTML Element, das es ermöglicht, bei mehrfach verwendetem Inhalt die Originalressource bzw. &quot;bevorzugte&quot; Quelle auszuweisen.',
+    'allow follow' => 'Linkverfolgung erlauben',
+    'allow index' => 'Indizierung erlauben',
+    'Allows to set the META attributes "noindex" and "nofollow"' => 'Erlaubt das Setzen der META Attribute "noindex" und "nofollow"',
+    'Always include' => 'Immer',
+    'Automatic detection' => 'Automatisch',
+    'Basic settings' => 'Grundeinstellungen',
+    'Canonical URL' => 'Kanonische URL',
+    'Description length <= 156 characters' => 'Seitenbeschreibung Länge <= 156 Zeichen',
+    'disable to set "nofollow" attribute' => 'Deaktivieren um "nofollow" zu setzen',
+    'disable to set "noindex" attribute' => 'Deaktivieren um "noindex" zu setzen',
+    'Do not add images to index' => 'Bilder auf dieser Seite nicht in den Index aufnehmen',
+    'Include in Sitemap' => 'In Sitemap aufnehmen',
+    'Keywords appear in the META description' => 'Keywords sind in der META Beschreibung enthalten',
+    'Keywords appear in the title attribute' => 'Keywords sind im Seitentitel enthalten',
+    'Keywords appear in the URL for this page' => 'Keywords sind in der URL der Seite enthalten',
+    'Never include' => 'Nie',
+    'No translation of this page in search results' => 'Keine Übersetzung dieser Seite in Suchergebnissen anbieten',
+    'Please note: These are options that need some Know-How about Search Engine Optimization. If you don\'t know what to do here, just leave the default settings.'
+        => 'Hinweis: Diese Einstellungen erfordern einiges Wissen über Suchmaschinenoptimierung. Wenn Sie nicht wissen, was Sie hier einstellen sollen, belassen Sie am besten die Voreinstellungen.',
+    'Robots settings' => 'Einstellungen für Suchmaschinen-Robots',
+    'Sitemap priority' => 'Sitemap Priorität',
+    'Sitemap settings' => 'Sitemap Einstellungen',
+    'The priority of this URL relative to other URLs on your site. This value does not affect how your pages are compared to pages on other sites—it only lets the search engines know which pages you deem most important for the crawlers.'
+        => 'Die Priorität dieser URL gegenüber anderen URLs auf Ihrer Website. Dieser Wert hat keinen Einfluss auf einen Vergleich Ihrer Seiten mit Seiten auf anderen Websites. Er informiert die Suchmaschinen lediglich darüber, welche Seiten für die Crawler die höchste Priorität haben.',
+    'Title length <= 55 characters' => 'Seitentitellänge <= 55 Zeichen',
+    'Update frequency' => 'Updatehäufigkeit',
+    'Update sitemap.xml now' => 'sitemap.xml jetzt erneuern',
 );
 
 // include old lang files

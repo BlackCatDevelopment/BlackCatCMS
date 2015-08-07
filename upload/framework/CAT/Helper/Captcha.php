@@ -64,11 +64,9 @@ if (!class_exists('CAT_Helper_Captcha'))
          **/
         public static function get($action='all',$style='',$sec_id='')
         {
-echo "get()<br /><textarea cols=\"100\" rows=\"20\" style=\"width: 100%;\">";
-print_r( $_SESSION );
-echo "</textarea>";
             ob_start();
-                self::show($action,$style,$sec_id);
+                if(!func_num_args()) self::show();
+                else                 self::show($action,$style,$sec_id);
                 $return = ob_get_clean();
             return $return;
         }
@@ -105,7 +103,14 @@ echo "</textarea>";
          * @return
          **/
         public static function check() {
-            if(!CAT_Helper_Image::check_gd() || !file_exists(CAT_PATH.'/modules/lib_securimage/include/securimage.php'))
+            $securimage = false;
+            // SecurImage installed and GD available?
+            if(file_exists(CAT_PATH.'/modules/lib_securimage/include/securimage.php') && CAT_Helper_Image::check_gd())
+                $securimage = true;
+            // WB style captcha was used anyway (why?!?)
+            if(isset($_POST['captcha']) && !isset($_POST['catpcha_code']))
+                $securimage = false;
+            if(!$securimage)
                 return self::wbstyle_check();
             else
                 return self::securImage_check();

@@ -84,14 +84,14 @@ if(!$type || !$name || !$dir || !$desc)
 module_create_check_dir($type,$dir);
 
 $files_needed = array(
-    'module'   => array( 'index.php', 'install.php', 'upgrade.php', 'uninstall.php', 'view.php', 'modify.php', 'add.php', 'delete.php', 'save.php', 'search.php', 'css/frontend.css', 'css/backend.css', 'languages/DE.php', 'templates/default/index.tpl' ),
+    'page'     => array( 'index.php', 'install.php', 'upgrade.php', 'uninstall.php', 'view.php', 'modify.php', 'add.php', 'delete.php', 'save.php', 'search.php', 'css/frontend.css', 'css/backend.css', 'languages/DE.php', 'templates/default/index.tpl' ),
     'library'  => array( 'index.php', 'install.php', 'upgrade.php' ),
     'tool'     => array( 'index.php', 'install.php', 'upgrade.php', 'uninstall.php', 'tool.php', 'css/frontend.css', 'css/backend.css', 'languages/DE.php', 'templates/default/tool.tpl' ),
     'template' => array( 'index.php', 'templates/default/index.tpl' ),
     'wysiwyg'  => array( 'index.php', 'c_editor.php' ),
 );
 $dirs_needed = array(
-    'module'   => array( 'languages', 'templates', 'templates/default', 'css', 'js' ),
+    'page'     => array( 'languages', 'templates', 'templates/default', 'css', 'js' ),
     'library'  => array( 'vendor' ),
     'tool'     => array( 'languages', 'templates', 'templates/default', 'css', 'js' ),
     'template' => array( 'languages', 'templates', 'templates/default', 'css', 'js' ),
@@ -106,7 +106,7 @@ $info_prefix = array(
     'wysiwyg'  => 'module_',
 );
 $type_path   = array(
-    'module'   => 'modules',
+    'page'     => 'modules',
     'library'  => 'modules',
     'tool'     => 'modules',
     'template' => 'templates',
@@ -196,7 +196,7 @@ $info['addon_function'] = $type;
 
 CAT_Helper_Addons::loadModuleIntoDB( $dir, 'install', $info);
 
-CAT_Object::json_success('Module created successfully!');
+CAT_Object::json_success('Module created successfully');
 
 /**
  * checks if addon dir / file already exists

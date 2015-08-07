@@ -14,14 +14,12 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
+ *   @author          Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
- *   @category        CAT_Modules
- *   @package         wysiwyg
+ *   @category        CAT_Core
+ *   @package         CAT_Core
  *
  */
 
@@ -44,13 +42,13 @@ if (defined('CAT_PATH')) {
 /**
  *	Get content
  */
-$result = CAT_Helper_Page::getInstance()->db()->query(sprintf(
-    "SELECT `content` FROM `%smod_wysiwyg` WHERE `section_id`= '%d'",
-    CAT_TABLE_PREFIX, $section_id
-));
-if( $result && $result->numRows() > 0 )
+$result = CAT_Helper_Page::getInstance()->db()->query(
+    "SELECT `content` FROM `:prefix:mod_wysiwyg` WHERE `section_id`= :section_id",
+    array('section_id'=>$section_id)
+);
+if( $result && $result->rowCount() > 0 )
 {
-    $data    = $result->fetchRow(MYSQL_ASSOC);
+    $data    = $result->fetch();
     $content = htmlspecialchars($data['content']);
 }
 else
@@ -63,13 +61,13 @@ if(!isset($wysiwyg_editor_loaded))
 	$wysiwyg_editor_loaded = true;
     $config = array('width'=>'100%','height'=>'250px');
     // get settings
-    $result = CAT_Helper_Page::getInstance()->db()->query(sprintf(
-        "SELECT * from `%smod_wysiwyg_admin_v2` where `editor`='%s' AND (`set_name`='width' OR `set_name`='height')",
-        CAT_TABLE_PREFIX, WYSIWYG_EDITOR
-    ));
-    if($result->numRows())
+    $result = CAT_Helper_Page::getInstance()->db()->query(
+        "SELECT * from `:prefix:mod_wysiwyg_admin_v2` where `editor`=:name AND (`set_name`='width' OR `set_name`='height')",
+        array('name'=>WYSIWYG_EDITOR)
+    );
+    if($result->rowCount())
     {
-        while( false !== ( $row = $result->fetchRow(MYSQL_ASSOC) ) )
+        while( false !== ( $row = $result->fetch() ) )
         {
             $config[$row['set_name']] = $row['set_value'];
         }
@@ -88,15 +86,15 @@ if(!isset($wysiwyg_editor_loaded))
     else
     {
 		$id_list       = array();
-		$result  = CAT_Helper_Page::getInstance()->db()->query(sprintf(
-              "SELECT `section_id` FROM `%ssections` "
-            . "WHERE `page_id`= '%d' AND `module`= 'wysiwyg' "
+		$result  = CAT_Helper_Page::getInstance()->db()->query(
+              "SELECT `section_id` FROM `:prefix:sections` "
+            . "WHERE `page_id`= :page_id AND `module`= 'wysiwyg' "
             . "ORDER BY position",
-            CAT_TABLE_PREFIX, $page_id
-        ));
-		if ( $result->numRows() > 0)
+            array('page_id'=>$page_id)
+        );
+		if ( $result->rowCount() > 0)
         {
-			while( !false == ($wysiwyg_section = $result->fetchRow(MYSQL_ASSOC) ) )
+			while( !false == ($wysiwyg_section = $result->fetch() ) )
             {
 				$temp_id   = abs(intval($wysiwyg_section['section_id']));
 				$id_list[] = 'content'.$temp_id;

@@ -39,32 +39,8 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-function Dwoo_Plugin_show_edit_area( Dwoo $dwoo, $name, $id, $content, $width = '100%', $height = '350px' ) {
-    if ( !function_exists( 'show_edit_area' ) )
-	{
-        // find code editor (we support EditArea and ACE for now)
-        foreach(array('ace_editor','edit_area') as $path)
-        {
-            $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$path.'/include.php');
-            if(file_exists($file))
-            {
-    		    @require_once($file);
-                break;
-            }
-        }
-	}
-    if ( function_exists( 'show_edit_area' ) )
-	{
-	    ob_start();
-	    show_edit_area( $name, $id, $content, $width, $height );
-	    $content = ob_get_clean();
-	    echo $content;
-    }
-    else
-    {
-        echo sprintf('<textarea name="%s" id="%s" style="width:%s;height:%s;">%s</textarea>',
-                     $name, $id, $width, $height, $content );
-    }
+function Dwoo_Plugin_show_code_area( Dwoo $dwoo, $name, $id, $content, $width = '100%', $height = '350px' ) {
+    CAT_Helper_CodeEditor::getEditor($name, $id, $content, $width, $height);
 }
 
 ?>

@@ -136,6 +136,7 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/backend/pages/trash.php' ),
     ( 0, '/backend/preferences/ajax_save.php' ),
     ( 0, '/backend/profiles/index.php' ),
+    ( 0, '/backend/settings/ajax_check_htaccess.php' ),
     ( 0, '/backend/settings/ajax_get_settings.php' ),
     ( 0, '/backend/settings/ajax_guid.php' ),
     ( 0, '/backend/settings/ajax_save_settings.php' ),

@@ -248,4 +248,21 @@ else
 global $parser;
 $parser = CAT_Helper_Template::getInstance('Dwoo');
 
+//**************************************************************************
+// wblib2 autoloader
+//**************************************************************************
+spl_autoload_register(function($class) {
+    if(substr_count($class,'wbForms') && !class_exists('\wblib\wbForms'))
+    {
+        @require CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_wblib/wblib/wbForms.php');
+    }
+    else
+    {
+        $file = str_replace('\\','/',CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_wblib/'.str_replace(array('\\','_'), array('/','/'), $class).'.php'));
+        if (file_exists($file)) {
+            @require $file;
+        }
+    }
+});
+
 CAT_Registry::register('CAT_INITIALIZED', true, true);

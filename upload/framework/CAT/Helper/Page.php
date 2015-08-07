@@ -1496,6 +1496,23 @@ frontend.css and template.css are added in _get_css()
             if(isset($droplets_config['meta']))
                 $output[] = $droplets_config['meta'];
 
+            // SEO
+            if(isset($properties['settings']) && isset($properties['settings']['seo']))
+            {
+                $seo    = $properties['settings']['seo'];
+                $robots = array();
+                if(isset($seo['robots'])&&isset($seo['robots'][0]))
+                {
+                    $temp  = preg_split('~[\s,]+~',$seo['robots'][0]);
+                    $check = array_flip($temp);
+                    if(!array_key_exists('noindex',$check))  $robots[] = 'index';
+                    if(!array_key_exists('nofollow',$check)) $robots[] = 'follow';
+                    $robots = array_merge($robots,array_values($temp));
+                }
+                if(count($robots))
+                    $output[] = '<meta name="robots" content="'.implode(',',$robots).'" />';
+            }
+
             return $output;
 
         } // end function getDefaultMeta()
@@ -2063,8 +2080,10 @@ frontend.css and template.css are added in _get_css()
             }
 
             // check if intro page to show
-            if ( (INTRO_PAGE && ! $no_intro) && (!isset($page_id) || !is_numeric($page_id)))
-            {
+            if (
+                   (INTRO_PAGE && ! $no_intro) && (!isset($page_id) || !is_numeric($page_id))
+                && (!(CAT_Registry::get('USE_SHORT_URLS')&&isset($_SERVER['REDIRECT_QUERY_STRING'])))
+            ) {
                 // Get intro page content
                 $filename = CAT_PATH . PAGES_DIRECTORY . '/intro' . PAGE_EXTENSION;
                 if (file_exists($filename))
