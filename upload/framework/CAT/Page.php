@@ -150,6 +150,12 @@ if (!class_exists('CAT_Page', false))
                 header('Retry-After: 7200'); // in seconds
             }
 
+            // check for 301 redirect (needs the SEO Tool)
+            if(CAT_Helper_Page::isRedirected($page_id))
+            {
+                header('HTTP/1.1 301 Moved Permanently', TRUE, 301);
+            }
+
             // template engine
             global $parser;
 
@@ -239,7 +245,25 @@ if (!class_exists('CAT_Page', false))
             global $parser, $page_id;
             if (defined('PAGE_LANGUAGES') && PAGE_LANGUAGES)
             {
-                $items = CAT_Helper_Page::getInstance()->getLinkedByLanguage($page_id);
+                $items = CAT_Helper_Page::getLinkedByLanguage($page_id);
+                // if there are no items linked to the page, return a link to the
+                // default page, so the user can still _change_ his language
+                if(!is_array($items) || !count($items))
+                {
+                    // get used languages
+                    $used_langs = CAT_Helper_I18n::getUsedLangs(true,true);
+                    // remove current lang
+                    if(isset($used_langs[LANGUAGE]))
+                    {
+                        unset($used_langs[LANGUAGE]);
+                    }
+                    // now, get default page for remaining langs
+                    foreach(array_keys($used_langs) as $lang)
+                    {
+                        $page = CAT_Helper_Page::getDefaultPageForLanguage($lang);
+                        $items[] = CAT_Helper_Page::properties($page);
+                    }
+                }
             }
             if( isset($items) && count($items) )
             {

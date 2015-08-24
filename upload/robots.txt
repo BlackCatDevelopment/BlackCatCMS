@@ -1,0 +1,20 @@
+# robots.txt zu {CAT_URL}
+
+User-agent: *
+Disallow: /account/
+Disallow: /backend/
+Disallow: /config.php
+Disallow: /framework/
+Disallow: /include/
+Disallow: /modules/
+Disallow: /temp/
+
+# you can remove the next 3 lines if you don't have the kitFramework installed
+Disallow: /kit2/config
+Disallow: /kit2/framework
+Disallow: /kit2/logfile
+
+Allow: /
+
+# Sitemaps
+Sitemap: {CAT_URL}/sitemap.xml

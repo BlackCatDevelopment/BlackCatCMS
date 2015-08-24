@@ -42,13 +42,13 @@ if (defined('CAT_PATH')) {
 }
 
 $local = array (
-	'pages'				=> 'backend_pages_modify.js',
 	'access'			=> 'backend_users_index.js',
 	'addons'			=> 'backend_addons.js',
+	'login_index'		=> 'login.js',
 	'media'				=> 'backend_media.js',
+	'pages'				=> 'backend_pages_modify.js',
 	'preferences'		=> 'backend_preferences.js',
 	'settings'			=> array('backend_pages_modify.js','backend_settings_index.js'),
-	'login_index'		=> 'login.js',
 );
 $mod_headers = array(
 	'backend' => array(
@@ -107,32 +107,3 @@ if ( CAT_Registry::get('DEFAULT_THEME_VARIANT') == 'custom' )
     if(file_exists(dirname(__FILE__).'/templates/custom/backend_'.$page.'.js'))
         $mod_headers['backend']['js'][0][] = '/custom/backend_'.$page.'.js';
 
-// disable UI theme and tooltips, as the BC Backend already uses qtip2
-\wblib\wbFormsJQuery::set('load_ui_theme',false);
-\wblib\wbFormsJQuery::set('disable_tooltips',true);
-// default class for labels
-\wblib\wbFormsElementLabel::setClass('fc_label_250');
-// prefix for generated IDs (you can explicitly set the id attribute in inc.forms.php)
-\wblib\wbFormsElementLabel::setIDPrefix('fc_');
-// override some other wbForms defaults
-\wblib\wbFormsElementCheckbox::setClass('fc_checkbox_jq');
-\wblib\wbFormsElementFieldset::setClass('');
-\wblib\wbFormsElementInfo::setClass('');
-\wblib\wbFormsElementButton::setClass('');
-// this template is also used for checkboxes
-\wblib\wbFormsElementRadio::setTemplate('
-    <div class="fc_settings_label"%title%>
-       %is_required%<input%type%%name%%id%%class%%style%%value%%required%%checked%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% />
-       %label%
-    </div>
-'
-);
-// outer "wrapper" to checkbox groups; also used for radiogroups
-\wblib\wbFormsElementCheckboxgroup::setTemplate(
-    '
-    <span class="fc_label_250">%label_span%</span>
-    <div class="fc_settings_max left">
-    %options%
-    </div><div class="clear"></div>
-    '
-);

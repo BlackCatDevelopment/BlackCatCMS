@@ -2930,7 +2930,6 @@ echo "</textarea>";
         public function init()
         {
             $this->attributes['label_span']  = NULL;
-            $this->attributes['class']       = 'fblabel';
             $this->attr['is_group']          = false;
         }
         public function render()

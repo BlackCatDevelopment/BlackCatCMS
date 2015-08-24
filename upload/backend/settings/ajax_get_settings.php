@@ -67,6 +67,15 @@ $tpl_data['DISPLAY_ADVANCED'] = $users->checkPermission('Settings','settings_adv
 
 switch($region)
 {
+    case 'seo':
+        // get the form
+        $form = $backend->getForms('settings');
+        $form->setForm('seo');
+        $values = getSettingsTable();
+        $form->setData($values);
+        $tpl_data = array('form' => $form->getForm());
+        // add default form
+        $tpl_data['INDEX'] = $parser->get('backend_settings_index_seo',$tpl_data);
     case 'frontend':
         $tpl_data['templates'] = getTemplateList('frontend');
         $tpl_data['variants']  = array();

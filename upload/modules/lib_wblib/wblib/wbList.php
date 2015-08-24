@@ -143,7 +143,9 @@ if(!class_exists('wblib\wbList',false))
 
             $root_id    = ( isset($options['root_id'])             ? $options['root_id']             : 0     );
             $hidden     = ( isset(self::$defaults['__hidden_key']) ? self::$defaults['__hidden_key'] : ''    );
+            $type       = ( isset($options['type'])                ? $options['type']                : ''    );
             $maxlevel   = ( isset($options['maxlevel'])            ? $options['maxlevel']            : self::$defaults['maxlevel'] );
+            $startlevel = ( isset($options['startlevel'])          ? $options['startlevel']          : 0     );
 
             $p_key      = self::$defaults['__parent_key'];
             $id_key     = self::$defaults['__id_key'];
@@ -186,6 +188,7 @@ if(!class_exists('wblib\wbList',false))
             $parent       = $root_id; // initializing $parent as the root
             $parent_stack = array();
             $html         = array();  // output array
+            $items        = array();  // for type select
             $lastchild    = false;
 
             // open the root list
@@ -197,22 +200,32 @@ if(!class_exists('wblib\wbList',false))
                 if ( $option === false )
                 {
                     $parent = array_pop($parent_stack); // move to next parent
-                    #if($type!='select')
-                    #{
+                    if($type!='select')
+                    {
                         $html[]  = self::listEnd();
                         $html[]  = str_repeat(self::$defaults['space'],self::$open_lists).self::itemEnd();
-                    #}
+                    }
                 }
                 // ----- handle item with children -----
                 elseif(!empty($children[$option['value'][$id_key]]))
                 {
                     $item   = $option['value'];
+                    if(!$item[$l_key]<$startlevel)
+                    {
+                        if($type!='select')
+                        {
                     // get the css classes
                     $css    = self::getListItemCSS($item,$lastchild);
                     // add the item first
                     $html[] = self::itemStart(NULL,$css) . self::getListItemText($item);
                     // open sub list for the children
                     $html[] = self::listStart($ul_id);
+                        }
+                        else
+                        {
+                            $items[] = $item;
+                        }
+                    }
                     // push parent to parent stack
                     array_push( $parent_stack, $item[$p_key] );
                     $parent = $item[$id_key];
@@ -220,6 +233,10 @@ if(!class_exists('wblib\wbList',false))
                 // ----- handle leaf (item with no children) -----
                 else {
                     $item   = $option['value'];
+                    if(!$item[$l_key]<$startlevel)
+                    {
+                        if($type!='select')
+                        {
                     // get the css classes
                     $css    = self::getListItemCSS($item);
                     // add the item first
@@ -227,12 +244,23 @@ if(!class_exists('wblib\wbList',false))
                             . self::getListItemText($item)
                             . self::itemEnd();
                 }
+                        else
+                        {
+                            $items[] = $item;
+                        }
+                    }
+                }
             }   // end while()
 
             // HTML wrapper for the menu (close)
+            if($type!='select')
+            {
             $html[] = self::listEnd();
             $output = str_ireplace( '{{lastcss}}', '', implode("\r\n",$html) );
             return $output;
+            }
+
+            return $items;
         }   // end function buildList()
 
         /**
@@ -247,20 +275,50 @@ if(!class_exists('wblib\wbList',false))
          **/
         public static function buildSelect($list, $options = array())
         {
+            if(!count(self::$defaults)) self::reset();
             $options['type']     = 'select';
             $options['as_array'] = true;
 
             $space  = ( isset($options['space']) ? $options['space'] : self::$defaults['space'] );
             $output = self::buildList($list,$options);
+            $items  = array();
 
             if ( isset($options['options_only']) && $options['options_only'] )
-                return join( "\n\t", $output )."\n";
+            {
+                $return = array();
+                foreach(array_values($output) as $item)
+                {
+                    $return[$item[self::$defaults['__id_key']]]
+                        = str_repeat($space,$item[self::$defaults['__level_key']])
+                        . $item[self::$defaults['__title_key']];
+                }
+                return $return;
+            }
+            else
+            {
+                $items   = array();
+                $sel     = isset($options['selected'])
+                         ? $options['selected']
+                         : NULL
+                         ;
+                foreach(array_values($output) as $item)
+                {
+                    $items[] = self::selectOption(
+                        $item[self::$defaults['__id_key']],
+                        (($item[self::$defaults['__id_key']]==$sel)?'selected="selected" ':''),
+                        (str_repeat($space,$item[self::$defaults['__level_key']])),
+                        $item[self::$defaults['__title_key']]
+                    );
+                }
+            }
 
-            $name   = $options['name'];
+            $name   = isset($options['name'])
+                    ? $options['name']
+                    : self::generateRandomString();
 
-            return self::selectStart($space,$name)
-		         . join( "\n\t", $output )."\n"
-                 . self::selectEnd($space)
+            return self::selectStart($name)
+		         . join( "\n\t", $items )."\n"
+                 . self::selectEnd()
                  ;
 
         }   // end function buildSelect()
@@ -457,6 +515,56 @@ if(!class_exists('wblib\wbList',false))
         }   // end function getListItemText()
 
         /**
+         * opens a <select> box with given $name
+         *
+         * @access private
+         * @param  string  $name  - name for the select field
+         * @param  int     $level - ignored
+         * @return string
+         **/
+        private static function selectStart($name=NULL, $level=NULL)
+        {
+            return str_replace(
+                       array( '%%id%%', '%%'                            ),
+                       array( $name   , self::$defaults['select_class'] ),
+                       self::$defaults['select_open']
+                   );
+        }   // end function selectStart()
+
+        /**
+         * closes a <select>
+         *
+         * @access private
+         * @return string
+         **/
+        private static function selectEnd()
+        {
+            return self::$defaults['select_close'];
+        }   // end function closeSelect()
+
+        /**
+         * creates an <option> element
+         *
+         * @access private
+         * @param  string  $value
+         * @param  string  $sel
+         * @param  string  $tab
+         * @param  string  $text
+         * @return string
+         **/
+        private static function selectOption($value,$sel,$space,$text,$class=NULL)
+        {
+            $text    = $space . ' ' . $text;
+            $option  = str_replace(
+                array( '%%value%%', '%%selected%%', '%%text%%', '%%'   ),
+                array( $value     , $sel          , $text     , $class ),
+                self::$defaults['select_option']
+            );
+            return str_replace('class="" ','',$option);
+        }   // end function selectOption()
+
+
+        /**
          * accessor to Analog (if installed)
          *
          * Note: Log messages are ignored if no Analog is available!
@@ -485,6 +593,16 @@ if(!class_exists('wblib\wbList',false))
             if ( self::$analog )
                 \Analog::log($message,$level);
         }   // end function log()
+
+        public static function generateRandomString($length=10)
+        {
+            for(
+                   $code_length = $length, $newcode = '';
+                   strlen($newcode) < $code_length;
+                   $newcode .= chr(!rand(0, 2) ? rand(48, 57) : (!rand(0, 1) ? rand(65, 90) : rand(97, 122)))
+            );
+            return $newcode;
+        }
 
         /**
          * change options

@@ -45,7 +45,8 @@ require_once CAT_PATH.'/framework/functions.php';
 
 function Dwoo_Plugin_language_menu(Dwoo $dwoo)
 {
-	return language_menu();
+	global $page_id;
+    return CAT_Page::getInstance($page_id)->getLanguageMenu();
 }
 
 ?>

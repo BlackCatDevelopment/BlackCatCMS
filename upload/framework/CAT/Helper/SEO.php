@@ -44,6 +44,8 @@ if (!class_exists('CAT_Helper_SEO'))
         {
             // get pages that are visible for guests
             $pagelist = CAT_Helper_Page::getPages();
+            // get default settings
+            $default_freq = CAT_Registry::get('SITEMAP_UPDATE_FREQ',NULL,'weekly');
             // get default page for highest priority
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // !!!!! note: this does not work in combination with language based forwarding!
@@ -64,12 +66,16 @@ if (!class_exists('CAT_Helper_SEO'))
                     $prio  = ((isset($seo_set['sitemap_priority'])&&isset($seo_set['sitemap_priority'][0]))
                            ? $seo_set['sitemap_priority'][0]
                            : '0.5');
+                    $freq  = ((isset($seo_set['sitemap_update_freq'])&&isset($seo_set['sitemap_update_freq'][0]))
+                           ? $seo_set['sitemap_update_freq'][0]
+                           : $default_freq);
                     if($p['page_id']==$root)
                         $prio = '1.0';
                     $xml[] = '  <url>
     <loc>'.CAT_Helper_Validate::getURI($p['href']).'</loc>
     <lastmod>'.strftime('%Y-%m-%d',$p['modified_when']).'</lastmod>
     <priority>'.$prio.'</priority>
+    <changefreq>'.$freq.'</changefreq>
   </url>';
                 }
             }

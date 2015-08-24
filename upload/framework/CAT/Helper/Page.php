@@ -60,6 +60,7 @@ if (!class_exists('CAT_Helper_Page'))
         private static $pages_by_id         = array();
         private static $pages_sections      = array();
         private static $pages_editable      = 0;
+        private static $pages_seo           = array();
 
         // header components
         private static $css                 = array();
@@ -147,6 +148,9 @@ if (!class_exists('CAT_Helper_Page'))
                 );
                 if( $result && $result->rowCount()>0 )
                 {
+                    self::$pages          = array();
+                    self::$pages_editable = array();
+                    self::$pages_by_id    = array();
                     $children_count = array();
                     $direct_parent  = 0;
                     while ( false !== ( $row = $result->fetch() ) )
@@ -205,6 +209,19 @@ if (!class_exists('CAT_Helper_Page'))
                                 if(!isset($row['settings'][$set_row['set_type']][$set_row['set_name']]))
                                     $row[$set_row['set_type']][$set_row['set_name']] = array();
                                 $row['settings'][$set_row['set_type']][$set_row['set_name']][] = $set_row['set_value'];
+                            }
+                        }
+
+                        // save SEO settings
+                        if(isset($row['settings']['seo']))
+                        {
+                            self::$pages_seo[$row['page_id']] = array();
+                            foreach($row['settings']['seo'] as $key => $value)
+                            {
+                                self::$pages_seo[$row['page_id']][$key]
+                                    = (count($value)>1)
+                                    ? $value
+                                    : $value[0];
                             }
                         }
 
@@ -965,7 +982,7 @@ frontend.css and template.css are added in _get_css()
             // for all pages with level 0...
             $root = array();
             $now  = time();
-            $ordered = CAT_Helper_Array::getInstance()->ArraySort ( self::$pages, 'position' );
+            $ordered = CAT_Helper_Array::ArraySort(self::$pages,'position');
             foreach( $ordered as $page )
             {
                 if (
@@ -991,6 +1008,21 @@ frontend.css and template.css are added in _get_css()
                 }
             }
         } // end function getDefaultPage()
+
+        /**
+         * determine default page
+         *
+         * @access public
+         * @return void
+         **/
+        public static function getDefaultPageForLanguage($lang)
+        {
+            $pages = CAT_Helper_I18n::getUsedLangs(true,false);
+            if(isset($pages[$lang]) && is_array($pages[$lang]) && count($pages[$lang]))
+                if(isset($pages[$lang][0]) && isset($pages[$lang][0]['page_id']))
+                    return $pages[$lang][0]['page_id'];
+            return false;
+        } // end function getDefaultPageForLanguage()
 
         /**
          * returns the number of editable pages
@@ -1416,8 +1448,8 @@ frontend.css and template.css are added in _get_css()
         {
             $sql     = 'SELECT * FROM `:prefix:page_langs` AS t1'
                      . ' RIGHT OUTER JOIN `:prefix:pages` AS t2'
-                     . ' ON t1.link_page_id=t2.page_id'
-                     . ' WHERE t1.page_id = :id'
+                     . ' ON `t1`.`link_page_id`=`t2`.`page_id`'
+                     . ' WHERE `t1`.`page_id` = :id'
                      ;
 
             $results = self::getInstance()->db()->query($sql,array('id'=>$page_id));
@@ -1497,6 +1529,7 @@ frontend.css and template.css are added in _get_css()
                 $output[] = $droplets_config['meta'];
 
             // SEO
+            // Please note: These settings need the "SEO Tool" Admin Tool
             if(isset($properties['settings']) && isset($properties['settings']['seo']))
             {
                 $seo    = $properties['settings']['seo'];
@@ -1511,6 +1544,8 @@ frontend.css and template.css are added in _get_css()
                 }
                 if(count($robots))
                     $output[] = '<meta name="robots" content="'.implode(',',$robots).'" />';
+                if(isset($seo['canonical'])&&isset($seo['canonical'][0]))
+                    $output[] = '<link rel="canonical" href="'.$seo['canonical'][0].'" />';
             }
 
             return $output;
@@ -1665,6 +1700,10 @@ frontend.css and template.css are added in _get_css()
                         if(is_array($set[$type][$key]) && count($set[$type][$key]) == 1)
                             return $set[$type][$key][0];
                         return $set[$type][$key];
+                    }
+                    else
+                    {
+                        return NULL;
                     }
                 }
                 else
@@ -1892,6 +1931,39 @@ frontend.css and template.css are added in _get_css()
                 else
                     return self::$pages_sections;
         }   // end function getSections()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getSEO($page_id,$key=NULL)
+        {
+            if(!$page_id)
+                return NULL;
+            if(!count(self::$pages)&&!CAT_Registry::exists('CAT_HELPER_PAGE_INITIALIZED'))
+                self::init();
+            // get page data
+            $seo  = isset(self::$pages_seo[$page_id])
+                  ? self::$pages_seo[$page_id]
+                  : array();
+            if(count($seo))
+            {
+                if($key)
+                {
+                    if(isset($seo[$key]))
+                    return $seo[$key];
+                    else
+                        return NULL;
+                }
+                else
+                {
+                    return $seo;
+                }
+            }
+            return array();
+        }   // end function getSEO()
+        
 
         /**
          *
@@ -2261,6 +2333,19 @@ frontend.css and template.css are added in _get_css()
         }   // end function isMaintenance()
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function isRedirected($page_id)
+        {
+            $redirect = CAT_Helper_Page::getSEO($page_id,'redirect');
+            if($redirect)
+                return true;
+            return false;
+        }   // end function isRedirected()
+
+        /**
          * Check whether a page is visible or not
          * This will check page-visibility, user- and group permissions
          *
@@ -2286,8 +2371,6 @@ frontend.css and template.css are added in _get_css()
                     break;
                 // always visible
                 case 'public':
-                    // check language
-                    if(CAT_Registry::get('PAGE_LANGUAGES')===false || self::properties($page_id,'language')==''||self::properties($page_id,'language')==LANGUAGE)
                     $show_it = true;
                     break;
                 // shown if user is allowed
