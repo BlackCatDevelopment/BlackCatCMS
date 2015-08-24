@@ -549,9 +549,11 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) )
          * looks for used languages by analyzing the pages
          *
          * @access public
+         * @param  boolean  $guest_only - pages visible in frontend only, default: true
+         * @param  boolean  $langs_only - get pages (false) or language shortcuts only (true), default: false
          * @return
          **/
-        public static function getUsedLangs($guest_only=true)
+        public static function getUsedLangs($guest_only=true,$langs_only=false)
         {
             $vis   = ( $guest_only ? 'public' : NULL );
             $pages = CAT_Helper_Page::getPagesByVisibility($vis);
@@ -559,9 +561,16 @@ if ( ! class_exists( 'CAT_Helper_I18n', false ) )
             foreach($pages as $id)
             {
                 $lang = CAT_Helper_Page::properties($id,'language');
+                if($langs_only)
+                {
+                    $langs[$lang] = 1;
+                }
+                else
+                {
                 if(!isset($langs[$lang])) $langs[$lang] = array();
                 $langs[$lang][] = array('page_id'=>$id, 'menu_title'=>CAT_Helper_Page::properties($id,'menu_title'));
 	}
+            }
             return $langs;
         }   // end function getUsedLangs()
 

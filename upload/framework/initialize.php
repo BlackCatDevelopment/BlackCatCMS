@@ -151,18 +151,8 @@ if (!defined('SESSION_STARTED'))
 {
     session_name(APP_NAME.'sessionid');
 	$cookie_settings = session_get_cookie_params();
-/* old session lifetime handling
-	session_set_cookie_params(
-        3 * 3600, // three hours
-        $cookie_settings["path"],
-        $cookie_settings["domain"],
-        (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'), // secure-bool
-		true    // http only
-	);
-    unset($cookie_settings);
-*/
 	session_start();
-// new handling; will extend the session lifetime on each action
+    // extend the session lifetime on each action
     setcookie(
         session_name(),
         session_id(),
@@ -189,9 +179,15 @@ if (!CAT_Backend::isBackend() && !defined('CAT_AJAX_CALL') && !defined('CAT_LOGI
 // Get users language
 //**************************************************************************
 $val = CAT_Helper_Validate::getInstance();
-$user_lang = $val->sanitizeGet('lang');
-if ( $user_lang && $user_lang != '' && !is_numeric($user_lang) && strlen($user_lang) == 2 && file_exists(CAT_PATH.'/languages/'.$user_lang.'.php'))
-    CAT_Registry::register('LANGUAGE', strtoupper($user_lang), true);
+if($val->get('_REQUEST','lang'))
+{
+    $language = strtoupper($val->get('_REQUEST','lang'));
+    $language = $val->lang()->checkLang($language)
+              ? $language
+              : CAT_Registry::get('DEFAULT_LANGUAGE');
+    $_SESSION['lang'] = $language;
+    CAT_Registry::register('LANGUAGE', strtoupper($language), true);
+}
 if ( ! CAT_Registry::exists('LANGUAGE') )
     CAT_Registry::register('LANGUAGE',DEFAULT_LANGUAGE,true);
 

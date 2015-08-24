@@ -105,6 +105,11 @@ function Dwoo_Plugin_show_menu(
     $MaxLevel       = among_constants( $aMaxLevel );
     $Options        = among_constants( $aOptions );
 
+    global $wb;
+    if(PAGE_LANGUAGES) {
+		$wb->extra_where_sql = ' `language`=\''.(isset($_SESSION['lang'])?$_SESSION['lang']:LANGUAGE).'\'';
+	}
+
     if ( $direct_output ) // If direct output simply print show_menu2()
     {
         show_menu2( $Menu, $Start, $MaxLevel, $Options, $aItemOpen, $aItemClose, $aMenuOpen, $aMenuClose, $aTopItemOpen, $aTopMenuOpen );
