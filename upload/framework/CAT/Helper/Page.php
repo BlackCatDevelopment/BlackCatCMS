@@ -2195,8 +2195,6 @@ frontend.css and template.css are added in _get_css()
                     break;
                 // always visible
                 case 'public':
-                    // check language
-                    if(CAT_Registry::get('PAGE_LANGUAGES')===false || self::properties($page_id,'language')==''||self::properties($page_id,'language')==LANGUAGE)
                     $show_it = true;
                     break;
                 // shown if user is allowed
