@@ -125,7 +125,7 @@ else
 		'filetime'			=> strftime($date->getDefaultTimeFormat(), $dirh->getModdate( $load_path )) . ( isset($language_time_string) ? ' '.$language_time_string : '' ),
 		'full_name'			=> $load_file,
 		'filename'			=> substr($load_file , 0 , -( strlen($filetype) + 1 ) ),
-		'load_url'			=> $val->sanitize_url(( IS_WIN ? utf8_decode( CAT_URL.'/'.$load_url ) : $load_url ))
+		'load_url'			=> $val->sanitize_url(( IS_WIN ? utf8_decode( CAT_URL.'/'.$load_url ) : CAT_URL.'/'.$load_url ))
 	);
 }
 // ================================= 

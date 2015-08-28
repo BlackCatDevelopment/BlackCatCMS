@@ -1559,11 +1559,26 @@ frontend.css and template.css are added in _get_css()
          **/
         public static function getMeta($droplets_config=array())
         {
+            global $page_id;
             $meta = self::getDefaultMeta($droplets_config);
             self::$meta = array_merge(
                 $meta,
                 self::$meta
             );
+            // if the current page has linked pages in other languages
+            $linked = self::getLinkedByLanguage($page_id);
+            if(is_array($linked) && count($linked))
+            {
+                $alt = array();
+                foreach($linked as $page)
+                {
+                    $alt[] = '<link rel="alternate" hreflang="'.strtolower($page['lang']).'" href="'.self::getLink($page['page_id']).'">';
+                }
+                self::$meta = array_merge(
+                    $alt,
+                    self::$meta
+                );
+            }
             return implode("\n",array_unique(self::$meta));
         } // end function getMeta()
 
@@ -2630,6 +2645,7 @@ frontend.css and template.css are added in _get_css()
             {
                 foreach($arr as $el)
                 {
+                    if(!is_array($el) || !count($el)) continue;
                     $str = '<meta ';
                     foreach($el as $key => $val)
                         $str .= $key.'="'.$val.'" ';

@@ -71,6 +71,7 @@ switch($region)
         // get the form
         $form = $backend->getForms('settings');
         $form->setForm('seo');
+        $form->set('contentonly',true);
         $values = getSettingsTable();
         $form->setData($values);
         $tpl_data = array('form' => $form->getForm());

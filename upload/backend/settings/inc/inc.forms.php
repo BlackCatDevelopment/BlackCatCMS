@@ -46,29 +46,25 @@ $FORMS = array(
             'name'        => 'website_title',
             'label'       => 'Website title',
             'title'       => 'Used for the title tag in the HTML header.',
-            'required'    => true,
         ),
         array(
             'type'        => 'checkbox',
             'name'        => 'use_short_urls',
             'label'       => 'Use short URLs (Apache webserver only, requires mod_rewrite!)',
             'title'       => 'This will allow to use SEO friendly URLs like http://www.yourdomain.com/path/to/page instead of http://www.yourdomain.com/page/path/to/page.php',
-            'checked'     => false,
         ),
         array(
             'type'        => 'textarea',
             'name'        => 'website_description',
             'label'       => 'Website description',
-            'title'       => 'Used for the description META attribute. The description should be a nice &quot;human readable&quot; text up to 156 characters.',
+            'title'       => 'Used for the description META attribute. The description should be a nice &quot;human readable&quot; text with 70 up to 156 characters.',
             'class'       => 'fc_input_300',
-            'required'    => true,
         ),
         array(
             'type'        => 'textarea',
             'name'        => 'website_keywords',
             'label'       => 'Website keywords',
-            'title'       => 'Used for the keywords META attribute. You should use about 3 (up to 5-6) keywords that occur as often as possible in your page contents.',
-            'required'    => true,
+            'title'       => 'Used for the keywords META attribute. Most search engines do not use this anymore.',
         ),
 
         array(
@@ -84,6 +80,12 @@ $FORMS = array(
             ),
             'selected'    => 'weekly',
             'class'       => 'fbleave',
+        ),
+        array(
+            'type'        => 'checkbox',
+            'name'        => 'update_sitemap',
+            'label'       => 'Update sitemap.xml on save',
+            'title'       => 'If checked, the sitemap.xml will be re-generated after save.',
         ),
     ),
 );

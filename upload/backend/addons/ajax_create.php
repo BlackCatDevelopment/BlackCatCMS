@@ -153,7 +153,7 @@ if( $type != 'language' )
         $fh  = fopen($full.'/'.$file,'w');
         if($fh)
         {
-            if($ext !== 'css')
+            if($ext !== 'css' && substr_compare('languages',$file,0,9))
             {
                 module_create_writeHeader($fh,$name,$author,$type);
             }

@@ -50,7 +50,14 @@ require_once dirname(__FILE__).'/functions.php';
 // template for default tab (SEO settings)
 $tpl      = 'backend_settings_index_seo';
 // add default form
-$tpl_data['INDEX'] = $parser->get($tpl, array( 'values' => getSettingsTable() ) );
+$form = $backend->getForms('settings');
+$form->setForm('seo');
+$form->set('contentonly',true);
+$values = getSettingsTable();
+$form->setData($values);
+//$tpl_data['form'] = $form->getForm();
+
+$tpl_data['INDEX'] = $parser->get($tpl, array('values'=>$values,'form'=>$form->getForm()));
 $tpl_data['MAINTENANCE_MODE'] = CAT_Registry::get('MAINTENANCE_MODE');
 
 // ==================== 

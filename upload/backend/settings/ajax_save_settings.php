@@ -73,6 +73,10 @@ switch($region)
         saveServer($backend);
         break;
     case 'seo':
+        if($val->get('_REQUEST','update_sitemap'))
+            CAT_Helper_SEO::updateSitemap();
+        saveGroup($backend,$region);
+        break;
     case 'frontend':
     case 'backend':
     case 'users':

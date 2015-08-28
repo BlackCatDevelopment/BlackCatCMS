@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013 - 2015 Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -1525,6 +1525,15 @@ function __do_install() {
         $server_addr = $_SERVER['SERVER_ADDR'];
     } else {
         $server_addr = '127.0.0.1';
+    }
+
+    // Patch robots.txt _before_ changing the $config_cat_url
+    if(($handle = @fopen($cat_path.'/robots.txt', 'r+')) !== false) {
+        $robots = fread($handle, filesize($cat_path.'/robots.txt'));
+        rewind($handle);
+        $robots = str_replace('{CAT_URL}',$config_cat_url,$robots);
+        fwrite($handle,$robots);
+        fclose($handle);
     }
 
     // remove trailing /
