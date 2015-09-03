@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013 - 2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -48,11 +48,7 @@ include 'functions.php';
 $page_id = $val->sanitizePost('page_id','numeric');
 if ( !$page_id )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('You sent an invalid value.'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('You sent an invalid value.'));
     exit();
 }
 
@@ -65,11 +61,7 @@ $options = backend_pages_getoptions();
 // check titles
 if(CAT_Helper_Page::sanitizeTitles($options)===false)
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate( 'Please enter a menu title' ),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('Please enter a menu title'));
     exit();
 }
 
@@ -91,11 +83,7 @@ foreach ( $users->get_groups_id() as $cur_gid )
 
 if ( (!$in_old_group) && !is_numeric( array_search($users->get_user_id(), $old_admin_users) ) )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('You do not have permissions to modify this page'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('You do not have permissions to modify this page'));
     exit();
 }
 
@@ -143,11 +131,7 @@ if ( $options['link'] !== $old_link )
 {
     if(CAT_Helper_Page::exists($options['link']))
     {
-        $ajax    = array(
-            'message'    => $backend->lang()->translate('A page with the same or similar link exists'),
-            'success'    => false
-        );
-        print json_encode( $ajax );
+        echo CAT_Object::json_error($backend->lang()->translate('A page with the same or similar link exists'));
         exit();
     }
 }
@@ -156,7 +140,8 @@ if ( $options['link'] !== $old_link )
 CAT_Helper_Page::reset();
 
 // Get page trail
-$options['page_trail'] = CAT_Helper_Page::getPageTrail($options['parent'],true).','.$page_id;
+$options['page_trail'] = CAT_Helper_Page::getPageTrail($options['parent']).','.$page_id;
+
 if(substr($options['page_trail'],0,1)==0)
     $options['page_trail'] = str_replace('0,','',$options['page_trail']);
 
