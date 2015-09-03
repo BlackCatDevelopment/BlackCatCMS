@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013 - 2015 Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -48,11 +48,7 @@ header('Content-type: application/json');
 
 if ( !$users->checkPermission('Pages','pages') )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You do not have the permission to proceed this action'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('You do not have the permission to proceed this action'));
 	exit();
 }
 
@@ -68,11 +64,7 @@ if (
     || (!is_array($sect)  && ($table == 'sections'))
     || ($table != 'pages' && $table != 'sections' )
 ) {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You sent invalid data'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
+	echo CAT_Object::json_error($backend->lang()->translate('You sent invalid data'));
 	exit();
 }
 
@@ -94,21 +86,12 @@ $reorder	= $order->reorder_by_array( $new_array );
 
 if ( $reorder === true )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('Re-ordered successfully'),
-		'success'	=> true
-	);
-	print json_encode( $ajax );
+	echo CAT_Object::json_success($backend->lang()->translate('Re-ordered successfully'));
 	exit();
 }
 else
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate( $reorder.': Error re-ordering page'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
+	echo CAT_Object::json_error($backend->lang()->translate( $reorder.': Error re-ordering page'));
 	exit();
 }
 exit();
-?>
