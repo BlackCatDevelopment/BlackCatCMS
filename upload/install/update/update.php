@@ -28,7 +28,12 @@ require_once dirname(__FILE__).'/../../config.php';
 define('CAT_INSTALL_PROCESS',true);
 
 // Try to guess installer URL
-$installer_uri = 'http://' . $_SERVER[ "SERVER_NAME" ] . ( ( $_SERVER['SERVER_PORT'] != 80 ) ? ':'.$_SERVER['SERVER_PORT'] : '' ) . $_SERVER[ "SCRIPT_NAME" ];
+$installer_uri = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://')
+               . $_SERVER["SERVER_NAME"]
+               . (($_SERVER['SERVER_PORT']!=80 && !isset($_SERVER['HTTPS']))
+                 ? ':'.$_SERVER['SERVER_PORT']
+                 : '' )
+               . $_SERVER["SCRIPT_NAME"];
 $installer_uri = dirname( $installer_uri );
 $installer_uri = str_ireplace('update','',$installer_uri);
 $lang          = CAT_Helper_I18n::getInstance();
@@ -275,14 +280,19 @@ if(!$res || !$res->numRows())
 /*******************************************************************************
     1.1 TO 1.1.1
 *******************************************************************************/
-
+$database->query(sprintf(
+    'SHOW COLUMNS FROM `%spages_headers` LIKE "use_core";',
+    CAT_TABLE_PREFIX
+));
+if(!$res || !$res->numRows())
+{
 $database->query(sprintf(
     'ALTER TABLE `%spages_headers`
 	ADD COLUMN `use_core` ENUM(\'Y\',\'N\') NULL AFTER `page_js`,
 	ADD COLUMN `use_ui` ENUM(\'Y\',\'N\') NULL AFTER `use_core`;',
     CAT_TABLE_PREFIX
 ));
-
+}
 
 /*******************************************************************************
     ALL VERSIONS
@@ -346,7 +356,7 @@ function update_wizard_header() {
   <head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
     <title>BlackCat CMS Update Prerequistes Error</title>
-    <link rel="stylesheet" href="'.$installer_uri.'/templates/default/index.css" type="text/css" />
+    <link rel="stylesheet" href="'.$installer_uri.'templates/default/index.css" type="text/css" />
    </head>
   <body>
   <div style="width:800px;min-width:800px;margin:auto;margin-top:20%;text-align:center;color:#5AA2DA;">

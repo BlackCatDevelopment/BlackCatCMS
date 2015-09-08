@@ -156,7 +156,8 @@ if ( $options['link'] !== $old_link )
 CAT_Helper_Page::reset();
 
 // Get page trail
-$options['page_trail'] = CAT_Helper_Page::getPageTrail($options['parent'],true).','.$page_id;
+$options['page_trail'] = CAT_Helper_Page::getPageTrail($options['parent']).','.$page_id;
+
 if(substr($options['page_trail'],0,1)==0)
     $options['page_trail'] = str_replace('0,','',$options['page_trail']);
 
