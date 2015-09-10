@@ -804,7 +804,7 @@ function show_step_finish() {
     try
     {
         $result = $database->query(
-            'SHOW TABLES LIKE ":prefix:pages"'
+            'SHOW TABLES LIKE ":prefix:cat_mod_wysiwyg_admin_v2"'
         );
         if ( ! is_object($result) || ! $result->numRows() ) {
             // do base installation first
@@ -1527,6 +1527,15 @@ function __do_install() {
         $server_addr = '127.0.0.1';
     }
 
+    // get server path
+    $server_path = pathinfo(CAT_Helper_Directory::sanitizePath($_SERVER['SCRIPT_FILENAME'].'/..'),PATHINFO_DIRNAME);
+    $local_path  = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/..');
+    if($server_path != $local_path) {
+        $server_config_path = "'".$server_path."'";
+    } else {
+        $server_config_path = 'dirname(__FILE__)';
+    }
+
     // Patch robots.txt _before_ changing the $config_cat_url
     if(($handle = @fopen($cat_path.'/robots.txt', 'r+')) !== false) {
         $robots = fread($handle, filesize($cat_path.'/robots.txt'));
@@ -1561,7 +1570,7 @@ function __do_install() {
 "define('CAT_TABLE_PREFIX', '".$config['table_prefix']."');\n".
 "\n".
 "define('CAT_SERVER_ADDR', '".$server_addr."');\n".
-"define('CAT_PATH', dirname(__FILE__));\n".
+"define('CAT_PATH', ".$server_config_path.");\n".
 "define('CAT_URL', '".$config_cat_url."');\n".
 "define('CAT_ADMIN_PATH', CAT_PATH.'/'.CAT_BACKEND_PATH);\n".
 "define('CAT_ADMIN_URL', CAT_URL.'/'.CAT_BACKEND_PATH);\n".
