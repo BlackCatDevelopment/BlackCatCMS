@@ -158,6 +158,7 @@ if (!class_exists('wblib\wbFormsBase',false))
             'wblib_url'       => NULL,
             'workdir'         => NULL,
             'wysiwyg_editor'  => 'Aloha',
+            'contentonly'     => false,
         );
         /**
          * object attributes
@@ -300,7 +301,7 @@ if (!class_exists('wblib\wbFormsBase',false))
          **/
         public static function hint($message)
         {
-            if(self::$globals['enable_hints'])
+            if(strlen($message) && self::$globals['enable_hints'])
             {
                 $forms = '';
                 if(count(wbForms::$FORMS))
@@ -312,22 +313,7 @@ if (!class_exists('wblib\wbFormsBase',false))
                 else
                     $forms = '<tr><td colspan="2">none</td></tr>';
 
-                echo sprintf('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-                    <html>
-                      <head>
-                      <meta http-equiv="content-type" content="text/html; charset=windows-1250">
-                      <title>%s</title>
-                      <style type="text/css" media="screen">
-                      body,html{width:100%%;height:100%%;margin:0;padding:0;}
-                      body{background:#006699;font-family: Verdana, Geneva, Tahoma, sans-serif;filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#006699\', endColorstr=\'#FFFFFF\');background: -webkit-gradient(linear, left top, left bottom, from(#006699), to(#FFFFFF));background: -moz-linear-gradient(top,  #006699, #FFFFFF);}
-                      div{width:75%%;margin:5%% auto auto auto;padding:15px;background-color:#fff;-webkit-border-radius: 5px;-moz-border-radius: 5px;-khtml-border-radius: 5px;border-radius: 5px;-moz-box-shadow: 5px 5px 5px #000000;-webkit-box-shadow: 5px 5px 5px #000000;box-shadow: 5px 5px 5px #000000;}
-                      table{min-width:40%%;}
-                      th{background-color:#aecede;padding:5px;}
-                      td{padding:5px;}
-                      </style>
-                      </head>
-                      <body>
-                        <div>
+                echo sprintf('
                           <h1>%s</h1>
                           %s<br /><br />
                           <table>
@@ -338,11 +324,8 @@ if (!class_exists('wblib\wbFormsBase',false))
                             <tbody>
                               %s
                             </tbody>
-                          </table>
-                        </div>
-                      </body>
-                    </html>',
-                    self::t('wbForms Notice'),self::t('wbForms Notice'),self::t($message),$forms
+                          </table>',
+                    self::t('Notice'),self::t('Notice'),self::t($message),$forms
                 );
             }
         }   // end function hint()
@@ -441,9 +424,9 @@ if (!class_exists('wblib\wbFormsBase',false))
                 . $_SERVER['HTTP_HOST']
                 . '/'
                 . str_ireplace(
-                      $_SERVER['DOCUMENT_ROOT'],
+                      self::fixPath($_SERVER['DOCUMENT_ROOT']),
                       '',
-                      str_replace('\\','/',dirname(__FILE__))
+                      str_replace('\\','/',self::fixPath(dirname(__FILE__)))
                   )
             ;
         }   // end function getURL()
@@ -712,6 +695,40 @@ if (!class_exists('wblib\wbFormsBase',false))
             self::log('< addOption()',7);
         }   // end function addOption()
 
+        /**
+		 * fixes a path by removing //, /../ and other things
+		 *
+		 * @access public
+		 * @param  string  $path - path to fix
+		 * @return string
+		 **/
+		public static function fixPath($path)
+		{
+		    $path       = preg_replace( '~/{1,}$~', '', $path );
+			$path       = str_replace( '\\', '/', $path );
+	        $path       = preg_replace('~/\./~', '/', $path);
+	        $parts      = array();
+	        foreach ( explode('/', preg_replace('~/+~', '/', $path)) as $part )
+	        {
+	            if ($part === ".." || $part == '')
+	            {
+	                array_pop($parts);
+	            }
+	            elseif ($part!="")
+	            {
+                    $part = ( mb_detect_encoding($part,'UTF-8',true) )
+                          ? utf8_decode($part)
+                          : $part;
+	                $parts[] = $part;
+	            }
+	        }
+	        $new_path = implode("/", $parts);
+	        if ( ! preg_match( '/^[a-z]\:/i', $new_path ) ) {
+				$new_path = '/' . $new_path;
+			}
+	        return $new_path;
+		}   // end function fixPath()
+
     }   // ----------    end class wbFormsBase    ----------
 }
 
@@ -813,7 +830,21 @@ if (!class_exists('wblib\wbForms',false))
                 : self::path(realpath(dirname(__FILE__)));
             self::$globals['path']          = self::$globals['workdir'].'/forms';
             self::$globals['fallback_path'] = self::$globals['workdir'].'/forms';
-            self::$globals['token']         = 'alsdkjfaklösdfj';
+
+            // read and/or recreate a token file; a new token will be created
+            // every 24 hours
+            $tokenfile = self::$globals['workdir'].'/.token';
+            if(!file_exists($tokenfile) || (filemtime($tokenfile)<(time()-24*60*60)))
+            {
+                $token = self::generateName(16,NULL);
+                $fh    = fopen($tokenfile,'w');
+                fwrite($fh,$token);
+                fclose($fh);
+            }
+            $fh    = fopen($tokenfile,'r');
+            self::$globals['token'] = fread($fh,filesize($tokenfile));
+            fclose($fh);
+
             self::log('< getInstance()',7);
             return self::$instance;
         }   // end function getInstance()
@@ -1126,6 +1157,19 @@ if (!class_exists('wblib\wbForms',false))
         {
             return self::$CURRENT;
         }   // end function current()
+
+        /**
+         * creates an empty form (if a form is created from scratch instead of
+         * a config file)
+         *
+         * @access public
+         * @return
+         **/
+        public static function createForm($name)
+        {
+            self::$FORMS[$name] = array();
+            self::setForm($name);
+        }   // end function createForm()
 
         /**
          *
@@ -1480,6 +1524,8 @@ if (!class_exists('wblib\wbForms',false))
             wbFormsProtect::$config['token_lifetime'] = self::$globals['token_lifetime'];
             $elements[] = wbFormsElement::get(wbFormsProtect::getToken(self::$globals['token']))->render();
 
+            if(self::$globals['contentonly'])
+                return implode('',$elements);
             // make sure we have a submit button
             if(!self::hasButton() && self::$globals['add_buttons'])
                 $elements[] = wbFormsElementSubmit::get(array('label'=>'Submit'))->render();
@@ -2242,7 +2288,7 @@ echo "</textarea>";
             // internal attributes
             'content'      => NULL,
             'form_class'   => 'fbform',
-            'form_width'   => '800px',
+            'form_width'   => '',
         );
         /**
          * output template
@@ -3235,6 +3281,7 @@ echo "</textarea>";
      */
     class wbFormsElementDate extends wbFormsElement
     {
+        protected static $cssclass = 'fbdatetime';
         public function render()
         {
             $this->checkAttr();

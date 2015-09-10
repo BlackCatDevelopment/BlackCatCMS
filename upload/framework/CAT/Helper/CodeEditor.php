@@ -74,9 +74,20 @@ if (!class_exists('CAT_Helper_CodeEditor'))
         public static function getEditor($name, $id, $content, $width=NULL, $height=NULL, $print=true)
         {
             if(!self::$_editor) self::loadEditor();
-            $e =& self::$_editor;
-            $e::init($name, $id, $content, $width, $height);
-            $e::show($print);
+            if(!self::$_editor)
+            {
+                $editor = sprintf(
+                    '<textarea id="%s" name="%s" style="width:%s;height:%s;">%s</textarea>',
+                    $id,$name,$width,$height,$content
+                );
+                if($print) echo $editor;
+                else       return $editor;
+            }
+            else {
+                $e =& self::$_editor;
+                $e::init($name, $id, $content, $width, $height);
+                $e::show($print);
+            }
         }   // end function getEditor()
 
         /**

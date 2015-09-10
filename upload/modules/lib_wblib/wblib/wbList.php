@@ -172,7 +172,7 @@ if(!class_exists('wblib\wbList',false))
                 }
             }
 
-            self::log(sprintf('max. level [%s], total item count [%s]',$maxlevel,count($list)),7);
+            self::log(sprintf('start level [%s], max. level [%s], total item count [%s]',$startlevel, $maxlevel,count($list)),7);
             self::log('children list: '.str_replace(' ', '    ',var_export($children,1)),7);
 
             // loop will be false if the root has no children (i.e., an empty menu!)
@@ -210,7 +210,7 @@ if(!class_exists('wblib\wbList',false))
                 elseif(!empty($children[$option['value'][$id_key]]))
                 {
                     $item   = $option['value'];
-                    if(!$item[$l_key]<$startlevel)
+                    if($item[$l_key]>=$startlevel)
                     {
                         if($type!='select')
                         {
@@ -233,7 +233,7 @@ if(!class_exists('wblib\wbList',false))
                 // ----- handle leaf (item with no children) -----
                 else {
                     $item   = $option['value'];
-                    if(!$item[$l_key]<$startlevel)
+                    if($item[$l_key]>=$startlevel)
                     {
                         if($type!='select')
                         {
