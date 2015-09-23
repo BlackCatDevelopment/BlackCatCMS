@@ -3392,7 +3392,7 @@ echo "</textarea>";
             'CDNs' => array(
                 'jquery'         => '//ajax.googleapis.com/ajax/libs/jquery/2/jquery.min.js',
                 'jqueryui'       => '//ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js',
-                'jqueryuithemes' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/%s/jquery-ui.css',
+                'jqueryuithemes' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/%s/jquery-ui.css',
                 'select2'        => '//cdn.jsdelivr.net/select2/3.4.8/select2.min.js',
             ),
             'enabled'            => true,
