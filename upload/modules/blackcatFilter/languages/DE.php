@@ -42,6 +42,9 @@ if (defined('CAT_PATH')) {
 $module_description	  = 'Erweiter- und konfigurierbare Ausgabefilter für das Frontend';
 
 $LANG = array(
+    'Activate' => 'Aktivieren',
+    'Deactivate' => 'Deaktivieren',
+    'Are you sure?' => 'Sind Sie sicher?',
     'Provided by (module)' => 'Definiert in (Modul)',
     'Enabled' => 'Aktiviert',
 // --- filter descriptions ---

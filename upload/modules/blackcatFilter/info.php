@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 $module_directory	  = 'blackcatFilter';
 $module_name		  = 'BlackCat CMS Output Filters';
 $module_function	  = 'tool';
-$module_version		  = '0.2';
+$module_version		  = '0.3';
 $module_platform	  = '1.x';
 $module_author		  = 'Black Cat Development';
 $module_license		  = 'copyright, all rights reserved';

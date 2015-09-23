@@ -15,7 +15,7 @@
         {foreach $filters filter}
         <tr>
             <td>
-                <a class="ajaxAction" href="{$CAT_URL}/modules/blackcatFilter/ajax_set.php?filter={$filter.filter_name}&amp;action=delete">
+                <a class="ajaxAction" href="{$CAT_URL}/modules/blackcatFilter/ajax_set.php?filter={$filter.filter_name}&amp;action=delete" title="{translate('Delete')}">
                     <img src="{$CAT_URL}/modules/blackcatFilter/css/images/delete.png" />
                 </a>
             </td>
@@ -23,7 +23,7 @@
             <td>{translate($filter.filter_name)}</td>
             <td>{translate($filter.filter_description)}</td>
             <td>
-                <a class="ajaxAction" href="{$CAT_URL}/modules/blackcatFilter/ajax_set.php?filter={$filter.filter_name}&amp;action={if $filter.filter_active == Y}deactivate{else}activate{/if}">
+                <a class="ajaxAction" title="{if $filter.filter_active == Y}{translate('Deactivate')}{else}{translate('Activate')}{/if}" href="{$CAT_URL}/modules/blackcatFilter/ajax_set.php?filter={$filter.filter_name}&amp;action={if $filter.filter_active == Y}deactivate{else}activate{/if}">
                     <img src="{$CAT_URL}/modules/blackcatFilter/css/images/{if $filter.filter_active == Y}active{else}inactive{/if}.png" />
                 </a>
             </td>
