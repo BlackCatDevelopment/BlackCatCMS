@@ -77,74 +77,143 @@
     			}
     		});
         });
-        $('.fc_catalog_install').unbind('click').bind('click',function() {
-            $.ajax({
-    			type:		'GET',
-    			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
-    			dataType:	'json',
-                data:       { directory: $(this).parent().parent().find('.fc_addon_directory').text(), action: 'install' },
-    			cache:		false,
-                beforeSend:	function( data )
-        		{
-        			data.process	= set_activity('Install...');
-        		},
-    			success:	function( data, textStatus, jqXHR )
-    			{
-    				if ( data.success === true )
-    				{
-                        location.reload();
-    				}
-    				else {
-    					return_error( jqXHR.process , data.message);
-    				}
-    			}
-    		});
-        });
         $('.fc_catalog_update').unbind('click').bind('click',function() {
-            $.ajax({
-    			type:		'GET',
-    			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
-    			dataType:	'json',
-                data:       { directory: $(this).parent().parent().find('.fc_addon_directory').text(), action: 'update' },
-    			cache:		false,
-                beforeSend:	function( data )
-        		{
-        			data.process	= set_activity('Update...');
-        		},
-    			success:	function( data, textStatus, jqXHR )
-    			{
-    				if ( data.success === true )
-    				{
-                        location.reload();
-    				}
-    				else {
-    					return_error( jqXHR.process , data.message);
-    				}
-    			}
-    		});
+            var addon = $(this).parent().parent().find('.fc_addon_directory').text();
+            $('<div></div>').appendTo('body')
+                .html(cattranslate('Do you really want to upgrade this addon?'))
+                .dialog({
+                    modal: true
+                    ,width: 600
+                    ,title: $(this).parent().parent().find('.fc_addon_name').text()
+                    ,buttons: [
+                        {
+                            text: cattranslate('Yes'),
+                            click: function() {
+                                $(this).dialog("close");
+                                $.ajax({
+                        			type:		'GET',
+                        			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
+                        			dataType:	'json',
+                                    data:       { directory: addon, action: 'update' },
+                        			cache:		false,
+                                    beforeSend:	function( data )
+                            		{
+                            			data.process	= set_activity('Update...');
+                            		},
+                        			success:	function( data, textStatus, jqXHR )
+                        			{
+                        				if ( data.success === true )
+                        				{
+                                            //location.reload();
+                                            jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
+                                            $("#fc_addons_catalog").trigger('click');
+                        				}
+                        				else {
+                        					return_error( jqXHR.process , data.message);
+                        				}
+                        			}
+                        		});
+                            }
+                        },{
+                            text: cattranslate('No'),
+                            click: function() {
+                                $(this).dialog("close");
+                            }
+                        }
+                    ]
+                });
+        });
+        $('.fc_catalog_install').unbind('click').bind('click',function() {
+            var addon = $(this).parent().parent().find('.fc_addon_directory').text();
+            $('<div></div>').appendTo('body')
+                .html(cattranslate('Do you really want to install this addon?'))
+                .dialog({
+                    modal: true
+                    ,width: 600
+                    ,title: $(this).parent().parent().find('.fc_addon_name').text()
+                    ,buttons: [
+                        {
+                            text: cattranslate('Yes'),
+                            click: function() {
+                                $(this).dialog("close");
+                                $.ajax({
+                        			type:		'GET',
+                        			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
+                        			dataType:	'json',
+                                    data:       { directory: addon, action: 'install' },
+                        			cache:		false,
+                                    beforeSend:	function( data )
+                            		{
+                            			data.process	= set_activity('Install...');
+                            		},
+                        			success:	function( data, textStatus, jqXHR )
+                        			{
+                        				if ( data.success === true )
+                        				{
+                                            //location.reload();
+                                            jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
+                                            $("#fc_addons_catalog").trigger('click');
+                        				}
+                        				else {
+                        					return_error( jqXHR.process , data.message);
+                        				}
+                        			}
+                        		});
+                            }
+                        },{
+                            text: cattranslate('No'),
+                            click: function() {
+                                $(this).dialog("close");
+                            }
+                        }
+                    ]
+                });
         });
         $('.fc_catalog_uninstall').unbind('click').bind('click',function() {
-            $.ajax({
-    			type:		'GET',
-    			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
-    			dataType:	'json',
-                data:       { directory: $(this).parent().parent().find('.fc_addon_directory').text(), action: 'uninstall' },
-    			cache:		false,
-                beforeSend:	function( data )
-        		{
-        			data.process	= set_activity('Uninstall...');
-        		},
-    			success:	function( data, textStatus, jqXHR )
-    			{
-    				if ( data.success === true )
-    				{
-                        location.reload();
-    				}
-    				else {
-    					return_error( jqXHR.process , data.message);
-    				}
-    			}
-    		});
+            var addon = $(this).parent().parent().find('.fc_addon_directory').text();
+            $('<div></div>').appendTo('body')
+                .html(cattranslate('Do you really want to uninstall this addon?'))
+                .dialog({
+                    modal: true
+                    ,width: 600
+                    ,title: $(this).parent().parent().find('.fc_addon_name').text()
+                    ,buttons: [
+                        {
+                            text: cattranslate('Yes'),
+                            click: function() {
+                                $(this).dialog("close");
+                                $.ajax({
+                        			type:		'GET',
+                        			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
+                        			dataType:	'json',
+                                    data:       { directory: addon, action: 'uninstall' },
+                        			cache:		false,
+                                    beforeSend:	function( data )
+                            		{
+                            			data.process	= set_activity('Uninstall...');
+                            		},
+                        			success:	function( data, textStatus, jqXHR )
+                        			{
+                        				if ( data.success === true )
+                        				{
+                                            //location.reload();
+                                            jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
+                                            $("#fc_addons_catalog").trigger('click');
+                        				}
+                        				else {
+                        					return_error( jqXHR.process , data.message);
+                        				}
+                        			}
+                        		});
+                            }
+                        },{
+                            text: cattranslate('No'),
+                            click: function() {
+                                $(this).dialog("close");
+                            }
+                        }
+                    ]
+                });
         });
     });
 </script>

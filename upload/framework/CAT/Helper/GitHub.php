@@ -110,6 +110,22 @@ if (!class_exists('CAT_Helper_GitHub'))
          * @access public
          * @return
          **/
+        public static function getTags($org,$repo)
+        {
+            $tags   = self::retrieve($org,$repo,'tags');
+            $latest = array();
+            if(is_array($tags) && count($tags))
+            {
+                return $tags;
+            }
+            return false;
+        }   // end function getTags()
+        
+        /**
+         *
+         * @access public
+         * @return
+         **/
         public static function getZip($dlurl,$path,$filename)
         {
             $ch   = self::init_curl();

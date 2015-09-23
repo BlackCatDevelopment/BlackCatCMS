@@ -49,6 +49,8 @@ if($action=='install' && CAT_Helper_Addons::isModuleInstalled($module_name))
 }
 
 include_once dirname(__FILE__).'/functions.inc.php';
+include_once CAT_PATH.'/framework/functions.php';
+
 $catalog = get_catalog();
 
 foreach($catalog['modules'] as $module)
@@ -84,6 +86,11 @@ foreach($catalog['modules'] as $module)
                 }
             }
         }
+        // try install / update
+        switch($action)
+        {
+            case 'install':
+            case 'update':
         // check for download location
         if(!isset($module['github']) || !isset($module['github']['organization']) || !isset($module['github']['repository']))
         {
@@ -93,11 +100,25 @@ foreach($catalog['modules'] as $module)
         $release_info = CAT_Helper_GitHub::getRelease($module['github']['organization'],$module['github']['repository']);
         if(!is_array($release_info) || !count($release_info))
         {
-            CAT_Object::json_error('Unable to download the module. No release found.');
+                    // no release found, search for tags
+                    $tags = CAT_Helper_GitHub::getTags($module['github']['organization'],$module['github']['repository']);
+                    if(!is_array($tags) || !count($release_info))
+                    {
+                        // no release and no tag, use master.zip
+                        $dlurl = sprintf('https://github.com/%s/%s/archive/master.zip',$module['github']['organization'],$module['github']['repository']);
+                    }
+                    else
+                    {
+                        $dlurl = $tags['zipball_url'];
+                    }
+                    //CAT_Object::json_error('Unable to download the module. No release found.');
+                }
+                else
+                {
+                    $dlurl = $release_info['zipball_url'];
         }
 
         // try download
-        $dlurl = $release_info['zipball_url'];
         if(CAT_Helper_GitHub::getZip($dlurl,CAT_PATH.'/temp',$module_name)!==true)
         {
             CAT_Object::json_error($backend->lang()->translate(
@@ -105,11 +126,6 @@ foreach($catalog['modules'] as $module)
                 array('error'=>CAT_Helper_GitHub::getError())
             ));
         }
-        // try install / update
-        switch($action)
-        {
-            case 'install':
-            case 'update':
                 if(CAT_Helper_Addons::installModule( CAT_PATH.'/temp/'.$module_name.'.zip', true, false ))
                 {
                     CAT_Object::json_success('Installed successfully');
@@ -124,7 +140,12 @@ foreach($catalog['modules'] as $module)
                 $result = CAT_Helper_Addons::uninstallModule('modules',$module_name);
                 if($result !== true)
                 {
-                    CAT_Object::json_error('Unable to uninstall the module!');
+                    CAT_Object::json_error(
+                        CAT_Helper_Addons::lang()->translate(
+                            'Unable to uninstall the module! {{message}}',
+                            array('message'=>$result)
+                        )
+                    );
                 }
                 else
                 {

@@ -1205,8 +1205,13 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     }
                 }
                 // Try to delete the module dir
-                if ( !CAT_Helper_Directory::removeDirectory( CAT_PATH . '/' . $type . '/' . $addon_name ) )
+                $mod_dir = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type.'/'.$addon_name);
+                if (
+                       !CAT_Helper_Directory::removeDirectory($mod_dir)
+                    && is_dir($mod_dir)
+                ) {
                     return self::getInstance()->lang()->translate( 'Cannot uninstall - unable to delete the directory!' );
+                }
             }
             else
             {

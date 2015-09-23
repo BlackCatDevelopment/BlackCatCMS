@@ -83,7 +83,7 @@ $addon = array(
     'type'      => $info['addon_function'],
     'installed' => NULL,
     'upgraded'  => NULL,
-    'removable' => 'Y',
+    'removable' => (( CAT_Helper_Addons::isRemovable($module) === true ) ? 'Y' : 'N' ),
 );
 foreach($info as $key => $value)
 {
