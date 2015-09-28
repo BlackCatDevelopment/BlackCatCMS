@@ -151,7 +151,6 @@ if ($job && $job=="save")
         if ( ! in_array($val->sanitizePost('skin'),$skins) )
     {
             $errors[$key] = $backend->lang()->translate('Invalid skin!');
-        continue;
     }
         else
         {
@@ -175,7 +174,6 @@ if ($job && $job=="save")
         if ( ! in_array($val->sanitizePost('toolbar'),$toolbars) )
         {
             $errors[$key] = $backend->lang()->translate('Invalid toolbar!');
-            continue;
         }
         else
         {
