@@ -149,7 +149,7 @@ elseif ( $update_section_id != '' )
 	$query_sections		= $backend->db()->query('SELECT `module` FROM `' . CAT_TABLE_PREFIX . 'sections` WHERE `page_id`= ' . $page_id . ' AND `section_id` = ' . $update_section_id);
 	if ( $query_sections->numRows() == 1 )
 	{
-		if ( $section = $query_sections->fetchRow( MYSQL_ASSOC ) )
+		if ( $section = $query_sections->fetch(PDO::FETCH_ASSOC) )
 		{
 			if ( !is_numeric (array_search($section['module'], $module_permissions) ) )
 			{

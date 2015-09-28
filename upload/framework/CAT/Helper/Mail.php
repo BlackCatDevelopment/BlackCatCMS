@@ -100,7 +100,7 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
             }
     		$query    = "SELECT * FROM " .CAT_TABLE_PREFIX. "settings";
     		$results  = $database->query($query);
-    		while($setting = $results->fetchRow(MYSQL_ASSOC))
+    		while($setting = $results->fetch(PDO::FETCH_ASSOC))
             {
                 if ( preg_match('/^wbmailer_(.*)$/i',$setting['name'],$match) )
                 {

@@ -43,6 +43,6 @@ if (defined('CAT_PATH')) {
 $result = CAT_Helper_Page::getInstance()->db()->query("SELECT `content` FROM `".CAT_TABLE_PREFIX."mod_wysiwyg` WHERE `section_id` = '".$section_id."'");
 if($result&&$result->numRows()>0)
 {
-    $fetch = $result->fetchRow(MYSQL_ASSOC);
+    $fetch = $result->fetch(PDO::FETCH_ASSOC);
     echo $fetch['content'];
 }

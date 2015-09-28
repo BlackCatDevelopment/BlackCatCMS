@@ -58,7 +58,7 @@ function register_droplet_for_search($droplet_name, $page_id, $module_directory)
     if (false === ($query = $database->query($SQL))) {
         trigger_error('[ %s ] %s', __FUNCTION__, $database->getError());
     }
-    while (false !== ($droplet = $query->fetchRow(MYSQL_ASSOC))) {
+    while (false !== ($droplet = $query->fetch(PDO::FETCH_ASSOC))) {
         $value = unserialize($droplet['extra']);
         if (isset($value['page_id']) && ($value['page_id'] == $page_id)) {
             // the Droplet is already registered for this page_id
@@ -91,7 +91,7 @@ function unregister_droplet_for_search($droplet_name, $page_id) {
     if (false === ($query = $database->query($SQL))) {
         trigger_error('[ %s ] %s', __FUNCTION__, $database->getError());
     }
-    while (false !== ($droplet = $query->fetchRow(MYSQL_ASSOC))) {
+    while (false !== ($droplet = $query->fetch(PDO::FETCH_ASSOC))) {
         $value = unserialize($droplet['extra']);
         if (isset($value['page_id']) && ($value['page_id'] == $page_id)) {
             // the Droplet is registered for this page_id
@@ -134,7 +134,7 @@ function get_droplet_page_ids_for_search($droplet_name) {
         trigger_error('[ %s ] %s', __FUNCTION__, $database->getError());
     }
     $page_ids = array();
-    while (false !== ($droplet = $query->fetchRow(MYSQL_ASSOC))) {
+    while (false !== ($droplet = $query->fetch(PDO::FETCH_ASSOC))) {
         $value = unserialize($droplet['extra']);
         if (isset($value['page_id'])) $page_ids[] = $value['page_id'];
     }

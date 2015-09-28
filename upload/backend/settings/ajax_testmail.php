@@ -56,7 +56,7 @@ if ( ! $curr_user_is_admin ) {
 $settings = array();
 $sql      = 'SELECT `name`, `value` FROM `'.CAT_TABLE_PREFIX.'settings`';
 if ( $res_settings = $backend->db()->query( $sql ) ) {
-    while ($row = $res_settings->fetchRow(MYSQL_ASSOC)) {
+    while ($row = $res_settings->fetch(PDO::FETCH_ASSOC)) {
         $settings[ strtoupper($row['name']) ] = ( $row['name'] != 'catmailer_smtp_password' ) ? htmlspecialchars($row['value']) : $row['value'];
 	}
 }

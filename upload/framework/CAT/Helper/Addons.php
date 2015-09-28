@@ -174,7 +174,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             );
             if ( $addon->rowCount() > 0 )
             {
-                return $addon->fetchRow( MYSQL_ASSOC );
+                return $addon->fetch(PDO::FETCH_ASSOC);
             }
             return NULL;
         } // end function getAddonDetails()
@@ -1179,7 +1179,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 );
                 if ( $stmt->rowCount() > 0 )
                 {
-                    while ( $row = $stmt->fetchRow( MYSQL_ASSOC ) )
+                    while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) )
                     {
                         $gid         = $row['group_id'];
                         $file        = $addon_name;
@@ -1342,7 +1342,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
                 // get all known groups
                 $groups = array();
-                while ( $row = $stmt->fetchRow( MYSQL_ASSOC ) )
+                while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) )
                 {
                     $groups[ $row['group_id'] ] = $row;
                     $gid                          = $row['group_id'];

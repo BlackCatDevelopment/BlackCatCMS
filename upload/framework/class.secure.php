@@ -105,7 +105,7 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
     $q = $db->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'class_secure');
     if ($q->numRows() > 0)
     {
-        while (false !== ($row = $q->fetchRow(MYSQL_ASSOC)))
+        while (false !== ($row = $q->fetch(PDO::FETCH_ASSOC)))
         {
             $direct_access_allowed[] = $row['filepath'];
         }

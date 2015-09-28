@@ -57,7 +57,7 @@ if ( ! $curr_user_is_admin ) {
 $settings = array();
 $sql      = 'SELECT * FROM `'.CAT_TABLE_PREFIX.'settings` WHERE name="guid"';
 if ( $res = $backend->db()->query( $sql ) ) {
-    $row = $res->fetchRow(MYSQL_ASSOC);
+    $row = $res->fetch(PDO::FETCH_ASSOC);
 }
 
 if(!isset($row['value']) || $row['value'] == '')

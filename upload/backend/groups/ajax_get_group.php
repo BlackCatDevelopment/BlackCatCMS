@@ -80,7 +80,7 @@ if(count($group_members))
 // ==============================================
 // ! Insert admin group and current group first
 // ==============================================
-if ( $group = $get_group->fetchRow( MYSQL_ASSOC ) )
+if ( $group = $get_group->fetch(PDO::FETCH_ASSOC) )
 {
     $system_permissions        = explode( ',', $group['system_permissions']);
     $module_permissions        = explode( ',', $group['module_permissions']);

@@ -183,7 +183,7 @@ class Template
   * @access    public
   * @return    void
   */
-  function Template($root = ".", $unknowns = "remove") {
+  function _construct($root = ".", $unknowns = "remove") {
     if ($this->debug & 4) {
       echo "<p><b>Template:</b> root = $root, unknowns = $unknowns</p>\n";
     }

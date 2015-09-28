@@ -119,7 +119,7 @@ if ($section_id != 0) {
 	}
 
 	// check module permissions:
-	$sec = $res_sec->fetchRow( MYSQL_ASSOC );
+	$sec = $res_sec->fetch(PDO::FETCH_ASSOC);
 	if (!$_bc_user->get_permission($sec['module'], 'module'))
 	{
 		$backend->print_error('You do not have permissions to modify this page');

@@ -103,7 +103,7 @@ if ( $results->numRows() == 0 )
 	exit();
 }
 
-$results_array	    = $results->fetchRow(MYSQL_ASSOC);
+$results_array	    = $results->fetch(PDO::FETCH_ASSOC);
 $old_admin_groups	= explode(',', $results_array['admin_groups']);
 $old_admin_users	= explode(',', $results_array['admin_users']);
 $in_old_group		= false;

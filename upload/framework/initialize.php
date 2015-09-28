@@ -133,7 +133,7 @@ if (!defined('CAT_INSTALL_PROCESS'))
         {
             die("CAPTCHA-Settings not found");
         }
-        $setting = $get_settings->fetchRow(MYSQL_ASSOC);
+        $setting = $get_settings->fetch(PDO::FETCH_ASSOC);
         CAT_Registry::register('ENABLED_CAPTCHA'    , (($setting['enabled_captcha'] == '1') ? true : false), true);
         CAT_Registry::register('ENABLED_ASP'        , (($setting['enabled_asp'] == '1')     ? true : false), true);
         CAT_Registry::register('CAPTCHA_TYPE'       , $setting['captcha_type']                             , true);

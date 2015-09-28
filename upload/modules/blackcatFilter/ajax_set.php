@@ -82,7 +82,7 @@ else
     ));
     if($res && $res->numRows())
     {
-        $data = $res->fetchRow(MYSQL_ASSOC);
+        $data = $res->fetch(PDO::FETCH_ASSOC);
         if(!isset($data['code']) || $data['code']=='')
         {
             $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$data['module_name'].'/filter/'.$data['filter_name'].'.php');

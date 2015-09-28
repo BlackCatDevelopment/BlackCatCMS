@@ -110,7 +110,7 @@ if ( CAT_Registry::get('PAGE_TRASH') !== 'false' )
 			if($query_menu->numRows() > 0)
 			{
 				// Loop through pages
-				while ( $page = $query_menu->fetchRow(MYSQL_ASSOC) )
+				while ( $page = $query_menu->fetch(PDO::FETCH_ASSOC) )
 				{
 					// Update the page visibility to 'deleted'
 					$backend->db()->query(sprintf(

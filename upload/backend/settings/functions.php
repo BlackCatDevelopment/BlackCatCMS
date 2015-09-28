@@ -271,7 +271,7 @@ function getCaptchaTypes($backend) {
 	// load text-captchas
 	if( $query = $backend->db()->query(sprintf("SELECT ct_text FROM `%smod_captcha_control`",CAT_TABLE_PREFIX)) )
     {
-		$data    = $query->fetchRow(MYSQL_ASSOC);
+		$data    = $query->fetch(PDO::FETCH_ASSOC);
 		$text_qa = $data['ct_text'];
 	}
 	if($text_qa == '')
@@ -280,7 +280,7 @@ function getCaptchaTypes($backend) {
 	// connect to database and read out captcha settings
 	if($query = $backend->db()->query(sprintf("SELECT * FROM `%smod_captcha_control`",CAT_TABLE_PREFIX)))
     {
-		$data            = $query->fetchRow(MYSQL_ASSOC);
+		$data            = $query->fetch(PDO::FETCH_ASSOC);
 		$enabled_captcha = $data['enabled_captcha'];
 		$enabled_asp     = $data['enabled_asp'];
 		$captcha_type    = $data['captcha_type'];
@@ -599,7 +599,7 @@ function check_auth_min_login_length($value,$oldvalue) {
         CAT_TABLE_PREFIX,$value
     ));
     if($result->numRows()) {
-        $row = $result->fetchRow(MYSQL_ASSOC);
+        $row = $result->fetch(PDO::FETCH_ASSOC);
         if($row['cnt']>0) {
             $err_msg[] = CAT_Users::getInstance()->lang()->translate(
                 'The min. Login name length could not be saved. There is/are {{ count }} user/s that have shorter names.',
@@ -622,7 +622,7 @@ function check_auth_max_login_length($value,$oldvalue) {
         CAT_TABLE_PREFIX,$value
     ));
     if($result->numRows()) {
-        $row = $result->fetchRow(MYSQL_ASSOC);
+        $row = $result->fetch(PDO::FETCH_ASSOC);
         if($row['cnt']>0) {
             $err_msg[] = CAT_Users::getInstance()->lang()->translate(
                 'The max. Login name length could not be saved. There is/are {{ count }} user/s that have longer names.',

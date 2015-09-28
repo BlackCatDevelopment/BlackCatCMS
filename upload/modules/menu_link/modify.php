@@ -48,7 +48,7 @@ $backend        = CAT_Backend::getInstance('pages','pages_modify');
 // get target page_id
 $table          = CAT_TABLE_PREFIX.'mod_menu_link';
 $sql_result     = $backend->db()->query("SELECT * FROM $table WHERE section_id = '$section_id'");
-$sql_row        = $sql_result->fetchRow(MYSQL_ASSOC);
+$sql_row        = $sql_result->fetch(PDO::FETCH_ASSOC);
 $target_page_id = $sql_row['target_page_id'];
 $r_type         = $sql_row['redirect_type'];
 $extern         = $sql_row['extern'];
@@ -67,7 +67,7 @@ foreach($pages as $page)
 
 foreach($links as $pid=>$l) {
 	if($query_section = $backend->db()->query("SELECT section_id, module FROM $table_s WHERE page_id = '$pid' ORDER BY position")) {
-		while($section = $query_section->fetchRow(MYSQL_ASSOC)) {
+		while($section = $query_section->fetch(PDO::FETCH_ASSOC)) {
 			// get section-anchor
 			if(defined('SEC_ANCHOR') && SEC_ANCHOR!='') {
 				$targets[$pid][] = SEC_ANCHOR.$section['section_id'];
@@ -76,7 +76,7 @@ foreach($links as $pid=>$l) {
 			}
 			if($section['module'] == 'wysiwyg') {
 				if($query_page = $backend->db()->query("SELECT content FROM $table_mw WHERE section_id = '{$section['section_id']}' LIMIT 1")) {
-					$page = $query_page->fetchRow(MYSQL_ASSOC);
+					$page = $query_page->fetch(PDO::FETCH_ASSOC);
 					if(preg_match_all('/<(?:a[^>]+name|[^>]+id)\s*=\s*"([^"]+)"/i',$page['content'], $match)) {
 						foreach($match[1] AS $t) {
 							$targets[$pid][$t] = $t;
@@ -91,7 +91,7 @@ foreach($links as $pid=>$l) {
 // get target-window for actual page
 $table      = CAT_TABLE_PREFIX."pages";
 $query_page = $backend->db()->query("SELECT target FROM $table WHERE page_id = '$page_id'");
-$page       = $query_page->fetchRow(MYSQL_ASSOC);
+$page       = $query_page->fetch(PDO::FETCH_ASSOC);
 $target     = $page['target'];
 
 // script for target-select-box

@@ -206,7 +206,7 @@ if ( $options['link'] !== $old_link )
     ));
     if ( is_object($query_subs) && $query_subs->numRows() > 0 )
     {
-        while ( $sub = $query_subs->fetchRow(MYSQL_ASSOC) )
+        while ( $sub = $query_subs->fetch(PDO::FETCH_ASSOC) )
         {
             // Double-check to see if it contains old link
             if ( substr($sub['link'], 0, $old_link_len) == $old_link )

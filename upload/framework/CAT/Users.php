@@ -150,7 +150,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                             // get default user preferences
                             $prefs = self::getDefaultUserOptions();
                             // get basic user data
-                            $user  = $result->fetchRow( MYSQL_ASSOC );
+                            $user  = $result->fetch(PDO::FETCH_ASSOC);
                             // add this user's options
                             $prefs = array_merge(
                                 $prefs,
@@ -1069,7 +1069,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
     		// ==============================================
     		// ! Insert admin group and current group first
     		// ==============================================
-    		$admin_group_name	= $get_groups->fetchRow( MYSQL_ASSOC );
+    		$admin_group_name	= $get_groups->fetch(PDO::FETCH_ASSOC);
 
     		if ( $insert_admin )
     		{
@@ -1089,7 +1089,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
     		$counter	= 1;
 
-    		while ( $group = $get_groups->fetchRow( MYSQL_ASSOC ) )
+    		while ( $group = $get_groups->fetch(PDO::FETCH_ASSOC) )
     		{
     			$system_permissions			= explode( ',', $group['system_permissions']);
     			array_unshift( $system_permissions, 'placeholder' );

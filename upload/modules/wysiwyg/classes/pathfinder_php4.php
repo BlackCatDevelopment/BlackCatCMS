@@ -155,7 +155,7 @@ class c_pathfinder
 			$r = $this->__db->query($q);
 		
 			if ($r && ( $r->numRows() > 0 ) ) {
-				$temp = $r->fetchRow( MYSQL_ASSOC );
+				$temp = $r->fetch(PDO::FETCH_ASSOC);
 				$this->last_section_id = $temp['section_id'];
 			}
 		} else {
@@ -171,7 +171,7 @@ class c_pathfinder
 	
 		$query = "SELECT `template` from `".CAT_TABLE_PREFIX."pages` where `page_id`='".$this->__page_id."'";
 		$result = $this->__db->query( $query );
-		$temp = $result->fetchRow( MYSQL_ASSOC );
+		$temp = $result->fetch(PDO::FETCH_ASSOC);
 		$base_folder = ($temp['template'] == "") ? DEFAULT_TEMPLATE : $temp['template'];
 		
 		foreach($this->files as $key=>$p) {
