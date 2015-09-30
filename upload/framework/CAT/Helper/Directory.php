@@ -785,6 +785,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                            ? CAT_Registry::get('OCTAL_DIR_MODE')
                            : (int) octdec(self::defaultDirMode());
              }
+             $dir_name = self::sanitizePath($dir_name);
 		     if ( $dir_name != '' && !is_dir($dir_name) )
 		     {
 		         $umask = umask(0);
@@ -1058,6 +1059,15 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             // Close the file
             fclose($fp);
         }   // end function encrypt()
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getName($file)
+        {
+            return ( mb_detect_encoding($file,'UTF-8',true) ? $file : utf8_encode($file) );
+        }   // end function encode()
 
 		/**
 		 *

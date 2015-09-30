@@ -23,25 +23,16 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
-} else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
-}
+/**
+ * Please note: This file has no secure code because it is called via AJAX
+ * under some circumstances - and as it performs a logout there is no need
+ * to protect it...
+ **/
 
 // this is not really needed, but just to be really really secure...
-foreach(array_keys($_SESSION) as $key)
-    unset($_SESSION[$key]);
+if(isset($_SESSION))
+    foreach(array_keys($_SESSION) as $key)
+        unset($_SESSION[$key]);
 
 // overwrite session array
 $_SESSION = array();
@@ -62,5 +53,8 @@ if(!isset($_POST['_cat_ajax']))
 }
 else {
     header('Content-type: application/json');
-    CAT_Object::json_success('ok');
+    echo json_encode(array(
+        'success' => true,
+        'message' => 'ok'
+    ));
 }

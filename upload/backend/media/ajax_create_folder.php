@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -39,8 +39,6 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-include_once(CAT_PATH . '/framework/functions.php');
-
 $backend = CAT_Backend::getInstance('Media','media',false);
 $users   = CAT_Users::getInstance();
 $val     = CAT_Helper_Validate::getInstance();
@@ -51,11 +49,7 @@ $ajax['folder_path'] = $val->sanitizePost('folder_path');
 
 if ( $ajax['folder_path'] == '' || !$users->checkPermission('Media','media_create') )
 {
-	$ajax	= array(
-		'message'	=> 'You don\'t have the permission to create a folder. Check your system settings.',
-		'created'	=> false
-	);
-	print json_encode( $ajax );
+	print CAT_Object::json_error('You don\'t have the permission to create a folder. Check your system settings.');
 	exit();
 }
 else

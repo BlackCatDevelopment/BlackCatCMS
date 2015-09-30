@@ -13,10 +13,8 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
+ *   @author          Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -27,11 +25,10 @@
 if (defined('CAT_PATH')) {
     include(CAT_PATH . '/framework/class.secure.php');
 } else {
-    $oneback = "../";
-    $root = $oneback;
+	$root = "../";
     $level = 1;
     while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-        $root .= $oneback;
+		$root .= "../";
         $level += 1;
     }
     if (file_exists($root.'/framework/class.secure.php')) {
@@ -42,12 +39,6 @@ if (defined('CAT_PATH')) {
 }
 
 $backend = CAT_Backend::getInstance('Media','media');
-
-// ================================= 
-// ! Include the WB functions file   
-// ================================= 
-include_once(CAT_PATH . '/framework/functions.php');
-
 $dirh  = CAT_Helper_Directory::getInstance();
 $user  = CAT_Users::getInstance();
 
@@ -65,9 +56,10 @@ $tpl_data['maxUploadFiles']     = 12;
 $tpl_data['allowed_file_types'] = str_replace(',','|',UPLOAD_ALLOWED);
 $tpl_data['MEDIA_DIRECTORY']    = MEDIA_DIRECTORY;
 
-// ==================================================================================================================================== 
-// ! Set the initial folder to view (mediaroot or homefolder). If the user doesn't have permissions to see media, redirect to admin_url
-// ==================================================================================================================================== 
+// ============================================================================= 
+// ! Set the initial folder to view (mediaroot or homefolder). If the user
+// ! doesn't have permissions to see media, redirect to admin_url
+// ============================================================================= 
 if ($user->checkPermission('media','media',false)==true){
     $tpl_data['initial_folder']
         = ( $user->get_user_id() == 1 || (HOME_FOLDERS && $user->get_home_folder()=='') || !HOME_FOLDERS )
@@ -105,7 +97,7 @@ if(is_array($folders) && count($folders))
 {
     foreach(array_values($folders) as $folder)
     {
-        $tpl_data['folders'][]['NAME'] = $folder;
+        $tpl_data['folders'][]['NAME'] = $dirh->getName($folder);
     }
 }
 // ================================================ 
@@ -123,7 +115,7 @@ if(is_array($files) && count($files))
             'FILESIZE'     => $dirh->getSize($file_path,true),
             'FILEDATE'     => CAT_Helper_DateTime::getDateTime(filemtime($file_path)),
             'FILETIME'     => CAT_Helper_DateTime::getDateTime(filemtime($file_path)),
-            'FULL_NAME'    => $file,
+            'FULL_NAME'    => $dirh->getName($file),
             'NAME'         => pathinfo($file,PATHINFO_FILENAME)
         );
     }

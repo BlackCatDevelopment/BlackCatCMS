@@ -50,21 +50,20 @@ header('Content-type: application/json');
 // ==================
 // ! Get user input   
 // ================== 
-$file_path		= CAT_Helper_Directory::sanitizePath( ($val->strip_slashes($val->sanitizePost('file_path')) ) );
+$file_path		= CAT_Helper_Directory::sanitizePath($val->strip_slashes($val->sanitizePost('file_path')));
 $rename_file 	= $val->strip_slashes($val->sanitizePost('rename_file'));
 $new_name		= trim( $val->strip_slashes($val->sanitizePost('new_name')) );
 $new_extension	= trim( $val->strip_slashes($val->sanitizePost('extension')) );
 
 // ===============================================================================
-// ! Check if user has permission to rename files and if all posts are not empty   
+// ! Check if user has permission to rename files and if all params are there
 // =============================================================================== 
 if ( $new_name == '' || $rename_file == '' || $file_path == '' || $users->checkPermission('Media','media_rename') !== true )
 {
-	$ajax['message']	= $users->checkPermission('Media','media_rename') !== true
+	$message = $users->checkPermission('Media','media_rename') !== true
                         ? $backend->lang()->translate('You do not have the permission to rename files')
                         : $backend->lang()->translate('You sent an empty value');
-	$ajax['success']	= false;
-	print json_encode( $ajax );
+	print CAT_Object::json_error($message);
 	exit();
 }
 else
@@ -75,12 +74,13 @@ else
 	if ( is_writable(CAT_PATH . $file_path) )
 	{
 		$file = CAT_Helper_Directory::sanitizePath( CAT_PATH . $file_path . '/' . $rename_file );
-		
-		// Check if a new extension were sent
+		// Check if a new extension was sent
 		if ( $new_extension == '' && !is_dir( $file ) )
 		{
 			// if file is a folder (so there is no extension) keep extension clear, if it is a file, add a "." and the extension
-			$new_extension = (strtolower(pathinfo( $file, PATHINFO_EXTENSION)) == '') ? '' : strtolower(pathinfo( $file, PATHINFO_EXTENSION) );
+			$new_extension = (strtolower(pathinfo($file,PATHINFO_EXTENSION)) == '')
+                           ? ''
+                           : strtolower(pathinfo($file,PATHINFO_EXTENSION));
 		}
 		if ( substr($new_extension, 0, 1) != '.'  && !is_dir( $file ) )
 		{

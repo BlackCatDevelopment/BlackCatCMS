@@ -58,6 +58,7 @@ else
     	'url'			=> $redirect,
     	'success'		=> CAT_Users::getInstance()->is_authenticated(),
     	'message'		=> ( ($redirect===false||$error) ? $error : NULL ),
+        'timer'         => ini_get('session.gc_maxlifetime'),
     );
 }
 
