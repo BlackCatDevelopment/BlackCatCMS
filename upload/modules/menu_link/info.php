@@ -44,9 +44,9 @@ if (defined('CAT_PATH')) {
 $module_directory = 'menu_link';
 $module_name = 'Menu Link';
 $module_function = 'page';
-$module_version = '2.8.2';
+$module_version = '2.8.3';
 $module_platform = '1.x';
-$module_author = 'Ryan Djurovich, thorn';
+$module_author = 'Ryan Djurovich, thorn, Black Cat Development';
 $module_license = 'GNU General Public License';
 $module_description = 'This module allows you to insert a link into the menu.';
 $module_guid      = '452f0da3-3bc1-43bc-b2ad-491ae8494c6e';

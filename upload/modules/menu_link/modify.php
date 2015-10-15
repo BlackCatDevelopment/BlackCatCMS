@@ -47,7 +47,7 @@ $backend        = CAT_Backend::getInstance('pages','pages_modify');
 
 // get target page_id
 $table          = CAT_TABLE_PREFIX.'mod_menu_link';
-$sql_result     = $backend->db()->query("SELECT * FROM $table WHERE section_id = '$section_id'");
+$sql_result     = $backend->db()->query("SELECT * FROM `$table` WHERE `section_id` = '$section_id'");
 $sql_row        = $sql_result->fetch(PDO::FETCH_ASSOC);
 $target_page_id = $sql_row['target_page_id'];
 $r_type         = $sql_row['redirect_type'];
@@ -66,7 +66,7 @@ foreach($pages as $page)
     $links[$page['page_id']] = $page['link'];
 
 foreach($links as $pid=>$l) {
-	if($query_section = $backend->db()->query("SELECT section_id, module FROM $table_s WHERE page_id = '$pid' ORDER BY position")) {
+	if($query_section = $backend->db()->query("SELECT `section_id`, `module` FROM `$table_s` WHERE `page_id` = '$pid' ORDER BY `position`")) {
 		while($section = $query_section->fetch(PDO::FETCH_ASSOC)) {
 			// get section-anchor
 			if(defined('SEC_ANCHOR') && SEC_ANCHOR!='') {
@@ -75,7 +75,7 @@ foreach($links as $pid=>$l) {
 				$targets[$pid] = array();
 			}
 			if($section['module'] == 'wysiwyg') {
-				if($query_page = $backend->db()->query("SELECT content FROM $table_mw WHERE section_id = '{$section['section_id']}' LIMIT 1")) {
+				if($query_page = $backend->db()->query("SELECT `content` FROM `$table_mw` WHERE `section_id` = '{$section['section_id']}' LIMIT 1")) {
 					$page = $query_page->fetch(PDO::FETCH_ASSOC);
 					if(preg_match_all('/<(?:a[^>]+name|[^>]+id)\s*=\s*"([^"]+)"/i',$page['content'], $match)) {
 						foreach($match[1] AS $t) {
@@ -90,9 +90,12 @@ foreach($links as $pid=>$l) {
 
 // get target-window for actual page
 $table      = CAT_TABLE_PREFIX."pages";
-$query_page = $backend->db()->query("SELECT target FROM $table WHERE page_id = '$page_id'");
+$query_page = $backend->db()->query("SELECT `target` FROM `$table` WHERE `page_id` = '$page_id'");
 $page       = $query_page->fetch(PDO::FETCH_ASSOC);
 $target     = $page['target'];
+
+// pages dropdown
+$pages_list = CAT_Helper_ListBuilder::sort($pages,0);
 
 // script for target-select-box
 ?>
@@ -154,13 +157,18 @@ $target     = $page['target'];
 		<select name="menu_link" id="menu_link" onchange="populate()" style="width:250px;" >
 			<option value="0"<?php echo $target_page_id=='0'?$sel:''?>><?php echo $TEXT['PLEASE_SELECT']; ?></option>
 			<option value="-1"<?php echo $target_page_id=='-1'?$sel:''?>><?php echo $MOD_MENU_LINK['EXTERNAL_LINK']; ?></option>
-			<?php foreach($links AS $pid=>$link) {
-				if ($pid == $page_id)  // Display current page with selection disabled
-					echo "<option value=\"$pid\" disabled=\"disabled\">$link *</option>\n";
+
+            <?php foreach(array_values($pages_list) as $pg) {
+				if ($pg['page_id'] == $page_id)  // Display current page with selection disabled
+					echo "<option value=\"", $pg['page_id'], "\" disabled=\"disabled\">", str_repeat('|--',$pg['level']), $pg['menu_title'], " *</option>\n";
 				else
-					echo "<option value=\"$pid\" ".($target_page_id==$pid?$sel:'').">$link</option>\n";
+					echo "<option value=\"", $pg['page_id'], "\" ".($target_page_id==$pg['page_id']?$sel:'').">", str_repeat('|--',$pg['level']), $pg['menu_title'], "</option>\n";
 			} ?>
+
 		</select>
+        <script language="JavaScript" type="text/javascript">
+            $('select#menu_link option:selected').attr('disabled','disabled');
+        </script>
 		&nbsp;
 		<input type="text" name="extern" id="extern" value="<?php echo $extern; ?>" style="width:250px;" <?php if($target_page_id!='-1') echo 'disabled="disabled"'; ?> />
 	</td>

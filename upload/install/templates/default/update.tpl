@@ -29,9 +29,9 @@
 		{if ! $progress}
 		<div style="text-align:center;">
 		{translate('This wizard will help you to upgrade your current Black Cat CMS Version')}<br />
-		<span style="font-weight:bold;color:#f00;">v{$lepton_version}</span><br />
+		<span style="font-weight:bold;color:#f00;">v{$cat_version}</span><br />
 		{translate('to Version')}<br />
-		<span style="font-weight:bold;color:#f00;">v{$new_lepton_version}</span>
+		<span style="font-weight:bold;color:#f00;">v{$new_cat_version}</span>
 		</div>
 		<form method="post" action="{$installer_uri}/index.php">
 		  <input type="hidden" name="update" value="y" />
