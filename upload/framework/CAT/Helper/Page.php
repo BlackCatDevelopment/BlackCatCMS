@@ -659,12 +659,18 @@ if (!class_exists('CAT_Helper_Page'))
                 $cfg_file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/c_editor.php');
                 if(file_exists($cfg_file))
                 {
-                    require $cfg_file;
-                    $c = new c_editor();
-                    $css = $c->getFrontendCSS();
-                    if(count($css))
+                    if(!class_exists('c_editor',false))
                     {
-                        $data['wysiwyg_files'] = $css;
+                        require $cfg_file;
+                    }
+                    $c = new c_editor();
+                    if(method_exists($c,'getFrontendCSS'))
+                    {
+                        $css = $c->getFrontendCSS();
+                        if(count($css))
+                        {
+                            $data['wysiwyg_files'] = $css;
+                        }
                     }
                 }
             }

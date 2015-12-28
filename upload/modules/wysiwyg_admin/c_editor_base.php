@@ -61,14 +61,13 @@ if(!class_exists('c_editor_base',false))
         abstract public function getToolbars();
         abstract public function getAdditionalSettings();
         abstract public function getAdditionalPlugins();
-        abstract public function getFrontendCSS();
+        #abstract public function getFrontendCSS();
 
         private function get($name,&$config)
         {
             if(isset($config[$name]))
             {
                 $val = $config[$name];
-    #            unset($config[$name]);
                 return $val;
             }
         }
