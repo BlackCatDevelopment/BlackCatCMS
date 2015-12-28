@@ -525,6 +525,8 @@ class CAT_PDOStatementDecorator
     }
     public function fetchRow($type=PDO::FETCH_ASSOC)
     {
+        // this is for backward compatibility
+        if($type===MYSQL_ASSOC) $type = PDO::FETCH_ASSOC;
         return $this->pdo_stmt->fetch($type);
     }
 }
