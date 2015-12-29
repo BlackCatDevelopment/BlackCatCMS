@@ -1310,6 +1310,13 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                     $self->log()->logWarn( sprintf( 'Unable to add module in dir [%s] to database, missing attr module_name!', $addon_dir ) );
                 }
             }
+
+            if ( $action == 'upgrade' && isset($addon_info['module_name']) )
+            {
+                $sql = "UPDATE `:prefix:addons` SET `upgraded`=:time, `version`=:ver WHERE `directory`=:dir";
+                $self->db()->query( $sql, array('time' => time(), 'ver' => $addon_info['module_version'], 'dir' => $addon_info['module_directory'] ) );
+            }
+
             return true;
         } // end function loadModuleIntoDB()
 
