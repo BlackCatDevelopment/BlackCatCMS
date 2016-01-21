@@ -1407,9 +1407,14 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 {
                     // skip negative page id's
                     if ( substr( $usage[$i]['page_id'], 0, 1 ) == '-' )
+                    {
                         unset($usage[$i]);
-                    $usage[$i]['page_link']  = CAT_Helper_Page::getLink($usage[$i]['page_id']);
-                    $usage[$i]['menu_title'] = CAT_Helper_Page::properties($usage[$i]['page_id'],'menu_title');
+                    }
+                    else
+                    {
+                        $usage[$i]['page_link']  = CAT_Helper_Page::getLink($usage[$i]['page_id']);
+                        $usage[$i]['menu_title'] = CAT_Helper_Page::properties($usage[$i]['page_id'],'menu_title');
+                    }
                 }
                 return $usage;
             }
