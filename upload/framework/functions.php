@@ -555,7 +555,7 @@ if (!defined('FUNCTIONS_FILE_LOADED'))
     {
         function file_list( $directory, $skip = array(), $show_hidden = false )
         {
-            return CAT_Helper_Directory::getInstance()
+            return CAT_Helper_Directory::getInstance(1)
                    ->setSkipDirs($skip)
                    ->scanDirectory($directory,true,true);
         }

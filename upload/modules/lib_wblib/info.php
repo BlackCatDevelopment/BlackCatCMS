@@ -23,14 +23,15 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
-} else {
-	$oneback = "../";
-	$root = $oneback;
+if (defined('WB_PATH')) {
+    if (defined('CAT_PATH')) include(CAT_PATH.'/framework/class.secure.php');
+    elseif (defined('LEPTON_PATH')) include(LEPTON_PATH.'/framework/class.secure.php');
+}
+else {
+    $root = "../";
 	$level = 1;
 	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
+        $root .= "../";
 		$level += 1;
 	}
 	if (file_exists($root.'/framework/class.secure.php')) {

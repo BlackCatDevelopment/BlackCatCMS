@@ -214,7 +214,7 @@ $module               = $val->sanitizePost('type');
 // ! Add new record into the sections table
 // ==========================================
 $backend->db()->query(sprintf(
-    "INSERT INTO `%ssections` (page_id,position,module,block) VALUES ('%d','1', '%s','1')",
+    "INSERT INTO `%ssections` (`page_id`,`position`,`module`,`block`) VALUES ('%d','1', '%s','1')",
     CAT_TABLE_PREFIX, $page_id, $module
 ));
 
@@ -232,7 +232,7 @@ $admin =& $backend;
 // ! Include the selected modules add file if it exists
 // ======================================================
 if ( file_exists(CAT_PATH . '/modules/' . $module . '/add.php') )
-    require(CAT_PATH . '/modules/' . $module . '/add.php');
+    require CAT_PATH . '/modules/' . $module . '/add.php';
 
 // ==============================
 // ! Check if there is a db error

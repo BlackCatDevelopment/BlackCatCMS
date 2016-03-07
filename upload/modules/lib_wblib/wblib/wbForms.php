@@ -807,6 +807,26 @@ if (!class_exists('wblib\wbForms',false))
         protected static $tpl        = NULL;
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function destroy()
+        {
+            self::$instance = NULL;
+            self::$CSS      = array();
+            self::$INLINECSS  = array();
+            self::$JS         = array();
+            self::$INLINEJS   = array();
+            self::$FORMS      = array();
+            self::$CURRENT    = NULL;
+            self::$ELEMENTS   = array();
+            self::$DATA       = array();
+            self::$ERRORS     = array();
+            self::$LOADED     = array();
+        }   // end function destroy()
+
+        /**
          * Create an instance
          *
          * @access public
@@ -1526,6 +1546,7 @@ if (!class_exists('wblib\wbForms',false))
 
             if(self::$globals['contentonly'])
                 return implode('',$elements);
+
             // make sure we have a submit button
             if(!self::hasButton() && self::$globals['add_buttons'])
                 $elements[] = wbFormsElementSubmit::get(array('label'=>'Submit'))->render();
@@ -1573,9 +1594,16 @@ if (!class_exists('wblib\wbForms',false))
             self::log('> getData()',7);
             $formname = self::current();
             if(!isset(self::$FORMS[$formname]['__is_valid']))
-                self::isValid($get_empty); self::$FORMS[$formname]['__is_valid'] = false;
+            {
+                self::log('calling isValid');
+                self::isValid($get_empty);
+                self::$FORMS[$formname]['__is_valid'] = false;
+            }
             if(!self::$FORMS[$formname]['__is_valid']&&!$always_return)
+            {
+                self::log('< getData(invalid)',7);
                 return NULL;
+            }
             return self::$DATA[$formname];
             self::log('< getData()',7);
         }   // end function getData()
@@ -2329,8 +2357,12 @@ echo "</textarea>";
         {
             self::log('> wbFormsElementForm::render()',7);
             $elements = func_get_arg(0);
+            // check enctype
+            if($this->attr['method'] == 'post') $this->attr['enctype'] = 'multipart/form-data';
             // render form
             $this->attr['content']  = $elements;
+            // make sure to close the buttonline
+            $this->attr['content'] .= wbFormsElementButtonline::get()->close();
             // make sure to close last fieldset
             $this->attr['fieldset'] = wbFormsElementFieldset::get()->close();
             $output  = $this->replaceAttr();
@@ -2536,7 +2568,7 @@ echo "</textarea>";
      */
     class wbFormsElementSelect extends wbFormsElement
     {
-        protected static $tpl = NULL;
+        protected static $tpl = "%label%%is_required%\n<select%name%%id%%class%%style%%title%%multiple%%tabindex%%accesskey%%disabled%%readonly%%required%%onblur%%onchange%%onclick%%onfocus%%onselect%>\n%options%</select> %after%\n";
         /**
          * adds select specific attributes
          **/
@@ -2545,16 +2577,6 @@ echo "</textarea>";
             $this->attributes['options']  = NULL;
             $this->attributes['selected'] = NULL;
             $this->attributes['multiple'] = NULL;
-            wbFormsElementSelect::$tpl
-                = '%label%%is_required%'
-                . "\n"
-                . '<select%name%%id%%class%%style%%title%%multiple%'
-                . '%tabindex%%accesskey%%disabled%%readonly%%required%%onblur%%onchange%%onclick%%onfocus%%onselect%>'
-                . "\n"
-                . '%options%'
-                . '</select> %after%'
-                . "\n"
-                ;
             return $this;
         }
         /**
@@ -2995,7 +3017,6 @@ echo "</textarea>";
             return 'checked';
         }   // end function valueattr()
 
-
     }   // ---------- end class wbFormsElementCheckbox ----------
 
     /**
@@ -3066,7 +3087,7 @@ echo "</textarea>";
             'value' => 1,
         );
         // valid types: button|submit|reset
-        public static $tpl = '<button%type%%name%%id%%value%%tabindex%%accesskey%%class%%style%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect%>%label%</button>';
+        public static $tpl = '<button%type%%name%%id%%value%%tabindex%%accesskey%%class%%style%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect%%title%>%label%</button>';
         public static $cssclass = 'ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary';
         public function render() {
             $open = NULL;

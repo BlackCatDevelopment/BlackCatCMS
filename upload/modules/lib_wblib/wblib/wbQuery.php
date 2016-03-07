@@ -233,6 +233,7 @@ interface wbQuery_DriverInterface
         protected $dbname               = "mydb";
         protected $prefix               = NULL;
         protected $timeout              = 5;
+        protected $force_utf8           = false;
 
         /**
          * error stack
@@ -312,6 +313,10 @@ interface wbQuery_DriverInterface
             array(
                 'name' => 'prefix',
                 'type' => 'string',
+            ),
+            array(
+                'name' => 'force_utf8',
+                'type' => 'boolean'
             ),
         );
 
@@ -445,6 +450,11 @@ interface wbQuery_DriverInterface
          * @return array
          **/
         public function getDriverOptions() {
+            if($this->force_utf8) {
+                return array(
+                    \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
+                );
+            }
         }   // end function getDriverOptions()
 
         /**

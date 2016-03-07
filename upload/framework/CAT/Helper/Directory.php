@@ -397,7 +397,6 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
 		    $path       = preg_replace( '~/{1,}$~', '', $path );
 		    // make all slashes forward
 			$path       = str_replace( '\\', '/', $path );
-
 	        // bla/./bloo ==> bla/bloo
 	        $path       = preg_replace('~/\./~', '/', $path);
 
@@ -424,7 +423,6 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                     $part = ( self::$is_win && mb_detect_encoding($part,'UTF-8',true) )
                           ? utf8_decode($part)
                           : $part;
-                    #$self->log()->logDebug("adding part -$part-\n");
 	                $parts[] = $part;
 	            }
 	        }
@@ -1059,6 +1057,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
             // Close the file
             fclose($fp);
         }   // end function encrypt()
+
         /**
          *
          * @access public

@@ -86,20 +86,21 @@ foreach($catalog['modules'] as $module)
                 }
             }
         }
+
         // try install / update
         switch($action)
         {
             case 'install':
             case 'update':
-        // check for download location
-        if(!isset($module['github']) || !isset($module['github']['organization']) || !isset($module['github']['repository']))
-        {
-            CAT_Object::json_error('Unable to download the module. No download location set.');
-        }
-        // get latest release
-        $release_info = CAT_Helper_GitHub::getRelease($module['github']['organization'],$module['github']['repository']);
-        if(!is_array($release_info) || !count($release_info))
-        {
+                // check for download location
+                if(!isset($module['github']) || !isset($module['github']['organization']) || !isset($module['github']['repository']))
+                {
+                    CAT_Object::json_error('Unable to download the module. No download location set.');
+                }
+                // get latest release
+                $release_info = CAT_Helper_GitHub::getRelease($module['github']['organization'],$module['github']['repository']);
+                if(!is_array($release_info) || !count($release_info))
+                {
                     // no release found, search for tags
                     $tags = CAT_Helper_GitHub::getTags($module['github']['organization'],$module['github']['repository']);
                     if(!is_array($tags) || !count($release_info))
@@ -116,16 +117,15 @@ foreach($catalog['modules'] as $module)
                 else
                 {
                     $dlurl = $release_info['zipball_url'];
-        }
-
-        // try download
-        if(CAT_Helper_GitHub::getZip($dlurl,CAT_PATH.'/temp',$module_name)!==true)
-        {
-            CAT_Object::json_error($backend->lang()->translate(
-                'Unable to download the module. Error: {{ error }}',
-                array('error'=>CAT_Helper_GitHub::getError())
-            ));
-        }
+                }
+                // try download
+                if(CAT_Helper_GitHub::getZip($dlurl,CAT_PATH.'/temp',$module_name)!==true)
+                {
+                    CAT_Object::json_error($backend->lang()->translate(
+                        'Unable to download the module. Error: {{ error }}',
+                        array('error'=>CAT_Helper_GitHub::getError())
+                    ));
+                }
                 if(CAT_Helper_Addons::installModule( CAT_PATH.'/temp/'.$module_name.'.zip', true, false ))
                 {
                     CAT_Object::json_success('Installed successfully');

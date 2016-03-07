@@ -156,9 +156,9 @@ else
     // ! Set permissions for addons
     // ==============================
     $system_permissions['addons']              = (
-                                                    isset($system_permissions['modules']) ||
-                                                    isset($system_permissions['templates']) ||
-                                                    isset($system_permissions['languages'])
+                                                    ( isset($system_permissions['modules'])   && $system_permissions['modules']   ) ||
+                                                    ( isset($system_permissions['templates']) && $system_permissions['templates'] ) ||
+                                                    ( isset($system_permissions['languages']) && $system_permissions['languages'] )
                                                  )
                                                ? true
                                                : false;

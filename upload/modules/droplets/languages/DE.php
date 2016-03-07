@@ -96,6 +96,7 @@ $LANG = array(
 	'Please mark some Droplets to delete' => 'Bitte Droplet(s) zum Löschen markieren',
 	'Please mark some Droplets to export' => 'Bitte einige Droplets zum Export markieren',
 	'Successfully imported [{{count}}] Droplet(s)' => '[{{count}}] Droplet(s) erfolgreich importiert',
+    'Unable to create the temporary folder: {{error}}' => 'Fehler beim Anlegen des temporären Verzeichnisses: {{error}}',
 	'Unable to delete droplet: {{id}}' => 'Fehler beim Löschen von Droplet: {{id}}',
 	'Use' => 'Verwendung',
 	'Valid' => 'Valide',

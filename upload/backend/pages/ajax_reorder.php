@@ -82,7 +82,7 @@ foreach ( $new_array as $index => $element)
 }
 
 $order		= new order(CAT_TABLE_PREFIX.$table, 'position', $id_field);
-$reorder	= $order->reorder_by_array( $new_array );
+$reorder	= $order->reorder_by_array($new_array);
 
 if ( $reorder === true )
 {

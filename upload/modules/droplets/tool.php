@@ -336,7 +336,11 @@ function export_droplets()
     $temp_dir = CAT_PATH . '/temp/droplets/';
 
     // make the temporary working directory
-    @mkdir( $temp_dir );
+    if(!@mkdir($temp_dir))
+    {
+        $err = error_get_last();
+        $backend->print_error( $backend->lang()->translate('Unable to create the temporary folder: {{error}}',array('error'=>$err['message'])) );
+    }
 
     foreach ( $marked as $id )
     {

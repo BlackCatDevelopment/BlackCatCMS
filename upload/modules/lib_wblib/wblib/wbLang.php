@@ -183,7 +183,7 @@ if(!is_scalar($msg)) {
 
             // get plurals
             preg_match_all( '~\[\[\s*?{{\s*?([^}].+?)\s*?}}\s*?\|\s*?([^\|].+?)\s*?\|\s*?([^\]].+?)\]\]~i', $msg, $matches, PREG_SET_ORDER );
-            self::log('preg_match_all result:',7);
+            self::log('preg_match_all result (match plurals):',7);
             self::log(var_export($matches,1),7);
 
             foreach ( $matches as $match )
@@ -207,6 +207,7 @@ if(!is_scalar($msg)) {
             foreach ( $attr as $key => $value )
                 $msg = preg_replace( "~{{\s*$key\s*}}~i", $value, $msg );
 
+            self::log(sprintf('after replacing attrs: ~%s~',$msg),7);
             self::log('< translate()',7);
 
             return $msg;

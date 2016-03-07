@@ -15,29 +15,28 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2014, Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
- *   @review          21.07.2014 18:26:26
  *
  */
 
 if (defined('CAT_PATH')) {
-    include(CAT_PATH.'/framework/class.secure.php');
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
-    $root = "../";
-    $level = 1;
-    while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-        $root .= "../";
-        $level += 1;
-    }
-    if (file_exists($root.'/framework/class.secure.php')) {
-        include($root.'/framework/class.secure.php');
-    } else {
-        trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-    }
+	$root = "../";
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= "../";
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
 }
 
 $backend = CAT_Backend::getInstance('Access', 'groups', false);
@@ -54,11 +53,9 @@ if (
     || ( $saveGroup && ! $users->checkPermission('Access','groups_modify') )
 ) {
     $action    = $addGroup != '' ? 'add' : 'modify';
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('You do not have the permission to {{action}} a group.', array( 'action' => $action ) ),
-        'success'    => false
+    echo CAT_Object::json_error(
+        $backend->lang()->translate('You do not have the permission to {{action}} a group.', array( 'action' => $action ) )
     );
-    print json_encode( $ajax );
     exit();
 }
 
@@ -71,31 +68,23 @@ if(
     || ( $addGroup == '' && $saveGroup == '' )
     || ( $addGroup != '' && $saveGroup != '' )
 ) {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('You sent an invalid value'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('You sent an invalid value'));
     exit();
 }
 
 // Check group_name
 if( $group_name == '' )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('Group name is blank'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('Group name is blank'));
     exit();
 }
 
-$sql = "SELECT * FROM `:prefix:groups` WHERE name = :name";
+$sql = "SELECT * FROM `:prefix:groups` WHERE `name` = :name";
 $params = array('name'=>$group_name);
 
 if( $saveGroup != '' )
 {
-    $sql .= "AND group_id != :id";
+    $sql .= " AND group_id != :id";
     $params['id'] = $group_id;
 }
 
@@ -105,20 +94,17 @@ if(
        ( $results->numRows() > 0 && $addGroup  != '' )
     || ( $results->numRows() > 0 && $saveGroup != ''  ) )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('Group name already exists'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('Group name already exists'));
     exit();
 }
 
 // Get system and module permissions
-require( CAT_ADMIN_PATH . '/groups/get_permissions.php' );
+require CAT_ADMIN_PATH . '/groups/get_permissions.php';
 
 $params = array(
     'name' => $group_name,'system_permissions'=>$system_permissions,'module_permissions'=>$module_permissions,'template_permissions'=>$template_permissions
 );
+
 if ( $addGroup != '' )
 {
     $sql = "INSERT INTO `:prefix:groups` ( `name`, `system_permissions`, `module_permissions`, `template_permissions`) "

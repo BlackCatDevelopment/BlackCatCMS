@@ -47,8 +47,10 @@ $tpl_data = array();
 
 // include local functions file
 require_once dirname(__FILE__).'/functions.php';
+
 // template for default tab (SEO settings)
 $tpl      = 'backend_settings_index_seo';
+
 // add default form
 $form = $backend->getForms('settings');
 $form->setForm('seo');
@@ -60,7 +62,7 @@ $form->setData($values);
 $tpl_data['INDEX'] = $parser->get($tpl, array('values'=>$values,'form'=>$form->getForm()));
 $tpl_data['MAINTENANCE_MODE'] = CAT_Registry::get('MAINTENANCE_MODE');
 
-// ==================== 
+// ====================
 // ! Parse the site   
 // ==================== 
 $parser->output('backend_settings_index', $tpl_data);

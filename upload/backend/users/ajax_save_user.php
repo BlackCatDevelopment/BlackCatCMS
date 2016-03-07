@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2014, Black Cat Development
+ *   @copyright       2016, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -39,6 +39,7 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+
 $val  = CAT_Helper_Validate::getInstance();
 $perm = 'users_modify';
 
@@ -52,18 +53,16 @@ header('Content-type: application/json');
 
 if ( ! $users->checkPermission('access',$perm) )
 {
-    $ajax = array(
-        'message'    => $backend->lang()->translate('You do not have the permission to {{action}} a user.', array( 'action' => str_replace('users','',$perm) ) ),
-        'success'    => false
+    echo CAT_Object::json_error(
+        $backend->lang()->translate('You do not have the permission to {{action}} a user.', array( 'action' => str_replace('users','',$perm) ) )
     );
-    print json_encode( $ajax );
     exit();
 }
 
 $addUser  = trim( $val->sanitizePost('addUser',NULL,true) );
 $saveUser = trim( $val->sanitizePost('saveUser',NULL,true) );
 
-include_once( CAT_PATH . '/framework/functions.php' );
+include_once CAT_PATH.'/framework/functions.php';
 
 // Gather details entered
 $username_fieldname = str_replace(array("[[", "]]"), '', htmlspecialchars($val->sanitizePost('username_fieldname'), ENT_QUOTES));
@@ -74,7 +73,7 @@ $password           = $val->sanitizePost('password');
 $password2          = $val->sanitizePost('password2');
 $email              = $val->sanitizePost('email',NULL,true);
 $home_folder        = $val->sanitizePost('home_folder',NULL,true);
-$active             = $val->sanitizePost('active') != '' ? true : false;
+$active             = $val->sanitizePost('active') != '' ? 1 : 0;
 $groups             = NULL;
 
 if($val->sanitizePost('groups',NULL,true))
@@ -92,87 +91,54 @@ if (
     || ( $addUser != '' && $saveUser != '' )
     || $user_id == 'admin'
 ) {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('You sent an invalid value'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('You sent an invalid value'));
     exit();
 }
 if ( $groups == '' )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('No group was selected'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('No group was selected'));
     exit();
 }
 if ( ! $users->validateUsername($username) )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate($users->getError()),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate($users->getError()));
     exit();
 }
 if (    ( $password != '' && strlen($password) < AUTH_MIN_PASS_LENGTH ) ||
         ( $addUser  != '' && strlen($password) < AUTH_MIN_PASS_LENGTH) )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('The password you entered was too short (Please use at least {{AUTH_MIN_PASS_LENGTH}} chars)' , array( 'AUTH_MIN_PASS_LENGTH' => AUTH_MIN_PASS_LENGTH )),
-        'success'    => false
+
+    echo CAT_Object::json_error(
+        $backend->lang()->translate('The password you entered was too short (Please use at least {{AUTH_MIN_PASS_LENGTH}} chars)' , array( 'AUTH_MIN_PASS_LENGTH' => AUTH_MIN_PASS_LENGTH ))
     );
-    print json_encode( $ajax );
     exit();
 }
 if( $password != $password2 )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('The passwords you entered do not match'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('The passwords you entered do not match'));
     exit();
 }
 if( $email != '' )
 {
     if($val->validate_email($email) == false)
     {
-        $ajax    = array(
-            'message'    => $backend->lang()->translate('The email address you entered is invalid'),
-            'success'    => false
-        );
-        print json_encode( $ajax );
+        echo CAT_Object::json_error($backend->lang()->translate('The email address you entered is invalid'));
         exit();
     }
 } else {
-        $ajax    = array(
-            'message'    => $backend->lang()->translate('You must enter an email address'),
-            'success'    => false
-        );
-        print json_encode( $ajax );
+        echo CAT_Object::json_error($backend->lang()->translate('You must enter an email address'));
         exit();
 }
 
 if ( $addUser && $users->checkUsernameExists($username) )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('The username you entered is already in use'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('The username you entered is already in use'));
     exit();
 }
 
 if ( $addUser && $users->checkEmailExists($email) )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('The email you entered is already in use'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('The email you entered is already in use'));
     exit();
 }
 
@@ -217,11 +183,7 @@ else
     $errors = $users->setUserOptions($user_id,$options);
     if(count($errors))
     {
-        $ajax    = array(
-            'message'    => 'Errors:<br />'.implode('<br />',$errors),
-            'success'    => false
-        );
-        print json_encode( $ajax );
+        echo CAT_Object::json_error('Errors:<br />'.implode('<br />',$errors));
         exit();
     }
 }
@@ -229,11 +191,7 @@ else
 
 if( $backend->db()->isError() )
 {
-    $ajax    = array(
-        'message'    => $backend->db()->getError(),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->db()->getError());
     exit();
 }
 else

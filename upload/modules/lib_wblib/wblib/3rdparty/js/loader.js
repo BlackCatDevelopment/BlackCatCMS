@@ -129,7 +129,7 @@ require(['jquery'], function($) {
                         );
                     }
                     else {
-                        if(!jQuery(this).is('span')) {
+                        if(!jQuery(this).is('span') && !jQuery(this).is('button')) {
                             jQuery(this).after(
                                 '<span class="fbinfo ui-icon ui-icon-info" style="display:inline-block;vertical-align:top;width:20px;margin-left:5px;" title="' + jQuery(this).attr('title') + '">&nbsp;<\/span>'
                             );

@@ -61,6 +61,10 @@ if(!class_exists('wblib\wbList',false))
          * this will be set to false after the first item was added
          **/
         private static $isfirst      = true;
+        /**
+         * allows to create li ids
+         **/
+        private static $_id          = 0;
 
         /**
          * constructor
@@ -217,7 +221,7 @@ if(!class_exists('wblib\wbList',false))
                     // get the css classes
                     $css    = self::getListItemCSS($item,$lastchild);
                     // add the item first
-                    $html[] = self::itemStart(NULL,$css) . self::getListItemText($item);
+                            $html[] = self::itemStart($css) . self::getListItemText($item);
                     // open sub list for the children
                     $html[] = self::listStart($ul_id);
                         }
@@ -240,7 +244,7 @@ if(!class_exists('wblib\wbList',false))
                     // get the css classes
                     $css    = self::getListItemCSS($item);
                     // add the item first
-                    $html[] = self::itemStart(NULL,$css)
+                            $html[] = self::itemStart($css)
                             . self::getListItemText($item)
                             . self::itemEnd();
                 }
@@ -396,12 +400,12 @@ if(!class_exists('wblib\wbList',false))
          * open item
          *
          * @access public
-         * @param  string  $li_id - string to use for id=""
          * @param  string  $css   - css classes
          * @return string
          **/
-        public static function itemStart($li_id=NULL,$css=NULL)
+        public static function itemStart($css=NULL)
         {
+            $li_id = ( self::$defaults['create_li_id'] ? self::$defaults['li_id_prefix'].self::getID() : NULL );
             self::log(sprintf('itemStart() li id [%s] css classes [%s]',$li_id,$css),7);
             $start = str_replace(
                 array( '%%id%%', '%%class%%' ),
@@ -511,7 +515,7 @@ if(!class_exists('wblib\wbList',false))
                     $text = $item[self::$defaults['__href_key']];
                 }
             }
-            return $text;
+            return str_replace('%%text%%',$text,self::$defaults['item']);
         }   // end function getListItemText()
 
         /**
@@ -605,6 +609,17 @@ if(!class_exists('wblib\wbList',false))
         }
 
         /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getID()
+        {
+            self::$_id++;
+            return self::$_id;
+        }   // end function getID()
+
+        /**
          * change options
          *
          * @access public
@@ -663,6 +678,7 @@ if(!class_exists('wblib\wbList',false))
                 'list_close'            => '</ul>',
                 'item_open'             => '<li id="%%id%%" class="%%class%%{{lastcss}}">',
                 'item_close'            => '</li>',
+                'item'                  => '%%text%%',
                 'select_open'           => '<select name="%%id%%" id="%%id%%" class="%%">',
                 'select_close'          => '</select>',
                 'select_option'         => '<option class="%%" value="%%value%%"%%selected%%>%%text%%</option>',
@@ -670,6 +686,7 @@ if(!class_exists('wblib\wbList',false))
                 'href'                  => '<a href="%%href%%"%%class%%>%%text%%</a>',
                 // ***** global options *****
                 'create_level_css'      => true,
+                'create_li_id'          => false,
                 'space'                 => '    ',
                 'max_recursion'         => 15,
                 'maxlevel'              => 999,

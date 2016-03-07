@@ -91,7 +91,6 @@ foreach($info as $key => $value)
     $addon[$key] = $value;
 }
 
-
 // check if the user is allowed to see this item
 if(!$users->get_permission($addon['directory'],$addon['type']))
 {
