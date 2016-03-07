@@ -29,6 +29,8 @@
  * to protect it...
  **/
 
+require realpath(dirname(__FILE__).'/../../config.php');
+
 // this is not really needed, but just to be really really secure...
 if(isset($_SESSION))
     foreach(array_keys($_SESSION) as $key)
@@ -49,6 +51,7 @@ if(!isset($_POST['_cat_ajax']) && session_id() !== '') {
 // redirect to admin login
 if(!isset($_POST['_cat_ajax']))
 {
+    $redirect = str_ireplace('/logout/','/login/',$_SERVER['SCRIPT_NAME']);
     die(header('Location: '.CAT_ADMIN_URL.'/login/index.php'));
 }
 else {

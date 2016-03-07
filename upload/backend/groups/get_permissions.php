@@ -163,7 +163,6 @@ else
                                                ? true
                                                : false;
 
-
     // ================================
     // ! Get permissions for settings
     // ================================
@@ -270,8 +269,8 @@ else
         }
     }
 
-    $modules            = ( sizeof($modules) > 0 ) ? $modules : $modlist;
-    $module_permissions = implode(',', $modules);
+    #$modules            = ( sizeof($modules) > 0 ) ? $modules : $modlist;
+    $module_permissions = ( count($modules) ? implode(',', $modules) : '' );
 
     // ============================
     // ! Get template permissions

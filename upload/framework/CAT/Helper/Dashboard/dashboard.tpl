@@ -14,6 +14,11 @@
 </div>
 {/if}
 
+{if ! $dashboard}
+<div class="fc_info" style="margin:15px 10px">
+    {translate('This is your dashboard, but it\'s empty because you do not have superuser permissions. Use the page tree to edit pages. Use the top links to navigate through the backend.')}
+</div>
+{else}
 {foreach $dashboard.columns col name='outer'}
     <ul style="width:{$col.width}%;" class="fc_widgets fc_dashboard_sortable" id="dashboard_col_{$.foreach.outer.index}" data-module="{$module}">
     {foreach $col.widgets key widget name='inner'}
@@ -30,3 +35,4 @@
     {/foreach}
     </ul>
 {/foreach}
+{/if}

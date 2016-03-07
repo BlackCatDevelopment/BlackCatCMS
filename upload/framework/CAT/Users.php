@@ -31,6 +31,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
 {
 	class CAT_Users extends CAT_Object
 	{
+        protected      $_config               = array( 'loglevel' => 8 );
 	
         private static $validatePasswordError = NULL;
         private static $lastValidatedPassword = NULL;
@@ -514,11 +515,13 @@ if ( ! class_exists( 'CAT_Users', false ) )
             if ( self::is_root() ) return true;
 
             $self = self::getInstance();
+            $self->log()->LogDebug(sprintf('Checking permission group [%s] perm [%s] for [%s]',$group,$perm,$for));
+
             // fill permissions cache on first call
             if ( ! count(self::$permissions) )
             {
                 $res  = $self->db()->query(
-                    'SELECT `perm_name`, `perm_group`, `perm_bit` FROM `:prefix:system_permissions` WHERE perm_for=:for;',
+                    'SELECT `perm_name`, `perm_group`, `perm_bit` FROM `:prefix:system_permissions` WHERE `perm_for`=:for;',
                     array('for'=>$for)
                 );
                 if($res->rowCount())

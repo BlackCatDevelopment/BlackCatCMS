@@ -58,6 +58,9 @@ $language_time        = '%H:%I:%S';
 $language_time_string = 'Uhr';
 
 $LANG = array(
+// ----- temporary dashboard info text -----
+    'This is your dashboard, but it\'s empty because you do not have superuser permissions. Use the page tree to edit pages. Use the top links to navigate through the backend.'
+        => 'Ihr Dashboard ist leider leer, da Sie nicht mit Superuser Rechten angemeldet sind. Verwenden Sie den Seitenbaum, um Seiten zu bearbeiten. Verwenden Sie die Links oben, um durch das Backend zu navigieren.',
 // ----- ./account folder -----
     'Captcha verification' => 'Captcha',
     'Change password' => 'Kennwort ändern',
@@ -522,6 +525,7 @@ $LANG = array(
     'Group deleted successfully' => 'Gruppe erfolgreich gelöscht',
     'Group loaded successfully' => 'Gruppe erfolgreich geladen',
     'Group name' => 'Gruppenname',
+    'Group saved successfully' => 'Gruppe erfolgreich gespeichert',
     'Groups' => 'Gruppen',
     'Home folder' => 'Heimatverzeichnis',
     'Initial page' => 'Standard Startseite',

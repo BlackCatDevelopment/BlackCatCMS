@@ -166,19 +166,6 @@ if (!class_exists('CAT_Helper_Page'))
                         $row['be_tree_is_open']  = isset( $_COOKIE[ session_name() . 'pageid_'.$row['page_id']] ) ? true : false; // for page tree
                         $row['href']             = CAT_URL . PAGES_DIRECTORY . $row['link'] . PAGE_EXTENSION;
 
-                        // mark editable pages by checking user perms and page
-                        // visibility
-// --------------------- NOT READY YET! ----------------------------------------
-        				if ( CAT_Users::ami_group_member($row['admin_groups']) )
-        				{
-                            if ( CAT_Registry::get('PAGE_TRASH') !== 'true' || $row['visibility'] !== 'deleted' )
-                            {
-                                $row['is_editable'] = true;
-                                self::$pages_editable++;
-                            }
-        				}
-// --------------------- NOT READY YET! ----------------------------------------
-
                         // mark current page
                         if (isset($page_id) && $row['page_id'] == $page_id )
                         {
@@ -233,7 +220,9 @@ if (!class_exists('CAT_Helper_Page'))
 
                     }   // end while()
 
+                    $use_trash = CAT_Registry::get('PAGE_TRASH');
                     // mark pages that have children
+                    // mark pages that are editable by the user
                     foreach(self::$pages as $i => $page)
                     {
                         if(isset($children_count[$page['page_id']]))
@@ -244,6 +233,19 @@ if (!class_exists('CAT_Helper_Page'))
                         }
                         if($direct_parent && $page['page_id'] == $direct_parent)
                             self::$pages[$i]['is_direct_parent'] = true;
+
+                        // mark editable pages by checking user perms and page
+                        // visibility
+// --------------------- NOT READY YET! (???) ----------------------------------------
+        				if (CAT_Users::ami_group_member($page['admin_groups']) || self::getPagePermission($page['page_id'],'admin') === true)
+        				{
+                            if ( $use_trash !== 'true' || $page['visibility'] !== 'deleted' )
+                            {
+                                self::$pages[$i]['is_editable'] = true;
+                                self::$pages_editable++;
+                            }
+        				}
+// --------------------- NOT READY YET! ----------------------------------------
                     }
 
                     // resolve the trail
@@ -266,6 +268,7 @@ if (!class_exists('CAT_Helper_Page'))
 
                 }       // end if($result)
             }
+
             CAT_Registry::register('CAT_HELPER_PAGE_INITIALIZED',true);
         }   // end function init()
 
@@ -1669,7 +1672,14 @@ frontend.css and template.css are added in _get_css()
     		        $in_group = true;
     		    }
     		}
-    		if((!$in_group) && !is_numeric(array_search(CAT_Users::getInstance()->get_user_id(), $users)))
+
+            $by_user = false;
+            if(is_array($users) && is_numeric(array_search(CAT_Users::getInstance()->get_user_id(), $users)))
+            {
+                $by_user = true;
+            }
+
+    		if(!$in_group && !$by_user)
             {
     			return false;
     		}

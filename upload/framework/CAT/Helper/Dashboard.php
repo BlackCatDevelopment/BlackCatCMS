@@ -61,6 +61,9 @@ if (!class_exists('CAT_Helper_Dashboard'))
         {
             global $parser;
 
+            // ----- quick & dirty hack: only full admin has a dashboard -----
+            if(!CAT_Users::is_root()) return;
+
             // add JS
             CAT_Helper_Page::addJS('/framework/CAT/Helper/Dashboard/dashboard.js','backend','footer');
 

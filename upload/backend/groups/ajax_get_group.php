@@ -15,12 +15,11 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2014, Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
- *   @review          21.07.2014 18:25:11
  *
  */
 
@@ -47,27 +46,19 @@ header('Content-type: application/json');
 
 if ( !$users->checkPermission('Access','groups') )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('You do not have the permission to view groups'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('You do not have the permission to view groups'));
     exit();
 }
 
 $group_id = CAT_Helper_Validate::sanitizePost('id','numeric');
 if ( !$group_id )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('You sent an invalid value'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('You sent an invalid value'));
     exit();
 }
 
 $get_group    = $backend->db()->query(
-    "SELECT * FROM `:prefix:groups` WHERE group_id = :id",
+    "SELECT * FROM `:prefix:groups` WHERE `group_id` = :id",
     array('id'=>$group_id)
 );
 
@@ -100,11 +91,7 @@ if ( $group = $get_group->fetch(PDO::FETCH_ASSOC) )
     exit();
 }
 else {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('Group could not be found in database'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    echo CAT_Object::json_error($backend->lang()->translate('Group could not be found in database'));
     exit();
 }
 
