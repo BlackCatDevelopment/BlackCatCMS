@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013 - 2016, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -55,21 +55,13 @@ if ( $options['parent'] != 0 )
 {
     if ( !CAT_Helper_Page::getPagePermission($options['parent'],'admin') )
     {
-        $ajax    = array(
-            'message'    => $backend->lang()->translate('You do not have the permission add a page here.'),
-            'success'    => false
-        );
-        print json_encode( $ajax );
+        CAT_Object::json_error($backend->lang()->translate('You do not have the permission add a page here.'));
         exit();
     }
 }
 elseif ( ! $users->checkPermission('pages', 'pages_add_l0', false) == true )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('You do not have the permission add a page here.'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    CAT_Object::json_error($backend->lang()->translate('You do not have the permission add a page here.'));
     exit();
 }
 
@@ -85,11 +77,7 @@ if ( !in_array(1, $users->get_groups_id()) )
 
     if ( $admin_perm_ok == false )
     {
-        $ajax    = array(
-            'message'    => $backend->lang()->translate( 'You do not have the permission add a page here.' ),
-            'success'    => false
-        );
-        print json_encode( $ajax );
+        CAT_Object::json_error($backend->lang()->translate('You do not have the permission add a page here.'));
         exit();
     }
 
@@ -100,14 +88,14 @@ if ( !in_array(1, $users->get_groups_id()) )
 
     if ($admin_perm_ok == false)
     {
-        $ajax    = array(
-            'message'    => $backend->lang()->translate( 'You do not have the permission add a page here.' ),
-            'success'    => false
-        );
-        print json_encode( $ajax );
+        CAT_Object::json_error($backend->lang()->translate('You do not have the permission add a page here.'));
         exit();
     }
 }
+
+// always add admin group to the list of admin_groups
+if(!in_array('1',$options['admin_groups']))
+    $options['admin_groups'][] = 1;
 
 $options['admin_groups']
     = is_array( $options['admin_groups'] )
@@ -123,11 +111,7 @@ $options['viewing_groups']
 // check titles
 if(CAT_Helper_Page::sanitizeTitles($options)===false)
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate( 'Please enter a menu title' ),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    CAT_Object::json_error($backend->lang()->translate('Please enter a menu title'));
     exit();
 }
 
@@ -139,11 +123,7 @@ CAT_Helper_Page::sanitizeLanguage($options);
 // Check if page already exists; checks access file, directory, and database
 if(CAT_Helper_Page::exists($options['link']))
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('A page with the same or similar link exists'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    CAT_Object::json_error($backend->lang()->translate('A page with the same or similar link exists'));
     exit();
 }
 
@@ -163,11 +143,7 @@ $options['position'] = $order->get_new($options['parent']);
 $page_id = CAT_Helper_Page::addPage($options);
 if ( !$page_id )
 {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('Unable to create the page: ') . $backend->db()->getError(),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    CAT_Object::json_error($backend->lang()->translate('Unable to create the page: ') . $backend->db()->getError());
     exit();
 }
 
@@ -184,11 +160,7 @@ if (!$result)
 {
     // try to recover = delete page
     CAT_Helper_Page::deletePage($page_id);
-    $ajax    = array(
-        'message'    => $backend->db()->getError(),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    CAT_Object::json_error($backend->db()->getError());
     exit();
 }
 
@@ -200,11 +172,7 @@ if (!$result)
 {
     // try to recover = delete page
     CAT_Helper_Page::deletePage($page_id);
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('Error creating access file in the pages directory, cannot open file'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    CAT_Object::json_error($backend->lang()->translate('Error creating access file in the pages directory, cannot open file'));
     exit();
 }
 
@@ -239,11 +207,7 @@ if ( file_exists(CAT_PATH . '/modules/' . $module . '/add.php') )
 // ==============================
 if ( $backend->db()->isError() )
 {
-    $ajax    = array(
-        'message'    => $backend->db()->getError(),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+    CAT_Object::json_error($backend->db()->getError());
     exit();
 }
 else
@@ -254,7 +218,7 @@ else
         'url'        => CAT_ADMIN_URL . '/pages/modify.php?page_id='. $page_id,
         'success'    => true
     );
-    print json_encode( $ajax );
+    echo json_encode( $ajax );
     exit();
 }
 exit();
