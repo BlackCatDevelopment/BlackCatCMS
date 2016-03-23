@@ -11,6 +11,6 @@
 					<a href="{if !$is_editable}#{else}{$CAT_ADMIN_URL}/pages/{$action}.php?page_id={$page_id}{/if}" title="{translate('Page title')}: {$page_title}" class="{if $current}fc_gradient3{/if}">
 						<span class="fc_page_tree_menu_title icon-{if $visibility == 'public'}screen{elseif $visibility == 'private'}key{elseif $visibility == 'registered'}users{elseif $visibility == 'hidden'}eye-2{elseif $visibility == 'deleted'}remove{else}eye-blocked{/if}"> {$menu_title}</span> <span class="fc_page_tree_menu_ID">(ID: {$page_id})</span>
 					</a>
-					<span class="fc_page_tree_options_open fc_pages_tree_options_button icon-tools fc_gradient1 fc_gradient_hover flag-{$language}"></span>
+					{if $permission.pages_settings}<span class="fc_page_tree_options_open fc_pages_tree_options_button icon-tools fc_gradient1 fc_gradient_hover flag-{$language}"></span>{/if}
 				</div>
 				<input type="hidden" name="page_id" value="{$page_id}" />
