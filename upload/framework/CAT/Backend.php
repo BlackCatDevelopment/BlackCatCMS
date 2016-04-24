@@ -219,7 +219,7 @@ if (!class_exists('CAT_Backend', false))
                     $text = $parser->get(
                         'backend_pagetree_item',
                         array_merge(
-                            $page,
+                            array_merge($page,$tpl_data),
                             array(
                                 'action' => ( pathinfo($uri,PATHINFO_FILENAME) == 'lang_settings' )
                                          ? 'lang_settings'
