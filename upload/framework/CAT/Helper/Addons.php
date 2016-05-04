@@ -98,7 +98,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                                'template_name',
                                'template_directory',
                                'template_version',
-                               'template_function'
+//                               'template_function'
                            ),
                            'language' => array(
                                'language_code',
@@ -1668,8 +1668,10 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                          'addon_function' => 'module'
                     );
                 }
-                else if ( isset( $template_function ) && in_array( strtolower( $template_function ), self::$template_functions ) )
+                else if(isset($template_name))
                 {
+                    if(!isset($template_function) || !in_array(strtolower($template_function), self::$template_functions))
+                        $template_function = 'template';
                     $return_values = array(
                          'addon_function' => 'template'
                     );

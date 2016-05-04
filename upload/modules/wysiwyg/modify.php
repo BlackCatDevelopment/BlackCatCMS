@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -99,8 +99,8 @@ if(!isset($wysiwyg_editor_loaded))
 				$temp_id   = abs(intval($wysiwyg_section['section_id']));
 				$id_list[] = 'content'.$temp_id;
 			}
-			require_once( CAT_PATH."/modules/wysiwyg/classes/pathfinder.php");
-			$wb_path_info = new c_pathfinder($database);
+			#require_once( CAT_PATH."/modules/wysiwyg/classes/pathfinder.php");
+			#$wb_path_info = new c_pathfinder($database);
 			require_once(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
 		}
 	}

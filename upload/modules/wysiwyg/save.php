@@ -14,10 +14,8 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- *   @author          Website Baker Project, LEPTON Project, Black Cat Development
- *   @copyright       2004-2010, Website Baker Project
- *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
+ *   @author          Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -25,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -34,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -76,7 +74,9 @@ $content = $val->sanitizePost('content'.$section_id);
 if(!CAT_Users::getInstance()->ami_group_member(1))
 {
     // if HTMLPurifier is enabled...
-    $r = $backend->db()->get_one('SELECT * FROM `'.CAT_TABLE_PREFIX.'mod_wysiwyg_admin_v2` WHERE set_name="enable_htmlpurifier" AND set_value="1"');
+    $r = $backend->db()->get_one(
+        'SELECT * FROM `:prefix:mod_wysiwyg_admin_v2` WHERE set_name="enable_htmlpurifier" AND set_value="1"'
+    );
     if($r)
     {
         // use HTMLPurifier to clean up the output
@@ -87,6 +87,7 @@ else
 {
     $content = $val->add_slashes($content);
 }
+
 /**
  *	searching in $text will be much easier this way
  */
@@ -95,11 +96,8 @@ $text = umlauts_to_entities(strip_tags($content), strtoupper(DEFAULT_CHARSET), 0
 /**
  *  save
  **/
-$query = "REPLACE INTO `".CAT_TABLE_PREFIX."mod_wysiwyg` VALUES ( '$section_id', $page_id, '$content', '$text' );";
-$backend->db()->query($query);
-if ($backend->db()->isError())
-    trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $backend->db()->getError()), E_USER_ERROR);
-
+$query = "REPLACE INTO `:prefix:mod_wysiwyg` VALUES ( ?, ?, ?, ? );";
+$backend->db()->query($query,array($section_id, $page_id, $content, $text));
 $edit_page = CAT_ADMIN_URL.'/pages/modify.php?page_id='.$page_id.'#'.SEC_ANCHOR.$section_id;
 
 // Check if there is a database error, otherwise say successful
@@ -114,5 +112,3 @@ else
 
 // Print admin footer
 $backend->print_footer();
-
-?>

@@ -41,31 +41,23 @@ if (defined('CAT_PATH')) {
 
 global $backend, $val, $users;
 
-$backend = CAT_Backend::getInstance('Pages', 'pages_settings', false);
+$backend = CAT_Backend::getInstance('start','start',false,false);
 $val     = CAT_Helper_Validate::getInstance();
 $users   = CAT_Users::getInstance();
 
 function backend_pages_prechecks($need_permission)
 {
     global $backend, $users;
-    if ( ! $users->checkPermission('pages',$need_permission,false) )
+    if ( ! $users->checkPermission('pages',$need_permission,false,false) )
     {
-        $ajax    = array(
-            'message'    => $backend->lang()->translate('You don not have the permission to add a page.'),
-            'success'    => false
-        );
-        print json_encode( $ajax );
+        CAT_Object::json_error($backend->lang()->translate('You don not have the permission to add a page.'));
         exit();
     }
 
     // check if pages folder is writable
     if ( !is_writable(CAT_PATH.PAGES_DIRECTORY.'/') )
     {
-    	$ajax	= array(
-    		'message'	=> $backend->lang()->translate('The pages directory is not writable!'),
-    		'success'	=> false
-    	);
-    	print json_encode( $ajax );
+    	CAT_Object::json_error($backend->lang()->translate('The pages directory is not writable!'));
     	exit();
     }
 }   // end function backend_pages_prechecks()

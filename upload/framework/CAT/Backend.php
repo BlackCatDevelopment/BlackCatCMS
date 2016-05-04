@@ -61,7 +61,7 @@ if (!class_exists('CAT_Backend', false))
                     exit(0);
                 }
     			elseif ( !defined('CAT_INSTALL_PROCESS') )
-    				$user->checkPermission($section_name, $section_permission,true);
+    				$user->checkPermission($section_name, $section_permission,$auto_auth);
                 self::$instance->section_name = $section_name;
                 global $parser;
                 self::initPaths();

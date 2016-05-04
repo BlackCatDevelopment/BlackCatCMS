@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2013, 2016, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
@@ -43,7 +43,6 @@ if (defined('CAT_PATH')) {
 $backend = CAT_Backend::getInstance('Start','start',false,false);
 if(!CAT_Users::is_authenticated()) exit; // just to be _really_ sure...
 
-
 $widget_settings = array(
     'allow_global_dashboard' => true,
     'widget_title'           => CAT_Helper_I18n::getInstance()->translate('Version check'),
@@ -54,7 +53,6 @@ if(!function_exists('render_widget_blackcat_check'))
 {
     function render_widget_blackcat_check()
     {
-
         require CAT_PATH.'/framework/CAT/ExceptionHandler.php';
 
         // register exception/error handlers

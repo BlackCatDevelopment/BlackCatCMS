@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -51,14 +51,14 @@ function wysiwyg_search($func_vars)
 	// we have to get 'content' instead of 'text', because strip_tags()
     // doesn't remove scripting well.
 	// scripting will be removed later on automatically
-	$query = $func_database->query(sprintf(
-        "SELECT content FROM `%smod_wysiwyg` WHERE section_id='%d'",
-        CAT_TABLE_PREFIX, $func_section_id
-	));
+	$query = $func_database->query(
+        "SELECT content FROM `:prefix:mod_wysiwyg` WHERE section_id=:id",
+        array('id'=>$func_section_id)
+	);
 
 	if($query->numRows() > 0)
     {
-		if($res = $query->fetchRow())
+		if($res = $query->fetch(PDO::MYSQL_ASSOC))
         {
             if(CAT_Helper_Addons::isModuleInstalled('kit_framework'))
             {
@@ -85,5 +85,3 @@ function wysiwyg_search($func_vars)
 	}
 	return $result;
 }
-
-?>

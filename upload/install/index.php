@@ -525,7 +525,7 @@ function show_step_db( $step ) {
             'installer_database_port'     => ( isset($config['database_port'])     ? $config['database_port']     : '3306'         ),
             'installer_database_username' => ( isset($config['database_username']) ? $config['database_username'] : 'my-user-name' ),
             'installer_database_password' => ( isset($config['database_password']) ? $config['database_password'] : ''             ),
-            'installer_database_name'       => ( isset($config['database_name'])     ? $config['database_name']       : 'my-db-name'   ),
+            'installer_database_name'     => ( isset($config['database_name'])     ? $config['database_name']     : 'my-db-name'   ),
             'installer_table_prefix'      => ( isset($config['table_prefix'])      ? $config['table_prefix']      : 'cat_'         ),
             'installer_install_tables'    => ( isset($config['install_tables'])    ? $config['install_tables']    : 'y'            ),
             'installer_no_validate_db_password' => ( isset($config['no_validate_db_password']) ? $config['no_validate_db_password'] : ''             ),
@@ -560,7 +560,7 @@ TYPE=mysql
 HOST=".$config['database_host']."
 PORT=".$config['database_port']."
 USERNAME=".$config['database_username']."
-PASSWORD=".$config['database_password']."
+PASSWORD=\"".$config['database_password']."\"
 NAME=".$config['database_name']."
 
 ;*/

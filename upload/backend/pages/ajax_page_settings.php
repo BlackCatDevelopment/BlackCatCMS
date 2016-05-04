@@ -39,18 +39,14 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$backend = CAT_Backend::getInstance('Pages','pages_settings',false);
+$backend = CAT_Backend::getInstance('Pages','pages_settings',false,false);
 $users   = CAT_Users::getInstance();
 
 header('Content-type: application/json');
 
 if ( !$users->checkPermission('Pages','pages_settings') )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You don\'t have the permission to change page settings.'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
+	CAT_Object::json_error($backend->lang()->translate("You don't have the permission to change page settings."));
 	exit();
 }
 
@@ -65,16 +61,11 @@ $val     = CAT_Helper_Validate::getInstance();
 $page_id = $val->get('_REQUEST','page_id','numeric');
 if ( !$page_id )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You sent an invalid value'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
+	CAT_Object::json_error($backend->lang()->translate('You sent an invalid value'));
 	exit();
 }
 
 require_once( CAT_PATH . '/framework/functions-utf8.php' );
-
 
 // =============================================================== 
 // ! Get perms & Check if there is an error and get page details   
@@ -86,20 +77,12 @@ $results		= $backend->db()->query(sprintf(
 
 if ( $backend->db()->isError() )
 {
-	$ajax	= array(
-		'message'	=> $backend->db()->getError(),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
+	CAT_Object::json_error($backend->db()->getError());
 	exit();
 }
 if ( $results->numRows() == 0 )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate( 'Page not found' ),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
+	CAT_Object::json_error($backend->lang()->translate( 'Page not found' ));
 	exit();
 }
 
@@ -117,11 +100,7 @@ foreach ( $users->get_groups_id() as $cur_gid )
 }
 if ( !$in_old_group && !is_numeric(array_search($users->get_user_id(), $old_admin_users)) )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate( 'You do not have permissions to modify this page' ),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
+	CAT_Object::json_error($backend->lang()->translate( 'You do not have permissions to modify this page' ));
 	exit();
 }
 
@@ -191,4 +170,3 @@ $ajax['template_variant'] = CAT_Helper_Page::getPageSettings($results_array['pag
 // ==================== 
 print json_encode( $ajax );
 exit();
-?>

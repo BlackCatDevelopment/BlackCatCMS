@@ -39,7 +39,6 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-
 $backend = CAT_Backend::getInstance('Pages','pages_add',false);
 $users   = CAT_Users::getInstance();
 
@@ -47,11 +46,7 @@ header('Content-type: application/json');
 
 if ( !$users->checkPermission('Pages','pages_add') )
 {
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You do not have the permission to add a page.'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
+    CAT_Object::json_error($backend->lang()->translate('You do not have the permission to add a page.'));
 	exit();
 }
 
@@ -80,7 +75,8 @@ $ajax	= array(
         'template_variant' => $variant,
         'variants'      => $variants,
 		'target'		=> '_self',
-		'success'		=> true
+    'success'          => true,
+    'admin_groups'     => array(1),
 );
 
 // ==================== 

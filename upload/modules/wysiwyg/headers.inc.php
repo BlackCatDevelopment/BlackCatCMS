@@ -15,17 +15,16 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
- *   @link            http://www.blackcat-cms.org
+ *   @copyright       2015, Black Cat Development
+ *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
 
-// include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -33,13 +32,21 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
-// end include class.secure.php
 
+// loads the headers.inc.php of the chosen WYSIWYG Editor (if available)
 $file = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/../'.WYSIWYG_EDITOR.'/headers.inc.php');
 if ( file_exists($file) ) @require $file;
+
+$user    = CAT_Users::getInstance();
+if($user->is_authenticated() && $user->checkPermission('pages','pages_modify',false))
+{
+    $mod_headers['frontend']['css'][] = array('file'=>'/modules/wysiwyg/contenttools/content-tools.min.css','media'=>'screen');
+    $mod_headers['frontend']['js'][] = '/modules/wysiwyg/contenttools/content-tools.min.js';
+    $mod_headers['frontend']['js'][] = '/modules/wysiwyg/contenttools/editor.js';
+}

@@ -15,16 +15,16 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2015, Black Cat Development
  *   @link            http://blackcat-cms.org
- * @license         http://www.gnu.org/licenses/gpl.html
+ *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,17 +32,37 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
 }
 
+$user    = CAT_Users::getInstance();
+
 // Get content
-$result = CAT_Helper_Page::getInstance()->db()->query("SELECT `content` FROM `".CAT_TABLE_PREFIX."mod_wysiwyg` WHERE `section_id` = '".$section_id."'");
+$result = CAT_Helper_Page::getInstance()->db()->query(
+    "SELECT `content` FROM `:prefix:mod_wysiwyg` WHERE `section_id`=:id",
+    array('id'=>$section_id)
+);
+
+// if there is any content....
 if($result&&$result->numRows()>0)
 {
     $fetch = $result->fetch(PDO::FETCH_ASSOC);
+    // enable frontend editing?
+    if($user->is_authenticated() && $user->checkPermission('pages','pages_modify',false))
+    {
+        $fetch['content'] = '<div data-editable data-name="wysiwyg_'.$page_id.'_'.$section_id.'">'
+                          . $fetch['content']
+                          . '</div>';
+        // wrap droplets
+        $fetch['content'] = preg_replace_callback(
+            '/\[\[(.*?)\]\]/',
+            function($matches) { return '<span contenteditable="false" data-droplet="'.$matches[1].'">'.$matches[0].'</span>'; },
+            $fetch['content']
+        );
+    }
     echo $fetch['content'];
 }

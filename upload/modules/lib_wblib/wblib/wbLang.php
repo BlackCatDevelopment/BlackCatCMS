@@ -158,10 +158,10 @@ if ( ! class_exists( 'wbLang', false ) )
         {
             self::log('> translate()',7);
 if(!is_scalar($msg)) {
-    echo "<textarea style=\"width:100%;height:200px;color:#000;background-color:#fff;\">";
+    echo "Invalid call to \wblib\wbLang::translate()!<br />Message:<textarea style=\"width:100%;height:200px;color:#000;background-color:#fff;\">";
     print_r( $msg );
     echo "</textarea>";
-    echo "<textarea style=\"width:100%;height:200px;color:#000;background-color:#fff;\">";
+    echo "Backtrace:<textarea style=\"width:100%;height:200px;color:#000;background-color:#fff;\">";
     print_r( debug_backtrace() );
     echo "</textarea>";
 }
