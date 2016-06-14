@@ -49,7 +49,7 @@ $result = CAT_Helper_Page::getInstance()->db()->query(
 if( $result && $result->rowCount() > 0 )
 {
     $data    = $result->fetch();
-    $content = htmlspecialchars($data['content']);
+    $content = htmlspecialchars(stripslashes($data['content']));
 }
 else
 {

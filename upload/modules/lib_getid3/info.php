@@ -42,11 +42,11 @@ if (defined('CAT_PATH')) {
 $module_directory     = 'lib_getid3';
 $module_name          = 'getID3 PHP media file parser';
 $module_function      = 'library';
-$module_version       = '0.5';
+$module_version       = '0.6';
 $module_platform      = '1.x';
 $module_author        = 'getID3() by James Heinrich <info@getid3.org>; this module Black Cat Development';
 $module_license       = 'GNU General Public License 2.0';
-$module_description   = 'getID3 PHP media file parser (v1.9.9)';
+$module_description   = 'getID3 PHP media file parser (v1.9.12)';
 $module_home          = 'http://blackcat-cms.org/';
 $module_guid          = '4AD71FD0-3176-42AB-BC9E-5EDF7E3D35FF';
 
