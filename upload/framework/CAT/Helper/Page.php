@@ -1441,7 +1441,9 @@ frontend.css and template.css are added in _get_css()
 
             // Check for :// in the link (used in URL's) as well as mailto:
             if (strstr($link, '://') == '' && substr($link, 0, 7) != 'mailto:')
-                return CAT_URL . PAGES_DIRECTORY . $link . PAGE_EXTENSION;
+                return CAT_Registry::get('USE_SHORT_URLS') ? 
+                	CAT_URL . $link . PAGE_EXTENSION :
+                	CAT_URL . PAGES_DIRECTORY . $link . PAGE_EXTENSION;
             else
                 return $link;
 
