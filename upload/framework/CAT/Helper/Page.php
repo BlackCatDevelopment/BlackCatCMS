@@ -817,7 +817,7 @@ if (!class_exists('CAT_Helper_Page'))
                     if (file_exists($file))
                     {
                         self::getInstance()->log()->logDebug(sprintf('adding footer items for admin tool [%s]', $_REQUEST['tool']));
-                        self::_load_footers_inc($file, 'backend', 'templates/' . $tpl);
+                        self::_load_footers_inc($file, 'backend', 'modules/' . $tool);
                     }
                 }
             }
