@@ -141,7 +141,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                     {
                         $checked      = false;
                         // first check if there exists a custom.* file ...
-                        $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.$droplet['drop_module_dir'].'/custom.'.$droplet['drop_file']);
+                        $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$droplet['drop_module_dir'].'/custom.'.$droplet['drop_file']);
                         if (file_exists($file))
                         {
                             $checked = true;
@@ -149,7 +149,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         else
                         {
                             // check for the regular file ...
-                            $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.$droplet['drop_module_dir'].'/'.$droplet['drop_file']);
+                            $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$droplet['drop_module_dir'].'/'.$droplet['drop_file']);
                             if (file_exists($file))
                                 $checked = true;
                         }
