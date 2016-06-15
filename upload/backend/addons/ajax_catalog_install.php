@@ -103,14 +103,14 @@ foreach($catalog['modules'] as $module)
                 {
                     // no release found, search for tags
                     $tags = CAT_Helper_GitHub::getTags($module['github']['organization'],$module['github']['repository']);
-                    if(!is_array($tags) || !count($release_info))
+                    if(!is_array($tags) || !count($tags))
                     {
                         // no release and no tag, use master.zip
                         $dlurl = sprintf('https://github.com/%s/%s/archive/master.zip',$module['github']['organization'],$module['github']['repository']);
                     }
                     else
                     {
-                        $dlurl = $tags['zipball_url'];
+                        $dlurl = $tags[0]['zipball_url'];
                     }
                     //CAT_Object::json_error('Unable to download the module. No release found.');
                 }
