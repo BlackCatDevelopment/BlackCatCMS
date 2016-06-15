@@ -1838,6 +1838,8 @@ frontend.css and template.css are added in _get_css()
                     return $pg['page_id'];
                 }
             }
+            if ( !file_exists(CAT_URL.$path) )
+            	return CAT_Registry::get('ERR_PAGE_404');
             return NULL;
         }   // end function getPageByPath()
 
