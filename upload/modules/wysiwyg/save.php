@@ -83,10 +83,12 @@ if(!CAT_Users::getInstance()->ami_group_member(1))
         $content = CAT_Helper_Protect::getInstance()->purify($content,array('Core.CollectErrors'=>true));
     }
 }
+/* see: http://forum.blackcat-cms.org/viewtopic.php?f=11&t=548&p=4103#p4101
 else
 {
     $content = $val->add_slashes($content);
 }
+*/
 
 /**
  *	searching in $text will be much easier this way

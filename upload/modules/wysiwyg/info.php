@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 $module_directory	  = 'wysiwyg';
 $module_name		  = 'WYSIWYG';
 $module_function	  = 'page';
-$module_version		  = '4.1';
+$module_version		  = '4.2';
 $module_platform	  = '1.x';
 $module_author		  = 'BlackCat Development';
 $module_license		  = 'GNU General Public License';
