@@ -141,21 +141,27 @@ if (!class_exists('CAT_Page', false))
             // ----- keep old modules happy -----
 
             $this->log()->LogDebug(sprintf('showing page with ID [%s]',$page_id));
-
+		    $sp	= $_SERVER["SERVER_PROTOCOL"] ? $_SERVER["SERVER_PROTOCOL"] : 'HTTP/1.1';
+		    
             // send appropriate header
             if(CAT_Helper_Page::isMaintenance() || CAT_Registry::get('MAINTENANCE_PAGE') == $page_id)
             {
-                header('HTTP/1.1 503 Service Temporarily Unavailable');
+                header($sp . ' 503 Service Temporarily Unavailable');
                 header('Status: 503 Service Temporarily Unavailable');
                 header('Retry-After: 7200'); // in seconds
             }
-
             // check for 301 redirect (needs the SEO Tool)
             if(CAT_Helper_Page::isRedirected($page_id))
             {
-                header('HTTP/1.1 301 Moved Permanently', TRUE, 301);
+	              header($sp . ' 301 Moved Permanently', TRUE, 301);
             }
-
+			// check for 404 redirect
+			if(CAT_Registry::get('ERR_PAGE_404') == $page_id)
+			{
+			    header( $sp . ' 404 Not Found');
+			    header('Status: 404 Not Found');
+			    $_SERVER['REDIRECT_STATUS'] = 404;
+			}
             // template engine
             global $parser;
 
@@ -456,6 +462,8 @@ if (!class_exists('CAT_Page', false))
             else
             {
                 header($_SERVER['SERVER_PROTOCOL'].' 404 Not found');
+			    header('Status: 404 Not Found');
+			    $_SERVER['REDIRECT_STATUS'] = 404;
             }
         }   // end function print404()
         
