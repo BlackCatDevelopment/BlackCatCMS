@@ -1,5 +1,5 @@
 # deny access to some specific files
-<Files ~ "^.*\.(LOG|log|bak|bk|LCK|txt|TXT)$">
+<Files ~ "^.*\.(LOG|log|bak|bk|LCK|TXT)$">
     Order allow,deny
     Deny from all
     Satisfy All
@@ -62,3 +62,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^([\/\sa-zA-Z0-9._-]+)$ /blackcat/bcwa11/index.php?$1 [QSA,L]
 ########## End - BlackCat CMS short url
+
+# deny access to txt files except robots.txt
+RewriteCond %{REQUEST_URI} !/robots\.txt$ [nocase]
+RewriteRule \.txt$  -  [forbidden,last]
