@@ -55,7 +55,7 @@ if(!class_exists('order'))
     	// =====================
     	// ! Get the db values
     	// =====================
-    	public function order($table, $order_field='position', $id_field = 'id', $common_field = '')
+    	public function __construct($table, $order_field='position', $id_field = 'id', $common_field = '')
     	{
     		$this->table			= $table;
     		$this->order_field 		= $order_field;
