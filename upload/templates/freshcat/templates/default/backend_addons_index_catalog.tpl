@@ -54,28 +54,50 @@
 <script charset=iso-8859-1 type="text/javascript">
     jQuery(document).ready(function($) {
         $('#fc_addons_update_catalog').unbind('click').bind('click',function() {
+            var old_version = $('span#fc_addons_catalog_version').text();
             $.ajax({
-    			type:		'GET',
-    			url:		CAT_ADMIN_URL + '/addons/ajax_update_catalog.php',
-    			dataType:	'json',
-    			cache:		false,
-                beforeSend:	function( data )
-        		{
-        			data.process	= set_activity('Updating catalog...');
-        		},
-    			success:	function( data, textStatus, jqXHR )
-    			{
-    				if ( data.success === true )
-    				{
+                type:       'GET',
+                url:        CAT_ADMIN_URL + '/addons/ajax_update_catalog.php',
+                dataType:   'json',
+                cache:      false,
+                beforeSend: function( data )
+                {
+                    data.process    = set_activity('Updating catalog...');
+                },
+                success:    function( data, textStatus, jqXHR )
+                {
+                    if ( data.success === true )
+                    {
                         $('div#addons_main_content').html(data.content);
                         $('span#fc_addons_catalog_version').text(data.catalog_version);
                         jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
-    				}
-    				else {
-    					return_error( jqXHR.process , data.message);
-    				}
-    			}
-    		});
+                        if(old_version != data.catalog_version)
+                        {
+                            $.ajax(
+                    		{
+                    			type:		'POST',
+                    			url:		CAT_ADMIN_URL + '/addons/ajax_get_catalog.php',
+                                data:       { _cat_ajax: 1 },
+                    			dataType:	'json',
+                    			cache:		false,
+                    			success:	function( data, textStatus, jqXHR )
+                    			{
+                    				if ( data.success === true )
+                    				{
+                                        $('div#addons_main_content').html(data.content);
+                    				}
+                    				else {
+                    					return_error( jqXHR.process , data.message);
+                    				}
+                    			}
+                    		});
+                        }
+                    }
+                    else {
+                        return_error( jqXHR.process , data.message);
+                    }
+                }
+            });
         });
         $('.fc_catalog_update').unbind('click').bind('click',function() {
             var addon = $(this).parent().parent().find('.fc_addon_directory').text();
@@ -91,28 +113,28 @@
                             click: function() {
                                 $(this).dialog("close");
                                 $.ajax({
-                        			type:		'GET',
-                        			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
-                        			dataType:	'json',
+                                    type:        'GET',
+                                    url:        CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
+                                    dataType:    'json',
                                     data:       { directory: addon, action: 'update' },
-                        			cache:		false,
-                                    beforeSend:	function( data )
-                            		{
-                            			data.process	= set_activity('Update...');
-                            		},
-                        			success:	function( data, textStatus, jqXHR )
-                        			{
-                        				if ( data.success === true )
-                        				{
+                                    cache:        false,
+                                    beforeSend:    function( data )
+                                    {
+                                        data.process    = set_activity('Update...');
+                                    },
+                                    success:    function( data, textStatus, jqXHR )
+                                    {
+                                        if ( data.success === true )
+                                        {
                                             //location.reload();
                                             jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
                                             $("#fc_addons_catalog").trigger('click');
-                        				}
-                        				else {
-                        					return_error( jqXHR.process , data.message);
-                        				}
-                        			}
-                        		});
+                                        }
+                                        else {
+                                            return_error( jqXHR.process , data.message);
+                                        }
+                                    }
+                                });
                             }
                         },{
                             text: cattranslate('No'),
@@ -137,28 +159,28 @@
                             click: function() {
                                 $(this).dialog("close");
                                 $.ajax({
-                        			type:		'GET',
-                        			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
-                        			dataType:	'json',
+                                    type:        'GET',
+                                    url:        CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
+                                    dataType:    'json',
                                     data:       { directory: addon, action: 'install' },
-                        			cache:		false,
-                                    beforeSend:	function( data )
-                            		{
-                            			data.process	= set_activity('Install...');
-                            		},
-                        			success:	function( data, textStatus, jqXHR )
-                        			{
-                        				if ( data.success === true )
-                        				{
+                                    cache:        false,
+                                    beforeSend:    function( data )
+                                    {
+                                        data.process    = set_activity('Install...');
+                                    },
+                                    success:    function( data, textStatus, jqXHR )
+                                    {
+                                        if ( data.success === true )
+                                        {
                                             //location.reload();
                                             jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
                                             $("#fc_addons_catalog").trigger('click');
-                        				}
-                        				else {
-                        					return_error( jqXHR.process , data.message);
-                        				}
-                        			}
-                        		});
+                                        }
+                                        else {
+                                            return_error( jqXHR.process , data.message);
+                                        }
+                                    }
+                                });
                             }
                         },{
                             text: cattranslate('No'),
@@ -183,28 +205,28 @@
                             click: function() {
                                 $(this).dialog("close");
                                 $.ajax({
-                        			type:		'GET',
-                        			url:		CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
-                        			dataType:	'json',
+                                    type:        'GET',
+                                    url:        CAT_ADMIN_URL + '/addons/ajax_catalog_install.php',
+                                    dataType:    'json',
                                     data:       { directory: addon, action: 'uninstall' },
-                        			cache:		false,
-                                    beforeSend:	function( data )
-                            		{
-                            			data.process	= set_activity('Uninstall...');
-                            		},
-                        			success:	function( data, textStatus, jqXHR )
-                        			{
-                        				if ( data.success === true )
-                        				{
+                                    cache:        false,
+                                    beforeSend:    function( data )
+                                    {
+                                        data.process    = set_activity('Uninstall...');
+                                    },
+                                    success:    function( data, textStatus, jqXHR )
+                                    {
+                                        if ( data.success === true )
+                                        {
                                             //location.reload();
                                             jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
                                             $("#fc_addons_catalog").trigger('click');
-                        				}
-                        				else {
-                        					return_error( jqXHR.process , data.message);
-                        				}
-                        			}
-                        		});
+                                        }
+                                        else {
+                                            return_error( jqXHR.process , data.message);
+                                        }
+                                    }
+                                });
                             }
                         },{
                             text: cattranslate('No'),

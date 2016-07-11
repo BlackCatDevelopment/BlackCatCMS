@@ -1532,12 +1532,12 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
          * @access public
          * @return
          **/
-        public static function isRemovable( $module )
+        public static function isRemovable($module,$type="module")
         {
             $self = self::getInstance();
             $q    = $self->db()->query(
                 'SELECT * FROM `:prefix:addons` WHERE type=:type AND ( directory=:dir OR name=:name ) LIMIT 1',
-                array('type'=>"module", 'dir'=>$module, 'name'=>$module)
+                array('type'=>$type, 'dir'=>$module, 'name'=>$module)
             );
             if ( !$q->rowCount() )
                 return false;
