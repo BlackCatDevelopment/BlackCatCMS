@@ -90,8 +90,11 @@ if ( !$in_old_group && !is_numeric(array_search($users->get_user_id(), $old_admi
 //
 if ( $val->sanitizeGet('del') )
 {
-    list( $lang, $page_id ) = explode( '_', $val->sanitizeGet('del') );
-    CAT_Helper_Page::deleteLanguageLink($page_id,$lang);
+    list( $lang, $del_page_id ) = explode( '_', $val->sanitizeGet('del') );
+    if(is_numeric($del_page_id))
+    {
+        CAT_Helper_Page::deleteLanguageLink($del_page_id,$lang);
+    }
 }
 
 $arrh = CAT_Helper_Array::getInstance();
@@ -100,7 +103,6 @@ $arrh = CAT_Helper_Array::getInstance();
 // ! find already linked pages
 // ===========================
 $items = CAT_Helper_Page::getInstance($page_id)->getLinkedByLanguage($page_id);
-
 
 // =========================
 // ! get installed languages
@@ -173,7 +175,6 @@ $tpl_data['PAGES']
                                            ->config(array('space' => '|-- '))
                                            ->dropdown( '', $pages_list, 0, false, true );
 
-
 // ====================
 // ! Parse the header 	
 // ==================== 
@@ -183,5 +184,3 @@ $parser->output('backend_pages_lang_settings', $tpl_data);
 // ! Print admin footer   
 // ====================== 
 $backend->print_footer();
-
-?>
