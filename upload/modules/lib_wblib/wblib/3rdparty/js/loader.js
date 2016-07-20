@@ -10,8 +10,6 @@ require.config({
     }
 });
 
-
-
 function loadCss(url) {
     var link  = document.createElement("link");
     link.type = "text/css";
@@ -46,6 +44,9 @@ require(['jquery'], function($) {
                 jQuery('div.fbform select').not('.fbimageselect').not('.uidisabled').not('.fbleave').select2();
             });
         }
+
+        // ----- attach date picker -----
+        jQuery('.fbdatetime').datepicker();
 
         // ----- attach color picker -----
         if(jQuery('.fbcolorpicker').length) {

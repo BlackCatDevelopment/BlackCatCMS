@@ -99,8 +99,6 @@ if(!isset($wysiwyg_editor_loaded))
 				$temp_id   = abs(intval($wysiwyg_section['section_id']));
 				$id_list[] = 'content'.$temp_id;
 			}
-			#require_once( CAT_PATH."/modules/wysiwyg/classes/pathfinder.php");
-			#$wb_path_info = new c_pathfinder($database);
 			require_once(CAT_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
 		}
 	}

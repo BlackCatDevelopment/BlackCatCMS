@@ -3306,7 +3306,6 @@ echo "</textarea>";
         public function render()
         {
             $this->checkAttr();
-            wbFormsJQuery::attach($this->attr['id'],'datepicker');
             $this->attr['type'] = 'text';
             return $this->replaceAttr();
         }   // end function render()
@@ -3546,6 +3545,7 @@ echo "</textarea>";
                 },
                 array_values(wbForms::$INLINEJS)
             ));
+
             self::log('headers returned',7);
             self::log($output,7);
             define('WBLIB2_HEADERS_SENT',1);
