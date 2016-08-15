@@ -50,10 +50,13 @@ if (!class_exists('CAT_Helper_SEO'))
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // !!!!! note: this does not work in combination with language based forwarding!
 // !!!!! Especially if the root pages are all invisible!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             $root     = CAT_Helper_Page::getDefaultPage();
             if(count($pagelist))
             {
                 $xml       = array();
+                $root_mod  = NULL;
+                $root_freq = NULL;
                 foreach($pagelist as $p)
                 {
                     $seo_set = array();
@@ -70,7 +73,11 @@ if (!class_exists('CAT_Helper_SEO'))
                            ? $seo_set['sitemap_update_freq'][0]
                            : $default_freq);
                     if($p['page_id']==$root)
+                    {
                         $prio = '1.0';
+                        $root_mod = strftime('%Y-%m-%d',$p['modified_when']);
+                        $root_freq = $freq;
+                    }
                     $xml[] = '  <url>
     <loc>'.CAT_Helper_Validate::getURI($p['href']).'</loc>
     <lastmod>'.strftime('%Y-%m-%d',$p['modified_when']).'</lastmod>
@@ -81,6 +88,18 @@ if (!class_exists('CAT_Helper_SEO'))
             }
             if(count($xml))
             {
+                // add entry for CAT_URL
+                if($root_mod) // we need the modified_when date
+                {
+                    $root_url = CAT_URL;
+                    if(substr($root_url,-1,1) != '/') $root_url .= '/';
+                    array_unshift($xml,'  <url>
+    <loc>'.$root_url.'</loc>
+    <lastmod>'.$root_mod.'</lastmod>
+    <priority>1.0</priority>
+    <changefreq>'.$root_freq.'</changefreq>
+  </url>');
+                }
                 $fh = fopen(CAT_PATH.'/sitemap.xml','w');
                 fwrite($fh,'<'.'?'.'xml version="1.0" encoding="UTF-8"?>'."\n");
                 fwrite($fh,'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n");
