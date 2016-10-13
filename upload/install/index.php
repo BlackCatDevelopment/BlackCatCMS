@@ -1233,27 +1233,6 @@ function check_tables($database) {
 
     if (!isset($MESSAGE)) include (CAT_PATH."/languages/".LANGUAGE.".php");
 
-    /**
-     *    The important part ...
-     *    Is there an valid user?
-     */
-    $result = $database->query("SELECT * from `".$table_prefix."users` where `username`='".$config['admin_username']."'");
-    if ( $database->is_error() ) {
-        $errors['adminuser'] = $database->get_error();
-    }
-
-    if ($result->numRows() == 0) {
-        $errors['adminuser'] = false;
-    } else {
-        $data = $result->fetchRow( MYSQL_ASSOC );
-         /**
-          *    Does the password match
-          */
-         if ( md5($config['admin_password']) != $data['password']) {
-             $errors['password'] = false;
-         }
-    }
-
     write2log('< [check_tables()]');
 
     return array(
