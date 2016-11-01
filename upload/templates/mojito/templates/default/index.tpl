@@ -57,7 +57,7 @@
 		</nav>
 	</header>
 	<section id="content" class="gradient_gray br_all">
-		{if check_section(2)}
+		{if check_block(2)}
 		<header id="content_header" class="gradient_gray br_top">
 			<div class="right">{language_menu()}</div>
 			{page_header()}
@@ -65,7 +65,7 @@
 		</header>
 		{/if}
 
-		<aside id="sidebar" class="{if !check_section(2)}br_left{else}br_bottomleft{/if}">
+		<aside id="sidebar" class="{if !check_block(2)}br_left{else}br_bottomleft{/if}">
 			{show_menu(1, SM2_ROOT, SM2_ALL, SM2_ALL|SM2_XHTML_STRICT, '<li class="sib_[sib] [class]">[ac][menu_title]</a>', '</li>', '<ul class="hauptnavigation menu-[level]">', '</ul>')}
             <div id="langmenu">{language_menu()}</div>
 		</aside>
