@@ -39,7 +39,32 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$dwoodata	= array();
+//CAT_Helper_Protect::getInstance()->enableCSRFMagic();
+if ( CAT_Helper_Validate::getInstance()->sanitizeGet( 'logout' ) == 'true' )
+{
+	// delete session cookie if set
+	if ( isset($_COOKIE[session_name()]) )
+	{
+		setcookie(session_name(), '', time() - 42000, '/');
+	}
+	header('Location: ' . CAT_Helper_Page::getLink( $page_id,'link') );
+	// delete the session itself
+	session_destroy();
+} else if ( CAT_Helper_Validate::getInstance()->sanitizePost( 'username_fieldname' ) != ''
+	&&  CAT_Helper_Validate::getInstance()->sanitizePost( 'password_fieldname' ) != ''
+) {
+	header('Location: ' . CAT_Helper_Page::getLink( $page_id,'link') );
+}
+
+$dwoodata	= array(
+	'is_authenticated'	=> CAT_Users::getInstance()::is_authenticated(),
+	'display_name'		=> CAT_Users::getInstance()::get_display_name(),
+	'redirect_url'		=> !CAT_Users::getInstance()::is_authenticated() ? 
+								CAT_Helper_Page::getLink($page_id,'link') :
+								CAT_Helper_Page::getLink($page_id,'link') . '?logout=true',
+	'FRONTEND_SIGNUP'	=> FRONTEND_SIGNUP
+);
+
 $variant = CAT_Helper_Page::getPageSettings($page_id,'internal','template_variant');
 if(!$variant)
     $variant = ( defined('DEFAULT_TEMPLATE_VARIANT') && DEFAULT_TEMPLATE_VARIANT != '' )

@@ -49,6 +49,7 @@
 			    </form>
 			</div>
 			{/if}
+			{if $FRONTEND_LOGIN}{include login.tpl}{/if}
 		<a href="{cat_url}" id="logo">{page_title}</a>
 
 		<nav id="main_nav">

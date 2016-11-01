@@ -110,3 +110,52 @@
 			text-shadow: 1px 1px 1px white;
 			font-size: 1.8em;
 		}
+		
+#login_box {
+	position:	fixed;
+	top:		80px;
+	right:		0px;
+	z-index:	999;
+	display:	inline-block;
+	float:		right;
+	font-size:	1em;
+}
+	#toggleLogin {
+		display:		inline-block;
+		width:			40px;
+		height:			40px;
+		text-align:		center;
+		font:			bold;
+		line-height:	45px;
+		cursor:			pointer;
+		position:		relative;
+		z-index:		2;
+	}
+	#toggleLogin:before {
+		margin:	0px !important;
+	}
+	#login_box form {
+		padding:			.5em 1em;
+		position:			absolute;
+		z-index:			1;
+		top:				-5px;
+		right:				-340px;
+		width:				300px;
+		-webkit-transition:	all 500ms cubic-bezier(0.250, 0.100, 0.250, 1.000); 
+		-moz-transition:	all 500ms cubic-bezier(0.250, 0.100, 0.250, 1.000); 
+		-ms-transition:		all 500ms cubic-bezier(0.250, 0.100, 0.250, 1.000); 
+		-o-transition:		all 500ms cubic-bezier(0.250, 0.100, 0.250, 1.000); 
+		transition:			all 500ms cubic-bezier(0.250, 0.100, 0.250, 1.000); /* ease (default) */
+	}
+	#login_box.visible form {
+		right:		0px;
+	}
+		#login_box form input {
+			margin:			3px 5px;
+			padding:		2px 5px;
+			height:			24px;
+			font-family:	"HelveticaNeue-Light", "HelveticaNeue", Helvetica, Arial, Verdana, sans-serif;
+		}
+		#login_box form input[type="submit"] {
+			font-weight: 400;
+		}

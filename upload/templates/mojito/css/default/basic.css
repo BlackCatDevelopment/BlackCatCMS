@@ -253,10 +253,10 @@ form {
 }
 	input,
 	button {
-		margin: 0.2em;
-		padding: 0.1em 0.2em;
-		height: 36px;
-		border: 1px solid #9da8b2;
+		margin:		.2em;
+		padding:	.1em .6em;
+		height:		36px;
+		border:		1px solid #9da8b2;
 		-webkit-border-radius: 4px;
 		-moz-border-radius: 4px;
 		border-radius: 4px;
