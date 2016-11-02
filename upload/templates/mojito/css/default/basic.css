@@ -110,9 +110,8 @@ hr {
 }
 
 img {
-	margin: 1%;
-	padding: 0px;
-	border-width: 0px;
+	padding:		0;
+	border-width:	0;
 }
 
 a, a:link, a:visited, a:active {
