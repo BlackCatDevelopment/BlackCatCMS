@@ -381,7 +381,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
             // the first file with suffix .bc.php will be used
             foreach($configfiles as $file)
             {
-                if($file=='index.php') continue;
+                if(substr_compare($file,'index.php',-1,9)) continue;
                 if(substr_compare($file,'.bc.php',-1,7))
                 {
                     break;
