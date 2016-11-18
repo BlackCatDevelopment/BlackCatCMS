@@ -104,7 +104,7 @@ if (!class_exists('CAT_Helper_GitHub'))
             }
             return false;
         }   // end function getRelease()
-        
+
         /**
          *
          * @access public

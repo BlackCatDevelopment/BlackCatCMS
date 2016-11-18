@@ -1662,7 +1662,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
 
                 require( $directory . '/info.php' );
 
-                if ( isset( $module_function ) && in_array( strtolower( $module_function ), self::$module_functions ) )
+                if(isset($module_function) && in_array(strtolower($module_function), self::$module_functions))
                 {
                     $return_values = array(
                          'addon_function' => 'module'
@@ -1679,7 +1679,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 else
                 {
                     self::$error = 'Invalid info.php - neither $module_function nor $template_function set';
-                    $self->log()->logDebug( self::$error );
+                    $self->log()->logDebug(self::$error);
                     return false;
                 }
                 // Check if the file is valid

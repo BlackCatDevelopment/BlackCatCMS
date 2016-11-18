@@ -664,15 +664,15 @@ if (!class_exists('CAT_Helper_Page'))
                 {
                     if(!class_exists('c_editor',false))
                     {
-                        require $cfg_file;
+                    require $cfg_file;
                     }
                     $c = new c_editor();
                     if(method_exists($c,'getFrontendCSS'))
                     {
-                        $css = $c->getFrontendCSS();
-                        if(count($css))
-                        {
-                            $data['wysiwyg_files'] = $css;
+                    $css = $c->getFrontendCSS();
+                    if(count($css))
+                    {
+                        $data['wysiwyg_files'] = $css;
                         }
                     }
                 }
@@ -2634,9 +2634,9 @@ frontend.css and template.css are added in _get_css()
                 {
                     $resolved = self::_find_item($item);
                     if($resolved) {
-                    $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $resolved ) . '"></script>' . "\n";
+                        $static[] = CAT_Helper_Page::$space . '<script type="text/javascript" src="' . $val->sanitize_url(CAT_URL . '/modules/lib_jquery/plugins/' . $resolved ) . '"></script>' . "\n";
+                    }
                 }
-            }
             }
 
             // components to load on individual pages only (backend only)

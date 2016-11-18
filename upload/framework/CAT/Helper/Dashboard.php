@@ -199,8 +199,8 @@ if (!class_exists('CAT_Helper_Dashboard'))
                 $base = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules');
                 foreach(array_values(self::$not_on_dashboard[$module]) as $item)
                 {
-                        $widget_settings = array();
-                        include(CAT_Helper_Directory::sanitizePath($item));
+                    $widget_settings = array();
+                    include(CAT_Helper_Directory::sanitizePath($item));
                     $root = explode('/',str_replace(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'),'',$item));
                     if(file_exists(CAT_PATH.'/modules/'.$root[1].'/languages/'.LANGUAGE.'.php') )
                     {

@@ -423,7 +423,7 @@ if ( ! class_exists( 'CAT_Helper_Directory', false ) ) {
                     $part = ( self::$is_win && mb_detect_encoding($part,'UTF-8',true) )
                           ? utf8_decode($part)
                           : $part;
-	                $parts[] = $part;
+                    $parts[] = $part;
 	            }
 	        }
 
