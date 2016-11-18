@@ -429,7 +429,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
         {
             // show detailed error message only to global admin
             if(CAT_Users::is_authenticated() && CAT_Users::is_root())
-            return $this->lasterror;
+                return $this->lasterror;
             else
                 return "An internal error occured. We're sorry for inconvenience.";
         }   // end function getError()
