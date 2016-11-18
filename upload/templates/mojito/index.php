@@ -57,9 +57,9 @@ if ( CAT_Helper_Validate::getInstance()->sanitizeGet( 'logout' ) == 'true' )
 }
 
 $dwoodata	= array(
-	'is_authenticated'	=> CAT_Users::getInstance()::is_authenticated(),
-	'display_name'		=> CAT_Users::getInstance()::get_display_name(),
-	'redirect_url'		=> !CAT_Users::getInstance()::is_authenticated() ? 
+	'is_authenticated'	=> CAT_Users::getInstance()->is_authenticated(),
+	'display_name'		=> CAT_Users::getInstance()->get_display_name(),
+	'redirect_url'		=> !CAT_Users::getInstance()->is_authenticated() ? 
 								CAT_Helper_Page::getLink($page_id,'link') :
 								CAT_Helper_Page::getLink($page_id,'link') . '?logout=true',
 	'FRONTEND_SIGNUP'	=> FRONTEND_SIGNUP
