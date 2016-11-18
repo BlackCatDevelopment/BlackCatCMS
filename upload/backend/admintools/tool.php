@@ -64,7 +64,7 @@ if(!CAT_Users::get_permission($get_tool,'module'))
 global $parser;
 $parser->setGlobals('CAT_ADMIN_URL',CAT_ADMIN_URL);
 
-// ============================== 
+// ==============================
 // ! Check if tool is installed   
 // ============================== 
 if ( !CAT_Helper_Addons::isModuleInstalled($get_tool) )

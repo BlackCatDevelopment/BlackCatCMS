@@ -125,7 +125,7 @@ if (!class_exists('CAT_Backend', false))
             self::$form->loadFile('inc.forms.php',CAT_PATH.'/'.CAT_BACKEND_PATH.'/'.$section.'/inc');
             return self::$form;
         }   // end function getForms()
-        
+
 
         /**
          * prints the top of the backend page

@@ -142,7 +142,7 @@ if (!class_exists('CAT_Page', false))
 
             $this->log()->LogDebug(sprintf('showing page with ID [%s]',$page_id));
 		    $sp	= $_SERVER["SERVER_PROTOCOL"] ? $_SERVER["SERVER_PROTOCOL"] : 'HTTP/1.1';
-		    
+
             // send appropriate header
             if(CAT_Helper_Page::isMaintenance() || CAT_Registry::get('MAINTENANCE_PAGE') == $page_id)
             {
@@ -161,7 +161,7 @@ if (!class_exists('CAT_Page', false))
 			    header( $sp . ' 404 Not Found');
 			    header('Status: 404 Not Found');
 			    $_SERVER['REDIRECT_STATUS'] = 404;
-			}
+            }
             // template engine
             global $parser;
 

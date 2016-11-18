@@ -88,19 +88,19 @@ if ( (!$in_old_group) && !is_numeric( array_search($users->get_user_id(), $old_a
 }
 
 // Setup admin groups
-$admin_groups[]        = 1;
-$admin_groups        = implode(',', $options['admin_groups']);
+$admin_groups[]   = 1;
+$admin_groups     = implode(',', $options['admin_groups']);
 // Setup viewing groups
-$viewing_groups[]    = 1;
-$viewing_groups        = implode(',', $options['viewing_groups']);
+$viewing_groups[] = 1;
+$viewing_groups   = implode(',', $options['viewing_groups']);
 
 // If needed, get new order
 if ( $options['parent'] != $old_parent )
 {
     require( CAT_PATH . '/framework/class.order.php' );
-    $order            = new order(CAT_TABLE_PREFIX.'pages', 'position', 'page_id', 'parent');
+    $order               = new order(CAT_TABLE_PREFIX.'pages', 'position', 'page_id', 'parent');
     // Get new order
-    $options['position'] = $order->get_new( $options['parent'] );
+    $options['position'] = $order->get_new($options['parent']);
     // Clean new order
     $order->clean($options['parent']);
 }
@@ -112,7 +112,7 @@ else
 // Work out level and root parent
 if ( $options['parent'] != '0' )
 {
-    $options['level']       = CAT_Helper_Page::properties($options['parent'],'level') + 1;
+    $options['level']    = CAT_Helper_Page::properties($options['parent'],'level') + 1;
 }
 
 $options['root_parent']

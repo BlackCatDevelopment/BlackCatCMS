@@ -61,8 +61,8 @@ $new_extension	= trim( $val->strip_slashes($val->sanitizePost('extension')) );
 if ( $new_name == '' || $rename_file == '' || $file_path == '' || $users->checkPermission('Media','media_rename') !== true )
 {
 	$message = $users->checkPermission('Media','media_rename') !== true
-                        ? $backend->lang()->translate('You do not have the permission to rename files')
-                        : $backend->lang()->translate('You sent an empty value');
+             ? $backend->lang()->translate('You do not have the permission to rename files')
+             : $backend->lang()->translate('You sent an empty value');
 	print CAT_Object::json_error($message);
 	exit();
 }
@@ -71,18 +71,18 @@ else
 	// ================================ 
 	// ! Check if folder is writeable   
 	// ================================ 
-	if ( is_writable(CAT_PATH . $file_path) )
+	if(is_writable(CAT_PATH.$file_path))
 	{
-		$file = CAT_Helper_Directory::sanitizePath( CAT_PATH . $file_path . '/' . $rename_file );
+		$file = CAT_Helper_Directory::sanitizePath(CAT_PATH.$file_path.'/'.$rename_file);
 		// Check if a new extension was sent
-		if ( $new_extension == '' && !is_dir( $file ) )
+		if($new_extension == '' && !is_dir($file))
 		{
 			// if file is a folder (so there is no extension) keep extension clear, if it is a file, add a "." and the extension
 			$new_extension = (strtolower(pathinfo($file,PATHINFO_EXTENSION)) == '')
                            ? ''
                            : strtolower(pathinfo($file,PATHINFO_EXTENSION));
 		}
-		if ( substr($new_extension, 0, 1) != '.'  && !is_dir( $file ) )
+		if(substr($new_extension, 0, 1) != '.' && !is_dir($file))
 		{
 			$new_extension	= '.' . $new_extension;
 		}
@@ -90,7 +90,7 @@ else
 		// ========================================== 
 		// ! Combine path, filenames and extensions   
 		// ========================================== 
-		$new_rename	= CAT_Helper_Directory::sanitizePath( CAT_PATH . $file_path . '/' . $new_name . $new_extension );
+		$new_rename	= CAT_Helper_Directory::sanitizePath(CAT_PATH.$file_path.'/'.$new_name.$new_extension);
 
 		// ================================= 
 		// ! Try to rename the file/folder   

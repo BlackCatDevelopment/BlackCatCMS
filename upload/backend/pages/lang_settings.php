@@ -61,7 +61,7 @@ require_once(CAT_PATH.'/framework/functions-utf8.php');
 global $parser;
 $tpl_data = array();
 
-// =============================================================== 
+// ===============================================================
 // ! Get perms & Check if there is an error and get page details   
 // =============================================================== 
 $page = CAT_Helper_Page::getPage($page_id);

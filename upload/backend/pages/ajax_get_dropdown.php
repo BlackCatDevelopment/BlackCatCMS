@@ -23,20 +23,20 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+    include(CAT_PATH.'/framework/class.secure.php');
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+    while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+        $root .= "../";
+        $level += 1;
+    }
+    if (file_exists($root.'/framework/class.secure.php')) {
+        include($root.'/framework/class.secure.php');
+    } else {
+        trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+    }
 }
 
 $backend = CAT_Backend::getInstance('Pages','pages_add',false);
@@ -47,7 +47,7 @@ header('Content-type: application/json');
 if ( !$users->checkPermission('Pages','pages_add') )
 {
     CAT_Object::json_error($backend->lang()->translate('You do not have the permission to add a page.'));
-	exit();
+    exit();
 }
 
 // note: all pages are listed in the dropdown, even hidden / private AND deleted!
@@ -68,19 +68,19 @@ if(isset($info['module_variants']) && is_array($info['module_variants']) && coun
 // ============================================= 
 // ! Add result_array to the template variable   
 // ============================================= 
-$ajax	= array(
-		'parent_id'		=> $val->sanitizePost('parent_id','numeric'),
-		'parent_list'	=> $dropdown_list,
-        'template'      => $template,
-        'template_variant' => $variant,
-        'variants'      => $variants,
-		'target'		=> '_self',
+$ajax    = array(
+    'parent_id'        => $val->sanitizePost('parent_id','numeric'),
+    'parent_list'      => $dropdown_list,
+    'template'         => $template,
+    'template_variant' => $variant,
+    'variants'         => $variants,
+    'target'           => '_self',
     'success'          => true,
     'admin_groups'     => array(1),
 );
 
 // ==================== 
-// ! Return values 	
+// ! Return values
 // ==================== 
 
 print json_encode( $ajax );

@@ -23,8 +23,8 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined('CAT_PATH')) {
+	include(CAT_PATH.'/framework/class.secure.php');
 } else {
 	$root = "../";
 	$level = 1;
@@ -32,8 +32,8 @@ if (defined('CAT_PATH')) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -65,7 +65,7 @@ else
 
 		$create_folder		= CAT_PATH . $ajax['folder_path'] .'/' . $folder_name;
 		$counter			= 1;
-		while ( is_dir($create_folder) )
+		while(is_dir($create_folder))
 		{
 			$create_folder	= CAT_PATH . $ajax['folder_path'] . '/' . $folder_name . ' ' . $counter;
 			$counter++;

@@ -58,7 +58,7 @@ if(!file_exists(CAT_PATH."/temp/catalog.json"))
 $catalog = get_catalog();
 
 // get installed
-$modules   = CAT_Helper_Addons::get_addons('module');
+$modules = CAT_Helper_Addons::get_addons('module');
 
 // map installed
 $installed = array();
