@@ -15,8 +15,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2015, Black Cat Development
- *   @link            http://blackcat-cms.org
+ *   @copyright       2016, Black Cat Development
+ *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
@@ -301,7 +301,7 @@ function module_create_writeHeader($fh,$name,$author,$type)
  *
  *   @author          '.$author.'
  *   @copyright       '.date('Y').', '.$author.'
- *   @link            http://blackcat-cms.org
+ *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_'.ucfirst($type).'s
  *   @package         '.$name.'

@@ -13,7 +13,7 @@
 
 <h2>What's next?</h2>
 
-<p>If you need help, please visit our <a href="http://blackcat-cms.org/" target="_blank">Homepage</a>
-and/or <a href="http://blackcat-cms.org/forum/" target="_blank">the Forum</a>.
+<p>If you need help, please visit our <a href="https://blackcat-cms.org/" target="_blank">Homepage</a>
+and/or <a href="https://blackcat-cms.org/forum/" target="_blank">the Forum</a>.
 
 <p><strong>Thank you for using Black Cat CMS!</strong></p>

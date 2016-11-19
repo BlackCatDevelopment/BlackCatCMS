@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2016, Black Cat Development
  *   @link            http://www.blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules

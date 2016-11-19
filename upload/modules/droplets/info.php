@@ -15,8 +15,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, 2014, Black Cat Development
- *   @link            http://blackcat-cms.org
+ *   @copyright       2016, Black Cat Development
+ *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         droplets
@@ -48,5 +48,5 @@ $module_author      = 'BlackCat Development';
 $module_license     = 'GNU General Public License';
 $module_description = 'This tool allows you to manage your Droplets.';
 
-$module_home        = 'http://blackcat-cms.org/';
+$module_home        = 'https://blackcat-cms.org/';
 $module_guid        = 'FDAF7FBF-DE7F-4394-81DC-8D139EA3216C';

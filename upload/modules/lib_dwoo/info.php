@@ -16,8 +16,8 @@
  *
  *   @author          LEPTON Project, Black Cat Development
  *   @copyright       2011-2012, LEPTON Project
- *   @copyright       2013, Black Cat Development
- *   @link            http://blackcat-cms.org
+ *   @copyright       2016, Black Cat Development
+ *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Module
  *   @package         lib_dwoo

@@ -14,7 +14,7 @@
 <h2>Wie weiter?</h2>
 
 <p>Wenn Sie weitere Informationen oder Hilfe benötigen, besuchen Sie bitte unsere
-<a href="http://blackcat-cms.org/" target="_blank">Homepage</a>
-und/oder <a href="http://blackcat-cms.org/forum/" target="_blank">das Forum</a>.
+<a href="https://blackcat-cms.org/" target="_blank">Homepage</a>
+und/oder <a href="https://blackcat-cms.org/forum/" target="_blank">das Forum</a>.
 
 <p><strong>Vielen Dank, dass Sie Black Cat CMS verwenden!</strong></p>

@@ -15,8 +15,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
- *   @link            http://blackcat-cms.org
+ *   @copyright       2016, Black Cat Development
+ *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         blackcat
@@ -41,7 +41,7 @@ if (defined('CAT_PATH')) {
 
 $settings = array (
   array (
-    'value' => 'http://blackcat-cms.org/media/_internal_/version.txt',
+    'value' => 'https://blackcat-cms.org/media/_internal_/version.txt',
     'name' => 'source',
     'label' => 'Version check source file',
     'type' => 'text',
@@ -75,7 +75,7 @@ $settings = array (
 
 // --- do not change this manually, use the Admin Tool! ---
 $current = array(
-    'source' => 'http://blackcat-cms.org/media/_internal_/version.txt',
+    'source' => 'https://blackcat-cms.org/media/_internal_/version.txt',
     'timeout' => '30',
     'proxy_host' => '',
     'proxy_port' => '',
