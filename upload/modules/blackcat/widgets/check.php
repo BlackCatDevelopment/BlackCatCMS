@@ -98,6 +98,7 @@ if(!function_exists('render_widget_blackcat_check'))
                     'adapter'      => 'Zend\Http\Client\Adapter\Proxy',
                     'proxy_host'   => $current['proxy_host'],
                     'proxy_port'   => $current['proxy_port'],
+                    'sslcapath'    => '/etc/ssl/certs'
                 )
             );
             $client->setHeaders(
