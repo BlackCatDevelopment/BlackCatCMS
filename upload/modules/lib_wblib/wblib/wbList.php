@@ -214,16 +214,20 @@ if(!class_exists('wblib\wbList',false))
                 elseif(!empty($children[$option['value'][$id_key]]))
                 {
                     $item   = $option['value'];
-                    if($item[$l_key]>=$startlevel)
+                    if(!isset($item[$l_key]) || $item[$l_key]>=$startlevel)
                     {
                         if($type!='select')
                         {
-                    // get the css classes
-                    $css    = self::getListItemCSS($item,$lastchild);
-                    // add the item first
+                            if(!isset($item[self::$defaults['__children_key']]))
+                            {
+                                $item[self::$defaults['__children_key']] = true;
+                            }
+                            // get the css classes
+                            $css    = self::getListItemCSS($item,$lastchild);
+                            // add the item first
                             $html[] = self::itemStart($css) . self::getListItemText($item);
-                    // open sub list for the children
-                    $html[] = self::listStart($ul_id);
+                            // open sub list for the children
+                            $html[] = self::listStart($ul_id);
                         }
                         else
                         {
@@ -237,17 +241,17 @@ if(!class_exists('wblib\wbList',false))
                 // ----- handle leaf (item with no children) -----
                 else {
                     $item   = $option['value'];
-                    if($item[$l_key]>=$startlevel)
+                    if(!isset($item[$l_key]) || $item[$l_key]>=$startlevel)
                     {
                         if($type!='select')
                         {
-                    // get the css classes
-                    $css    = self::getListItemCSS($item);
-                    // add the item first
+                            // get the css classes
+                            $css    = self::getListItemCSS($item);
+                            // add the item first
                             $html[] = self::itemStart($css)
-                            . self::getListItemText($item)
-                            . self::itemEnd();
-                }
+                                    . self::getListItemText($item)
+                                    . self::itemEnd();
+                        }
                         else
                         {
                             $items[] = $item;
@@ -259,9 +263,9 @@ if(!class_exists('wblib\wbList',false))
             // HTML wrapper for the menu (close)
             if($type!='select')
             {
-            $html[] = self::listEnd();
-            $output = str_ireplace( '{{lastcss}}', '', implode("\r\n",$html) );
-            return $output;
+                $html[] = self::listEnd();
+                $output = str_ireplace( '{{lastcss}}', '', implode("\r\n",$html) );
+                return $output;
             }
 
             return $items;
@@ -310,7 +314,7 @@ if(!class_exists('wblib\wbList',false))
                     $items[] = self::selectOption(
                         $item[self::$defaults['__id_key']],
                         (($item[self::$defaults['__id_key']]==$sel)?'selected="selected" ':''),
-                        (str_repeat($space,$item[self::$defaults['__level_key']])),
+                        (isset($item[self::$defaults['__level_key']]) ? (str_repeat($space,$item[self::$defaults['__level_key']])) : ''),
                         $item[self::$defaults['__title_key']]
                     );
                 }
@@ -598,6 +602,100 @@ if(!class_exists('wblib\wbList',false))
                 \Analog::log($message,$level);
         }   // end function log()
 
+        /**
+         * build multilevel (recursive) array from flat one; will add the
+         * children of an item to __children_key array key
+         *
+         * @access  public
+         * @param   array   $items - flat array (reference!)
+         * @param   number  $min   - min level to show
+         * @return  array
+         **/
+        public static function buildRecursion ( &$items, $min = -9 )
+        {
+            // check if $items is an array
+            if(!empty($items) && !is_array($items))
+            {
+                return NULL;
+            }
+            // if there's only one item, no recursion to do
+            if ( !(count($items) > 1))
+            {
+                return $items;
+            }
+
+            $tree    = array();
+            $root_id = -1;
+            $self    = self::getInstance();
+
+            // check if the $items array is already multi-dimensional
+            if(array_key_exists(self::$defaults['__children_key'],$items))
+                return $items;
+
+            // spare some typing...
+            $ik      = self::$defaults['__id_key'];
+            $pk      = self::$defaults['__parent_key'];
+            $ck      = self::$defaults['__children_key'];
+            $lk      = self::$defaults['__level_key'];
+
+            // make sure that the $items array is indexed by the __id_key
+            $arr     = array();
+            foreach ( $items as $index => $item ){
+                $arr[$item[$ik]] = $item;
+            }
+            $items = $arr;
+
+            //
+            // this creates an array of parents with their associated children
+            //
+            // -----------------------------------------------
+            // REQUIRES that the array index is the parent ID!
+            // -----------------------------------------------
+            //
+            // http://www.tommylacroix.com/2008/09/10/php-design-pattern-building-a-tree/
+            //
+            foreach($items as $id => &$node)
+            {
+                // skip nodes with depth < min level
+                if(isset($node[$lk]) && $node[$lk] <= $min)
+                {
+                    continue;
+                }
+
+                // avoid error messages on missing parent key
+                if(!isset($node[$pk]))
+                {
+                    $node[$pk] = null;
+                }
+
+                // root node
+                if($node[$pk] === null && $root_id < 0)
+                {
+                    $tree[$id] = &$node;
+                    $root_id   = $id;
+                }
+                // sub node
+                else
+                {
+                    // avoid warnings on missing children key
+                    if(!isset($items[$node[$pk]][$ck]) || !is_array($items[$node[$pk]][$ck]))
+                    {
+                        $items[$node[$pk]][$ck] = array();
+                    }
+                    $items[$node[$pk]][$ck][] = &$node;
+                }
+            }
+
+            if(!empty($tree) && is_array($tree) && count($tree) > 0)
+            {
+                if(isset($tree[$root_id]))
+                    $tree = $tree[$root_id][$ck];
+            }
+
+            return $tree;
+
+        }   // end function buildRecursion ()
+
         public static function generateRandomString($length=10)
         {
             for(
@@ -647,6 +745,57 @@ if(!class_exists('wblib\wbList',false))
                 }
             }
         }   // end function set()
+
+        /**
+         * sort array by children
+         **/
+        public static function sort($list, $root_id)
+        {
+
+            if ( empty($list) || ! is_array( $list ) || count($list) == 0 )
+                return NULL;
+
+            $self      = self::getInstance();
+            $return    = array();
+            $children  = array();
+            $p_key     = self::$defaults['__parent_key'];
+            $id_key    = self::$defaults['__id_key'];
+
+            // create a list of children for each item
+            foreach ( $list as $item ) {
+                $children[$item[$p_key]][] = $item;
+            }
+
+            // loop will be false if the root has no children
+            $loop         = !empty( $children[$root_id] );
+
+            // initializing $parent as the root
+            $parent       = $root_id;
+            $parent_stack = array();
+
+            while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
+            {
+                if ( $option === false ) // no more children
+                {
+                    $parent = array_pop( $parent_stack );
+                }
+                // current item has children
+                elseif ( ! empty( $children[ $option['value'][$id_key] ] ) )
+                {
+                    if(!isset($option['value']['__children']))
+                        $option['value']['__children'] = count($children[ $option['value'][$id_key] ]);
+                    $return[] = $option['value'];
+                    array_push( $parent_stack, $option['value'][$p_key] );
+                    $parent = $option['value'][$id_key];
+                }
+                else {
+                    if(!isset($option['value']['__children']))
+                        $option['value']['__children'] = 0;
+                    $return[] = $option['value'];
+                }
+            }
+            return $return;
+        }
 
         /**
          * reset to the defaults

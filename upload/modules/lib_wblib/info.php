@@ -29,22 +29,22 @@ if (defined('WB_PATH')) {
 }
 else {
     $root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+    $level = 1;
+    while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
         $root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+        $level += 1;
+    }
+    if (file_exists($root.'/framework/class.secure.php')) {
+        include($root.'/framework/class.secure.php');
+    } else {
+        trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+    }
 }
 
 $module_directory    = 'lib_wblib';
 $module_name         = 'wblib2 Library for BlackCat CMS';
 $module_function     = 'library';
-$module_version      = '0.7';
+$module_version      = '0.8';
 $module_platform     = '1.x';
 $module_requirements = 'PHP 5.32 or higher';
 $module_author 		 = 'Bianka Martinovic, BlackBird Webprogrammierung';

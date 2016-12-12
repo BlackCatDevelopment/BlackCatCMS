@@ -82,6 +82,7 @@ if (!class_exists('wblib\wbFormsBase',false))
             'onselect'    => NULL,
             'readonly'    => NULL,
             'required'    => NULL,
+            'aria-required' => NULL,
             'style'       => NULL,
             'tabindex'    => NULL,
             'title'       => NULL,
@@ -2127,9 +2128,9 @@ echo "</textarea>";
                      // markup for required fields
                    .  "%is_required%"
                      // default attributes
-                   . "<input%type%%name%%id%%class%%style%%title%%value%%required%"
+                   . "<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%"
                      // more attributes
-                   . "%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% /> %after%"
+                   . "%checked%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% /> %after%"
                    . "\n"
                      // errors and other infos
                    . "%notes%"
@@ -2208,7 +2209,7 @@ echo "</textarea>";
             $class::$tpl = $tpl;
             self::log('< setTemplate()',7);
         }   // end function setTemplate()
-        
+
         /**
          * returns an instance (normally called 'getInstance()')
          *
@@ -2245,8 +2246,9 @@ echo "</textarea>";
             if(isset($this->attr['required']) && $this->attr['required'] !== false)
             {
                 #if(!isset($this->attr['is_group']) || !$this->attr['is_group'])
-                    $this->attr['is_required'] = sprintf(self::$globals['required_span'],self::t('This item is required'));
+                $this->attr['is_required'] = sprintf(self::$globals['required_span'],self::t('This item is required'));
                 $this->attr['required'] = 'required'; // valid XHTML
+                $this->attr['aria-required'] = 'true'; // WAI-ARIA
             }
             else
             {
@@ -2568,7 +2570,7 @@ echo "</textarea>";
      */
     class wbFormsElementSelect extends wbFormsElement
     {
-        protected static $tpl = "%label%%is_required%\n<select%name%%id%%class%%style%%title%%multiple%%tabindex%%accesskey%%disabled%%readonly%%required%%onblur%%onchange%%onclick%%onfocus%%onselect%>\n%options%</select> %after%\n";
+        protected static $tpl = "%label%%is_required%\n<select%name%%id%%class%%style%%title%%multiple%%tabindex%%accesskey%%disabled%%readonly%%required%%aria-required%%onblur%%onchange%%onclick%%onfocus%%onselect%>\n%options%</select> %after%\n";
         /**
          * adds select specific attributes
          **/
@@ -2937,13 +2939,13 @@ echo "</textarea>";
     class wbFormsElementTextarea extends wbFormsElement
     {
         protected static $tpl =
-            "%is_required%<input%type%%name%%id%%class%%style%%title%%value%%required%%checked%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% />%label%";
+            "%is_required%<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%%checked%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% />%label%";
         public function init()
         {
             wbFormsElementTextarea::$tpl
                 = '%label%%is_required%'
                 . '<textarea %name%%id%%class%%style%%title%'
-                . '%tabindex%%accesskey%%disabled%%readonly%%required%%onblur%%onchange%%onclick%%onfocus%%onselect%>'
+                . '%tabindex%%accesskey%%disabled%%readonly%%required%%aria-required%%onblur%%onchange%%onclick%%onfocus%%onselect%>'
                 . '%value%'
                 . '</textarea> %after%'
                 ;
@@ -2991,7 +2993,7 @@ echo "</textarea>";
     class wbFormsElementCheckbox extends wbFormsElement
     {
         protected static $cssclass = 'fbcheckbox';
-        protected static $tpl = "<span %class%>%label_span%</span>%is_required%<input%type%%name%%id%%class%%style%%title%%value%%required%%checked%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% />";
+        protected static $tpl = "<span %class%>%label_span%</span>%is_required%<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%%checked%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% />";
                  // markup for <label>
                //. "%label%"
 

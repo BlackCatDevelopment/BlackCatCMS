@@ -6,7 +6,8 @@ require.config({
         colpick:  'colpick/colpick',
         egg:      'egg/egg',
         select2:  'select2/select2.min',
-        validate: 'validate/jquery.validate.min'
+        validate: 'validate/jquery.validate.min',
+        qtip2:    'qtip2/jquery.qtip.min'
     }
 });
 
