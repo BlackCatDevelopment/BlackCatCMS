@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
+ *   @copyright       2016, Black Cat Development
  *   @link            http://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -23,20 +23,65 @@
  *
  */
 
-require_once dirname(__FILE__).'/../../config.php';
+define('CAT_INSTALL',true);
+#define('CAT_INSTALL_PROCESS',true);
+define('CAT_LOGFILE',dirname(__FILE__).'/../../temp/update.log');
 
-define('CAT_INSTALL_PROCESS',true);
+//**************************************************************************
+// add framework subdir to include path
+//**************************************************************************
+set_include_path(implode(PATH_SEPARATOR, array(
+    realpath(dirname(__FILE__) . '/framework'),
+    get_include_path()
+)));
+//**************************************************************************
+// register autoloader
+//**************************************************************************
+spl_autoload_register(function($class)
+{
+    $file = str_replace('_', '/', $class);
+    if (file_exists(dirname(__FILE__).'/../../framework/' . $file . '.php'))
+    {
+        @require dirname(__FILE__).'/../../framework/' . $file . '.php';
+    }
+    // next in stack
+});
 
-// Try to guess installer URL
-$installer_uri = 'http://' . $_SERVER[ "SERVER_NAME" ] . ( ( $_SERVER['SERVER_PORT'] != 80 ) ? ':'.$_SERVER['SERVER_PORT'] : '' ) . $_SERVER[ "SCRIPT_NAME" ];
-$installer_uri = dirname( $installer_uri );
-$installer_uri = str_ireplace('update','',$installer_uri);
 $lang          = CAT_Helper_I18n::getInstance();
 $lang->addFile( $lang->getLang().'.php', dirname(__FILE__).'/../languages' );
 
-if(!CAT_Helper_Addons::versionCompare( CAT_VERSION, '0.11.0Beta' ))
+// allow upgrade vom v1.2, too
+if(!isset($_GET['do']) && CAT_Helper_Addons::versionCompare(CAT_VERSION,'1.2','<'))
+    update11to12pre();
+
+// keep wb2compat.php happy
+foreach(array_values(array('DEFAULT_THEME','CATMAILER_DEFAULT_SENDERNAME','DEFAULT_TIMEZONE_STRING','SERVER_EMAIL')) as $const) {
+    define($const,'');
+}
+define('LANGUAGE','EN');
+
+@require_once dirname(__FILE__).'/../../config.php';
+
+$result = $database->query(sprintf("SELECT `value` FROM `%ssettings` WHERE `name`='%s'",CAT_TABLE_PREFIX,'cat_version'));
+if($result->rowCount() > 0)
+{
+    $row = $result->fetch();
+    define('CAT_VERSION',$row['value']);
+}
+
+// Try to guess installer URL
+$installer_uri = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://')
+               . $_SERVER["SERVER_NAME"]
+               . (($_SERVER['SERVER_PORT']!=80 && !isset($_SERVER['HTTPS']))
+                 ? ':'.$_SERVER['SERVER_PORT']
+                 : '' )
+               . $_SERVER["SCRIPT_NAME"];
+$installer_uri = dirname( $installer_uri );
+$installer_uri = str_ireplace('update','',$installer_uri);
+
+if(!CAT_Helper_Addons::versionCompare( CAT_VERSION, '1.1' ))
     pre_update_error($lang->translate(
-        'You need to have <strong>BlackCat CMS v0.11.0Beta</strong> installed to use the Update.<br />You have <strong>{{version}}</strong> installed.',
+        'You need to have <strong>BlackCat CMS v1.1</strong> installed to use the Update.<br />You have <strong>{{version}}</strong> installed.',
         array( 'version' => CAT_VERSION )
     ));
 
@@ -52,6 +97,7 @@ else
     pre_update_error($lang->translate(
         'The file <pre>tag.txt</pre> is missing! Unable to upgrade!'
     ));
+    exit;
 }
 
 if(!CAT_Helper_Validate::getInstance()->sanitizeGet('do'))
@@ -78,206 +124,44 @@ if(!CAT_Helper_Validate::getInstance()->sanitizeGet('do'))
 ob_start();
 
 /*******************************************************************************
-    BETA TO RELEASE 1.0
-*******************************************************************************/
-
-// remove captcha_control module
-if(file_exists(CAT_PATH.'/modules/captcha_control/index.php'))
-{
-    CAT_Helper_Directory::removeDirectory(CAT_PATH.'/modules/captcha_control');
-    $lang->db()->query(sprintf(
-        "DELETE FROM `%saddons` WHERE directory = '%s' AND type = '%s'",
-        CAT_TABLE_PREFIX, 'captcha_control', 'module'
-    ));
-}
-// moved to widgets subdir; in fact, this change was made before Beta, but anyway...
-if(file_exists(CAT_PATH.'/modules/blackcat/widget.php'))
-    unlink(CAT_PATH.'/modules/blackcat/widget.php');
-// add to class_secure table
-$lang->db()->query(sprintf(
-    "REPLACE INTO `%sclass_secure` VALUES ( 0, '%s' )",
-    CAT_TABLE_PREFIX, '/backend/pages/ajax_recreate_af.php'
-));
+ *  1.1 TO 1.2
+ ******************************************************************************/
+$database->query(
+    "CREATE TABLE IF NOT EXISTS `:prefix:dashboard` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `user_id` int(11) NOT NULL DEFAULT '0',
+      `module` varchar(50) DEFAULT '0',
+      `layout` varchar(10) NOT NULL,
+      `widgets` text NOT NULL,
+      PRIMARY KEY (`id`),
+      UNIQUE KEY `id_user_id_module` (`user_id`,`module`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+);
 
 /*******************************************************************************
-    1.0 TO 1.0.1
+    1.2 TO 1.2.1
 *******************************************************************************/
-// remove beta png
-if(file_exists(CAT_PATH."/templates/freshcat/css/images/login/beta_state.png"))
-    unlink(CAT_PATH."/templates/freshcat/css/images/login/beta_state.png");
+$sql = "UPDATE `:prefix:system_permissions` SET `perm_bit`=:val WHERE `perm_name`=:perm";
+$database->query( $sql, array('val'=>1,'perm'=>'settings'));
+$database->query( $sql, array('val'=>2,'perm'=>'settings_basic'));
+$database->query( $sql, array('val'=>4,'perm'=>'settings_advanced'));
 
-// ----- moved for Version 1.1 (mysql strict mode) -----
-// run lib_search upgrade
-//if(file_exists(CAT_PATH.'/modules/lib_search/upgrade.php'))
-//    include CAT_PATH.'/modules/lib_search/upgrade.php';
-// run droplets upgrade
-//if(file_exists(CAT_PATH.'/modules/droplets/upgrade.php'))
-//    include CAT_PATH.'/modules/droplets/upgrade.php';
-// ----- moved for Version 1.1 (mysql strict mode) -----
-
-// run wrapper install script
-if(file_exists(CAT_PATH.'/modules/wrapper/install.php'))
-    include CAT_PATH.'/modules/wrapper/install.php';
-
-// run menu_link install script
-if(file_exists(CAT_PATH.'/modules/menu_link/install.php'))
-    include CAT_PATH.'/modules/menu_link/install.php';
-
-// remove compiled templates
-$dirs = CAT_Helper_Directory::getInstance()->maxRecursionDepth(0)->scanDirectory( CAT_PATH.'/temp/compiled', false, false );
-if(count($dirs))
-    CAT_Helper_Directory::removeDirectory($dirs[0]);
-
-
-/*******************************************************************************
-    1.0.1 TO 1.0.2
-*******************************************************************************/
-include CAT_PATH.'/framework/class.database.php';
-$database = new database();
-
-// fix cattranslate entry in class_secure table
-$database->query(sprintf(
-    'UPDATE `%sclass_secure` SET `filepath`="%s" WHERE `filepath`="%s"',
-    CAT_TABLE_PREFIX, '/modules/lib_jquery/plugins/cattranslate/cattranslate.php', '/modules/lib_jquery/plugins/catranslate/cattranslate.php'
-));
-
-// reset default template (set to empty value in DB) - see issue #205
-$res = $database->query(sprintf(
-    'SELECT `value` FROM `%ssettings` WHERE `name`="%s"',
-    CAT_TABLE_PREFIX, 'default_template'
-));
-if($res && $res->numRows())
+// update module versions
+$sql = "UPDATE `:prefix:addons` SET `upgraded`=:time, `version`=:ver WHERE `directory`=:dir";
+foreach(array_values(array('lib_getid3','lib_wblib','wysiwyg')) as $module)
 {
-    $row = $res->fetchRow(MYSQL_ASSOC);
-    $database->query(sprintf(
-        'UPDATE `%spages` SET `template`="" WHERE `template`="%s"',
-        CAT_TABLE_PREFIX, $row['value']
-    ));
+    $addon_dir  = CAT_PATH.'/modules/'.$module;
+    $addon_info = CAT_Helper_Addons::checkInfo($addon_dir);
+    $database->query( $sql, array('time' => time(), 'ver' => $addon_info['module_version'], 'dir' => $addon_info['module_directory'] ) );
 }
 
 /*******************************************************************************
-    1.0.2 TO 1.0.3
-*******************************************************************************/
-// drop obsolete table pages_load
-$database->query(sprintf(
-    'DROP TABLE IF EXISTS `%spages_load`;', CAT_TABLE_PREFIX
-));
-
-$res = $database->query(sprintf(
-    'SELECT `value` FROM `%ssettings` WHERE `name`="%s"',
-    CAT_TABLE_PREFIX, 'cat_default_date_format'
-));
-if(!$res || !$res->numRows())
-{
-// date and time formats; the wb2compat.php will create the ones for WB
-$database->query(sprintf(
-    'UPDATE `%ssettings` SET `name`="cat_default_date_format" WHERE `name`="default_date_format"',
-    CAT_TABLE_PREFIX
-));
-$database->query(sprintf(
-    'UPDATE `%ssettings` SET `name`="cat_default_time_format" WHERE `name`="default_time_format"',
-    CAT_TABLE_PREFIX
-));
-    $database->query(sprintf(
-        'INSERT INTO `%ssettings` VALUES (NULL,"%s","%s")',
-        CAT_TABLE_PREFIX, 'default_date_format','d.m.Y'
-    ));
-    $database->query(sprintf(
-        'INSERT INTO `%ssettings` VALUES (NULL,"%s","%s")',
-        CAT_TABLE_PREFIX,'default_time_format','H:i:s'
-    ));
-}
-// delete search droplet setting as it is no longer used
-$database->query(sprintf(
-    'DELETE FROM `%ssearch` WHERE `name`="cfg_search_droplet"',
-    CAT_TABLE_PREFIX
-));
-
-/*******************************************************************************
-    1.0.3/1.0.4 TO 1.1
+    ALL VERSIONS
 *******************************************************************************/
 
-// add new files
-$database->query(sprintf(
-    'REPLACE INTO `%sclass_secure` VALUES( "0", "/backend/pages/ajax_headers.php" )',
-    CAT_TABLE_PREFIX
-));
-$database->query(sprintf(
-    'REPLACE INTO `%sclass_secure` VALUES( "0", "/backend/pages/modify_headers.php" )',
-    CAT_TABLE_PREFIX
-));
-$database->query(sprintf(
-    'REPLACE INTO `%sclass_secure` VALUES ( "0", "/backend/login/ajax_check_ssl.php" )',
-    CAT_TABLE_PREFIX
-));
-
-$res = $database->query(sprintf(
-    'SELECT `filepath` FROM `%sclass_secure` WHERE `filepath`="%s"',
-    CAT_TABLE_PREFIX, '/modules/blackcat/widgets/logs.php'
-));
-if(!$res || !$res->numRows())
-{
-    $mod_id_h = $database->query(sprintf(
-        'SELECT `addon_id` FROM `%saddons` WHERE `directory`="%s"',
-        CAT_TABLE_PREFIX, 'blackcat'
-    ));
-    $mod_id = $mod_id_h->fetchColumn();
-    $database->query(sprintf(
-        'INSERT INTO `%sclass_secure` VALUES ( "%d", "/modules/blackcat/widgets/logs.php" )',
-        CAT_TABLE_PREFIX, $mod_id
-    ));
-}
-
-// alter table 'search'; no need to check this first
-$database->query(sprintf(
-    'ALTER TABLE `%ssearch` CHANGE COLUMN `extra` `extra` TEXT NULL',
-    CAT_TABLE_PREFIX
-));
-
-// alter table 'droplets'; no need to check this first
-$database->query(sprintf(
-    'ALTER TABLE `%smod_droplets` CHANGE COLUMN `modified_by` `modified_by` INT(11) NULL DEFAULT "0"',
-    CAT_TABLE_PREFIX
-));
-
-// run droplets upgrade
-if(file_exists(CAT_PATH.'/modules/droplets/upgrade.php'))
-    include CAT_PATH.'/modules/droplets/upgrade.php';
-// run lib_search upgrade
-if(file_exists(CAT_PATH.'/modules/lib_search/upgrade.php'))
-    include CAT_PATH.'/modules/lib_search/upgrade.php';
-
-// Installer for Doctrine
-$mod_id = $database->query(sprintf(
-    'SELECT `addon_id` FROM `%saddons` WHERE `directory`="%s"',
-    CAT_TABLE_PREFIX, 'lib_doctrine'
-));
-if(!$res || !$res->numRows())
-{
-    include CAT_PATH.'/modules/lib_doctrine/install.php';
-}
-
-// update droplet EditThisPage
-//CAT_Helper_Droplet::installDroplet(CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/droplets/install/droplet_EditThisPage.zip'));
-
-// new table for header files
-$res = $database->query(sprintf(
-    'show tables like "%spages_headers"',
-    CAT_TABLE_PREFIX
-));
-if(!$res || !$res->numRows())
-{
-    $database->query(sprintf(
-        'CREATE TABLE IF NOT EXISTS `%spages_headers` (
-          `page_id` int(11) NOT NULL,
-          `page_js_files` text,
-          `page_css_files` text,
-          `page_js` text,
-          UNIQUE KEY `page_id` (`page_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT="header files";',
-        CAT_TABLE_PREFIX
-    ));
-}
+// delete templates cache (the folder will be re-created by the DwooDriver)
+$temp_path = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/../../temp/');
+CAT_Helper_Directory::removeDirectory($temp_path.'/compiled');
 
 /*******************************************************************************
     ALL VERSIONS: update version info
@@ -309,28 +193,32 @@ exit;
 
 function pre_update_error( $msg ) {
     global $installer_uri, $lang;
-    update_wizard_header();
+    update_wizard_header(true);
     echo'
         <div style="float:left">
           <img src="templates/default/images/fail.png" alt="Fail" title="Fail" />
         </div>
-        <h1>BlackCat CMS Update Prerequistes Error</h1>
+  <h1>BlackCat CMS Update Prerequistes Error</h1>
         <h2>'.$lang->translate('Sorry, the BlackCat CMS Update prerequisites check failed.').'</h2>
         <span style="display:inline-block;background-color:#343434;color:#ff3030;font-size:1.5em;border:1px solid #ff3030;padding:15px;width:100%;margin:15px auto;-webkit-border-radius: 8px;-moz-border-radius: 8px;-khtml-border-radius: 8px;border-radius: 8px;">'.$msg.'</span><br /><br />
         <h2>'.$lang->translate('You will need to fix the errors quoted above to start the installation.').'</h2>';
     update_wizard_footer();
 }   // end function pre_update_error()
 
-function update_wizard_header() {
+function update_wizard_header($is_error=false) {
     global $installer_uri, $lang;
+    $header = $is_error
+            ? 'BlackCat CMS Update Prerequistes Error'
+            : 'BlackCat CMS Update Wizard'
+            ;
     echo '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
   <head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-    <title>BlackCat CMS Update Prerequistes Error</title>
-    <link rel="stylesheet" href="'.$installer_uri.'/templates/default/index.css" type="text/css" />
+    <title>'.$header.'</title>
+    <link rel="stylesheet" href="'.$installer_uri.'templates/default/index.css" type="text/css" />
    </head>
   <body>
   <div style="width:800px;min-width:800px;margin:auto;margin-top:20%;text-align:center;color:#5AA2DA;">
@@ -358,4 +246,93 @@ function update_wizard_footer() {
 </html>
 ';
     exit;
+}
+
+/*******************************************************************************
+    1.1 TO 1.2: We must create the new database settings file first!
+    Note: We cannot include / require the original config.php as it will
+    cause lots of errors
+*******************************************************************************/
+function update11to12pre()
+{
+    $db_config_file_path = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/../../framework/CAT/Helper/DB');
+    if(is_dir($db_config_file_path)) {
+        // find file
+        // note: .bc.php as suffix filter does not work!
+        $configfiles = CAT_Helper_Directory::scanDirectory(dirname(__FILE__).'/../../framework/CAT/Helper/DB',true,true,NULL,array('php'),NULL,array('index.php'));
+    } else {
+        mkdir($db_config_file_path,'0755');
+    }
+    if(!is_array($configfiles) || !count($configfiles))
+    {
+        include dirname(__FILE__).'/../admin_dummy.inc.php';
+        $admin = new admin_dummy();
+        // get the DB config from config.php
+        $config = file_get_contents(dirname(__FILE__).'/../../config.php');
+        preg_match_all("~define\(\'CAT_(DB_\w+)[^,].+?\'([^\'].+?)\'~i",$config,$m);
+        if(is_array($m) && count($m)) {
+            $db = array();
+            for($i=0;$i<count($m[0]);$i++) {
+                $db[$m[1][$i]] = $m[2][$i];
+            }
+            $db_config_content = "
+;<?php
+;die(); // For further security
+;/*
+
+[CAT_DB]
+TYPE=mysql
+HOST=".$db['DB_HOST']."
+PORT=".$db['DB_PORT']."
+USERNAME=".$db['DB_USERNAME']."
+PASSWORD=\"".$db['DB_PASSWORD']."\"
+NAME=".$db['DB_NAME']."
+
+;*/
+;?>
+";
+
+            // save database settings; we generate a file name here
+            $db_settings_file = $db_config_file_path.'/'.$admin->createGUID('').'.bc.php';
+            write2log('trying to create '.$db_settings_file);
+            if(($handle = @fopen($db_settings_file, 'w')) === false) {
+                write2log('!!!ERROR!!! Cannot create database settings file ['.$db_settings_file.']');
+                pre_update_error('!!!ERROR!!! Cannot create database settings file ['.$db_settings_file.']');
+                exit;
+            } else {
+                if (fwrite($handle, $db_config_content, strlen($db_config_content) ) === FALSE) {
+                    write2log('!!!ERROR!!! Cannot write to database settings file ['.$db_settings_file.']');
+                    fclose($handle);
+                    pre_update_error('!!!ERROR!!! Cannot write to database settings file ['.$db_settings_file.']');
+                    exit;
+                }
+            }
+            write2log('>>> ok');
+
+            // remove DB config from config.php
+            write2log('removing db settings from config.php');
+            $config = preg_replace("~define\(\'CAT_(DB_\w+).*~i","",$config);
+            $config = preg_replace("~\n\n+~","\n\n",$config);
+            $fh = fopen(dirname(__FILE__).'/../../config.php','w');
+            fwrite($fh,$config);
+            ftruncate($fh,ftell($fh));
+            fclose($fh);
+
+            // remove index.php
+            if(file_exists($db_config_file_path.'/index.php'))
+            {
+                unlink($db_config_file_path.'/index.php');
+            }
+        }
+    }
+}
+
+function write2log($msg)
+{
+    global $depth;
+    if(substr($msg,0,1) == '<') $depth--;
+    $logh = fopen(CAT_LOGFILE,'a');
+    fwrite($logh,str_repeat('  ',$depth) . $msg."\n");
+    fclose($logh);
+    if(substr($msg,0,1) == '>') $depth++;
 }
