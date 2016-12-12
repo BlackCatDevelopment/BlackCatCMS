@@ -15,8 +15,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013 - 2015 Black Cat Development
- *   @link            http://blackcat-cms.org
+ *   @copyright       @copyright       2016, Black Cat Development
+ *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         blackcat
@@ -50,9 +50,9 @@ if(!function_exists('render_widget_blackcat_help'))
     function render_widget_blackcat_help()
     {
         return "
-    <span style=\"width:80px;display:inline-block;\">Wiki:</span> <a href=\"http://wiki.blackcat-cms.org\" target=\"_blank\">http://wiki.blackcat-cms.org</a><br />
-    <span style=\"width:80px;display:inline-block;\">Forum:</span> <a href=\"http://forum.blackcat-cms.org\" target=\"_blank\">http://forum.blackcat-cms.org</a><br />
-    <span style=\"width:80px;display:inline-block;\">Homepage:</span> <a href=\"http://blackcat-cms.org\" target=\"_blank\">http://blackcat-cms.org</a><br />
+    <span style=\"width:80px;display:inline-block;\">Wiki:</span> <a href=\"https://wiki.blackcat-cms.org\" target=\"_blank\">https://wiki.blackcat-cms.org</a><br />
+    <span style=\"width:80px;display:inline-block;\">Forum:</span> <a href=\"https://forum.blackcat-cms.org\" target=\"_blank\">https://forum.blackcat-cms.org</a><br />
+    <span style=\"width:80px;display:inline-block;\">Homepage:</span> <a href=\"https://blackcat-cms.org\" target=\"_blank\">https://blackcat-cms.org</a><br />
     ";
     }
 }

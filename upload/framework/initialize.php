@@ -15,8 +15,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
- *   @link            http://blackcat-cms.org
+ *   @copyright       2016, Black Cat Development
+ *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
@@ -66,7 +66,7 @@ spl_autoload_register(function($class)
 });
 
 CAT_Registry::register('CAT_CORE', 'Black Cat CMS', true);
-CAT_Registry::register('URL_HELP', 'http://blackcat-cms.org/', true);
+CAT_Registry::register('URL_HELP', 'https://blackcat-cms.org/', true);
 CAT_Registry::register('IS_WIN'  , (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? true : false, true);
 
 // Create database class

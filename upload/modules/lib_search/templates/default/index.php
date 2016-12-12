@@ -9,7 +9,7 @@
  *
  * @author          LEPTON Project
  * @copyright       since 2011 LEPTON Project
- * @link            http://blackcat-cms.org
+ * @link            https://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see LICENSE and COPYING files in your package
  *

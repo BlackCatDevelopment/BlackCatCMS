@@ -15,8 +15,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
- *   @link            http://blackcat-cms.org
+ *   @copyright       2016, Black Cat Development
+ *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         lib_search
@@ -47,7 +47,7 @@ $module_platform      = '1.x';
 $module_author        = 'Black Cat Development';
 $module_license       = 'GNU General Public License';
 $module_description   = 'The default search engine for BlackCat CMS';
-$module_home          = 'http://blackcat-cms.org/';
+$module_home          = 'https://blackcat-cms.org/';
 $module_guid          = '8F2B9826-59BD-4C84-BF4D-477CA30C74B6';
 
 ?>

@@ -77,9 +77,9 @@
 		</div>
 	</div>
 	<div class="fc_gradient4 fc_license">
-		<p class="right"><a href="http://blackcat-cms.org" title="Black Cat CMS Core" target="_blank">Black Cat CMS Core</a> is released under the
+		<p class="right"><a href="https://blackcat-cms.org" title="Black Cat CMS Core" target="_blank">Black Cat CMS Core</a> is released under the
 			<a href="http://www.gnu.org/licenses/gpl.html" title="Black Cat CMS Core is GPL" target="_blank">GNU General Public License</a>.<br />
-			<a href="http://blackcat-cms.org" title="Black Cat CMS Bundle" target="_blank">Black Cat CMS Bundle</a> is released under several different licenses.
+			<a href="https://blackcat-cms.org" title="Black Cat CMS Bundle" target="_blank">Black Cat CMS Bundle</a> is released under several different licenses.
 		</p>
 		<p class="left">
 			<a href="{$FORGOTTEN_DETAILS_APP}" class="icon-help" id="fc_login_forgot" title="{translate('Forgotten your details?')}">

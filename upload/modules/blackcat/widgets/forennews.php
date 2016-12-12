@@ -15,8 +15,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, Black Cat Development
- *   @link            http://blackcat-cms.org
+ *   @copyright       2016, Black Cat Development
+ *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Modules
  *   @package         blackcat
@@ -63,7 +63,7 @@ if(!function_exists('render_widget_blackcat_forennews'))
         $tpl_data    = array();
 
         $dom = new DOMDocument();
-        $dom->loadXML(_loadURL('http://forum.blackcat-cms.org/feed.php?f=2'));
+        $dom->loadXML(_loadURL('https://forum.blackcat-cms.org/feed.php?f=2'));
 
         $items = $dom->getElementsByTagName('entry');
         $cnt   = 0;

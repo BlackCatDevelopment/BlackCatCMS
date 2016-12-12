@@ -12,13 +12,13 @@ See file INSTALL.
 # Helpful Links
 
 Official website of BackCat CMS (German only!):  
-http://blackcat-cms.org
+https://blackcat-cms.org
 
 To build your unique download bundle with the add ons of your choice:  
-http://blackcat-cms.org/page/download.php
+https://blackcat-cms.org/page/download.php
 
 Our forum (German, but English speaking visitors are welcome!)  
-http://forum.blackcat-cms.org
+https://forum.blackcat-cms.org
 
 **Note for English speaking visitors:** This (the GitHub repository) is your
 place to go! :)

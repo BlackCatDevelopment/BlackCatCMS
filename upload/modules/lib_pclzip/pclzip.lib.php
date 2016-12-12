@@ -8,7 +8,7 @@
  * @module          lib_lepton
  * @author          LEPTON Project
  * @copyright       2012, LEPTON Project
- * @link            http://blackcat-cms.org
+ * @link            https://blackcat-cms.org
  * @license         http://www.gnu.org/licenses/gpl.html
  * @license_terms   please see info.php of this module
  * @version         $Id: pclzip.lib.php 1871 2012-04-06 11:03:40Z erpe $

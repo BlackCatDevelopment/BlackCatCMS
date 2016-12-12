@@ -15,8 +15,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2013, 2014, Black Cat Development
- *   @link            http://blackcat-cms.org
+ *   @copyright       2016, Black Cat Development
+ *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
  *   @package         CAT_Core
@@ -391,9 +391,9 @@ if ( ! class_exists( 'CAT_Object', false ) ) {
     </div>
     <div class="fc_license">
 		<p>
-            <a target="_blank" title="Black Cat CMS Core" href="http://blackcat-cms.org">Black Cat CMS Core</a> is released under the
+            <a target="_blank" title="Black Cat CMS Core" href="https://blackcat-cms.org">Black Cat CMS Core</a> is released under the
 			<a target="_blank" title="Black Cat CMS Core is GPL" href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>.<br>
-			<a target="_blank" title="Black Cat CMS Bundle" href="http://blackcat-cms.org">Black Cat CMS Bundle</a> is released under several different licenses.
+			<a target="_blank" title="Black Cat CMS Bundle" href="https://blackcat-cms.org">Black Cat CMS Bundle</a> is released under several different licenses.
 		</p>
 	</div>
 </body>

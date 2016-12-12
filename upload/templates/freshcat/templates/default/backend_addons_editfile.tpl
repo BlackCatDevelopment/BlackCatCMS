@@ -34,7 +34,7 @@
         {if $code}
         <div class="fc_info">
             <br />{translate('Note: You may install the EditArea module to have this code syntax highlighted!')}
-            <br /><a href="http://blackcat-cms.org/page/add-ons/originaladdons.php?do=item&item=11" title="{translate('Download')}"><span class="icon icon-download">&nbsp;</span></a>
+            <br /><a href="https://blackcat-cms.org/page/add-ons/originaladdons.php?do=item&item=11" title="{translate('Download')}"><span class="icon icon-download">&nbsp;</span></a>
         </div><br /><br />
         {/if}
         <form action="{$CAT_URL}/modules/edit_module_files.php" method="post">
