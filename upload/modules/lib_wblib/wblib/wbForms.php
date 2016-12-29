@@ -80,6 +80,7 @@ if (!class_exists('wblib\wbFormsBase',false))
             'onclick'     => NULL,
             'onfocus'     => NULL,
             'onselect'    => NULL,
+            'pattern'     => NULL,
             'readonly'    => NULL,
             'required'    => NULL,
             'aria-required' => NULL,
@@ -470,6 +471,8 @@ if (!class_exists('wblib\wbFormsBase',false))
             if(isset($this->attr['id']) && $class::$id_prefix && substr($this->attr['id'],0,strlen($class::$id_prefix)) != $class::$id_prefix)
                 $this->attr['id'] = $class::$id_prefix.$this->attr['id'];
 
+            if(isset($this->attr['after']))
+                $this->attr['after'] = self::t($this->attr['after']);
             if(isset($this->attr['label']))
             {
                 $this->attr['label'] = self::t($this->attr['label']);
@@ -580,7 +583,7 @@ if (!class_exists('wblib\wbFormsBase',false))
                 self::log($output,7);
 
                 // remove any placeholders not replaced yet
-                $output = preg_replace( '~%\w+%~', '', $output );
+                $output = preg_replace( '~%[\w-]+%~', '', $output );
                 self::log('template after removing additional placeholders',7);
                 self::log($output,7);
             }
@@ -665,6 +668,7 @@ if (!class_exists('wblib\wbFormsBase',false))
             self::log('> setAttr()',7);
             $this->attr[$attr] = $value;
             self::log('< setAttr()',7);
+            return $this;
         }   // end function setAttr()
 
         /**
@@ -678,6 +682,7 @@ if (!class_exists('wblib\wbFormsBase',false))
             $field = $this->valueattr();
             $this->attr[$field] = self::t($value);
             self::log('< setValue()',7);
+            return $this;
         }   // end function setValue()
 
         /**
@@ -694,6 +699,7 @@ if (!class_exists('wblib\wbFormsBase',false))
                 else
                     $this->attr['options'][] = self::t($key);
             self::log('< addOption()',7);
+            return $this;
         }   // end function addOption()
 
         /**
@@ -1153,6 +1159,8 @@ if (!class_exists('wblib\wbForms',false))
         {
             if(!isset($elem['name']))
                 $elem['name'] = wbFormsElement::generateName();
+            if(!isset($elem['type']))
+                $elem['type'] = 'text';
             // always generate the names of honeypot fields!
             if($elem['type']=='honeypot')
             {
@@ -1239,7 +1247,7 @@ if (!class_exists('wblib\wbForms',false))
             else
             {
                 $arr =& self::${$ref};
-                if($where=='before')
+                if($where=='before' && count($arr))
                     $i = key(end($arr));
                 if($where=='top')
                 {
@@ -1356,7 +1364,8 @@ if (!class_exists('wblib\wbForms',false))
         {
             $f = wbFormsElementForm::get();
             $f->attr[$attr] = $value;
-        }
+            return $this;
+        }   // end function setAttr()
 
         /**
          *
@@ -1381,6 +1390,7 @@ if (!class_exists('wblib\wbForms',false))
                 $obj->setAttr($field,$value);
             }
             self::log('< setData()',7);
+            return $obj;
         }   // end function setData()
 
         /**
@@ -2128,9 +2138,9 @@ echo "</textarea>";
                      // markup for required fields
                    .  "%is_required%"
                      // default attributes
-                   . "<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%"
+                   . "<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%%pattern%"
                      // more attributes
-                   . "%checked%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% /> %after%"
+                   . "%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% /> %after%"
                    . "\n"
                      // errors and other infos
                    . "%notes%"
@@ -2318,7 +2328,7 @@ echo "</textarea>";
             // internal attributes
             'content'      => NULL,
             'form_class'   => 'fbform',
-            'form_width'   => '',
+            'form_width'   => '100%',
         );
         /**
          * output template

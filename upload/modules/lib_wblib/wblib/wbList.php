@@ -44,7 +44,7 @@ if(!class_exists('wblib\wbList',false))
         /**
          * log level
          **/
-        public  static $loglevel     = 7;
+        public  static $loglevel     = 4;
         /**
          * array to store open nodes
          **/
