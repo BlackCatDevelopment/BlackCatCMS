@@ -53,6 +53,11 @@ if(!function_exists('render_widget_blackcat_check'))
 {
     function render_widget_blackcat_check()
     {
+        $error = $version = $newer = $last = $last_version = NULL;
+        $debug = false;
+        $doit  = true;
+
+        include dirname(__FILE__).'/../data/config.inc.php';
         require CAT_PATH.'/framework/CAT/ExceptionHandler.php';
 
         // register exception/error handlers
@@ -60,13 +65,9 @@ if(!function_exists('render_widget_blackcat_check'))
         set_error_handler(array("CAT_ExceptionHandler", "errorHandler"));
         register_shutdown_function(array("CAT_ExceptionHandler", "shutdownHandler"));
 
-        include dirname(__FILE__).'/../data/config.inc.php';
+        $widget_name  = CAT_Object::lang()->translate('Version check');
 
-        $widget_name = CAT_Object::lang()->translate('Version check');
-        $error = $version = $newer = $last = $last_version = NULL;
-        $debug = false;
-        $doit  = true;
-
+        // check if the version should be checked
         if(!CAT_Helper_Validate::sanitizeGet('blackcat_refresh'))
         {
             $file = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/../data/.last');
@@ -89,62 +90,32 @@ if(!function_exists('render_widget_blackcat_check'))
         }
 
         if ( $doit ) {
-            ini_set('include_path', CAT_PATH.'/modules/lib_zendlite');
-            include CAT_PATH.'/modules/lib_zendlite/library.php';
-            $client = new Zend\Http\Client(
-                $current['source'],
-                array(
-                    'timeout'      => $current['timeout'],
-                    'adapter'      => 'Zend\Http\Client\Adapter\Proxy',
-                    'proxy_host'   => $current['proxy_host'],
-                    'proxy_port'   => $current['proxy_port'],
-                    'sslcapath'    => '/etc/ssl/certs'
-                )
-            );
-            $client->setHeaders(
-                array(
-                    'Pragma' => 'no-cache',
-                    'Cache-Control' => 'no-cache',
-                )
-            );
-
-            try {
-                $response = $client->send();
-                if ( $response->getStatusCode() != '200' ) {
-                    $error = "Unable to load source "
-                           . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
-                           . "Status: " . $response->getStatus() . " - " . $response->getMessage()
-                           . ( ( $debug ) ? "<br />".var_dump($client->getLastRequest()) : NULL )
-                           . "<br />"
-                           ;
-                    $version = 'unknown';
-                }
-                else
-                {
-                    $version = $response->getBody();
-                }
-            } catch ( Exception $e ) {
+            $release_info = CAT_Helper_GitHub::getRelease('BlackCatDevelopment','BlackCatCMS');
+            if(!$release_info || !is_array($release_info) || !count($release_info))
+            {
                 $error = "Unable to load source "
                        . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
-                   . $e->getMessage()
-                   . "<br />"
-                   ;
+                       . "Status: " . CAT_Helper_GitHub::getError()
+                       . ( ( $debug ) ? "<br />".var_dump($client->getLastRequest()) : NULL )
+                       . "<br />"
+                       ;
                 $version = 'unknown';
             }
-
-            if ( $version && $version != 'unknown' )
+            else
             {
-                if ( CAT_Helper_Addons::getInstance()->versionCompare($version,CAT_VERSION,'>' ) ) {
-                    $newer = true;
+                $version = isset($release_info['tag_name']) ? $release_info['tag_name'] : 'unknown';
+                if ( $version && $version != 'unknown' )
+                {
+                    if ( CAT_Helper_Addons::getInstance()->versionCompare($version,CAT_VERSION,'>' ) ) {
+                        $newer = true;
+                    }
+                    $fh = @fopen(CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/../data/.last'),'w');
+                    if(is_resource($fh)) {
+                        fputs($fh,time().'|'.$version);
+                        fclose($fh);
+                    }
                 }
             }
-
-            $fh   = @fopen(CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/../data/.last'),'w');
-            if ( is_resource($fh) ) {
-            fputs($fh,time().'|'.$version);
-            fclose($fh);
-            }
-
         }
         else {
             $version = ( isset($last_version) && $last_version != '' )
@@ -157,14 +128,14 @@ if(!function_exists('render_widget_blackcat_check'))
         return $parser->get(
             'widget.tpl',
             array(
-                'error' => $error,
-                'version' => $version,
-                'newer' => $newer,
-                'last' => CAT_Helper_DateTime::getInstance()->getDate($last).' '.CAT_Helper_DateTime::getInstance()->getTime($last),
-                'CAT_VERSION' => CAT_VERSION,
-                'uri' => $_SERVER['SCRIPT_NAME'],
+                'error'               => $error,
+                'version'             => $version,
+                'newer'               => $newer,
+                'last'                => CAT_Helper_DateTime::getInstance()->getDate($last).' '.CAT_Helper_DateTime::getInstance()->getTime($last),
+                'CAT_VERSION'         => CAT_VERSION,
+                'uri'                 => $_SERVER['SCRIPT_NAME'],
                 'missing_mailer_libs' => count(CAT_Helper_Addons::getLibraries('mail')),
-                'missing_wysiwyg' => count(CAT_Helper_Addons::get_addons(NULL,'module','wysiwyg')),
+                'missing_wysiwyg'     => count(CAT_Helper_Addons::get_addons(NULL,'module','wysiwyg')),
             )
         );
     }

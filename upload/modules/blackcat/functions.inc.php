@@ -50,6 +50,7 @@ function _loadURL($url) {
             'adapter'      => 'Zend\Http\Client\Adapter\Proxy',
             'proxy_host'   => $current['proxy_host'],
             'proxy_port'   => $current['proxy_port'],
+            'sslverifypeer' => false
         )
     );
     $client->setHeaders(

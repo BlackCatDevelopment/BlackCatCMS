@@ -42,12 +42,10 @@ if (defined('CAT_PATH')) {
 $module_directory	  = 'blackcat';
 $module_name		  = 'BlackCat CMS Admin Tool and Widget';
 $module_function	  = 'tool';
-$module_version       = '0.6';
+$module_version       = '0.7';
 $module_platform	  = '1.0';
 $module_author		  = 'BlackCat  Development';
 $module_license		  = 'GNU General Public License';
 $module_license_terms = '';
 $module_description   = 'BlackCat CMS Admin Tool and Widget - allows to check for new versions (widget demo)';
 $module_guid		  = 'CF217773-24C7-4DAB-954F-98D9F7118F7D';
-
-?>
