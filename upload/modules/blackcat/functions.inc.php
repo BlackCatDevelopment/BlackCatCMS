@@ -40,46 +40,13 @@ if (defined('CAT_PATH')) {
 }
 
 function _loadURL($url) {
-    include dirname(__FILE__).'/data/config.inc.php';
-    ini_set('include_path', CAT_PATH.'/modules/lib_zendlite');
-    include CAT_PATH.'/modules/lib_zendlite/library.php';
-    $client = new Zend\Http\Client(
-        $url,
-        array(
-            'timeout'      => $current['timeout'],
-            'adapter'      => 'Zend\Http\Client\Adapter\Proxy',
-            'proxy_host'   => $current['proxy_host'],
-            'proxy_port'   => $current['proxy_port'],
-            'sslverifypeer' => false
-        )
-    );
-    $client->setHeaders(
-        array(
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'no-cache',
-        )
-    );
+    $ch = CAT_Helper_GitHub::init_curl($url);
+    $xml = curl_exec($ch);
 
-    try {
-        $response = $client->send();
-        if ( $response->getStatusCode() != '200' ) {
-            $error = "Unable to load source "
-                   . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
-                   . "Status: " . $response->getStatus() . " - " . $response->getMessage()
-                   . ( ( $debug ) ? "<br />".var_dump($client->getLastRequest()) : NULL )
-                   . "<br />"
-                   ;
-        }
-        else
-        {
-            return $response->getBody();
-        }
-    } catch ( Exception $e ) {
-        $error = "Unable to load source "
-               . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
-           . $e->getMessage()
-           . "<br />"
-           ;
+    $status = curl_getinfo($ch);
+    curl_close($ch);
+
+    if ($status['http_code'] == 200) {
+        return $xml;
     }
-    echo $error;
 }
