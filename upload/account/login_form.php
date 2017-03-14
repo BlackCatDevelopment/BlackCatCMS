@@ -47,8 +47,8 @@ $error    = CAT_Users::getInstance()->loginError();
 
 if ( $redirect ) header( 'Location: '.$redirect );
 
-$redirect_url	= $val->sanitizeGet('redirect') != '' ?
-		$val->sanitizeGet('redirect') : $val->sanitizePost('redirect');
+$redirect_url	= CAT_Helper_Validate::sanitizeGet('redirect') != '' ?
+		CAT_Helper_Validate::sanitizeGet('redirect') : CAT_Helper_Validate::sanitizePost('redirect');
 
 global $parser;
 $parser->setPath( CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/templates/' . CAT_Registry::get('DEFAULT_THEME_VARIANT') ); // if there's a template for this in the current frontend template
