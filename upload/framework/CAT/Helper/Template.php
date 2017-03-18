@@ -44,8 +44,9 @@ if (!class_exists('CAT_Helper_Template'))
 
             // get current working directory
             $callstack = debug_backtrace();
+            
             $this->workdir
-                = ( isset( $callstack[0] ) && isset( $callstack[0]['file'] ) )
+                = (isset($callstack[0]) && isset($callstack[0]['file']) && pathinfo($callstack[0]['file'],PATHINFO_BASENAME) !== 'DriverDecorator.php')
                 ? realpath( dirname( $callstack[0]['file'] ) )
                 : realpath( dirname(__FILE__) );
 

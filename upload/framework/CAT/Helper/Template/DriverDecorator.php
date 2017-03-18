@@ -248,7 +248,7 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
                 }
                 if ( $file )
                 {
-                    $this->seen[$this->te->paths['current'] . $_tpl] = $file;
+                    $this->seen[$this->te->paths['current'] . '/' . $_tpl] = $file;
                     return $file;
                 }
             }
