@@ -91,7 +91,7 @@ $permissions['MODULES_VIEW']      = $users->checkPermission('addons', 'modules_v
 $permissions['MODULES_INSTALL']   = $users->checkPermission('addons', 'modules_install')   ? true : false;
 $permissions['MODULES_UNINSTALL'] = $users->checkPermission('addons', 'modules_uninstall') ? true : false;
 
-
+$parser->setPath(CAT_THEME_PATH.'/templates/default','backend');
 echo json_encode(array(
     'success' => true,
     'content' => $parser->get(

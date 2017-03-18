@@ -237,8 +237,8 @@ $addon = array_merge(
         'link'         => $link,
 ));
 
-$tpl_data['token_name'] = $GLOBALS['csrf']['input-name'];
-$tpl_data['token']      = csrf_get_tokens();
+#$tpl_data['token_name'] = $GLOBALS['csrf']['input-name'];
+#$tpl_data['token']      = csrf_get_tokens();
 
 
 $result  = true;
