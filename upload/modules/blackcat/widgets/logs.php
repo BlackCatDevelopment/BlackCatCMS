@@ -190,7 +190,9 @@ if(!function_exists('render_widget_blackcat_logs'))
 
         global $parser;
         $parser->setPath(dirname(__FILE__).'/../templates/default');
-        return $parser->get('logs.tpl',array('logs'=>$logs));
+        $output = $parser->get('logs.tpl',array('logs'=>$logs));
+        $parser->resetPath();
+        return $output;
     }
 }
 

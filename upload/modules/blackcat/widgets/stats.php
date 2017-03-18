@@ -76,6 +76,8 @@ if(!function_exists('render_widget_blackcat_stats'))
 
         global $parser;
         $parser->setPath(dirname(__FILE__).'/../templates/default');
-        return $parser->get('stats.tpl',$data);
+        $output = $parser->get('stats.tpl',$data);
+        $parser->resetPath();
+        return $output;
     }
 }

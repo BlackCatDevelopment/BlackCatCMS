@@ -85,6 +85,8 @@ if(!function_exists('render_widget_blackcat_forennews'))
 
         global $parser;
         $parser->setPath(dirname(__FILE__).'/../templates/default');
-        return $parser->get('news.tpl',array('news'=>$tpl_data));
+        $output = $parser->get('news.tpl',array('news'=>$tpl_data));
+        $parser->resetPath();
+        return $output;
     }
 }

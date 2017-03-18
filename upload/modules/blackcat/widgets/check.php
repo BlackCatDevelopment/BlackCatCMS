@@ -125,7 +125,7 @@ if(!function_exists('render_widget_blackcat_check'))
 
         global $parser;
         $parser->setPath(dirname(__FILE__).'/../templates/default');
-        return $parser->get(
+        $output = $parser->get(
             'widget.tpl',
             array(
                 'error'               => $error,
@@ -138,5 +138,7 @@ if(!function_exists('render_widget_blackcat_check'))
                 'missing_wysiwyg'     => count(CAT_Helper_Addons::get_addons(NULL,'module','wysiwyg')),
             )
         );
+        $parser->resetPath();
+        return $output;
     }
 }
