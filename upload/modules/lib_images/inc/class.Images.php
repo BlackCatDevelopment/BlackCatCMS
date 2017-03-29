@@ -209,7 +209,7 @@ class Image {
 		// check if it is a jpg and if there are exif data about Orientation (e.g. on uploading an image from smartphone)
 		if( $this->getMimeType() == "image/jpg" || $this->getMimeType() == "image/jpeg")
 		{
-			$exif = exif_read_data($this->image);
+			$exif = @exif_read_data($this->image);
 			if(!empty($exif['Orientation'])) {
 				switch($exif['Orientation']) {
 					case 8:
