@@ -1832,6 +1832,7 @@ frontend.css and template.css are added in _get_css()
         {
             if(!count(self::$pages)) self::getInstance();
             if(substr($path,0,1)!='/') $path = '/'.$path;
+
             $path_without_suffix = str_replace('.'.pathinfo($path,PATHINFO_EXTENSION),'',$path);
             foreach(self::$pages as $pg)
             {
@@ -2209,7 +2210,7 @@ frontend.css and template.css are added in _get_css()
             if ( ! $page_id )
             {
                 if(CAT_Registry::get('USE_SHORT_URLS')&&isset($_SERVER['REDIRECT_QUERY_STRING']))
-                     $page_id = CAT_Helper_Page::getPageByPath('/'.$_SERVER['REDIRECT_QUERY_STRING']);
+                     $page_id = CAT_Helper_Page::getPageByPath('/'.strtok($_SERVER['REDIRECT_QUERY_STRING'],'&'));
                 else
                     $page_id = self::getDefaultPage();
             }
