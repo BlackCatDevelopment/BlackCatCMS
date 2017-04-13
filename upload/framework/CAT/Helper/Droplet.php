@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *   @author          Black Cat Development
- *   @copyright       2016, Black Cat Development
+ *   @copyright       2017, Black Cat Development
  *   @link            https://blackcat-cms.org
  *   @license         http://www.gnu.org/licenses/gpl.html
  *   @category        CAT_Core
@@ -595,7 +595,16 @@ if (!class_exists('CAT_Helper_Droplet')) {
             $err_set = @ini_set('display_errors','on');
             ob_start();
             $braces || $code = "if(0){{$code}\n}";
-            if (@eval($code) === false) {
+
+            // PHP 7+ throws a ParseError exception if error occur inside eval
+            // Thanks to WBCE team for this fix!
+            try {
+                $check_result = (@eval($code) !== false);
+            } catch (ParseError $e) {
+                $check_result = false;
+            }
+
+            if ($check_result === false) {
                 if ($braces) {
                     $braces = PHP_INT_MAX;
                 } else {
@@ -1151,7 +1160,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 return $query->fetchAll();
             else
                 return array();
-        }   // end function getDropletsForUse()
+        }   // end function getCSSJS()
         
 
         /**
