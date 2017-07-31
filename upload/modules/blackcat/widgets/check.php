@@ -94,7 +94,7 @@ if(!function_exists('render_widget_blackcat_check'))
             if(!$release_info || !is_array($release_info) || !count($release_info))
             {
                 $error = "Unable to load source "
-                       . "(using Proxy: " . ( ( isset($current['proxy_host']) && $current['proxy_host'] != '' ) ? 'yes' : 'no' ) . ")<br />"
+                       . "(using Proxy: " . ( ( defined('GITHUB_PROXY') && GITHUB_PROXY != '' ) ? 'yes' : 'no' ) . ")<br />"
                        . "Status: " . CAT_Helper_GitHub::getError()
                        . ( ( $debug ) ? "<br />".var_dump($client->getLastRequest()) : NULL )
                        . "<br />"

@@ -74,7 +74,8 @@ $mod_headers = array(
 		),
 		'js' => array(
 			array(
-                'backend.js'
+                '/modules/lib_jquery/jquery-core/jquery-migrate-1.4.1.min.js',
+                'backend.js',
 			)
 		)
 	)

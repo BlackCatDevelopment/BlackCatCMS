@@ -183,14 +183,17 @@ if (!class_exists('CAT_Helper_GitHub'))
             $url  = sprintf('https://api.github.com/repos/%s/%s/%s',
                     $org, $repo, $url);
             try {
-                //echo "retrieve url: $url<br />";
                 curl_setopt($ch,CURLOPT_URL,$url);
                 $result = json_decode(curl_exec($ch), true);
                 if(isset($result['documentation_url']))
-                    self::printError( "GitHub Error: ", $result['message'], "<br />URL: $url<br />" );
+                {
+                    self::setError("GitHub Error: ", $result['message'], "<br />URL: $url<br />");
+                    return false;
+                }
                 return $result;
             } catch ( Exception $e ) {
-                self::printError( "CUrl error: ", $e->getMessage(), "<br />" );
+                self::setError( "CUrl error: ", $e->getMessage(), "<br />" );
+                return false;
             }
         }   // end function retrieve()
 
@@ -204,13 +207,17 @@ if (!class_exists('CAT_Helper_GitHub'))
         public static function retrieve_remote_file_size($url)
         {
              $ch = self::init_curl();
+             try {
              curl_setopt($ch, CURLOPT_HEADER, TRUE);
              curl_setopt($ch, CURLOPT_NOBODY, TRUE);
              curl_setopt($ch, CURLOPT_URL, $url);
              $data = curl_exec($ch);
              $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
              return $size;
+            } catch ( Exception $e ) {
+                return false;
         }
+        }   // end function retrieve_remote_file_size()
 
         /**
          *

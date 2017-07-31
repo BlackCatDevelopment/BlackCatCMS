@@ -18,6 +18,6 @@
     {if $missing_wysiwyg == 0} <div class="widget_info widget_error" style="color:#f00;">{translate('Warning: no WYSIWYG Editors installed!')}</div>{/if}
     {if $missing_mailer_libs == 0} <div class="widget_info widget_error" style="color:#f00;">{translate('Warning: no mailer libs installed!')}</div>{/if}
 
-    [ <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=blackcat">{translate('Edit connection settings')}</a>
+    [ <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=blackcat">{translate('Settings')}</a>
     | <a href="https://blackcat-cms.org/page/download.php" target="_blank"{if $newer} style="color:#f00;font-weight:bold;"{/if}>{translate('Visit download page')}</a> ]
 </div>
