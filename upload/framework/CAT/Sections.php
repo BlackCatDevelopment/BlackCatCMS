@@ -68,15 +68,15 @@ if ( ! class_exists( 'CAT_Sections', false ) ) {
          * @access public
          * @return
          **/
-        public static function addSection($page_id,$module,$add_to_block)
+        public static function addSection($page_id,$module,$add_to_block,$name='no name')
         {
             $self = self::getInstance();
         	require(CAT_PATH.'/framework/class.order.php');
         	$order    = new order(CAT_TABLE_PREFIX.'sections', 'position', 'section_id', 'page_id');
         	$position = $order->get_new($page_id);
         	$self->db()->query(
-                'INSERT INTO `:prefix:sections` SET `page_id`=:id, `module`=:module, `position`=:pos, `block`=:block',
-                array('id'=>$page_id, 'module'=>$module, 'pos'=>$position, 'block'=>$add_to_block)
+                'INSERT INTO `:prefix:sections` SET `page_id`=:id, `module`=:module, `position`=:pos, `block`=:block, `name`=:name',
+                array('id'=>$page_id, 'module'=>$module, 'pos'=>$position, 'block'=>$add_to_block, 'name'=>$name)
             );
 
         	if ( !$self->db()->isError() )

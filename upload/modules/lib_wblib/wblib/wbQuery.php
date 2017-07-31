@@ -135,10 +135,10 @@ if ( ! class_exists( '\wblib\wbQuery', false ) )
             try {
                 $classname = '\\wblib\\'.$driver;
                 return new $classname($options);
-            } catch (wbQueryException $e) {
+            } catch (\wblib\wbQueryException $e) {
                 self::log($e->getMessage);
                 echo $e->getMessage();
-            } catch (PDOException $e) {
+            } catch (\PDO\PDOException $e) {
                 self::log($e->getMessage);
                 echo $e->getMessage();
             }

@@ -64,7 +64,11 @@ if (!class_exists('wblib\wbFormsBase',false))
          * instance
          **/
         protected static $instance   = NULL;
-       /**
+        /**
+         * for HTML5 data-* attributes
+         **/
+        protected $data              = NULL;
+        /**
          * common attributes for every element
          **/
         protected $attributes = array(
@@ -81,6 +85,7 @@ if (!class_exists('wblib\wbFormsBase',false))
             'onfocus'     => NULL,
             'onselect'    => NULL,
             'pattern'     => NULL,
+            'placeholder' => NULL,
             'readonly'    => NULL,
             'required'    => NULL,
             'aria-required' => NULL,
@@ -108,6 +113,7 @@ if (!class_exists('wblib\wbFormsBase',false))
             'form_width'  => 1,
             'fieldset'    => 1,
             'notes'       => 1,
+            'text'        => 1, // used for buttons
         );
         /**
          * internal attributes
@@ -205,48 +211,36 @@ if (!class_exists('wblib\wbFormsBase',false))
 
         /**
          * accessor to wbLang (if available)
-         *
-         * returns the original message if wbLang is not available
-         *
-         * @access protected
-         * @param  string    $msg
-         * @return string
          **/
-        public static function t($message)
+        public static function lang()
         {
-            if(!is_scalar($message)) return $message;
-            self::log('> t()',7);
-            if( !self::$wblang && !self::$wblang == -1)
+            self::log('> lang()',7);
+            if(!self::$wblang && !self::$wblang == -1)
             {
                 self::log('Trying to load wbLang',7);
                 try
                 {
-                    @include_once dirname(__FILE__).'/wbLang.php';
-                    self::$wblang = wbLang::getInstance();
+                    include_once dirname(__FILE__).'/wbLang.php';
+                    self::$wblang = \wblib\wbLang::getInstance();
                     self::log(sprintf('wbLang loaded, current language [%s]',self::$wblang->current()),7);
-                    if(isset(self::$globals['lang_path']))
+                    // auto-add lang file by lang_path global
+                    if(isset(self::$globals['lang_path']) && is_dir(self::path(self::$globals['lang_path'])))
                     {
-                        if(is_dir(self::path(self::$globals['lang_path'])))
-                        {
-                            if(is_dir(self::path(self::$globals['lang_path'])))
-                            {
-                                self::log(sprintf('adding global lang path [%s]',self::$globals['lang_path']),7);
-                                self::$wblang->addPath(self::$globals['lang_path']);
-                            }
-                            if(
-                                   file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.self::$wblang->current().'.php'))
-                                || file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.strtoupper(self::$wblang->current()).'.php'))
-                                || file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.strtolower(self::$wblang->current()).'.php'))
-                            ) {
-                                self::log(sprintf('adding file [%s]',self::$wblang->current()),7);
-                                self::$wblang->addFile(self::$wblang->current());
+                        self::log(sprintf('adding global lang path [%s]',self::$globals['lang_path']),7);
+                        self::$wblang->addPath(self::$globals['lang_path']);
+                        if(
+                               file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.self::$wblang->current().'.php'))
+                            || file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.strtoupper(self::$wblang->current()).'.php'))
+                            || file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.strtolower(self::$wblang->current()).'.php'))
+                        ) {
+                            self::log(sprintf('adding file [%s]',self::$wblang->current()),7);
+                            self::$wblang->addFile(self::$wblang->current());
                         }
                     }
-                    }
+                    // auto-add lang file by caller's path
                     $callstack = debug_backtrace();
                     $caller    = array_pop($callstack);
-                    // avoid deep recursion
-                    $i         = 0;
+                    $i         = 0; // avoid deep recursion
                     while(!strcasecmp(dirname(__FILE__),$caller['file']))
                     {
                         if($i>=3) break;
@@ -278,13 +272,33 @@ if (!class_exists('wblib\wbFormsBase',false))
                         }
                     }
                 }
-                catch ( wbFormsExection $e )
+                catch(\wblib\wbFormsException $e)
                 {
-                    self::log('Unable to load wbLang',7);
+                    self::log(sprintf(
+                        'Unable to load wbLang: [%s]',$e->getMessage()
+                    ),7);
                     self::$wblang = -1;
                 }
             }
-            if( self::$wblang !== -1 )
+            if(is_object(self::$wblang)) return self::$wblang;
+            else                         return self::getInstance();
+        }   // end function lang()
+
+        /**
+         * accessor to wbLang (if available)
+         *
+         * returns the original message if wbLang is not available
+         *
+         * @access protected
+         * @param  string    $msg
+         * @return string
+         **/
+        public static function t($message)
+        {
+            if(!is_scalar($message)) return $message;
+            self::log('> t()',7);
+            if(!self::$wblang && !self::$wblang == -1) self::lang();
+            if(self::$wblang !== -1)
             {
                 self::log('< t(translated)',7);
                 return self::$wblang->t($message);
@@ -382,7 +396,7 @@ if (!class_exists('wblib\wbFormsBase',false))
          * @param  string  $path - path to fix
          * @return string
          **/
-        public static function path( $path )
+        public static function path($path)
         {
             // remove / at end of string; this will make sanitizePath fail otherwise!
             $path       = preg_replace( '~/{1,}$~', '', $path );
@@ -562,6 +576,11 @@ if (!class_exists('wblib\wbFormsBase',false))
                                ;
                 }
             }
+            if(is_array($this->data) && count($this->data))
+            {
+                $replace[] = '%data%';
+                $with[]    = implode(' ',$this->data);
+            }
 
 //echo "CLASS -$class- OUTPUT -", gettype($output), "-<br />";
             if(!is_scalar($output))
@@ -630,6 +649,21 @@ if (!class_exists('wblib\wbFormsBase',false))
                 $class::$globals[$global] = $value;
             }
         }   // end function set()
+
+        /**
+         * accessor to $globals array; returns the current value of $global
+         *
+         * @access public
+         * @param  array|string  $global
+         * @return void
+         **/
+        public static function get($global)
+        {
+            $class = get_called_class();
+            if(isset($class::$globals[$global]))
+                return $class::$globals[$global];
+            return NULL;
+        }   // end function get()
 
         /**
          *
@@ -1014,6 +1048,49 @@ if (!class_exists('wblib\wbForms',false))
         }   // end function addCSSLink()
 
         /**
+         * merge the contents of another form to the current one
+         *
+         * @access public
+         * @param  string  $form - name of the first form
+         * @param  string  $add  - name of the second form
+         * @return void
+         *
+         **/
+        public function addForm($form,$add)
+        {
+            self::log('> addForm()',7);
+            if(!$this->exists($form))
+            {
+                self::log(sprintf('no such form: [%s]',$form),7);
+                self::log('< addForm(false)',7);
+                return false;
+            }
+            if(!$this->exists($add))
+            {
+                self::log(sprintf('no such form: [%s]',$add),7);
+                self::log('< addForm(false)',7);
+                return false;
+            }
+            $current = self::current();
+            if(!$current==$form) $this->setForm($form);
+            // add the header of the second form as legend
+            #if (isset(self::$_forms[$name]['config']['header'])) {
+            #    $this->insertBefore($name, 'quertz', array(
+            #         'type' => 'legend',
+            #        'name' => $name . '_header',
+            #        'label' => self::$_forms[$name]['config']['header']
+            #    ));
+            #}
+            self::$FORMS[$form] = array_merge(self::$FORMS[$form],self::$FORMS[$add]);
+            foreach(self::$FORMS[$add] as $element)
+            {
+                self::addElement($element);
+            }
+            if(!$current==$form) $this->setForm($current);
+            self::log('< addForm()',7);
+        }   // end function addForm()
+
+        /**
          * allows to add custom css files; they will be loaded into the HTML
          * header using JavaScript (jQuery)
          *
@@ -1066,6 +1143,10 @@ if (!class_exists('wblib\wbForms',false))
 
             // check for name etc.
             self::checkAttributes($elem);
+
+            // allows to override $where by adding 'insertafter' to elem definition
+            if(isset($elem['insertafter']))
+                $elem_name = $elem['insertafter'];
 
             // check if element exists
             if(!self::hasElement($elem['name'],$find_in))
@@ -1222,6 +1303,16 @@ if (!class_exists('wblib\wbForms',false))
                     $this->addElement(array('type'=>'honeypot'));
             self::log('< createHoneypots()',7);
         }   // end function createHoneypots()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function exists($formname)
+        {
+            return array_key_exists($formname,self::$FORMS);
+        }   // end function exists()
 
         /**
          * gets insert position for new element
@@ -1390,7 +1481,7 @@ if (!class_exists('wblib\wbForms',false))
                 $obj->setAttr($field,$value);
             }
             self::log('< setData()',7);
-            return $obj;
+            //return $obj;
         }   // end function setData()
 
         /**
@@ -1518,7 +1609,6 @@ if (!class_exists('wblib\wbForms',false))
          **/
         public function getForm($name=NULL,$return=true)
         {
-
             self::log('> getForm()',7);
 
             if(!$name) $name = self::$CURRENT;
@@ -1549,11 +1639,12 @@ if (!class_exists('wblib\wbForms',false))
 
             // add hidden element to check if the form was sent
             if(!self::hasElement('submit_'.$name))
-                $elements[] = wbFormsElement::get(array('type'=>'hidden','name'=>'submit_'.$name,'value'=>1))->render();
+                $elements[] = self::addElement(array('type'=>'hidden','name'=>'submit_'.$name,'value'=>1))->render();
 
             // CSRF token
             wbFormsProtect::$config['token_lifetime'] = self::$globals['token_lifetime'];
-            $elements[] = wbFormsElement::get(wbFormsProtect::getToken(self::$globals['token']))->render();
+            $elements[] = self::addElement(wbFormsProtect::getToken(self::$globals['token']))->render();
+            //$elements[] = wbFormsElement::get(wbFormsProtect::getToken(self::$globals['token']))->render();
 
             if(self::$globals['contentonly'])
                 return implode('',$elements);
@@ -1880,7 +1971,9 @@ echo "</textarea>";
             self::log('> isValid()',7);
             $formname = self::current();
             if(!isset(self::$FORMS[$formname]['__is_valid']))
+            {
                 self::validateForm($get_empty);
+            }
             return isset(self::$FORMS[$formname]['__is_valid'])
                  ? self::$FORMS[$formname]['__is_valid']
                  : false;
@@ -1930,9 +2023,13 @@ echo "</textarea>";
             // retrieve registered elements
             $elements = self::$FORMS[$formname];
 
+            self::log('elements to check:',7);
+            self::log(var_export($elements,1),7);
+
             // validate token
             if(wbFormsProtect::checkToken(self::$globals['token']))
             {
+                self::log('token is valid',7);
                 if(!count($elements))
                 {
                     self::hint('The given form seems to have no elements!');
@@ -1943,6 +2040,7 @@ echo "</textarea>";
                 // honeypot fields
                 foreach(array_keys($ref) as $name)
                 {
+                    self::log('checking honeypot fields',7);
                     if(
                         !  substr_compare($name,self::$globals['honeypot_prefix'],0,strlen(self::$globals['honeypot_prefix']))
                         && $ref[$name] != ''
@@ -1956,11 +2054,13 @@ echo "</textarea>";
                     }
                 }
 
+                self::log(sprintf('checking [%d] elements',count($elements)),7);
+
                 // check
                 foreach($elements as $elem)
                 {
                     if(is_object($elem)) { continue; }
-                    if(isset($elem['type']) && array_key_exists($elem['type'],self::$nodata) )
+                    if(isset($elem['type']) && array_key_exists($elem['type'],self::$nodata))
                         continue;
                     if(!isset($elem['name']))
                     {
@@ -1976,9 +2076,16 @@ echo "</textarea>";
                     }
                     // remove [] from array fields
                     $elem['name'] = str_replace('[]','',$elem['name']);
+                    self::log('checking element:',7);
+                    self::log(var_export($elem,1),7);
                     // check required
-                    if(isset($elem['required'])&&!isset($ref[$elem['name']]))
-                    {
+                    if(
+                           isset($elem['required'])
+                        && (
+                               !isset($ref[$elem['name']])
+                            || !strlen($ref[$elem['name']])
+                           )
+                    ) {
                         self::$ERRORS[$elem['name']]
                             = isset($elem['missing'])
                             ? self::t($elem['missing'])
@@ -2057,9 +2164,10 @@ echo "</textarea>";
                     if(isset($ref[$elem['name']]) || $get_empty )
                     {
                         self::log(sprintf(
-                            'storing data for field [%s], value:',$elem['name']
-                        ), (isset($ref[$elem['name']])?$ref[$elem['name']]:'')
-                        ,7);
+                            'storing data for field [%s], value: [%s]',
+                            $elem['name'],
+                            (isset($ref[$elem['name']])?$ref[$elem['name']]:'')
+                        ),7);
                         if(isset($ref[$elem['name']]) && $ref[$elem['name']] !== '')
                             self::$DATA[$formname][$elem['name']] = $ref[$elem['name']];
                         elseif($get_empty)
@@ -2138,7 +2246,7 @@ echo "</textarea>";
                      // markup for required fields
                    .  "%is_required%"
                      // default attributes
-                   . "<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%%pattern%"
+                   . "<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%%pattern%%placeholder%%data%"
                      // more attributes
                    . "%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% /> %after%"
                    . "\n"
@@ -2159,6 +2267,14 @@ echo "</textarea>";
             {
                 if(isset($options[$key]))
                     $this->attr[$key] = $options[$key];
+            }
+
+            // handle HTML5 data-* attributes
+            foreach($options as $attr => $val) {
+                if(strlen($attr)>5 && substr_compare($attr,'data-',0,5)==0)
+                {
+                    $this->data[] = $attr.'="'.$val.'"';
+                }
             }
 
             self::log(sprintf('element of type [%s] initialized with attr',get_class($this)),7);
@@ -2303,6 +2419,7 @@ echo "</textarea>";
     class wbFormsElementForm extends wbFormsElement
     {
         private static   $instances  = array();
+        protected static $cssclass   = 'fbform';
         protected        $attributes = array(
             // <form> attributes
             'action'       => NULL,
@@ -2323,7 +2440,6 @@ echo "</textarea>";
             'method'       => 'post',
             'id'           => NULL,
             'name'         => NULL,
-            'class'        => 'ui-widget',
             'enctype'      => 'application/x-www-form-urlencoded',
             // internal attributes
             'content'      => NULL,
@@ -2340,6 +2456,8 @@ echo "</textarea>";
         {
             $this->attr['id']   = wbForms::current();
             $this->attr['name'] = wbForms::current();
+            if(\wblib\wbFormsJQuery::get('load_ui_theme') === true)
+                $this->attr['class'] = 'ui-widget';
             return $this;
         }   // end function init()
 
@@ -2432,14 +2550,30 @@ echo "</textarea>";
      * @copyright  Copyright (c) 2014 BlackBird Webprogrammierung
      * @license    GNU LESSER GENERAL PUBLIC LICENSE Version 3
      */
+    class wbFormsElementDivider extends wbFormsElement
+    {
+        protected static $tpl      = "<hr />\n";
+    }   // ---------- end class wbFormsElementDivider ----------
+
+    /**
+     * form builder fieldset element class
+     *
+     * @category   wblib2
+     * @package    wbFormsElementFieldset
+     * @copyright  Copyright (c) 2014 BlackBird Webprogrammierung
+     * @license    GNU LESSER GENERAL PUBLIC LICENSE Version 3
+     */
     class wbFormsElementFieldset extends wbFormsElement
     {
         private   static $is_open  = false;
         protected static $tpl      = '<fieldset%class%%style%>';
         protected static $cssclass = 'ui-widget ui-widget-content ui-corner-all ui-helper-clearfix';
+
         public function init()
         {
             $this->attr['style'] = 'margin-bottom:15px;';
+            if(! \wblib\wbFormsJQuery::get('load_ui_theme') === true)
+               self::$cssclass = '';
             return $this;
         }   // end function init()
 
@@ -2491,6 +2625,8 @@ echo "</textarea>";
         public function init()
         {
             //$this->attr['style'] = 'padding: 5px 10px;';
+            if(! \wblib\wbFormsJQuery::get('load_ui_theme') === true)
+               self::$cssclass = '';
             return $this;
         }
         /**
@@ -2553,6 +2689,44 @@ echo "</textarea>";
     /**
      *
      **/
+    class wbFormsElementPassword extends wbFormsElement
+    {
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function render()
+        {
+            $this->checkAttr();
+            $this->attr['type']  = 'password';
+            return $this->replaceAttr();
+        }   // end function init()
+
+    }
+
+    /**
+     *
+     **/
+    class wbFormsElementText extends wbFormsElement
+    {
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public function render()
+        {
+            $this->checkAttr();
+            $this->attr['type']  = 'text';
+            return $this->replaceAttr();
+        }   // end function init()
+
+    }
+
+    /**
+     *
+     **/
     class wbFormsElementColor extends wbFormsElement
     {
         /**
@@ -2598,6 +2772,15 @@ echo "</textarea>";
         {
             $this->checkAttr();
             if(!isset($this->attr['options'])) $this->attr['options'] = array();
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// TODO: catch this error
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+if(is_scalar($this->attr['options'])) {
+    echo "<textarea style=\"width:100%;height:200px;color:#000;background-color:#fff;\">";
+    print_r( $this );
+    echo "</textarea>";
+}
+
             $options   = array();
             $isIndexed = array_values($this->attr['options']) === $this->attr['options'];
             $sel       = array();
@@ -3011,6 +3194,7 @@ echo "</textarea>";
         {
             $this->attributes['label_span']  = NULL;
             $this->attr['is_group']          = false;
+            $this->attributes['checked']     = 'checked';
         }
         public function render()
         {
@@ -3044,8 +3228,13 @@ echo "</textarea>";
         private   static $is_open = false;
         protected static $tpl     = '<div%class%%style%>';
         public           $attr    = array(
-            'class' => 'fbbuttonline ui-corner-all'
+            'class' => 'fbbuttonline'
         );
+        public function init()
+        {
+            if(\wblib\wbFormsJQuery::get('load_ui_theme') === true)
+                $this->attr['class'] .= ' ui-widget';
+        }
         public function is_open()
         {
             return self::$is_open;
@@ -3100,7 +3289,13 @@ echo "</textarea>";
         );
         // valid types: button|submit|reset
         public static $tpl = '<button%type%%name%%id%%value%%tabindex%%accesskey%%class%%style%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect%%title%>%label%</button>';
-        public static $cssclass = 'ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary';
+        public static $cssclass = '';
+
+        public function init() {
+            if(\wblib\wbFormsJQuery::get('load_ui_theme') === true)
+                $this->attr['class'] .= ' ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary';
+        }
+
         public function render() {
             $open = NULL;
             $bl   = wbFormsElementButtonline::get();
@@ -3108,6 +3303,25 @@ echo "</textarea>";
             return $open.parent::render();
         }
     }   // ---------- end class wbFormsElementButton ----------
+
+    /**
+     * form builder special button element; button with separate label
+     *
+     * @category   wblib2
+     * @package    wbFormsElementButton
+     * @copyright  Copyright (c) 2017 BlackBird Webprogrammierung
+     * @license    GNU LESSER GENERAL PUBLIC LICENSE Version 3
+     */
+    class wbFormsElementLabeledButton extends wbFormsElementButton
+    {
+        public static $tpl = '%label%<button%type%%name%%id%%value%%tabindex%%accesskey%%class%%style%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect%%title%>%text%</button>';
+        public function init() {
+            $this->attributes['text']    = NULL;
+        }
+        public function render() {
+            return wbFormsElement::render();
+        }
+    }   // ---------- end class wbFormsElementLabeledButton ----------
 
     /**
      * form builder button element; used for submit, reset
@@ -3137,8 +3351,9 @@ echo "</textarea>";
      */
     class wbFormsElementSubmit extends wbFormsElementButton
     {
+        public static $cssclass = '';
         public function init() {
-            $this->attr['onclick'] = "$('#".wbForms::current()."').submit()";
+            $this->attr['onclick'] = "$('form#".wbForms::current()."').submit()";
             $this->attr['id']      = 'submit_'.wbForms::current().'_btn';
             $this->attr['type']    = 'submit';
             wbFormsJQuery::addComponent('button');
@@ -3303,6 +3518,19 @@ echo "</textarea>";
         }   // end function render()
     }   // ---------- end class wbFormsElementHoneypot ----------
 
+    /**
+     * form builder honeypot element class; adds a honeypot (hidden) field
+     * to the form as some basic spam protection
+     *
+     * @category   wblib2
+     * @package    wbFormsElementHoneypot
+     * @copyright  Copyright (c) 2014 BlackBird Webprogrammierung
+     * @license    GNU LESSER GENERAL PUBLIC LICENSE Version 3
+     */
+    class wbFormsElementHidden extends wbFormsElement
+    {
+        protected static $tpl = "<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%%pattern%%data%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% /> %after%";
+    }
 
     /**
      * form builder date element class; uses jQuery DatePicker
@@ -3763,6 +3991,7 @@ echo "</textarea>";
             }
             // get token from hidden field
             $token = $_POST[self::$config['token_fieldname']];
+            self::log(sprintf('incoming token: [%s]',$token),7);
             $parts = explode( '-', $token );
             if(count($parts)!==3)
             {
@@ -3817,7 +4046,7 @@ echo "</textarea>";
         {
             self::log(sprintf('> createToken("%s")',$dynamic),7);
             if(self::$token && self::$token!='' && !$force)
-        {
+            {
                 self::log('return already generated token',7);
                 self::log(sprintf('< createToken("%s")',self::$token),7);
                 return self::$token;
@@ -3879,7 +4108,7 @@ echo "</textarea>";
 			}
 			$TimeSeed    = floor( time() / $tokentime ) * $tokentime;
 			$DomainSeed  = $_SERVER['SERVER_NAME'];
-			$Seed        = $TimeSeed + $DomainSeed;
+			$Seed        = $TimeSeed . $DomainSeed;
 
 			// use some server specific data
 			$serverdata  = ( isset( $_SERVER['SERVER_SIGNATURE'] ) )   ? $_SERVER['SERVER_SIGNATURE']     : 'qN';
@@ -3893,8 +4122,11 @@ echo "</textarea>";
 			// add some browser data
 			$browser     = ( isset($_SERVER['HTTP_USER_AGENT']) )      ? $_SERVER['HTTP_USER_AGENT']      : 'xc';
 			$browser    .= ( isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : 'x9';
-			$browser    .= ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) ? $_SERVER['HTTP_ACCEPT_ENCODING'] : 'x?';
+            // error in Chrome / Iron: The field changes between calls!
+			//$browser    .= ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) ? $_SERVER['HTTP_ACCEPT_ENCODING'] : 'x?';
 			$browser	.= ( isset($_SERVER['HTTP_ACCEPT_CHARSET']) )  ? $_SERVER['HTTP_ACCEPT_CHARSET']  : 'xB';
+
+            self::log(sprintf('seed [%s] serverdata [%s] browserdata [%s]',$Seed,$serverdata,$browser),7);
 
 			// add seed to current secret
 			$secret     .= md5($Seed).md5($serverdata).md5($browser);

@@ -319,6 +319,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         public static function addPage($options)
         {
+            global $backend, $database, $admin, $page_id, $section_id;
             $self = self::getInstance();
             // get mandatory fields
             $res = $self->db()->query(
@@ -351,8 +352,45 @@ if (!class_exists('CAT_Helper_Page'))
             $sql = preg_replace('~,\s*$~','',$sql);
             $self->db()->query($sql,$params);
             $page_id = $self->db()->lastInsertId();
+            
+            if(!$self->db()->isError()) {
             // reload pages list
-            if(!$self->db()->isError()) self::init(1);
+                self::init(1);
+                // auto add
+                $template = self::properties($page_id,'template');
+                if(!$template || $template =='')
+                    $template = DEFAULT_TEMPLATE;
+                // load info.php
+                $template_location = CAT_PATH.'/templates/'.$template.'/info.php';
+    			if(file_exists($template_location))
+    				require $template_location;
+                if(isset($auto_add_modules) && is_array($auto_add_modules) && count($auto_add_modules))
+                {
+                    $admin  =& $backend;
+                    $addons = CAT_Helper_Addons::getInstance();
+                    foreach($auto_add_modules as $item)
+                    {
+                        foreach(array_values(array('module','fallback')) as $key)
+                        {
+                            if(isset($item[$key]) && $addons->isModuleInstalled($item[$key]))
+                            {
+                                $section_id = CAT_Sections::addSection(
+                                    $page_id,
+                                    $item[$key],
+                                    (isset($item['block']) ? $item['block'] : 1),
+                                    (isset($item['name'])  ? $item['name']  : $item[$key])
+                                );
+                                if($section_id && file_exists(CAT_PATH.'/modules/'.$item[$key].'/add.php'))
+                                {
+                                    require CAT_PATH.'/modules/'.$item[$key].'/add.php';
+                                    continue 2;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             return
                   $self->db()->isError()
                 ? false
