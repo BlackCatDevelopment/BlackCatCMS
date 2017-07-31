@@ -2643,6 +2643,7 @@ frontend.css and template.css are added in _get_css()
                     if($row['use_core'] == 'Y') $arr['core'] = true;
                 }
             }
+			if(isset($arr[0])) { $arr = $arr[0]; }
 
             // make sure that we load the core if needed, even if the
             // author forgot to set the flags

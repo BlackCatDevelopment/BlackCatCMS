@@ -153,13 +153,13 @@ if( $type != 'language' )
         $fh  = fopen($full.'/'.$file,'w');
         if($fh)
         {
-            if($ext !== 'css' && substr_compare('languages',$file,0,9))
+            if($ext !== 'css' && $ext != 'tpl' && substr_compare('languages',$file,0,9))
             {
                 module_create_writeHeader($fh,$name,$author,$type);
             }
-            if(function_exists('code_for_'.str_replace('.','_',$file)))
+            if(function_exists('code_for_'.str_replace('.','_', pathinfo($file,PATHINFO_BASENAME))))
             {
-                $func = 'code_for_'.str_replace('.','_',$file);
+                $func = 'code_for_'.str_replace('.','_',pathinfo($file,PATHINFO_BASENAME));
                 $func($fh,$type);
             }
             fclose($fh);
@@ -398,6 +398,20 @@ if(!$variant)
 ');
             break;
     }
+}
+
+function code_for_index_tpl($fh,$type)
+{
+    fwrite($fh,'<!doctype html>
+  <html>
+  <head>
+	{get_page_headers}
+  </head>
+  <body>
+
+  </body>
+</html>
+');
 }
 
 function code_for_c_editor_php($fh,$type)
