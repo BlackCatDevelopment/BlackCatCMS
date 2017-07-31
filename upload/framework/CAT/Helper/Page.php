@@ -1341,6 +1341,7 @@ frontend.css and template.css are added in _get_css()
             ";
             }
 
+            // must be loaded very early
             CAT_Helper_Page::$jquery[] = '<script type="text/javascript">'.$default.'</script>';
 
             if ($for == 'backend')
@@ -2431,6 +2432,9 @@ frontend.css and template.css are added in _get_css()
         {
             $show_it = false;
             $page    = self::properties($page_id);
+            if($page['language'] != LANGUAGE) {
+                return false;
+            }
             switch ($page['visibility'])
             {
                 // never shown in FE
@@ -2991,7 +2995,7 @@ frontend.css and template.css are added in _get_css()
                 // ----- jQuery -----
                 if (isset($mod_headers[$for]['jquery']) && is_array($mod_headers[$for]['jquery']) && count($mod_headers[$for]['jquery']))
                 {
-                    self::_analyze_jquery_components($mod_headers[$for]['jquery'][0], $for, $section);
+                    self::_analyze_jquery_components($mod_headers[$for]['jquery'], $for, $section);
                 }
                 // ----- other JS -----
                 if (isset($mod_headers[$for]['js']) && is_array($mod_headers[$for]['js']) && count($mod_headers[$for]['js']))
