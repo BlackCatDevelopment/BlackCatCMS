@@ -227,7 +227,7 @@ if(!class_exists('wblib\wbList',false))
                             // add the item first
                             $html[] = self::itemStart($css) . self::getListItemText($item);
                             // open sub list for the children; create unique ID
-                            $html[] = self::listStart($ul_id.'_'.self::getID());
+                            $html[] = self::listStart($ul_id.'_'.$item[$l_key].'_'.self::getID());
                         }
                         else
                         {
