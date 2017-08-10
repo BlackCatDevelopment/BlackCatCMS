@@ -58,7 +58,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
         {
             if(!defined('CR'))   define('CR',chr(13));
             if(!defined('LF'))   define('LF',chr(10));
-            if(!defined('CRLF')) define('CRLF',chr(13)+chr(10));
+            if(!defined('CRLF')) define('CRLF',chr(13).chr(10));
             if (!self::$instance)
                 self::$instance = new self();
             return self::$instance;
