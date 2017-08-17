@@ -74,6 +74,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                                'template_platform',
                                'template_guid',
                                'template_variants',
+                               'auto_add_modules',
                            ),
                            'language' => array(
                                'language_license',

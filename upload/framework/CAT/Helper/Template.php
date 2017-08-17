@@ -167,6 +167,8 @@ if (!class_exists('CAT_Helper_Template'))
     	 */
     	public static function get_template_blocks( $template = DEFAULT_TEMPLATE , $selected = 1)
     	{
+            global $page_id;
+
     		// =============================================
     		// ! Include template info file (if it exists)
     		// =============================================
@@ -188,7 +190,20 @@ if (!class_exists('CAT_Helper_Template'))
     			// =========================
     			if ( !isset($block[1]) || $block[1] == '' )
     			{
+                    if(isset($blocks)) {
+                        $variant  = CAT_Helper_Page::getPageSettings($page_id,'internal','template_variant');
+                        if(!$variant)
+                            $variant = ( defined('DEFAULT_TEMPLATE_VARIANT') && DEFAULT_TEMPLATE_VARIANT != '' )
+                                     ? DEFAULT_TEMPLATE_VARIANT
+                                     : 'default';
+                        if(isset($blocks[$variant]))
+                        {
+                            $block = $blocks[$variant];
+                        }
+
+                    } else {
     				$block[1]	= $driver->lang()->translate('Main');
+                    }
     			}
 
     			// ================================

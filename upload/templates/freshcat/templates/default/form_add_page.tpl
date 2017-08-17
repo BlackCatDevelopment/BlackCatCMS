@@ -70,6 +70,11 @@
 			</select>
             </div>
 
+            <div id="fc_div_template_autoadd">
+            <input type="checkbox" class="fc_checkbox_jq" name="template_autoadd" id="fc_template_autoadd" value="1" checked="checked" />
+			<label for="fc_addPage_Searching">{translate('Auto-add modules (configured in info.php)')}</label>
+            </div>
+
 			{if $DISPLAY_LANGUAGE_LIST}
 			<label for="fc_addPage_language">{translate('Language')}:</label>
 			<select name="language" id="fc_addPage_language">

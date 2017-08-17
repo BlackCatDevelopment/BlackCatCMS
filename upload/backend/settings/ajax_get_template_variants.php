@@ -70,7 +70,8 @@ if(!$info || !count($info)) {
 $ajax	= array(
 	'message'	=> NULL,
     'variants'  => ( isset($info['module_variants']) ? $info['module_variants'] : array() ),
-	'success'	=> true
+	'success'	=> true,
+    'auto_add_modules' => ( (isset($info['auto_add_modules'])&&is_array($info['auto_add_modules'])) ? true : false ),
 );
 print json_encode( $ajax );
 exit();

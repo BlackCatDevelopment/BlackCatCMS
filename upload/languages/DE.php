@@ -242,6 +242,7 @@ $LANG = array(
     'Add Page' => 'Seite hinzuf&uuml;gen',
     'Administration Tools' => 'Admin Tools',
     'An error occured (using trash: {{trash}})' => 'Es ist ein Fehler aufgetreten (verwende Papierkorb: {{trash}})',
+    'Auto-add modules (configured in info.php)' => 'Module automatisch hinzufügen (in der info.php konfiguriert)',
     'Change settings' => 'Einstellungen bearbeiten',
     'Create link' => 'Verknüpfung erstellen',
     'CSS files' => 'CSS Dateien',

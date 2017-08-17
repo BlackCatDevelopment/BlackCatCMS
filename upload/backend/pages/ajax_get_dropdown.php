@@ -57,12 +57,16 @@ $dropdown_list = CAT_Helper_ListBuilder::sort(CAT_Helper_Page::getPages(1),0);
 $template = CAT_Helper_Page::properties( $val->sanitizePost('parent_id','numeric'), 'template' );
 $variant  = CAT_Helper_Page::getPageSettings($val->sanitizePost('parent_id','numeric'),'internal','template_variant');
 $variants = array();
+$auto_add_modules = false;
 $info     = CAT_Helper_Addons::checkInfo(
     CAT_PATH.'/templates/'.CAT_Helper_Page::getPageTemplate($val->sanitizePost('parent_id','numeric'))
 );
 if(isset($info['module_variants']) && is_array($info['module_variants']) && count($info['module_variants'])) {
     $variants = $info['module_variants'];
     array_unshift($variants,'');
+}
+if(isset($info['auto_add_modules']) && is_array($info['auto_add_modules']) && count($info['auto_add_modules'])) {
+    $auto_add_modules = true;
 }
 
 // ============================================= 
@@ -74,6 +78,7 @@ $ajax    = array(
     'template'         => $template,
     'template_variant' => $variant,
     'variants'         => $variants,
+    'auto_add_modules' => $auto_add_modules,
     'target'           => '_self',
     'success'          => true,
     'admin_groups'     => array(1),

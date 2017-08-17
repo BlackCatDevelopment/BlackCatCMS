@@ -353,22 +353,32 @@ if (!class_exists('CAT_Helper_Page'))
             $self->db()->query($sql,$params);
             $page_id = $self->db()->lastInsertId();
             
-            if(!$self->db()->isError()) {
+
+            $auto_add = CAT_Helper_Validate::sanitizePost('auto_add_modules',NULL,true) ? '1' : '0';
+            if(!$self->db()->isError() && $auto_add) {
             // reload pages list
                 self::init(1);
-                // auto add
+                // get template and variant
                 $template = self::properties($page_id,'template');
                 if(!$template || $template =='')
                     $template = DEFAULT_TEMPLATE;
+                $variant  = CAT_Helper_Page::getPageSettings($page_id,'internal','template_variant');
+                if(!$variant)
+                $variant = ( defined('DEFAULT_TEMPLATE_VARIANT') && DEFAULT_TEMPLATE_VARIANT != '' )
+                         ? DEFAULT_TEMPLATE_VARIANT
+                         : 'default';
                 // load info.php
                 $template_location = CAT_PATH.'/templates/'.$template.'/info.php';
     			if(file_exists($template_location))
     				require $template_location;
+                // if there are some modules defined
                 if(isset($auto_add_modules) && is_array($auto_add_modules) && count($auto_add_modules))
                 {
+                    if(isset($auto_add_modules[$variant]))
+                    {
                     $admin  =& $backend;
                     $addons = CAT_Helper_Addons::getInstance();
-                    foreach($auto_add_modules as $item)
+                        foreach($auto_add_modules[$variant] as $item)
                     {
                         foreach(array_values(array('module','fallback')) as $key)
                         {
@@ -384,6 +394,7 @@ if (!class_exists('CAT_Helper_Page'))
                                 {
                                     require CAT_PATH.'/modules/'.$item[$key].'/add.php';
                                     continue 2;
+                                    }
                                 }
                             }
                         }
