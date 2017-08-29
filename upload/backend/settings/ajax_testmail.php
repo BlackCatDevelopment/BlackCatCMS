@@ -65,6 +65,7 @@ ob_clean();
 // this is not the optimal solution, but as we have 2 libs only, it's good enough
 $lib_to_driver = array(
     'lib_phpmailer' => 'PHPMailer',
+    'lib_phpmailer6' => 'PHPMailer6',
     'lib_swift'     => 'Swift'
 );
 
