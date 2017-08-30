@@ -47,6 +47,7 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
         private   static $routine_driver_map = array(
             'lib_swift'     => 'Swift',
             'lib_phpmailer' => 'PHPMailer',
+            'lib_phpmailer6'    => 'PHPMailer6',
         );
 
         /**
