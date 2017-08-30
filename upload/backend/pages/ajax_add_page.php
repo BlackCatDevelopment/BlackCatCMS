@@ -120,6 +120,16 @@ CAT_Helper_Page::sanitizeLink($options);
 CAT_Helper_Page::sanitizeTemplate($options);
 CAT_Helper_Page::sanitizeLanguage($options);
 
+// check for valid template variant
+if(isset($options['variant']) && strlen($options['variant']))
+{
+    $known_variants = CAT_Helper_Template::getVariants($options['template']);
+    if(!in_array($options['variant'],$known_variants))
+    {
+        $options['variant'] = NULL;
+    }
+}
+
 // Check if page already exists; checks access file, directory, and database
 if(CAT_Helper_Page::exists($options['link']))
 {

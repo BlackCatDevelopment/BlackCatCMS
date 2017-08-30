@@ -270,6 +270,29 @@ if (!class_exists('CAT_Helper_Template'))
     	}   // end function get_template_menus()
 
         /**
+         * get the list of template variants
+         *
+         * @access public
+         * @return
+         **/
+        public static function getVariants($template=DEFAULT_TEMPLATE)
+        {
+            // find the info.php
+            $info = CAT_PATH.'/templates/'.$template.'/info.php';
+            if(file_exists($info)) {
+                // we use include as some info.php files fill the variants
+                // array using the Directory helper
+                include $info;
+                if(isset($template_variants) && is_array($template_variants) && count($template_variants))
+                {
+                    return $template_variants;
+                }
+            }
+            return false;
+        }   // end function getVariants()
+        
+
+        /**
          * this method checks for existance of 'register_frontend_modfiles' in
          * a template file; not used yet
          *

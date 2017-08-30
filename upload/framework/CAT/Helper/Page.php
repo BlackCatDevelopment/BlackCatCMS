@@ -334,6 +334,7 @@ if (!class_exists('CAT_Helper_Page'))
             $params  = array();
             foreach($options as $key => $value)
             {
+                if($key=='variant') continue;
                 $sql .= '`'.$key.'` = :'.$key.', ';
                 $params[$key] = $value;
                 if(array_key_exists($key,$mandatory))
@@ -352,9 +353,22 @@ if (!class_exists('CAT_Helper_Page'))
             $sql = preg_replace('~,\s*$~','',$sql);
             $self->db()->query($sql,$params);
             $page_id = $self->db()->lastInsertId();
+            $variant = null;
             
+            // template variant
+            if(isset($options['variant']) && strlen($options['variant']))
+            {
+                $self->db()->query(
+                    'INSERT INTO `:prefix:pages_settings` '
+                    .'(`page_id`, `set_type`, `set_name`, `set_value`) '
+                    ."VALUES(?,?,?,?)",
+                    array($page_id,'internal','template_variant',$options['variant'])
+                );
+                $variant = $options['variant'];
+            }
 
             $auto_add = CAT_Helper_Validate::sanitizePost('auto_add_modules',NULL,true) ? '1' : '0';
+
             if(!$self->db()->isError() && $auto_add) {
             // reload pages list
                 self::init(1);
@@ -362,11 +376,6 @@ if (!class_exists('CAT_Helper_Page'))
                 $template = self::properties($page_id,'template');
                 if(!$template || $template =='')
                     $template = DEFAULT_TEMPLATE;
-                $variant  = CAT_Helper_Page::getPageSettings($page_id,'internal','template_variant');
-                if(!$variant)
-                $variant = ( defined('DEFAULT_TEMPLATE_VARIANT') && DEFAULT_TEMPLATE_VARIANT != '' )
-                         ? DEFAULT_TEMPLATE_VARIANT
-                         : 'default';
                 // load info.php
                 $template_location = CAT_PATH.'/templates/'.$template.'/info.php';
     			if(file_exists($template_location))

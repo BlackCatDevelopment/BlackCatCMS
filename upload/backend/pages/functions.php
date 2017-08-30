@@ -82,6 +82,7 @@ function backend_pages_getoptions()
         'searching'      => $val->sanitizePost('searching',NULL,true) ? '1' : '0',
         'target'         => $val->sanitizePost('target',NULL,true),
         'template'       => $val->sanitizePost('template',NULL,true),
+        'variant'        => $val->sanitizePost('variant',NULL,true),
         'viewing_groups' => ( ( $val->sanitizePost('viewing_groups',NULL,true) != '' ) ? $val->sanitizePost('viewing_groups',NULL,true) : array('1') ),
         'visibility'     => $val->sanitizePost('visibility',NULL,true),
     );
