@@ -95,8 +95,14 @@ foreach($catalog['modules'] as $module)
                 // check for download location
                 if(!isset($module['github']) || !isset($module['github']['organization']) || !isset($module['github']['repository']))
                 {
+                    // external download location (not GitHub)
+                    if(!isset($module['download']))
+                    {
                     CAT_Object::json_error('Unable to download the module. No download location set.');
                 }
+                }
+                if(!isset($module['download']))
+                {
                 // get latest release
                 $release_info = CAT_Helper_GitHub::getRelease($module['github']['organization'],$module['github']['repository']);
                 if(!is_array($release_info) || !count($release_info))
@@ -117,6 +123,11 @@ foreach($catalog['modules'] as $module)
                 else
                 {
                     $dlurl = $release_info['zipball_url'];
+                    }
+                }
+                else
+                {
+                    $dlurl = $module['download'];
                 }
                 // try download
                 if(CAT_Helper_GitHub::getZip($dlurl,CAT_PATH.'/temp',$module_name)!==true)
