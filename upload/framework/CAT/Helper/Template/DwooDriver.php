@@ -73,10 +73,17 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
         public function get($_tpl, $data = array(), $_compiler = null, $_output = false)
         {
             // add globals to $data array
-            if ( is_array(self::$_globals) && count(self::$_globals) && is_array($data))
+            if(is_array(self::$_globals) && count(self::$_globals))
             {
-                $this->logger->LogDebug('Adding globals to data:',self::$_globals);
-                $data = array_merge( self::$_globals, $data );
+                if(is_array($data))
+                {
+                    $this->logger->addDebug('Adding globals to data');
+                    $data = array_merge(self::$_globals, $data);
+                }
+                else
+                {
+                    $data = self::$_globals;
+                }
             }
             if ( ! is_object ( $_tpl ) )
             {
