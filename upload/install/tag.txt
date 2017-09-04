@@ -1,1 +1,1 @@
-v1.3Beta1#v1.3Beta1-0-ge4a353a#0-ge4a353a 
+v1.3RC1#v1.3RC1-0-g776132e#0-g776132e 
