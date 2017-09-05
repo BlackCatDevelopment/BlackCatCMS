@@ -77,7 +77,7 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
             {
                 if(is_array($data))
                 {
-                    $this->logger->addDebug('Adding globals to data');
+                    $this->logger->LogDebug('Adding globals to data');
                     $data = array_merge(self::$_globals, $data);
                 }
                 else
