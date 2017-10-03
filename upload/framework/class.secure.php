@@ -102,7 +102,7 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
     // some core files must be allowed to load the config.php directly. We
     // get the list of allowed files from the DB
     //**************************************************************************
-    $q = $db->query('SELECT * FROM ' . CAT_TABLE_PREFIX . 'class_secure');
+    $q = $db->query('SELECT * FROM `:prefix:class_secure`');
     if ($q->numRows() > 0)
     {
         while (false !== ($row = $q->fetch(PDO::FETCH_ASSOC)))
