@@ -126,7 +126,7 @@ CAT_Registry::register('OCTAL_DIR_MODE', (int) octdec($string_dir_mode), true);
 //**************************************************************************
 if (!defined('CAT_INSTALL_PROCESS'))
 {
-    $sql = 'SELECT * FROM `' . CAT_TABLE_PREFIX . 'mod_captcha_control` LIMIT 1';
+    $sql = 'SELECT * FROM `:prefix:mod_captcha_control` LIMIT 1';
     if (false !== ($get_settings = $database->query($sql)))
     {
         if ($get_settings->numRows() == 0)

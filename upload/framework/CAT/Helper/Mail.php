@@ -99,7 +99,7 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
                 @require dirname(__FILE__).'/../../class.database.php';
     		    $database = new database();
             }
-    		$query    = "SELECT * FROM " .CAT_TABLE_PREFIX. "settings";
+    		$query    = "SELECT * FROM `:prefix:settings`";
     		$results  = $database->query($query);
     		while($setting = $results->fetch(PDO::FETCH_ASSOC))
             {
