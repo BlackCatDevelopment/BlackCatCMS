@@ -152,6 +152,7 @@ if (!defined('SESSION_STARTED'))
     session_name(APP_NAME.'sessionid');
 	$cookie_settings = session_get_cookie_params();
 	session_start();
+    $_SESSION['_GUID'] = GUID;
     // extend the session lifetime on each action
     setcookie(
         session_name(),

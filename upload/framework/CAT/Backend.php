@@ -54,6 +54,15 @@ if (!class_exists('CAT_Backend', false))
                 self::$instance = new self();
                 if(!CAT_Registry::defined('CAT_INITIALIZED'))
                     include CAT_PATH.'/framework/initialize.php';
+                // invalid session?
+                if(!isset($_SESSION['_GUID']) || $_SESSION['_GUID'] != GUID)
+                {
+                    unset($_COOKIE[session_name()]);
+                    session_unset();
+                    session_destroy();
+                    header('Location: '.CAT_ADMIN_URL.'/login/index.php');
+                    exit(0);
+                }
                 $user = CAT_Users::getInstance();
                 if($user->is_authenticated() == false && !defined('CAT_INSTALL_PROCESS'))
                 {
