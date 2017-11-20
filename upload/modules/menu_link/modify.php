@@ -136,13 +136,12 @@ $pages_list = CAT_Helper_ListBuilder::sort($pages,0);
 			d.options[j++].value=cur[i+1];
 		}
 
-    if(o.value=='-1') {
+		if(o.value=='-1') {
 			e.disabled = false;
 		} else {
 			e.disabled = true;
 		}
 	}
-
 /*]]>*/
 </script>
 <form name="menulink" action="<?php echo CAT_URL ?>/modules/menu_link/save.php" method="post">
@@ -166,9 +165,14 @@ $pages_list = CAT_Helper_ListBuilder::sort($pages,0);
 			} ?>
 
 		</select>
-        <script language="JavaScript" type="text/javascript">
-            $('select#menu_link option:selected').attr('disabled','disabled');
-        </script>
+<?php
+/*
+	creativecat, 20.11.2017: Don't know why selected option should be disabled. If so, it is not possible to change the URL or anchor after initial save
+<script language="JavaScript" type="text/javascript">
+	$('select#menu_link option:selected').attr('disabled','disabled');
+</script>
+*/
+?>
 		&nbsp;
 		<input type="text" name="extern" id="extern" value="<?php echo $extern; ?>" style="width:250px;" <?php if($target_page_id!='-1') echo 'disabled="disabled"'; ?> />
 	</td>
