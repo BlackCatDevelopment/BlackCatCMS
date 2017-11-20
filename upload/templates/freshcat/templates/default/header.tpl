@@ -15,7 +15,7 @@
 
 	<header id="fc_admin_header" class="fc_gradient1 fc_border">
 		{*Here the selection of different sides will be added*}
-		<span id="fc_side_choose"><a href="https://blackcat-cms.org/" class="icon icon-logo_bc" title="Visit Black Cat CMS Homepage" target="_blank"> Black Cat CMS v{$CAT_VERSION}</a></span>
+		<span id="fc_side_choose"><a href="https://blackcat-cms.org/" class="icon icon-logo_bc" title="Visit Black Cat CMS Homepage" target="_blank"> Black Cat CMS {$CAT_VERSION}</a></span>
 		{*main navigation*}
 		<nav>
 			<ul id="fc_menu">
