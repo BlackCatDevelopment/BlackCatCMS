@@ -70,7 +70,7 @@
 
               {if $addon.type == 'template' || $addon.type == 'language' || $addon.INSTALL}
                   <form name="install" action="manual_install.php" method="post" style="float:left;">
-                    <input type="hidden" name="{$token_name}" value="{$token}" />
+				  	<script type="text/javascript">CsrfMagic.end();</script>
     				<input type="hidden" name="action" value="install" />
                     <input type="hidden" name="file" value="{if $addon.directory}{$addon.directory}{else}{$addon.INSTALL.directory}{/if}" />
                     <input type="hidden" name="type" value="{$addon.type}" />
@@ -85,7 +85,7 @@
 
 {if $permissions.MODULES_INSTALL && $addon.UPGRADE && $addon.is_installed}
 			<form name="upgrade" action="manual_install.php" method="post">
-                <input type="hidden" name="{$token_name}" value="{$token}" />
+				<script type="text/javascript">CsrfMagic.end();</script>
 				<input type="hidden" name="action" value="upgrade" />
                 <input type="hidden" name="type" value="{$addon.type}" />
 				<input type="hidden" name="file" value="{if $addon.directory}{$addon.directory}{else}{$addon.INSTALL.directory}{/if}" />
