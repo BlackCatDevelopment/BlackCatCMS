@@ -160,7 +160,6 @@ CREATE TABLE IF NOT EXISTS `cat_pages` (
   `keywords` text NOT NULL,
   `page_trail` text NOT NULL,
   `template` varchar(255) NOT NULL DEFAULT '',
-  `variant` varchar(255) NOT NULL DEFAULT '',
   `visibility` varchar(255) NOT NULL DEFAULT '',
   `position` int(11) NOT NULL DEFAULT '0',
   `menu` int(11) NOT NULL DEFAULT '0',
