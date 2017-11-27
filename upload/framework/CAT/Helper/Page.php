@@ -387,7 +387,7 @@ if (!class_exists('CAT_Helper_Page'))
                     {
                     $admin  =& $backend;
                     $addons = CAT_Helper_Addons::getInstance();
-                        foreach($auto_add_modules[$variant] as $item)
+                    foreach($auto_add_modules[$variant] as $item)
                     {
                         foreach(array_values(array('module','fallback')) as $key)
                         {
@@ -428,10 +428,23 @@ if (!class_exists('CAT_Helper_Page'))
         public static function updatePage($page_id,$options)
         {
             if(!self::$instance) self::getInstance();
+
+            // template variant
+            if(isset($options['variant']) && strlen($options['variant']))
+            {
+                $self->db()->query(
+                    'REPLACE INTO `:prefix:pages_settings` '
+                    .'(`page_id`, `set_type`, `set_name`, `set_value`) '
+                    ."VALUES(?,?,?,?)",
+                    array($page_id,'internal','template_variant',$options['variant'])
+                );
+            }
+
             $sql	 = 'UPDATE `:prefix:pages` SET ';
             $params  = array('id'=>$page_id);
             foreach($options as $key => $value)
             {
+                if($key=='variant') continue;
                 if(is_array($value))
                     $value = implode(',',$value);
                 $sql .= '`'.$key.'` = :'.$key.', ';
@@ -441,6 +454,7 @@ if (!class_exists('CAT_Helper_Page'))
             $sql = preg_replace('~,\s*$~','',$sql);
             $sql .= ' WHERE page_id=:id';
             self::$instance->db()->query($sql,$params);
+
             // reload pages list
             if(!self::$instance->db()->isError()) self::init(1);
             return

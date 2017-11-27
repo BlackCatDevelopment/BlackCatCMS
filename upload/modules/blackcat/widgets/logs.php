@@ -90,7 +90,7 @@ if(!function_exists('render_widget_blackcat_logs'))
         {
 
             $date = CAT_Helper_Validate::sanitizePost('dl');
-    $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/logs/log_'.$date.'.txt');
+            $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/logs/log_'.$date.'.txt');
             if(file_exists($file))
             {
                 $zip = CAT_Helper_Zip::getInstance(pathinfo($file,PATHINFO_DIRNAME).'/'.pathinfo($file,PATHINFO_FILENAME).'.zip');

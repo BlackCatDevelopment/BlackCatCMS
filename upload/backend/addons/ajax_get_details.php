@@ -83,8 +83,9 @@ $addon = array(
     'type'      => $info['addon_function'],
     'installed' => NULL,
     'upgraded'  => NULL,
-    'removable' => (( CAT_Helper_Addons::isRemovable($module) === true ) ? 'Y' : 'N' ),
+    'removable' => (( CAT_Helper_Addons::isRemovable($module,$info['addon_function']) === true ) ? 'Y' : 'N' ),
 );
+
 foreach($info as $key => $value)
 {
     $key = preg_replace('/^(module_|addon_)/i','',$key);
@@ -237,8 +238,8 @@ $addon = array_merge(
         'link'         => $link,
 ));
 
-#$tpl_data['token_name'] = $GLOBALS['csrf']['input-name'];
-#$tpl_data['token']      = csrf_get_tokens();
+$tpl_data['token_name'] = $GLOBALS['csrf']['input-name'];
+$tpl_data['token']      = csrf_get_tokens();
 
 
 $result  = true;

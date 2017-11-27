@@ -46,7 +46,7 @@ $_SESSION['captcha'.$sec_id] = rand(0,99999);
 // get questions and answers
 $text_qa='';
 $table = CAT_TABLE_PREFIX.'mod_captcha_control';
-if($query = $database->query("SELECT ct_text FROM `$table`")) {
+if($query = $database->query("SELECT `ct_text` FROM `$table`")) {
 	$data = $query->fetchRow();
 	$text_qa = $data['ct_text'];
 }
