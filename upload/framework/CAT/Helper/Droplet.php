@@ -56,9 +56,10 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         public static function getInstance()
         {
-            if(!defined('CR'))   define('CR',chr(13));
-            if(!defined('LF'))   define('LF',chr(10));
-            if(!defined('CRLF')) define('CRLF',chr(13).chr(10));
+			defined('CR') OR define('CR',chr(13));
+			defined('LF') OR define('LF',chr(10));
+			defined('CRLF') OR define('CRLF',CR.LF);
+
             if (!self::$instance)
                 self::$instance = new self();
             return self::$instance;
