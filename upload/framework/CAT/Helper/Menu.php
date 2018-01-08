@@ -252,7 +252,7 @@ if ( ! class_exists( 'CAT_Helper_Menu', false ) )
         protected static function checkOptions(array &$options = array())
         {
             $lbopt = array();
-            while ( $opt = array_shift($options) )
+            while($opt=array_shift($options))
             {
                 if(preg_match('~^(.+?)\:$~',$opt,$m))
                 {

@@ -86,10 +86,9 @@ if(!function_exists('render_widget_blackcat_logs'))
             exit;
         }
         // download
-        if(CAT_Helper_Validate::sanitizePost('dl'))
+        if(CAT_Helper_Validate::sanitizeGet('dl'))
         {
-
-            $date = CAT_Helper_Validate::sanitizePost('dl');
+    		$date = CAT_Helper_Validate::sanitizeGet('dl');
             $file = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/temp/logs/log_'.$date.'.txt');
             if(file_exists($file))
             {

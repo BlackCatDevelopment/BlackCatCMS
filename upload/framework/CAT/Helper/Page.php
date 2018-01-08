@@ -173,13 +173,6 @@ if (!class_exists('CAT_Helper_Page'))
                             $direct_parent = $row['parent'];
                         }
 
-                        // count children; this lets us mark pages that have
-                        // children later
-                        if(!isset($children_count[$row['parent']]))
-                            $children_count[$row['parent']] = 1;
-                        else
-                            $children_count[$row['parent']]++;
-
                         // add any other settings
                         $set = self::$instance->db()->query(
                             'SELECT * FROM `:prefix:pages_settings` WHERE page_id=:id',
@@ -217,6 +210,16 @@ if (!class_exists('CAT_Helper_Page'))
                         end(self::$pages);
                         self::$pages_by_id[$row['page_id']] = key(self::$pages);
                         reset(self::$pages);
+
+                        // count children; this lets us mark pages that have
+                        // children later
+                        if(self::isVisible($row['page_id']))
+                        {
+                            if(!isset($children_count[$row['parent']]))
+                                $children_count[$row['parent']] = 1;
+                            else
+                                $children_count[$row['parent']]++;
+                        }
 
                     }   // end while()
 
