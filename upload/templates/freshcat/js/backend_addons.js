@@ -1,6 +1,6 @@
 /*
        2014, Black Cat Development
-   @link            https://blackcat-cms.org
+   @link            http://blackcat-cms.org
    @license         http://www.gnu.org/licenses/gpl.html
    @category        CAT_Core
    @package         freshcat
