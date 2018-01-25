@@ -1037,7 +1037,6 @@ function install_modules ($cat_path,$database) {
         {
 // for now: do not install lib_search here, as it lets the installer break!
 if($item=='lib_search') continue;
-
             if(in_array($item,$ignore_files)) continue;
             if($type == 'languages')
             {
