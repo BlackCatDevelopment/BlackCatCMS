@@ -110,7 +110,7 @@ if (!class_exists('CAT_Helper_Dashboard'))
             if($data)
             {
                 $config = $data->fetchRow();
-                if(count($config) && isset($config['widgets']) && $config['widgets'] != '')
+                if(is_array($config) && count($config)>0 && isset($config['widgets']) && $config['widgets'] != '')
                 {
                     $config['widgets'] = unserialize($config['widgets']);
                 }
