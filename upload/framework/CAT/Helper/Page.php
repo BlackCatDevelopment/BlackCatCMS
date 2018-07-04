@@ -173,6 +173,13 @@ if (!class_exists('CAT_Helper_Page'))
                             $direct_parent = $row['parent'];
                         }
 
+                        // count children; this lets us mark pages that have
+                        // children later
+                        if(!isset($children_count[$row['parent']]))
+                            $children_count[$row['parent']] = 1;
+                        else
+                            $children_count[$row['parent']]++;
+
                         // add any other settings
                         $set = self::$instance->db()->query(
                             'SELECT * FROM `:prefix:pages_settings` WHERE page_id=:id',
@@ -211,16 +218,6 @@ if (!class_exists('CAT_Helper_Page'))
                         self::$pages_by_id[$row['page_id']] = key(self::$pages);
                         reset(self::$pages);
 
-                        // count children; this lets us mark pages that have
-                        // children later
-                        if(self::isVisible($row['page_id']))
-                        {
-                            if(!isset($children_count[$row['parent']]))
-                                $children_count[$row['parent']] = 1;
-                            else
-                                $children_count[$row['parent']]++;
-                        }
-
                     }   // end while()
 
                     $use_trash = CAT_Registry::get('PAGE_TRASH');
@@ -247,7 +244,13 @@ if (!class_exists('CAT_Helper_Page'))
                                 self::$pages[$i]['is_editable'] = true;
                                 self::$pages_editable++;
                             }
-        				}
+        				} else {
+                            if(CAT_Users::checkPermission('pages','pages_modify') && ($use_trash !== 'true' || $page['visibility'] !== 'deleted'))
+                            {
+                                self::$pages[$i]['is_editable'] = true;
+                                self::$pages_editable++;
+                            }
+                        }
 // --------------------- NOT READY YET! ----------------------------------------
                     }
 
@@ -1694,7 +1697,12 @@ frontend.css and template.css are added in _get_css()
             {
                 if ( self::properties($page_id,'level') == 0 )
                     break;
-                $ids[]   = self::properties($page_id,'parent');
+                // if there is no page data yet (may occur when a new page is
+                // created), properties() returns an empty array, so we have
+                // to fix this here
+                $parent_id = self::properties($page_id,'parent');
+                if(!is_array($parent_id))
+                    $ids[]   = $parent_id;
                 $page_id = self::properties($page_id,'parent');
             }
             return $ids;
@@ -1731,6 +1739,9 @@ frontend.css and template.css are added in _get_css()
     		$action_groups = $action.'_groups';
     		$action_users  = $action.'_users';
             $page          = self::properties($page_id);
+            $groups        = array();
+            $users         = array();
+
     		if (is_array($page))
             {
 				$groups = ( isset($page[$action_groups]) )
@@ -1756,7 +1767,6 @@ frontend.css and template.css are added in _get_css()
             {
                 $by_user = true;
             }
-
     		if(!$in_group && !$by_user)
             {
     			return false;
