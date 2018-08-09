@@ -168,6 +168,13 @@ foreach( $steps as $i => $step ) {
     $id_to_step_index[$step['id']] = $i;
 }
 
+// this will suppress some errors
+$cat_path = $dirh->sanitizePath( dirname(__FILE__).'/..' );
+init_constants($cat_path);
+if(!defined('CAT_THEME_URL')) define('CAT_THEME_URL','');
+if(!defined('URL_HELP')) define('URL_HELP','');
+if(!defined('DEFAULT_TEMPLATE')) define('DEFAULT_TEMPLATE','');
+
 // template engine; creates a global var $parser
 global $parser;
 $parser = CAT_Helper_Template::getInstance('Dwoo');
@@ -1305,21 +1312,23 @@ function init_constants($cat_path)
     if ( ! CAT_Registry::exists('CAT_ADMIN_PATH') )     { CAT_Registry::define('CAT_ADMIN_PATH', CAT_PATH.CAT_BACKEND_PATH);  }
     if ( ! CAT_Registry::exists('CAT_ADMIN_URL') )      { CAT_Registry::define('CAT_ADMIN_URL', CAT_URL.CAT_BACKEND_PATH);    }
 
-    foreach( $config as $key => $value ) {
-        if ( ! CAT_Registry::exists( strtoupper($key) ) )
-        {
-            if ( ! is_scalar($value) ) { continue; }
-            CAT_Registry::define( str_replace( 'DATABASE_', '_CAT_DB_', strtoupper($key) ),$value);
+    if(!empty($config)) {
+        foreach( $config as $key => $value ) {
+            if ( ! CAT_Registry::exists( strtoupper($key) ) )
+            {
+                if ( ! is_scalar($value) ) { continue; }
+                CAT_Registry::define( str_replace( 'DATABASE_', '_CAT_DB_', strtoupper($key) ),$value);
+            }
         }
-    }
-    if ( ! CAT_Registry::exists('CAT_TABLE_PREFIX') )   { CAT_Registry::define('CAT_TABLE_PREFIX',TABLE_PREFIX);              }
+        if ( ! CAT_Registry::exists('CAT_TABLE_PREFIX') )   { CAT_Registry::define('CAT_TABLE_PREFIX',TABLE_PREFIX);              }
 
-    // WB compatibility
-    if ( ! CAT_Registry::exists('WB_URL')       ) { CAT_Registry::define('WB_URL',$config['cat_url']);        }
-    if ( ! CAT_Registry::exists('WB_PATH')      ) { CAT_Registry::define('WB_PATH',$cat_path);                }
-    // LEPTON compatibility
-    if ( ! CAT_Registry::exists('LEPTON_URL')   ) { CAT_Registry::define('LEPTON_URL',$config['cat_url']); }
-    if ( ! CAT_Registry::exists('LEPTON_PATH')  ) { CAT_Registry::define('LEPTON_PATH',$cat_path);            }
+        // WB compatibility
+        if ( ! CAT_Registry::exists('WB_URL')       ) { CAT_Registry::define('WB_URL',$config['cat_url']);        }
+        if ( ! CAT_Registry::exists('WB_PATH')      ) { CAT_Registry::define('WB_PATH',$cat_path);                }
+        // LEPTON compatibility
+        if ( ! CAT_Registry::exists('LEPTON_URL')   ) { CAT_Registry::define('LEPTON_URL',$config['cat_url']); }
+        if ( ! CAT_Registry::exists('LEPTON_PATH')  ) { CAT_Registry::define('LEPTON_PATH',$cat_path);            }
+    }
 
     // user id
     $_SESSION['USER_ID'] = 1;
