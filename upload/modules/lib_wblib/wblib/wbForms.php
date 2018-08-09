@@ -565,6 +565,7 @@ if (!class_exists('wblib\wbFormsBase',false))
                                ;
                 }
             }
+
             foreach(array_keys($this->internal_attrs) as $attr)
             {
                 if(isset($this->attr[$attr]) && $this->attr[$attr] != '')
@@ -2246,7 +2247,7 @@ echo "</textarea>";
                      // markup for required fields
                    .  "%is_required%"
                      // default attributes
-                   . "<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%%pattern%%placeholder%%data%"
+                   . "<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%%pattern%%placeholder%%data%%checked%"
                      // more attributes
                    . "%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% /> %after%"
                    . "\n"
@@ -3132,7 +3133,7 @@ if(is_scalar($this->attr['options'])) {
     class wbFormsElementTextarea extends wbFormsElement
     {
         protected static $tpl =
-            "%is_required%<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%%checked%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% />%label%";
+            "%is_required%<input%type%%name%%id%%class%%style%%title%%value%%required%%aria-required%%tabindex%%accesskey%%disabled%%readonly%%onblur%%onchange%%onclick%%onfocus%%onselect% />%label%";
         public function init()
         {
             wbFormsElementTextarea::$tpl
