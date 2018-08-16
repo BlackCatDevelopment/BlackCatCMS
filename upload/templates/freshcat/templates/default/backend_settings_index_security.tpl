@@ -4,6 +4,8 @@
             <div class="fc_settings_max settings_label">
                 <input type="checkbox" class="fc_checkbox_jq" name="auto_disable_users" id="fc_auto_disable_users" value="true" {if $values.auto_disable_users} checked="checked"{/if}/>
     			<label for="fc_auto_disable_users">{translate('Disable user accounts when max login attempts is reached')}</label><br />
+                <input type="checkbox" class="fc_checkbox_jq" name="enable_htmlpurifier" id="fc_enable_htmlpurifier" value="true" {if $values.enable_htmlpurifier} checked="checked"{/if}/>
+    			<label for="fc_enable_htmlpurifier">{translate('Use HTML Purifier to protect WYSIWYG content')}</label><br />
                 <input type="checkbox" class="fc_checkbox_jq" name="enable_csrfmagic" id="fc_enable_csrfmagic" value="true" {if $values.enable_csrfmagic} checked="checked"{/if}/>
     			<label for="fc_enable_csrfmagic">{translate('Use csrf-magic to protect forms (frontend only)')}</label><br />
                 <input type="checkbox" value="true" class="fc_checkbox_jq" name="csrfmagic_defer" id="fc_csrfmagic_defer" {if $values.csrfmagic_defer} checked="checked"{/if}/>

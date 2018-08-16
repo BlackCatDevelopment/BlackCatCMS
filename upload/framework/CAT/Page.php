@@ -204,13 +204,6 @@ if (!class_exists('CAT_Page', false))
                     executeFilters($output);
                 }
 
-                // use HTMLPurifier to clean up the output
-                if( defined('ENABLE_HTMLPURIFIER') && true === ENABLE_HTMLPURIFIER )
-                {
-                    $this->log()->LogDebug('executing HTML Purifier');
-                    $output = CAT_Helper_Protect::purify($output);
-                }
-
                 $this->log()->LogDebug('print output');
 
                 if(!headers_sent())
