@@ -65,11 +65,11 @@ if (!class_exists('CAT_Helper_Protect'))
             if ( is_object(self::$purifier) ) return self::$purifier;
             if ( ! class_exists('HTMLPurifier', false) )
             {
-                $path = CAT_Helper_Directory::getInstance()->sanitizePath(CAT_PATH . '/modules/lib_htmlpurifier/htmlpurifier/library/HTMLPurifier.auto.php');
+                $path = CAT_Helper_Directory::getInstance()->sanitizePath(CAT_PATH . '/modules/lib_htmlpurifier/vendor/library/HTMLPurifier.auto.php');
                 if ( ! file_exists( $path ) )
                 {
                     CAT_Object::getInstance()->printFatalError('Missing library HTMLPurifier!');
-            }
+                }
                 include $path;
             }
             $pconfig = HTMLPurifier_Config::createDefault();

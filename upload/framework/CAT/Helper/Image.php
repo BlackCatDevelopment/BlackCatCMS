@@ -181,7 +181,7 @@ if ( ! class_exists( 'CAT_Helper_Image', false ) ) {
 				    $height = intval($image->getHeight() * $h_t_w);
 				}
 			}
-			
+
 			$image->resize( $width, $height, $method );
 			return $image->save( $dest_file, $dest_path, $extension );
 	    }   // end function make_thumb()

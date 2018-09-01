@@ -44,7 +44,7 @@ if (defined('CAT_PATH')) {
 
 define('CR',chr(13));
 define('LF',chr(10));
-define('CRLF',chr(13)+chr(10));
+define('CRLF',chr(13).chr(10));
 
 $parser->setGlobals( array(
     'IMGURL' => CAT_URL . '/modules/droplets/css/images',

@@ -548,7 +548,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
             // get user perms from session
             $has = CAT_Helper_Validate::getInstance()->fromSession('SYSTEM_PERMISSIONS');
-
+            $self->log()->LogDebug(sprintf('user has: [%s]', $has));
             // no perms at all!
             if ( $has == '' )
                 if ( $redirect )
@@ -594,10 +594,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
 //echo "HAS -", (int)$has, "- NEED -", (int)$bit, "- RESULT -", ( (int)$has & (int)$bit ), "-<br />\n";
             if ( (int)$has & (int)$bit )
             {
+                $self->log()->LogDebug(sprintf('user has required bit [%s]', $bit, $has));
                 return true;
             }
             else
             {
+                $self->log()->LogDebug(sprintf('user does not have required bit [%s]', $bit));
                 if ( $redirect )
                 {
                     // cleanup session

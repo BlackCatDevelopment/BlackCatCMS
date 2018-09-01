@@ -67,10 +67,10 @@ $addons  = CAT_Helper_Addons::getInstance();
 include CAT_PATH . '/framework/class.admin.php';
 $admin = new admin('Pages', 'pages_modify');
 
-// =============
-// ! Get perms
-// =============
-if (!CAT_Helper_Page::getPagePermission($page_id, 'admin'))
+// =============================================================================
+// ! Get perms (user must be in admin group or have modify permissions)
+// =============================================================================
+if (!CAT_Helper_Page::getPagePermission($page_id, 'admin') && !CAT_Users::checkPermission('pages','pages_modify'))
 {
     $backend->print_error('You do not have permissions to modify this page');
 }

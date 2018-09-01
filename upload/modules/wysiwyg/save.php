@@ -70,25 +70,15 @@ if ( CAT_Helper_Page::getPagePermission($page_id,'admin') !== true )
 // =================
 $content = $val->sanitizePost('content'.$section_id);
 
-// for non-admins only
-if(!CAT_Users::getInstance()->ami_group_member(1))
+// if HTMLPurifier is enabled...
+$r = $backend->db()->get_one(
+    'SELECT * FROM `:prefix:settings` WHERE `name`="enable_htmlpurifier" AND `value`="true"'
+);
+if($r)
 {
-    // if HTMLPurifier is enabled...
-    $r = $backend->db()->get_one(
-        'SELECT * FROM `:prefix:mod_wysiwyg_admin_v2` WHERE set_name="enable_htmlpurifier" AND set_value="1"'
-    );
-    if($r)
-    {
-        // use HTMLPurifier to clean up the output
-        $content = CAT_Helper_Protect::getInstance()->purify($content,array('Core.CollectErrors'=>true));
-    }
+    // use HTMLPurifier to clean up the contents
+    $content = CAT_Helper_Protect::getInstance()->purify($content,array('Core.CollectErrors'=>true));
 }
-/* see: https://forum.blackcat-cms.org/viewtopic.php?f=11&t=548&p=4103#p4101
-else
-{
-    $content = $val->add_slashes($content);
-}
-*/
 
 /**
  *	searching in $text will be much easier this way

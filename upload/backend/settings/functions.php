@@ -50,7 +50,7 @@ $groups = array(
     'users' => array('frontend_signup','frontend_login','home_folders','auth_min_login_length','auth_max_login_length','auth_min_pass_length','auth_max_pass_length','users_allow_mailaddress','initial_page'),
     'server' => array('operating_system','pages_directory','page_extension','media_directory','page_spacer','upload_allowed','app_name','sec_anchor'),
     'mail' => array('server_email','catmailer_lib','catmailer_default_sendername','catmailer_routine','catmailer_smtp_host','catmailer_smtp_timeout','catmailer_smtp_auth','catmailer_smtp_username','catmailer_smtp_password','catmailer_smtp_ssl','catmailer_smtp_ssl_port','catmailer_smtp_starttls'),
-    'security' => array('auto_disable_users','enable_csrfmagic','upload_enable_mimecheck','upload_mime_default_type','upload_allowed','captcha_type','text_qa','enabled_captcha','enabled_asp'),
+    'security' => array('auto_disable_users','enable_csrfmagic','enable_htmlpurifier','upload_enable_mimecheck','upload_mime_default_type','upload_allowed','captcha_type','text_qa','enabled_captcha','enabled_asp'),
 );
 $allow_tags_in_fields = array('website_header', 'website_footer');
 $allow_empty_values   = array('website_header', 'website_footer', 'sec_anchor', 'pages_directory','catmailer_smtp_host','catmailer_smtp_timeout','catmailer_smtp_username','catmailer_smtp_password');
