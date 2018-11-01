@@ -76,13 +76,12 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                     ->setBody($message);
 				if ( $html != '') $message->addPart($html, 'text/html');
 				if ( $attachment )
-					if( is_array($attachment) )
+					if( is_array($attachment) && count(array_filter($attachment)) > 0 )
 					{
 						foreach( $attachment as $file )
 							$message->attach(Swift_Attachment::fromPath($file));
-					} else {
+					} elseif( !is_array($attachment) )
 						$message->attach(Swift_Attachment::fromPath($attachment));
-					}
             }
             catch(Exception $e)
             {
