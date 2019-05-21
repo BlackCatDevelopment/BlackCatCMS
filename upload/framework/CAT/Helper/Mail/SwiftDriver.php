@@ -55,7 +55,7 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
         /**
          *
          **/
-        public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname='', $html='')
+        public function sendMail($fromaddress, $toaddress, $subject, $message, $fromname='', $html='', $attachment=NULL)
         {
 
             $use_smtp = false;
@@ -74,7 +74,14 @@ if(!class_exists('CAT_Helper_Mail_SwiftDriver',false)) {
                     ->setFrom($fromaddress)
                     ->setTo($toaddress)
                     ->setBody($message);
-					if ( $html != '') $message->addPart($html, 'text/html');
+				if ( $html != '') $message->addPart($html, 'text/html');
+				if ( $attachment )
+					if( is_array($attachment) && count(array_filter($attachment)) > 0 )
+					{
+						foreach( $attachment as $file )
+							$message->attach(Swift_Attachment::fromPath($file));
+					} elseif( !is_array($attachment) )
+						$message->attach(Swift_Attachment::fromPath($attachment));
             }
             catch(Exception $e)
             {

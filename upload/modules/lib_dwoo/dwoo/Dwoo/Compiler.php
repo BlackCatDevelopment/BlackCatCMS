@@ -2976,7 +2976,7 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 		}
 
 		// loops over the param map and assigns values from the template or default value for unset optional params
-		while (list($k,$v) = each($map)) {
+		foreach( $map as $k => $v ) {
 			if ($v[0] === '*') {
 				// "rest" array parameter, fill every remaining params in it and then break
 				if (count($ps) === 0) {

@@ -341,7 +341,7 @@ if (!class_exists('CAT_Page', false))
                         if (defined('SEC_ANCHOR') && SEC_ANCHOR != '')
                         {
                             echo '<a class="section_anchor" id="' . SEC_ANCHOR . $section_id . '"'
-                               . ( (isset($section['name']) && $section['name'] != 'no name') ? 'title="'.$section['name'].'"' : '' )
+                               . ( (isset($section['name']) && $section['name'] != 'no name') ? ' title="'.$section['name'].'"' : '' )
                                . '></a>';
                         }
                         // check if module exists - feature: write in errorlog
