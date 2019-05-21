@@ -156,6 +156,12 @@ foreach(array_values(array('lib_getid3','lib_wblib','wysiwyg')) as $module)
 }
 
 /*******************************************************************************
+    add missing database entries for addons catalog
+*******************************************************************************/
+$database->query("INSERT IGNORE INTO `:prefix:class_secure` (`module`, `filepath`) VALUES (0, '/backend/addons/ajax_get_template.php');");
+$database->query("INSERT IGNORE INTO `:prefix:class_secure` (`module`, `filepath`) VALUES (0, '/backend/addons/ajax_update_catalog.php');");
+
+/*******************************************************************************
     ALL VERSIONS
 *******************************************************************************/
 
