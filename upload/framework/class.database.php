@@ -96,6 +96,11 @@ if (!class_exists('database', false))
         public function insert_id() { return self::$obj->lastInsertId(); }
         public function prompt_on_error($switch=true) { /* no longer supported */ }
 
+        // WBCE
+        public function getLastInsertId() {
+            return self::$obj->lastInsertId();
+        }
+
     }   // ----- end class database -----
 }
 

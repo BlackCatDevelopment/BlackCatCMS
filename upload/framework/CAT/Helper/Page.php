@@ -1890,6 +1890,27 @@ frontend.css and template.css are added in _get_css()
          * @access public
          * @return
          **/
+        public static function getPagesForLang($lang)
+        {
+            if(!count(self::$pages)) self::getInstance();
+            $pages = array();
+            $lang  = strtoupper($lang);
+            foreach(self::$pages as $pg)
+            {
+                // check level and visibility
+                if ( $pg['language'] == $lang  && self::isVisible($pg['page_id']) )
+                {
+                    $pages[] = $pg;
+                }
+            }
+            return $pages;
+        }   // end function getPagesForLang()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
         public static function getPagesForLevel($level,$menu_no=NULL)
         {
             if(!count(self::$pages)) self::getInstance();

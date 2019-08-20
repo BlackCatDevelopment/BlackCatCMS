@@ -82,8 +82,18 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             $parent       = $root_id;
             $parent_stack = array();
 
-            while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
+            #while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
+            while ( $loop && ( ( count($children[$parent]) > 0 || ( $parent <> $root_id ) ) ) )
             {
+				if(!strlen(key($children[$parent]))) {
+                    $option = false;
+                } else {
+		            $option	= array(
+			        	'key'	=> key($children[$parent]),
+			        	'value'	=> current($children[$parent])
+		            );
+				}
+                array_shift($children[$parent]);
                 if ( $option === false ) // no more children
                 {
                     $parent = array_pop( $parent_stack );
@@ -240,9 +250,18 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             $parent       = $root_id;
             $parent_stack = array();
 
-            while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
+            #while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
+            while ( $loop && ( ( count($children[$parent]) > 0 || ( $parent <> $root_id ) ) ) )
             {
-
+                if(!strlen(key($children[$parent]))) {
+                    $option = false;
+                } else {
+    	            $option	= array(
+    		        	'key'	=> key($children[$parent]),
+    		        	'value'	=> current($children[$parent])
+    	            );
+                }
+				array_shift($children[$parent]);
                 $is_current
                     = (
                            ( isset($option['value'][$current]) && $option['value'][$current] == true )

@@ -56,10 +56,9 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         public static function getInstance()
         {
-			defined('CR') OR define('CR',chr(13));
-			defined('LF') OR define('LF',chr(10));
-			defined('CRLF') OR define('CRLF',CR.LF);
-
+            if(!defined('CR'))   define('CR',chr(13));
+            if(!defined('LF'))   define('LF',chr(10));
+            if(!defined('CRLF')) define('CRLF',chr(13).chr(10));
             if (!self::$instance)
                 self::$instance = new self();
             return self::$instance;
@@ -198,18 +197,18 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         {
                             case 'og:image':
                                 $image = $value;
-                                continue;
+                                break;
                             case 'og:type':
                                 $og_type = strtolower($value);
-                                continue;
+                                break;
                             case 'og:droplet':
                                 if (strtolower($value) == 'false')
                                     $exec_droplets = false;
-                                continue;
+                                break;
                             case 'og:exec':
                                 if (strtolower($value) == 'false')
                                     $open_graph = false;
-                                continue;
+                                break;
                         }
                     }
                     $keyword_array[] = $keyword;
@@ -310,7 +309,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
             $droplet_name = self::clear_droplet_name($droplet_name);
             $SQL          = "SELECT * FROM `:prefix:mod_droplets` WHERE `name`=:name";
             $params       = array('name'=>$droplet_name);
-            $result       = self::getInstance()->db()->query($SQL,$params);
+            $result       = self::db()->query($SQL,$params);
             if (is_object($result) && $result->rowCount() > 0)
                 return true;
             return false;
@@ -338,8 +337,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
                 'field3' => self::field_page_id,
                 'value3' => $page_id
             );
-            $check = self::getInstance()->db()->query($SQL,$params)->fetchColumn();
-            if(self::getInstance()->db()->isError() || !$check)
+            $check = self::db()->query($SQL,$params)->fetchColumn();
+            if(self::db()->isError() || !$check)
                 return false;
             $result = ($check == $page_id) ? true : false;
             return $result;
@@ -638,7 +637,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         public static function getDroplet($id)
         {
-            $query = self::getInstance()->db()->query(
+            $query = self::db()->query(
                 "SELECT * FROM `:prefix:mod_droplets` WHERE id = :id",
                 array('id'=>$id)
             );
@@ -653,7 +652,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         public static function getDropletByName($name)
         {
-            $stmt = self::getInstance()->db()->query(
+            $stmt = self::db()->query(
                 'SELECT * FROM `:prefix:mod_droplets` WHERE name=:name',
                 array('name'=>$name)
             );
@@ -667,7 +666,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
          **/
         public static function getDropletData($id)
         {
-            $query = $backend->db()->query(
+            $query = self::db()->query(
                 'SELECT * FROM `:prefix:mod_droplets` AS t1 LEFT OUTER JOIN `:prefix:mod_droplets_permissions` AS t2 ' .
                 'ON t1.id=t2.id WHERE t1.id=:id',
                 array('id'=>$id)
@@ -756,7 +755,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
             $__CAT_Helper_Droplets_content = '';
 
             $section = CAT_Sections::getSectionsByType($page_id);
-            if(count($section))
+            if(is_array($section) && count($section))
             {
                 $SQL    = "SELECT `content` FROM `:prefix:mod_wysiwyg` WHERE `section_id`=:id";
                 $params = array('id'=>$section[0]['section_id']);
@@ -1133,7 +1132,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                     . "WHERE `drop_type`=:type AND `drop_page_id`=:id LIMIT 1"
                     ;
             $params = array('type'=>$type,'id'=>$page_id);
-            if (null == ($query = self::getInstance()->db()->query($SQL,$params)))
+            if (null == ($query = self::db()->query($SQL,$params)))
                 return false;
             if ($query->rowCount() > 0)
                 return $query->fetchAll();
@@ -1152,8 +1151,8 @@ if (!class_exists('CAT_Helper_Droplet')) {
                  . "WHERE (`drop_type`=:type1 OR `drop_type`=:type2) AND `drop_page_id`=:id"
                  ;
             $params = array('type1'=>'css', 'type2'=>'javascript','id'=>$page_id);
-            $query = self::getInstance()->db()->query($SQL,$params);
-            if(self::getInstance()->db()->isError())
+            $query = self::db()->query($SQL,$params);
+            if(self::db()->isError())
             {
                 return array();
             }

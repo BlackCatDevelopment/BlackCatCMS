@@ -421,10 +421,9 @@ function entities_to_7bit($str) {
 	$str = str_replace('&#039;', '&apos;', $str);
     $str = preg_replace_callback(
         '/&#([0-9]+);/',
-        create_function(
-            '$m',
-            'dechex($m[1]);'
-        ),
+        function($m) {
+            return dechex($m[1]);
+        },
         $str
     );
 	// maybe there are some &gt; &lt; &apos; &quot; &amp; &nbsp; left, replace them too
