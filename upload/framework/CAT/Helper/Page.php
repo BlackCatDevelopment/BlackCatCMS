@@ -312,7 +312,7 @@ if (!class_exists('CAT_Helper_Page'))
                 $static =& CAT_Helper_Page::$f_js;
             $static[] = self::$space
                       . '<script type="text/javascript" src="'
-                      . CAT_Helper_Validate::sanitize_url(CAT_URL.$url)
+                      . CAT_Helper_Validate::sanitize_url($url)
                       . '"></script>';
         }   // end function addJS()
 
@@ -2698,6 +2698,7 @@ frontend.css and template.css are added in _get_css()
 
             $static =& CAT_Helper_Page::$jquery;
             $val    =  CAT_Helper_Validate::getInstance();
+            if(isset($arr[0])) { $arr = $arr[0]; }
 
             $set    = self::getInstance()->db()->query(
                 'SELECT `use_core`, `use_ui` FROM `:prefix:pages_headers` WHERE `page_id`=:id OR `page_id`=0',
@@ -2711,7 +2712,6 @@ frontend.css and template.css are added in _get_css()
                     if($row['use_core'] == 'Y') $arr['core'] = true;
                 }
             }
-			if(isset($arr[0])) { $arr = $arr[0]; }
 
             // make sure that we load the core if needed, even if the
             // author forgot to set the flags
