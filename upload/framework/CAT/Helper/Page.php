@@ -1860,8 +1860,10 @@ frontend.css and template.css are added in _get_css()
                 return self::$pages;
             // only visible for current lang
             $pages = array();
+            // skip error page 404
+            $errpg = CAT_Registry::get('ERR_PAGE_404');
             foreach(self::$pages as $pg)
-                if(self::isVisible($pg['page_id']))
+                if(self::isVisible($pg['page_id']) && $pg['page_id'] != $errpg)
                     $pages[] = $pg;
             return $pages;
         }   // end function getPages()
@@ -1877,9 +1879,11 @@ frontend.css and template.css are added in _get_css()
         {
             if(!count(self::$pages)) self::getInstance();
             $menu = array();
+            // skip error page 404
+            $errpg = CAT_Registry::get('ERR_PAGE_404');
             foreach(self::$pages as $pg)
             {
-                if( $pg['menu'] == $id && self::isVisible($pg['page_id']) )
+                if( $pg['menu'] == $id && $pg['page_id'] != $errpg && self::isVisible($pg['page_id']) )
                     $menu[] = $pg;
             }
             return $menu;
@@ -1915,10 +1919,12 @@ frontend.css and template.css are added in _get_css()
         {
             if(!count(self::$pages)) self::getInstance();
             $pages = array();
+            // skip error page 404
+            $errpg = CAT_Registry::get('ERR_PAGE_404');
             foreach(self::$pages as $pg)
             {
                 // check level and visibility
-                if ( $pg['level'] == $level  && self::isVisible($pg['page_id']) )
+                if ( $pg['level'] == $level  && self::isVisible($pg['page_id']) && $pg['page_id'] != $errpg )
                 {
                     // optional: check for given menu number
                     if(!$menu_no || $pg['menu'] == $menu_no)
@@ -2517,7 +2523,7 @@ frontend.css and template.css are added in _get_css()
                     break;
                 // always visible
                 case 'public':
-                    $show_it = true;
+                    $show_it = CAT_Sections::hasActiveSections($page_id);
                     break;
                 // shown if user is allowed
                 case 'private':

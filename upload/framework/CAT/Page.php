@@ -314,7 +314,8 @@ if (!class_exists('CAT_Page', false))
                         header("Location: " . LOGIN_URL .  '?redirect=' . $_SERVER['PHP_SELF'] );
                         exit();
                     } else {
-                        self::$helper->printFatalError('You are not allowed to view this page!');
+                        #self::$helper->printFatalError('You are not allowed to view this page!');
+                        return self::print404();
                     }
                 }
             }
@@ -448,9 +449,9 @@ if (!class_exists('CAT_Page', false))
          **/
         public static function print404()
         {
-            if ( CAT_Registry::defined('ERR_PAGE') && CAT_Registry::get('ERR_PAGE') != '' )
+            if ( CAT_Registry::defined('ERR_PAGE_404') && CAT_Registry::get('ERR_PAGE_404') != '' )
             {
-                header('Location: '.self::$helper->getLink(CAT_Registry::get('ERR_PAGE')));
+                header('Location: '.self::$helper->getLink(CAT_Registry::get('ERR_PAGE_404')));
             }
             else
             {
