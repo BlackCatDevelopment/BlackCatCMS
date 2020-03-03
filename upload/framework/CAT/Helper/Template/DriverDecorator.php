@@ -48,8 +48,9 @@ if ( ! class_exists('CAT_Helper_Template_DriverDecorator',false) )
 
         public function __construct( $obj )
         {
-            parent::__construct();
             $this->te = $obj;
+            parent::__construct();
+            
             // get current working directory
             $callstack = debug_backtrace();
             $this->te->paths['workdir']

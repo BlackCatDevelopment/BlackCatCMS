@@ -221,20 +221,21 @@ if (!class_exists('wblib\wbFormsBase',false))
                 try
                 {
                     include_once dirname(__FILE__).'/wbLang.php';
+                    $language = defined('LANGUAGE') ? LANGUAGE : self::$wblang->current();
                     self::$wblang = \wblib\wbLang::getInstance();
-                    self::log(sprintf('wbLang loaded, current language [%s]',self::$wblang->current()),7);
+                    self::log(sprintf('wbLang loaded, current language [%s]',$language),7);
                     // auto-add lang file by lang_path global
                     if(isset(self::$globals['lang_path']) && is_dir(self::path(self::$globals['lang_path'])))
                     {
                         self::log(sprintf('adding global lang path [%s]',self::$globals['lang_path']),7);
                         self::$wblang->addPath(self::$globals['lang_path']);
                         if(
-                               file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.self::$wblang->current().'.php'))
-                            || file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.strtoupper(self::$wblang->current()).'.php'))
-                            || file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.strtolower(self::$wblang->current()).'.php'))
+                               file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.$language.'.php'))
+                            || file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.strtoupper($language).'.php'))
+                            || file_exists(self::path(pathinfo(self::$globals['lang_path'],PATHINFO_DIRNAME).'/languages/'.strtolower($language).'.php'))
                         ) {
-                            self::log(sprintf('adding file [%s]',self::$wblang->current()),7);
-                            self::$wblang->addFile(self::$wblang->current());
+                            self::log(sprintf('adding file [%s]',$language),7);
+                            self::$wblang->addFile($language);
                         }
                     }
                     // auto-add lang file by caller's path
@@ -255,20 +256,20 @@ if (!class_exists('wblib\wbFormsBase',false))
                             self::$wblang->addPath(self::path(pathinfo($caller['file'],PATHINFO_DIRNAME).'/languages'));
                         }
                         if(
-                               file_exists(self::path(pathinfo($caller['file'],PATHINFO_DIRNAME).'/languages/'.self::$wblang->current().'.php'))
-                            || file_exists(self::path(pathinfo($caller['file'],PATHINFO_DIRNAME).'/languages/'.strtoupper(self::$wblang->current()).'.php'))
-                            || file_exists(self::path(pathinfo($caller['file'],PATHINFO_DIRNAME).'/languages/'.strtolower(self::$wblang->current()).'.php'))
+                               file_exists(self::path(pathinfo($caller['file'],PATHINFO_DIRNAME).'/languages/'.$language.'.php'))
+                            || file_exists(self::path(pathinfo($caller['file'],PATHINFO_DIRNAME).'/languages/'.strtoupper($language).'.php'))
+                            || file_exists(self::path(pathinfo($caller['file'],PATHINFO_DIRNAME).'/languages/'.strtolower($language).'.php'))
                         ) {
-                            self::log(sprintf('adding file [%s]',self::$wblang->current()),7);
-                            self::$wblang->addFile(self::$wblang->current());
+                            self::log(sprintf('adding file [%s]',$language),7);
+                            self::$wblang->addFile($language);
                         }
                         // This is for BlackCat CMS, filtering backend paths
                         if(isset($caller['args']) && isset($caller['args'][0]) && is_scalar($caller['args'][0]) && file_exists($caller['args'][0]))
                         {
                             if(is_dir(self::path(pathinfo($caller['args'][0],PATHINFO_DIRNAME).'/languages')))
                                 self::$wblang->addPath(self::path(pathinfo($caller['args'][0],PATHINFO_DIRNAME).'/languages'));
-                            if(file_exists(self::path(pathinfo($caller['args'][0],PATHINFO_DIRNAME).'/languages/'.self::$wblang->current().'.php')))
-                                self::$wblang->addFile(self::$wblang->current());
+                            if(file_exists(self::path(pathinfo($caller['args'][0],PATHINFO_DIRNAME).'/languages/'.$language.'.php')))
+                                self::$wblang->addFile($language);
                         }
                     }
                 }

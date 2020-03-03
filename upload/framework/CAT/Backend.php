@@ -127,7 +127,7 @@ if (!class_exists('CAT_Backend', false))
                 $init = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/templates/'.CAT_Registry::get('DEFAULT_THEME').'/forms.init.php');
                 if(file_exists($init))
                     require $init;
-                self::$form = \wblib\wbForms::getInstance();
+                self::$form = \wblib\wbForms::getInstance(LANGUAGE);
                 self::$form->set('wblib_url',CAT_URL.'/modules/lib_wblib/wblib');
                 self::$form->set('lang_path',CAT_PATH.'/languages');
             }
