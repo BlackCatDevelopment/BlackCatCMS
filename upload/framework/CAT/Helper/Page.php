@@ -124,7 +124,6 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         private static function init($force=false)
         {
-
             global $page_id;
 
             if(CAT_Registry::exists('CAT_HELPER_PAGE_INITIALIZED') && !$force)
@@ -273,6 +272,16 @@ if (!class_exists('CAT_Helper_Page'))
                     }
 
                 }       // end if($result)
+            }
+
+            // mark root page as current
+            if(empty($page_id)) {
+                $page_id = self::getDefaultPage();
+                $pg = CAT_Helper_Array::ArraySearchRecursive($page_id,self::$pages,'page_id');
+                if(isset($pg[0])) {
+                    self::$pages[$pg[0]]['is_current'] = true;
+                    self::$pages[$pg[0]]['is_in_trail'] = true;
+                }
             }
 
             CAT_Registry::register('CAT_HELPER_PAGE_INITIALIZED',true);
