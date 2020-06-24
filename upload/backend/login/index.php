@@ -41,5 +41,9 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-CAT_Helper_Protect::getInstance()->enableCSRFMagic();
+if(defined('ENABLE_CSRFMAGIC') && true === ENABLE_CSRFMAGIC)
+{
+    CAT_Helper_Protect::getInstance()->enableCSRFMagic();
+}
+
 CAT_Users::getInstance()->handleLogin();

@@ -197,6 +197,9 @@ if (!function_exists('csrf_startup'))
         {
             csrf_conf('expires', TOKEN_LIFETIME);
         }
+        if(defined('CSRF_MAGIC_DEFER') && true === CSRF_MAGIC_DEFER) {
+            csrf_conf('defer',true);
+        }
     }
 }
 

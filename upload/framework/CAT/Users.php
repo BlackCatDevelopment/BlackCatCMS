@@ -139,6 +139,18 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     if ( ! self::$loginerror && ! CAT_Registry::defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < $min_pass_length )
                         self::setLoginError($lang->translate('Invalid credentials'));
 
+                    // check token
+                    $self->log()->LogDebug('CSRF_PROTECTION_ENABLED : ['.defined('ENABLE_CSRFMAGIC').'] ['.ENABLE_CSRFMAGIC.']');
+                    if( ! self::$loginerror && defined('ENABLE_CSRFMAGIC') && ENABLE_CSRFMAGIC == 'true') {
+                        define('CSRF_MAGIC_DEFER',1);
+                        $token = $val->sanitizePost('__csrf_magic');
+                        $self->log()->LogDebug('token value ['.$token.']');
+                        if(empty($token) || !CAT_Helper_Protect::checkToken($token)) {
+                            $self->log()->LogDebug('invalid token!');
+                            self::setLoginError($lang->translate('Invalid credentials'));
+                        }
+                    }
+
                     if ( ! self::$loginerror )
                     {
                         $query  = 'SELECT * FROM `:prefix:users` WHERE `username`=:name AND `password`=:pw';
