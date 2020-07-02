@@ -198,7 +198,7 @@ if(!class_exists('order'))
     		$sql		 = 'SELECT `'.$this->id_field.'` FROM `'.$this->table.'` ';
     		if( $cf_value != '' )
     		{
-    			$sql	.= 'WHERE `'.$this->common_field.'`=\''.$cf_value.'\'';
+    			$sql	.= 'WHERE `'.$this->common_field.'`=\''.$cf_value.'\' ';
     		}
     		$sql		.= 'ORDER BY `'.$this->order_field.'` ASC';
 
