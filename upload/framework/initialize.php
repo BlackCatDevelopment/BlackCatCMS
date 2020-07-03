@@ -153,16 +153,32 @@ if (!defined('SESSION_STARTED'))
 	$cookie_settings = session_get_cookie_params();
 	session_start();
     $_SESSION['_GUID'] = GUID;
+
+    if(!isset($cookie_settings['samesite']) || empty($cookie_settings['samesite'])) {
+        $cookie_settings['samesite'] = 'Lax';
+    }
+
     // extend the session lifetime on each action
+    if(version_compare('PHP_VERSION','7.3','>=')) {
+        setcookie(session_name(), session_id(), [
+            'expires' => 0,
+            'path' => $cookie_settings["path"],
+            'domain' => $cookie_settings["domain"],
+            'secure' => (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'),
+            'httponly' => true,
+            'samesite' => $cookie_settings['samesite'] ,
+        ]);
+    } else {
     setcookie(
-        session_name(),
-        session_id(),
-        time()+ini_get('session.gc_maxlifetime'),
-        $cookie_settings["path"],
-        $cookie_settings["domain"],
-        (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'),
-        true
+            session_name(),                             // name
+            session_id(),                               // value
+            0,                                          // expires when browser closed
+            $cookie_settings["path"],                   // path
+            $cookie_settings["domain"],                 // domain
+            (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'), // secure
+            true                                        // httponly
     );
+    }
     CAT_Registry::register('SESSION_STARTED', true, true);
 }
 if (defined('ENABLED_ASP') && ENABLED_ASP && !isset($_SESSION['session_started']))
@@ -171,8 +187,14 @@ if (defined('ENABLED_ASP') && ENABLED_ASP && !isset($_SESSION['session_started']
 //**************************************************************************
 // frontend only
 //**************************************************************************
-if (!CAT_Backend::isBackend() && !defined('CAT_AJAX_CALL') && !defined('CAT_LOGIN_PHASE') && defined('ENABLE_CSRFMAGIC') && true === ENABLE_CSRFMAGIC )
-{
+if (
+       !CAT_Backend::isBackend()
+    && !defined('CAT_AJAX_CALL')
+    && !isset($_REQUEST['_cat_ajax'])
+    && !defined('CAT_LOGIN_PHASE')
+    && defined('ENABLE_CSRFMAGIC')
+    && true === ENABLE_CSRFMAGIC
+) {
     CAT_Helper_Protect::getInstance()->enableCSRFMagic();
 }
 

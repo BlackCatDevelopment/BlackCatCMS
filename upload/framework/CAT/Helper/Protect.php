@@ -32,6 +32,8 @@ if (!class_exists('CAT_Helper_Protect'))
 
     class CAT_Helper_Protect extends CAT_Object
     {
+        protected      $_config               = array( 'loglevel' => 8 );
+
         private static $instance;
         private static $purifier;
         private static $csrf;
@@ -120,23 +122,26 @@ if (!class_exists('CAT_Helper_Protect'))
          */
     	public static function createToken($mode = 'POST')
     	{
+            $self  = self::getInstance();
+            $self->log()->LogDebug('createToken()');
             // for backward compatibility...
             if((is_string($mode) && strtolower($mode) == 'post') || ($mode === true))
     			return '';
             // We return an empty string here, just to keep WB modules happy.
             // The CSRF protection will be added automatically to the Backend,
             // so there's no need to do it this way.
-
             $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_csrfmagic/csrf-magic.php');
             if ( file_exists( $path ) )
             {
                 if ( ! function_exists('csrf_get_tokens') )
                     include_once $path;
+                $self->log()->LogDebug('calling csrf_get_token()');
                 return csrf_get_tokens();
     		}
             else
             {
         		// no token without csrf-magic!
+                $self->log()->LogDebug('CSRFMagic is not available, returnung NULL');
                 return NULL;
     		}
     	}   // end function createToken()
@@ -154,6 +159,9 @@ if (!class_exists('CAT_Helper_Protect'))
          */
         public static function checkToken($token)
     	{
+            $self  = self::getInstance();
+            $self->log()->LogDebug('checkToken()');
+
     		if (!TOKEN_LIFETIME) return true;
 
             // for backward compatibility with WB...
@@ -168,11 +176,15 @@ if (!class_exists('CAT_Helper_Protect'))
             {
                 if ( ! function_exists('csrf_check_token') )
                     include_once $path;
-                return csrf_check_token($token);
+                $self->log()->LogDebug('calling csrf_check_token()');
+                $result = csrf_check_token($token);
+                $self->log()->LogDebug(sprintf('result [%s]',$result));
+                return $result;
     		}
             else
     		{
         		// no token without csrf-magic!
+                $self->log()->LogDebug('CSRFMagic is not available, returnung NULL');
                 return true;
     	}
     	}   // end function checkToken()

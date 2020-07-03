@@ -103,6 +103,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
             }
             CAT_Backend::initPaths();
 
+            $self  = self::getInstance();
+            $self->log()->LogDebug('handleLogin()');
+
             $val   = CAT_Helper_Validate::getInstance();
             $lang  = CAT_Helper_I18n::getInstance();
             $self  = self::getInstance();
@@ -111,10 +114,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
             if ( ! self::is_authenticated() )
             {
+                $self->log()->LogDebug('user is not (yet) authenticated');
 
                 // --- login attempt ---
                 if ( $val->sanitizePost('username_fieldname') )
                 {
+                    $self->log()->LogDebug('handle login attempt');
 
                     // get input data
                     $user = htmlspecialchars($val->sanitizePost($val->sanitizePost('username_fieldname')),ENT_QUOTES);
@@ -153,6 +158,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
                     if ( ! self::$loginerror )
                     {
+                        $self->log()->LogDebug('no login error');
+
                         $query  = 'SELECT * FROM `:prefix:users` WHERE `username`=:name AND `password`=:pw';
                         $qAct		= 'SELECT `active` FROM `:prefix:users` WHERE `username` = :name AND `password` = :pw';
                         $result = $self->db()->query($query,array('name'=>$name,'pw'=>md5($pw)));
@@ -271,6 +278,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         }
                         else
                         {
+                            $self->log()->LogDebug('account disabled');
 	                        if ( !$active && $result->rowCount() == 1 )
 		                        self::setLoginError($lang->translate('Your account has been disabled. Please contact the administrator.'));
 	                        else
@@ -481,6 +489,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function disableAccount($user_id)
         {
             $self  = self::getInstance();
+            $self->log()->LogDebug('disableAccount()');
             $self->db()->query(
                 'UPDATE `:prefix:users` SET active = 0 WHERE `'
                 . ( is_numeric($user_id) ? 'user_id' : 'username' )
@@ -499,6 +508,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function enableAccount($user_id)
         {
             $self  = self::getInstance();
+            $self->log()->LogDebug('enableAccount()');
             $self->db()->query(
                 'UPDATE `:prefix:users` SET active = 1 WHERE `'
                 . ( is_numeric($user_id) ? 'user_id' : 'username' )
@@ -523,8 +533,15 @@ if ( ! class_exists( 'CAT_Users', false ) )
          **/
         public static function checkPermission( $group, $perm, $redirect = false, $for = 'BE' )
         {
+            $self  = self::getInstance();
+            $self->log()->LogDebug('checkPermission()');
+            $self->log()->LogDebug(sprintf('group [%s] perm [%s] redirect [%s] for [%s]',$group,$perm,$redirect,$for));
+
             // root is always allowed to do it all
-            if ( self::is_root() ) return true;
+            if ( self::is_root() ) {
+                $self->log()->LogDebug('user is root, no more checks');
+                return true;
+            }
 
             $self = self::getInstance();
             $self->log()->LogDebug(sprintf('Checking permission group [%s] perm [%s] for [%s]',$group,$perm,$for));
@@ -666,6 +683,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
         public static function checkUserLogin($name,$pw)
         {
             $self   = self::getInstance();
+            $self->log()->LogDebug('checkUserLogin()');
             $query  = 'SELECT * FROM `:prefix:users` WHERE `username`=:name AND `password`=:pw AND `active` = 1';
             $result = $self->db()->query($query,array('name'=>$name,'pw'=>md5($pw)));
     		return ( $result->rowCount() == 1 ) ? true : false;
