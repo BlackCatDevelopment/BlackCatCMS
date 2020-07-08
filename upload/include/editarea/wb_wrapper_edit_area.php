@@ -36,6 +36,6 @@ if (defined('CAT_PATH')) {
 }
 // end include class.secure.php
 
-include_once(CAT_PATH.'/modules/edit_area/register.php');
-
-?>
+if(file_exists(CAT_PATH.'/modules/edit_area/register.php')) {
+    include_once(CAT_PATH.'/modules/edit_area/register.php');
+}
