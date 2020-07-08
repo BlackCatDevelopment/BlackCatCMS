@@ -49,9 +49,6 @@ $user->lang()->addFile(LANGUAGE);
 if(!$user->is_authenticated())
     die( header( 'Location: '.CAT_Registry::get('LOGIN_URL')."\n\n" ) );
 
-// enable CSRFMagic
-//CAT_Helper_Protect::getInstance()->enableCSRFMagic();
-
 $submit_ok = false;
 $message   = false;
 $save      = $val->sanitizePost('save');
