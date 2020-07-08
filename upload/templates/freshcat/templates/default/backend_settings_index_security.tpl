@@ -6,13 +6,19 @@
     			<label for="fc_auto_disable_users">{translate('Disable user accounts when max login attempts is reached')}</label><br />
                 <input type="checkbox" class="fc_checkbox_jq" name="enable_htmlpurifier" id="fc_enable_htmlpurifier" value="true" {if $values.enable_htmlpurifier} checked="checked"{/if}/>
     			<label for="fc_enable_htmlpurifier">{translate('Use HTML Purifier to protect WYSIWYG content')}</label><br />
-                <input type="checkbox" class="fc_checkbox_jq" name="enable_csrfmagic" id="fc_enable_csrfmagic" value="true" {if $values.enable_csrfmagic} checked="checked"{/if}/>
-    			<label for="fc_enable_csrfmagic">{translate('Use csrf-magic to protect forms (frontend only)')}</label><br />
-                <input type="checkbox" value="true" class="fc_checkbox_jq" name="csrfmagic_defer" id="fc_csrfmagic_defer" {if $values.csrfmagic_defer} checked="checked"{/if}/>
-                <label for="fc_csrfmagic_defer">{translate('Defer executing csrf_check() until manual call')}</label>
             </div>
-            <div class="clear_sp"></div>
+            <label class="fc_label_300" for="fc_cookie_samesite">{translate('Cookie SameSite directive')}:</label>
+            <select name="cookie_samesite" id="fc_cookie_samesite">
+                <option value="Strict"{if $values.cookie_samesite=='Strict'} selected="selected"{/if}>Strict</option>
+                <option value="Lax"{if $values.cookie_samesite=='Lax'} selected="selected"{/if}>Lax</option>
+                <option value="None"{if $values.cookie_samesite=='None'} selected="selected"{/if}>None</option>
+            </select>
+            <p>
+                {translate('In &quot;Strict&quot; mode, the cookie is not sent with absolutely no cross-site request. The &quot;lax&quot; mode allows the cookie to be sent with some &quot;secure&quot; cross-site requests. None&quot; disables any security.')}<br />
+                {translate('<strong>Note:</strong> Changing this setting does not affect already existing cookies.')}
+            </p>
 
+            <div class="clear_sp"></div>
 
             <span class="fc_label_300">{translate('Upload security settings')}:</span>
             <div class="clear"></div>

@@ -27,17 +27,17 @@
 
 			<label class="fc_label_300" for="fc_redirect_timer" title="{translate('After some actions, success or error messages are displayed. This is the time such messages are shown before the backend redirects you back to the calling page.')}">{translate('Redirect after')}:</label>
 			<input type="text" name="redirect_timer" id="fc_redirect_timer" value="{$values.redirect_timer}" /> ms
-            <p>{translate('allowed values')}: 0 - 10000</p>
+            <p>{translate('Allowed values')}: 0 - 10000</p>
 			<div class="clear_sp"></div>
 
-			<label class="fc_label_300" for="fc_token_lifetime" title="{translate('Tokens are used to protect against CSRF attacks. Too short token lifetimes will cause problems, so change this setting wisely.')}">{translate('Token lifetime')}:</label>
-			<input type="text" name="token_lifetime" id="fc_token_lifetime"  value="{$values.token_lifetime}" /> s
-			<p>{translate('0 means default, which is 7200s = 2 hours; allowed values')}: 0 - 10000</p>
+			<label class="fc_label_300" for="fc_session_lifetime" title="">{translate('Session lifetime')}:</label>
+			<input type="text" name="session_lifetime" id="fc_session_lifetime"  value="{$values.session_lifetime}" /> s
+			<p>{translate('Allowed values')}: 0 - 10000</p>
 			<div class="clear_sp"></div>
 
 			<label class="fc_label_300" for="fc_max_attempts" title="{translate('By default, wrong login attempts are only saved in the session. To lock the user account after the max. attempts are reached, use the appropriate security setting. (Security -> Disable user accounts when max login attempts is reached)')}">{translate('Allowed wrong login attempts')}:</label>
 			<input type="text" name="max_attempts" id="fc_max_attempts"  value="{$values.max_attempts}" />
-			<p>{translate('When reaching this number, more login attempts are not possible for this session.')} ({translate('allowed values')}: 1 - 10)</p>
+			<p>{translate('When reaching this number, more login attempts are not possible for this session.')} ({translate('Allowed values')}: 1 - 10)</p>
 			<div class="clear_sp"></div>
 			{else}
 			<input type="hidden" name="er_level" value="{$values.er_level}" />
