@@ -136,7 +136,6 @@ $LANG = array(
     'Close & Reset' => 'Schließen & Zurücksetzen',
     'Confirmation' => 'Bestätigung',
     'Count' => 'Anzahl',
-    'CSRF check failed. Maybe a token timeout. Trying to reload page.' => 'CSRF Check fehlgeschlagen. Vielleicht ist das Token abgelaufen. Seite wird neu geladen.',
     'Done' => 'Fertig',
     'Edit' => 'Bearbeite',
     'From' => 'Von',
@@ -224,7 +223,6 @@ $LANG = array(
     'A technical cookie is required for backend login.' => 'Für die Anmeldung am Backend ist ein technisches Cookie erforderlich.',
     'allow' => 'erlauben',
     'Please enter your username and password.' => 'Bitte Benutzernamen und Passwort eingeben.',
-    'Sorry, but you have attempted to login too many times.' => 'Zu viele Anmeldeversuche.',
     'The password you entered was too short' => 'Das angegebene Passwort ist zu kurz!',
     'The username you entered was too short' => 'Der eingegebene Benutzername war zu kurz',
     'Invalid credentials' => 'Die Logindaten sind ungültig',
@@ -364,7 +362,7 @@ $LANG = array(
     'Allow frontend login' => 'Anmeldung im Frontend erlauben',
     'Allow mail address as login name' => 'Erlaube Mailadresse als Login-Namen',
     'Allowed filetypes on upload' => 'Erlaubte Dateitypen für Dateiupload',
-    'allowed values' => 'erlaubte Werte',
+    'Allowed values' => 'erlaubte Werte',
     'Allows to assign user based home folders located under media. Please remember to create the folders in the media section. To assign a home folder to a user, proceed to the user settings.' => 'Erlaubt die Zuweisung benutzerspezifischer Homeverzeichnisse unterhalb von media. Die Verzeichnisse müssen im Media-Bereich angelegt werden. Die Zuweisung erfolgt in den Benutzereinstellungen.',
     'Allows to set a maximal login name length. Set a higher value if you allow email addresses as login names.' => 'Erlaubt das Setzen einer Maximallänge für Benutzerkennungen. Sofern Mailadressen als Loginkennungen zugelassen sind, sollte ein höherer Wert verwendet werden.',
     'Allows to set a maximal password length. You should not restrict the maximal length too much.' => 'Erlaubt das Setzen einer Maximallänge für Kennworte. Die Kennwortlänge sollte nicht zu sehr eingeschränkt werden.',
@@ -431,7 +429,7 @@ $LANG = array(
     'This is the default time format. This setting will be used for guests and as a default for new users.' => 'Das Standard-Zeitformat. Diese Einstellung wird für Gäste und neu erstellte Benutzerkonten verwendet.',
     'This is the only page the visitor sees in maintenance mode. This page should have setting [hidden].' => 'Dies ist die einzige Seite, die der Besucher im Wartungsmodus sieht. Die Seite sollte die Einstellung [versteckt] haben.',
     'This will allow to use SEO friendly URLs like http://www.yourdomain.com/path/to/page instead of http://www.yourdomain.com/page/path/to/page.php' => 'Erlaubt die Nutzung SEO-freundlicher URLs, wie http://www.yourdomain.com/path/to/page statt http://www.yourdomain.com/page/path/to/page.php',
-    'Token lifetime' => 'Token Gültigkeitsdauer',
+    'Session lifetime' => 'Session Gültigkeitsdauer',
     'Tokens are used to protect against CSRF attacks. Too short token lifetimes will cause problems, so change this setting wisely.' => 'Tokens werden zum Schutz gegen CSRF-Attacken verwendet. Eine zu kurze Gültigkeitsdauer verursacht Probleme, daher die Einstellung bitte mit Bedacht ändern.',
     'Update sitemap.xml on save' => 'Beim Speichern sitemap.xml erneuern',
     'Upload security settings' => 'Einstellungen für Datei-Uploads',
@@ -474,8 +472,13 @@ $LANG = array(
     'Use SSL' => 'SSL verwenden',
     'SSL Port' => 'SSL Port',
 // ----- security -----
+    'Cookie SameSite directive' => 'Cookie SameSite Direktive',
     'Disable user accounts when max login attempts is reached'
        => 'Benutzerkonto deaktivieren, wenn die max. Anzahl Anmeldeversuche überschritten wurde',
+    'In &quot;Strict&quot; mode, the cookie is not sent with absolutely no cross-site request. The &quot;lax&quot; mode allows the cookie to be sent with some &quot;secure&quot; cross-site requests. None&quot; disables any security.'
+       => 'Im Modus &quot;Strict&quot; wird das Cookie bei absolut keinem Cross-Site-Request mitgesendet. Der Modus &quot;Lax&quot; erlaubt das Mitsenden des Cookies bei einigen &quot;sicheren&quot; Cross-Site-Requests. &quot;None&quot; deaktiviert jedwede Sicherheit.',
+    '<strong>Note:</strong> Changing this setting does not affect already existing cookies.'
+        => '<strong>Hinweis:</strong> Eine Änderung dieser Einstellung wirkt sich nicht auf bereits vorhandene Cookies aus.',
 
 // ----- media -----
     'All files have been uploaded successfully.' => 'Alle Dateien erfolgreich übertragen',
