@@ -262,13 +262,15 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
     	            );
                 }
 				array_shift($children[$parent]);
-                $is_current
-                    = (
+                $is_current = false;
+                if($option !== false) {
+                    if (
                            ( isset($option['value'][$current]) && $option['value'][$current] == true )
                         || ( isset($selected) && $selected == $option['value'][$id_key] )
-                      )
-                    ? true
-                    : false;
+                    ) {
+                        $is_current = true;
+                    }
+                }
 
                 if ( $option === false ) // no more children
                 {
