@@ -191,8 +191,7 @@ foreach ($sections as $section)
                 ob_start();
                 require(CAT_PATH . '/modules/' . $module . '/modify.php');
                 $tpl_data['blocks'][$bcnt]['content'] = ob_get_contents();
-                //ob_end_clean();
-                ob_clean(); // allow multiple buffering for csrf-magic
+                ob_clean(); // allow multiple buffering
 
                 $bcnt++;
             }

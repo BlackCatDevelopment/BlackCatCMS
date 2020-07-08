@@ -40,35 +40,34 @@ if (defined('CAT_PATH')) {
     }
 }
 
-$header   = ( CAT_Helper_Validate::sanitizeGet('ajax') ? false : true );
+$header   = (CAT_Helper_Validate::sanitizeGet('ajax') ? false : true);
 $backend  =  CAT_Backend::getInstance('admintools', 'admintools', $header);
 $admin    =& $backend;
 $val      =  CAT_Helper_Validate::getInstance();
-$get_tool =  $val->sanitizeGet('tool',NULL,true);
+$get_tool =  $val->sanitizeGet('tool', null, true);
 
-if ( $get_tool == '' ) $get_tool = $val->sanitizePost('tool',NULL,true);
+if ($get_tool == '') {
+    $get_tool = $val->sanitizePost('tool', null, true);
+}
 
-if ( $get_tool == '' ) // still no tool
-{
+if ($get_tool == '') { // still no tool
     header("Location: index.php");
     exit(0);
 }
 
 // check tool permission
-if(!CAT_Users::get_permission($get_tool,'module'))
-{
+if (!CAT_Users::get_permission($get_tool, 'module')) {
     header("Location: index.php");
     exit(0);
 }
 
 global $parser;
-$parser->setGlobals('CAT_ADMIN_URL',CAT_ADMIN_URL);
+$parser->setGlobals('CAT_ADMIN_URL', CAT_ADMIN_URL);
 
 // ==============================
-// ! Check if tool is installed   
-// ============================== 
-if ( !CAT_Helper_Addons::isModuleInstalled($get_tool) )
-{
+// ! Check if tool is installed
+// ==============================
+if (!CAT_Helper_Addons::isModuleInstalled($get_tool)) {
     header("Location: index.php");
     exit(0);
 }
@@ -77,52 +76,45 @@ $tool = CAT_Helper_Addons::getAddonDetails($get_tool);
 
 // Set toolname
 $tpl_data['TOOL_NAME'] = $tool['name'];
-$parser->setGlobals('TOOL_URL',CAT_ADMIN_URL.'/admintools/tool.php?tool='.$tool['directory']);
+$parser->setGlobals('TOOL_URL', CAT_ADMIN_URL.'/admintools/tool.php?tool='.$tool['directory']);
 
 // Check if folder of tool exists
-if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php') )
-{
+if (file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php')) {
     // load language file (if any)
     $langfile = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$tool['directory'].'/languages/'.LANGUAGE.'.php');
-    if ( file_exists($langfile) )
-    {
-        if ( ! $backend->lang()->checkFile($langfile, 'LANG', true ))
+    if (file_exists($langfile)) {
+        if (! $backend->lang()->checkFile($langfile, 'LANG', true)) {
             // old fashioned language file
             require $langfile;
-        else
+        } else {
             // modern language file
             $backend->lang()->addFile(LANGUAGE.'.php', CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$tool['directory'].'/languages'));
+        }
     }
     // Cache the tool and add it to dwoo
-    if(!CAT_Helper_Validate::sanitizeGet('ajax'))
-    {
-    ob_start();
+    if (!CAT_Helper_Validate::sanitizeGet('ajax')) {
+        ob_start();
             require CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php');
-        $tpl_data['TOOL'] = ob_get_contents();
-    ob_clean(); // allow multiple buffering for csrf-magic
-    }
-    else
-    {
+            $tpl_data['TOOL'] = ob_get_contents();
+        ob_clean(); // allow multiple buffering
+    } else {
         require CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/'.$tool['directory'].'/tool.php');
         return;
     }
     // Check whether icon is available for the admintool
-    if ( file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png') )
-    {
+    if (file_exists(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png')) {
         list($width, $height, $type, $attr) = getimagesize(CAT_PATH.'/modules/'.$tool['directory'].'/icon.png');
         // Check whether file is 32*32 pixel and is an PNG-Image
         $tpl_data['ICON'] = ($width == 32 && $height == 32 && $type == 3)
                           ? CAT_URL.'/modules/'.$tool['directory'].'/icon.png'
                           : false;
     }
-}
-else
-{
+} else {
     $admin->print_error('Error opening file.');
 }
 
 // print page
-$parser->output( 'backend_admintools_tool', $tpl_data );
+$parser->output('backend_admintools_tool', $tpl_data);
 
 // Print admin footer
 $backend->print_footer();
