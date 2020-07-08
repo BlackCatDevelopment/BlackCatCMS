@@ -58,6 +58,11 @@
 					<label for="fc_login_password">{translate('Password')}</label>
 					<input type="password" maxlength="{$MAX_PASSWORD_LEN}" name="{$PASSWORD_FIELDNAME}" id="fc_login_password" />
 				</p>
+                <p class="warning">
+                    {translate('A technical cookie is required for backend login.')}
+                    <input type="checkbox" name="fc_cookie_allow" id="fc_cookie_allow" style="vertical-align:bottom" />
+                    {translate('allow')}
+                </p>
 				<p>
 					<button type="submit" name="submit_login" class="fc_login_button icon-switch"> {translate('Login')}</button>
 				</p>

@@ -149,33 +149,34 @@ if (!defined('CAT_INSTALL_PROCESS'))
 //**************************************************************************
 if (!defined('SESSION_STARTED'))
 {
+    // setting SESSION_LIFETIME re-introduced with v1.3.7
+    if(!defined('SESSION_LIFETIME')) {
+        define('SESSION_LIFETIME',7200);
+    }
+
     session_name(APP_NAME.'sessionid');
+    global $cookie_settings;
 	$cookie_settings = session_get_cookie_params();
-	session_start();
+
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start([
+            'save_path'       => __DIR__.'/../temp/sessions',
+            'cookie_lifetime' => time() + SESSION_LIFETIME,
+            'cookie_path'     => $cookie_settings['path'],
+            'cookie_domain'   => $cookie_settings['domain'],
+            'cookie_secure'   => (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'),
+            'cookie_httponly' => true,
+            'cookie_samesite' => 'Lax',
+        ]);
+    }
+
     $_SESSION['_GUID'] = GUID;
-    // extend the session lifetime on each action
-    setcookie(
-        session_name(),
-        session_id(),
-        time()+ini_get('session.gc_maxlifetime'),
-        $cookie_settings["path"],
-        $cookie_settings["domain"],
-        (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'),
-        true
-    );
+
     CAT_Registry::register('SESSION_STARTED', true, true);
 }
 if (defined('ENABLED_ASP') && ENABLED_ASP && !isset($_SESSION['session_started']))
     $_SESSION['session_started'] = time();
     
-//**************************************************************************
-// frontend only
-//**************************************************************************
-if (!CAT_Backend::isBackend() && !defined('CAT_AJAX_CALL') && !defined('CAT_LOGIN_PHASE') && defined('ENABLE_CSRFMAGIC') && true === ENABLE_CSRFMAGIC )
-{
-    CAT_Helper_Protect::getInstance()->enableCSRFMagic();
-}
-
 //**************************************************************************
 // Get users language
 //**************************************************************************

@@ -107,6 +107,7 @@ jQuery(document).ready(function(){
 			dates				= {
 				'username_fieldname':	username_fieldname,
 				'password_fieldname':	password_fieldname,
+                'fc_cookie_allow':      current_form.find('input#fc_cookie_allow').is(':checked'),
                 '_cat_ajax':            1
 			};
 			dates[username_fieldname]	= current_form.find('input[name=' + username_fieldname + ']').val();
@@ -138,7 +139,8 @@ jQuery(document).ready(function(){
 					else {
 						$('#fc_forms').effect( 'shake', { times: 2 }, 300);
 						$('#fc_message_login').addClass('icon-warning highlight').removeClass('icon-info').text(' ' + data.message).slideDown(300);
-						$('input[name=' + password_fieldname + ']').val('').focus();
+						$('input[name=' + password_fieldname + ']').val('');
+                        $('input[name=' + username_fieldname + ']').focus();
 					}
 				},
 				error:		function( jqXHR, textStatus, errorThrown )

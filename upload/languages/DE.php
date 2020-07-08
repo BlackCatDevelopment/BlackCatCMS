@@ -221,10 +221,14 @@ $LANG = array(
 	'Log-out' => 'Abmelden',
 	'Media' => 'Medien',
 // ----- LOGIN PAGE -----
-    'Please enter your username and password.' => 'Bitte geben Sie unten Ihren Benutzernamen und Passwort ein.',
+    'A technical cookie is required for backend login.' => 'Für die Anmeldung am Backend ist ein technisches Cookie erforderlich.',
+    'allow' => 'erlauben',
+    'Please enter your username and password.' => 'Bitte Benutzernamen und Passwort eingeben.',
+    'Sorry, but you have attempted to login too many times.' => 'Zu viele Anmeldeversuche.',
     'The password you entered was too short' => 'Das angegebene Passwort ist zu kurz!',
     'The username you entered was too short' => 'Der eingegebene Benutzername war zu kurz',
     'Invalid credentials' => 'Die Logindaten sind ungültig',
+    'You have to allow a technical cookie for login.' => 'Für das Backend Login ist ein technischer Cookie erforderlich.',
     'Your account has been disabled. Please contact the administrator.' => 'Ihr Account wurde deaktiviert. Bitte kontaktieren Sie den Administrator.',
 // ----- BACKEND -----
     'Welcome to Black Cat CMS Administration' => 'Willkommen im Black Cat CMS Administrationsbereich',
@@ -472,8 +476,6 @@ $LANG = array(
 // ----- security -----
     'Disable user accounts when max login attempts is reached'
        => 'Benutzerkonto deaktivieren, wenn die max. Anzahl Anmeldeversuche überschritten wurde',
-    'Use csrf-magic to protect forms (frontend only)' => 'csrf-magic zur Absicherung von Formularen verwenden (nur Frontend)',
-    'Defer executing csrf_check() until manual call' => 'csrf_check() bis zur manuellen Ausführung aussetzen',
 
 // ----- media -----
     'All files have been uploaded successfully.' => 'Alle Dateien erfolgreich übertragen',
@@ -635,7 +637,7 @@ $LANG = array(
     'Standard page: Template for search result' => 'Standardseite: Template für Suchergebnisse',
     'The file [.htaccess] already exists! BlackCat will save the suggested Rewrite Rules into file [htaccess_BlackCatCMS.txt]. You will have to add them manually or rename that file to [.htaccess].'
         => 'Die Datei [.htaccess] existiert bereits! BlackCat speichert die empfohlenen Rewrite Regeln in die Datei [htaccess_BlackCatCMS.txt]. Sie müssen sie manuell hinzufügen oder diese Datei in [.htaccess] umbenennen.',
-    'Use HTMLPurifier to clean output' => 'Mit HTMLPurifier filtern',
+    'Use HTML Purifier to protect WYSIWYG content' => 'WYSIWYG Inhalte mit HTMLPurifier filtern',
     'Use image from content page in search result' => 'Bild aus Inhalt in Suchergebnis verwenden',
     'Use jQuery' => 'jQuery verwenden',
     'Use jQuery UI' => 'jQuery UI verwenden',
