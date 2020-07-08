@@ -34,7 +34,6 @@ if (!class_exists('CAT_Helper_Protect'))
     {
         private static $instance;
         private static $purifier;
-        private static $csrf;
 
         public static function getInstance()
         {
@@ -87,95 +86,6 @@ if (!class_exists('CAT_Helper_Protect'))
             self::$purifier = new HTMLPurifier($pconfig);
             return self::$purifier;
         }
-
-        /**
-         * enable csrf-magic by including csrf-magic.php
-         * will throw a fatal error if the lib is not available!
-         *
-         * @access public
-         * @return void
-         **/
-        public function enableCSRFMagic()
-        {
-            if ( is_object(self::$csrf) ) return self::$csrf;
-            if ( ! function_exists('csrf_ob_handler') )
-            {
-                $path = CAT_Helper_Directory::sanitizePath(CAT_PATH . '/modules/lib_csrfmagic/csrf-magic.php');
-                if ( ! file_exists( $path ) )
-                    $this->printFatalError('Missing library CSRF-Magic!');
-                include $path;
-                CAT_Registry::set('CSRF_PROTECTION_ENABLED',true,true);
-            }
-        }   // end function enableCSRFMagic()
-
-        /*
-         * creates tokens for CSRF protection and stores it in the session
-         * requirements: an active session must be available
-         *
-         * uses csrf-magic if available; returns NULL if not
-         *
-         * @access public
-         * @param  string  $mode - this is for backward compatibility with WB
-         * @return string
-         */
-    	public static function createToken($mode = 'POST')
-    	{
-            // for backward compatibility...
-            if((is_string($mode) && strtolower($mode) == 'post') || ($mode === true))
-    			return '';
-            // We return an empty string here, just to keep WB modules happy.
-            // The CSRF protection will be added automatically to the Backend,
-            // so there's no need to do it this way.
-
-            $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_csrfmagic/csrf-magic.php');
-            if ( file_exists( $path ) )
-            {
-                if ( ! function_exists('csrf_get_tokens') )
-                    include_once $path;
-                return csrf_get_tokens();
-    		}
-            else
-            {
-        		// no token without csrf-magic!
-                return NULL;
-    		}
-    	}   // end function createToken()
-
-        /*
-         * checks received token against session-stored tokens
-         *
-         * requirements: an active session must be available
-         * 
-         * uses csrf-magic if available; returns true if not
-         *
-         * @access public
-         * @param  string  $token - token to check
-         * @return boolean - true if numbers matches against one of the stored tokens
-         */
-        public static function checkToken($token)
-    	{
-    		if (!TOKEN_LIFETIME) return true;
-
-            // for backward compatibility with WB...
-            if((is_string($token) && strtolower($token) == 'post') || ($token === true))
-    			return true;
-            // We return true here, just to keep WB modules happy.
-            // The CSRF protection will be added automatically to the Backend,
-            // so there's no need to do it this way.
-
-            $path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/modules/lib_csrfmagic/csrf-magic.php');
-            if ( file_exists( $path ) )
-            {
-                if ( ! function_exists('csrf_check_token') )
-                    include_once $path;
-                return csrf_check_token($token);
-    		}
-            else
-    		{
-        		// no token without csrf-magic!
-                return true;
-    	}
-    	}   // end function checkToken()
 
         /**
          * generate salt

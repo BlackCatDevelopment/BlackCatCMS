@@ -70,13 +70,6 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
                     CAT_Users::getInstance()->handleLogin();
                     exit(0);
                 }
-                // always enable CSRF protection in backend; does not work with
-                // AJAX so scripts called via AJAX should set this constant
-                if (!defined('CAT_AJAX_CALL'))
-                {
-                    //echo "class.secure is calling enableCSRFMagic<br />";
-                    CAT_Helper_Protect::getInstance()->enableCSRFMagic();
-                }
                 global $parser;
                 if (!is_object($parser))
                     $parser = CAT_Helper_Template::getInstance('Dwoo');
@@ -168,83 +161,6 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
 
     //echo "done secure<br />";
     //exit;
-}
-
-/**
- * this is used to configure csrf-magic
- **/
-if (!function_exists('csrf_startup'))
-{
-    function csrf_startup()
-    {
-        // AJAX requests are allowed via POST only and must identify themselves
-        // by adding a '_cat_ajax' param to the request
-        if (isset($_POST['_cat_ajax']))
-            csrf_conf('rewrite', false);
-        // This enables JavaScript rewriting and will ensure your AJAX calls
-        // don't stop working.
-        csrf_conf('rewrite-js', CAT_URL . '/modules/lib_csrfmagic/csrf-magic.js');
-        // This makes csrf-magic call my_csrf_callback() before exiting when
-        // there is a bad csrf token. This lets me customize the error page.
-        csrf_conf('callback', 'cat_csrf_callback');
-        // While this is enabled by default to boost backwards compatibility,
-        // for security purposes it should ideally be off. Some users can be
-        // NATted or have dialup addresses which rotate frequently. Cookies
-        // are much more reliable.
-        csrf_conf('allow-ip', false);
-        // Token lifetime
-        if (defined('TOKEN_LIFETIME') && TOKEN_LIFETIME > 0)
-        {
-            csrf_conf('expires', TOKEN_LIFETIME);
-        }
-    }
-}
-
-if (!function_exists('cat_csrf_callback'))
-{
-    function cat_csrf_callback($tokens)
-    {
-        // check headers content type
-        $headers = headers_list();
-        foreach($headers as $entry)
-        {
-            list($key,$value) = explode(': ',$entry);
-            if(!strcasecmp('Content-type',$key))
-            {
-                if(substr_count($value,'json'))
-                {
-                    print json_encode(array(
-                        'message' => 'CSRF check failed. Your form session may have expired, or you may not have cookies enabled.',
-                        'success' => false,
-                    ));
-                    exit();
-                }
-            }
-        }
-        $data = '';
-        header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
-        if(function_exists('csrf_flattenpost'))
-        {
-            foreach (csrf_flattenpost($_POST) as $key => $value) {
-                if ($key == $GLOBALS['csrf']['input-name']) continue;
-                $data .= '<input type="hidden" name="'.htmlspecialchars($key).'" value="'.htmlspecialchars($value).'" />';
-            }
-            $data = '<form method="post" action="">'.$data.'<input type="submit" value="Try again" /></form>';
-        }
-        echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-    <html>
-      <head>
-      <meta http-equiv="content-type" content="text/html; charset=windows-1250">
-      <title>Black Cat CMS Error Message</title>
-      </head>
-      <body>
-            <p>CSRF check failed. Your form session may have expired, or you may not have
-            cookies enabled.</p>
-            '.$data;
-        if(CAT_Registry::exists('DEBUG_CSRF') && DEBUG_CSRF === true)
-            echo "<p>Debug: $tokens</p>";
-        echo '</body></html>';
-    }   // end function cat_csrf_callback()
 }
 
 /**
