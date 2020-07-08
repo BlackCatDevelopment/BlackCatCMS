@@ -48,7 +48,6 @@
                         url: "ajax_install.php",
                         params: {
                             _cat_ajax: 1,
-                            __csrf_magic: $('input[name="__csrf_magic"]').val()
                         },
                         maxFiles: 1,
                         acceptedFiles: '.zip',
