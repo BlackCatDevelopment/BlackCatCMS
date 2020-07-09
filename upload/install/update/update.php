@@ -156,6 +156,20 @@ foreach(array_values(array('lib_getid3','lib_wblib','wysiwyg')) as $module)
 }
 
 /*******************************************************************************
+    1.3 TO 1.4
+*******************************************************************************/
+$getDB	= CAT_Helper_DB::getInstance()->getConfig();
+$checkForField = $database->query( "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " .
+		"WHERE TABLE_NAME = ':prefix:users' " .
+			"AND COLUMN_NAME = 'newauth' " .
+			"AND TABLE_SCHEMA = '".$getDB['DB_NAME']."'" )->fetchColumn();
+if (!$checkForField) {
+	CAT_Helper_DB::getInstance()->query( "ALTER TABLE `:prefix:users` ADD `newauth` bit(1) NOT NULL DEFAULT 1" );
+	CAT_Helper_DB::getInstance()->query( "UPDATE `:prefix:users` SET `newauth`=0");
+}
+unset($getDB);
+
+/*******************************************************************************
     add missing database entries for addons catalog
 *******************************************************************************/
 $database->query("INSERT IGNORE INTO `:prefix:class_secure` (`module`, `filepath`) VALUES (0, '/backend/addons/ajax_get_template.php');");
@@ -182,6 +196,10 @@ $database->query(sprintf(
 ));
 
 ob_end_clean();
+
+
+
+
 
 /*******************************************************************************
 
@@ -253,6 +271,8 @@ function update_wizard_footer() {
 ';
     exit;
 }
+
+
 
 /*******************************************************************************
     1.1 TO 1.2: We must create the new database settings file first!

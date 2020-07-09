@@ -150,7 +150,8 @@ $group_id = ( is_array($group_id) && in_array('1', $group_id) && $addUser != '' 
 // create new user
 if ( $addUser )
 {
-    $users->createUser($group_id, $active, $username, md5($password), $display_name, $email, $home_folder );
+    $users->createUser($group_id, $active, $username, $password, $display_name, $email, $home_folder );
+    unset($password);
 }
 else
 {
@@ -163,8 +164,7 @@ else
         'email'        => $email,
         'home_folder'  => $home_folder,
     );
-    if($password)
-        $options['password'] = md5($password);
+
     // extended
     $available = $users->getExtendedOptions();
     foreach( $available as $key => $method )
@@ -181,6 +181,7 @@ else
     }
 
     $errors = $users->setUserOptions($user_id,$options);
+    unset($options['password']);
     if(count($errors))
     {
         echo CAT_Object::json_error('Errors:<br />'.implode('<br />',$errors));

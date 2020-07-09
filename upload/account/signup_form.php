@@ -138,9 +138,9 @@ if ( $val->sanitizePost('username') )
     {
         // Generate a random password
         $new_pass     = $users->generateRandomString(8);
-        $md5_password = md5( $new_pass );
+        $password = CAT_Users::getHash( $new_pass );
 
-        $result = $users->createUser($groups_id, $active, $username, $md5_password, $display_name, $email, CAT_Users::get_home_folder() );
+        $result = $users->createUser($groups_id, $active, $username, $password, $display_name, $email, CAT_Users::get_home_folder() );
 
         if ( ! is_bool($result) )
         {

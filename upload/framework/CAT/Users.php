@@ -30,7 +30,7 @@ if (! class_exists('CAT_Object', false)) {
 if (! class_exists('CAT_Users', false)) {
     class CAT_Users extends CAT_Object
     {
-        protected $_config               = array( 'loglevel' => 7 );
+        protected $_config               = array( 'loglevel' => 8 );
     
         private static $validatePasswordError = null;
         private static $lastValidatedPassword = null;
@@ -91,6 +91,133 @@ if (! class_exists('CAT_Users', false)) {
             }
         }
 
+
+
+
+
+        /**
+         * Check whether the password uses already new technic
+         *
+         * @access private
+         * @param string $passwd
+         * @return string
+        **/
+        private static function checkNewPassword(string $username=null)
+        {
+            if (!$username) {
+                return false;
+            }
+
+            $result = self::getInstance()->db()->query(
+                'SELECT `newauth` FROM `:prefix:users` WHERE `username`=:name',
+                array( 'name' => $username )
+            )->fetchColumn();
+
+            return $result == 1 ? true : false;
+        }   // end function checkNewPassword()
+
+        /**
+         * get hash
+         *
+         * @access private
+         * @param string $passwd
+         * @return string
+        **/
+        private static function getHash(string $passwd='', array $options=array())
+        {
+            /* $options = [
+                 'cost' => 11,
+             ];*/
+            return password_hash($passwd, PASSWORD_BCRYPT, $options);
+        }   // end function getHash()
+
+        /**
+         * Compare user's password with given password
+         *
+         * @access public
+         * @param string $username
+         * @param string $passwd
+         * @return numeric
+         */
+        private static function authenticateOldPW(string $username=null, string $passwd=null)
+        {
+            #self::log()->addDebug(sprintf('authenticateOldPW() - Trying to verify password for username with md5() [%s]', $username));
+
+            // if no username or password is given return false
+            if (!$username||!$passwd) {
+                self::setLoginError('An empty value was sent for authentication!');
+                return false;
+            }
+
+            // get id with old md5()
+            $id	= self::getInstance()->db()->query(
+                'SELECT `user_id` FROM `:prefix:users` WHERE `username` = :name AND `password` = :pw',
+                array('name'=>$username,'pw'=>md5($passwd))
+            );
+
+            if ($id->rowCount() == 1) {
+                return $id->fetchColumn();
+            } else {
+                return false;
+            }
+        }
+
+        /**
+         * Compare user's password with given password
+         *
+         * @access public
+         * @param int    $uid
+         * @param string $passwd
+         * @param string $tfaToken
+         * @return bool
+         */
+        private static function authenticate(string $username, string $passwd)
+        {
+            #self::log()->addDebug(sprintf('authenticate() - Trying to verify password for username [%s]', $username));
+
+            if (!$username||!$passwd) {
+                self::setLoginError('An empty value was sent for authentication!');
+                return false;
+            }
+
+            if (password_verify($passwd, self::getPasswd($username))) {
+                return true;
+            } else {
+                self::setLoginError('Invalid credentials');
+                return false;
+            }
+        }   // end function authenticate()
+
+        /**
+         * Get hashed password from database
+         *
+         * @access private
+         * @param int $uid
+         * @return string
+         **/
+        private static function getPasswd(string $username='')
+        {
+            if ($username=='') {
+                return false;
+            }
+
+            #self::log()->addDebug(sprintf('fetching password for username [%s]',$username));
+            $storedHash = self::getInstance()->db()->query(
+                'SELECT `password` FROM `:prefix:users` WHERE `username`=:name',
+                array( 'name' => $username )
+            )->fetchColumn();
+
+            if (self::getInstance()->db()->isError()) {
+                return false;
+            } else {
+                return $storedHash;
+            }
+        }   // end function getPasswd()
+
+
+
+
+
         /**
          * handle user login
          **/
@@ -111,6 +238,7 @@ if (! class_exists('CAT_Users', false)) {
             if (! self::is_authenticated()) {
                 // --- login attempt ---
                 if ($val->sanitizePost('username_fieldname')) {
+
                     // get input data
                     $user = htmlspecialchars($val->sanitizePost($val->sanitizePost('username_fieldname')), ENT_QUOTES);
                     $pw   = $val->sanitizePost($val->sanitizePost('password_fieldname'));
@@ -142,128 +270,139 @@ if (! class_exists('CAT_Users', false)) {
                         self::setLoginError($lang->translate('Invalid credentials'));
                     }
 
-                    if (defined('ENABLE_CSRFPROTECTION') && true === ENABLE_CSRFPROTECTION && true === CAT_Helper_Protect::getInstance()->checkCSRFProtection()) {
-                        //print_r($_COOKIE);
-                        if (!isset($_COOKIE['CSRFP-Token']) || empty($_COOKIE['CSRFP-Token'])) {
-                            self::setLoginError($lang->translate('Invalid credentials (no token)'));
-                        }
-                    }
 
                     if (! self::$loginerror) {
-                        $query  = 'SELECT * FROM `:prefix:users` WHERE `username`=:name AND `password`=:pw';
-                        $qAct		= 'SELECT `active` FROM `:prefix:users` WHERE `username` = :name AND `password` = :pw';
-                        $result = $self->db()->query($query, array('name'=>$name,'pw'=>md5($pw)));
-                        $active		= $self->db()->query($qAct, array('name'=>$name,'pw'=>md5($pw)));
-
-                        if ($active && $result->rowCount() == 1) {
-                            // get default user preferences
-                            $prefs = self::getDefaultUserOptions();
-                            // get basic user data
-                            $user  = $result->fetch(PDO::FETCH_ASSOC);
-                            // add this user's options
-                            $prefs = array_merge(
-                                $prefs,
-                                self::getUserOptions($user['user_id'])
+                        // check for old md5()-password and if login with old method is successful.
+                        if (self::checkNewPassword($user)===false
+                            && (is_numeric($user_id = self::authenticateOldPW($user, $pw) && $user_id > 0))
+                        ) {
+                            // Save new password hash
+                            $self->db()->query(
+                                'UPDATE `:prefix:users` SET `password` =:pw, `newauth`=1 WHERE `user_id`=:user_id',
+                                array(
+                                    'user_id'	=> $user_id,
+                                    'pw'		=> self::getHash($pw)
+                                )
                             );
+                        }
 
-                            foreach (self::$sessioncols as $key) {
-                                $_SESSION[strtoupper($key)] = $user[$key];
-                            }
-
-                            // ----- preferences -----
-                            $_SESSION['LANGUAGE']
-                                = ($user['language'] != '')
-                                ? $user['language']
-                                : (isset($prefs['language']) ? $prefs['language'] : 'DE')
-                                ;
-
-                            $_SESSION['TIMEZONE_STRING']
-                                = (isset($prefs['timezone_string']) && $prefs['timezone_string'] != '')
-                                ? $prefs['timezone_string']
-                                : CAT_Registry::get('DEFAULT_TIMEZONE_STRING')
-                                ;
-
-                            $_SESSION['CAT_DATE_FORMAT']
-                                = (isset($prefs['date_format']) && $prefs['date_format'] != '')
-                                ? $prefs['date_format']
-                                : CAT_Registry::get('CAT_DEFAULT_DATE_FORMAT')
-                                ;
-
-                            $_SESSION['CAT_TIME_FORMAT']
-                                = (isset($prefs['time_format']) && $prefs['time_format'] != '')
-                                ? $prefs['time_format']
-                                : CAT_Registry::get('CAT_DEFAULT_TIME_FORMAT')
-                                ;
-
-                            if (defined('WB2COMPAT') && WB2COMPAT === true) {
-                                $wb2compat_format_map = CAT_Registry::get('WB2COMPAT_FORMAT_MAP');
-
-                                $_SESSION['DATE_FORMAT'] = isset($_SESSION['CAT_DATE_FORMAT']) ?
-                                            $wb2compat_format_map[$_SESSION['CAT_DATE_FORMAT']] : '';
-                                $_SESSION['TIME_FORMAT'] =  isset($_SESSION['CAT_TIME_FORMAT']) ?
-                                            $wb2compat_format_map[$_SESSION['CAT_TIME_FORMAT']] : '';
-                            }
-
-                            date_default_timezone_set($_SESSION['TIMEZONE_STRING']);
-
-                            $_SESSION['SYSTEM_PERMISSIONS']		= 0;
-                            $_SESSION['MODULE_PERMISSIONS']		= array();
-                            $_SESSION['TEMPLATE_PERMISSIONS']	= array();
-                            $_SESSION['GROUP_NAME']				= array();
-
-                            $first_group = true;
-
-                            foreach (explode(",", $user['groups_id']) as $cur_group_id) {
-                                $query   = "SELECT * FROM `:prefix:groups` WHERE group_id=:id";
-                                $result  = $self->db()->query($query, array('id'=>$cur_group_id));
-                                $results = $result->fetch();
-
-                                $_SESSION['GROUP_NAME'][$cur_group_id] = $results['name'];
-
-                                // Set system permissions
-                                if ($results['system_permissions'] != '') {
-                                    $_SESSION['SYSTEM_PERMISSIONS'] = $results['system_permissions'];
+                        // Method to authenticate user
+                        if (($user_id = self::authenticate($user, $pw))>0) {
+                            $query  = 'SELECT * FROM `:prefix:users` WHERE `user_id`=:user_id';
+                            $qAct		= 'SELECT `active` FROM `:prefix:users` WHERE `user_id` = :user_id';
+                            $result = $self->db()->query($query, array('user_id'=>$user_id));
+                            $active		= $self->db()->query($qAct, array('user_id'=>$user_id));
+                        
+                            if ($active && $result->rowCount() == 1) {
+                                // get default user preferences
+                                $prefs = self::getDefaultUserOptions();
+                                // get basic user data
+                                $user  = $result->fetch(PDO::FETCH_ASSOC);
+                                // add this user's options
+                                $prefs = array_merge(
+                                    $prefs,
+                                    self::getUserOptions($user['user_id'])
+                                );
+                        
+                                foreach (self::$sessioncols as $key) {
+                                    $_SESSION[strtoupper($key)] = $user[$key];
                                 }
-
-                                // Set module permissions
-                                if ($results['module_permissions'] != '') {
-                                    if ($first_group) {
-                                        $_SESSION['MODULE_PERMISSIONS']	= explode(',', $results['module_permissions']);
-                                    } else {
-                                        $_SESSION['MODULE_PERMISSIONS']	= array_intersect($_SESSION['MODULE_PERMISSIONS'], explode(',', $results['module_permissions']));
+                        
+                                // ----- preferences -----
+                                $_SESSION['LANGUAGE']
+                                    = ($user['language'] != '')
+                                    ? $user['language']
+                                    : (isset($prefs['language']) ? $prefs['language'] : 'DE')
+                                    ;
+                        
+                                $_SESSION['TIMEZONE_STRING']
+                                    = (isset($prefs['timezone_string']) && $prefs['timezone_string'] != '')
+                                    ? $prefs['timezone_string']
+                                    : CAT_Registry::get('DEFAULT_TIMEZONE_STRING')
+                                    ;
+                        
+                                $_SESSION['CAT_DATE_FORMAT']
+                                    = (isset($prefs['date_format']) && $prefs['date_format'] != '')
+                                    ? $prefs['date_format']
+                                    : CAT_Registry::get('CAT_DEFAULT_DATE_FORMAT')
+                                    ;
+                        
+                                $_SESSION['CAT_TIME_FORMAT']
+                                    = (isset($prefs['time_format']) && $prefs['time_format'] != '')
+                                    ? $prefs['time_format']
+                                    : CAT_Registry::get('CAT_DEFAULT_TIME_FORMAT')
+                                    ;
+                        
+                                if (defined('WB2COMPAT') && WB2COMPAT === true) {
+                                    $wb2compat_format_map = CAT_Registry::get('WB2COMPAT_FORMAT_MAP');
+                        
+                                    $_SESSION['DATE_FORMAT'] = isset($_SESSION['CAT_DATE_FORMAT']) ?
+                                                $wb2compat_format_map[$_SESSION['CAT_DATE_FORMAT']] : '';
+                                    $_SESSION['TIME_FORMAT'] =  isset($_SESSION['CAT_TIME_FORMAT']) ?
+                                                $wb2compat_format_map[$_SESSION['CAT_TIME_FORMAT']] : '';
+                                }
+                        
+                                date_default_timezone_set($_SESSION['TIMEZONE_STRING']);
+                        
+                                $_SESSION['SYSTEM_PERMISSIONS']		= 0;
+                                $_SESSION['MODULE_PERMISSIONS']		= array();
+                                $_SESSION['TEMPLATE_PERMISSIONS']	= array();
+                                $_SESSION['GROUP_NAME']				= array();
+                        
+                                $first_group = true;
+                        
+                                foreach (explode(",", $user['groups_id']) as $cur_group_id) {
+                                    $query   = "SELECT * FROM `:prefix:groups` WHERE group_id=:id";
+                                    $result  = $self->db()->query($query, array('id'=>$cur_group_id));
+                                    $results = $result->fetch();
+                        
+                                    $_SESSION['GROUP_NAME'][$cur_group_id] = $results['name'];
+                        
+                                    // Set system permissions
+                                    if ($results['system_permissions'] != '') {
+                                        $_SESSION['SYSTEM_PERMISSIONS'] = $results['system_permissions'];
                                     }
-                                }
-
-                                // Set template permissions
-                                if ($results['template_permissions'] != '') {
-                                    if ($first_group) {
-                                        $_SESSION['TEMPLATE_PERMISSIONS'] = explode(',', $results['template_permissions']);
-                                    } else {
-                                        $_SESSION['TEMPLATE_PERMISSIONS'] = array_intersect($_SESSION['TEMPLATE_PERMISSIONS'], explode(',', $results['template_permissions']));
+                        
+                                    // Set module permissions
+                                    if ($results['module_permissions'] != '') {
+                                        if ($first_group) {
+                                            $_SESSION['MODULE_PERMISSIONS']	= explode(',', $results['module_permissions']);
+                                        } else {
+                                            $_SESSION['MODULE_PERMISSIONS']	= array_intersect($_SESSION['MODULE_PERMISSIONS'], explode(',', $results['module_permissions']));
+                                        }
                                     }
+                        
+                                    // Set template permissions
+                                    if ($results['template_permissions'] != '') {
+                                        if ($first_group) {
+                                            $_SESSION['TEMPLATE_PERMISSIONS'] = explode(',', $results['template_permissions']);
+                                        } else {
+                                            $_SESSION['TEMPLATE_PERMISSIONS'] = array_intersect($_SESSION['TEMPLATE_PERMISSIONS'], explode(',', $results['template_permissions']));
+                                        }
+                                    }
+                        
+                                    $first_group = false;
+                                }   // foreach ( explode(",",$user['groups_id']) as $cur_group_id )
+                        
+                                // Update the users table with current ip and timestamp
+                                $get_ts	= time();
+                                $get_ip	= $_SERVER['REMOTE_ADDR'];
+                                $query  = "UPDATE `:prefix:users` SET login_when=:when, login_ip=:ip WHERE user_id=:id";
+                                $self->db()->query($query, array('when'=>$get_ts,'ip'=>$get_ip,'id'=>$user['user_id']));
+                                if ($redirect_url) {
+                                    return $redirect_url;
                                 }
-
-                                $first_group = false;
-                            }   // foreach ( explode(",",$user['groups_id']) as $cur_group_id )
-
-                            // Update the users table with current ip and timestamp
-                            $get_ts	= time();
-                            $get_ip	= $_SERVER['REMOTE_ADDR'];
-                            $query  = "UPDATE `:prefix:users` SET login_when=:when, login_ip=:ip WHERE user_id=:id";
-                            $self->db()->query($query, array('when'=>$get_ts,'ip'=>$get_ip,'id'=>$user['user_id']));
-                            if ($redirect_url) {
-                                return $redirect_url;
-                            }
-                            if (self::getInstance()->checkPermission('start', 'start')) {
-                                return CAT_ADMIN_URL.'/start/index.php?initial=true';
+                                if (self::getInstance()->checkPermission('start', 'start')) {
+                                    return CAT_ADMIN_URL.'/start/index.php?initial=true';
+                                } else {
+                                    return CAT_URL.'/index.php';
+                                }
                             } else {
-                                return CAT_URL.'/index.php';
-                            }
-                        } else {
-                            if (!$active && $result->rowCount() == 1) {
-                                self::setLoginError($lang->translate('Your account has been disabled. Please contact the administrator.'));
-                            } else {
-                                self::setLoginError($lang->translate('Invalid credentials'));
+                                if (!$active && $result->rowCount() == 1) {
+                                    self::setLoginError($lang->translate('Your account has been disabled. Please contact the administrator.'));
+                                } else {
+                                    self::setLoginError($lang->translate('Invalid credentials'));
+                                }
                             }
                         }
                     }
@@ -277,10 +416,7 @@ if (! class_exists('CAT_Users', false)) {
                         if ($name) {
                             self::disableAccount($name);
                         }
-                        return $parser->get(
-                            CAT_THEME_URL . '/templates/warning.html',
-                            array()
-                        );
+                        return CAT_THEME_URL . '/templates/warning.html';
                     }
 
                     return false;
@@ -383,9 +519,14 @@ if (! class_exists('CAT_Users', false)) {
         			 */
                     $new_pass = self::generateRandomString(AUTH_MIN_PASS_LENGTH);
 
+                    // Save new password hash
                     $self->db()->query(
-                        "UPDATE `:prefix:users` SET password=:pw, last_reset=:reset WHERE user_id=:id",
-                        array('pw'=>md5($new_pass),'reset'=>time(),'id'=>$results_array['user_id'])
+                        'UPDATE `:prefix:users` SET `password`=:pw, `newauth`=1, last_reset=:reset WHERE `user_id`=:user_id',
+                        array(
+                            'user_id'	=> $results_array['user_id'],
+                            'pw'		=> self::getHash($new_pass),
+                            'reset'		=> time()
+                        )
                     );
 
                     if ($self->db()->isError()) {
@@ -640,9 +781,20 @@ if (! class_exists('CAT_Users', false)) {
         public static function checkUserLogin($name, $pw)
         {
             $self   = self::getInstance();
-            $query  = 'SELECT * FROM `:prefix:users` WHERE `username`=:name AND `password`=:pw AND `active` = 1';
-            $result = $self->db()->query($query, array('name'=>$name,'pw'=>md5($pw)));
-            return ($result->rowCount() == 1) ? true : false;
+
+            // check for old md5()-password and if login with old method is successful.
+            if (self::checkNewPassword($user)===false && is_numeric($user_id = self::authenticateOldPW($user, $pw))) {
+                // Save new password hash
+                $self->db()->query(
+                    'UPDATE `:prefix:users` SET `password` =:pw, `newauth`=1 WHERE `user_id`=:user_id',
+                    array(
+                        'user_id'	=> $user_id,
+                        'pw'		=> self::getHash($pw)
+                    )
+                );
+            }
+
+            return self::authenticate($name, $pw);
         }   // end function checkUserLogin()
         
         /**
@@ -677,22 +829,22 @@ if (! class_exists('CAT_Users', false)) {
          * @param          $groups_id
          * @param  string  $active
          * @param  string  $username
-         * @param  string  $md5_password
+         * @param  string  $password
          * @param  string  $display_name
          * @param  string  $email
          * @param  string  $home_folder
          * @return mixed   true on success, db error message otherwise
          **/
-        public static function createUser($groups_id, $active, $username, $md5_password, $display_name, $email, $home_folder)
+        public static function createUser($groups_id, $active, $username, $pw, $display_name, $email, $home_folder)
         {
             $self  = self::getInstance();
             $query = 'INSERT INTO `:prefix:users` (`group_id`,`groups_id`,`active`,`username`,`password`,`display_name`,`email`,`home_folder`) '
-                   . "VALUES (:groups_id, :groups_id2, :active, :username, :md5_password, :display_name, :email, :home_folder);";
+                   . "VALUES (:groups_id, :groups_id2, :active, :username, :password, :display_name, :email, :home_folder);";
             $self->db()->query(
                 $query,
                 array(
                     'groups_id'    => $groups_id   , 'groups_id2'   => $groups_id   , 'active'      => $active,
-                    'username'     => $username    , 'md5_password' => $md5_password,
+                    'username'     => $username    , 'password'		=> self::getHash($pw),
                     'display_name' => $display_name, 'email'        => $email       , 'home_folder' => $home_folder
                 )
             );
@@ -874,7 +1026,11 @@ if (! class_exists('CAT_Users', false)) {
             foreach ($fields as $key) {
                 if (isset($options[$key]) && $options[$key] !== '') {
                     $q .= "`".$key."`=:$key, ";
-                    $p[$key] = $options[$key];
+                    if ($key=='password') {
+                        $p[$key] = self::getHash($options[$key]);
+                    } else {
+                        $p[$key] = $options[$key];
+                    }
                     $c++;
                 }
             }

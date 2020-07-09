@@ -107,6 +107,10 @@ if ( $current_password == '' )
 {
 	$err_msg[]			= $backend->lang()->translate( 'You must enter your current password to save your changes' );
 }
+else if ( $new_password_1 != $new_password_2 )
+{
+	$err_msg[]			= $backend->lang()->translate( 'The passwords do not match.' );
+}
 else
 {
 	// if new_password is empty, still let current one
@@ -123,10 +127,6 @@ else
         }
 	}
 }
-
-#$current_password		= md5($current_password);
-$new_password_1			= md5($new_password_1);
-$new_password_2			= md5($new_password_2);
 
 // ======================================================================================= 
 // ! if no validation errors, try to update the database, otherwise return errormessages   
@@ -147,30 +147,34 @@ if (!count($err_msg))
     }
 
     // --- save basics ---
-	$sql	 = sprintf(
-        'UPDATE `%susers` SET `display_name` = "%s", '
-	        .  '`password` = "%s", '
-	        .  '`email` = "%s", '
-	        .  '`language` = "%s" '
-	        .  'WHERE `user_id` = %d '
-            .  'AND `password` = "%s"',
-        CAT_TABLE_PREFIX, $display_name, $new_password_1, $email, $language, $user_id, md5($current_password)
-    );
+	$sql	 = 'UPDATE `:prefix:users` SET `display_name` = :display, '
+	        .  '`password` = :pw, '
+	        .  '`email` = :email, '
+	        .  '`language` = :lang '
+	        .  'WHERE `user_id` = :uid';
 
-	if (($stmt = $backend->db()->query($sql)) !== false)
+	$arr	= array(
+	        	'display'	=> $display_name,
+				'pw'		=> CAT_Users::getHash($new_password_1),
+				'email'		=> $email,
+				'lang'		=> $language,
+				'uid'		=> $user_id
+	);
+
+	if (($stmt = $backend->db()->query($sql,$arr)) !== false)
 	{
 		// update successful
         // --- save additional settings ---
-        $backend->db()->query( 'DELETE FROM `'.CAT_TABLE_PREFIX.'users_options` WHERE `user_id` = ' . $user_id );
+        $backend->db()->query( 'DELETE FROM `:prefix:users_options` WHERE `user_id` = :uid', array('uid'=>$user_id) );
         foreach( $extended as $opt => $check )
         {
             $value = $val->sanitizePost($opt);
 //echo "OPT -$opt- VAL -$value- CHECK -$check- VALID -" . call_user_func($check,$value) . "-\n<br />";
             if ( $check && ! call_user_func($check,$value) ) continue;
-            $sql = 'INSERT INTO `%susers_options` '
-                 . 'VALUES ( "%d", "%s", "%s" )'
+            $sql = 'INSERT INTO `:prefix:users_options` '
+                 . 'VALUES ( :uid, :opt, :val )'
                  ;
-            $backend->db()->query(sprintf($sql,CAT_TABLE_PREFIX,$user_id,$opt,$value));
+            $backend->db()->query($sql,array('uid'=>$user_id,'opt'=>$opt,'val'=>$value));
         }
 
 		$_SESSION['DISPLAY_NAME']		= $display_name;
