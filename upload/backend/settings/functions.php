@@ -162,7 +162,7 @@ function getLanguages() {
     {
         $data[$counter]['CODE']    = $l_codes[$l_name];
         $data[$counter]['NAME']    = $l_name;
-        $data[$counter]['SELECTED'] = (DEFAULT_LANGUAGE == $l_codes[$l_name]) ? true : false;
+        $data[$counter]['SELECTED'] = ( defined('DEFAULT_LANGUAGE') && DEFAULT_LANGUAGE == $l_codes[$l_name]) ? true : false;
         $counter++;
     }
     return $data;
@@ -179,7 +179,7 @@ function getTimezones() {
     {
         $data[$counter] = array(
             'NAME'            => $title,
-            'SELECTED'        => ( DEFAULT_TIMEZONE_STRING == $title ) ? true : false
+            'SELECTED'        => ( defined('DEFAULT_TIMEZONE_STRING') && DEFAULT_TIMEZONE_STRING == $title ) ? true : false
         );
         $counter++;
     }
@@ -198,7 +198,7 @@ function getCharsets() {
         $data[$counter] = array(
             'NAME'            => $title,
             'VALUE'            => $code,
-            'SELECTED'        => ( DEFAULT_CHARSET == $code ) ? true : false
+            'SELECTED'        => ( defined('DEFAULT_CHARSET') && DEFAULT_CHARSET == $code ) ? true : false
         );
         $counter++;
     }
@@ -217,7 +217,7 @@ function getDateformats() {
         $data[$counter] = array(
             'NAME'     => $title,
             'VALUE'    => ( $format != 'system_default' )    ? $format : '',
-            'SELECTED' => ( CAT_DEFAULT_DATE_FORMAT == $format ) ? true    : false
+            'SELECTED' => ( defined('CAT_DEFAULT_DATE_FORMAT') && CAT_DEFAULT_DATE_FORMAT == $format ) ? true    : false
         );
         $counter++;
     }
@@ -237,7 +237,7 @@ function getTimeformats() {
         $data[$counter] = array(
             'NAME'     => $title,
             'VALUE'    => ( $format != 'system_default' ) ? $format : '',
-            'SELECTED' => ( CAT_DEFAULT_TIME_FORMAT == $format ) ? true : false
+            'SELECTED' => ( defined('CAT_DEFAULT_TIME_FORMAT') && CAT_DEFAULT_TIME_FORMAT == $format ) ? true : false
         );
         $counter++;
     }
