@@ -107,11 +107,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
 	        if(!$username) return false;
 
 			$result = self::getInstance()->db()->query(
-	            'SELECT `newauth` FROM `:prefix:users` WHERE `username`=:name',
+	            'SELECT LENGTH(`password`) FROM `:prefix:users` WHERE `username`=:name',
             	array( 'name' => $username )
 			)->fetchColumn();
 
-			return $result == 1 ? true : false;
+			return $result <= 32 ? false : true;
         }   // end function checkNewPassword()
 
         /**
@@ -263,11 +263,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
 					{
 						// check for old md5()-password and if login with old method is successful.
 						if (self::checkNewPassword($user)===false
-							&& ( is_numeric($user_id = self::authenticateOldPW($user,$pw) && $user_id > 0 ))
+							&& ( $user_id = self::authenticateOldPW($user,$pw) > 0 )
 						) {
 							// Save new password hash
                     	    $self->db()->query(
-                    	    	'UPDATE `:prefix:users` SET `password` =:pw, `newauth`=1 WHERE `user_id`=:user_id',
+                    	    	'UPDATE `:prefix:users` SET `password` =:pw WHERE `user_id`=:user_id',
                     	    	array(
 	                	        	'user_id'	=> $user_id,
 	                	        	'pw'		=> self::getHash($pw)
@@ -528,7 +528,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
 					// Save new password hash
 					$self->db()->query(
-					   	'UPDATE `:prefix:users` SET `password`=:pw, `newauth`=1, last_reset=:reset WHERE `user_id`=:user_id',
+					   	'UPDATE `:prefix:users` SET `password`=:pw, last_reset=:reset WHERE `user_id`=:user_id',
 					   	array(
 					   	   	'user_id'	=> $results_array['user_id'],
 					   	   	'pw'		=> self::getHash($new_pass),
@@ -804,7 +804,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
 			{
 				// Save new password hash
                 $self->db()->query(
-                	'UPDATE `:prefix:users` SET `password` =:pw, `newauth`=1 WHERE `user_id`=:user_id',
+                	'UPDATE `:prefix:users` SET `password` =:pw WHERE `user_id`=:user_id',
                 	array(
 	                	'user_id'	=> $user_id,
 	                	'pw'		=> self::getHash($pw)
