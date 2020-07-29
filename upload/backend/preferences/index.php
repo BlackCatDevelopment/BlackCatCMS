@@ -94,7 +94,7 @@ else
 // ! read available languages from table addons and assign it to the template   
 // ============================================================================ 
 $addons = CAT_Helper_Addons::getInstance();
-$tpl_data['languages'] = $addons->get_addons( LANGUAGE , 'language', false, 'directory' );
+$tpl_data['languages'] = $addons->get_addons( $_SESSION['LANGUAGE'] , 'language', false, 'directory' );
 
 // ================================== 
 // ! Insert default timezone values   
