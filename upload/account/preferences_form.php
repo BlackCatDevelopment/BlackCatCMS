@@ -59,7 +59,7 @@ $wbcompat  = (defined('WB2COMPAT') && WB2COMPAT===true) ? true : false;
 
 if ( $save && ( $save == 'account_settings' ) )
 {
-	$submit_ok = CAT_Users::checkUserLogin($user->get_username(),$current_password);
+	$submit_ok = CAT_Users::checkUserLogin($user->get_username(),$current_password) > 0 ? true : false;
 	unset($query);
 	unset($result);
 	unset($_POST['save']);

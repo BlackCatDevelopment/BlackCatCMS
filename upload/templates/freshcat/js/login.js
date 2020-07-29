@@ -113,7 +113,6 @@ jQuery(document).ready(function(){
 			dates[password_fieldname]	= current_form.find('input[name=' + password_fieldname + ']').val();
 			dates[password_fieldname+'_1']	= current_form.find('input[name=' + password_fieldname + '_1]').val();
 			dates[password_fieldname+'_2']	= current_form.find('input[name=' + password_fieldname + '_2]').val();
-			console.log(dates);
 		if ( dates.password !== '' &&  dates.user !== '' )
 		{
 			$.ajax(
@@ -139,7 +138,6 @@ jQuery(document).ready(function(){
 						window.location		= data.url
 					}
 					else {
-						console.log(data);
 						if(data.otp)
 						{
 							$('.setNewPassword').removeClass('hidden');

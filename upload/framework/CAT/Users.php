@@ -163,7 +163,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param string $passwd
          * @return bool
          */
-        private static function authenticate(string $username,string $passwd):bool
+        private static function authenticate(string $username,string $passwd):?int
         {
             #self::log()->addDebug(sprintf('authenticate() - Trying to verify password for username [%s]', $username));
 
@@ -173,7 +173,18 @@ if ( ! class_exists( 'CAT_Users', false ) )
             }
 
             if ( password_verify($passwd, self::getPasswd($username)) )
-                return true;
+            {
+				// get id with old md5()
+				$id = self::getInstance()->db()->query(
+					'SELECT `user_id` FROM `:prefix:users` WHERE `username` = :name',
+					array('name'=>$username)
+				)->fetchColumn();
+				if (self::getInstance()->db()->isError()) {
+				    return false;
+				} else {
+				    return $id;
+				}
+            }
 			else {
     	        self::setLoginError('Invalid credentials');
 	            return false;
@@ -284,11 +295,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
 									self::setLoginError($lang->translate('The passwords you entered do not match'));
 								if (self::$loginerror) return false;
 								else $self->db()->query(
-									'UPDATE `:prefix:users` SET `password` =:pw, `otp`=:otp WHERE `user_id`=:user_id',
+									'UPDATE `:prefix:users` SET `password` =:pw, `last_reset`=:reset, `otp`=:otp WHERE `user_id`=:user_id',
 									array(
-								    	'user_id'	=> $user_id,
+										'user_id'	=> $user_id,
 								    	'pw'		=> self::getHash($newPW1),
-								    	'otp'		=> false
+								    	'otp'		=> false,
+										'reset'		=> time()
 									)
 								);
 	                    	}
@@ -554,7 +566,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
 					   	   	'user_id'	=> $results_array['user_id'],
 					   	   	'pw'		=> self::getHash($new_pass),
 					   	   	'reset'		=> time(),
-					   	   	'otp'		=> 1
+					   	   	'otp'		=> true
 					   	)
 					);
 
@@ -604,7 +616,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                             // reset PW if sending mail failed
         					$self->db()->query(
                                 "UPDATE `:prefix:users` SET password=:pw, lastreset='', otp=:otp WHERE user_id=:id",
-                                array('pw'=>$old_pass, 'id'=>$results_array['user_id'], 'otp'=>0)
+                                array('pw'=>$old_pass, 'id'=>$results_array['user_id'], 'otp'=>false)
                             );
         					$message = $self->lang()->translate('Unable to email password, please contact system administrator');
                             if ( is_object($mailer) )
@@ -895,7 +907,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  int  $otp
          * @return mixed   true on success, db error message otherwise
          **/
-        public static function createUser($groups_id, $active, $username, $pw, $display_name, $email, $home_folder, $otp )
+        public static function createUser($groups_id, $active, $username, $pw, $display_name, $email, $home_folder, $otp=true )
         {
             $self  = self::getInstance();
             $query = 'INSERT INTO `:prefix:users` (`group_id`,`groups_id`,`active`,`username`,`password`,`display_name`,`email`,`home_folder`, `otp`) '
@@ -906,7 +918,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     'groups_id'    => $groups_id   , 'groups_id2'   => $groups_id   , 'active'      => $active,
                     'username'     => $username    , 'password'		=> self::getHash($pw),
                     'display_name' => $display_name, 'email'        => $email       , 'home_folder' => $home_folder,
-                    'otp'			=> $otp
+                    'otp'			=> $otp ? true : false
                 )
             );
             if ( $self->db()->isError() )
