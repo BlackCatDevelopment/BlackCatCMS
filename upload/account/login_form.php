@@ -47,10 +47,8 @@ $password_fieldname	= $password_fieldname ? $password_fieldname : CAT_Helper_Val
 $redirect = CAT_Users::getInstance()->handleLogin(false);
 $error    = CAT_Users::getInstance()->loginError();
 
-if ( $redirect && $redirect !== -1 ) {
-	header( 'Location: '.$redirect);
-	header( 'Refresh: 0; URL='.$redirect);
-}
+if ( $redirect && $redirect !== -1 )
+	die( header( 'Refresh: 0; URL='.$redirect."\n\n", true, 302) );
 
 $redirect_url	= CAT_Helper_Validate::sanitizeGet('redirect') != '' ?
 		CAT_Helper_Validate::sanitizeGet('redirect') : CAT_Helper_Validate::sanitizePost('redirect');
