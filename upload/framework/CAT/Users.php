@@ -92,9 +92,6 @@ if ( ! class_exists( 'CAT_Users', false ) )
         }
 
 
-
-
-
         /**
          * Check whether the password uses already new technic
          *
@@ -122,7 +119,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param array $options
          * @return string
         **/
-        private static function getHash(string $passwd='',array $options=array()):string
+        public static function getHash(string $passwd='',array $options=array()):string
         {
            /* $options = [
                 'cost' => 11,
