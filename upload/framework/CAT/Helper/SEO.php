@@ -59,6 +59,9 @@ if (!class_exists('CAT_Helper_SEO'))
                 $root_freq = NULL;
                 foreach($pagelist as $p)
                 {
+					if(in_array($p['visibility'], array('none','deleted','private','registered')))
+						continue;
+
                     $seo_set = array();
                     if(isset($p['settings'])&&isset($p['settings']['seo']))
                         $seo_set = $p['settings']['seo'];
@@ -79,7 +82,7 @@ if (!class_exists('CAT_Helper_SEO'))
                         $root_freq = $freq;
                     }
                     $xml[] = '  <url>
-    <loc>'.CAT_Helper_Validate::getURI($p['href']).'</loc>
+    <loc>'.CAT_Helper_Validate::getURI(CAT_Helper_Page::getLink($p['page_id'])).'</loc>
     <lastmod>'.strftime('%Y-%m-%d',$p['modified_when']).'</lastmod>
     <priority>'.$prio.'</priority>
     <changefreq>'.$freq.'</changefreq>
@@ -94,7 +97,7 @@ if (!class_exists('CAT_Helper_SEO'))
                     $root_url = CAT_URL;
                     if(substr($root_url,-1,1) != '/') $root_url .= '/';
                     array_unshift($xml,'  <url>
-    <loc>'.$root_url.'</loc>
+    <loc>'.CAT_Helper_Validate::getURI($root_url).'</loc>
     <lastmod>'.$root_mod.'</lastmod>
     <priority>1.0</priority>
     <changefreq>'.$root_freq.'</changefreq>
