@@ -255,6 +255,7 @@ CREATE TABLE IF NOT EXISTS `cat_users` (
   `home_folder` varchar(255) NOT NULL DEFAULT '',
   `login_when` int(11) NOT NULL DEFAULT '0',
   `login_ip` varchar(15) NOT NULL DEFAULT '',
+  `otp` bit(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

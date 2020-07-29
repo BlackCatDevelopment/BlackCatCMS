@@ -111,6 +111,12 @@
 				<input type="password" name="password2" id="fc_User_password2" value="" />
 				<div class="fc_settings_max fc_br_all icon-notification fc_gradient_red fc_border fc_shadow_big"> {$NEWUSERHINT.1}</div>
 			</div>
+			<div class="clear_sp"></div>
+			<div class="fc_settings_max">
+				<input type="checkbox" class="fc_checkbox_jq" name="otp" id="fc_User_otp" value="1" checked="checked" />
+				<label for="fc_User_otp">{translate('One-time password')}</label><br>
+				<small>{translate('Recommended: The user must change his password the next time he logs in.')}</small>
+			</div>
 
 			<hr />
 

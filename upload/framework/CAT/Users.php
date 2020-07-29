@@ -99,10 +99,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * Check whether the password uses already new technic
          *
          * @access private
-         * @param string $passwd
-         * @return string
+         * @param string $username
+         * @return bool
         **/
-        private static function checkNewPassword(string $username=NULL)
+        private static function checkNotMD5Password(string $username=NULL):bool
         {
 	        if(!$username) return false;
 
@@ -112,16 +112,17 @@ if ( ! class_exists( 'CAT_Users', false ) )
 			)->fetchColumn();
 
 			return $result <= 32 ? false : true;
-        }   // end function checkNewPassword()
+        }   // end function checkNotMD5Password()
 
         /**
          * get hash
          *
          * @access private
          * @param string $passwd
+         * @param array $options
          * @return string
         **/
-        private static function getHash(string $passwd='',array $options=array())
+        private static function getHash(string $passwd='',array $options=array()):string
         {
            /* $options = [
                 'cost' => 11,
@@ -163,10 +164,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @access public
          * @param int    $uid
          * @param string $passwd
-         * @param string $tfaToken
          * @return bool
          */
-        private static function authenticate(string $username,string $passwd)
+        private static function authenticate(string $username,string $passwd):bool
         {
             #self::log()->addDebug(sprintf('authenticate() - Trying to verify password for username [%s]', $username));
 
@@ -238,6 +238,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     // get input data
                     $user = htmlspecialchars($val->sanitizePost($val->sanitizePost('username_fieldname')),ENT_QUOTES);
                     $pw   = $val->sanitizePost($val->sanitizePost('password_fieldname'));
+                    $newPW1   = $val->sanitizePost($val->sanitizePost('password_fieldname').'_1');
+                    $newPW2   = $val->sanitizePost($val->sanitizePost('password_fieldname').'_2');
                     $name = ( preg_match('/[\;\=\&\|\<\> ]/',$user) ? '' : $user );
 
                     $min_length      = CAT_Registry::exists('AUTH_MIN_LOGIN_LENGTH',false)
@@ -258,11 +260,10 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     if ( ! self::$loginerror && ! CAT_Registry::defined('ALLOW_SHORT_PASSWORDS') && strlen($pw) < $min_pass_length )
                         self::setLoginError($lang->translate('Invalid credentials'));
 
-
 					if( ! self::$loginerror )
 					{
 						// check for old md5()-password and if login with old method is successful.
-						if (self::checkNewPassword($user)===false
+						if (self::checkNotMD5Password($user)===false
 							&& ( $user_id = self::authenticateOldPW($user,$pw) > 0 )
 						) {
 							// Save new password hash
@@ -276,9 +277,25 @@ if ( ! class_exists( 'CAT_Users', false ) )
 						}
 
 						// Method to authenticate user
-						if ( ($user_id = self::authenticate($user,$pw))>0 )
+						if ( ($user_id = self::authenticate($user,$pw))>0 && (!self::checkOTP($user)xor$newPW1!=''))
                     	{
-	                	    
+	                    	if(self::checkOTP($user))
+	                    	{
+								if ( !CAT_Registry::defined('ALLOW_SHORT_PASSWORDS') && strlen($newPW1) < $min_pass_length )
+									self::setLoginError($lang->translate('The password you entered was too short (Please use at least {{AUTH_MIN_PASS_LENGTH}} chars)' , array( 'AUTH_MIN_PASS_LENGTH' => AUTH_MIN_PASS_LENGTH )));
+								if ( $newPW1!=$newPW2 )
+									self::setLoginError($lang->translate('The passwords you entered do not match'));
+								if (self::$loginerror) return false;
+								else $self->db()->query(
+									'UPDATE `:prefix:users` SET `password` =:pw, `otp`=:otp WHERE `user_id`=:user_id',
+									array(
+								    	'user_id'	=> $user_id,
+								    	'pw'		=> self::getHash($newPW1),
+								    	'otp'		=> false
+									)
+								);
+	                    	}
+
                     	    $query  = 'SELECT * FROM `:prefix:users` WHERE `user_id`=:user_id';
                     	    $qAct		= 'SELECT `active` FROM `:prefix:users` WHERE `user_id` = :user_id';
                     	    $result = $self->db()->query($query,array('user_id'=>$user_id));
@@ -403,6 +420,11 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     	        self::setLoginError($lang->translate('Invalid credentials'));
                     	    }
                     	}
+                    	else if ( ($user_id = self::authenticate($user,$pw))>0 )
+                    	{
+	                    	 self::setLoginError($lang->translate('You have to set a new password.'));
+	                    	 $otp	= true;
+                    	}
 					}
 
                     if (
@@ -418,12 +440,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         return CAT_THEME_URL . '/templates/warning.html';
                     }
 
-                    return false;
+                    return isset($otp)&&$otp === true ? -1 : false;
                 }
 
                 if ( ! $output )
                 {
-                    return false;
+                    return isset($otp)&&$otp === true ? -1 : false;
                 }
 
                 $username_fieldname = $val->createFieldname('username_');
@@ -446,6 +468,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
                     'ATTEMPTS'              => $val->fromSession('ATTEMTPS'),
                     'MESSAGE'               => self::$loginerror
                 );
+
+				$tpl_data['otp']				= isset($otp)&&$otp===true ? true : false;
 
 				$tpl_data['meta']['LANGUAGE']	= strtolower(LANGUAGE);
 				$tpl_data['meta']['CHARSET']	= (defined('DEFAULT_CHARSET')) ? DEFAULT_CHARSET : "utf-8";
@@ -528,11 +552,12 @@ if ( ! class_exists( 'CAT_Users', false ) )
 
 					// Save new password hash
 					$self->db()->query(
-					   	'UPDATE `:prefix:users` SET `password`=:pw, last_reset=:reset WHERE `user_id`=:user_id',
+					   	'UPDATE `:prefix:users` SET `password`=:pw, last_reset=:reset, otp=:otp WHERE `user_id`=:user_id',
 					   	array(
 					   	   	'user_id'	=> $results_array['user_id'],
 					   	   	'pw'		=> self::getHash($new_pass),
-					   	   	'reset'		=> time()
+					   	   	'reset'		=> time(),
+					   	   	'otp'		=> 1
 					   	)
 					);
 
@@ -581,8 +606,8 @@ if ( ! class_exists( 'CAT_Users', false ) )
         				{
                             // reset PW if sending mail failed
         					$self->db()->query(
-                                "UPDATE `:prefix:users` SET password=:pw, lastreset='' WHERE user_id=:id",
-                                array('pw'=>$old_pass, 'id'=>$results_array['user_id'])
+                                "UPDATE `:prefix:users` SET password=:pw, lastreset='', otp=:otp WHERE user_id=:id",
+                                array('pw'=>$old_pass, 'id'=>$results_array['user_id'], 'otp'=>0)
                             );
         					$message = $self->lang()->translate('Unable to email password, please contact system administrator');
                             if ( is_object($mailer) )
@@ -800,7 +825,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
             $self   = self::getInstance();
 
 			// check for old md5()-password and if login with old method is successful.
-			if (self::checkNewPassword($user)===false && is_numeric($user_id = self::authenticateOldPW($user,$pw)))
+			if (self::checkNotMD5Password($user)===false && is_numeric($user_id = self::authenticateOldPW($user,$pw)))
 			{
 				// Save new password hash
                 $self->db()->query(
@@ -835,6 +860,26 @@ if ( ! class_exists( 'CAT_Users', false ) )
         }   // end function checkUsernameExists()
 
 
+        /**
+         * check if the password is flagged as one-time password
+         *
+         * @access public
+         * @param  string  $username
+         * @return boolean
+         **/
+        public static function checkOTP(string $username=''):bool
+        {
+	        if($username=='') return false;
+
+            $result = self::getInstance()->db()->query(
+                'SELECT `otp` FROM `:prefix:users` WHERE `username` = :user',
+                array('user'=>$username)
+            );
+            if ( $result->rowCount() > 0 )
+	            return $result->fetchColumn() == 1 ? true : false;
+            return false;
+        }   // end function checkOTP()
+
 /*******************************************************************************
  * CRUD METHODS
  ******************************************************************************/
@@ -850,19 +895,21 @@ if ( ! class_exists( 'CAT_Users', false ) )
          * @param  string  $display_name
          * @param  string  $email
          * @param  string  $home_folder
+         * @param  int  $otp
          * @return mixed   true on success, db error message otherwise
          **/
-        public static function createUser($groups_id, $active, $username, $pw, $display_name, $email, $home_folder )
+        public static function createUser($groups_id, $active, $username, $pw, $display_name, $email, $home_folder, $otp )
         {
             $self  = self::getInstance();
-            $query = 'INSERT INTO `:prefix:users` (`group_id`,`groups_id`,`active`,`username`,`password`,`display_name`,`email`,`home_folder`) '
-                   . "VALUES (:groups_id, :groups_id2, :active, :username, :password, :display_name, :email, :home_folder);";
+            $query = 'INSERT INTO `:prefix:users` (`group_id`,`groups_id`,`active`,`username`,`password`,`display_name`,`email`,`home_folder`, `otp`) '
+                   . "VALUES (:groups_id, :groups_id2, :active, :username, :password, :display_name, :email, :home_folder, :otp);";
             $self->db()->query(
                 $query,
                 array(
                     'groups_id'    => $groups_id   , 'groups_id2'   => $groups_id   , 'active'      => $active,
                     'username'     => $username    , 'password'		=> self::getHash($pw),
-                    'display_name' => $display_name, 'email'        => $email       , 'home_folder' => $home_folder
+                    'display_name' => $display_name, 'email'        => $email       , 'home_folder' => $home_folder,
+                    'otp'			=> $otp
                 )
             );
             if ( $self->db()->isError() )

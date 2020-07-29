@@ -94,6 +94,7 @@ if ($user)
         'email'              => $user['email'],
         'active'             => $user['active'] == 1 ? true : false,
         'home_folder'        => $user['home_folder'],
+        'otp'			    => $user['otp'] == 1 ? true : false,
         'username_fieldname' => $username_fieldname,
         'message'            => $backend->lang()->translate( 'User loaded successfully' ),
         'success'            => true,

@@ -508,6 +508,8 @@ $LANG = array(
     'Upload File(s)' => 'Datei(en) hochladen',
     'You don\'t have the permission to delete this file.' => 'Sie haben nicht die notwendigen Berechtigungen, um diese Datei zu löschen.',
 // ----- users/groups -----
+	'One-time password'	=> 'Einmal-Passwort',
+	'Recommended: The user must change his password the next time he logs in.' => 'Empfohlen: Der Benutzer muss sein Passwort beim nächsten Login ändern.',
     'Activate user' => 'Benutzer aktivieren',
     'Add user' => 'Benutzer anlegen',
     'Add group' => 'Gruppe anlegen',
@@ -555,6 +557,8 @@ $LANG = array(
     'Removing group' => 'Entferne Gruppe',
     'Removing user' => 'Entferne Benutzer',
     'Retype password' => 'Kennwort wiederholen',
+    'Retype new password' => 'Neues Kennwort wiederholen',
+    'Set new password'	=> 'Neues Passwort setzen',
     'Save group' => 'Gruppe speichern',
     'Save user' => 'Benutzer speichern',
     'Saving user' => 'Speichere Benutzer',

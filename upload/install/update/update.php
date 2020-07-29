@@ -185,6 +185,21 @@ $database->query(sprintf(
 ob_end_clean();
 
 
+/*******************************************************************************
+ *   1.3 TO 1.4
+ *	Add attribute otp (one-time password) to table users
+*******************************************************************************/
+$getDB	= CAT_Helper_DB::getInstance()->getConfig();
+$checkForField = $database->query( "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " .
+		"WHERE TABLE_NAME = ':prefix:users' " .
+			"AND COLUMN_NAME = 'otp' " .
+			"AND TABLE_SCHEMA = '".$getDB['DB_NAME']."'" )->fetchColumn();
+if (!$checkForField) {
+	CAT_Helper_DB::getInstance()->query( "ALTER TABLE `:prefix:users` ADD `otp` bit(1) NOT NULL DEFAULT 0" );
+}
+unset($getDB);
+
+
 
 
 
