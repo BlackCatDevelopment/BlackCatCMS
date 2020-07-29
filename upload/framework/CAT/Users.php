@@ -235,7 +235,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
             $lang  = CAT_Helper_I18n::getInstance();
             $self  = self::getInstance();
 
-            $redirect_url   = $val->sanitizePost('redirect');
+            $redirect_url   = $val->getURI($val->sanitizePost('redirect'));
 
             if ( ! self::is_authenticated() )
             {
@@ -417,9 +417,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
 								if ($redirect_url)
 			        	    		return $redirect_url;
                     	        if ( self::getInstance()->checkPermission( 'start', 'start' ) )
-                    	            return CAT_ADMIN_URL.'/start/index.php?initial=true';
+                    	            return CAT_Helper_Validate::getURI(CAT_ADMIN_URL.'/start/index.php?initial=true');
                     	        else
-                    	            return CAT_URL.'/index.php';
+                    	            return CAT_Helper_Validate::getURI(CAT_URL.'/index.php');
                     	    }
                     	    else
                     	    {
@@ -446,7 +446,7 @@ if ( ! class_exists( 'CAT_Users', false ) )
                         {
                             self::disableAccount($name);
                         }
-                        return CAT_THEME_URL . '/templates/warning.html';
+                        return CAT_Helper_Validate::getURI(CAT_THEME_URL . '/templates/warning.html');
                     }
 
                     return isset($otp)&&$otp === true ? -1 : false;
@@ -491,9 +491,9 @@ if ( ! class_exists( 'CAT_Users', false ) )
             	if ($redirect_url)
             		header( 'Location: '.$redirect_url );
                 if ( self::getInstance()->checkPermission( 'start', 'start' ) )
-                    header( 'Location: '.CAT_ADMIN_URL.'/start/index.php' );
+                    header( 'Location: '.CAT_Helper_Validate::getURI(CAT_ADMIN_URL.'/start/index.php') );
                 else
-                    header( 'Location: '.CAT_URL.'/index.php' );
+                    header( 'Location: '.CAT_Helper_Validate::getURI(CAT_URL.'/index.php' ) );
             }
 
         }   // end function handleLogin()

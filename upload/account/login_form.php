@@ -39,16 +39,24 @@ if (defined('CAT_PATH')) {
 	}
 }
 
-$username_fieldname = 'username';
-$password_fieldname = 'password';
+$username_fieldname = CAT_Helper_Validate::sanitizePost('username_fieldname');
+$username_fieldname	= $username_fieldname ? $username_fieldname : CAT_Helper_Validate::createFieldname('username_');
+$password_fieldname = CAT_Helper_Validate::sanitizePost('password_fieldname');
+$password_fieldname	= $password_fieldname ? $password_fieldname : CAT_Helper_Validate::createFieldname('password_');
 
 $redirect = CAT_Users::getInstance()->handleLogin(false);
 $error    = CAT_Users::getInstance()->loginError();
 
-if ( $redirect ) header( 'Location: '.$redirect );
+if ( $redirect && $redirect !== -1 ) {
+	header( 'Location: '.$redirect);
+	header( 'Refresh: 0; URL='.$redirect);
+}
 
 $redirect_url	= CAT_Helper_Validate::sanitizeGet('redirect') != '' ?
 		CAT_Helper_Validate::sanitizeGet('redirect') : CAT_Helper_Validate::sanitizePost('redirect');
+
+// get input data
+$user = htmlspecialchars(CAT_Helper_Validate::sanitizePost($username_fieldname),ENT_QUOTES);
 
 global $parser;
 $parser->setPath( CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/templates/' . CAT_Registry::get('DEFAULT_THEME_VARIANT') ); // if there's a template for this in the current frontend template
@@ -56,8 +64,10 @@ $parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to
 $parser->output('account_login_form',
     array(
         'message'            => $error,
+        'user'				=> $user,
         'username_fieldname' => $username_fieldname,
         'password_fieldname' => $password_fieldname,
+        'otp' 					=> $redirect==-1 ? true : false,
         'redirect_url'       => ( $redirect_url ? $redirect_url : '' ),
     )
 );
