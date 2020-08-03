@@ -58,9 +58,8 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
          **/
         public static function getInstance( $driver = NULL )
         {
-
             if ( ! self::$init ) self::init();
-            if ( ! $driver && isset(self::$routine_driver_map[CATMAILER_LIB]) )
+            if ( ! $driver && (defined('CATMAILER_LIB') && isset(self::$routine_driver_map[CATMAILER_LIB])) )
                 $driver = self::$routine_driver_map[CATMAILER_LIB];
             if ( ! $driver )
                 $driver = 'PHPMailer';
@@ -69,7 +68,7 @@ if ( ! class_exists( 'CAT_Helper_Mail', false ) ) {
                 $driver .= 'Driver';
             }
             // check if the lib is available
-            if ( ! file_exists(dirname(__FILE__).'/../../../modules/'.CATMAILER_LIB) )
+            if (  ! (defined('CATMAILER_LIB') && file_exists(dirname(__FILE__).'/../../../modules/'.CATMAILER_LIB)) )
                 return false;
             if ( ! isset(self::$_drivers[$driver]) || ! is_object(self::$_drivers[$driver]) )
             {

@@ -60,11 +60,6 @@
 					<label for="fc_login_password">{translate('Password')}</label>
 					<input type="password" maxlength="{$MAX_PASSWORD_LEN}" name="{$PASSWORD_FIELDNAME}" id="fc_login_password" />
 				</p>
-                <p class="warning">
-                    {translate('A technical cookie is required for backend login.')}
-                    <input type="checkbox" name="fc_cookie_allow" id="fc_cookie_allow" style="vertical-align:bottom" />
-                    {translate('allow')}
-                </p>
 				<p class="setNewPassword{if !$otp} hidden{/if}">
 					<label for="fc_login_newpassword1">{translate('New password')}</label>
 					<input type="password" maxlength="{$MAX_PASSWORD_LEN}" name="{$PASSWORD_FIELDNAME}_1" id="fc_login_newpassword1" />
@@ -73,6 +68,11 @@
 					<label for="fc_login_newpassword2">{translate('Retype new password')}</label>
 					<input type="password" maxlength="{$MAX_PASSWORD_LEN}" name="{$PASSWORD_FIELDNAME}_2" id="fc_login_newpassword2" />
 				</p>
+                <p class="warning">
+                    {translate('A technical cookie is required for backend login.')}
+                    <input type="checkbox" name="fc_cookie_allow" id="fc_cookie_allow" style="vertical-align:bottom" />
+                    {translate('allow')}
+                </p>
 				<p>
 					<button type="submit" name="submit_login" class="fc_login_button icon-switch"> {translate('Login')}</button>
 				</p>
