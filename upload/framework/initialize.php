@@ -153,7 +153,7 @@ if (!defined('SESSION_STARTED')) {
 
     if (session_status() == PHP_SESSION_NONE) {
         session_start([
-            'save_path'       => __DIR__.'/../temp/sessions',
+            'save_path'       => __DIR__.CAT_Registry::get('SESSION_SAVE_PATH'),
             'cookie_lifetime' => time() + SESSION_LIFETIME,
             'cookie_path'     => $cookie_settings['path'],
             'cookie_domain'   => $cookie_settings['domain'],

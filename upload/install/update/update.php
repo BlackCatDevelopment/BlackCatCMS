@@ -182,13 +182,20 @@ $database->query(sprintf(
     CAT_TABLE_PREFIX, $current_build, 'cat_build'
 ));
 
-ob_end_clean();
 
+/*******************************************************************************
+ *   1.3 TO 1.4
+ *	Add value for session_save_path
+*******************************************************************************/
+
+$database->query("INSERT IGNORE INTO `:prefix:settings` (`name`, `value`) VALUES ('session_save_path', '/../temp/sessions');");
 
 /*******************************************************************************
  *   1.3 TO 1.4
  *	Add attribute otp (one-time password) to table users
 *******************************************************************************/
+
+
 $getDB	= CAT_Helper_DB::getInstance()->getConfig();
 $checkForField = $database->query( "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " .
 		"WHERE TABLE_NAME = ':prefix:users' " .
@@ -200,7 +207,7 @@ if (!$checkForField) {
 unset($getDB);
 
 
-
+ob_end_clean();
 
 
 /*******************************************************************************

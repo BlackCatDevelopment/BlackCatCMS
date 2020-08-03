@@ -33,8 +33,11 @@
 			<label class="fc_label_300" for="fc_session_lifetime" title="">{translate('Session lifetime')}:</label>
 			<input type="text" name="session_lifetime" id="fc_session_lifetime"  value="{$values.session_lifetime}" /> s
 			<p>{translate('Allowed values')}: 0 - 10000</p>
+			<div class="clear"></div>
+			<label class="fc_label_300" for="fc_session_save_path">{translate('Session path')}:</label>
+			<input type="text" name="session_save_path" id="fc_session_save_path" value="{$values.session_save_path}" />
+            <p>{translate('You have to log in again if you change this value.')}</p>
 			<div class="clear_sp"></div>
-
 			<label class="fc_label_300" for="fc_max_attempts" title="{translate('By default, wrong login attempts are only saved in the session. To lock the user account after the max. attempts are reached, use the appropriate security setting. (Security -> Disable user accounts when max login attempts is reached)')}">{translate('Allowed wrong login attempts')}:</label>
 			<input type="text" name="max_attempts" id="fc_max_attempts"  value="{$values.max_attempts}" />
 			<p>{translate('When reaching this number, more login attempts are not possible for this session.')} ({translate('Allowed values')}: 1 - 10)</p>
