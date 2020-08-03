@@ -129,7 +129,7 @@ $bundled = array(
 // ----- modules -----
     'blackcatFilter' , 'droplets'  , 'lib_getid3',
     'lib_dwoo'       , 'lib_images', 'lib_jquery', 'lib_pclzip', 'lib_search'  ,
-    'lib_zendlite'   , 'lib_csrfmagic',
+    'lib_zendlite'   , 
     'lib_doctrine'   ,
     'menu_link'      , 'show_menu2', 'wrapper'   , 'wysiwyg'   , 'wysiwyg_admin',
 // ----- templates -----
@@ -138,7 +138,7 @@ $bundled = array(
     'DE'             , 'EN'
 );
 $mandatory = array(
-    'droplets', 'lib_csrfmagic', 'lib_doctrine', 'lib_dwoo', 'lib_jquery', 'lib_pclzip', 'show_menu2', 'wysiwyg', 'wysiwyg_admin'
+    'droplets', 'lib_doctrine', 'lib_dwoo', 'lib_jquery', 'lib_pclzip', 'show_menu2', 'wysiwyg', 'wysiwyg_admin'
 );
 
 // *****************************************************************************
