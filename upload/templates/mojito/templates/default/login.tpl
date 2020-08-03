@@ -5,10 +5,20 @@
 		<input type="hidden" name="redirect" value="{$redirect_url}" >
 		<input type="hidden" name="username_fieldname" value="{$username_fieldname}" >
 		<input type="hidden" name="password_fieldname" value="{$password_fieldname}" >
-		{translate('Login')}:<br>
-		<input type="text" name="{$username_fieldname}" placeholder="email@domain.de" id="loginInput"><br>
-		{translate('Password')}:<br>
-		<input type="password" name="{$password_fieldname}" placeholder="Passwort"><br>
+		<p {if $otp}style="display:none;"{/if}>
+			{translate('Login')}:<br>
+			<input type="text" name="{$username_fieldname}" placeholder="{translate('Username')}" id="loginInput" value="{$user}">
+		</p>
+		<p>
+			{translate('Password')}:<br>
+			<input type="password" name="{$password_fieldname}" placeholder="{translate('Password')}">
+		</p>
+		<p {if !$otp}style="display:none;"{/if}>
+			<label class="account_label" for="{$password_fieldname}_1">{translate('New password')}:</label><br>
+			<input type="password" class="account_input" name="{$password_fieldname}_1" id="{$password_fieldname}_1" maxlength="30"  placeholder="{translate('New password')}"><br>
+			<label class="account_label" for="{$password_fieldname}_2">{translate('Retype new password')}:</label><br>
+			<input type="password" class="account_input" name="{$password_fieldname}_2" id="{$password_fieldname}_2" maxlength="30"  placeholder="{translate('Retype new password')}"><br>
+		</p>
 		<button type="submit" class="icon-switch gradient_blue dr_hover" id="loginButton"> {translate('Login')}</button><br><br>
 		<a href="{$CAT_URL}/account/forgot.php" class="forgotPW"> {translate('Forgot your details?')}</a>
 	</form>

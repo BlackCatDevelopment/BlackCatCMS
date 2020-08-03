@@ -155,19 +155,6 @@ foreach(array_values(array('lib_getid3','lib_wblib','wysiwyg')) as $module)
     $database->query( $sql, array('time' => time(), 'ver' => $addon_info['module_version'], 'dir' => $addon_info['module_directory'] ) );
 }
 
-/*******************************************************************************
-    1.3 TO 1.4
-*******************************************************************************/
-$getDB	= CAT_Helper_DB::getInstance()->getConfig();
-$checkForField = $database->query( "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " .
-		"WHERE TABLE_NAME = ':prefix:users' " .
-			"AND COLUMN_NAME = 'newauth' " .
-			"AND TABLE_SCHEMA = '".$getDB['DB_NAME']."'" )->fetchColumn();
-if (!$checkForField) {
-	CAT_Helper_DB::getInstance()->query( "ALTER TABLE `:prefix:users` ADD `newauth` bit(1) NOT NULL DEFAULT 1" );
-	CAT_Helper_DB::getInstance()->query( "UPDATE `:prefix:users` SET `newauth`=0");
-}
-unset($getDB);
 
 /*******************************************************************************
     add missing database entries for addons catalog
@@ -196,6 +183,21 @@ $database->query(sprintf(
 ));
 
 ob_end_clean();
+
+
+/*******************************************************************************
+ *   1.3 TO 1.4
+ *	Add attribute otp (one-time password) to table users
+*******************************************************************************/
+$getDB	= CAT_Helper_DB::getInstance()->getConfig();
+$checkForField = $database->query( "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " .
+		"WHERE TABLE_NAME = ':prefix:users' " .
+			"AND COLUMN_NAME = 'otp' " .
+			"AND TABLE_SCHEMA = '".$getDB['DB_NAME']."'" )->fetchColumn();
+if (!$checkForField) {
+	CAT_Helper_DB::getInstance()->query( "ALTER TABLE `:prefix:users` ADD `otp` bit(1) NOT NULL DEFAULT 0" );
+}
+unset($getDB);
 
 
 

@@ -46,9 +46,11 @@
 				<a href="{$CAT_URL}" class="icon-home fc_border_all fc_border_all_light fc_gradient1 fc_gradient_hover" id="fc_home_site" title="{translate('Home')}"></a>
 			</div>
 			<form name="login" action="{$ACTION_URL}" method="post" id="fc_login_form" class="fc_gradient1 fc_br_bottom fc_border">
-				<p>
-					{*Currently not active <input type="hidden" name="url" value="{$REDIRECT}" />*}
+				<h2 class="setNewPassword{if !$otp} hidden{/if}" style="margin-top:0;">{translate('Set new password')}</h2>
+				<p class="setNewPasswordHidden{if $otp} hidden{/if}">
+					<input type="hidden" name="redirect" value="{$REDIRECT}" />
 					<input type="hidden" name="username_fieldname" value="{$USERNAME_FIELDNAME}" />
+					<input type="hidden" name="password_fieldname" value="{$PASSWORD_FIELDNAME}" />
 					<input type="hidden" name="password_fieldname" value="{$PASSWORD_FIELDNAME}" />
 		
 					<label for="fc_login_username">{translate('Username')}</label>
@@ -58,11 +60,22 @@
 					<label for="fc_login_password">{translate('Password')}</label>
 					<input type="password" maxlength="{$MAX_PASSWORD_LEN}" name="{$PASSWORD_FIELDNAME}" id="fc_login_password" />
 				</p>
+<<<<<<< HEAD
                 <p class="warning">
                     {translate('A technical cookie is required for backend login.')}
                     <input type="checkbox" name="fc_cookie_allow" id="fc_cookie_allow" style="vertical-align:bottom" />
                     {translate('allow')}
                 </p>
+=======
+				<p class="setNewPassword{if !$otp} hidden{/if}">
+					<label for="fc_login_newpassword1">{translate('New password')}</label>
+					<input type="password" maxlength="{$MAX_PASSWORD_LEN}" name="{$PASSWORD_FIELDNAME}_1" id="fc_login_newpassword1" />
+				</p>
+				<p class="setNewPassword{if !$otp} hidden{/if}">
+					<label for="fc_login_newpassword2">{translate('Retype new password')}</label>
+					<input type="password" maxlength="{$MAX_PASSWORD_LEN}" name="{$PASSWORD_FIELDNAME}_2" id="fc_login_newpassword2" />
+				</p>
+>>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
 				<p>
 					<button type="submit" name="submit_login" class="fc_login_button icon-switch"> {translate('Login')}</button>
 				</p>

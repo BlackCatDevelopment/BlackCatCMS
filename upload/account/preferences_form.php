@@ -56,10 +56,7 @@ $wbcompat  = (defined('WB2COMPAT') && WB2COMPAT===true) ? true : false;
 
 if ( $save && ( $save == 'account_settings' ) )
 {
-	$query  = "SELECT `password` from `:prefix:users` where `user_id`=:id AND `password`=:pw";
-	$result = $database->query($query,array('id'=>$user->get_user_id(),'pw'=>md5($val->sanitizePost('current_password'))));
-	if ( $result->rowCount() == 1 )
-		$submit_ok = true;
+	$submit_ok = CAT_Users::checkUserLogin($user->get_username(),$current_password) > 0 ? true : false;
 	unset($query);
 	unset($result);
 	unset($_POST['save']);

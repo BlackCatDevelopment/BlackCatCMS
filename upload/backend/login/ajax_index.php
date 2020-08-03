@@ -57,7 +57,8 @@ else
     $ajax	= array(
     	'url'			=> $redirect,
     	'success'		=> CAT_Users::getInstance()->is_authenticated(),
-    	'message'		=> ( ($redirect===false||$error) ? $error : NULL ),
+    	'otp'			=> $redirect==-1 ? true : false,
+    	'message'		=> ( (($redirect==-1||$redirect===false)||$error) ? $error : NULL ),
         'timer'         => ini_get('session.gc_maxlifetime'),
     );
 }

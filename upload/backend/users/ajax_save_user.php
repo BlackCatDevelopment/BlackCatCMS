@@ -74,6 +74,8 @@ $password2          = $val->sanitizePost('password2');
 $email              = $val->sanitizePost('email',NULL,true);
 $home_folder        = $val->sanitizePost('home_folder',NULL,true);
 $active             = $val->sanitizePost('active') != '' ? 1 : 0;
+$otp            	 = $val->sanitizePost('otp') != '' ? true : false;
+
 $groups             = NULL;
 
 if($val->sanitizePost('groups',NULL,true))
@@ -150,7 +152,7 @@ $group_id = ( is_array($group_id) && in_array('1', $group_id) && $addUser != '' 
 // create new user
 if ( $addUser )
 {
-    $users->createUser($group_id, $active, $username, $password, $display_name, $email, $home_folder );
+    $users->createUser($group_id, $active, $username, $password, $display_name, $email, $home_folder, $otp );
     unset($password);
 }
 else
@@ -163,6 +165,7 @@ else
         'display_name' => $display_name,
         'email'        => $email,
         'home_folder'  => $home_folder,
+        'otp' 			=> $otp
     );
 
     // extended

@@ -112,6 +112,8 @@ jQuery(document).ready(function(){
 			};
 			dates[username_fieldname]	= current_form.find('input[name=' + username_fieldname + ']').val();
 			dates[password_fieldname]	= current_form.find('input[name=' + password_fieldname + ']').val();
+			dates[password_fieldname+'_1']	= current_form.find('input[name=' + password_fieldname + '_1]').val();
+			dates[password_fieldname+'_2']	= current_form.find('input[name=' + password_fieldname + '_2]').val();
 		if ( dates.password !== '' &&  dates.user !== '' )
 		{
 			$.ajax(
@@ -137,10 +139,22 @@ jQuery(document).ready(function(){
 						window.location		= data.url
 					}
 					else {
+<<<<<<< HEAD
 						$('#fc_forms').effect( 'shake', { times: 2 }, 300);
 						$('#fc_message_login').addClass('icon-warning highlight').removeClass('icon-info').text(' ' + data.message).slideDown(300);
 						$('input[name=' + password_fieldname + ']').val('');
                         $('input[name=' + username_fieldname + ']').focus();
+=======
+						if(data.otp)
+						{
+							$('.setNewPassword').removeClass('hidden');
+							$('.setNewPasswordHidden').addClass('hidden');
+						} else {
+							$('#fc_forms').effect( 'shake', { times: 2 }, 300);
+							$('#fc_message_login').addClass('icon-warning highlight').removeClass('icon-info').text(' ' + data.message).slideDown(300);
+							$('input[name=' + password_fieldname + ']').val('').focus();
+						}
+>>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
 					}
 				},
 				error:		function( jqXHR, textStatus, errorThrown )
