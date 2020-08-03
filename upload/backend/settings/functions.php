@@ -177,11 +177,7 @@ function getTimezones()
     foreach ($timezone_table as $title) {
         $data[$counter] = array(
             'NAME'            => $title,
-<<<<<<< HEAD
-            'SELECTED'        => (DEFAULT_TIMEZONE_STRING == $title) ? true : false
-=======
             'SELECTED'        => ( defined('DEFAULT_TIMEZONE_STRING') && DEFAULT_TIMEZONE_STRING == $title ) ? true : false
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
         );
         $counter++;
     }
@@ -199,12 +195,8 @@ function getCharsets()
     foreach ($CHARSETS as $code => $title) {
         $data[$counter] = array(
             'NAME'            => $title,
-            'VALUE'            => $code,
-<<<<<<< HEAD
-            'SELECTED'        => (DEFAULT_CHARSET == $code) ? true : false
-=======
+            'VALUE'           => $code,
             'SELECTED'        => ( defined('DEFAULT_CHARSET') && DEFAULT_CHARSET == $code ) ? true : false
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
         );
         $counter++;
     }
@@ -222,13 +214,8 @@ function getDateformats()
     foreach ($DATE_FORMATS as $format => $title) {
         $data[$counter] = array(
             'NAME'     => $title,
-<<<<<<< HEAD
-            'VALUE'    => ($format != 'system_default')    ? $format : '',
-            'SELECTED' => (CAT_DEFAULT_DATE_FORMAT == $format) ? true    : false
-=======
             'VALUE'    => ( $format != 'system_default' )    ? $format : '',
             'SELECTED' => ( defined('CAT_DEFAULT_DATE_FORMAT') && CAT_DEFAULT_DATE_FORMAT == $format ) ? true    : false
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
         );
         $counter++;
     }
@@ -247,13 +234,8 @@ function getTimeformats()
         $format = str_replace('|', ' ', $format); // Add's white-spaces (not able to be stored in array key)
         $data[$counter] = array(
             'NAME'     => $title,
-<<<<<<< HEAD
-            'VALUE'    => ($format != 'system_default') ? $format : '',
-            'SELECTED' => (CAT_DEFAULT_TIME_FORMAT == $format) ? true : false
-=======
             'VALUE'    => ( $format != 'system_default' ) ? $format : '',
             'SELECTED' => ( defined('CAT_DEFAULT_TIME_FORMAT') && CAT_DEFAULT_TIME_FORMAT == $format ) ? true : false
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
         );
         $counter++;
     }

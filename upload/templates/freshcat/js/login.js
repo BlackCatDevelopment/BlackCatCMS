@@ -139,12 +139,10 @@ jQuery(document).ready(function(){
 						window.location		= data.url
 					}
 					else {
-<<<<<<< HEAD
 						$('#fc_forms').effect( 'shake', { times: 2 }, 300);
 						$('#fc_message_login').addClass('icon-warning highlight').removeClass('icon-info').text(' ' + data.message).slideDown(300);
 						$('input[name=' + password_fieldname + ']').val('');
                         $('input[name=' + username_fieldname + ']').focus();
-=======
 						if(data.otp)
 						{
 							$('.setNewPassword').removeClass('hidden');
@@ -154,7 +152,6 @@ jQuery(document).ready(function(){
 							$('#fc_message_login').addClass('icon-warning highlight').removeClass('icon-info').text(' ' + data.message).slideDown(300);
 							$('input[name=' + password_fieldname + ']').val('').focus();
 						}
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
 					}
 				},
 				error:		function( jqXHR, textStatus, errorThrown )

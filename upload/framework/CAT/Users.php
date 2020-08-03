@@ -99,25 +99,12 @@ if (! class_exists('CAT_Users', false)) {
          * @param string $username
          * @return bool
         **/
-<<<<<<< HEAD
-        private static function checkNewPassword(string $username=null)
-=======
         private static function checkNotMD5Password(string $username=NULL):bool
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
         {
             if (!$username) {
                 return false;
             }
 
-<<<<<<< HEAD
-            $result = self::getInstance()->db()->query(
-                'SELECT `newauth` FROM `:prefix:users` WHERE `username`=:name',
-                array( 'name' => $username )
-            )->fetchColumn();
-
-            return $result == 1 ? true : false;
-        }   // end function checkNewPassword()
-=======
 			$result = self::getInstance()->db()->query(
 	            'SELECT LENGTH(`password`) FROM `:prefix:users` WHERE `username`=:name',
             	array( 'name' => $username )
@@ -125,7 +112,6 @@ if (! class_exists('CAT_Users', false)) {
 
 			return $result <= 32 ? false : true;
         }   // end function checkNotMD5Password()
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
 
         /**
          * get hash
@@ -135,11 +121,7 @@ if (! class_exists('CAT_Users', false)) {
          * @param array $options
          * @return string
         **/
-<<<<<<< HEAD
-        private static function getHash(string $passwd='', array $options=array())
-=======
         public static function getHash(string $passwd='',array $options=array()):string
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
         {
             /* $options = [
                  'cost' => 11,
@@ -186,11 +168,7 @@ if (! class_exists('CAT_Users', false)) {
          * @param string $passwd
          * @return bool
          */
-<<<<<<< HEAD
-        private static function authenticate(string $username, string $passwd)
-=======
         private static function authenticate(string $username,string $passwd):?int
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
         {
             #self::log()->addDebug(sprintf('authenticate() - Trying to verify password for username [%s]', $username));
 
@@ -199,14 +177,6 @@ if (! class_exists('CAT_Users', false)) {
                 return false;
             }
 
-<<<<<<< HEAD
-            if (password_verify($passwd, self::getPasswd($username))) {
-                return true;
-            } else {
-                self::setLoginError('Invalid credentials');
-                return false;
-            }
-=======
             if ( password_verify($passwd, self::getPasswd($username)) )
             {
 				// get id with old md5()
@@ -224,7 +194,6 @@ if (! class_exists('CAT_Users', false)) {
     	        self::setLoginError('Invalid credentials');
 	            return false;
 			}
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
         }   // end function authenticate()
 
         /**
@@ -281,14 +250,11 @@ if (! class_exists('CAT_Users', false)) {
                     // get input data
                     $user = htmlspecialchars($val->sanitizePost($val->sanitizePost('username_fieldname')), ENT_QUOTES);
                     $pw   = $val->sanitizePost($val->sanitizePost('password_fieldname'));
-<<<<<<< HEAD
                     $callow = $val->sanitizePost('fc_cookie_allow');
                     $name = (preg_match('/[\;\=\&\|\<\> ]/', $user) ? '' : $user);
-=======
                     $newPW1   = $val->sanitizePost($val->sanitizePost('password_fieldname').'_1');
                     $newPW2   = $val->sanitizePost($val->sanitizePost('password_fieldname').'_2');
                     $name = ( preg_match('/[\;\=\&\|\<\> ]/',$user) ? '' : $user );
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
 
                     $min_length      = CAT_Registry::exists('AUTH_MIN_LOGIN_LENGTH', false)
                                      ? CAT_Registry::get('AUTH_MIN_LOGIN_LENGTH')
@@ -315,8 +281,6 @@ if (! class_exists('CAT_Users', false)) {
                         self::setLoginError($lang->translate('Invalid credentials'));
                     }
 
-
-<<<<<<< HEAD
                     if (! self::$loginerror) {
                         // check for old md5()-password and if login with old method is successful.
                         if (self::checkNewPassword($user)===false
@@ -452,7 +416,7 @@ if (! class_exists('CAT_Users', false)) {
                             }
                         }
                     }
-=======
+
 					if( ! self::$loginerror )
 					{
 						// check for old md5()-password and if login with old method is successful.
@@ -620,7 +584,7 @@ if (! class_exists('CAT_Users', false)) {
 	                    	 $otp	= true;
                     	}
 					}
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
+
 
                     if (
                            $val->fromSession('ATTEMPTS') > CAT_Registry::get('MAX_ATTEMPTS')
@@ -637,14 +601,9 @@ if (! class_exists('CAT_Users', false)) {
                     return isset($otp)&&$otp === true ? -1 : false;
                 }
 
-<<<<<<< HEAD
-                if (! $output) {
-                    return false;
-=======
                 if ( ! $output )
                 {
                     return isset($otp)&&$otp === true ? -1 : false;
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
                 }
 
                 $username_fieldname = $val->createFieldname('username_');
@@ -668,17 +627,10 @@ if (! class_exists('CAT_Users', false)) {
                     'MESSAGE'               => self::$loginerror
                 );
 
-<<<<<<< HEAD
-                $tpl_data['meta']['LANGUAGE']	= strtolower(LANGUAGE);
-                $tpl_data['meta']['CHARSET']	= (defined('DEFAULT_CHARSET')) ? DEFAULT_CHARSET : "utf-8";
-=======
 				$tpl_data['otp']				= isset($otp)&&$otp===true ? true : false;
 
 				$tpl_data['meta']['LANGUAGE']	= strtolower(LANGUAGE);
 				$tpl_data['meta']['CHARSET']	= (defined('DEFAULT_CHARSET')) ? DEFAULT_CHARSET : "utf-8";
-
-                $parser->output('login',$tpl_data);
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
 
                 $parser->output('login', $tpl_data);
             } else {
@@ -691,8 +643,6 @@ if (! class_exists('CAT_Users', false)) {
                     header('Location: '.CAT_URL.'/index.php');
                 }
             }
-<<<<<<< HEAD
-=======
             else
             {
             	if ($redirect_url)
@@ -703,7 +653,7 @@ if (! class_exists('CAT_Users', false)) {
                     header( 'Location: '.CAT_Helper_Validate::getURI(CAT_URL.'/index.php' ) );
             }
 
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
+
         }   // end function handleLogin()
 
         /**
@@ -760,7 +710,6 @@ if (! class_exists('CAT_Users', false)) {
                     /**
         			 *	Generate a random password then update the database with it
         			 */
-<<<<<<< HEAD
                     $new_pass = self::generateRandomString(AUTH_MIN_PASS_LENGTH);
 
                     // Save new password hash
@@ -785,7 +734,7 @@ if (! class_exists('CAT_Users', false)) {
                             CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/templates/' . CAT_Registry::get('DEFAULT_THEME_VARIANT')
                         );
                         $parser->setFallbackPath(CAT_PATH . '/account/templates/default/');
-=======
+
         			$new_pass = self::generateRandomString(AUTH_MIN_PASS_LENGTH);
 
 					// Save new password hash
@@ -814,7 +763,6 @@ if (! class_exists('CAT_Users', false)) {
         					CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/templates/' . CAT_Registry::get('DEFAULT_THEME_VARIANT')
         				);
         				$parser->setFallbackPath( CAT_PATH . '/account/templates/default/' );
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
                         $mail_message = $parser->get('account_forgotpw_mail_body', array(
                             'LOGIN_DISPLAY_NAME'  => $results_array['display_name'],
                             'LOGIN_WEBSITE_TITLE' => WEBSITE_TITLE,
@@ -841,15 +789,9 @@ if (! class_exists('CAT_Users', false)) {
                             $result       = true;
                         } else {
                             // reset PW if sending mail failed
-<<<<<<< HEAD
-                            $self->db()->query(
-                                "UPDATE `:prefix:users` SET password=:pw, lastreset='' WHERE user_id=:id",
-                                array('pw'=>$old_pass, 'id'=>$results_array['user_id'])
-=======
         					$self->db()->query(
                                 "UPDATE `:prefix:users` SET password=:pw, lastreset='', otp=:otp WHERE user_id=:id",
                                 array('pw'=>$old_pass, 'id'=>$results_array['user_id'], 'otp'=>false)
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
                             );
                             $message = $self->lang()->translate('Unable to email password, please contact system administrator');
                             if (is_object($mailer)) {
@@ -1062,17 +1004,6 @@ if (! class_exists('CAT_Users', false)) {
         {
             $self   = self::getInstance();
 
-<<<<<<< HEAD
-            // check for old md5()-password and if login with old method is successful.
-            if (self::checkNewPassword($user)===false && is_numeric($user_id = self::authenticateOldPW($user, $pw))) {
-                // Save new password hash
-                $self->db()->query(
-                    'UPDATE `:prefix:users` SET `password` =:pw, `newauth`=1 WHERE `user_id`=:user_id',
-                    array(
-                        'user_id'	=> $user_id,
-                        'pw'		=> self::getHash($pw)
-                    )
-=======
 			// check for old md5()-password and if login with old method is successful.
 			if (self::checkNotMD5Password($user)===false && is_numeric($user_id = self::authenticateOldPW($user,$pw)))
 			{
@@ -1083,7 +1014,6 @@ if (! class_exists('CAT_Users', false)) {
 	                	'user_id'	=> $user_id,
 	                	'pw'		=> self::getHash($pw)
                 	)
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
                 );
             }
 
@@ -1111,11 +1041,6 @@ if (! class_exists('CAT_Users', false)) {
         }   // end function checkUsernameExists()
 
 
-<<<<<<< HEAD
-        /*******************************************************************************
-         * CRUD METHODS
-         ******************************************************************************/
-=======
         /**
          * check if the password is flagged as one-time password
          *
@@ -1139,7 +1064,7 @@ if (! class_exists('CAT_Users', false)) {
 /*******************************************************************************
  * CRUD METHODS
  ******************************************************************************/
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
+
 
         /**
          * create a new user
@@ -1155,11 +1080,7 @@ if (! class_exists('CAT_Users', false)) {
          * @param  int  $otp
          * @return mixed   true on success, db error message otherwise
          **/
-<<<<<<< HEAD
-        public static function createUser($groups_id, $active, $username, $pw, $display_name, $email, $home_folder)
-=======
         public static function createUser($groups_id, $active, $username, $pw, $display_name, $email, $home_folder, $otp=true )
->>>>>>> ae19f5b62c3e91fa9f95cab0a2c6f18400bca867
         {
             $self  = self::getInstance();
             $query = 'INSERT INTO `:prefix:users` (`group_id`,`groups_id`,`active`,`username`,`password`,`display_name`,`email`,`home_folder`, `otp`) '
