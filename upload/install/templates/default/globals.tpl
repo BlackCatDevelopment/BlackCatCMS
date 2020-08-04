@@ -30,7 +30,7 @@
     <tr{if $errors.session_save_path} class="fail"{/if}>
       <td><label for="session_save_path">{translate('Session path')}</label></td>
       <td>
-        <input type="text" tabindex="1" name="session_save_path" id="session_save_path" style="width: 97%;" value="{$session_save_path}" />
+        <input type="text" tabindex="1" name="session_save_path" id="session_save_path" style="width: 97%;" value="{if $session_save_path}{$session_save_path}{else}temp/session{/if}" />
         {if $errors.session_save_path}<br /><span>{$errors.session_save_path}</span>{/if}
       </td>
 	</tr>

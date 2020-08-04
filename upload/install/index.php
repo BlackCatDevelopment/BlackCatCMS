@@ -511,7 +511,7 @@ function check_step_globals() {
     }
     if ( ! isset($config['session_save_path']) || $config['session_save_path'] == '' )
     {
-        $errors['session_save_path'] = 'temp/sessions';
+        $errors['session_save_path'] = $lang->translate('Enter a relative path where the sessions are saved.');
     }
     if ( ! isset($config['ssl']) || $config['ssl'] == '' )
     {

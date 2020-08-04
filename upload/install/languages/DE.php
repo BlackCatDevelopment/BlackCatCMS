@@ -96,6 +96,8 @@ $LANG = array(
         => 'Der Installer hat festgestellt, daß auf diesem Server SSL (https) verfügbar ist. Wir empfehlen, das Backend über https zu betreiben, um die Daten zu schützen. Unglücklicherweise ist der SSL-Check aber nicht 100% sicher, daher kann es sein, daß SSL später trotzdem in der config.php deaktiviert werden muß.',
     'Use SSL for Backend'
         => 'SSL für das Backend verwenden',
+	'Enter a relative path where the sessions are saved.'
+		=> 'Geben Sie einen relativen Pfad an, an dem die Sessions gespeichert werden.',
 // ----- db -----
     'Please enter your MySQL database server details below'
         => 'Bitte geben Sie Ihre Datenbankeinstellungen ein',
