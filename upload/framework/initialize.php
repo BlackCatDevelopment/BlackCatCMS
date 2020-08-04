@@ -151,8 +151,11 @@ if (!defined('SESSION_STARTED')) {
     global $cookie_settings;
     $cookie_settings = session_get_cookie_params();
 
-	if (is_dir(__DIR__.CAT_Registry::get('SESSION_SAVE_PATH')))
+	if (!is_dir(__DIR__.CAT_Registry::get('SESSION_SAVE_PATH')))
+	{
 		CAT_Helper_Directory::createDirectory(__DIR__.CAT_Registry::get('SESSION_SAVE_PATH'));
+		chmod(__DIR__.CAT_Registry::get('SESSION_SAVE_PATH'),0700);
+	}
 
     if (session_status() == PHP_SESSION_NONE) {
         session_start([
