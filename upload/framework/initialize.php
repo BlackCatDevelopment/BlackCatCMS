@@ -151,15 +151,18 @@ if (!defined('SESSION_STARTED')) {
     global $cookie_settings;
     $cookie_settings = session_get_cookie_params();
 
-	if (!is_dir(__DIR__.CAT_Registry::get('SESSION_SAVE_PATH')))
+	if (!is_dir(CAT_PATH.'/'.CAT_Registry::get('SESSION_SAVE_PATH')))
 	{
-		CAT_Helper_Directory::createDirectory(__DIR__.CAT_Registry::get('SESSION_SAVE_PATH'));
-		chmod(__DIR__.CAT_Registry::get('SESSION_SAVE_PATH'),0700);
+		CAT_Helper_Directory::createDirectory(CAT_PATH.'/'.CAT_Registry::get('SESSION_SAVE_PATH'));
+		$f = fopen(CAT_PATH.'/'.CAT_Registry::get('SESSION_SAVE_PATH')."/.htaccess", "a+");
+		fwrite($f, "deny from all");
+		fclose($f);
+		chmod(CAT_PATH.'/'.CAT_Registry::get('SESSION_SAVE_PATH'),0700);
 	}
 
     if (session_status() == PHP_SESSION_NONE) {
         session_start([
-            'save_path'       => __DIR__.CAT_Registry::get('SESSION_SAVE_PATH'),
+            'save_path'       => CAT_PATH.'/'.CAT_Registry::get('SESSION_SAVE_PATH'),
             'cookie_lifetime' => time() + SESSION_LIFETIME,
             'cookie_path'     => $cookie_settings['path'],
             'cookie_domain'   => $cookie_settings['domain'],

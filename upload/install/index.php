@@ -511,7 +511,7 @@ function check_step_globals() {
     }
     if ( ! isset($config['session_save_path']) || $config['session_save_path'] == '' )
     {
-        $errors['session_save_path'] = '/../temp/sessions';
+        $errors['session_save_path'] = 'temp/sessions';
     }
     if ( ! isset($config['ssl']) || $config['ssl'] == '' )
     {
@@ -976,11 +976,11 @@ function fill_tables($database) {
         $errors['settings'] = $database->get_error();
     }
     else {
-		CAT_Helper_Directory::getInstance()->createDirectory($config['session_save_path']);
-		$f = fopen($config['session_save_path']."/.htaccess", "a+");
+		CAT_Helper_Directory::getInstance()->createDirectory(CAT_PATH.'/'.$config['session_save_path']);
+		$f = fopen(CAT_PATH.'/'.$config['session_save_path']."/.htaccess", "a+");
 		fwrite($f, "deny from all");
 		fclose($f);
-		chmod($config['session_save_path'],0700);
+		chmod(CAT_PATH.'/'.$config['session_save_path'],0700);
         write2log('filled table [settings]');
     }
 

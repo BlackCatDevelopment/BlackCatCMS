@@ -189,7 +189,7 @@ $database->query(sprintf(
 *******************************************************************************/
 
 
-$database->query("INSERT IGNORE INTO `:prefix:settings` (`name`, `value`) VALUES ('session_save_path', '/../temp/sessions');");
+$database->query("INSERT IGNORE INTO `:prefix:settings` (`name`, `value`) VALUES ('session_save_path', 'temp/sessions');");
 
 $session_save_path	= CAT_PATH.'/temp/sessions'; 
 CAT_Helper_Directory::getInstance()->createDirectory($session_save_path);
