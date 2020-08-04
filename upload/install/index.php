@@ -476,6 +476,7 @@ function show_step_globals( $step ) {
         'globals.tpl',
         array(
             'installer_cat_url'                 => dirname( $installer_uri ).'/',
+            'session_save_path'            		=> $config['session_save_path'],
             'installer_guid_prefix'             => $config['installer_guid_prefix'],
             'timezones'                          => $timezone_table,
             'installer_default_timezone_string' => $config['default_timezone_string'],
@@ -507,6 +508,10 @@ function check_step_globals() {
     if ( ! isset($config['cat_url']) || $config['cat_url'] == '' )
     {
         $errors['installer_cat_url'] = $lang->translate('Please insert the base URL!');
+    }
+    if ( ! isset($config['session_save_path']) || $config['session_save_path'] == '' )
+    {
+        $errors['session_save_path'] = '/../temp/sessions';
     }
     if ( ! isset($config['ssl']) || $config['ssl'] == '' )
     {
@@ -958,6 +963,7 @@ function fill_tables($database) {
         ." ('default_timezone_string', '".$config['default_timezone_string']."'),"
         ." ('installation_time', '".time()."'),"
         ." ('operating_system', '".$config['operating_system']."'),"
+        ." ('session_save_path', '".$config['session_save_path']."'),"
         ." ('string_dir_mode', '$dir_mode'),"
         ." ('string_file_mode', '$file_mode'),"
         ." ('website_title', '".$config['website_title']."'),"
@@ -970,6 +976,11 @@ function fill_tables($database) {
         $errors['settings'] = $database->get_error();
     }
     else {
+		CAT_Helper_Directory::getInstance()->createDirectory($config['session_save_path']);
+		$f = fopen($config['session_save_path']."/.htaccess", "a+");
+		fwrite($f, "deny from all");
+		fclose($f);
+		chmod($config['session_save_path'],0700);
         write2log('filled table [settings]');
     }
 

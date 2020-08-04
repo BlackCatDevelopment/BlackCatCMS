@@ -188,7 +188,15 @@ $database->query(sprintf(
  *	Add value for session_save_path
 *******************************************************************************/
 
+
 $database->query("INSERT IGNORE INTO `:prefix:settings` (`name`, `value`) VALUES ('session_save_path', '/../temp/sessions');");
+
+$session_save_path	= CAT_PATH.'/temp/sessions'; 
+CAT_Helper_Directory::getInstance()->createDirectory($session_save_path);
+$f = fopen($session_save_path."/.htaccess", "a+");
+fwrite($f, "deny from all");
+fclose($f);
+chmod($config['session_save_path'],0700);
 
 /*******************************************************************************
  *   1.3 TO 1.4

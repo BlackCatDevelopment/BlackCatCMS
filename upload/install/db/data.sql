@@ -61,7 +61,6 @@ INSERT INTO `cat_settings` (name, value) VALUES
     ('section_blocks', 'true'),
     ('server_email', 'admin@yourdomain.tld'),
     ('token_lifetime', '1800'),
-    ('session_save_path', '/../temp/sessions'),
     ('upload_allowed', 'jpg,jpeg,gif,gz,png,pdf,tif,zip'),
     ('upload_enable_mimecheck', true),
     ('upload_mime_default_type','text/plain'),
