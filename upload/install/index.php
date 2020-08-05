@@ -476,7 +476,8 @@ function show_step_globals( $step ) {
         'globals.tpl',
         array(
             'installer_cat_url'                 => dirname( $installer_uri ).'/',
-            'session_save_path'            		=> $config['session_save_path'],
+            'installer_session_save_path'       => $config['session_save_path']
+            											? $config['session_save_path'] : 'temp/session',
             'installer_guid_prefix'             => $config['installer_guid_prefix'],
             'timezones'                          => $timezone_table,
             'installer_default_timezone_string' => $config['default_timezone_string'],
@@ -511,7 +512,7 @@ function check_step_globals() {
     }
     if ( ! isset($config['session_save_path']) || $config['session_save_path'] == '' )
     {
-        $errors['session_save_path'] = $lang->translate('Enter a relative path where the sessions are saved.');
+        $errors['installer_session_save_path'] = $lang->translate('Enter a relative path where the sessions are saved.');
     }
     if ( ! isset($config['ssl']) || $config['ssl'] == '' )
     {
@@ -963,7 +964,7 @@ function fill_tables($database) {
         ." ('default_timezone_string', '".$config['default_timezone_string']."'),"
         ." ('installation_time', '".time()."'),"
         ." ('operating_system', '".$config['operating_system']."'),"
-        ." ('session_save_path', '".$config['session_save_path']."'),"
+        ." ('installer_session_save_path', '".$config['installer_session_save_path']."'),"
         ." ('string_dir_mode', '$dir_mode'),"
         ." ('string_file_mode', '$file_mode'),"
         ." ('website_title', '".$config['website_title']."'),"
@@ -976,11 +977,11 @@ function fill_tables($database) {
         $errors['settings'] = $database->get_error();
     }
     else {
-		CAT_Helper_Directory::getInstance()->createDirectory(CAT_PATH.'/'.$config['session_save_path']);
-		$f = fopen(CAT_PATH.'/'.$config['session_save_path']."/.htaccess", "a+");
+		CAT_Helper_Directory::getInstance()->createDirectory(CAT_PATH.'/'.$config['installer_session_save_path']);
+		$f = fopen(CAT_PATH.'/'.$config['installer_session_save_path']."/.htaccess", "a+");
 		fwrite($f, "deny from all");
 		fclose($f);
-		chmod(CAT_PATH.'/'.$config['session_save_path'],0700);
+		chmod(CAT_PATH.'/'.$config['installer_session_save_path'],0700);
         write2log('filled table [settings]');
     }
 

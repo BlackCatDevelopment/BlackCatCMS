@@ -27,11 +27,11 @@
 	    <input type="checkbox" tabindex="6" name="installer_world_writeable" id="installer_world_writeable" value="true" />
       </td>
 	</tr>
-    <tr{if $errors.session_save_path} class="fail"{/if}>
-      <td><label for="session_save_path">{translate('Session path')}</label></td>
+    <tr{if $errors.installer_session_save_path} class="fail"{/if}>
+      <td><label for="installer_session_save_path">{translate('Session path')}</label></td>
       <td>
-        <input type="text" tabindex="1" name="session_save_path" id="session_save_path" style="width: 97%;" value="{if $session_save_path}{$session_save_path}{else}temp/session{/if}" />
-        {if $errors.session_save_path}<br /><span>{$errors.session_save_path}</span>{/if}
+        <input type="text" tabindex="1" name="installer_session_save_path" id="installer_session_save_path" style="width: 97%;" value="{if $installer_session_save_path}{$installer_session_save_path}{else}temp/session{/if}" />
+        {if $errors.installer_session_save_path}<br /><span>{$errors.installer_session_save_path}</span>{/if}
       </td>
 	</tr>
     <tr{if $errors.installer_cat_url} class="fail"{/if}>
