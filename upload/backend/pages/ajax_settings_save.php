@@ -72,6 +72,7 @@ $page             = CAT_Helper_Page::getPage($page_id);
 $old_parent       = $page['parent'];
 $old_link         = $page['link'];
 $old_position     = $page['position'];
+$old_trail        = $page['page_trail'];
 $old_admin_groups = explode(',', str_replace('_', '', $page['admin_groups']));
 $old_admin_users  = explode(',', str_replace('_', '', $page['admin_users']));
 $in_old_group     = false;
@@ -200,10 +201,11 @@ if ( $options['link'] !== $old_link )
     $result = CAT_Helper_Page::createAccessFile($options['link'], $page_id, $options['level']);
     // Update child pages
     $old_link_len = strlen($old_link);
-    $query_subs   = $database->query(sprintf(
+    $sql          = sprintf(
         "SELECT `page_id`, `parent`, `link`, `level` FROM `%spages` WHERE `page_trail` LIKE '%s,%%' ORDER BY LEVEL ASC",
-        CAT_TABLE_PREFIX, $options['page_trail']
-    ));
+        CAT_TABLE_PREFIX, $old_trail
+    );
+    $query_subs   = $database->query($sql);
     if ( is_object($query_subs) && $query_subs->numRows() > 0 )
     {
         while ( $sub = $query_subs->fetch(PDO::FETCH_ASSOC) )
