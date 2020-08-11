@@ -23,9 +23,9 @@
  *
  */
 
-define('CAT_INSTALL',true);
+define('CAT_INSTALL', true);
 #define('CAT_INSTALL_PROCESS',true);
-define('CAT_LOGFILE',dirname(__FILE__).'/../../temp/update.log');
+define('CAT_LOGFILE', dirname(__FILE__).'/../../temp/update.log');
 
 //**************************************************************************
 // add framework subdir to include path
@@ -37,36 +37,41 @@ set_include_path(implode(PATH_SEPARATOR, array(
 //**************************************************************************
 // register autoloader
 //**************************************************************************
-spl_autoload_register(function($class)
-{
+spl_autoload_register(function ($class) {
     $file = str_replace('_', '/', $class);
-    if (file_exists(dirname(__FILE__).'/../../framework/' . $file . '.php'))
-    {
+    if (file_exists(dirname(__FILE__).'/../../framework/' . $file . '.php')) {
         @require dirname(__FILE__).'/../../framework/' . $file . '.php';
     }
     // next in stack
 });
 
 $lang          = CAT_Helper_I18n::getInstance();
-$lang->addFile( $lang->getLang().'.php', dirname(__FILE__).'/../languages' );
+$lang->addFile($lang->getLang().'.php', dirname(__FILE__).'/../languages');
 
-// allow upgrade vom v1.2, too
-if(!isset($_GET['do']) && CAT_Helper_Addons::versionCompare(CAT_VERSION,'1.2','<'))
+// allow upgrade from v1.2, too
+if (!isset($_GET['do']) && CAT_Helper_Addons::versionCompare(CAT_VERSION, '1.2', '<')) {
     update11to12pre();
+}
 
 // keep wb2compat.php happy
-foreach(array_values(array('DEFAULT_THEME','CATMAILER_DEFAULT_SENDERNAME','DEFAULT_TIMEZONE_STRING','SERVER_EMAIL')) as $const) {
-    define($const,'');
+foreach (array_values(array('DEFAULT_THEME','CATMAILER_DEFAULT_SENDERNAME','DEFAULT_TIMEZONE_STRING','SERVER_EMAIL')) as $const) {
+    define($const, '');
 }
-define('LANGUAGE','EN');
+define('LANGUAGE', 'EN');
 
 @require_once dirname(__FILE__).'/../../config.php';
 
-$result = $database->query(sprintf("SELECT `value` FROM `%ssettings` WHERE `name`='%s'",CAT_TABLE_PREFIX,'cat_version'));
-if($result->rowCount() > 0)
-{
+if(!version_compare(PHP_VERSION,'7.3','>=')) {
+    pre_update_error($lang->translate(
+        'You need to have PHP version >= v7.3 to run BlackCat CMS v1.4 and above. You have strong>{{version}}</strong> installed.',
+        array('version'=>PHP_VERSION)
+    ));
+}
+
+$result = $database->query(sprintf("SELECT `value` FROM `%ssettings` WHERE `name`='%s'", CAT_TABLE_PREFIX, 'cat_version'));
+if ($result->rowCount() > 0) {
     $row = $result->fetch();
-    define('CAT_VERSION',$row['value']);
+    define('CAT_VERSION', $row['value']);
 }
 
 // Try to guess installer URL
@@ -74,34 +79,31 @@ $installer_uri = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://')
                . $_SERVER["SERVER_NAME"]
                . (($_SERVER['SERVER_PORT']!=80 && !isset($_SERVER['HTTPS']))
                  ? ':'.$_SERVER['SERVER_PORT']
-                 : '' )
+                 : '')
                . $_SERVER["SCRIPT_NAME"];
-$installer_uri = dirname( $installer_uri );
-$installer_uri = str_ireplace('update','',$installer_uri);
+$installer_uri = dirname($installer_uri);
+$installer_uri = str_ireplace('update', '', $installer_uri);
 
-if(!CAT_Helper_Addons::versionCompare( CAT_VERSION, '1.1' ))
+if (!CAT_Helper_Addons::versionCompare(CAT_VERSION, '1.1')) {
     pre_update_error($lang->translate(
         'You need to have <strong>BlackCat CMS v1.1</strong> installed to use the Update.<br />You have <strong>{{version}}</strong> installed.',
         array( 'version' => CAT_VERSION )
     ));
+}
 
 // get new version from tag.txt
-if ( file_exists(dirname(__FILE__).'/../tag.txt') )
-{
-    $tag = fopen( dirname(__FILE__).'/../tag.txt', 'r' );
-    list ( $current_version, $current_build, $current_build ) = explode( '#', fgets($tag) );
+if (file_exists(dirname(__FILE__).'/../tag.txt')) {
+    $tag = fopen(dirname(__FILE__).'/../tag.txt', 'r');
+    list($current_version, $current_build, $current_build) = explode('#', fgets($tag));
     fclose($tag);
-}
-else
-{
+} else {
     pre_update_error($lang->translate(
         'The file <pre>tag.txt</pre> is missing! Unable to upgrade!'
     ));
     exit;
 }
 
-if(!CAT_Helper_Validate::getInstance()->sanitizeGet('do'))
-{
+if (!CAT_Helper_Validate::getInstance()->sanitizeGet('do')) {
     update_wizard_header();
     echo '
         <h1>BlackCat CMS Update Wizard</h1>
@@ -142,25 +144,60 @@ $database->query(
     1.2 TO 1.2.1
 *******************************************************************************/
 $sql = "UPDATE `:prefix:system_permissions` SET `perm_bit`=:val WHERE `perm_name`=:perm";
-$database->query( $sql, array('val'=>1,'perm'=>'settings'));
-$database->query( $sql, array('val'=>2,'perm'=>'settings_basic'));
-$database->query( $sql, array('val'=>4,'perm'=>'settings_advanced'));
+$database->query($sql, array('val'=>1,'perm'=>'settings'));
+$database->query($sql, array('val'=>2,'perm'=>'settings_basic'));
+$database->query($sql, array('val'=>4,'perm'=>'settings_advanced'));
 
 // update module versions
 $sql = "UPDATE `:prefix:addons` SET `upgraded`=:time, `version`=:ver WHERE `directory`=:dir";
-foreach(array_values(array('lib_getid3','lib_wblib','wysiwyg')) as $module)
-{
+foreach (array_values(array('lib_getid3','lib_wblib','wysiwyg')) as $module) {
     $addon_dir  = CAT_PATH.'/modules/'.$module;
     $addon_info = CAT_Helper_Addons::checkInfo($addon_dir);
-    $database->query( $sql, array('time' => time(), 'ver' => $addon_info['module_version'], 'dir' => $addon_info['module_directory'] ) );
+    $database->query($sql, array('time' => time(), 'ver' => $addon_info['module_version'], 'dir' => $addon_info['module_directory'] ));
 }
-
 
 /*******************************************************************************
     add missing database entries for addons catalog
 *******************************************************************************/
 $database->query("INSERT IGNORE INTO `:prefix:class_secure` (`module`, `filepath`) VALUES (0, '/backend/addons/ajax_get_template.php');");
 $database->query("INSERT IGNORE INTO `:prefix:class_secure` (`module`, `filepath`) VALUES (0, '/backend/addons/ajax_update_catalog.php');");
+
+/*******************************************************************************
+    1.3 TO 1.4
+*******************************************************************************/
+// remove csrf setting
+$database->query('DELETE FROM `:prefix:settings` WHERE `name`="enable_csrfmagic";');
+// remove token lifetime
+$database->query('DELETE FROM `:prefix:settings` WHERE `name`="token_lifetime";');
+// add new settings
+$database->query('INSERT IGNORE INTO `:prefix:settings` (`name`,`value`) VALUES ( "session_lifetime", "7200" );');
+$database->query('INSERT IGNORE INTO `:prefix:settings` (`name`,`value`) VALUES ( "cookie_samesite", "Strict" );');
+// create sessions subfolder
+$database->query("INSERT IGNORE INTO `:prefix:settings` (`name`, `value`) VALUES ('session_save_path', 'temp/sessions');");
+$session_save_path	= CAT_PATH.'/temp/sessions';
+CAT_Helper_Directory::getInstance()->createDirectory($session_save_path);
+// protect sessions subfolder
+$fh = fopen($session_save_path.'/.htaccess','w');
+fwrite($fh,"Order deny,allow\n");
+fwrite($fh,"Deny from all\n");
+fwrite($fh,"ErrorDocument 403 ".CAT_URL."\n");
+fwrite($fh,"ErrorDocument 404 ".CAT_URL."\n");
+fclose($fh);
+chmod($config['session_save_path'],0700);
+
+/*******************************************************************************
+ *   1.3 TO 1.4
+ *	Add attribute otp (one-time password) to table users
+*******************************************************************************/
+$getDB	= CAT_Helper_DB::getInstance()->getConfig();
+$checkForField = $database->query( "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " .
+		"WHERE TABLE_NAME = ':prefix:users' " .
+			"AND COLUMN_NAME = 'otp' " .
+			"AND TABLE_SCHEMA = '".$getDB['DB_NAME']."'" )->fetchColumn();
+if (!$checkForField) {
+	CAT_Helper_DB::getInstance()->query( "ALTER TABLE `:prefix:users` ADD `otp` bit(1) NOT NULL DEFAULT 0" );
+}
+unset($getDB);
 
 /*******************************************************************************
     ALL VERSIONS
@@ -175,53 +212,23 @@ CAT_Helper_Directory::removeDirectory($temp_path.'/compiled');
 *******************************************************************************/
 $database->query(sprintf(
     'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
-    CAT_TABLE_PREFIX, $current_version, 'cat_version'
+    CAT_TABLE_PREFIX,
+    $current_version,
+    'cat_version'
 ));
 $database->query(sprintf(
     'UPDATE `%ssettings` SET `value`="%s" WHERE `name`="%s"',
-    CAT_TABLE_PREFIX, $current_build, 'cat_build'
+    CAT_TABLE_PREFIX,
+    $current_build,
+    'cat_build'
 ));
-
-
-/*******************************************************************************
- *   1.3 TO 1.4
- *	Add value for session_save_path
-*******************************************************************************/
-
-
-$database->query("INSERT IGNORE INTO `:prefix:settings` (`name`, `value`) VALUES ('session_save_path', 'temp/sessions');");
-
-$session_save_path	= CAT_PATH.'/temp/sessions'; 
-CAT_Helper_Directory::getInstance()->createDirectory($session_save_path);
-$f = fopen($session_save_path."/.htaccess", "a+");
-fwrite($f, "deny from all");
-fclose($f);
-chmod($config['session_save_path'],0700);
-
-/*******************************************************************************
- *   1.3 TO 1.4
- *	Add attribute otp (one-time password) to table users
-*******************************************************************************/
-
-
-$getDB	= CAT_Helper_DB::getInstance()->getConfig();
-$checkForField = $database->query( "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " .
-		"WHERE TABLE_NAME = ':prefix:users' " .
-			"AND COLUMN_NAME = 'otp' " .
-			"AND TABLE_SCHEMA = '".$getDB['DB_NAME']."'" )->fetchColumn();
-if (!$checkForField) {
-	CAT_Helper_DB::getInstance()->query( "ALTER TABLE `:prefix:users` ADD `otp` bit(1) NOT NULL DEFAULT 0" );
-}
-unset($getDB);
-
 
 ob_end_clean();
 
-
 /*******************************************************************************
 
 *******************************************************************************/
-$installer_uri = str_replace('/update','',$installer_uri);
+$installer_uri = str_replace('/update', '', $installer_uri);
 update_wizard_header();
     echo '
         <h2>'.$lang->translate('Update done').'</h2>
@@ -232,7 +239,8 @@ update_wizard_header();
 update_wizard_footer();
 exit;
 
-function pre_update_error( $msg ) {
+function pre_update_error($msg)
+{
     global $installer_uri, $lang;
     update_wizard_header(true);
     echo'
@@ -246,7 +254,8 @@ function pre_update_error( $msg ) {
     update_wizard_footer();
 }   // end function pre_update_error()
 
-function update_wizard_header($is_error=false) {
+function update_wizard_header($is_error=false)
+{
     global $installer_uri, $lang;
     $header = $is_error
             ? 'BlackCat CMS Update Prerequistes Error'
@@ -266,7 +275,8 @@ function update_wizard_header($is_error=false) {
     <div style="float:left;width:100%;">';
 }
 
-function update_wizard_footer() {
+function update_wizard_footer()
+{
     echo '
     </div>
   </div>
@@ -289,8 +299,6 @@ function update_wizard_footer() {
     exit;
 }
 
-
-
 /*******************************************************************************
     1.1 TO 1.2: We must create the new database settings file first!
     Note: We cannot include / require the original config.php as it will
@@ -299,23 +307,22 @@ function update_wizard_footer() {
 function update11to12pre()
 {
     $db_config_file_path = CAT_Helper_Directory::sanitizePath(dirname(__FILE__).'/../../framework/CAT/Helper/DB');
-    if(is_dir($db_config_file_path)) {
+    if (is_dir($db_config_file_path)) {
         // find file
         // note: .bc.php as suffix filter does not work!
-        $configfiles = CAT_Helper_Directory::scanDirectory(dirname(__FILE__).'/../../framework/CAT/Helper/DB',true,true,NULL,array('php'),NULL,array('index.php'));
+        $configfiles = CAT_Helper_Directory::scanDirectory(dirname(__FILE__).'/../../framework/CAT/Helper/DB', true, true, null, array('php'), null, array('index.php'));
     } else {
-        mkdir($db_config_file_path,'0755');
+        mkdir($db_config_file_path, '0755');
     }
-    if(!is_array($configfiles) || !count($configfiles))
-    {
+    if (!is_array($configfiles) || !count($configfiles)) {
         include dirname(__FILE__).'/../admin_dummy.inc.php';
         $admin = new admin_dummy();
         // get the DB config from config.php
         $config = file_get_contents(dirname(__FILE__).'/../../config.php');
-        preg_match_all("~define\(\'CAT_(DB_\w+)[^,].+?\'([^\'].+?)\'~i",$config,$m);
-        if(is_array($m) && count($m)) {
+        preg_match_all("~define\(\'CAT_(DB_\w+)[^,].+?\'([^\'].+?)\'~i", $config, $m);
+        if (is_array($m) && count($m)) {
             $db = array();
-            for($i=0;$i<count($m[0]);$i++) {
+            for ($i=0;$i<count($m[0]);$i++) {
                 $db[$m[1][$i]] = $m[2][$i];
             }
             $db_config_content = "
@@ -338,12 +345,12 @@ NAME=".$db['DB_NAME']."
             // save database settings; we generate a file name here
             $db_settings_file = $db_config_file_path.'/'.$admin->createGUID('').'.bc.php';
             write2log('trying to create '.$db_settings_file);
-            if(($handle = @fopen($db_settings_file, 'w')) === false) {
+            if (($handle = @fopen($db_settings_file, 'w')) === false) {
                 write2log('!!!ERROR!!! Cannot create database settings file ['.$db_settings_file.']');
                 pre_update_error('!!!ERROR!!! Cannot create database settings file ['.$db_settings_file.']');
                 exit;
             } else {
-                if (fwrite($handle, $db_config_content, strlen($db_config_content) ) === FALSE) {
+                if (fwrite($handle, $db_config_content, strlen($db_config_content)) === false) {
                     write2log('!!!ERROR!!! Cannot write to database settings file ['.$db_settings_file.']');
                     fclose($handle);
                     pre_update_error('!!!ERROR!!! Cannot write to database settings file ['.$db_settings_file.']');
@@ -354,16 +361,15 @@ NAME=".$db['DB_NAME']."
 
             // remove DB config from config.php
             write2log('removing db settings from config.php');
-            $config = preg_replace("~define\(\'CAT_(DB_\w+).*~i","",$config);
-            $config = preg_replace("~\n\n+~","\n\n",$config);
-            $fh = fopen(dirname(__FILE__).'/../../config.php','w');
-            fwrite($fh,$config);
-            ftruncate($fh,ftell($fh));
+            $config = preg_replace("~define\(\'CAT_(DB_\w+).*~i", "", $config);
+            $config = preg_replace("~\n\n+~", "\n\n", $config);
+            $fh = fopen(dirname(__FILE__).'/../../config.php', 'w');
+            fwrite($fh, $config);
+            ftruncate($fh, ftell($fh));
             fclose($fh);
 
             // remove index.php
-            if(file_exists($db_config_file_path.'/index.php'))
-            {
+            if (file_exists($db_config_file_path.'/index.php')) {
                 unlink($db_config_file_path.'/index.php');
             }
         }
@@ -373,9 +379,13 @@ NAME=".$db['DB_NAME']."
 function write2log($msg)
 {
     global $depth;
-    if(substr($msg,0,1) == '<') $depth--;
-    $logh = fopen(CAT_LOGFILE,'a');
-    fwrite($logh,str_repeat('  ',$depth) . $msg."\n");
+    if (substr($msg, 0, 1) == '<') {
+        $depth--;
+    }
+    $logh = fopen(CAT_LOGFILE, 'a');
+    fwrite($logh, str_repeat('  ', $depth) . $msg."\n");
     fclose($logh);
-    if(substr($msg,0,1) == '>') $depth++;
+    if (substr($msg, 0, 1) == '>') {
+        $depth++;
+    }
 }
