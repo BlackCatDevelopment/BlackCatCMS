@@ -310,8 +310,9 @@ if (!class_exists('CAT_Page', false))
                     // if Frontend-Login redirect user to login form and after login back to current page
                     if ( FRONTEND_LOGIN )
                     {
+	                    $redirect = $_SERVER['REDIRECT_QUERY_STRING'] ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['PHP_SELF'];
                         header("HTTP/1.1 401 Unauthorized");
-                        header("Location: " . LOGIN_URL .  '?redirect=' . $_SERVER['PHP_SELF'] );
+                        header("Location: " . LOGIN_URL .  '?redirect=' . CAT_Helper_Validate::getURI(CAT_URL . '/' . $redirect));
                         exit();
                     } else {
                         #self::$helper->printFatalError('You are not allowed to view this page!');
