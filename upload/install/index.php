@@ -94,9 +94,9 @@ foreach( $dirs as $i => $dir )
         $pre_inst_err[] = 'The ['.$dir.'] subfolder must be writable!<br />Das Verzeichnis ['.$dir.'] muss schreibbar sein!';
     }
 }
-if ( ! version_compare( phpversion(), '5.3.0', '>=') )
+if ( ! version_compare( phpversion(), '7.3.1', '>=') )
 {
-    $pre_inst_err[] = 'BlackCat CMS requires PHP >= 5.3. You have '.phpversion().'. Installation not possible!';
+    $pre_inst_err[] = 'BlackCat CMS requires PHP >= 7.3.1. You have '.phpversion().'. Installation not possible!';
 }
 if ( count($pre_inst_err) )
 {
