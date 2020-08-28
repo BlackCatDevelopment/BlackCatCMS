@@ -24,7 +24,7 @@
  */
 
 $PRECHECK = array(
-	'PHP_VERSION'  => array( 'VERSION' => '5.3.1', 'OPERATOR' => '>=' ),
+	'PHP_VERSION'  => array( 'VERSION' => '7.3.1', 'OPERATOR' => '>=' ),
 	'PHP_SETTINGS' => array(
 		'register_globals' => 0,
 		'safe_mode'        => 0,
