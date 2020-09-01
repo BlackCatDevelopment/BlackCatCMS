@@ -451,12 +451,6 @@ function show_step_globals( $step ) {
         $config['default_language' ] = $lang->getLang();
     }
 
-    // generate a GUID prefix
-    if ( !isset( $config['guid_prefix'] ) ) {
-        // VERY simple algorithm, no need for something more creative
-        $config['guid_prefix'] = implode('',array_rand(array_flip(array_merge(range('a','z'),range('A','Z'),range('0','9'))),4));
-    }
-
     // operating system
     // --> FrankH: Detect OS
     $ctrue  = " checked='checked'";
@@ -478,17 +472,15 @@ function show_step_globals( $step ) {
             'installer_cat_url'                 => dirname( $installer_uri ).'/',
             'installer_session_save_path'       => $config['session_save_path']
             											? $config['session_save_path'] : 'temp/session',
-            'installer_guid_prefix'             => $config['installer_guid_prefix'],
-            'timezones'                          => $timezone_table,
+            'timezones'                         => $timezone_table,
             'installer_default_timezone_string' => $config['default_timezone_string'],
             'languages'                         => $langs,
             'installer_default_language'        => $config['default_language'],
             'editors'                           => findWYSIWYG(),
             'installer_default_wysiwyg'         => $config['default_wysiwyg'],
             'installer_ssl'                     => ( isset($config['ssl']) ? $config['ssl'] : sslCheck() ) ,
-            'installer_guid_prefix'             => $config['guid_prefix'],
-            'is_linux'                           => $osl,
-            'is_windows'                         => $osw,
+            'is_linux'                          => $osl,
+            'is_windows'                        => $osw,
             'errors'                            => $step['errors'],
             'ssl_available'                     => ( isset($config['ssl_available']) ? $config['ssl_available'] : sslCheck() ) ,
         )
@@ -956,7 +948,6 @@ function fill_tables($database) {
     // fill settings configured by installer
     $settings_rows = "INSERT INTO `".CAT_TABLE_PREFIX."settings` "
         ." (name, value) VALUES "
-        ." ('guid', '" . ( ( isset($config['create_guid']) && $config['create_guid'] == 'true' ) ? $admin->createGUID($config['guid_prefix']) : '' ) . "'),"
         ." ('app_name', 'cat$session_rand'),"
         ." ('cat_build', '$current_build'),"
         ." ('cat_version', '$current_version'),"
