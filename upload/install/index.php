@@ -471,7 +471,7 @@ function show_step_globals( $step ) {
         array(
             'installer_cat_url'                 => dirname( $installer_uri ).'/',
             'installer_session_save_path'       => $config['session_save_path']
-            											? $config['session_save_path'] : 'temp/session',
+                                                   ? $config['session_save_path'] : 'temp/session',
             'timezones'                         => $timezone_table,
             'installer_default_timezone_string' => $config['default_timezone_string'],
             'languages'                         => $langs,
@@ -955,7 +955,7 @@ function fill_tables($database) {
         ." ('default_timezone_string', '".$config['default_timezone_string']."'),"
         ." ('installation_time', '".time()."'),"
         ." ('operating_system', '".$config['operating_system']."'),"
-        ." ('installer_session_save_path', '".$config['installer_session_save_path']."'),"
+        ." ('session_save_path', '".$config['session_save_path']."'),"
         ." ('string_dir_mode', '$dir_mode'),"
         ." ('string_file_mode', '$file_mode'),"
         ." ('website_title', '".$config['website_title']."'),"
@@ -968,12 +968,12 @@ function fill_tables($database) {
         $errors['settings'] = $database->get_error();
     }
     else {
-		CAT_Helper_Directory::getInstance()->createDirectory(CAT_PATH.'/'.$config['installer_session_save_path']);
-		$f = fopen(CAT_PATH.'/'.$config['installer_session_save_path']."/.htaccess", "a+");
-		fwrite($f, "deny from all");
-		fclose($f);
-		chmod(CAT_PATH.'/'.$config['installer_session_save_path'],0700);
-        write2log('filled table [settings]');
+        CAT_Helper_Directory::getInstance()->createDirectory(CAT_PATH.'/'.$config['session_save_path']);
+        $f = fopen(CAT_PATH.'/'.$config['session_save_path']."/.htaccess", "a+");
+        fwrite($f, "deny from all");
+        fclose($f);
+        chmod(CAT_PATH.'/'.$config['session_save_path'],0700);
+        write2log(sprintf('created session save path [%s]',CAT_PATH.'/'.$config['session_save_path']));
     }
 
     // Admin group
