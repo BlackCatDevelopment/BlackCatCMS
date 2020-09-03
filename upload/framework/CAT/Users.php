@@ -99,7 +99,7 @@ if (! class_exists('CAT_Users', false)) {
          * @param string $username
          * @return bool
         **/
-        private static function checkNotMD5Password(string $username=NULL):bool
+        private static function checkNotMD5Password(string $username=null):bool
         {
             if (!$username) {
                 return false;
@@ -121,7 +121,7 @@ if (! class_exists('CAT_Users', false)) {
          * @param array $options
          * @return string
         **/
-        public static function getHash(string $passwd='',array $options=array()):string
+        public static function getHash(string $passwd='', array $options=array()):string
         {
             /* $options = [
                  'cost' => 11,
@@ -168,7 +168,7 @@ if (! class_exists('CAT_Users', false)) {
          * @param string $passwd
          * @return bool
          */
-        private static function authenticate(string $username,string $passwd):?int
+        private static function authenticate(string $username, string $passwd):?int
         {
             #self::log()->addDebug(sprintf('authenticate() - Trying to verify password for username [%s]', $username));
 
@@ -177,8 +177,7 @@ if (! class_exists('CAT_Users', false)) {
                 return false;
             }
 
-            if ( password_verify($passwd, self::getPasswd($username)) )
-            {
+            if (password_verify($passwd, self::getPasswd($username))) {
 				// get id with old md5()
 				$id = self::getInstance()->db()->query(
 					'SELECT `user_id` FROM `:prefix:users` WHERE `username` = :name',
@@ -189,8 +188,7 @@ if (! class_exists('CAT_Users', false)) {
 				} else {
 				    return $id;
 				}
-            }
-			else {
+            } else {
     	        self::setLoginError('Invalid credentials');
 	            return false;
 			}
@@ -254,7 +252,7 @@ if (! class_exists('CAT_Users', false)) {
                     $name = (preg_match('/[\;\=\&\|\<\> ]/', $user) ? '' : $user);
                     $newPW1   = $val->sanitizePost($val->sanitizePost('password_fieldname').'_1');
                     $newPW2   = $val->sanitizePost($val->sanitizePost('password_fieldname').'_2');
-                    $name = ( preg_match('/[\;\=\&\|\<\> ]/',$user) ? '' : $user );
+                    $name = (preg_match('/[\;\=\&\|\<\> ]/', $user) ? '' : $user);
 
                     $min_length      = CAT_Registry::exists('AUTH_MIN_LOGIN_LENGTH', false)
                                      ? CAT_Registry::get('AUTH_MIN_LOGIN_LENGTH')
@@ -271,7 +269,7 @@ if (! class_exists('CAT_Users', false)) {
                     if (! self::$loginerror && $user == '' || $pw == '') {
                         self::setLoginError($lang->translate('Please enter your username and password.'));
                     }
-                    if (! self::$loginerror && $callow == 'false') {
+                    if (! self::$loginerror && ($callow == 'false' || $callow == false) && !isset($_REQUEST['_cat_ajax'])) {
                         self::setLoginError($lang->translate('You have to allow a technical cookie for login.'));
                     }
                     if (! self::$loginerror && strlen($user) < $min_length) {
@@ -281,12 +279,10 @@ if (! class_exists('CAT_Users', false)) {
                         self::setLoginError($lang->translate('Invalid credentials'));
                     }
 
-
-					if( ! self::$loginerror )
-					{
+                    if (! self::$loginerror) {
 						// check for old md5()-password and if login with old method is successful.
 						if (self::checkNotMD5Password($user)===false
-							&& ( $user_id = self::authenticateOldPW($user,$pw) > 0 )
+                            && ($user_id = self::authenticateOldPW($user, $pw) > 0)
 						) {
 							// Save new password hash
                     	    $self->db()->query(
@@ -299,16 +295,18 @@ if (! class_exists('CAT_Users', false)) {
 						}
 
 						// Method to authenticate user
-						if ( ($user_id = self::authenticate($user,$pw))>0 && (!self::checkOTP($user)xor$newPW1!=''))
-                    	{
-	                    	if(self::checkOTP($user))
-	                    	{
-								if ( !CAT_Registry::defined('ALLOW_SHORT_PASSWORDS') && strlen($newPW1) < $min_pass_length )
-									self::setLoginError($lang->translate('The password you entered was too short (Please use at least {{AUTH_MIN_PASS_LENGTH}} chars)' , array( 'AUTH_MIN_PASS_LENGTH' => AUTH_MIN_PASS_LENGTH )));
-								if ( $newPW1!=$newPW2 )
+                        if (($user_id = self::authenticate($user, $pw))>0 && (!self::checkOTP($user) xor $newPW1!='')) {
+                            if (self::checkOTP($user)) {
+                                if (!CAT_Registry::defined('ALLOW_SHORT_PASSWORDS') && strlen($newPW1) < $min_pass_length) {
+                                    self::setLoginError($lang->translate('The password you entered was too short (Please use at least {{AUTH_MIN_PASS_LENGTH}} chars)', array( 'AUTH_MIN_PASS_LENGTH' => AUTH_MIN_PASS_LENGTH )));
+                                }
+                                if ($newPW1!=$newPW2) {
 									self::setLoginError($lang->translate('The passwords you entered do not match'));
-								if (self::$loginerror) return false;
-								else $self->db()->query(
+                                }
+                                if (self::$loginerror) {
+                                    return false;
+                                } else {
+                                    $self->db()->query(
 									'UPDATE `:prefix:users` SET `password` =:pw, `last_reset`=:reset, `otp`=:otp WHERE `user_id`=:user_id',
 									array(
 										'user_id'	=> $user_id,
@@ -318,14 +316,14 @@ if (! class_exists('CAT_Users', false)) {
 									)
 								);
 	                    	}
+                            }
 
                     	    $query  = 'SELECT * FROM `:prefix:users` WHERE `user_id`=:user_id';
                     	    $qAct		= 'SELECT `active` FROM `:prefix:users` WHERE `user_id` = :user_id';
-                    	    $result = $self->db()->query($query,array('user_id'=>$user_id));
-                    	    $active		= $self->db()->query($qAct,array('user_id'=>$user_id));
+                            $result = $self->db()->query($query, array('user_id'=>$user_id));
+                            $active		= $self->db()->query($qAct, array('user_id'=>$user_id));
 						
-                			if ( $active && $result->rowCount() == 1 )
-                    	    {
+                            if ($active && $result->rowCount() == 1) {
                     	        // get default user preferences
                     	        $prefs = self::getDefaultUserOptions();
                     	        // get basic user data
@@ -336,38 +334,36 @@ if (! class_exists('CAT_Users', false)) {
                     	            self::getUserOptions($user['user_id'])
                     	        );
 						
-                    	        foreach( self::$sessioncols as $key )
-                    	        {
+                                foreach (self::$sessioncols as $key) {
                     	            $_SESSION[strtoupper($key)] = $user[$key];
                     	        }
 						
                     	        // ----- preferences -----
                     	        $_SESSION['LANGUAGE']
-                    	            = ( $user['language'] != '' )
+                                    = ($user['language'] != '')
                     	            ? $user['language']
-                    	            : ( isset($prefs['language']) ? $prefs['language'] : 'DE' )
+                                    : (isset($prefs['language']) ? $prefs['language'] : 'DE')
                     	            ;
 						
                     	        $_SESSION['TIMEZONE_STRING']
-                    	            = ( isset($prefs['timezone_string']) && $prefs['timezone_string'] != '' )
+                                    = (isset($prefs['timezone_string']) && $prefs['timezone_string'] != '')
                     	            ? $prefs['timezone_string']
                     	            : CAT_Registry::get('DEFAULT_TIMEZONE_STRING')
                     	            ;
 						
                     	        $_SESSION['CAT_DATE_FORMAT']
-                    	            = ( isset($prefs['date_format']) && $prefs['date_format'] != '' )
+                                    = (isset($prefs['date_format']) && $prefs['date_format'] != '')
                     	            ? $prefs['date_format']
                     	            : CAT_Registry::get('CAT_DEFAULT_DATE_FORMAT')
                     	            ;
 						
                     	        $_SESSION['CAT_TIME_FORMAT']
-                    	            = ( isset($prefs['time_format']) && $prefs['time_format'] != '' )
+                                    = (isset($prefs['time_format']) && $prefs['time_format'] != '')
                     	            ? $prefs['time_format']
                     	            : CAT_Registry::get('CAT_DEFAULT_TIME_FORMAT')
                     	            ;
 						
-                    	        if( defined('WB2COMPAT') && WB2COMPAT === true )
-                    	        {
+                                if (defined('WB2COMPAT') && WB2COMPAT === true) {
                     	            $wb2compat_format_map = CAT_Registry::get('WB2COMPAT_FORMAT_MAP');
 						
                     	            $_SESSION['DATE_FORMAT'] = isset($_SESSION['CAT_DATE_FORMAT']) ? 
@@ -385,66 +381,62 @@ if (! class_exists('CAT_Users', false)) {
 						
                     	        $first_group = true;
 						
-                				foreach ( explode(",",$user['groups_id']) as $cur_group_id )
-                				{
+                                foreach (explode(",", $user['groups_id']) as $cur_group_id) {
                     	            $query   = "SELECT * FROM `:prefix:groups` WHERE group_id=:id";
-                    	            $result  = $self->db()->query($query,array('id'=>$cur_group_id));
+                                    $result  = $self->db()->query($query, array('id'=>$cur_group_id));
                 					$results = $result->fetch();
 						
                 					$_SESSION['GROUP_NAME'][$cur_group_id] = $results['name'];
 						
                 					// Set system permissions
-                					if($results['system_permissions'] != '')
+                                    if ($results['system_permissions'] != '') {
                 						$_SESSION['SYSTEM_PERMISSIONS'] = $results['system_permissions'];
+                                    }
 						
                 					// Set module permissions
-                					if ( $results['module_permissions'] != '' )
-                					{
-                						if ($first_group)
-                						{
+                                    if ($results['module_permissions'] != '') {
+                                        if ($first_group) {
                 							$_SESSION['MODULE_PERMISSIONS']	= explode(',', $results['module_permissions']);
-                						}
-                						else
-                						{
+                                        } else {
                 							$_SESSION['MODULE_PERMISSIONS']	= array_intersect($_SESSION['MODULE_PERMISSIONS'], explode(',', $results['module_permissions']));
                 						}
                 					}
 						
                 					// Set template permissions
-                					if ( $results['template_permissions'] != '' )
-                					{
-                						if ($first_group)
+                                    if ($results['template_permissions'] != '') {
+                                        if ($first_group) {
                 							$_SESSION['TEMPLATE_PERMISSIONS'] = explode(',', $results['template_permissions']);
-                						else
+                                        } else {
                 							$_SESSION['TEMPLATE_PERMISSIONS'] = array_intersect($_SESSION['TEMPLATE_PERMISSIONS'], explode(',', $results['template_permissions']));
                     	            }
+                                    }
 						
                 					$first_group = false;
-						
                     	        }   // foreach ( explode(",",$user['groups_id']) as $cur_group_id )
 						
                 				// Update the users table with current ip and timestamp
                 				$get_ts	= time();
                 				$get_ip	= $_SERVER['REMOTE_ADDR'];
                     	        $query  = "UPDATE `:prefix:users` SET login_when=:when, login_ip=:ip WHERE user_id=:id";
-                    	        $self->db()->query($query,array('when'=>$get_ts,'ip'=>$get_ip,'id'=>$user['user_id']));
-								if ($redirect_url)
+                                $self->db()->query($query, array('when'=>$get_ts,'ip'=>$get_ip,'id'=>$user['user_id']));
+
+                                if (!empty($redirect_url) && $redirect_url != 'http:') {
 			        	    		return $redirect_url;
-                    	        if ( self::getInstance()->checkPermission( 'start', 'start' ) )
+                                }
+                                // user is allowed so see the backend
+                                if (self::getInstance()->checkPermission('start', 'start')) {
                     	            return CAT_Helper_Validate::getURI(CAT_ADMIN_URL.'/start/index.php?initial=true');
-                    	        else
+                                } else {
                     	            return CAT_Helper_Validate::getURI(CAT_URL.'/index.php');
                     	    }
-                    	    else
-                    	    {
-	                	        if ( !$active && $result->rowCount() == 1 )
+                            } else {
+                                if (!$active && $result->rowCount() == 1) {
 		            	            self::setLoginError($lang->translate('Your account has been disabled. Please contact the administrator.'));
-	                	        else
+                                } else {
                     	        self::setLoginError($lang->translate('Invalid credentials'));
                     	    }
                     	}
-                    	else if ( ($user_id = self::authenticate($user,$pw))>0 )
-                    	{
+                        } elseif (($user_id = self::authenticate($user, $pw))>0) {
 	                    	 self::setLoginError($lang->translate('You have to set a new password.'));
 	                    	 $otp	= true;
                     	}
@@ -466,8 +458,7 @@ if (! class_exists('CAT_Users', false)) {
                     return isset($otp)&&$otp === true ? -1 : false;
                 }
 
-                if ( ! $output )
-                {
+                if (! $output) {
                     return isset($otp)&&$otp === true ? -1 : false;
                 }
 
@@ -499,15 +490,15 @@ if (! class_exists('CAT_Users', false)) {
 
                 $parser->output('login', $tpl_data);
             } else {
-            	if ($redirect_url)
-            		header( 'Location: '.$redirect_url );
-                if ( self::getInstance()->checkPermission( 'start', 'start' ) )
-                    header( 'Location: '.CAT_Helper_Validate::getURI(CAT_ADMIN_URL.'/start/index.php') );
-                else
-                    header( 'Location: '.CAT_Helper_Validate::getURI(CAT_URL.'/index.php' ) );
+                if ($redirect_url) {
+                    header('Location: '.$redirect_url);
+                }
+                if (self::getInstance()->checkPermission('start', 'start')) {
+                    header('Location: '.CAT_Helper_Validate::getURI(CAT_ADMIN_URL.'/start/index.php'));
+                } else {
+                    header('Location: '.CAT_Helper_Validate::getURI(CAT_URL.'/index.php'));
+                }
             }
-
-
         }   // end function handleLogin()
 
         /**
@@ -576,13 +567,10 @@ if (! class_exists('CAT_Users', false)) {
 					   	   	'otp'		=> true
 					   	)
 					);
-        			if ( $self->db()->isError() )
-        			{
+                    if ($self->db()->isError()) {
         				// Error updating database
         				$message = $self->db()->getError();
-        			}
-        			else
-        			{
+                    } else {
         				// Setup email to send
         				$mail_to      = $email;
         				$mail_subject = $self->lang()->translate('Your login details...');
@@ -590,7 +578,7 @@ if (! class_exists('CAT_Users', false)) {
         				$parser->setPath( 
         					CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/templates/' . CAT_Registry::get('DEFAULT_THEME_VARIANT')
         				);
-        				$parser->setFallbackPath( CAT_PATH . '/account/templates/default/' );
+                        $parser->setFallbackPath(CAT_PATH . '/account/templates/default/');
                         $mail_message = $parser->get('account_forgotpw_mail_body', array(
                             'LOGIN_DISPLAY_NAME'  => $results_array['display_name'],
                             'LOGIN_WEBSITE_TITLE' => WEBSITE_TITLE,
@@ -721,11 +709,12 @@ if (! class_exists('CAT_Users', false)) {
             $perm  = strtolower($perm);
 
             // get needed bit
+            if(isset(self::$permissions) && isset(self::$permissions[$group][$perm])) {
             $bit = self::$permissions[$group][$perm];
-
             // Dashboard should be the only page with bit 0!
             if ($bit == 0) {
                 return true;
+            }
             }
 
             // get user perms from session
@@ -833,8 +822,7 @@ if (! class_exists('CAT_Users', false)) {
             $self   = self::getInstance();
 
 			// check for old md5()-password and if login with old method is successful.
-			if (self::checkNotMD5Password($user)===false && is_numeric($user_id = self::authenticateOldPW($user,$pw)))
-			{
+            if (self::checkNotMD5Password($user)===false && is_numeric($user_id = self::authenticateOldPW($user, $pw))) {
 				// Save new password hash
                 $self->db()->query(
                 	'UPDATE `:prefix:users` SET `password` =:pw WHERE `user_id`=:user_id',
@@ -878,18 +866,21 @@ if (! class_exists('CAT_Users', false)) {
          **/
         public static function checkOTP(string $username=''):bool
         {
-	        if($username=='') return false;
+            if ($username=='') {
+                return false;
+            }
 
             $result = self::getInstance()->db()->query(
                 'SELECT `otp` FROM `:prefix:users` WHERE `username` = :user',
                 array('user'=>$username)
             );
-            if ( $result->rowCount() > 0 )
+            if ($result->rowCount() > 0) {
 	            return $result->fetchColumn() == 1 ? true : false;
+            }
             return false;
         }   // end function checkOTP()
 
-/*******************************************************************************
+        /*******************************************************************************
  * CRUD METHODS
  ******************************************************************************/
 
@@ -908,7 +899,7 @@ if (! class_exists('CAT_Users', false)) {
          * @param  int  $otp
          * @return mixed   true on success, db error message otherwise
          **/
-        public static function createUser($groups_id, $active, $username, $pw, $display_name, $email, $home_folder, $otp=true )
+        public static function createUser($groups_id, $active, $username, $pw, $display_name, $email, $home_folder, $otp=true)
         {
             $self  = self::getInstance();
             $query = 'INSERT INTO `:prefix:users` (`group_id`,`groups_id`,`active`,`username`,`password`,`display_name`,`email`,`home_folder`, `otp`) '
@@ -1041,6 +1032,28 @@ if (! class_exists('CAT_Users', false)) {
             }
             return $options;
         }   // end function getUserOptions()
+
+        /**
+         *
+         * @access public
+         * @return
+         **/
+        public static function getUserPermissions()
+        {
+            if(self::is_authenticated()) {
+                // get user perms from the session
+                $val = CAT_Helper_Validate::getInstance();
+                $system_permissions   = explode(',', $val->fromSession('SYSTEM_PERMISSIONS'));
+                $module_permissions   = $val->fromSession('MODULE_PERMISSIONS');
+                $template_permissions = $val->fromSession('TEMPLATE_PERMISSIONS');
+                return array(
+                    'system'   => $system_permissions,
+                    'module'   => $module_permissions,
+                    'template' => $template_permissions
+                );
+            }
+            return false;
+        }   // end function getUserPermissions()
 
         public static function getExtendedOptions()
         {
@@ -1432,6 +1445,12 @@ if (! class_exists('CAT_Users', false)) {
                           ;
                     return $path;
                 } else {
+                    if ($as_array) {
+                        return array(
+                            'init_page' => '',
+                            'init_page_param' => ''
+                        );
+                    }
                     return null;
                 }
             } else {

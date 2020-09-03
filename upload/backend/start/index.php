@@ -39,10 +39,26 @@ if (defined('CAT_PATH')) {
 	}
 }
 
+$user    = CAT_Users::getInstance();
+
+// if the user has access to the backend dashboard only, redirect to frontend
+if(CAT_Helper_Validate::getInstance()->fromSession('SYSTEM_PERMISSIONS') == 0) {
+    $page = $user->get_initial_page();
+    if($page) {
+        header('Location: '.$page);
+    } else {
+        if(headers_sent()) {
+            header('Refresh: 0; URL='.CAT_URL."/index.php\n\n", true, 302);
+        } else {
+            header('Location: '.CAT_URL.'/index.php');
+        }
+    }
+    exit;
+}
+
 global $parser;
 
 $backend = CAT_Backend::getInstance('start');
-$user    = CAT_Users::getInstance();
 $lang    = CAT_Helper_I18n::getInstance();
 $widget  = CAT_Helper_Widget::getInstance();
 

@@ -51,7 +51,6 @@
 					<input type="hidden" name="redirect" value="{$REDIRECT}" />
 					<input type="hidden" name="username_fieldname" value="{$USERNAME_FIELDNAME}" />
 					<input type="hidden" name="password_fieldname" value="{$PASSWORD_FIELDNAME}" />
-					<input type="hidden" name="password_fieldname" value="{$PASSWORD_FIELDNAME}" />
 		
 					<label for="fc_login_username">{translate('Username')}</label>
 					<input type="text" maxlength="{$MAX_USERNAME_LEN}" name="{$USERNAME_FIELDNAME}" value="{$USERNAME}" id="fc_login_username" />
