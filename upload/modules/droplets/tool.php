@@ -202,7 +202,7 @@ function manage_droplet_backups()
                 'size' => $stat['size'],
                 'date' => strftime('%c', $stat['ctime']),
                 'files' => count($count),
-                'listfiles' => implode(", ", array_map(create_function('$cnt', 'return $cnt["filename"];'), $count)),
+                'listfiles' => implode(", ", array_map(function($cnt) { return $cnt["filename"]; }, $count)),
                 'download' => CAT_Helper_Validate::sanitize_url(CAT_URL.'/modules/droplets/export/'.basename($file))
             );
         }
