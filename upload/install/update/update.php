@@ -185,15 +185,18 @@ fwrite($fh,"ErrorDocument 404 ".CAT_URL."\n");
 fclose($fh);
 chmod($config['session_save_path'],0700);
 
+// update LoginBox Droplet
+CAT_Helper_Droplet::installDroplet(CAT_PATH.'/modules/droplets/install/droplet_LoginBox.zip');
+
 /*******************************************************************************
- *   1.3 TO 1.4
- *	Add attribute otp (one-time password) to table users
+    1.3 TO 1.4
+	Add attribute otp (one-time password) to table users
 *******************************************************************************/
 $getDB	= CAT_Helper_DB::getInstance()->getConfig();
 $checkForField = $database->query( "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " .
-		"WHERE TABLE_NAME = ':prefix:users' " .
-			"AND COLUMN_NAME = 'otp' " .
-			"AND TABLE_SCHEMA = '".$getDB['DB_NAME']."'" )->fetchColumn();
+	"WHERE TABLE_NAME = ':prefix:users' " .
+	"AND COLUMN_NAME = 'otp' " .
+	"AND TABLE_SCHEMA = '".$getDB['DB_NAME']."'" )->fetchColumn();
 if (!$checkForField) {
 	CAT_Helper_DB::getInstance()->query( "ALTER TABLE `:prefix:users` ADD `otp` bit(1) NOT NULL DEFAULT 0" );
 }
