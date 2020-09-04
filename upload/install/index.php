@@ -989,7 +989,7 @@ function fill_tables($database) {
     }
 
     // Admin user
-    $insert_admin_user = "INSERT INTO `".CAT_TABLE_PREFIX."users` (user_id,group_id,groups_id,active,username,password,email,display_name) VALUES ('1','1','1','1','".$config['admin_username']."','".password_hash($config['admin_password'],PASSWORD_BCRYPT)."','".$config['admin_email']."','Administrator')";
+    $insert_admin_user = "INSERT INTO `".CAT_TABLE_PREFIX."users` (user_id,group_id,groups_id,active,username,password,email,display_name) VALUES ('1','1','1','1','".$config['admin_username']."','".password_hash($config['admin_password'],PASSWORD_DEFAULT)."','".$config['admin_email']."','Administrator')";
     $database->query($insert_admin_user);
     if ( $database->is_error() ) {
         trigger_error(sprintf('[%s - %s] %s', __FILE__, __LINE__, $database->get_error()), E_USER_ERROR);

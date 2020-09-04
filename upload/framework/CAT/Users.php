@@ -121,12 +121,9 @@ if (! class_exists('CAT_Users', false)) {
          * @param array $options
          * @return string
         **/
-        public static function getHash(string $passwd='', array $options=array()):string
+        public static function getHash(string $passwd=''):string
         {
-            /* $options = [
-                 'cost' => 11,
-             ];*/
-            return password_hash($passwd, PASSWORD_BCRYPT, $options);
+            return password_hash($passwd, PASSWORD_DEFAULT);
         }   // end function getHash()
 
         /**
