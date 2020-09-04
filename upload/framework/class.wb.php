@@ -205,8 +205,8 @@ class wb
 
     /* methods for compatibility with WB 2.8.3 and above (originally located in SecureForm.php) */
    	public function createFTAN() {}
-	public function getFTAN( $mode = 'POST')   { return CAT_Helper_Protect::createToken($mode); }
-	public function checkFTAN( $mode = 'POST') { return CAT_Helper_Protect::checkToken($mode);  }
+	public function getFTAN( $mode = 'POST')   { return ''; }
+	public function checkFTAN( $mode = 'POST') { return true;  }
 	public function getIDKEY($value)           { return $value; }
 	public function checkIDKEY( $fieldname, $default = 0, $request = 'POST' ) {
         $val = CAT_Helper_Validate::get('_'.$request, $fieldname);

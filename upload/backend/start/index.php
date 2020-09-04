@@ -42,7 +42,7 @@ if (defined('CAT_PATH')) {
 $user    = CAT_Users::getInstance();
 
 // if the user has access to the backend dashboard only, redirect to frontend
-if(CAT_Helper_Validate::getInstance()->fromSession('SYSTEM_PERMISSIONS') == 0) {
+if(!$user->is_root() && CAT_Helper_Validate::getInstance()->fromSession('SYSTEM_PERMISSIONS') == 0) {
     $page = $user->get_initial_page();
     if($page) {
         header('Location: '.$page);

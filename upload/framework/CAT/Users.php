@@ -822,7 +822,7 @@ if (! class_exists('CAT_Users', false)) {
             $self   = self::getInstance();
 
 			// check for old md5()-password and if login with old method is successful.
-            if (self::checkNotMD5Password($user)===false && is_numeric($user_id = self::authenticateOldPW($user, $pw))) {
+            if (self::checkNotMD5Password($name)===false && is_numeric($user_id = self::authenticateOldPW($name, $pw))) {
 				// Save new password hash
                 $self->db()->query(
                 	'UPDATE `:prefix:users` SET `password` =:pw WHERE `user_id`=:user_id',
