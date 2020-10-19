@@ -138,7 +138,7 @@ class Image {
      *               b = bottom
      *               array( y-coordinate, height)
      */
-    public function resize($max_width, $max_height, $method="fit", $cropAreaLeftRight="c", $cropAreaBottomTop="c", $jpgQuality=75,$enlarge=false)
+    public function resize($max_width, $max_height, $method="fit", $cropAreaLeftRight="c", $cropAreaBottomTop="c", $jpgQuality=92,$enlarge=true)
     {
         $width  = $this->getWidth();
         $height = $this->getHeight();
