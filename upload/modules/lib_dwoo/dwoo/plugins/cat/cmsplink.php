@@ -48,7 +48,7 @@ function Dwoo_plugin_cmsplink(Dwoo $dwoo, $page) {
     preg_match( '/(\d+)/', $page, $match );
     if(!count($match))
         return '';
-    return CAT_Helper_Page::getLink($match[1]);
+    return CAT_Helper_Validate::sanitize_url(CAT_Helper_Page::getLink($match[1]));
 }
 
 ?>
