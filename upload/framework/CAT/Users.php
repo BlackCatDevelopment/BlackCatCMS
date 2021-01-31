@@ -245,7 +245,7 @@ if (! class_exists('CAT_Users', false)) {
                     // get input data
                     $user = htmlspecialchars($val->sanitizePost($val->sanitizePost('username_fieldname')), ENT_QUOTES);
                     $pw   = $val->sanitizePost($val->sanitizePost('password_fieldname'));
-                    $callow = $val->sanitizePost('fc_cookie_allow');
+                    $callow = $val->sanitizePost("fc_cookie_allow") == "true" ? "true" : "false";
                     $name = (preg_match('/[\;\=\&\|\<\> ]/', $user) ? '' : $user);
                     $newPW1   = $val->sanitizePost($val->sanitizePost('password_fieldname').'_1');
                     $newPW2   = $val->sanitizePost($val->sanitizePost('password_fieldname').'_2');

@@ -74,6 +74,9 @@ $LANG = array(
     'My settings' => 'Profil / Benutzereinstellungen',
     'Need to log-in?' => 'Anmelden?',
     'New password' => 'Neues Kennwort',
+    'Retype new password' => 'Neues Kennwort wiederholen',
+    'You have to set a new password.'    => 'Sie m&uuml;ssen ein neues Passwort setzen.',
+    'Current password' => 'Aktuelles Kennwort',
     'No group was selected' => 'Es wurde keine Gruppe ausgew&auml;hlt',
     'Password cannot be reset more than once per hour' => 'Das Passwort kann nur einmal pro Stunde zurückgesetzt werden',
     'Please enter your email address' => 'Bitte geben Sie Ihre Mailadresse an',
@@ -221,6 +224,7 @@ $LANG = array(
 	'Media' => 'Medien',
 // ----- LOGIN PAGE -----
     'A technical cookie is required for backend login.' => 'Für die Anmeldung am Backend ist ein technisches Cookie erforderlich.',
+    'A technical cookie is required for login.' => 'Für die Anmeldung ist ein technisches Cookie erforderlich.',
     'allow' => 'erlauben',
     'Please enter your username and password.' => 'Bitte Benutzernamen und Passwort eingeben.',
     'The password you entered was too short' => 'Das angegebene Passwort ist zu kurz!',

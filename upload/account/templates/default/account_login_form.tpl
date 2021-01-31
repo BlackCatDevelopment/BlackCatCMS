@@ -1,4 +1,4 @@
-<form action="{$CAT_URL}/account/login.php" method="post">
+<form action="{cat_url}/account/login.php" method="post">
   <input type="hidden" name="username_fieldname" value="{$username_fieldname}" />
   <input type="hidden" name="password_fieldname" value="{$password_fieldname}" />
   <input type="hidden" name="redirect" value="{$redirect_url}" />
@@ -27,6 +27,11 @@
 		<label class="account_label" for="{$password_fieldname}_2">{translate('Retype new password')}:</label>
 		<input type="password" class="account_input" name="{$password_fieldname}_2" id="{$password_fieldname}_2" maxlength="30" /><br />
     </p>
+    <p class="warning">
+      <input type="checkbox" name="fc_cookie_allow" id="fc_cookie_allow" value="true">
+      <label for="fc_cookie_allow">{translate('A technical cookie is required for login.')}</label>
+      {translate('allow')}
+  </p>
     <input type="submit" class="account_button" name="submit" value="{translate('Login')}"  />
 	<input type="reset" class="account_button" name="reset" value="{translate('Reset')}"  />
   </fieldset>
