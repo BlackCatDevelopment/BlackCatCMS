@@ -30,7 +30,7 @@ if ( !class_exists( 'CAT_Helper_DB' ) )
 {
     //set_exception_handler(array("CAT_PDOExceptionHandler", "exceptionHandler"));
 
-    class CAT_Helper_DB extends PDO
+    class CAT_Helper_DB
     {
         public  static $exc_trace = false;
 

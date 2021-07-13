@@ -124,6 +124,7 @@ if (!class_exists('CAT_Helper_Page'))
          **/
         private static function init($force=false)
         {
+
             global $page_id;
 
             if(CAT_Registry::exists('CAT_HELPER_PAGE_INITIALIZED') && !$force)
@@ -148,7 +149,7 @@ if (!class_exists('CAT_Helper_Page'))
                 if( $result && $result->rowCount()>0 )
                 {
                     self::$pages          = array();
-                    self::$pages_editable = array();
+                    self::$pages_editable = 0;
                     self::$pages_by_id    = array();
                     $children_count = array();
                     $direct_parent  = 0;
@@ -1421,6 +1422,7 @@ if (!class_exists('CAT_Helper_Page'))
                 $static = array_unique($static);
                 return implode("\n", $static) . "\n";
             }
+
             return NULL;
         } // end function getJavaScripts()
 

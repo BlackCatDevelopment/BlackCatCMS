@@ -115,7 +115,7 @@ class CAT_ExceptionHandler
     /**
      * global error handler; allows to log the error
      **/
-    public static function errorHandler($error_level, $error_message, $error_file, $error_line, $error_context)
+    public static function errorHandler($error_level, $error_message, $error_file, $error_line)
     {
         $error = "lvl: " . $error_level . " | msg:" . $error_message . " | file:" . $error_file . " | ln:" . $error_line;
         switch ($error_level) {
@@ -163,19 +163,21 @@ class CAT_ExceptionHandler
     public static function shutdownHandler() //will be called when php script ends.
     {
         $lasterror = error_get_last();
-        switch ($lasterror['type'])
-        {
-            case E_ERROR:
-            case E_CORE_ERROR:
-            case E_COMPILE_ERROR:
-            case E_USER_ERROR:
-            case E_RECOVERABLE_ERROR:
-            case E_CORE_WARNING:
-            case E_COMPILE_WARNING:
-            case E_PARSE:
-                $error = "[SHUTDOWN] lvl:" . $lasterror['type'] . " | msg:" . $lasterror['message'] . " | file:" . $lasterror['file'] . " | ln:" . $lasterror['line'];
-                $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',2);
-                $logger->logFatal($error);
+        if(is_array($lasterror)) {
+	        switch ($lasterror['type'])
+	        {
+	            case E_ERROR:
+	            case E_CORE_ERROR:
+	            case E_COMPILE_ERROR:
+	            case E_USER_ERROR:
+	            case E_RECOVERABLE_ERROR:
+	            case E_CORE_WARNING:
+	            case E_COMPILE_WARNING:
+	            case E_PARSE:
+	                $error = "[SHUTDOWN] lvl:" . $lasterror['type'] . " | msg:" . $lasterror['message'] . " | file:" . $lasterror['file'] . " | ln:" . $lasterror['line'];
+	                $logger = CAT_Helper_KLogger::instance(CAT_PATH.'/temp/logs',2);
+	                $logger->logFatal($error);
+                }
             }
         }
     }

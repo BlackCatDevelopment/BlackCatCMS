@@ -72,7 +72,7 @@ if (!class_exists('CAT_Page', false))
         /**
          * initialize current page
          **/
-        final private static function init($page_id)
+        private static function init($page_id)
         {
             global $parser;
             $parser->setGlobals('PAGE_ID',$page_id);
@@ -264,7 +264,7 @@ if (!class_exists('CAT_Page', false))
                     }
                 }
             }
-            if( isset($items) && count($items) )
+            if( isset($items) && is_array($items) && count($items) )
             {
                 // initialize template search path
                 $parser->setPath(CAT_PATH.'/templates/'.TEMPLATE.'/templates');

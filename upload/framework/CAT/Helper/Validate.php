@@ -127,7 +127,7 @@ if (!class_exists('CAT_Helper_Validate'))
          **/
         public static function strip_slashes($input)
         {
-            if (!get_magic_quotes_gpc() || (!is_string($input)))
+            if (!is_string($input))
             {
                 return $input;
             }

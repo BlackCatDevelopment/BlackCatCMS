@@ -418,8 +418,8 @@ class CAT_Helper_KLogger
 	        $class     = isset( $info['class'] )    ? $info['class']    : NULL;
 	        $function  = isset( $info['function'] ) ? $info['function'] : NULL;
 	        $file      = isset( $info['file'] )     ? basename($info['file']) : NULL;
-	        $code_line = isset( $info['line'] )     ? $info['line']           : '?'
-                       . isset( $last['line'] )     ? '('.$last['line'].')'   : '';
+	        $code_line = isset( $info['line'] )     ? $info['line']           : '?';
+            $code_line .= isset( $last['line'] )     ? '('.$last['line'].')'   : '';
 
             if(substr($line,0,1)=='<')
                     self::$spaces--;
