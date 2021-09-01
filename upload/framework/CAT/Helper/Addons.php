@@ -664,7 +664,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
             $parser->setPath( CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/' );
             $parser->setFallbackPath( dirname( __FILE__ ) . '/templates/Addons' );
             $output = $parser->get( 'summary', array(
-                'addon' => $info['module_name'],
+                'addon'   => isset($info['module_name']) ? $info['module_name'] : '',
                 'heading' => ( $failed_checks ? $self->lang()->translate( 'Pre installation check failed' ) : $self->lang()->translate( 'Pre installation check successful' ) ),
                 'message' => ( $failed_checks ? $self->lang()->translate( 'Installation failed. Your system does not fulfill the defined requirements. Please fix the issues summarized below and try again.' ) : '' ),
                 'summary' => $summary,
