@@ -2303,7 +2303,7 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 					$output = '$tmp_key';
 				} else {
 					if ($curBlock === 'root') {
-						$output = '$this->scope["'.$key.'"]';
+						$output = 'isset($this->scope["'.$key.'"]) ? $this->scope["'.$key.'"] : ""';
 					} else {
 						$output = '(isset($this->scope["'.$key.'"]) ? $this->scope["'.$key.'"] : null)';
 					}
@@ -3067,7 +3067,7 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 			if ($classname !== null && $classname === 'Dwoo_Compiler') {
 				continue;
 			}
-			if ($param->getName() === 'rest' && $param->isArray() === true) {
+			if ($param->getName() === 'rest' && $this->declaresArray($param)) {
 				$out[] = array('*', $param->isOptional(), null);
 			}
 			$out[] = array($param->getName(), $param->isOptional(), $param->isOptional() ? $param->getDefaultValue() : null);
@@ -3090,4 +3090,17 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 		}
 		return self::$instance;
 	}
+
+    function declaresArray(ReflectionParameter $reflectionParameter): bool
+    {
+        $reflectionType = $reflectionParameter->getType();
+
+        if (!$reflectionType) return false;
+
+        $types = $reflectionType instanceof ReflectionUnionType
+            ? $reflectionType->getTypes()
+            : [$reflectionType];
+
+       return in_array('array', array_map(fn(ReflectionNamedType $t) => $t->getName(), $types));
+    }
 }

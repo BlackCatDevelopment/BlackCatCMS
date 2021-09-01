@@ -160,7 +160,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 );
                 if ($result && $result->rowCount() > 0) {
                     self::$pages = [];
-                    self::$pages_editable = [];
+                    self::$pages_editable = 0;
                     self::$pages_by_id = [];
                     $children_count = [];
                     $direct_parent  = 0;
@@ -1942,10 +1942,9 @@ if (!class_exists("CAT_Helper_Page")) {
             // sort pages by when_changed
             $res = usort(
                 $pages,
-                create_function(
-                    '$a,$b',
-                    'return ( ( $a["modified_when"] < $b["modified_when"] ) ? 1 : -1 );'
-                )
+                function($a,$b) {
+                    return ( ( $a["modified_when"] < $b["modified_when"] ) ? 1 : -1 );
+                }
             );
             return array_slice($pages,0,$number);
         }   // end function getLastEdited()

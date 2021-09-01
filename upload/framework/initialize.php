@@ -172,6 +172,9 @@ if (!defined('SESSION_STARTED')) {
         ]);
     }
 
+    if(!defined('GUID')) {
+        define('GUID','bc');
+    }
     $_SESSION['_GUID'] = GUID;
 
     CAT_Registry::register('SESSION_STARTED', true, true);
