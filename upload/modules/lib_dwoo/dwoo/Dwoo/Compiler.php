@@ -1767,7 +1767,7 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 					$funcCompiler = $this->customPlugins[$func]['callback'];
 				} else {
 					$funcCompiler = 'Dwoo_Plugin_'.$func.'_compile';
-ÿ 		㰐
+                }
 				array_unshift($params, $this);
 				$output = call_user_func_array($funcCompiler, $params);
 			} else {
@@ -3054,10 +3054,17 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 
 		$out = array();
 		foreach ($ref->getParameters() as $param) {
-			if (($class = $param->->getType()->getName()) !== null && $class->name === 'Dwoo') {
+            $name = $classname = null;
+            $type = $param->getType();
+            if(null!==$type) {
+                if(null!==$type->getName()) {
+                    $classname = $type->getName();
+                }
+            }
+			if ($classname !== null && $classname === 'Dwoo') {
 				continue;
 			}
-			if (($class = $param->->getType()->getName()) !== null && $class->name === 'Dwoo_Compiler') {
+			if ($classname !== null && $classname === 'Dwoo_Compiler') {
 				continue;
 			}
 			if ($param->getName() === 'rest' && $param->isArray() === true) {
