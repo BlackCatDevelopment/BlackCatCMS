@@ -26,7 +26,7 @@
 define("CAT_DEBUG", false);
 define("CAT_PATH", dirname(__FILE__) . "/../");
 
-global $depth;
+global $depth, $current_build;
 $depth = 0;
 
 // check wether to call update.php or start installation
@@ -334,6 +334,8 @@ if (isset($config["cat_url"]) && $config["cat_url"] != "") {
     $parser->setGlobals([
         "cat_url" => $config["cat_url"],
     ]);
+} else {
+    $config['cat_url'] = '';
 }
 
 if (!isset($config["installed_version"])) {
@@ -396,8 +398,8 @@ if (!$output) {
 $parser->output("index.tpl", [
     "debug" => CAT_DEBUG,
     "steps" => $steps,
-    "nextstep" => $nextstep["id"],
-    "prevstep" => $prevstep["id"],
+    "nextstep" => isset($nextstep["id"]) ? $nextstep["id"] : '',
+    "prevstep" => isset($prevstep["id"]) ? $prevstep["id"] : '',
     "status" => $currentstep["success"] ? true : false,
     "output" => $output,
     "this_step" => $this_step,
@@ -543,7 +545,7 @@ function show_step_globals($step)
 
     $output = $parser->get("globals.tpl", [
         "installer_cat_url" => dirname($installer_uri) . "/",
-        "installer_session_save_path" => $config["session_save_path"]
+        "installer_session_save_path" => isset($config["session_save_path"])
             ? $config["session_save_path"]
             : "temp/session",
         "timezones" => $timezone_table,
@@ -552,7 +554,7 @@ function show_step_globals($step)
         "languages" => $langs,
         "installer_default_language" => $config["default_language"],
         "editors" => findWYSIWYG(),
-        "installer_default_wysiwyg" => $config["default_wysiwyg"],
+        "installer_default_wysiwyg" => isset($config["default_wysiwyg"]) ? $config["default_wysiwyg"] : '',
         "installer_ssl" => isset($config["ssl"]) ? $config["ssl"] : sslCheck(),
         "is_linux" => $osl,
         "is_windows" => $osw,
@@ -1083,7 +1085,7 @@ function install_tables($database)
  **/
 function fill_tables($database)
 {
-    global $config, $admin;
+    global $config, $admin, $current_build;
 
     write2log("> [fill_tables()]");
 
@@ -1117,7 +1119,7 @@ function fill_tables($database)
     // for optional wysiwyg editors; requires name to be something like
     // <editorname>_xxx.zip, which will be prefixed with 'opt_' by the wizard,
     // so second part is the name of the editor
-    if ($config["default_wysiwyg"] !== "edit_area") {
+    if (isset($config["default_wysiwyg"]) && $config["default_wysiwyg"] != "" && $config["default_wysiwyg"] !== "edit_area") {
         list($ignore, $config["default_wysiwyg"], $ignore) = explode(
             "_",
             $config["default_wysiwyg"],
@@ -1613,9 +1615,6 @@ function init_constants($cat_path)
     if (!CAT_Registry::exists("CAT_PATH")) {
         CAT_Registry::define("CAT_PATH", $cat_path);
     }
-    if (!CAT_Registry::exists("CAT_URL")) {
-        CAT_Registry::define("CAT_URL", $config["cat_url"]);
-    }
     if (!CAT_Registry::exists("CAT_ADMINS_FOLDER")) {
         CAT_Registry::define("CAT_ADMINS_FOLDER", "/admins");
     }
@@ -1627,9 +1626,6 @@ function init_constants($cat_path)
     }
     if (!CAT_Registry::exists("CAT_ADMIN_PATH")) {
         CAT_Registry::define("CAT_ADMIN_PATH", CAT_PATH . CAT_BACKEND_PATH);
-    }
-    if (!CAT_Registry::exists("CAT_ADMIN_URL")) {
-        CAT_Registry::define("CAT_ADMIN_URL", CAT_URL . CAT_BACKEND_PATH);
     }
 
     if (!empty($config)) {
@@ -1661,6 +1657,13 @@ function init_constants($cat_path)
         }
         if (!CAT_Registry::exists("LEPTON_PATH")) {
             CAT_Registry::define("LEPTON_PATH", $cat_path);
+        }
+    } else {
+        if (!CAT_Registry::exists("CAT_URL")) {
+            CAT_Registry::define("CAT_URL", '');
+        }
+        if (!CAT_Registry::exists("CAT_ADMIN_URL")) {
+            CAT_Registry::define("CAT_ADMIN_URL", '');
         }
     }
 
@@ -1775,6 +1778,8 @@ function do_step($this_step, $skip = false)
     foreach ($steps as $i => $step) {
         $steps[$i]["current"] = false;
     }
+
+    $result = $output = null;
 
     foreach ($steps as $i => $step) {
         // set the 'done' marker for all steps < current
@@ -1891,7 +1896,7 @@ function __do_install()
     if (($handle = @fopen($cat_path . "/robots.txt", "r+")) !== false) {
         $robots = fread($handle, filesize($cat_path . "/robots.txt"));
         rewind($handle);
-        $robots = str_replace("{CAT_URL}", $config_cat_url, $robots);
+        $robots = str_replace("{CAT_URL}", $config["cat_url"], $robots);
         fwrite($handle, $robots);
         fclose($handle);
     }
