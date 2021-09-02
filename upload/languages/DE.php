@@ -227,6 +227,8 @@ $LANG = [
         "",
     "Image with varying fonts and backgrounds" =>
         "Bild mit wechselnden Schriften und Hintergr&uuml;nden",
+    "Installation path" =>
+        "Installationsverzeichnis",
     "Old style (not recommended)" => "Alter Stil (nicht empfohlen)",
     "Please note: These settings only concern the old Captcha derived from WebsiteBaker. At the moment, there are no settings for the SecurImage library here." =>
         "Hinweis: Diese Einstellungen betreffen die alten Captcha Methoden, die von WebsiteBaker übernommen wurden. Zur Zeit können hier keine Einstellungen für die SecurImage Bibliothek vorgenommen werden.",

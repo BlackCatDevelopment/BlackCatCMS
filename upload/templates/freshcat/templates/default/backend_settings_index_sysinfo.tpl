@@ -1,14 +1,18 @@
-            <label class="fc_label_200" for="fc_default_template">{translate('GUID')}:</label>
-			<span id="guid">{$values.guid}</span>
-            {if ! isset($values.guid) || $values.guid == ''}
-            <button class="icon-shield" dir="ltr" type="submit" id="fc_createguid" name="create_guid" onclick="return false;">{translate('Create GUID')}</button>
-            {/if}
-
-			<hr />
-
 			<span class="fc_label_200">{translate('Install date and time')}:</span>
 			{$values.installation_time}
 			<div class="clear_sp"></div>
+
+            <span class="fc_label_200">{translate('Version')}:</span>
+            {$values.cat_version} {if $values.cat_build}(Build {$values.cat_build}){/if}
+            <div class="clear_sp"></div>
+
+            <span class="fc_label_200">{translate('Installation path')}:</span>
+            {$CAT_PATH}
+            <div class="clear_sp"></div>
+
+            <span class="fc_label_200">{translate('PHP version')}:</span>
+            <?=phpversion()?>
+            <div class="clear_sp"></div>
 
             {if isset($values.pages_count) && is_array($values.pages_count)}
             <span class="fc_label_200">{translate('Page statistics')}:</span>

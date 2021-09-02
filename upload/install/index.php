@@ -1260,6 +1260,22 @@ function install_modules($cat_path, $database)
         foreach ($subs as $item) {
             // for now: do not install lib_search here, as it lets the installer break!
             if ($item == "lib_search") {
+                // set default values for the CAT search_id
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('module_order', 'wysiwyg')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('max_excerpt', '15')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('time_limit', '0')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_keywords', 'true')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_description', 'true')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_non_public_content', 'false')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_link_non_public_content', '')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_show_description', 'true')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('template', '')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_images', 'true')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_thumbs_width', '100')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_content_image', 'first')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_library', 'lib_search')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_droplet', 'CAT_SearchResults')",CAT_TABLE_PREFIX));
+                $database->query(sprintf("INSERT INTO `%ssearch` (name, value) VALUES ('cfg_search_use_page_id', '-1')",CAT_TABLE_PREFIX));
                 continue;
             }
             if (in_array($item, $ignore_files)) {
