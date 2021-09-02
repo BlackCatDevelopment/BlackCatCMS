@@ -1136,21 +1136,12 @@ function fill_tables($database)
         " ('app_name', 'cat$session_rand')," .
         " ('cat_build', '$current_build')," .
         " ('cat_version', '$current_version')," .
-        " ('default_language', '" .
-        $config["default_language"] .
-        "')," .
-        " ('default_timezone_string', '" .
-        $config["default_timezone_string"] .
-        "')," .
-        " ('installation_time', '" .
-        time() .
-        "')," .
-        " ('operating_system', '" .
-        $config["operating_system"] .
-        "')," .
-        " ('session_save_path', '" .
-        $config["session_save_path"] .
-        "')," .
+        " ('default_language', '" . $config["default_language"] . "')," .
+        " ('default_timezone_string', '" . $config["default_timezone_string"] . "')," .
+        " ('installation_time', '" . time() . "')," .
+        " ('operating_system', '" . $config["operating_system"] . "')," .
+        " ('session_save_path', '" . $config["session_save_path"] . "')," .
+        " ('session_lifetime', '7200')," .
         " ('string_dir_mode', '$dir_mode')," .
         " ('string_file_mode', '$file_mode')," .
         " ('website_title', '" .
