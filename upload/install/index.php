@@ -101,9 +101,9 @@ foreach ($dirs as $i => $dir) {
             "] muss schreibbar sein!";
     }
 }
-if (!version_compare(phpversion(), "7.3.1", ">=")) {
+if (!version_compare(phpversion(), "7.4", ">=")) {
     $pre_inst_err[] =
-        "BlackCat CMS requires PHP >= 7.3.1. You have " .
+        "BlackCat CMS requires PHP >= 7.4. You have " .
         phpversion() .
         ". Installation not possible!";
 }
