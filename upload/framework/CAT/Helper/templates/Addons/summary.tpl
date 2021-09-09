@@ -14,14 +14,14 @@
 	<tbody>
 	{foreach $summary line}
 	{if $line.key && $line.key == 'PHP_SETTINGS' && $seen == false}
-	{$seen=true}
+	{assign true seen}
 	<tr>
       <td>&nbsp;</td>
       <td colspan="3">{translate('PHP Settings')}</td>
 	</tr>
 	{/if}
     {if $line.key && $line.key == 'ADDONS' && $addonsseen == false}
-	{$addonsseen=true}
+	{assign true addonsseen}
 	<tr>
       <td>&nbsp;</td>
       <td style="{$line.style}" colspan="3">{translate('Required Addons')}</td>

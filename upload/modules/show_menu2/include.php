@@ -232,10 +232,10 @@ class SM2_Formatter
                 'parent|level|sib|sibCount|class|description|keywords|'.
                 SM2_CONDITIONAL.
             ')\]@',
-            create_function(
-                '$m',
-                'global $self; return $self->replace($m[1]);'
-            ),
+            function($m) {
+                global $self;
+                return $self->replace($m[1]);
+            },
             $aCurrItem
         );
     }

@@ -163,10 +163,9 @@ function utf8_fast_entities_to_umlauts($str) {
 		//$str = preg_replace("/&#([0-9]+);/e", "code_to_utf8($1)", $str);
         $str = preg_replace_callback(
             '/&#([0-9]+);/',
-            create_function(
-                '$m',
-                'code_to_utf8($m[1]);'
-            ),
+            function($m) {
+                code_to_utf8($m[1]);
+            },
             $str
         );
 	}
