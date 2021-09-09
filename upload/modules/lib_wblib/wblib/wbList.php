@@ -198,8 +198,14 @@ if(!class_exists('wblib\wbList',false))
             // open the root list
             $html[] = self::listStart($ul_id);
 
-            while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent <> $root_id ) ) )
+            while ( $loop && ( ( count($children[$parent]) > 0 || ( $parent <> $root_id ) ) ) )
             {
+                if(!strlen(key($children[$parent]))) break;
+	            $option	= array(
+		        	'key'	=> key($children[$parent]),
+		        	'value'	=> current($children[$parent])
+	            );
+				array_shift($children[$parent]);
                 // ----- no more items -----
                 if ( $option === false )
                 {
