@@ -716,6 +716,18 @@ $LANG = [
     "File deleted successfully" => "Datei erfolgreich gelöscht",
     "File size" => "Dateigröße",
     "File type" => "Dateityp",
+    'File upload error (the uploaded file exceeds the upload_max_filesize directive in php.ini).'
+        => 'Die Größe der Datei überschreitet die Einstellung upload_max_filesize in der php.ini.',
+    'File upload error (the uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form).'
+        => 'Die Größe der Datei überschreitet die Einstellung MAX_FILE_SIZE des HTML-Formulars.',
+    'File upload error (the uploaded file was only partially uploaded).'
+        => 'Die Datei wurde nur zum Teil hochgeladen.',
+    'File upload error (no file was uploaded).'
+        => 'Es wurde keine Datei hochgeladen.',
+    'File upload error (missing a temporary folder).'
+        => 'Kein temp-Verzeichnis gefunden.',
+    'File upload error (failed to write file to disk).'
+        => 'Die Datei konnte nicht gespeichert werden.',
     "Folder created successfully" => "Verzeichnis erfolgreich angelegt",
     "Media" => "Medien",
     "New folder" => "Neues Verzeichnis",

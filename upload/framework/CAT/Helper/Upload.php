@@ -713,7 +713,7 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
         */
         function getsize($size)
         {
-            $last = strtolower($size{strlen($size)-1});
+            $last = strtolower($size[strlen($size)-1]);
             $size = intval($size);
             switch($last)
             {
