@@ -102,7 +102,10 @@ if(
 require CAT_ADMIN_PATH . '/groups/get_permissions.php';
 
 $params = array(
-    'name' => $group_name,'system_permissions'=>$system_permissions,'module_permissions'=>$module_permissions,'template_permissions'=>$template_permissions
+    'name'                 => htmlspecialchars($group_name),
+    'system_permissions'   => $system_permissions,
+    'module_permissions'   => $module_permissions,
+    'template_permissions' => $template_permissions
 );
 
 if ( $addGroup != '' )
