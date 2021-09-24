@@ -95,7 +95,7 @@ if ( $val->sanitizePost('filter_add') )
         $backend->db()->query(
             "INSERT INTO `:prefix:mod_filter` VALUES ( :name, :module, :desc, :code, :active )",
             array(
-                'name' => $data['name'],
+                'name'   => filter_var($data['name'],FILTER_SANITIZE_SPECIAL_CHARS),
                 'module' => $data['module_name'],
                 'desc'   => $data['description'],
                 'code'   => $data['code'],

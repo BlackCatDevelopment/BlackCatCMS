@@ -632,7 +632,7 @@ function edit_droplet($id)
                     } else {
                         $new_id = CAT_Helper_Droplet::insertDroplet(
                             array(
-                                'name'        => $title,
+                                'name'        => htmlspecialchars($title),
                                 'code'        => $content,
                                 'description' => $description,
                                 'time'        => $modified_when,

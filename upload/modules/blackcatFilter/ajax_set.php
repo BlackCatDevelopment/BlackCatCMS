@@ -58,6 +58,8 @@ if ( !CAT_Users::getInstance()->checkPermission('admintools','blackcatFilter') )
 $filter = $val->get('_REQUEST','filter');
 $action = $val->get('_REQUEST','action');
 
+$sanitized_filter = filter_var($filter,FILTER_SANITIZE_SPECIAL_CHARS);
+
 // filter to activate/deactivate?
 if($action!='delete')
 {
@@ -67,7 +69,7 @@ if($action!='delete')
            ;
     $backend->db()->query(sprintf(
         "UPDATE `%smod_filter` SET filter_active='%s' WHERE filter_name='%s'",
-        CAT_TABLE_PREFIX, $value, $filter
+        CAT_TABLE_PREFIX, $value, $database->conn()->quote($sanitized_filter)
     ));
     if($backend->db()->isError())
         $error = $backend->db()->getError();
@@ -75,10 +77,9 @@ if($action!='delete')
 // filter to delete?
 else
 {
-
     $res = $backend->db()->query(sprintf(
-        "SELECT * FROM `%smod_filter` WHERE filter_name='%s'",
-        CAT_TABLE_PREFIX, $filter
+        "SELECT * FROM `%smod_filter` WHERE filter_name=%s",
+        CAT_TABLE_PREFIX, $database->conn()->quote($sanitized_filter)
     ));
     if($res && $res->numRows())
     {
@@ -90,8 +91,8 @@ else
                 unlink($file);
         }
         $backend->db()->query(sprintf(
-            "DELETE FROM `%smod_filter` WHERE filter_name='%s'",
-            CAT_TABLE_PREFIX, $filter
+            "DELETE FROM `%smod_filter` WHERE filter_name=%s",
+            CAT_TABLE_PREFIX, $database->conn()->quote($sanitized_filter)
         ));
         if($backend->db()->isError())
             $error = $backend->db()->getError();
