@@ -2078,6 +2078,8 @@ if (!class_exists("CAT_Helper_Page")) {
                     CAT_Helper_Page::$space . "<title>" . $title . "</title>";
             }
 
+            $title = htmlentities($title);
+
             // description
             if (isset($droplets_config["description"])) {
                 $description = $droplets_config["description"];

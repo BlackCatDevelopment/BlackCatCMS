@@ -102,7 +102,11 @@ function page_keywords($mode=false)
 function page_title($spacer=' - ',$template='[WEBSITE_TITLE][SPACER][PAGE_TITLE]',$mode=false)
 {
     $vars   = array('[WEBSITE_TITLE]', '[PAGE_TITLE]', '[MENU_TITLE]', '[SPACER]');
-	$values = array(CAT_Registry::get('WEBSITE_TITLE'), CAT_Registry::get('PAGE_TITLE'), CAT_Registry::get('MENU_TITLE'), $spacer);
+	$values = array(
+        htmlentities(CAT_Registry::get('WEBSITE_TITLE')),
+        htmlentities(CAT_Registry::get('PAGE_TITLE')),
+        htmlentities(CAT_Registry::get('MENU_TITLE'), $spacer)
+    );
 	$temp = str_replace($vars, $values, $template);
 	if ( true === $mode ) {
             return $temp;

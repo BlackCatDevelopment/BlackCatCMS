@@ -182,7 +182,7 @@ if (!class_exists('CAT_Backend', false))
                 $title = $this->db()->query(
                     "SELECT `value` FROM `:prefix:settings` WHERE `name`='website_title'"
                 )->fetchColumn();
-                CAT_Registry::define('WEBSITE_TITLE',$title,true);
+                CAT_Registry::define('WEBSITE_TITLE',htmlentities($title),true);
             }
 
             // check current URL for page tree
@@ -218,6 +218,7 @@ if (!class_exists('CAT_Backend', false))
                 // create LI content for ListBuilder
                 foreach($pages as $i => $page)
                 {
+                    $page['page_title'] = htmlentities($page['page_title']);
                     if(isset($sections[$page['page_id']]) && count($sections[$page['page_id']]))
                     {
                         $page['page_title'] .= "\n".count($sections[$page['page_id']]).' '.$user->lang()->translate('active sections').':';
