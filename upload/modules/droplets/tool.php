@@ -299,9 +299,13 @@ function export_droplets()
     $temp_dir = CAT_PATH . '/temp/droplets/';
 
     // make the temporary working directory
-    if (!@mkdir($temp_dir)) {
-        $err = error_get_last();
-        $backend->print_error($backend->lang()->translate('Unable to create the temporary folder: {{error}}', array('error'=>$err['message'])));
+    if(!file_exists($temp_dir)) {
+        try {
+            mkdir($temp_dir);
+        } catch(Exception $e) {
+	        $err = error_get_last();
+	        $backend->print_error($backend->lang()->translate('Unable to create the temporary folder: {{error}}', array('error'=>$err['message'])));
+    	}
     }
 
     foreach ($marked as $id) {
@@ -312,7 +316,7 @@ function export_droplets()
             $usage   = substr($usage, 0, -3);
         }
         $info[]  = 'Droplet: ' . $name . '.php<br />';
-        $sFile   = $temp_dir . $name . '.php';
+        $sFile   = $temp_dir . CAT_Helper_Directory::sanitizeFilename($name) . '.php';
         $fh      = fopen($sFile, 'w');
         fwrite($fh, '//:' . $droplet['description'] . "\n");
         fwrite($fh, '//:' . $usage . "\n");
