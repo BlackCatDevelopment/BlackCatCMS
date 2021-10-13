@@ -1,11 +1,11 @@
 <?php
+
 /////////////////////////////////////////////////////////////////
 /// getID3() by James Heinrich <info@getid3.org>               //
-//  available at http://getid3.sourceforge.net                 //
-//            or http://www.getid3.org                         //
-//          also https://github.com/JamesHeinrich/getID3       //
-/////////////////////////////////////////////////////////////////
-// See readme.txt for more details                             //
+//  available at https://github.com/JamesHeinrich/getID3       //
+//            or https://www.getid3.org                        //
+//            or http://getid3.sourceforge.net                 //
+//  see readme.txt for more details                            //
 /////////////////////////////////////////////////////////////////
 //                                                             //
 // module.misc.cue.php                                         //
@@ -31,10 +31,18 @@
  * A CueSheet class used to open and parse cuesheets.
  *
  */
+
+if (!defined('GETID3_INCLUDEPATH')) { // prevent path-exposing attacks that access modules directly on public webservers
+	exit;
+}
+
 class getid3_cue extends getid3_handler
 {
 	public $cuesheet = array();
 
+	/**
+	 * @return bool
+	 */
 	public function Analyze() {
 		$info = &$this->getid3->info;
 
@@ -44,18 +52,24 @@ class getid3_cue extends getid3_handler
 		return true;
 	}
 
-
-
+	/**
+	 * @param string $filename
+	 *
+	 * @return array
+	 */
 	public function readCueSheetFilename($filename)
 	{
 		$filedata = file_get_contents($filename);
 		return $this->readCueSheet($filedata);
 	}
+
 	/**
-	* Parses a cue sheet file.
-	*
-	* @param string $filename - The filename for the cue sheet to open.
-	*/
+	 * Parses a cue sheet file.
+	 *
+	 * @param string $filedata
+	 *
+	 * @return array
+	 */
 	public function readCueSheet(&$filedata)
 	{
 		$cue_lines = array();
@@ -72,18 +86,18 @@ class getid3_cue extends getid3_handler
 	}
 
 	/**
-	* Parses the cue sheet array.
-	*
-	* @param array $file - The cuesheet as an array of each line.
-	*/
+	 * Parses the cue sheet array.
+	 *
+	 * @param array $file - The cuesheet as an array of each line.
+	 */
 	public function parseCueSheet($file)
 	{
 		//-1 means still global, all others are track specific
 		$track_on = -1;
+		$currentFile = null;
 
-		for ($i=0; $i < count($file); $i++)
-		{
-			list($key) = explode(' ', strtolower($file[$i]), 2);
+		foreach ($file as $line) {
+			list($key) = explode(' ', strtolower($line), 2);
 			switch ($key)
 			{
 				case 'catalog':
@@ -92,25 +106,25 @@ class getid3_cue extends getid3_handler
 				case 'performer':
 				case 'songwriter':
 				case 'title':
-					$this->parseString($file[$i], $track_on);
+					$this->parseString($line, $track_on);
 					break;
 				case 'file':
-					$currentFile = $this->parseFile($file[$i]);
+					$currentFile = $this->parseFile($line);
 					break;
 				case 'flags':
-					$this->parseFlags($file[$i], $track_on);
+					$this->parseFlags($line, $track_on);
 					break;
 				case 'index':
 				case 'postgap':
 				case 'pregap':
-					$this->parseIndex($file[$i], $track_on);
+					$this->parseIndex($line, $track_on);
 					break;
 				case 'rem':
-					$this->parseComment($file[$i], $track_on);
+					$this->parseComment($line, $track_on);
 					break;
 				case 'track':
 					$track_on++;
-					$this->parseTrack($file[$i], $track_on);
+					$this->parseTrack($line, $track_on);
 					if (isset($currentFile)) // if there's a file
 					{
 						$this->cuesheet['tracks'][$track_on]['datafile'] = $currentFile;
@@ -118,18 +132,18 @@ class getid3_cue extends getid3_handler
 					break;
 				default:
 					//save discarded junk and place string[] with track it was found in
-					$this->parseGarbage($file[$i], $track_on);
+					$this->parseGarbage($line, $track_on);
 					break;
 			}
 		}
 	}
 
 	/**
-	* Parses the REM command.
-	*
-	* @param string $line - The line in the cue file that contains the TRACK command.
-	* @param integer $track_on - The track currently processing.
-	*/
+	 * Parses the REM command.
+	 *
+	 * @param string  $line - The line in the cue file that contains the TRACK command.
+	 * @param integer $track_on - The track currently processing.
+	 */
 	public function parseComment($line, $track_on)
 	{
 		$explodedline = explode(' ', $line, 3);
@@ -148,11 +162,12 @@ class getid3_cue extends getid3_handler
 	}
 
 	/**
-	* Parses the FILE command.
-	*
-	* @param string $line - The line in the cue file that contains the FILE command.
-	* @return array - Array of FILENAME and TYPE of file..
-	*/
+	 * Parses the FILE command.
+	 *
+	 * @param string $line - The line in the cue file that contains the FILE command.
+	 *
+	 * @return array - Array of FILENAME and TYPE of file..
+	 */
 	public function parseFile($line)
 	{
 		$line =            substr($line, strpos($line, ' ') + 1);
@@ -168,11 +183,11 @@ class getid3_cue extends getid3_handler
 	}
 
 	/**
-	* Parses the FLAG command.
-	*
-	* @param string $line - The line in the cue file that contains the TRACK command.
-	* @param integer $track_on - The track currently processing.
-	*/
+	 * Parses the FLAG command.
+	 *
+	 * @param string  $line - The line in the cue file that contains the TRACK command.
+	 * @param integer $track_on - The track currently processing.
+	 */
 	public function parseFlags($line, $track_on)
 	{
 		if ($track_on != -1)
@@ -206,11 +221,11 @@ class getid3_cue extends getid3_handler
 	}
 
 	/**
-	* Collect any unidentified data.
-	*
-	* @param string $line - The line in the cue file that contains the TRACK command.
-	* @param integer $track_on - The track currently processing.
-	*/
+	 * Collect any unidentified data.
+	 *
+	 * @param string  $line - The line in the cue file that contains the TRACK command.
+	 * @param integer $track_on - The track currently processing.
+	 */
 	public function parseGarbage($line, $track_on)
 	{
 		if ( strlen($line) > 0 )
@@ -227,15 +242,16 @@ class getid3_cue extends getid3_handler
 	}
 
 	/**
-	* Parses the INDEX command of a TRACK.
-	*
-	* @param string $line - The line in the cue file that contains the TRACK command.
-	* @param integer $track_on - The track currently processing.
-	*/
+	 * Parses the INDEX command of a TRACK.
+	 *
+	 * @param string  $line - The line in the cue file that contains the TRACK command.
+	 * @param integer $track_on - The track currently processing.
+	 */
 	public function parseIndex($line, $track_on)
 	{
 		$type = strtolower(substr($line, 0, strpos($line, ' ')));
 		$line =            substr($line, strpos($line, ' ') + 1);
+		$number = 0;
 
 		if ($type == 'index')
 		{
@@ -261,6 +277,10 @@ class getid3_cue extends getid3_handler
 		}
 	}
 
+	/**
+	 * @param string $line
+	 * @param int    $track_on
+	 */
 	public function parseString($line, $track_on)
 	{
 		$category = strtolower(substr($line, 0, strpos($line, ' ')));
@@ -292,11 +312,11 @@ class getid3_cue extends getid3_handler
 	}
 
 	/**
-	* Parses the TRACK command.
-	*
-	* @param string $line - The line in the cue file that contains the TRACK command.
-	* @param integer $track_on - The track currently processing.
-	*/
+	 * Parses the TRACK command.
+	 *
+	 * @param string  $line - The line in the cue file that contains the TRACK command.
+	 * @param integer $track_on - The track currently processing.
+	 */
 	public function parseTrack($line, $track_on)
 	{
 		$line = substr($line, strpos($line, ' ') + 1);

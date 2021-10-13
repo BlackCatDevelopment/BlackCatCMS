@@ -1,11 +1,11 @@
 <?php
+
 /////////////////////////////////////////////////////////////////
 /// getID3() by James Heinrich <info@getid3.org>               //
-//  available at http://getid3.sourceforge.net                 //
-//            or http://www.getid3.org                         //
-//          also https://github.com/JamesHeinrich/getID3       //
-/////////////////////////////////////////////////////////////////
-// See readme.txt for more details                             //
+//  available at https://github.com/JamesHeinrich/getID3       //
+//            or https://www.getid3.org                        //
+//            or http://getid3.sourceforge.net                 //
+//  see readme.txt for more details                            //
 /////////////////////////////////////////////////////////////////
 //                                                             //
 // module.tag.xmp.php                                          //
@@ -81,8 +81,8 @@ class Image_XMP
 	* Reads all the JPEG header segments from an JPEG image file into an array
 	*
 	* @param string $filename - the filename of the JPEG file to read
-	* @return array $headerdata - Array of JPEG header segments
-	* @return boolean FALSE - if headers could not be read
+	* @return array|false  $headerdata - Array of JPEG header segments,
+	*                        FALSE - if headers could not be read
 	*/
 	public function _get_jpeg_header_data($filename)
 	{
@@ -114,7 +114,7 @@ class Image_XMP
 		$data = fread($filehnd, 2);
 
 		// Check that the third character is 0xFF (Start of first segment header)
-		if ($data{0} != "\xFF")
+		if ($data[0] != "\xFF")
 		{
 			// NO FF found - close file and return - JPEG is probably corrupted
 			fclose($filehnd);
@@ -124,15 +124,16 @@ class Image_XMP
 		// Flag that we havent yet hit the compressed image data
 		$hit_compressed_image_data = false;
 
+		$headerdata = array();
 		// Cycle through the file until, one of: 1) an EOI (End of image) marker is hit,
 		//                                       2) we have hit the compressed image data (no more headers are allowed after data)
 		//                                       3) or end of file is hit
 
-		while (($data{1} != "\xD9") && (!$hit_compressed_image_data) && (!feof($filehnd)))
+		while (($data[1] != "\xD9") && (!$hit_compressed_image_data) && (!feof($filehnd)))
 		{
 			// Found a segment to look at.
 			// Check that the segment marker is not a Restart marker - restart markers don't have size or data after them
-			if ((ord($data{1}) < 0xD0) || (ord($data{1}) > 0xD7))
+			if ((ord($data[1]) < 0xD0) || (ord($data[1]) > 0xD7))
 			{
 				// Segment isn't a Restart marker
 				// Read the next two bytes (size)
@@ -149,15 +150,15 @@ class Image_XMP
 
 				// Store the segment information in the output array
 				$headerdata[] = array(
-					'SegType'      => ord($data{1}),
-					'SegName'      => $GLOBALS['JPEG_Segment_Names'][ord($data{1})],
+					'SegType'      => ord($data[1]),
+					'SegName'      => $GLOBALS['JPEG_Segment_Names'][ord($data[1])],
 					'SegDataStart' => $segdatastart,
 					'SegData'      => $segdata,
 				);
 			}
 
 			// If this is a SOS (Start Of Scan) segment, then there is no more header data - the compressed image data follows
-			if ($data{1} == "\xDA")
+			if ($data[1] == "\xDA")
 			{
 				// Flag that we have hit the compressed image data - exit loop as no more headers available.
 				$hit_compressed_image_data = true;
@@ -168,7 +169,7 @@ class Image_XMP
 				$data = fread($filehnd, 2);
 
 				// Check that the first byte of the two is 0xFF as it should be for a marker
-				if ($data{0} != "\xFF")
+				if ($data[0] != "\xFF")
 				{
 					// NO FF found - close file and return - JPEG is probably corrupted
 					fclose($filehnd);
@@ -191,8 +192,8 @@ class Image_XMP
 	* Retrieves XMP information from an APP1 JPEG segment and returns the raw XML text as a string.
 	*
 	* @param string $filename - the filename of the JPEG file to read
-	* @return string $xmp_data - the string of raw XML text
-	* @return boolean FALSE - if an APP 1 XMP segment could not be found, or if an error occured
+	* @return string|false $xmp_data - the string of raw XML text,
+	*                        FALSE - if an APP 1 XMP segment could not be found, or if an error occurred
 	*/
 	public function _get_XMP_text($filename)
 	{
@@ -200,22 +201,25 @@ class Image_XMP
 		$jpeg_header_data = $this->_get_jpeg_header_data($filename);
 
 		//Cycle through the header segments
-		for ($i = 0; $i < count($jpeg_header_data); $i++)
-		{
-			// If we find an APP1 header,
-			if (strcmp($jpeg_header_data[$i]['SegName'], 'APP1') == 0)
-			{
-				// And if it has the Adobe XMP/RDF label (http://ns.adobe.com/xap/1.0/\x00) ,
-				if (strncmp($jpeg_header_data[$i]['SegData'], 'http://ns.adobe.com/xap/1.0/'."\x00", 29) == 0)
-				{
-					// Found a XMP/RDF block
-					// Return the XMP text
-					$xmp_data = substr($jpeg_header_data[$i]['SegData'], 29);
+		if (is_array($jpeg_header_data) && count($jpeg_header_data) > 0) {
+			foreach ($jpeg_header_data as $segment) {
+				// If we find an APP1 header,
+				if (strcmp($segment['SegName'], 'APP1') === 0) {
+					// And if it has the Adobe XMP/RDF label (http://ns.adobe.com/xap/1.0/\x00) ,
+					if (strncmp($segment['SegData'], 'http://ns.adobe.com/xap/1.0/' . "\x00", 29) === 0) {
+						// Found a XMP/RDF block
+						// Return the XMP text
+						$xmp_data = substr($segment['SegData'], 29);
 
-					return trim($xmp_data); // trim() should not be neccesary, but some files found in the wild with null-terminated block (known samples from Apple Aperture) causes problems elsewhere (see http://www.getid3.org/phpBB3/viewtopic.php?f=4&t=1153)
+						// trim() should not be necessary, but some files found in the wild with null-terminated block
+						// (known samples from Apple Aperture) causes problems elsewhere
+						// (see https://www.getid3.org/phpBB3/viewtopic.php?f=4&t=1153)
+						return trim($xmp_data);
+					}
 				}
 			}
 		}
+
 		return false;
 	}
 
@@ -223,9 +227,9 @@ class Image_XMP
 	* Parses a string containing XMP data (XML), and returns an array
 	* which contains all the XMP (XML) information.
 	*
-	* @param string $xml_text - a string containing the XMP data (XML) to be parsed
-	* @return array $xmp_array - an array containing all xmp details retrieved.
-	* @return boolean FALSE - couldn't parse the XMP data
+	* @param string $xmltext - a string containing the XMP data (XML) to be parsed
+	* @return array|false $xmp_array - an array containing all xmp details retrieved,
+	*                       FALSE - couldn't parse the XMP data.
 	*/
 	public function read_XMP_array_from_text($xmltext)
 	{
@@ -304,17 +308,19 @@ class Image_XMP
 								{
 									// Check whether we want this details from this attribute
 //									if (in_array($key, $GLOBALS['XMP_tag_captions']))
-									if (true)
-									{
+//									if (true)
+//									{
 										// Attribute wanted
 										$xmp_array[$key] = $xml_elem['attributes'][$key];
-									}
+//									}
 								}
 							}
+							break;
 						case 'cdata':
 						case 'close':
 							break;
 					}
+					break;
 
 				case 'rdf:ID':
 				case 'rdf:nodeID':
@@ -362,8 +368,8 @@ class Image_XMP
 				default:
 					// Check whether we want the details from this attribute
 //					if (in_array($xml_elem['tag'], $GLOBALS['XMP_tag_captions']))
-					if (true)
-					{
+//					if (true)
+//					{
 						switch ($xml_elem['type'])
 						{
 							case 'open':
@@ -385,7 +391,7 @@ class Image_XMP
 								// ignore
 								break;
 						}
-					}
+//					}
 					break;
 			}
 
@@ -397,7 +403,7 @@ class Image_XMP
 	/**
 	* Constructor
 	*
-	* @param string - Name of the image file to access and extract XMP information from.
+	* @param string $sFilename - Name of the image file to access and extract XMP information from.
 	*/
 	public function __construct($sFilename)
 	{
@@ -409,8 +415,11 @@ class Image_XMP
 			$xmp_data = $this->_get_XMP_text($sFilename);
 			if ($xmp_data)
 			{
-				$this->_aXMP = $this->read_XMP_array_from_text($xmp_data);
-				$this->_bXMPParse = true;
+				$aXMP = $this->read_XMP_array_from_text($xmp_data);
+				if ($aXMP !== false) {
+					$this->_aXMP = (array) $aXMP;
+					$this->_bXMPParse = true;
+				}
 			}
 		}
 	}
