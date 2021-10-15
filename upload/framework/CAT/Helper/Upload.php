@@ -713,6 +713,10 @@ if ( ! class_exists( 'CAT_Helper_Upload' ) )
         */
         function getsize($size)
         {
+            if(preg_match('~^\d+$~', $size)) {
+                $this->log()->logDebug(sprintf('getsize() - size %s is numeric, nothing to convert', $size));
+                return $size;
+            }
             $last = strtolower($size[strlen($size)-1]);
             $size = intval($size);
             switch($last)

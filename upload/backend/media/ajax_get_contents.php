@@ -56,9 +56,14 @@ if ( $val->sanitizePost('load_url') == '' || $user->checkPermission('media','med
 	exit();
 }
 
-$load_file		= urldecode($val->sanitizePost('load_url'));
-$load_url		= $val->sanitizePost('folder_path') . '/' . $load_file;
-$load_path		= CAT_PATH.'/'.$load_url;
+if ( $val->sanitizePost('load_url') == '/' && $val->sanitizePost('folder_path') == '' ) {
+    $load_file = '/media';
+} else {
+    $load_file = urldecode($val->sanitizePost('load_url'));
+}
+
+$load_url  = $val->sanitizePost('folder_path') . '/' . $load_file;
+$load_path = CAT_PATH.'/'.$load_url;
 
 $ajax	= array(
 	'initial_folder'		=> $dirh->sanitizePath($load_url),
