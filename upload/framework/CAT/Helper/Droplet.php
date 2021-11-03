@@ -1086,7 +1086,7 @@ if (!class_exists('CAT_Helper_Droplet')) {
                         'code'   => $code,
                         'desc'   => $description,
                         'when'   => time(),
-                        'userid' => CAT_Users::get_user_id(),
+                        'userid' => CAT_Users::get_user_id() ? CAT_Users::get_user_id() : 1,
                         'active' => 1,
                         'usage'  => $usage
                     );
