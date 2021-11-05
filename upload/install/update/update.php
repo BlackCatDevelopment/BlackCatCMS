@@ -274,7 +274,7 @@ $checkForField = $database
     ->fetchColumn();
 if (!$checkForField) {
     CAT_Helper_DB::getInstance()->query(
-        "ALTER TABLE `:prefix:users` ADD `otp` bit(1) NOT NULL DEFAULT 0"
+        "ALTER TABLE `:prefix:users` ADD `otp` tinyint(1) NOT NULL DEFAULT 0"
     );
 }
 unset($getDB);
