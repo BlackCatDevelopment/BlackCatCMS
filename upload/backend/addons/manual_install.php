@@ -23,87 +23,121 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+if (defined("CAT_PATH")) {
+    include CAT_PATH . "/framework/class.secure.php";
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+    while ($level < 10 && !file_exists($root . "/framework/class.secure.php")) {
+        $root .= "../";
+        $level += 1;
+    }
+    if (file_exists($root . "/framework/class.secure.php")) {
+        include $root . "/framework/class.secure.php";
+    } else {
+        trigger_error(
+            sprintf(
+                "[ <b>%s</b> ] Can't include class.secure.php!",
+                $_SERVER["SCRIPT_NAME"]
+            ),
+            E_USER_ERROR
+        );
+    }
 }
 
-$backend = CAT_Backend::getInstance('Addons', 'modules_install');
-$user    = CAT_Users::getInstance();
-$val     = CAT_Helper_Validate::getInstance();
+$backend = CAT_Backend::getInstance("Addons", "modules_install");
+$user = CAT_Users::getInstance();
+$val = CAT_Helper_Validate::getInstance();
 
-$action	 = $val->sanitizePost('action');
-$module	 = $val->sanitizePost('file');
-$type    = $val->sanitizePost('type').'s';
+$action = $val->sanitizePost("action");
+$module = $val->sanitizePost("file");
+$type = $val->sanitizePost("type") . "s";
 
-$js_back = CAT_ADMIN_URL . '/addons/index.php';
+$js_back = CAT_ADMIN_URL . "/addons/index.php";
 
-if ( !in_array( $action, array('install', 'upgrade') ) )
-{
-	die(header('Location: '.CAT_ADMIN_URL.'/'.CAT_BACKEND_PATH.'/addons/index.php'));
+if (!in_array($action, ["install", "upgrade"])) {
+    die(
+        header(
+            "Location: " .
+                CAT_ADMIN_URL .
+                "/" .
+                CAT_BACKEND_PATH .
+                "/addons/index.php"
+        )
+    );
 }
-if ( $module == '' || !( strpos($module, '..') === false ) )
-{
-	die(header('Location: '.CAT_ADMIN_URL.'/'.CAT_BACKEND_PATH.'/addons/index.php'));
+if ($module == "" || !(strpos($module, "..") === false)) {
+    die(
+        header(
+            "Location: " .
+                CAT_ADMIN_URL .
+                "/" .
+                CAT_BACKEND_PATH .
+                "/addons/index.php"
+        )
+    );
 }
 
 // validate
-$path = CAT_Helper_Directory::sanitizePath(CAT_PATH.'/'.$type.'/'.$module.(($type=='languages')?'.php':''));
+$path = CAT_Helper_Directory::sanitizePath(
+    CAT_PATH .
+        "/" .
+        $type .
+        "/" .
+        $module .
+        ($type == "languages" ? ".php" : "")
+);
 $info = CAT_Helper_Addons::checkInfo($path);
 
-if ( ! is_array($info) || ! count($info) )
-{
+if (!is_array($info) || !count($info)) {
     $backend->print_error(
-          $backend->lang()->translate(
-              'Unable to {{ action }} {{ type }} {{ module }}!',
-              array('action'=>$action,'type'=>substr( $type, 0, -1 ),'module'=>$path)
-          )
-        . ': <tt>"'
-        . htmlentities(basename($path)).'/'.$action.'.php"</tt> '
-        . $backend->lang()->translate('does not exist'),
+        $backend
+            ->lang()
+            ->translate("Unable to {{ action }} {{ type }} {{ module }}!", [
+                "action" => $action,
+                "type" => substr($type, 0, -1),
+                "module" => $path,
+            ]) .
+            ': <tt>"' .
+            htmlentities(basename($path)) .
+            "/" .
+            $action .
+            '.php"</tt> ' .
+            $backend->lang()->translate("does not exist"),
         $js_back
     );
 }
 
-if ( $type != 'languages' )
-{
+if ($type != "languages") {
     // this prints an error page if prerequisites are not met
-    $precheck_errors = CAT_Helper_Addons::preCheckAddon( NULL, $path, false );
-    if ( $precheck_errors != '' && ! is_bool($precheck_errors) )
-    {
-        $backend->print_error($backend->lang()->translate(
-            'Invalid installation file. {{error}}',
-            array('error'=>$precheck_errors)
-        ));
+    $precheck_errors = CAT_Helper_Addons::preCheckAddon(null, $path, false);
+    if ($precheck_errors != "" && !is_bool($precheck_errors)) {
+        $backend->print_error(
+            $backend
+                ->lang()
+                ->translate("Invalid installation file. {{error}}", [
+                    "error" => $precheck_errors,
+                ])
+        );
         return false;
     }
-    $admin =& $backend;
-    // Run the modules install // upgrade script if there is one
-    if ( file_exists($path.'/'.$action.'.php') )
-        require $path.'/'.$action.'.php';
+    $admin = &$backend;
 }
-
-CAT_Helper_Addons::loadModuleIntoDB($path,$action,$info);
-
-switch ($action)
-{
-	case 'install':
-	case 'upgrade':
-		$backend->print_success( str_replace('deed','ded','Addon successfully '.$action.'ed'), $js_back);
-		break;
-	default:
-		$backend->print_error( 'Action not supported', $js_back );
+CAT_Helper_Addons::loadModuleIntoDB($path, $action, $info);
+// Run the modules install // upgrade script if there is one
+if (file_exists($path . "/" . $action . ".php")) {
+    require $path . "/" . $action . ".php";
+}
+switch ($action) {
+    case "install":
+    case "upgrade":
+        $backend->print_success(
+            str_replace("deed", "ded", "Addon successfully " . $action . "ed"),
+            $js_back
+        );
+        break;
+    default:
+        $backend->print_error("Action not supported", $js_back);
 }
 
 // Print admin footer
