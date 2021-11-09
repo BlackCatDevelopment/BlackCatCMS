@@ -2074,7 +2074,10 @@ if (!class_exists("CAT_Users", false)) {
                     self::$validatePasswordError =
                         self::lang()->translate(
                             "The required password complexity is not met"
-                        ) . implode("<br />", $PASSWORD->getPasswordIssues());
+                        ) . "<br />";
+                    foreach($PASSWORD->getPasswordIssues() as $issue) {
+                        self::$validatePasswordError .= self::lang()->translate($issue) . "<br />";
+                    }
                     return false;
                 }
             }
