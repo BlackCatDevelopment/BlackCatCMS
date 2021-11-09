@@ -24,6 +24,10 @@
  */
 
 $LANG = array(
+    "Password requires an uppercase letter." => "Das Kennwort muss einen Großbuchstaben enthalten.",
+    "Password requires a number." => "Das Kennwort muss eine Ziffer enthalten.",
+    "Password requires a special character." => "Das Kennwort muss ein Sonderzeichen enthalten.",
+    "Password should not contain your username." => "Der Benutzername sollte nicht Teil des Kennwortes sein.",
 // ----- pre Installation / Update errors -----
     'Sorry, the BlackCat CMS Installation prerequisites check failed.'
         => 'Entschuldigung, die Prüfung der BlackCat CMS Installations-Voraussetzungen ist fehlgeschlagen.',

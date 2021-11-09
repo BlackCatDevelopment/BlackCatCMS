@@ -792,6 +792,10 @@ $LANG = [
     "Modules" => "Module",
     "Optional parameters" => "Optionale Parameter",
     "Password" => "Kennwort",
+    "Password requires an uppercase letter." => "Das Kennwort muss einen Großbuchstaben enthalten.",
+    "Password requires a number." => "Das Kennwort muss eine Ziffer enthalten.",
+    "Password requires a special character." => "Das Kennwort muss ein Sonderzeichen enthalten.",
+    "Password should not contain your username." => "Der Benutzername sollte nicht Teil des Kennwortes sein.",
     "Permissions" => "Rechte",
     "Please note: You should only enter values in those fields if you wish to change this users password" =>
         "Hinweis: In die folgenden Felder nur etwas eintragen, wenn das Kennwort geändert werden soll",
