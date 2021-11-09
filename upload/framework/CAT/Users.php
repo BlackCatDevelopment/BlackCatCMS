@@ -353,7 +353,10 @@ if (!class_exists("CAT_Users", false)) {
                         // check for old md5()-password and if login with old method is successful.
                         if (
                             self::checkNotMD5Password($user) === false &&
-                            ($user_id = self::authenticateOldPW($user, $pw) > 0)
+                            is_numeric(
+                                $user_id = self::authenticateOldPW($user, $pw)
+                            ) &&
+                            $user_id > 0
                         ) {
                             // Save new password hash
                             $self
@@ -1140,7 +1143,8 @@ if (!class_exists("CAT_Users", false)) {
             // check for old md5()-password and if login with old method is successful.
             if (
                 self::checkNotMD5Password($user) === false &&
-                is_numeric($user_id = self::authenticateOldPW($user, $pw))
+                is_numeric($user_id = self::authenticateOldPW($user, $pw)) &&
+                $user_id > 0
             ) {
                 // Save new password hash
                 $self

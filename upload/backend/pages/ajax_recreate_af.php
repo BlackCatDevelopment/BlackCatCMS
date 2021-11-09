@@ -23,70 +23,80 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined("CAT_PATH")) {
+    include CAT_PATH . "/framework/class.secure.php";
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+    while ($level < 10 && !file_exists($root . "/framework/class.secure.php")) {
+        $root .= "../";
+        $level += 1;
+    }
+    if (file_exists($root . "/framework/class.secure.php")) {
+        include $root . "/framework/class.secure.php";
+    } else {
+        trigger_error(
+            sprintf(
+                "[ <b>%s</b> ] Can't include class.secure.php!",
+                $_SERVER["SCRIPT_NAME"]
+            ),
+            E_USER_ERROR
+        );
+    }
 }
 
-$backend = CAT_Backend::getInstance('Pages','pages',false);
-$users   = CAT_Users::getInstance();
-$val     = CAT_Helper_Validate::getInstance();
+$backend = CAT_Backend::getInstance("Pages", "pages", false);
+$users = CAT_Users::getInstance();
+$val = CAT_Helper_Validate::getInstance();
 
-header('Content-type: application/json');
+header("Content-type: application/json");
 
-if ( !$users->checkPermission('Pages','pages') )
-{
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You do not have the permission to proceed this action'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+if (!$users->checkPermission("Pages", "pages")) {
+    $ajax = [
+        "message" => $backend
+            ->lang()
+            ->translate(
+                "You do not have the permission to proceed this action"
+            ),
+        "success" => false,
+    ];
+    print json_encode($ajax);
+    exit();
 }
 
-$page_id = $val->sanitizePost('page_id','numeric');
+$page_id = $val->sanitizePost("page_id", "numeric");
 
 // Get page id
-if (!$page_id)
-{
-	$ajax	= array(
-		'message'	=> $backend->lang()->translate('You sent an invalid value'),
-		'success'	=> false
-	);
-	print json_encode( $ajax );
-	exit();
+if (!$page_id) {
+    $ajax = [
+        "message" => $backend->lang()->translate("You sent an invalid value"),
+        "success" => false,
+    ];
+    print json_encode($ajax);
+    exit();
 }
 
 // load page settings
-$page     = CAT_Helper_Page::getPage($page_id);
+$page = CAT_Helper_Page::getPage($page_id);
 // get file name
-$filename = CAT_PATH . PAGES_DIRECTORY . $page['link'] . PAGE_EXTENSION;
+$filename = $page["link"];
+
 // create access file
-if(CAT_Helper_Page::createAccessFile($filename, $page_id))
-{
-    $ajax = array(
-		'message'	=> $backend->lang()->translate('Access file created successfully'),
-		'success'	=> true
-	);
-}
-else
-{
-    $ajax = array(
-		'message'	=> $backend->lang()->translate('Unable to re-create the access file!'),
-		'success'	=> false
-	);
+if (CAT_Helper_Page::createAccessFile($filename, $page_id)) {
+    $ajax = [
+        "message" => $backend
+            ->lang()
+            ->translate("Access file created successfully"),
+        "success" => true,
+    ];
+} else {
+    $ajax = [
+        "message" => $backend
+            ->lang()
+            ->translate("Unable to re-create the access file!"),
+        "success" => false,
+    ];
 }
 
-print json_encode( $ajax );
+print json_encode($ajax);
 exit();
