@@ -28,7 +28,7 @@ if (defined("CAT_PATH")) {
 } else {
     $root = "../";
     $level = 1;
-    while ($level < 10 && !file_exists($root . "/framework/class.secure.php")) {
+    while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
         $root .= "../";
         $level += 1;
     }
