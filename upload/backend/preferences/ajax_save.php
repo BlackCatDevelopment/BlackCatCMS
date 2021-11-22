@@ -32,8 +32,8 @@ if (defined("CAT_PATH")) {
         $root .= "../";
         $level += 1;
     }
-    if (file_exists($root . "/framework/class.secure.php")) {
-        include $root . "/framework/class.secure.php";
+    if (file_exists($root . "framework/class.secure.php")) {
+        include $root . "framework/class.secure.php";
     } else {
         trigger_error(
             sprintf(
