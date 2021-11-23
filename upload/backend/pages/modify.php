@@ -31,14 +31,14 @@ else
 {
     $root  = "../";
     $level = 1;
-    while (($level < 10) && (!file_exists($root . '/framework/class.secure.php')))
+    while (($level < 10) && (!file_exists($root . 'framework/class.secure.php')))
     {
         $root .= "../";
         $level += 1;
     }
-    if (file_exists($root . '/framework/class.secure.php'))
+    if (file_exists($root . 'framework/class.secure.php'))
     {
-        include($root . '/framework/class.secure.php');
+        include($root . 'framework/class.secure.php');
     }
     else
     {
