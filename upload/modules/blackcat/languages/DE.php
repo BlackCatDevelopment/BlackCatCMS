@@ -60,6 +60,7 @@ $LANG = array(
     'Remote version' => 'Ermittelte Version',
     'Statistics' => 'Statistiken',
     'To disable, go to Settings -> System settings -> Maintenance mode -> set to "off".' => 'Zum Abschalten: Einstellungen -> Systemeinstellungen -> Wartungsmodus -> auf "off" stellen.',
+    'Unable to retrieve news' => 'Es konnten keine News empfangen werden',
     'Version check' => 'Versionsprüfung',
     'Version check failed!' => 'Versionsprüfung fehlgeschlagen!',
     'Version check source file' => 'Quelldatei für die Versionsprüfung',
