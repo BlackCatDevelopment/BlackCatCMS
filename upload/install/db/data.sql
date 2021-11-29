@@ -78,6 +78,7 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/account/preferences.php' ),
     ( 0, '/account/signup.php' ),
     ( 0, '/backend/addons/ajax_catalog_install.php' ),
+    ( 0, '/backend/addons/ajax_install.php' ),
     ( 0, '/backend/addons/ajax_get_details.php' ),
     ( 0, '/backend/addons/ajax_get_catalog.php'),
     ( 0, '/backend/addons/ajax_get_template.php'),

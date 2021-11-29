@@ -218,6 +218,9 @@ $database->query(
 $database->query(
     "INSERT IGNORE INTO `:prefix:class_secure` (`module`, `filepath`) VALUES (0, '/backend/addons/ajax_update_catalog.php');"
 );
+$database->query(
+    "INSERT IGNORE INTO `:prefix:class_secure` (`module`, `filepath`) VALUES (0, '/backend/addons/ajax_install.php');"
+);
 
 /*******************************************************************************
     1.3 TO 1.4
