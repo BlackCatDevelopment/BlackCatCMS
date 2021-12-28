@@ -232,7 +232,7 @@ class Image {
 			}
 		}
 
-        $imageC = ImageCreateTrueColor($newImage_width, $newImage_height);
+        $imageC = imagecreatetruecolor($newImage_width, $newImage_height);
         $newImage = $image_create_func($this->image);
 
         if($image_save_func == 'ImagePNG'){

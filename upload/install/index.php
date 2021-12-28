@@ -117,6 +117,7 @@ if (count($pre_inst_err)) {
 include dirname(__FILE__) . "/../framework/CAT/Helper/I18n.php";
 $lang = CAT_Helper_I18n::getInstance();
 $lang->addFile($lang->getLang() . ".php", dirname(__FILE__) . "/languages");
+CAT_Registry::set('LANGUAGE',$lang->getLang());
 
 // the admin dummy defines some methods needed for module installation and error handling
 include dirname(__FILE__) . "/admin_dummy.inc.php";
