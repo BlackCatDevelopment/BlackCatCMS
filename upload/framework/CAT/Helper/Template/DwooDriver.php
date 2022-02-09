@@ -30,7 +30,7 @@ if ( ! class_exists('Dwoo',false) )
 
 if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
 {
-    class CAT_Helper_Template_DwooDriver extends Dwoo
+    class CAT_Helper_Template_DwooDriver extends \Dwoo\Core
     {
 
         protected $debuglevel      = CAT_Helper_KLogger::CRIT;
@@ -48,6 +48,8 @@ if ( ! class_exists('CAT_Helper_Template_DwooDriver',false) )
             $compiled_path = CAT_PATH.'/temp/compiled';
             if (!file_exists($compiled_path)) mkdir($compiled_path, 0755, true);
             parent::__construct( $compiled_path, $cache_path );
+            // add custom plugins
+            $this->getLoader()->addDirectory(CAT_PATH.'/modules/lib_dwoo/Plugins');
             // we need our own logger instance here as the driver does not
             // inherit from CAT_Object
             if ( ! class_exists('CAT_Helper_KLogger',false) ) {
