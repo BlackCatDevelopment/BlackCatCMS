@@ -15,8 +15,9 @@
 
 */
 
-function PluginGetPageHeaders(Dwoo\Core $core,$page_id=false,$ignore_inc=false)
+require_once CAT_PATH.'/framework/functions.php';
+
+function PluginGetPageHeaders(Dwoo\Core $core, $for='frontend', $print_output=true , $current_section=false)
 {
-    // postpone header creation until the rendered page is sent; insert placeholder instead
-    return "<!-- pageheader ".($ignore_inc===true ? '1' : '0'). " -->\n";
+    return get_page_headers($for, $print_output, $current_section);
 }

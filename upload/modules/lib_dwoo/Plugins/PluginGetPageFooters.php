@@ -15,10 +15,9 @@
 
 */
 
-function PluginGetPageFooters(Dwoo\Core $core,$page_id=false,$ignore_inc=false,$print_output=true)
+require_once CAT_PATH.'/framework/functions.php';
+
+function PluginGetPageFooters(Dwoo\Core $core,$for='frontend')
 {
-    if(defined('CAT_FOOTERS_SENT')) return false;
-    $output = \CAT\Helper\Assets::renderAssets('footer',$page_id,$ignore_inc,$print_output);
-    define('CAT_FOOTERS_SENT',true);
-	return $output;
+    return get_page_footers($for);
 }
