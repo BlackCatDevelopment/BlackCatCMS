@@ -15,7 +15,9 @@
 
 */
 
-function PluginPageContent(Dwoo\Core $core, $block=1) {
-    global $page_id;
-    CAT_Page::getInstance($page_id)->getPageContent($block);
+require_once CAT_PATH.'/framework/functions.php';
+
+function PluginTemplateDir(Dwoo\Core $core)
+{
+    return TEMPLATE_DIR;
 }

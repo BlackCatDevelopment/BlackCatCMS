@@ -20,5 +20,5 @@ function PluginCatBreadcrumb(Dwoo\Core $core)
     $attr = func_get_args();
     // first attr is $Dwoo
     array_shift($attr);
-    return \CAT\Helper\Menu::breadcrumbMenu($attr);
+    return CAT_Helper_Menu::breadcrumbMenu($attr);
 }

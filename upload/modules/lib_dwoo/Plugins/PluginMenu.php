@@ -22,5 +22,5 @@ function PluginMenu(Dwoo\Core $core)
     array_shift($attr);
     // second attr is menu (id or name)
     $menu = array_shift($attr);
-    return \CAT\Helper\Menu::show($menu,$attr);
+    return CAT_Helper_Menu::show($menu,$attr);
 }

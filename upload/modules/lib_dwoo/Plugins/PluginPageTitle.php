@@ -24,9 +24,9 @@ function PluginPageTitle(Dwoo\Core $core, $template='[WEBSITE_TITLE][SPACER][PAG
         '[SPACER]'
     );
 	$values = array(
-        \CAT\Registry::get('WEBSITE_TITLE'),
-        \CAT\Helper\Page::properties(NULL,'page_title'),
-        \CAT\Registry::get('MENU_TITLE'),
+        WEBSITE_TITLE,
+        CAT_Helper_Page::properties(NULL,'page_title'),
+        MENU_TITLE,
         $spacer
     );
 	$temp = str_ireplace($vars, $values, $template);

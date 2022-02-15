@@ -22,5 +22,5 @@ function PluginCatFullmenu(Dwoo\Core $core)
     array_shift($attr);
     // second attr is menu number
     $menu_number = array_shift($attr);
-    return \CAT\Helper\Menu::fullMenu($menu_number,$attr);
+    return CAT_Helper_Menu::fullMenu($menu_number,$attr);
 }

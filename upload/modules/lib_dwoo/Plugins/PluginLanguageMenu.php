@@ -17,7 +17,6 @@
 
 function PluginLanguageMenu(Dwoo\Core $core)
 {
-    $attr = func_get_args();
-    array_shift($attr);
-    return \CAT\Helper\Menu::getLanguageMenu($attr);
+    global $page_id;
+    return CAT_Page::getInstance($page_id)->getLanguageMenu();
 }

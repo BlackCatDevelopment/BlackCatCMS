@@ -15,7 +15,10 @@
 
 */
 
-function PluginPageContent(Dwoo\Core $core, $block=1) {
+require_once CAT_PATH.'/framework/functions.php';
+
+function PluginCheckSection(Dwoo\Core $core, $section_id)
+{
     global $page_id;
-    CAT_Page::getInstance($page_id)->getPageContent($block);
+    return CAT_Sections::section_is_active($section_id);
 }

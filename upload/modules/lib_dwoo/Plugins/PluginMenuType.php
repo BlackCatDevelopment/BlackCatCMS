@@ -22,5 +22,5 @@ function PluginMenuType(Dwoo\Core $core)
     array_shift($attr);
     // second attr is menu type ID
     $menutype = array_shift($attr);
-    return \CAT\Helper\Menu::showType($menutype,$attr);
+    return CAT_Helper_Menu::showType($menutype,$attr);
 }
