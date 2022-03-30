@@ -253,7 +253,21 @@ fwrite($fh, "Deny from all\n");
 fwrite($fh, "ErrorDocument 403 " . CAT_URL . "\n");
 fwrite($fh, "ErrorDocument 404 " . CAT_URL . "\n");
 fclose($fh);
-chmod($config["session_save_path"], 0700);
+chmod($session_save_path, 0700);
+
+if (
+    false !==
+    ($query = $database->query(
+        "SELECT value FROM `:prefix:search` WHERE name='cfg_search_library' LIMIT 1"
+    ))
+) {
+    $query->rowCount() > 0
+        ? ($res = $query->fetch())
+        : ($res["value"] = "lib_search");
+    CAT_Registry::register("SEARCH_LIBRARY", $res["value"], true);
+} else {
+    CAT_Registry::register("SEARCH_LIBRARY", "lib_search", true);
+}
 
 // update LoginBox Droplet
 CAT_Helper_Droplet::installDroplet(
