@@ -1,53 +1,53 @@
 <p class="fc_gradient1" style="text-align:right;border-bottom:1px solid #000;">
-    {if $catalog_version}{translate('Catalog version')}: <span id="fc_addons_catalog_version">{$catalog_version}</span>{/if}
-    <button id="fc_addons_update_catalog">{translate('Update')}</button>
+    {% if catalog_version %}{{translate('Catalog version')}}: <span id="fc_addons_catalog_version">{{catalog_version}}</span>{% endif %}
+    <button id="fc_addons_update_catalog">{{translate('Update')}}</button>
 </p><div class="clear_sp"></div>
 
 <table class="fc_table">
     <thead>
         <tr class="fc_gradient1">
             <th></th>
-            <th>{translate('Addon')}</th>
-            <th>{translate('Avail. since')}</th>
-            <th>{translate('Current version')}</th>
-            <th>{translate('Installed version')}</th>
-            <th>{translate('Action')}</th>
+            <th>{{translate('Addon')}}</th>
+            <th>{{translate('Avail. since')}}</th>
+            <th>{{translate('Current version')}}</th>
+            <th>{{translate('Installed version')}}</th>
+            <th>{{translate('Action')}}</th>
         </tr>
     </thead>
     <tbody>
-    {foreach $addons as addon}
+    {% for addon in addons %}
         <tr>
             <td>
-                {if $addon.installed_data.update === true}
-                <span class="icon icon-alarm fc_addon_icon-alarm" title="{translate('Update available!')}"></span>
-                {/if}
+                {% if addon.installed_data.update is same as (true) %}
+                <span class="icon icon-alarm fc_addon_icon-alarm" title="{{translate('Update available!')}}"></span>
+                {% endif %}
             </td>
             <td>
-                <span class="fc_addon_name">{$addon.name}</span><br />
-                {if $addon.description.en}{$addon.description.en.title}{/if}
+                <span class="fc_addon_name">{{addon.name}}</span><br />
+                {% if addon.description.en %}{{addon.description.en.title|raw}}{% endif %}
             </td>
-            <td>{if $addon.since}{$addon.since}{/if}</td>
-            <td><span class="fc_addon_version{if $addon.installed_data.update == true} fc_addon_update{/if}">{$addon.version}</span></td>
+            <td>{% if addon.since %}{{addon.since}}{% endif %}</td>
+            <td><span class="fc_addon_version{% if addon.installed_data.update is same as (true) %} fc_addon_update{% endif %}">{{addon.version}}</span></td>
             <td>
-                {if $addon.is_installed}
-                    <span class="fc_addon_version{if $addon.installed_data.update == true} fc_addon_old{/if}">{$addon.installed_data.version}</span><br />
-                    <span class="fc_addon_installdate">{$addon.installed_data.install_date}</span><br />
-                {/if}
+                {% if addon.is_installed %}
+                    <span class="fc_addon_version{% if addon.installed_data.update is same as (true) %} fc_addon_old{% endif %}">{{addon.installed_data.version}}</span><br />
+                    <span class="fc_addon_installdate">{{addon.installed_data.install_date}}</span><br />
+                {% endif %}
             </td>
             <td class="fc_addon_buttons">
-                <span class="fc_addon_directory" style="display:none;">{$addon.directory}</span>
-                {if ! $addon.is_installed && $permissions.MODULES_INSTALL == true}
-                <button class="fc_catalog_install fc_gradient1" style="min-width:85px;">{translate('Install')}</button>
-                {/if}
-                {if $addon.installed_data.update == true && $permissions.MODULES_INSTALL == true}
-                <button class="fc_catalog_update fc_gradient_blue" style="min-width:85px;">{translate('Update')}</button>
-                {/if}
-                {if $addon.is_removable && $addon.is_installed && $permissions.MODULES_UNINSTALL}
-                <button class="fc_catalog_uninstall fc_gradient_red" style="min-width:85px;">{translate('Uninstall')}</button>
-                {/if}
+                <span class="fc_addon_directory" style="display:none;">{{addon.directory}}</span>
+                {% if not addon.is_installed and permissions.MODULES_INSTALL is same as (true) %}
+                <button class="fc_catalog_install fc_gradient1" style="min-width:85px;">{{translate('Install')}}</button>
+                {% endif %}
+                {% if addon.installed_data.update is same as (true) and permissions.MODULES_INSTALL is same as (true) %}
+                <button class="fc_catalog_update fc_gradient_blue" style="min-width:85px;">{{translate('Update')}}</button>
+                {% endif %}
+                {% if addon.is_removable and addon.is_installed and permissions.MODULES_UNINSTALL %}
+                <button class="fc_catalog_uninstall fc_gradient_red" style="min-width:85px;">{{translate('Uninstall')}}</button>
+                {% endif %}
             </td>
         </tr>
-    {/foreach}
+    {% endfor %}
     </tbody>
 </table>
 
@@ -65,14 +65,14 @@
                     data.process    = set_activity('Updating catalog...');
                 },
                 success:    function( data, textStatus, jqXHR )
-                {
+            {
                     if ( data.success === true )
                     {
                         $('div#addons_main_content').html(data.content);
                         $('span#fc_addons_catalog_version').text(data.catalog_version);
                         jqXHR.process.slideUp(1200, function(){ jqXHR.process.remove(); });
                         if(old_version != data.catalog_version)
-                        {
+                    {
                             $.ajax(
                     		{
                     			type:		'POST',

@@ -1,4 +1,2 @@
-            {if $form}
-            {$form}
-            {/if}
-			<div class="clear_sp"></div>
+{% if form %}{{form|raw}}{% endif %}
+<div class="clear_sp"></div>

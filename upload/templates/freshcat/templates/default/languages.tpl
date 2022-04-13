@@ -1,5 +1,5 @@
 <div class="langmenu">
-	{foreach $items as item}
-	<a href="{$item.href}" title="{$item.menu_title}"><img src="{$CAT_URL}/languages/{lower($item.language)}.png" alt="{$item.language}"></a>
-	{/foreach}
+	{% for item in items %}
+	<a href="{{item.href}}" title="{{item.menu_title}}"><img src="{{CAT_URL}}/languages/{{item.language|lower)}}.png" alt="{{item.language}}"></a>
+	{% endfor %}
 </div>

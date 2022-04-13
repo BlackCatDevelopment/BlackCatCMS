@@ -1,27 +1,27 @@
-            <label class="fc_label_200" for="fc_default_template" title="{translate('Select the frontend template you wish to use as default. You can choose different templates on a per-page-level.')}">{translate('Template')}:</label>
+            <label class="fc_label_200" for="fc_default_template" title="{{translate('Select the frontend template you wish to use as default. You can choose different templates on a per-page-level.')}}">{{translate('Template')}}:</label>
 			<select name="default_template" id="fc_default_template">
-				{foreach $templates template}
-				<option value="{$template.VALUE}"{if $template.SELECTED} selected="selected"{/if}>{$template.NAME}</option>
-				{/foreach}
-			</select><br />
+				{% for template in templates %}
+				<option value="{{template.VALUE}}"{% if template.SELECTED %} selected="selected"{% endif %}>{{template.NAME}}</option>
+				{% endfor %}
+			</select><br>
 
-            <div id="div_template_variants" style="display:{if $variants}inline-block{else}none{/if}">
-            <label class="fc_label_200" for="fc_default_template_variant" title="{translate('Choose a template variant here. Available variants are defined in the template\'s info.php. (For example, a variant containing a slider for homepage / showcase pages and a variant without for normal pages.)')}">{translate('Variant')}:</label>
+            <div id="div_template_variants" style="display:{% if variants %}inline-block{else}none{% endif %}">
+            <label class="fc_label_200" for="fc_default_template_variant" title="{{translate('Choose a template variant here. Available variants are defined in the template\'s info.php. (For example, a variant containing a slider for homepage / showcase pages and a variant without for normal pages.)')}}">{{translate('Variant')}}:</label>
             <select name="default_template_variant" id="fc_default_template_variant">
-				{foreach $variants variant}
-				<option value="{$variant}"{if $variant == $values.default_template_variant} selected="selected"{/if}>{$variant}</option>
-				{/foreach}
+				{% for variant in variants %}
+				<option value="{{variant}}"{%if variant == values.default_template_variant %} selected="selected"{% endif %}>{{variant}}</option>
+				{% endfor %}
 			</select>
             </div>
 
-			<hr />
+			<hr>
 
-			<label class="fc_label_200" for="fc_website_header" title="{translate('The template may use this as a global header.')}">{translate('Website header')}:</label>
-			<textarea name="website_header" id="fc_website_header" cols="80" rows="6"  class="fc_input_300">{$values.website_header}</textarea>
+			<label class="fc_label_200" for="fc_website_header" title="{{translate('The template may use this as a global header.')}}">{{translate('Website header')}}:</label>
+			<textarea name="website_header" id="fc_website_header" cols="80" rows="6"  class="fc_input_300">{{values.website_header}}</textarea>
 			<div class="clear_sp"></div>
 
-			<label class="fc_label_200" for="fc_website_footer" title="{translate('The template may use this as a global footer.')}">{translate('Website footer')}:</label>
-			<textarea name="website_footer" id="fc_website_footer" cols="80" rows="6"  class="fc_input_300">{$values.website_footer}</textarea>
+			<label class="fc_label_200" for="fc_website_footer" title="{{translate('The template may use this as a global footer.')}}">{{translate('Website footer')}}:</label>
+			<textarea name="website_footer" id="fc_website_footer" cols="80" rows="6"  class="fc_input_300">{{values.website_footer}}</textarea>
 			<div class="clear_sp"></div>
 
 <script charset="windows-1250" type="text/javascript">
