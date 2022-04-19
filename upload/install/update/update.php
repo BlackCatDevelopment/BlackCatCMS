@@ -50,14 +50,6 @@ spl_autoload_register(function ($class) {
 $lang = CAT_Helper_I18n::getInstance();
 $lang->addFile($lang->getLang() . ".php", dirname(__FILE__) . "/../languages");
 
-// allow upgrade from v1.2, too
-if (
-    !isset($_GET["do"]) &&
-    CAT_Helper_Addons::versionCompare(CAT_VERSION, "1.2", "<")
-) {
-    update11to12pre();
-}
-
 // keep wb2compat.php happy
 foreach (
     array_values([
@@ -83,6 +75,7 @@ if (!version_compare(PHP_VERSION, "7.3", ">=")) {
     );
 }
 
+// get CAT_VERSION from database
 $result = $database->query(
     sprintf(
         "SELECT `value` FROM `%ssettings` WHERE `name`='%s'",
@@ -90,9 +83,18 @@ $result = $database->query(
         "cat_version"
     )
 );
+
 if ($result->rowCount() > 0) {
     $row = $result->fetch();
     define("CAT_VERSION", $row["value"]);
+}
+
+// allow upgrade from v1.2, too
+if (
+    !isset($_GET["do"]) &&
+    CAT_Helper_Addons::versionCompare(CAT_VERSION, "1.2", "<")
+) {
+    update11to12pre();
 }
 
 // Try to guess installer URL
@@ -139,18 +141,18 @@ if (!CAT_Helper_Validate::getInstance()->sanitizeGet("do")) {
         <h2>' .
         $lang->translate("Welcome!") .
         '</h2>
-		' .
+    ' .
         $lang->translate(
             "This wizard will help you to upgrade your current BlackCat CMS Version"
         ) .
         '<br />
-		<span style="font-weight:bold;color:#f00;">' .
+    <span style="font-weight:bold;color:#f00;">' .
         CAT_VERSION .
         '</span><br />
-		' .
+    ' .
         $lang->translate("to Version") .
         '<br />
-		<span style="font-weight:bold;color:#f00;">' .
+    <span style="font-weight:bold;color:#f00;">' .
         $current_version .
         " Build " .
         $current_build .
@@ -276,7 +278,7 @@ CAT_Helper_Droplet::installDroplet(
 
 /*******************************************************************************
     1.3 TO 1.4
-	Add attribute otp (one-time password) to table users
+  Add attribute otp (one-time password) to table users
 *******************************************************************************/
 $getDB = CAT_Helper_DB::getInstance()->getConfig();
 $checkForField = $database
