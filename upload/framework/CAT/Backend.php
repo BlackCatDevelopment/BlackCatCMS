@@ -240,17 +240,18 @@ if (!class_exists('CAT_Backend', false))
                     $pages[$i]['text'] = $text;
                 }
 
-                // list of first level of pages
-                $tpl_data['pages']          = CAT_Helper_ListBuilder::getInstance()->config(array(
+                $tpl_data['pages_raw']     = $pages;
+                $tpl_data['pages_tree']    = CAT_Helper_ListBuilder::sort($pages,0);
+                $tpl_data['pages_ul']      = CAT_Helper_ListBuilder::getInstance()->config(array(
                     '__li_level_css'       => true,
                     '__li_id_prefix'       => 'pageid_',
-                    '__li_css_prefix'      => 'fc_page_',
-                    '__li_has_child_class' => 'fc_expandable',
+                    '__li_css_prefix'      => 'page_',
+                    '__li_has_child_class' => 'expandable',
                     '__is_open_key'        => 'be_tree_is_open',
-                    '__li_is_open_class'   => 'fc_tree_open',
-                    '__li_is_closed_class' => 'fc_tree_close',
+                    '__li_is_open_class'   => 'expanded',
+                    '__li_is_closed_class' => 'collapsed',
                     '__title_key'          => 'text',
-                ))->tree( $pages, 0 );
+                ))->tree($pages, 0);
 
                 // number of editable pages (for current user)
                 $tpl_data['pages_editable'] = CAT_Helper_Page::getEditable();
