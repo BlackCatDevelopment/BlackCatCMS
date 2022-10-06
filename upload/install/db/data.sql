@@ -147,6 +147,7 @@ INSERT INTO `cat_class_secure` ( `module`, `filepath`) VALUES
     ( 0, '/backend/settings/save.php' ),
     ( 0, '/backend/start/index.php' ),
     ( 0, '/backend/start/ajax_manage_widgets.php' ),
+    ( 0, '/backend/users/add.php' ),
     ( 0, '/backend/users/ajax_delete_user.php' ),
     ( 0, '/backend/users/ajax_get_user.php' ),
     ( 0, '/backend/users/ajax_save_user.php' ),
