@@ -1,0 +1,210 @@
+form {
+    &.two-column {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        gap: .5em;
+    }
+    &.one-column {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: .5em;
+    }
+    #avatar {
+        display: none;
+    }
+    #avatarpreview {
+        width: 75px;
+        height: 75px;
+    }
+    .button {
+        background: $color-button-bg;
+        color: $color-button-text;
+        padding: .5em 1em;
+        border: 0;
+        border-radius: 1em;
+        width: 15em;
+        &-active {
+            background: $color-button-active-bg;
+            color: $color-button-active-text;
+        }
+    }
+    // on-/off button
+    // https://codepen.io/bbodine1/pen/DqdMRy
+    .slide {
+        width: 80px;
+        height: 26px;
+        background: #333;
+        position: relative;
+        border-radius: 50px;
+        box-shadow: inset 0px 1px 1px rgba(0,0,0,0.5), 0px 1px 0px rgba(255,255,255,0.2);
+        &:after {
+            content: 'OFF';
+            color: #000;
+            position: absolute;
+            right: 10px;
+            z-index: 0;
+            font: 12px/26px Arial, sans-serif;
+            font-weight: bold;
+            text-shadow: 1px 1px 0px rgba(255,255,255,.15);
+        }
+        &:before {
+            content: 'ON';
+            color: $activeColor;
+            position: absolute;
+            left: 10px;
+            z-index: 0;
+            font: 12px/26px Arial, sans-serif;
+            font-weight: bold;
+        }
+        label {
+            display: block;
+            width: 34px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            z-index: 1;
+            background: #fcfff4;
+            background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+        }
+        input[type=checkbox] {
+            visibility: hidden;
+            &:checked + label {
+                left: 43px;
+            }
+        }
+    }
+}
+
+    .login-form-container {
+        padding: 7em 0;
+        max-width: 1140px;
+        margin-right: auto;
+        margin-left: auto;
+        .login-form {
+            box-shadow: 0 10px 34px -15px rgba(0,0,0,.24);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            .login-form-image {
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center center;
+                min-height: 50vh;
+                border-top-left-radius: 8px;
+                border-bottom-left-radius: 8px;
+                position: relative;
+                .login-form-image-attribution {
+                    background: rgba(255,255,255,.5);
+                    position: absolute;
+                    bottom: 0;
+                    height: 2em;
+                    line-height: 2em;
+                    width: 100%;
+                    text-align: center;
+                    a {
+                        color: #c00;
+                    }
+                }
+            }
+            .login-form-form {
+                position: relative;
+                border-top-right-radius: 8px;
+                border-bottom-right-radius: 8px;
+                padding: 7em;
+                form { gap: 1em !important; }
+                [class^="icon-"] {
+                    font-size:1.2em;
+                    padding:.3em;
+                    text-align:right;
+                    color: #000;
+                    border: 1px solid rgba(0,0,0,.25);
+                    border-radius: 50%;
+                    box-shadow: 0 0 .5em .1em rgba(0,0,0,.25);
+                    margin: .2em;
+                    color: gray;
+                    &:hover {
+                        box-shadow: 0 0 .5em .1em rgba(0,0,0,.5);
+                        border-color: #e3b04b !important;
+                        box-shadow: 0 0 .5em .1em #e3b04b;
+                        color: #000;
+                    }
+                    &.highlight {
+                        color: #e3b04b;
+                        border-color: #e3b04b;
+                    }
+                }
+                input[type="text"], input[type="password"] {
+                    height: 2em;
+                    background: #fff;
+                    color: #000;
+                    font-size: 1em;
+                    border-radius: 5px;
+                    border: 1px solid rgba(0,0,0,.1);
+                    &:active, &:focus {
+                        border-color: #e3b04b !important;
+                        outline: none;
+                    }
+                }
+                button[type="submit"] {
+                    background-color: #e3b04b;
+                    padding: .6em;
+                    border-radius: 5px;
+                    border:0;
+                    font-size: 1em;
+                    &:active, &:focus {
+                        box-shadow: 0 0 .5em .1em rgba(0,0,0,.5);
+                        border-color: #e3b04b !important;
+                        outline: none;
+                    }
+                }
+            }
+            .login-form-form, .login-form-forgot, .header {
+                transition: all 1s ease;
+            }
+            .closed {
+                opacity: 0;
+                z-index: -1;
+            }
+            .open {
+                opacity: 1;
+                z-index: 1;
+            }
+
+            .login-form-forgot {
+                position: absolute;
+                left: 7em;
+                top: 11em;
+                right: 7em;
+                bottom: 0;
+            }
+            .header {
+                width: 100%;
+                font-size: 1.2em;
+                font-weight: 900;
+            }
+        }
+        @media (min-width: 576px) {
+            .container {
+                max-width: 540px;
+            }
+        }
+        @media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+        }
+        @media (min-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+        }
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+    }

@@ -1,0 +1,67 @@
+@mixin box-shadow {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+@mixin profile-avatar {
+    background-image: url("../../../../../media/.avatars/cat1.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+}
+
+@mixin black-and-white-image {
+    filter: grayscale(1) contrast(2);
+}
+
+@mixin sepia-colored {
+    filter: sepia(1) hue-rotate(200deg);
+}
+
+@mixin tree {
+    ul {
+        list-style: none;
+        margin-left: -1em;
+        li {
+            padding: 2px 10px 2px 2px;
+            &.collapsed > ul {
+                display: none;
+            }
+            &.expandable {
+                &.collapsed {
+                    list-style-type: "+  ";
+                }
+                &.expanded {
+                    list-style-type: "-  ";
+                }
+            }
+            &:hover {
+                background-color: rgba(255, 255, 255, .1);
+            }
+        }
+    }
+}
+
+@mixin card {
+    .card {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        background-color: #fff;
+        margin-bottom: 20px;
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 2.5em;
+            padding-left: 1em;
+            padding-right: 1em;
+            background-color: $color-card-header-bg;
+            color: $color-card-header-text;
+            border-top-left-radius: 1em;
+            border-top-right-radius: 1em;
+        }
+        &-main {
+            padding: 1em;
+        }
+    }
+}

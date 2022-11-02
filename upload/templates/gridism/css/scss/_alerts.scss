@@ -1,0 +1,50 @@
+.alert {
+    background-color: $color-alert-bg;
+    color: $color-alert-text;
+    width: calc(100% - 3em);
+    border-width: 1px 1px 1px 6px;
+    border-style: solid;
+    border-radius: 3px;
+    border-color: $color-alert-border;
+    position: relative;
+    line-height: 1.5em;
+    min-height: 1em;
+    padding: 1em 1em 1em 1.5em;
+    margin-bottom: 2em;
+    &:before {
+        color: white;
+        width: 1.5em;
+        height: 1.5em;
+        position: absolute;
+        top: 1em;
+        left: -3px;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    &.box {
+        width: 400px;
+    }
+    &-error {
+        background-color: $color-error-bg;
+        border-color: $color-error-border;
+        color: $color-error-text;
+        &:before {
+            background-color: $color-error-border;
+            content:"!";
+        }
+
+    }
+    &-info {
+        background-color: $color-info-bg;
+        border-color: $color-info-border;
+        color: $color-info-text;
+        &:before {
+            background-color: $color-info-border;
+            content:"i";
+        }
+    }
+}

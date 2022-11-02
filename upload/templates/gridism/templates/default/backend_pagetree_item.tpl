@@ -1,0 +1,1 @@
+<a href="#">{$menu_title}</a>

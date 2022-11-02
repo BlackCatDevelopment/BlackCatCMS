@@ -1,0 +1,64 @@
+// main content areas
+$color-content-bg: #EAEDF1;     // content bg (very light gray) $color-athens-gray
+$color-top-bg: #F9FAFC;         // top nav bg (very light gray) $color-catskill-white
+$color-sidenav-bg: #17121B;     // sidenav bg & dark text       $color-fiord
+$color-sidenav-text: #fff;
+$color-brand-bg: #17121B;
+$color-brand-icon: #0c0;
+$color-footer-bg: #fff;
+
+// button groups
+$color-buttongroup-bg: #2F2A32;
+$color-buttongroup-text: $color-sidenav-text;
+$color-buttongroup-active-bg: $color-sidenav-bg;
+$color-buttongroup-active-text: $color-sidenav-text;
+
+// alerts
+$color-alert-bg: #fff;
+$color-alert-text: #000;
+$color-alert-border: #ccc;
+$color-error-bg: #fcc;
+$color-error-text: #c00;
+$color-error-border: #c00;
+$color-info-bg: #CCFFFF;
+$color-info-text: #000;
+$color-info-border: #6699FF;
+
+// cards
+$color-card-header-bg: $color-sidenav-bg;
+$color-card-header-text: $color-sidenav-text;
+
+// forms
+$color-button-active-bg: #2F2A32;
+$color-button-active-text: $color-sidenav-text;
+$color-button-bg: $color-buttongroup-bg;
+$color-button-text: $color-buttongroup-text;
+
+$color-header-bg: #2F2A32;
+$color-header-text: #000;
+
+
+$activeColor: #27ae60; //green
+$darkenColor: darken($activeColor, 20%);
+/* $background: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/13460/dark_wall.png'); */
+$background: #3498db;
+
+
+$color-white: #FFF;             // white
+$color-abbey: #777;             // gray
+$color-light_gray: #DADAE3;     // light gray
+
+$color-transparent: rgba(255, 255, 255, .5);
+
+
+
+
+
+
+$color-java: #1BBAE1; // blue text
+$color-mine-shaft: #333; // main section header bg
+$color-zest: #e67e22; // document icon bg
+$color-jungle-green: #27ae60; // calendar icon bg
+$color-cinnabar: #e74c3c; // main icon bg, red
+$color-amethyst: #af64cc; // main photo icon bg
+$color-alto: #D3D3D3;

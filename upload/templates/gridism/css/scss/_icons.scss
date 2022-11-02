@@ -1,0 +1,69 @@
+@font-face {
+	font-family: 'blackcat';
+	src:url('../webfont/blackcat.eot');
+	src:url('../webfont/blackcat.eot?#iefix') format('embedded-opentype'),
+		url('../webfont/blackcat.svg#blackcat') format('svg'),
+		url('../webfont/blackcat.woff') format('woff'),
+		url('../webfont/blackcat.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+[class^="icon-"]:before, [class*=" icon-"]:before {
+	font-family: 'blackcat';
+	font-style: normal;
+	font-weight: normal;
+}
+.icon-1em {
+    font-size: 1em;
+}
+.icon-brand {
+    margin-top: 2px;
+    font-size: 14px;
+    color: $color-brand-icon;
+    &:before{content:"\e050"}
+}
+.icon-preferences {
+    &:before{content:"\e011"}
+}
+.icon-logout {
+    &:before{content:"\e025"}
+}
+.icon-start {
+    &:before{content:"\e021"}
+}
+.icon-settings {
+    &:before{content:"\e01a"}
+}
+.icon-media {
+    &:before{content:"\e004"}
+}
+.icon-addons {
+    &:before{content:"\e023"}
+}
+.icon-admintools {
+    &:before{content:"\e01f"}
+}
+.icon-access {
+    &:before{content:"\e015"}
+}
+.icon-key {
+    &:before{content:"\e018"}
+}
+.icon-caret-right {
+    &:before{content:"\e03c"}
+}
+.icon-home {
+    &:before{content:"\e04b"}
+}
+.icon-folder-plus {
+    &:before{content:"\e04c"}
+}
+.icon-dots {
+    &:before{content:"\e03a"}
+}
+.icon-info-circle {
+    &:before{content:"\e035"}
+}
+.icon-alert {
+    &:before{content:"\e034"}
+}
