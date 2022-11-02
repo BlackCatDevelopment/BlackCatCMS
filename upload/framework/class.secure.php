@@ -23,26 +23,21 @@
  *
  */
 
-if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
-{
-
+if (!defined('CAT_PATH') && !defined('CAT_INSTALL')) {
     //**************************************************************************
     // try to find config.php
     //**************************************************************************
-    if (strpos(__FILE__, '/framework/class.secure.php') !== false)
+    if (strpos(__FILE__, '/framework/class.secure.php') !== false) {
         $config_path = str_replace('/framework/class.secure.php', '', __FILE__);
-    else
+    } else {
         $config_path = str_replace('\framework\class.secure.php', '', __FILE__);
+    }
 
-    if (!file_exists($config_path . '/config.php'))
-    {
-        if (file_exists($config_path . '/install/index.php'))
-        {
+    if (!file_exists($config_path . '/config.php')) {
+        if (file_exists($config_path . '/install/index.php')) {
             header("Location: ../install/index.php");
             exit();
-        }
-        else
-        {
+        } else {
             // Problem: no config.php nor installation files...
             exit('<p><strong>Sorry, but this installation seems to be damaged! Please contact your webmaster!</strong></p>');
         }
@@ -56,36 +51,32 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
     //**************************************************************************
     // analyze path to auto-protect backend
     //**************************************************************************
-    if (!defined('CAT_LOGIN_PHASE'))
-    {
-        $path = (isset($_SERVER['SCRIPT_FILENAME']) ? CAT_Helper_Directory::sanitizePath($_SERVER['SCRIPT_FILENAME']) : NULL);
-        if ($path)
-        {
+    if (!defined('CAT_LOGIN_PHASE')) {
+        $path = (isset($_SERVER['SCRIPT_FILENAME']) ? CAT_Helper_Directory::sanitizePath($_SERVER['SCRIPT_FILENAME']) : null);
+        if ($path) {
             $check = str_replace('/', '\/', CAT_Helper_Directory::sanitizePath(CAT_ADMIN_PATH));
-            if (preg_match('~^' . $check . '~i', $path))
-            {
+            if (preg_match('~^' . $check . '~i', $path)) {
                 define('CAT_REQUIRE_ADMIN', true);
-                if (!CAT_Users::getInstance()->is_authenticated())
-                {
+                if (!CAT_Users::getInstance()->is_authenticated()) {
                     CAT_Users::getInstance()->handleLogin();
                     exit(0);
                 }
                 global $parser;
                 if (!is_object($parser))
-                    $parser = CAT_Helper_Template::getInstance('Dwoo');
+                #    $parser = CAT_Helper_Template::getInstance('Dwoo');
+                    $parser = CAT_Object::parser();
                 // initialize template search path
                 $parser->setPath(CAT_THEME_PATH . '/templates');
                 $parser->setFallbackPath(CAT_THEME_PATH . '/templates');
             }
-        }
-        else
-        {
+        } else {
             define('CAT_REQUIRE_ADMIN', false);
         }
     }
 
-    if (!defined('CAT_INITIALIZED'))
+    if (!defined('CAT_INITIALIZED')) {
         require dirname(__FILE__) . '/initialize.php';
+    }
 
     $admin_dir             = str_replace(CAT_PATH, '', CAT_ADMIN_PATH);
     $db                    = new database();
@@ -96,65 +87,53 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
     // get the list of allowed files from the DB
     //**************************************************************************
     $q = $db->query('SELECT * FROM `:prefix:class_secure`');
-    if ($q->numRows() > 0)
-    {
-        while (false !== ($row = $q->fetch(PDO::FETCH_ASSOC)))
-        {
+    if ($q->numRows() > 0) {
+        while (false !== ($row = $q->fetch(PDO::FETCH_ASSOC))) {
             $direct_access_allowed[] = $row['filepath'];
         }
     }
 
     $allowed = false;
-    foreach ($direct_access_allowed as $allowed_file)
-    {
-        if (strpos($_SERVER['SCRIPT_NAME'], $allowed_file) !== false)
-        {
+    foreach ($direct_access_allowed as $allowed_file) {
+        if (strpos($_SERVER['SCRIPT_NAME'], $allowed_file) !== false) {
             $allowed = true;
             break;
         }
     }
-
-    if (!$allowed)
-    {
-        if (((strpos($_SERVER['SCRIPT_NAME'], $admin_dir . '/media/index.php')) !== false) || ((strpos($_SERVER['SCRIPT_NAME'], $admin_dir . '/preferences/index.php')) !== false) || ((strpos($_SERVER['SCRIPT_NAME'], $admin_dir . '/support/index.php')) !== false))
-        {
+    if (!$allowed) {
+        if (
+               ((strpos($_SERVER['SCRIPT_NAME'], $admin_dir.'/media/index.php'))       !== false)
+            || ((strpos($_SERVER['SCRIPT_NAME'], $admin_dir.'/preferences/index.php')) !== false)
+            || ((strpos($_SERVER['SCRIPT_NAME'], $admin_dir.'/support/index.php'))     !== false)
+        ) {
             // special: do absolute nothing!
-        }
-        elseif ((strpos($_SERVER['SCRIPT_NAME'], $admin_dir . '/index.php') !== false) || (strpos($_SERVER['SCRIPT_NAME'], $admin_dir . '/interface/index.php') !== false))
-        {
+        } elseif (
+               (strpos($_SERVER['SCRIPT_NAME'], $admin_dir.'/index.php') !== false)
+            || (strpos($_SERVER['SCRIPT_NAME'], $admin_dir.'/interface/index.php') !== false)
+        ) {
             // special: call start page of admins directory
             header("Location: " . CAT_ADMIN_URL . '/start/index.php');
             exit();
-        }
-        elseif (strpos($_SERVER['SCRIPT_NAME'], '/index.php') !== false)
-        {
-
+        } elseif (strpos($_SERVER['SCRIPT_NAME'], '/index.php') !== false) {
             // call the main page
             header("Location: ../index.php");
             exit();
-        }
-        else
-        {
-            if (!headers_sent())
-            {
+        } else {
+            if (!headers_sent()) {
                 header($_SERVER['SERVER_PROTOCOL'] . " 403 Forbidden");
-                if(isset($_REQUEST['_cat_ajax']))
-                {
+                if (isset($_REQUEST['_cat_ajax'])) {
                     header('Content-type: application/json');
+                }
             }
-            }
-            if(isset($_REQUEST['_cat_ajax']))
-            {
+            if (isset($_REQUEST['_cat_ajax'])) {
                 echo json_encode(array(
                     'success' => false,
                     'message' => 'ACCESS DENIED!  - Invalid call of ' . $_SERVER['SCRIPT_NAME']
                 ));
                 exit;
-            }
-            else
-            {
-            // stop program execution
-            exit('<p><strong style="color:#f00;">ACCESS DENIED!</strong> - Invalid call of <i>' . $_SERVER['SCRIPT_NAME'] . '</i></p>');
+            } else {
+                // stop program execution
+                exit('<p><strong style="color:#f00;">ACCESS DENIED!</strong> - Invalid call of <i>' . $_SERVER['SCRIPT_NAME'] . '</i></p>');
             }
         }
     }
@@ -166,18 +145,13 @@ if (!defined('CAT_PATH') && !defined('CAT_INSTALL'))
 /**
  * strip droplets
  **/
-if (!function_exists('cat_secure_formdata'))
-{
+if (!function_exists('cat_secure_formdata')) {
     function cat_secure_formdata(&$arr)
     {
-        foreach ($arr as $key => $value)
-        {
-            if (is_array($value))
-            {
+        foreach ($arr as $key => $value) {
+            if (is_array($value)) {
                 cat_secure_formdata($value);
-            }
-            else
-            {
+            } else {
                 // remove <script> tags
                 $value     = str_replace(array(
                     '<script',
@@ -202,30 +176,23 @@ if (!function_exists('cat_secure_formdata'))
 }
 
 // secure form input
-if (isset($_SESSION) && !defined('CAT_SEC_FORMDATA') && !isset($_SESSION['USER_ID']))
-{
-    if (count($_GET))
-    {
+if (isset($_SESSION) && !defined('CAT_SEC_FORMDATA') && !isset($_SESSION['USER_ID'])) {
+    if (count($_GET)) {
         cat_secure_formdata($_GET);
     }
-    if (count($_POST))
-    {
+    if (count($_POST)) {
         cat_secure_formdata($_POST);
     }
-    if (count($_REQUEST))
-    {
+    if (count($_REQUEST)) {
         cat_secure_formdata($_REQUEST);
     }
     define('CAT_SEC_FORMDATA', true);
 }
 
-spl_autoload_register(function($class)
-{
-    if (defined('CAT_PATH'))
-    {
+spl_autoload_register(function ($class) {
+    if (defined('CAT_PATH')) {
         $file = str_replace('_', '/', $class);
-        if (file_exists(CAT_PATH . '/framework/' . $file . '.php'))
-        {
+        if (file_exists(CAT_PATH . '/framework/' . $file . '.php')) {
             @require CAT_PATH . '/framework/' . $file . '.php';
         }
     }
