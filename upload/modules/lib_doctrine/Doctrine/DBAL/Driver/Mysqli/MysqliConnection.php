@@ -9,8 +9,11 @@ use Doctrine\DBAL\Driver\Mysqli\Exception\InvalidOption;
 use Doctrine\DBAL\Driver\PingableConnection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\ParameterType;
+use Doctrine\Deprecations\Deprecation;
 use mysqli;
+use mysqli_sql_exception;
 
+use function assert;
 use function floor;
 use function func_get_args;
 use function in_array;
@@ -19,8 +22,6 @@ use function mysqli_errno;
 use function mysqli_error;
 use function mysqli_init;
 use function mysqli_options;
-use function restore_error_handler;
-use function set_error_handler;
 use function sprintf;
 use function stripos;
 
@@ -67,21 +68,25 @@ class MysqliConnection implements ConnectionInterface, PingableConnection, Serve
         $socket = $params['unix_socket'] ?? ini_get('mysqli.default_socket');
         $dbname = $params['dbname'] ?? null;
 
-        $flags = $driverOptions[static::OPTION_FLAGS] ?? null;
+        $flags = $driverOptions[static::OPTION_FLAGS] ?? 0;
 
-        $this->conn = mysqli_init();
+        $conn = mysqli_init();
+        assert($conn !== false);
+
+        $this->conn = $conn;
 
         $this->setSecureConnection($params);
         $this->setDriverOptions($driverOptions);
 
-        set_error_handler(static function () {
-        });
         try {
-            if (! $this->conn->real_connect($params['host'], $username, $password, $dbname, $port, $socket, $flags)) {
-                throw ConnectionFailed::new($this->conn);
-            }
-        } finally {
-            restore_error_handler();
+            $success = @$this->conn
+                ->real_connect($params['host'], $username, $password, $dbname, $port, $socket, $flags);
+        } catch (mysqli_sql_exception $e) {
+            throw ConnectionFailed::upcast($e);
+        }
+
+        if (! $success) {
+            throw ConnectionFailed::new($this->conn);
         }
 
         if (! isset($params['charset'])) {
@@ -130,6 +135,12 @@ class MysqliConnection implements ConnectionInterface, PingableConnection, Serve
      */
     public function requiresQueryForServerVersion()
     {
+        Deprecation::triggerIfCalledFromOutside(
+            'doctrine/dbal',
+            'https://github.com/doctrine/dbal/pull/4114',
+            'ServerInfoAwareConnection::requiresQueryForServerVersion() is deprecated and removed in DBAL 3.'
+        );
+
         return false;
     }
 
@@ -167,7 +178,13 @@ class MysqliConnection implements ConnectionInterface, PingableConnection, Serve
      */
     public function exec($sql)
     {
-        if ($this->conn->query($sql) === false) {
+        try {
+            $result = $this->conn->query($sql);
+        } catch (mysqli_sql_exception $e) {
+            throw ConnectionError::upcast($e);
+        }
+
+        if ($result === false) {
             throw ConnectionError::new($this->conn);
         }
 
@@ -197,7 +214,11 @@ class MysqliConnection implements ConnectionInterface, PingableConnection, Serve
      */
     public function commit()
     {
-        return $this->conn->commit();
+        try {
+            return $this->conn->commit();
+        } catch (mysqli_sql_exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -205,7 +226,11 @@ class MysqliConnection implements ConnectionInterface, PingableConnection, Serve
      */
     public function rollBack()
     {
-        return $this->conn->rollback();
+        try {
+            return $this->conn->rollback();
+        } catch (mysqli_sql_exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -293,7 +318,7 @@ class MysqliConnection implements ConnectionInterface, PingableConnection, Serve
     /**
      * Establish a secure connection
      *
-     * @param mixed[] $params
+     * @param array<string,string> $params
      *
      * @throws MysqliException
      */
@@ -310,11 +335,11 @@ class MysqliConnection implements ConnectionInterface, PingableConnection, Serve
         }
 
         $this->conn->ssl_set(
-            $params['ssl_key']    ?? null,
-            $params['ssl_cert']   ?? null,
-            $params['ssl_ca']     ?? null,
-            $params['ssl_capath'] ?? null,
-            $params['ssl_cipher'] ?? null
+            $params['ssl_key']    ?? '',
+            $params['ssl_cert']   ?? '',
+            $params['ssl_ca']     ?? '',
+            $params['ssl_capath'] ?? '',
+            $params['ssl_cipher'] ?? ''
         );
     }
 }

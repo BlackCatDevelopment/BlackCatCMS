@@ -8,7 +8,6 @@ use Doctrine\DBAL\Types\Type;
 
 use function array_change_key_case;
 use function array_shift;
-use function array_values;
 use function assert;
 use function explode;
 use function is_string;
@@ -91,7 +90,10 @@ class MySqlSchemaManager extends AbstractSchemaManager
                 $v['flags'] = ['SPATIAL'];
             }
 
-            $v['length'] = isset($v['sub_part']) ? (int) $v['sub_part'] : null;
+            // Ignore prohibited prefix `length` for spatial index
+            if (strpos($v['index_type'], 'SPATIAL') === false) {
+                $v['length'] = isset($v['sub_part']) ? (int) $v['sub_part'] : null;
+            }
 
             $tableIndexes[$k] = $v;
         }
@@ -303,9 +305,9 @@ class MySqlSchemaManager extends AbstractSchemaManager
         $result = [];
         foreach ($list as $constraint) {
             $result[] = new ForeignKeyConstraint(
-                array_values($constraint['local']),
+                $constraint['local'],
                 $constraint['foreignTable'],
-                array_values($constraint['foreign']),
+                $constraint['foreign'],
                 $constraint['name'],
                 [
                     'onDelete' => $constraint['onDelete'],

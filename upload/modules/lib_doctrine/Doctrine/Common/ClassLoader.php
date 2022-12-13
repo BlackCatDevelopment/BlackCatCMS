@@ -1,23 +1,10 @@
 <?php
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
-
 namespace Doctrine\Common;
+
+use function trigger_error;
+use const E_USER_DEPRECATED;
+
+@trigger_error(ClassLoader::class . ' is deprecated.', E_USER_DEPRECATED);
 
 /**
  * A <tt>ClassLoader</tt> is an autoloader for class files that can be
@@ -30,6 +17,8 @@ namespace Doctrine\Common;
  *
  * @author Roman Borschel <roman@code-factory.org>
  * @since 2.0
+ *
+ * @deprecated The ClassLoader is deprecated and will be removed in version 4.0 of doctrine/common.
  */
 class ClassLoader
 {
@@ -74,7 +63,7 @@ class ClassLoader
      */
     public function __construct($ns = null, $includePath = null)
     {
-        $this->namespace = $ns;
+        $this->namespace   = $ns;
         $this->includePath = $includePath;
     }
 
@@ -151,7 +140,7 @@ class ClassLoader
      */
     public function register()
     {
-        spl_autoload_register(array($this, 'loadClass'));
+        spl_autoload_register([$this, 'loadClass']);
     }
 
     /**
@@ -161,7 +150,7 @@ class ClassLoader
      */
     public function unregister()
     {
-        spl_autoload_unregister(array($this, 'loadClass'));
+        spl_autoload_unregister([$this, 'loadClass']);
     }
 
     /**
@@ -173,15 +162,19 @@ class ClassLoader
      */
     public function loadClass($className)
     {
-        if ($this->namespace !== null && strpos($className, $this->namespace.$this->namespaceSeparator) !== 0) {
+        if (self::typeExists($className)) {
+            return true;
+        }
+
+        if ( ! $this->canLoadClass($className)) {
             return false;
         }
 
-        require ($this->includePath !== null ? $this->includePath . DIRECTORY_SEPARATOR : '')
+        require($this->includePath !== null ? $this->includePath . DIRECTORY_SEPARATOR : '')
                . str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className)
                . $this->fileExtension;
 
-        return true;
+        return self::typeExists($className);
     }
 
     /**
@@ -194,7 +187,7 @@ class ClassLoader
      */
     public function canLoadClass($className)
     {
-        if ($this->namespace !== null && strpos($className, $this->namespace.$this->namespaceSeparator) !== 0) {
+        if ($this->namespace !== null && strpos($className, $this->namespace . $this->namespaceSeparator) !== 0) {
             return false;
         }
 
@@ -231,37 +224,7 @@ class ClassLoader
      */
     public static function classExists($className)
     {
-        if (class_exists($className, false) || interface_exists($className, false)) {
-            return true;
-        }
-
-        foreach (spl_autoload_functions() as $loader) {
-            if (is_array($loader)) { // array(???, ???)
-                if (is_object($loader[0])) {
-                    if ($loader[0] instanceof ClassLoader) { // array($obj, 'methodName')
-                        if ($loader[0]->canLoadClass($className)) {
-                            return true;
-                        }
-                    } else if ($loader[0]->{$loader[1]}($className)) {
-                        return true;
-                    }
-                } else if ($loader[0]::$loader[1]($className)) { // array('ClassName', 'methodName')
-                    return true;
-                }
-            } else if ($loader instanceof \Closure) { // function($className) {..}
-                if ($loader($className)) {
-                    return true;
-                }
-            } else if (is_string($loader) && $loader($className)) { // "MyClass::loadClass"
-                return true;
-            }
-
-            if (class_exists($className, false) || interface_exists($className, false)) {
-                return true;
-            }
-        }
-
-        return false;
+        return self::typeExists($className, true);
     }
 
     /**
@@ -270,19 +233,35 @@ class ClassLoader
      *
      * @param string $className The name of the class.
      *
-     * @return ClassLoader The <tt>ClassLoader</tt> for the class or NULL if no such <tt>ClassLoader</tt> exists.
+     * @return ClassLoader|null The <tt>ClassLoader</tt> for the class or NULL if no such <tt>ClassLoader</tt> exists.
      */
     public static function getClassLoader($className)
     {
-         foreach (spl_autoload_functions() as $loader) {
+        foreach (spl_autoload_functions() as $loader) {
             if (is_array($loader)
-                && $loader[0] instanceof ClassLoader
-                && $loader[0]->canLoadClass($className)
+               && ($classLoader = reset($loader))
+               && $classLoader instanceof ClassLoader
+               && $classLoader->canLoadClass($className)
             ) {
-                return $loader[0];
+                return $classLoader;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Checks whether a given type exists
+     *
+     * @param string $type
+     * @param bool   $autoload
+     *
+     * @return bool
+     */
+    private static function typeExists($type, $autoload = false)
+    {
+        return class_exists($type, $autoload)
+            || interface_exists($type, $autoload)
+            || trait_exists($type, $autoload);
     }
 }
