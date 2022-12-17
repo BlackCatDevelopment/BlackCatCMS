@@ -6,13 +6,7 @@
                 </p>
                 <div class="clear_sp"></div>
                 <p>
-                    <div class="fallback">
-                        <input type="file" name="userfile" />
-                    </div>
-                    <div id="fc_dropzone" style="display:none;">
-                        <span>{translate('Click or drag & drop your file to the area below')}</span>
-                        <div class="dropzone"></div>
-                    </div>
+                    <input type="file" name="userfile" />
                 </p>
                 {if $groups.viewers}
                 <hr />

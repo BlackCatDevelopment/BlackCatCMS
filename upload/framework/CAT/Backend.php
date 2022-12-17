@@ -290,7 +290,7 @@ if (!class_exists('CAT_Backend', false))
 
             $time_search  = array('H','i','s','g');
             $time_replace = array('hh','mm','ss','h');
-            $tpl_data['TIME_FORMAT'] = str_replace($time_search, $time_replace, CAT_Registry::get('TIME_FORMAT'));
+            $tpl_data['TIME_FORMAT'] = str_replace($time_search, $time_replace, CAT_Registry::get('CAT_TIME_FORMAT'));
 
             $tpl_data['SESSION']     = session_name();
 

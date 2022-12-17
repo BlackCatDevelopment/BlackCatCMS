@@ -13,6 +13,7 @@ use Doctrine\DBAL\ParameterType;
 use InvalidArgumentException;
 use IteratorAggregate;
 use PDO;
+use ReturnTypeWillChange;
 
 use function array_key_exists;
 use function assert;
@@ -167,7 +168,7 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
             }
         } while ($result);
 
-        if ($currentLiteralDelimiter) {
+        if ($currentLiteralDelimiter !== null) {
             throw NonTerminatedStringLiteral::new($tokenOffset - 1);
         }
 
@@ -232,6 +233,8 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
      * @param string $currentLiteralDelimiter The delimiter of the current string literal
      *
      * @return bool Whether the token was found
+     *
+     * @param-out string|null $currentLiteralDelimiter
      */
     private static function findClosingQuote(
         $statement,
@@ -248,7 +251,7 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
             return false;
         }
 
-        $currentLiteralDelimiter = false;
+        $currentLiteralDelimiter = null;
         ++$tokenOffset;
 
         return true;
@@ -298,9 +301,6 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
 
         if ($type === ParameterType::LARGE_OBJECT) {
             $lob = oci_new_descriptor($this->_dbh, OCI_D_LOB);
-
-            assert($lob !== false);
-
             $lob->writeTemporary($variable, OCI_TEMP_BLOB);
 
             $variable =& $lob;
@@ -429,6 +429,7 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
      *
      * @deprecated Use iterateNumeric(), iterateAssociative() or iterateColumn() instead.
      */
+    #[ReturnTypeWillChange]
     public function getIterator()
     {
         return new StatementIterator($this);

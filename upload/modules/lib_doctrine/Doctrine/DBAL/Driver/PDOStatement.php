@@ -6,17 +6,15 @@ use Doctrine\DBAL\Driver\PDO\Exception;
 use Doctrine\DBAL\Driver\Statement as StatementInterface;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\DBAL\ParameterType;
+use Doctrine\Deprecations\Deprecation;
 use PDO;
 use PDOException;
+use ReturnTypeWillChange;
 
 use function array_slice;
 use function assert;
 use function func_get_args;
 use function is_array;
-use function sprintf;
-use function trigger_error;
-
-use const E_USER_DEPRECATED;
 
 /**
  * The PDO implementation of the Statement interface.
@@ -59,6 +57,7 @@ class PDOStatement extends \PDOStatement implements StatementInterface, Result
     /**
      * {@inheritdoc}
      */
+    #[ReturnTypeWillChange]
     public function bindValue($param, $value, $type = ParameterType::STRING)
     {
         $type = $this->convertParamType($type);
@@ -79,6 +78,7 @@ class PDOStatement extends \PDOStatement implements StatementInterface, Result
      *
      * @return bool
      */
+    #[ReturnTypeWillChange]
     public function bindParam($param, &$variable, $type = ParameterType::STRING, $length = null, $driverOptions = null)
     {
         $type = $this->convertParamType($type);
@@ -95,6 +95,7 @@ class PDOStatement extends \PDOStatement implements StatementInterface, Result
      *
      * @deprecated Use free() instead.
      */
+    #[ReturnTypeWillChange]
     public function closeCursor()
     {
         try {
@@ -109,6 +110,7 @@ class PDOStatement extends \PDOStatement implements StatementInterface, Result
     /**
      * {@inheritdoc}
      */
+    #[ReturnTypeWillChange]
     public function execute($params = null)
     {
         try {
@@ -123,6 +125,7 @@ class PDOStatement extends \PDOStatement implements StatementInterface, Result
      *
      * @deprecated Use fetchNumeric(), fetchAssociative() or fetchOne() instead.
      */
+    #[ReturnTypeWillChange]
     public function fetch($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
     {
         $args = func_get_args();
@@ -143,6 +146,7 @@ class PDOStatement extends \PDOStatement implements StatementInterface, Result
      *
      * @deprecated Use fetchOne() instead.
      */
+    #[ReturnTypeWillChange]
     public function fetchColumn($columnIndex = 0)
     {
         try {
@@ -274,10 +278,13 @@ class PDOStatement extends \PDOStatement implements StatementInterface, Result
     {
         if (! isset(self::PARAM_TYPE_MAP[$type])) {
             // TODO: next major: throw an exception
-            @trigger_error(sprintf(
-                'Using a PDO parameter type (%d given) is deprecated and will cause an error in Doctrine DBAL 3.0',
+            Deprecation::trigger(
+                'doctrine/dbal',
+                'https://github.com/doctrine/dbal/pull/3088',
+                'Using a PDO parameter type (%d given) is deprecated, ' .
+                'use \Doctrine\DBAL\Types\Types constants instead.',
                 $type
-            ), E_USER_DEPRECATED);
+            );
 
             return $type;
         }
@@ -293,12 +300,13 @@ class PDOStatement extends \PDOStatement implements StatementInterface, Result
     private function convertFetchMode(int $fetchMode): int
     {
         if (! isset(self::FETCH_MODE_MAP[$fetchMode])) {
-            // TODO: next major: throw an exception
-            @trigger_error(sprintf(
-                'Using a PDO fetch mode or their combination (%d given)' .
+            Deprecation::trigger(
+                'doctrine/dbal',
+                'https://github.com/doctrine/dbal/pull/3088',
+                'Using an unsupported PDO fetch mode or a bitmask of fetch modes (%d given)' .
                 ' is deprecated and will cause an error in Doctrine DBAL 3.0',
                 $fetchMode
-            ), E_USER_DEPRECATED);
+            );
 
             return $fetchMode;
         }

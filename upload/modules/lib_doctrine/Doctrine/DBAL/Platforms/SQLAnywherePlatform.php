@@ -13,6 +13,7 @@ use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\TransactionIsolationLevel;
+use Doctrine\Deprecations\Deprecation;
 use InvalidArgumentException;
 
 use function array_merge;
@@ -36,7 +37,7 @@ use function substr;
  * The SQLAnywherePlatform provides the behavior, features and SQL dialect of the
  * SAP Sybase SQL Anywhere 10 database platform.
  *
- * @deprecated Use SQLAnywhere 16 or newer
+ * @deprecated Support for SQLAnywhere will be removed in 3.0.
  */
 class SQLAnywherePlatform extends AbstractPlatform
 {
@@ -72,6 +73,12 @@ class SQLAnywherePlatform extends AbstractPlatform
      */
     public function fixSchemaElementName($schemaElementName)
     {
+        Deprecation::trigger(
+            'doctrine/dbal',
+            'https://github.com/doctrine/dbal/pull/4132',
+            'AbstractPlatform::fixSchemaElementName is deprecated with no replacement and removed in DBAL 3.0'
+        );
+
         $maxIdentifierLength = $this->getMaxIdentifierLength();
 
         if (strlen($schemaElementName) > $maxIdentifierLength) {
@@ -376,7 +383,7 @@ class SQLAnywherePlatform extends AbstractPlatform
      */
     public function getConcatExpression()
     {
-        return 'STRING(' . implode(', ', (array) func_get_args()) . ')';
+        return 'STRING(' . implode(', ', func_get_args()) . ')';
     }
 
     /**
@@ -399,11 +406,11 @@ class SQLAnywherePlatform extends AbstractPlatform
     /**
      * {@inheritdoc}
      */
-    public function getCreateDatabaseSQL($database)
+    public function getCreateDatabaseSQL($name)
     {
-        $database = new Identifier($database);
+        $name = new Identifier($name);
 
-        return "CREATE DATABASE '" . $database->getName() . "'";
+        return "CREATE DATABASE '" . $name->getName() . "'";
     }
 
     /**
@@ -533,11 +540,11 @@ class SQLAnywherePlatform extends AbstractPlatform
     /**
      * {@inheritdoc}
      */
-    public function getDropDatabaseSQL($database)
+    public function getDropDatabaseSQL($name)
     {
-        $database = new Identifier($database);
+        $name = new Identifier($name);
 
-        return "DROP DATABASE '" . $database->getName() . "'";
+        return "DROP DATABASE '" . $name->getName() . "'";
     }
 
     /**

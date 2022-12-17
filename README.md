@@ -1,9 +1,11 @@
 About
 =====
 
-BlackCat CMS is a PHP5, HTML5, database driven Web Content Management System.
+BlackCat CMS is a PHP7/8, HTML5, database driven Web Content Management System.
 It's module interface is highly, but not in all cases completely compatible to
 Website Baker and LEPTON CMS (see "History" below).
+
+!Important note: BlackCat CMS is not fully compatible with PHP 8.1.x. The last supported version is 8.0.x.
 
 # Technical requirements
 
