@@ -206,9 +206,11 @@ if (!class_exists('CAT_Helper_Validate'))
          **/
         public static function getURI($url)
         {
-            $rel_parsed = parse_url($url);
-            if(!array_key_exists('scheme',$rel_parsed ) || $rel_parsed['scheme']=='')
-                $url = (isset($_SERVER['HTTPS']) ? 'https:' : 'http:') . $url;
+            if(!empty($url)) {
+                $rel_parsed = parse_url($url);
+                if(!array_key_exists('scheme',$rel_parsed ) || $rel_parsed['scheme']=='')
+                    $url = (isset($_SERVER['HTTPS']) ? 'https:' : 'http:') . $url;
+            }
             return $url;
         }   // end function getURI()
 
