@@ -123,14 +123,25 @@ if ($type != "languages") {
     }
     $admin = &$backend;
 }
-CAT_Helper_Addons::loadModuleIntoDB($path, $action, $info);
-// Run the modules install // upgrade script if there is one
-if (file_exists($path . "/" . $action . ".php")) {
-    require $path . "/" . $action . ".php";
-}
+
 switch ($action) {
     case "install":
+        CAT_Helper_Addons::loadModuleIntoDB($path, $action, $info);
+        // Run the modules install // upgrade script if there is one
+        if (file_exists($path . "/" . $action . ".php")) {
+            require $path . "/" . $action . ".php";
+        }
+        $backend->print_success(
+            str_replace("deed", "ded", "Addon successfully " . $action . "ed"),
+            $js_back
+        );
+        break;
     case "upgrade":
+        // Run the modules install // upgrade script if there is one
+        if (file_exists($path . "/" . $action . ".php")) {
+            require $path . "/" . $action . ".php";
+        }
+        CAT_Helper_Addons::loadModuleIntoDB($path, $action, $info);
         $backend->print_success(
             str_replace("deed", "ded", "Addon successfully " . $action . "ed"),
             $js_back
