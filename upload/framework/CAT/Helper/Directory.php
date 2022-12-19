@@ -240,7 +240,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         public static function getMode($for = "file")
         {
             $mode = null;
-            if (OPERATING_SYSTEM != "windows") {
+            if (strtoupper(substr(PHP_OS, 0, 3)) != "WIN") {
                 if ($for == "directory") {
                     $mode = CAT_Registry::exists("OCTAL_DIR_MODE")
                         ? CAT_Registry::get("OCTAL_DIR_MODE")
@@ -456,6 +456,9 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         {
             $self = self::getInstance();
             $self->log()->logDebug("> sanitizePath " . $path);
+            if(empty($path)) {
+                return '';
+            }
             // remove / at end of string; this will make sanitizePath fail otherwise!
             $path = preg_replace('~/{1,}$~', "", $path);
             // make all slashes forward
@@ -582,7 +585,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                 if ($remove_prefix == "/") {
                     $remove_prefix = null;
                 }
-                if (substr($remove_orig, -1, 1) == "/") {
+                if (!empty($remove_orig) && substr($remove_orig, -1, 1) == "/") {
                     $remove_prefix .= "/";
                 }
             }
@@ -840,7 +843,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         public static function setReadOnly($item)
         {
             // Only chmod if os is not windows
-            if (OPERATING_SYSTEM != "windows") {
+            if (strtoupper(substr(PHP_OS, 0, 3)) != "WIN") {
                 $mode = (int) octdec("644");
                 if (file_exists($item)) {
                     $umask = umask(0);
@@ -1093,7 +1096,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
          **/
         public static function defaultDirMode()
         {
-            return OPERATING_SYSTEM != "windows" ? "0755" : "0777";
+            return strtoupper(substr(PHP_OS, 0, 3)) != "WIN" ? "0755" : "0777";
         } // end function defaultDirMode()
 
         /**
