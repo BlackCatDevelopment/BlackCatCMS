@@ -1646,7 +1646,6 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 $self->log()->LogDebug('$directory is a directory and info.php found');
                 // get header info
                 $link = NULL;
-                ini_set( 'auto_detect_line_endings', true );
                 $file = fopen( $directory . '/info.php', 'r' );
                 if ( $file )
                 {
