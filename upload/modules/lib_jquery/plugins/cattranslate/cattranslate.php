@@ -19,13 +19,13 @@ $msg  = $val->get('_REQUEST','msg');
 
 if( version_compare(phpversion(),'5.4','<') )
 {
-    $msg  = htmlspecialchars($msg, ENT_QUOTES, 'UTF-8');
-    $attr = htmlspecialchars($attr, ENT_QUOTES, 'UTF-8');
+    $msg  = empty($msg)  ? '' : htmlspecialchars($msg, ENT_QUOTES, 'UTF-8');
+    $attr = empty($attr) ? '' : htmlspecialchars($attr, ENT_QUOTES, 'UTF-8');
 }
 else
 {
-    $msg  = htmlspecialchars($msg, ENT_XHTML, 'UTF-8');
-    $attr = htmlspecialchars($attr, ENT_XHTML, 'UTF-8');
+    $msg  = empty($msg)  ? '' : htmlspecialchars($msg, ENT_XHTML, 'UTF-8');
+    $attr = empty($attr) ? '' : htmlspecialchars($attr, ENT_XHTML, 'UTF-8');
 }
 
 if( file_exists(CAT_PATH.'/languages/'.$lang->getLang().'.php') ) {
