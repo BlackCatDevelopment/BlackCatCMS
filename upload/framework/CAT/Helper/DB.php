@@ -25,6 +25,7 @@
 
 use Doctrine\Common\ClassLoader;
 require dirname(__FILE__).'/../../../modules/lib_doctrine/Doctrine/Common/ClassLoader.php';
+require __DIR__.'/../../../modules/lib_doctrine/Doctrine/DBAL/Deprecations/Deprecation.php';
 
 if ( !class_exists( 'CAT_Helper_DB' ) )
 {
@@ -516,7 +517,9 @@ class CAT_PDOStatementDecorator
     // route all other method calls directly to PDOStatement
     public function __call($method, $args)
     {
-        return call_user_func_array(array($this->pdo_stmt, $method), $args);
+        if(method_exists($this->pdo_stmt, $method)) {
+            return call_user_func_array(array($this->pdo_stmt, $method), $args);
+        }
     }
     public function numRows()
     {
