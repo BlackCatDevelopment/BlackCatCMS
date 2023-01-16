@@ -25,7 +25,6 @@
 
 use Doctrine\Common\ClassLoader;
 require dirname(__FILE__).'/../../../modules/lib_doctrine/Doctrine/Common/ClassLoader.php';
-require __DIR__.'/../../../modules/lib_doctrine/Doctrine/DBAL/Deprecations/Deprecation.php';
 
 if ( !class_exists( 'CAT_Helper_DB' ) )
 {
