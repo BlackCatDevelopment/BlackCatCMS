@@ -240,7 +240,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         public static function getMode($for = "file")
         {
             $mode = null;
-            if (strtoupper(substr(PHP_OS, 0, 3)) != "WIN") {
+            if (OPERATING_SYSTEM != "windows") {
                 if ($for == "directory") {
                     $mode = CAT_Registry::exists("OCTAL_DIR_MODE")
                         ? CAT_Registry::get("OCTAL_DIR_MODE")
@@ -456,11 +456,8 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         {
             $self = self::getInstance();
             $self->log()->logDebug("> sanitizePath " . $path);
-            if(empty($path)) {
-                return '';
-            }
             // remove / at end of string; this will make sanitizePath fail otherwise!
-            $path = preg_replace('~/{1,}$~', "", $path);
+            $path = preg_replace('~/{1,}$~', "", $path ? $path : "");
             // make all slashes forward
             $path = str_replace("\\", "/", $path);
             // bla/./bloo ==> bla/bloo
@@ -585,7 +582,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                 if ($remove_prefix == "/") {
                     $remove_prefix = null;
                 }
-                if (!empty($remove_orig) && substr($remove_orig, -1, 1) == "/") {
+                if (substr($remove_orig ? $remove_orig : "", -1, 1) == "/") {
                     $remove_prefix .= "/";
                 }
             }
@@ -684,7 +681,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                                         "$dir/$file - replace -$remove_prefix-"
                                     );
                                 $current = str_ireplace(
-                                    $remove_prefix,
+                                    $remove_prefix ? $remove_prefix : "",
                                     "",
                                     $dir . "/" . $file
                                 );
@@ -843,7 +840,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         public static function setReadOnly($item)
         {
             // Only chmod if os is not windows
-            if (strtoupper(substr(PHP_OS, 0, 3)) != "WIN") {
+            if (OPERATING_SYSTEM != "windows") {
                 $mode = (int) octdec("644");
                 if (file_exists($item)) {
                     $umask = umask(0);
@@ -1096,7 +1093,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
          **/
         public static function defaultDirMode()
         {
-            return strtoupper(substr(PHP_OS, 0, 3)) != "WIN" ? "0755" : "0777";
+            return OPERATING_SYSTEM != "windows" ? "0755" : "0777";
         } // end function defaultDirMode()
 
         /**
