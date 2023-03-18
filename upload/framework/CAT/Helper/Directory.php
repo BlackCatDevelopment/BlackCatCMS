@@ -240,7 +240,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         public static function getMode($for = "file")
         {
             $mode = null;
-            if (OPERATING_SYSTEM != "windows") {
+            if (strtoupper(substr(PHP_OS, 0, 3)) != "WIN") {
                 if ($for == "directory") {
                     $mode = CAT_Registry::exists("OCTAL_DIR_MODE")
                         ? CAT_Registry::get("OCTAL_DIR_MODE")
@@ -840,7 +840,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         public static function setReadOnly($item)
         {
             // Only chmod if os is not windows
-            if (OPERATING_SYSTEM != "windows") {
+            if (strtoupper(substr(PHP_OS, 0, 3)) != "WIN") {
                 $mode = (int) octdec("644");
                 if (file_exists($item)) {
                     $umask = umask(0);
@@ -1093,7 +1093,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
          **/
         public static function defaultDirMode()
         {
-            return OPERATING_SYSTEM != "windows" ? "0755" : "0777";
+            return strtoupper(substr(PHP_OS, 0, 3)) != "WIN" ? "0755" : "0777";
         } // end function defaultDirMode()
 
         /**
