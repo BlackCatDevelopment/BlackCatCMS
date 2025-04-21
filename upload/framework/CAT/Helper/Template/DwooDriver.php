@@ -24,89 +24,109 @@
  */
 
 if (!class_exists("Dwoo", false)) {
-  include CAT_PATH . "/modules/lib_dwoo/dwoo/dwooAutoload.php";
+    include CAT_PATH . "/modules/lib_dwoo/dwoo/dwooAutoload.php";
 }
 
 if (!class_exists("CAT_Helper_Template_DwooDriver", false)) {
-  class CAT_Helper_Template_DwooDriver extends Dwoo
-  {
-    protected $debuglevel = CAT_Helper_KLogger::CRIT;
-    public $_config = [
-      "loglevel" => CAT_Helper_KLogger::CRIT,
-      "show_paths_on_error" => true,
-    ];
-    public $workdir = null;
-    public $path = null;
-    public $paths = null;
-
-    public $fallback_path = null;
-    public static $_globals = [];
-    protected $logger = null;
-
-    public function __construct()
+    class CAT_Helper_Template_DwooDriver extends Dwoo
     {
-      $cache_path = CAT_PATH . "/temp/cache";
-      if (!file_exists($cache_path)) {
-        mkdir($cache_path, 0755, true);
-      }
-      $compiled_path = CAT_PATH . "/temp/compiled";
-      if (!file_exists($compiled_path)) {
-        mkdir($compiled_path, 0755, true);
-      }
-      parent::__construct($compiled_path, $cache_path);
-      // we need our own logger instance here as the driver does not
-      // inherit from CAT_Object
-      if (!class_exists("CAT_Helper_KLogger", false)) {
-        include dirname(__FILE__) .
-          "/../../../framework/CAT/Helper/KLogger.php";
-      }
-      $this->logger = new CAT_Helper_KLogger(
-        CAT_PATH . "/temp/logs",
-        $this->debuglevel
-      );
-    } // end function __construct()
+        protected $debuglevel = CAT_Helper_KLogger::CRIT;
+        public $_config = [
+            "loglevel" => CAT_Helper_KLogger::CRIT,
+            "show_paths_on_error" => true,
+        ];
+        public $workdir = null;
+        public $path = null;
+        public $fallback_path = null;
+        public static $_globals = [];
+        protected $logger = null;
+        public array $paths = [
+            "current" => null,
+            "frontend" => null,
+            "frontend_fallback" => null,
+            "backend" => null,
+            "backend_fallback" => null,
+            "workdir" => null,
+        ];
 
-    public function output($_tpl, $data = [], Dwoo_ICompiler $compiler = null)
-    {
-      echo $this->get($_tpl, $data, $compiler);
-    }
+        public function __construct()
+        {
+            $cache_path = CAT_PATH . "/temp/cache";
+            if (!file_exists($cache_path)) {
+                mkdir($cache_path, 0755, true);
+            }
+            $compiled_path = CAT_PATH . "/temp/compiled";
+            if (!file_exists($compiled_path)) {
+                mkdir($compiled_path, 0755, true);
+            }
+            parent::__construct($compiled_path, $cache_path);
+            // we need our own logger instance here as the driver does not
+            // inherit from CAT_Object
+            if (!class_exists("CAT_Helper_KLogger", false)) {
+                include dirname(__FILE__) .
+                    "/../../../framework/CAT/Helper/KLogger.php";
+            }
+            $this->logger = new CAT_Helper_KLogger(
+                CAT_PATH . "/temp/logs",
+                $this->debuglevel
+            );
+        } // end function __construct()
 
-    /**
-     * this overrides and extends the original get() method Dwoo provides:
-     * - use the template search and fallback paths
-     *
-     * @access public
-     * @param  see original Dwoo docs
-     * @return see original Dwoo docs
-     *
-     **/
-    public function get($_tpl, $data = [], $_compiler = null, $_output = false)
-    {
-      // add globals to $data array
-      if (is_array(self::$_globals) && count(self::$_globals)) {
-        if (is_array($data)) {
-          $this->logger->LogDebug("Adding globals to data");
-          $data = array_merge(self::$_globals, $data);
-        } else {
-          $data = self::$_globals;
+        public function output(
+            $_tpl,
+            $data = [],
+            ?Dwoo_ICompiler $compiler = null
+        ) {
+            echo $this->get($_tpl, $data, $compiler);
         }
-      }
-      if (!is_object($_tpl)) {
-        if (!file_exists($_tpl) || is_dir($_tpl)) {
-          global $parser;
-          $file = $parser->findTemplate($_tpl);
-          $this->logger->LogDebug(sprintf("Template file [%s]", $file));
-          if ($file) {
-            return parent::get(realpath($file), $data, $_compiler, $_output);
-          } else {
-            $this->logger->LogCrit("No template file!");
-          }
-        } else {
-          return parent::get($_tpl, $data, $_compiler, $_output);
-        }
-      } else {
-        return parent::get($_tpl, $data, $_compiler, $_output);
-      }
-    } // end function get()
-  } // end class CAT_Helper_Template_DwooDriver
+
+        /**
+         * this overrides and extends the original get() method Dwoo provides:
+         * - use the template search and fallback paths
+         *
+         * @access public
+         * @param  see original Dwoo docs
+         * @return see original Dwoo docs
+         *
+         **/
+        public function get(
+            $_tpl,
+            $data = [],
+            $_compiler = null,
+            $_output = false
+        ) {
+            // add globals to $data array
+            if (is_array(self::$_globals) && count(self::$_globals)) {
+                if (is_array($data)) {
+                    $this->logger->LogDebug("Adding globals to data");
+                    $data = array_merge(self::$_globals, $data);
+                } else {
+                    $data = self::$_globals;
+                }
+            }
+            if (!is_object($_tpl)) {
+                if (!file_exists($_tpl) || is_dir($_tpl)) {
+                    global $parser;
+                    $file = $parser->findTemplate($_tpl);
+                    $this->logger->LogDebug(
+                        sprintf("Template file [%s]", $file)
+                    );
+                    if ($file) {
+                        return parent::get(
+                            realpath($file),
+                            $data,
+                            $_compiler,
+                            $_output
+                        );
+                    } else {
+                        $this->logger->LogCrit("No template file!");
+                    }
+                } else {
+                    return parent::get($_tpl, $data, $_compiler, $_output);
+                }
+            } else {
+                return parent::get($_tpl, $data, $_compiler, $_output);
+            }
+        } // end function get()
+    } // end class CAT_Helper_Template_DwooDriver
 }

@@ -28,22 +28,28 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
-} else {
-	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ($subs as $sub) {
-		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) { 
-			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
-		} 
-	}
-	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-}
-// end include class.secure.php
+ if (defined("CAT_PATH")) {
+     include CAT_PATH . "/framework/class.secure.php";
+ } else {
+     $oneback = "../";
+     $root = $oneback;
+     $level = 1;
+     while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
+         $root .= $oneback;
+         $level += 1;
+     }
+     if (file_exists($root . "framework/class.secure.php")) {
+         include $root . "framework/class.secure.php";
+     } else {
+         throw new \RuntimeException(
+             sprintf(
+                 "Cannot include class.secure.php at %s",
+                 $_SERVER["SCRIPT_NAME"]
+             )
+         );
+     }
+ }
+ // end include class.secure.php
  
 if (!class_exists('Template')) {
 	include_once(CAT_PATH.'/modules/phplib/include.php');
@@ -57,7 +63,7 @@ class Template
   * @var       string
   * @access    public
   */
-  var $classname = "Template";
+  public $classname = "Template";
 
  /**
   * Determines how much debugging output Template will produce.
@@ -281,8 +287,7 @@ class Template
       }
       $this->file[$varname] = $this->filename($filename);
     } else {
-      reset($varname);
-      while (list($v, $f) = each($varname)) {
+      foreach ($varname as $k => $v) {
         if ($this->debug & 4) {
           echo "<p><b>set_file:</b> (with array) varname = $v, filename = $f</p>\n";
         }
