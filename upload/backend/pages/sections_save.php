@@ -158,7 +158,7 @@ elseif ( $update_section_id != '' )
                            : ''
                            ;
                 $sql      .= ( $name != '' )
-                           ? '`name` = "' . mysql_real_escape_string($name) . '", '
+                           ? '`name` = ' . $backend->db()->conn()->quote($name) . ', '
                            : ''
                            ;
                 $date_from = ($day_from * $month_from * $year_from) > 0
