@@ -136,50 +136,82 @@ if (!defined('CAT_INSTALL_PROCESS')) {
 }
 
 //**************************************************************************
-// Start a session
+// Start a session only where needed (backend/modules/account)
 //**************************************************************************
 if (!defined('SESSION_STARTED')) {
-    // setting SESSION_LIFETIME re-introduced with v1.4
+
+    // Default lifetime for session cookies (in seconds)
     if (!defined('SESSION_LIFETIME')) {
-        define('SESSION_LIFETIME', 7200);
+        define('SESSION_LIFETIME', 7200); // 2 hours
     }
+
+    // SameSite security policy for cookies
     if (!defined('COOKIE_SAMESITE')) {
         define('COOKIE_SAMESITE', 'Strict');
     }
 
-    session_name(APP_NAME.'sessionid');
-    global $cookie_settings;
+    // Set a custom session name based on the application
+    session_name(APP_NAME . 'sessionid');
+
+    // Load current cookie configuration
     $cookie_settings = session_get_cookie_params();
 
-	if (!is_dir(CAT_PATH.'/'.CAT_Registry::get('SESSION_SAVE_PATH')))
-	{
-		CAT_Helper_Directory::createDirectory(CAT_PATH.'/'.CAT_Registry::get('SESSION_SAVE_PATH'));
-		$f = fopen(CAT_PATH.'/'.CAT_Registry::get('SESSION_SAVE_PATH')."/.htaccess", "a+");
-		fwrite($f, "deny from all");
-		fclose($f);
-		chmod(CAT_PATH.'/'.CAT_Registry::get('SESSION_SAVE_PATH'),0700);
-	}
+    // Ensure a secure dedicated session directory exists
+    $session_save_path = CAT_PATH . '/' . CAT_Registry::get('SESSION_SAVE_PATH');
+    if (!is_dir($session_save_path)) {
+        CAT_Helper_Directory::createDirectory($session_save_path);
+        // Protect session directory from direct access
+        file_put_contents($session_save_path . "/.htaccess", "deny from all");
+        chmod($session_save_path, 0700);
+    }
 
-    if (session_status() == PHP_SESSION_NONE) {
+    // Define GUID constant if not already set (used for internal ID tracking)
+    if (!defined('GUID')) {
+        define('GUID', 'bc');
+    }
+
+    // Detect first URL path element to check if this is backend or module access
+    $uri = explode('/', $_SERVER['REQUEST_URI']);
+
+    // Only start a real session if user accesses backend or functional modules
+    if (
+        session_status() === PHP_SESSION_NONE &&
+        isset($uri[1]) &&
+        in_array($uri[1], ['backend', 'account', 'modules'])
+    ) {
+        // Secure session start with defined storage and cookie options
         session_start([
-            'save_path'       => CAT_PATH.'/'.CAT_Registry::get('SESSION_SAVE_PATH'),
-            'cookie_lifetime' => time() + SESSION_LIFETIME,
+            'save_path'       => $session_save_path,
+            'cookie_lifetime' => SESSION_LIFETIME, // Duration, not timestamp
             'cookie_path'     => $cookie_settings['path'],
             'cookie_domain'   => $cookie_settings['domain'],
             'cookie_secure'   => (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'),
             'cookie_httponly' => true,
             'cookie_samesite' => COOKIE_SAMESITE,
         ]);
+
+        // Attach an internal GUID string to this session
+        $_SESSION['_GUID'] = GUID;
+
+        // Actively refresh session cookie timeout on each backend action
+        setcookie(
+            session_name(),
+            session_id(),
+            time() + SESSION_LIFETIME,
+            $cookie_settings['path'],
+            $cookie_settings['domain'],
+            (strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, 5)) === 'https'),
+            true
+        );
     }
 
-    if(!defined('GUID')) {
-        define('GUID','bc');
-    }
-    $_SESSION['_GUID'] = GUID;
-
+    // Prevent multiple initialization runs
     CAT_Registry::register('SESSION_STARTED', true, true);
 }
+
+// Track first session usage timestamp if security mode is enabled
 if (defined('ENABLED_ASP') && ENABLED_ASP && !isset($_SESSION['session_started'])) {
+    // (Note: Has no effect in frontend without a real session)
     $_SESSION['session_started'] = time();
 }
     
