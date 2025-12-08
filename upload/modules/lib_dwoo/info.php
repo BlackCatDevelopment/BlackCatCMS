@@ -26,13 +26,13 @@
 
 /**
  * #################### DWOO PHP5 TEMPLATE ENGINE ####################
- *
+ *   
  * Copyright (c) 2008, Dwoo / Jordi Boggiano
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  *  * Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above copyright
@@ -41,7 +41,7 @@
  *  * Neither the name of Dwoo nor the names of its contributors may be
  *    used to endorse or promote products derived from this software
  *    without specific prior written permission.
- *
+ *    
  * THIS SOFTWARE IS PROVIDED BY JORDI BOGGIANO ''AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -52,40 +52,34 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ * 
  */
 
-if (defined("CAT_PATH")) {
-    include CAT_PATH . "/framework/class.secure.php";
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
 } else {
-    $root = "../";
-    $level = 1;
-    while ($level < 10 && !file_exists($root . "/framework/class.secure.php")) {
-        $root .= "../";
-        $level += 1;
-    }
-    if (file_exists($root . "/framework/class.secure.php")) {
-        include $root . "/framework/class.secure.php";
-    } else {
-        trigger_error(
-            sprintf(
-                "[ <b>%s</b> ] Can't include class.secure.php!",
-                $_SERVER["SCRIPT_NAME"]
-            ),
-            E_USER_ERROR
-        );
-    }
+	$root = "../";
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'framework/class.secure.php'))) {
+		$root .= "../";
+		$level += 1;
+	}
+	if (file_exists($root.'framework/class.secure.php')) { 
+		include($root.'framework/class.secure.php'); 
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
 }
 
-$module_directory = "lib_dwoo";
-$module_name = "Dwoo Library for BlackCat CMS";
-$module_function = "library";
-$module_version = "0.14";
-$module_platform = "1.x";
-$module_author = "Dwoo/Jordi Boggiano, this module Black Cat Development";
-$module_license = "GNU General Public License";
-$module_description = "Dwoo PHP5 Template Engine, Release 1.1.1";
-$module_home = "http://dwoo.org/";
-$module_guid = "0266338D-DC1E-4815-B308-F9A6CB84448C";
+$module_directory     = 'lib_dwoo';
+$module_name          = 'Dwoo Library for BlackCat CMS';
+$module_function      = 'library';
+$module_version       = '0.13';
+$module_platform      = '1.x';
+$module_author        = 'Dwoo/Jordi Boggiano, this module Black Cat Development';
+$module_license       = 'GNU General Public License';
+$module_description   = 'Dwoo PHP5 Template Engine, Release 1.1.1';
+$module_home          = 'http://dwoo.org/';
+$module_guid          = '0266338D-DC1E-4815-B308-F9A6CB84448C';
 
 ?>
