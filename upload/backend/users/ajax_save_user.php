@@ -228,6 +228,7 @@ if ($addUser) {
 
     $errors = $users->setUserOptions($user_id, $options);
     unset($options["password"]);
+    unset($password);
     if (count($errors)) {
         echo CAT_Object::json_error(
             "Errors:<br />" . implode("<br />", $errors)
