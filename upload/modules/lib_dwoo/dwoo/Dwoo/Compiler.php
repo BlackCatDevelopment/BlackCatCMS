@@ -2352,10 +2352,12 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 						array_shift($m[1]);
 					}
 
-					if ($curBlock !== 'root') {
-						$output = '(isset('.$output.') ? '.$output.':null)';
-					}
-				}
+                                        if ($curBlock !== 'root') {
+                                                $output = '(isset('.$output.') ? '.$output.':null)';
+                                        } elseif (strpos($output, '$this->scope[') === 0) {
+                                                $output = '(isset('.$output.') ? '.$output.' : "")';
+                                        }
+                                }
 
 				if (count($m[2])) {
 					unset($m[0]);
