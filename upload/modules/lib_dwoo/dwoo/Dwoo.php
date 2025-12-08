@@ -286,7 +286,7 @@ class Dwoo
      *                                   Dwoo_Compiler will be used.
      * @return string nothing or the template output if $output is true
      */
-    public function output($tpl, $data = array(), Dwoo_ICompiler $compiler = null)
+    public function output($tpl, $data = array(), ?Dwoo_ICompiler $compiler = null)
     {
         return $this->get($tpl, $data, $compiler, true);
     }
@@ -783,7 +783,7 @@ class Dwoo
      *
      * @param Dwoo_Security_Policy $policy the security policy object
      */
-    public function setSecurityPolicy(Dwoo_Security_Policy $policy = null)
+    public function setSecurityPolicy(?Dwoo_Security_Policy $policy = null)
     {
         $this->securityPolicy = $policy;
     }
@@ -865,7 +865,7 @@ class Dwoo
      * @param string $compileId the unique compiler identifier
      * @return Dwoo_ITemplate
      */
-    public function templateFactory($resourceName, $resourceId, $cacheTime = null, $cacheId = null, $compileId = null, Dwoo_ITemplate $parentTemplate = null)
+    public function templateFactory($resourceName, $resourceId, $cacheTime = null, $cacheId = null, $compileId = null, ?Dwoo_ITemplate $parentTemplate = null)
     {
         if (isset($this->resources[$resourceName])) {
             // TODO could be changed to $this->resources[$resourceName]['class']::templateFactory(..) in 5.3 maybe

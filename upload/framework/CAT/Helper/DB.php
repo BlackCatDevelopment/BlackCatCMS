@@ -516,7 +516,9 @@ class CAT_PDOStatementDecorator
     // route all other method calls directly to PDOStatement
     public function __call($method, $args)
     {
-        return call_user_func_array(array($this->pdo_stmt, $method), $args);
+        if(method_exists($this->pdo_stmt, $method)) {
+            return call_user_func_array(array($this->pdo_stmt, $method), $args);
+        }
     }
     public function numRows()
     {

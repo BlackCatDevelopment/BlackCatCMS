@@ -40,12 +40,15 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         protected static $current_depth = 0;
         protected static $is_win = null;
 
-        protected $_config = [
-            "loglevel" => 8,
-        ];
+        protected $_config = [];
         protected $debugLevel = 8;
 
         private static $instance;
+
+        public function __construct()
+        {
+            $this->_config = ["loglevel" => 8];
+        }
 
         public static function getInstance($reset = false)
         {
@@ -136,7 +139,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                     )
                 ) {
                     $dirs[] = $remove_dir
-                        ? str_ireplace($dir, "", $entry)
+                        ? str_ireplace($dir ?? "", "", $entry)
                         : $entry;
                 }
             }
@@ -199,7 +202,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                 ) {
                     $files[] = $remove_dir
                         ? str_ireplace(
-                            self::sanitizePath($dir),
+                            self::sanitizePath($dir) ?? "",
                             "",
                             self::sanitizePath($entry)
                         )
@@ -227,7 +230,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                 $stat = stat($entry);
                 if ($stat["mtime"] < $time) {
                     $files[] = $remove_dir
-                        ? str_ireplace($dir, "", $entry)
+                        ? str_ireplace($dir ?? "", "", $entry)
                         : $entry;
                 }
             }
@@ -457,7 +460,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
             $self = self::getInstance();
             $self->log()->logDebug("> sanitizePath " . $path);
             // remove / at end of string; this will make sanitizePath fail otherwise!
-            $path = preg_replace('~/{1,}$~', "", $path);
+            $path = preg_replace('~/{1,}$~', "", $path ? $path : "");
             // make all slashes forward
             $path = str_replace("\\", "/", $path);
             // bla/./bloo ==> bla/bloo
@@ -582,7 +585,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                 if ($remove_prefix == "/") {
                     $remove_prefix = null;
                 }
-                if (substr($remove_orig, -1, 1) == "/") {
+                if (substr($remove_orig ? $remove_orig : "", -1, 1) == "/") {
                     $remove_prefix .= "/";
                 }
             }
@@ -640,7 +643,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                                         "\$files_only is false, adding to \$dirs: $dir/$file - replace -$remove_prefix-"
                                     );
                                 $current = str_ireplace(
-                                    $remove_prefix,
+                                    $remove_prefix ?? "",
                                     "",
                                     $dir . "/" . $file
                                 );
@@ -681,7 +684,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                                         "$dir/$file - replace -$remove_prefix-"
                                     );
                                 $current = str_ireplace(
-                                    $remove_prefix,
+                                    $remove_prefix ?? "",
                                     "",
                                     $dir . "/" . $file
                                 );
@@ -1219,21 +1222,29 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         private static function _class_secure_code()
         {
             return "
-if (defined('CAT_PATH')) {
-    include(CAT_PATH.'/framework/class.secure.php');
-} else {
-    \$root = \"../\";
-    \$level = 1;
-    while ((\$level < 10) && (!file_exists(\$root.'framework/class.secure.php'))) {
-        \$root .= '../';
-        \$level += 1;
-    }
-    if (file_exists(\$root.'framework/class.secure.php')) {
-        include(\$root.'framework/class.secure.php');
-    } else {
-        trigger_error(sprintf(\"[ <b>%s</b> ] Can't include class.secure.php!\", \$_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-    }
-}
+// include class.secure.php to protect this file and the whole CMS!
+            if (defined(\"CAT_PATH\")) {
+                include CAT_PATH . \"/framework/class.secure.php\";
+            } else {
+                $oneback = \"../\";
+                $root = $oneback;
+                $level = 1;
+                while ($level < 10 && !file_exists($root . \"framework/class.secure.php\")) {
+                    $root .= $oneback;
+                    $level += 1;
+                }
+                if (file_exists($root . \"framework/class.secure.php\")) {
+                    include \$root . \"framework/class.secure.php\";
+                } else {
+                    throw new \RuntimeException(
+                        sprintf(
+                        \"Cannot include class.secure.php at %s\",
+                      \$_SERVER['SCRIPT_NAME']
+                        )
+                    );
+                }
+            }
+            // end include class.secure.php
 ";
         } // end function _class_secure_code()
     }

@@ -23,94 +23,102 @@
  *
  */
 
-if ( ! class_exists( 'CAT_Object', false ) ) {
-    @include dirname(__FILE__).'/../Object.php';
+if (!class_exists("CAT_Object", false)) {
+    @include dirname(__FILE__) . "/../Object.php";
 }
 
-if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
-	class CAT_Helper_ListBuilder extends CAT_Object
-	{
-	    protected $_config
-			= array(
-                 'loglevel'             => 7,
-			);
+if (!class_exists("CAT_Helper_ListBuilder", false)) {
+    class CAT_Helper_ListBuilder extends CAT_Object
+    {
+        protected $_config = [
+            "loglevel" => 7,
+        ];
 
         private static $instance;
 
-        public static function getInstance($reset=false)
+        public static function getInstance($reset = false)
         {
-            if (!self::$instance)
-            {
+            if (!self::$instance) {
                 self::$instance = new self();
                 $reset = true;
             }
-            if($reset) self::$instance->reset();
+            if ($reset) {
+                self::$instance->reset();
+            }
             return self::$instance;
-        }   // end function getInstance()
+        } // end function getInstance()
 
         public function __call($method, $args)
-            {
-            if ( ! isset($this) || ! is_object($this) )
+        {
+            if (!isset($this) || !is_object($this)) {
                 return false;
-            if ( method_exists( $this, $method ) )
-                return call_user_func_array(array($this, $method), $args);
-        }   // end function __call()
+            }
+            if (method_exists($this, $method)) {
+                return call_user_func_array([$this, $method], $args);
+            }
+        } // end function __call()
 
         /**
          * sort array by children
          **/
-        public static function sort ( $list, $root_id ) {
+        public static function sort($list, $root_id)
+        {
+            if (empty($list) || !is_array($list) || count($list) == 0) {
+                return null;
+            }
 
-            if ( empty($list) || ! is_array( $list ) || count($list) == 0 )
-                return NULL;
-
-            $self      = self::getInstance(false);
-            $return    = array();
-            $children  = array();
-            $p_key     = $self->_config['__parent_key'];
-            $id_key    = $self->_config['__id_key'];
+            $self = self::getInstance(false);
+            $return = [];
+            $children = [];
+            $p_key = $self->_config["__parent_key"];
+            $id_key = $self->_config["__id_key"];
 
             // create a list of children for each item
-            foreach ( $list as $item ) {
+            foreach ($list as $item) {
                 $children[$item[$p_key]][] = $item;
             }
 
             // loop will be false if the root has no children
-            $loop         = !empty( $children[$root_id] );
+            $loop = !empty($children[$root_id]);
 
             // initializing $parent as the root
-            $parent       = $root_id;
-            $parent_stack = array();
+            $parent = $root_id;
+            $parent_stack = [];
 
             #while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
-            while ( $loop && ( ( count($children[$parent]) > 0 || ( $parent <> $root_id ) ) ) )
-            {
-				if(!strlen(key($children[$parent]))) {
+            while (
+                $loop &&
+                (count($children[$parent]) > 0 || $parent != $root_id)
+            ) {
+                $childKey = key($children[$parent]);
+                if ($childKey === null || $childKey === "") {
                     $option = false;
                 } else {
-		            $option	= array(
-			        	'key'	=> key($children[$parent]),
-			        	'value'	=> current($children[$parent])
-		            );
-				}
+                    $option = [
+                        "key" => key($children[$parent]),
+                        "value" => current($children[$parent]),
+                    ];
+                }
                 array_shift($children[$parent]);
-                if ( $option === false ) // no more children
-                {
-                    $parent = array_pop( $parent_stack );
+                if ($option === false) {
+                    // no more children
+                    $parent = array_pop($parent_stack);
                 }
                 // current item has children
-                elseif ( ! empty( $children[ $option['value'][$id_key] ] ) )
-                {
-                    if(!isset($option['value']['__children']))
-                        $option['value']['__children'] = count($children[ $option['value'][$id_key] ]);
-                    $return[] = $option['value'];
-                    array_push( $parent_stack, $option['value'][$p_key] );
-                    $parent = $option['value'][$id_key];
-                }
-                else {
-                    if(!isset($option['value']['__children']))
-                        $option['value']['__children'] = 0;
-                    $return[] = $option['value'];
+                elseif (!empty($children[$option["value"][$id_key]])) {
+                    if (!isset($option["value"]["__children"])) {
+                        $option["value"]["__children"] = count(
+                            $children[$option["value"][$id_key]]
+                        );
+                    }
+                    $return[] = $option["value"];
+                    array_push($parent_stack, $option["value"][$p_key]);
+                    $parent = $option["value"][$id_key];
+                } else {
+                    if (!isset($option["value"]["__children"])) {
+                        $option["value"]["__children"] = 0;
+                    }
+                    $return[] = $option["value"];
                 }
             }
             return $return;
@@ -145,215 +153,295 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          * http://codjng.blogspot.com/2010/10/how-to-build-unlimited-level-of-menu.html
          *
          **/
-        public static function dropdown ( $name, $list, $root_id, $selected = NULL, $options_only = false )
-        {
+        public static function dropdown(
+            $name,
+            $list,
+            $root_id,
+            $selected = null,
+            $options_only = false
+        ) {
+            $output = self::listbuilder($list, $root_id, "select", $selected);
 
-            $output = self::listbuilder($list,$root_id,'select',$selected);
-
-            if ( $options_only )
-                return join( "\n\t", $output )."\n";
-            $self   = self::getInstance(false);
-            return $self->startSelect($name)
-		         . join( "\n\t", $output )."\n"
-                 . $self->closeSelect();
-
-        }   // end function dropdown ()
+            if ($options_only) {
+                return join("\n\t", $output) . "\n";
+            }
+            $self = self::getInstance(false);
+            return $self->startSelect($name) .
+                join("\n\t", $output) .
+                "\n" .
+                $self->closeSelect();
+        } // end function dropdown ()
 
         /**
          *
          * @access public
          * @return
          **/
-        public static function breadcrumb( $list, $selected=NULL )
+        public static function breadcrumb($list, $selected = null)
         {
-            $self     = self::getInstance(false);
-            $tree     = self::buildRecursion($list);
-            $path     = CAT_Helper_Array::ArraySearchRecursive($selected,$tree,$self->_config['__id_key']);
+            $self = self::getInstance(false);
+            $tree = self::buildRecursion($list);
+            $path = CAT_Helper_Array::ArraySearchRecursive(
+                $selected,
+                $tree,
+                $self->_config["__id_key"]
+            );
 
-            if(is_array($path) && count($path))
-            {
+            if (is_array($path) && count($path)) {
                 array_pop($path);
                 // push selected item to result
-                eval( '$node = $tree[\''.implode( '\'][\'', $path ).'\'];' );
+                eval('$node = $tree[\'' . implode('\'][\'', $path) . '\'];');
                 $trail[] = $node;
-                while(count($path)>1)
-                {
+                while (count($path) > 1) {
                     array_pop($path);
                     array_pop($path);
-                    eval( '$node = $tree[\''.implode( '\'][\'', $path ).'\'];' );
-                    if(isset($node['children']))
-                        unset($node['children']);
+                    eval(
+                        '$node = $tree[\'' . implode('\'][\'', $path) . '\'];'
+                    );
+                    if (isset($node["children"])) {
+                        unset($node["children"]);
+                    }
                     $trail[] = $node;
                 }
-                return(array_reverse($trail));
+                return array_reverse($trail);
             }
-            return NULL;
-        }   // end function breadcrumb()
+            return null;
+        } // end function breadcrumb()
 
-        public static function tree( $list, $root_id, $selected=NULL )
+        public static function tree($list, $root_id, $selected = null)
         {
-            $self   = self::getInstance(false);
-            $output = self::listbuilder($list,$root_id,'ul',$selected);
-            if(is_array($output) && count($output))
-            return $self->startUL()
-		         . join( "\n\t", $output )."\n"
-                 . $self->closeUL();
-            else
-                return '';
-        }   // end function tree()
+            $self = self::getInstance(false);
+            $output = self::listbuilder($list, $root_id, "ul", $selected);
+            if (is_array($output) && count($output)) {
+                return $self->startUL() .
+                    join("\n\t", $output) .
+                    "\n" .
+                    $self->closeUL();
+            } else {
+                return "";
+            }
+        } // end function tree()
 
         /**
          *
          * @access public
          * @return
          **/
-        private static function listbuilder($list,$root_id=0,$type='ul',$selected=NULL)
-        {
-            if (empty($list) || !is_array($list) || !count($list))
-            {
-                return NULL;
+        private static function listbuilder(
+            $list,
+            $root_id = 0,
+            $type = "ul",
+            $selected = null
+        ) {
+            if (empty($list) || !is_array($list) || !count($list)) {
+                return null;
             }
 
             // initialize
-            $self       = self::getInstance(false);
-            $output     = array();
-            $hidden     = ( isset($self->_config['__hidden_key'])
-                        ? $self->_config['__hidden_key']
-                        : ''
-                        );
-            $p_key      = $self->_config['__parent_key'];
-            $id_key     = $self->_config['__id_key'];
-            $title_key  = $self->_config['__title_key'];
-            $level_key  = $self->_config['__level_key'];
-            $isopen_key = $self->_config['__is_open_key'];
-            $link_key   = $self->_config['__link_key'];
-            $auto_link  = $self->_config['__auto_link'];
-            $current    = $self->_config['__is_current_key'];
-            $space      = $self->_config['space'];
-            $is_first   = true;
-            $is_last    = false;
-            $is_open    = false;
+            $self = self::getInstance(false);
+            $output = [];
+            $hidden = isset($self->_config["__hidden_key"])
+                ? $self->_config["__hidden_key"]
+                : "";
+            $p_key = $self->_config["__parent_key"];
+            $id_key = $self->_config["__id_key"];
+            $title_key = $self->_config["__title_key"];
+            $level_key = $self->_config["__level_key"];
+            $isopen_key = $self->_config["__is_open_key"];
+            $link_key = $self->_config["__link_key"];
+            $auto_link = $self->_config["__auto_link"];
+            $current = $self->_config["__is_current_key"];
+            $space = $self->_config["space"];
+            $is_first = true;
+            $is_last = false;
+            $is_open = false;
 
             // create a list of children for each item
-            foreach ( $list as $item ) {
+            foreach ($list as $item) {
                 // sort out hidden items
-                if ( isset($item[$hidden]) ) {
+                if (isset($item[$hidden])) {
                     continue;
                 }
                 $children[$item[$p_key]][] = $item;
             }
 
             // loop will be false if the root has no children
-            $loop         = !empty( $children[$root_id] );
+            $loop = !empty($children[$root_id]);
 
             // initializing $parent as the root
-            $parent       = $root_id;
-            $parent_stack = array();
+            $parent = $root_id;
+            $parent_stack = [];
 
             #while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
-            while ( $loop && ( ( count($children[$parent]) > 0 || ( $parent <> $root_id ) ) ) )
-            {
-                if(!strlen(key($children[$parent]))) {
+            while (
+                $loop &&
+                (count($children[$parent]) > 0 || $parent != $root_id)
+            ) {
+                if (!strlen(key($children[$parent]))) {
                     $option = false;
                 } else {
-    	            $option	= array(
-    		        	'key'	=> key($children[$parent]),
-    		        	'value'	=> current($children[$parent])
-    	            );
+                    $option = [
+                        "key" => key($children[$parent]),
+                        "value" => current($children[$parent]),
+                    ];
                 }
-				array_shift($children[$parent]);
+                array_shift($children[$parent]);
                 $is_current = false;
-                if($option !== false) {
+                if ($option !== false) {
                     if (
-                           ( isset($option['value'][$current]) && $option['value'][$current] == true )
-                        || ( isset($selected) && $selected == $option['value'][$id_key] )
+                        (isset($option["value"][$current]) &&
+                            $option["value"][$current] == true) ||
+                        (isset($selected) &&
+                            $selected == $option["value"][$id_key])
                     ) {
                         $is_current = true;
                     }
                 }
 
-                if ( $option === false ) // no more children
-                {
+                if ($option === false) {
+                    // no more children
                     $parent = array_pop($parent_stack);
-                    if($type!='select')
-                    {
+                    if ($type != "select") {
                         // close list item
-                        $output[]  = str_repeat( "\t", ( count( $parent_stack ) + 1 ) * 2 )     . $self->closeUL();
-                        $output[]  = str_repeat( "\t", ( count( $parent_stack ) + 1 ) * 2 - 1 ) . $self->closeLI();
+                        $output[] =
+                            str_repeat("\t", (count($parent_stack) + 1) * 2) .
+                            $self->closeUL();
+                        $output[] =
+                            str_repeat(
+                                "\t",
+                                (count($parent_stack) + 1) * 2 - 1
+                            ) . $self->closeLI();
                     }
                 }
                 // current item has children
-                elseif ( ! empty( $children[ $option['value'][$id_key] ] ) )
-                {
-                    $level  = ( isset($option['value'][$level_key]) && $option['value'][$level_key] >= 0 )
-                            ? $option['value'][ $level_key ]
+                elseif (!empty($children[$option["value"][$id_key]])) {
+                    $level =
+                        isset($option["value"][$level_key]) &&
+                        $option["value"][$level_key] >= 0
+                            ? $option["value"][$level_key]
                             : 0;
-                    $tab    = str_repeat( $space, $level );
-                    $text   = $option['value'][$title_key];
-                    $is_open = ( $selected ? $selected : $option['value'][$isopen_key] );
+                    $tab = str_repeat($space, $level);
+                    $text = $option["value"][$title_key];
+                    $is_open = $selected
+                        ? $selected
+                        : $option["value"][$isopen_key];
                     // mark selected
-                    if($type=='select')
-                    {
-                    $sel    = NULL;
-                    if ( isset($selected) && $selected == $option['value'][$id_key] ) {
-                        $sel = ' selected="selected"';
-                    }
-                        $output[] = $self->getOption($option['value'][$id_key],$sel,$tab,$text);
-                    }
-                    else
-                    {
+                    if ($type == "select") {
+                        $sel = null;
+                        if (
+                            isset($selected) &&
+                            $selected == $option["value"][$id_key]
+                        ) {
+                            $sel = ' selected="selected"';
+                        }
+                        $output[] = $self->getOption(
+                            $option["value"][$id_key],
+                            $sel,
+                            $tab,
+                            $text
+                        );
+                    } else {
                         // HTML for menu item containing children (open)
-                        $output[] = $tab.$self->startLI($option['value'][$id_key],$level,true,$is_first,$is_last,$is_open,$is_current)
-                               //. "<span>$text</span>";
-                                  . ( ($auto_link&&$link_key) ? '<a href="'.CAT_Helper_Page::getLink($option['value'][$id_key]).'">' : '' )
-                                  . $text
-                                  . ( ($auto_link&&$link_key) ? '</a>' : '' )
-                                  ;
+                        $output[] =
+                            $tab .
+                            $self->startLI(
+                                $option["value"][$id_key],
+                                $level,
+                                true,
+                                $is_first,
+                                $is_last,
+                                $is_open,
+                                $is_current
+                            ) .
+                            //. "<span>$text</span>";
+                            ($auto_link && $link_key
+                                ? '<a href="' .
+                                    CAT_Helper_Page::getLink(
+                                        $option["value"][$id_key]
+                                    ) .
+                                    '">'
+                                : "") .
+                            $text .
+                            ($auto_link && $link_key ? "</a>" : "");
                         // open sub list
-                        $output[] = $tab . "\t" . $self->startUL( $space, '', $option['value'][$level_key] );
+                        $output[] =
+                            $tab .
+                            "\t" .
+                            $self->startUL(
+                                $space,
+                                "",
+                                $option["value"][$level_key]
+                            );
                         #$output[] = '-'.$option['value'][$id_key].'-';
                     }
-                    array_push( $parent_stack, $option['value'][$p_key] );
-                    $parent = $option['value'][$id_key];
+                    array_push($parent_stack, $option["value"][$p_key]);
+                    $parent = $option["value"][$id_key];
                 }
                 // handle leaf
                 else {
-                    $level  = ( isset( $option['value'][$level_key]) && $option['value'][$level_key] >= 0 )
-                            ? $option['value'][ $level_key ]
+                    $level =
+                        isset($option["value"][$level_key]) &&
+                        $option["value"][$level_key] >= 0
+                            ? $option["value"][$level_key]
                             : 0;
-                    $tab    = str_repeat( $space, $level );
-                    $text   = $option['value'][$title_key];
-                    if($type=='select')
-                    {
-                    // mark selected
-                    $sel    = NULL;
-                        if ( $is_current ) {
-                        $sel = ' selected="selected"';
-                    }
-                        $output[] = $self->getOption($option['value'][ $id_key ],$sel,$tab,$text);
-                    }
-                    else
-                    {
-                        $output[] = $tab.$self->startLI($option['value'][$id_key],$level,false,$is_first,$is_last,false,$is_current)
-                                  . ( ($auto_link&&$link_key) ? '<a href="'.CAT_Helper_Page::getLink($option['value'][$id_key]).'">' : '' )
-                                  . $text
-                                  . ( ($auto_link&&$link_key) ? '</a>' : '' )
-                                  . $self->closeLI();
+                    $tab = str_repeat($space, $level);
+                    $text = $option["value"][$title_key];
+                    if ($type == "select") {
+                        // mark selected
+                        $sel = null;
+                        if ($is_current) {
+                            $sel = ' selected="selected"';
+                        }
+                        $output[] = $self->getOption(
+                            $option["value"][$id_key],
+                            $sel,
+                            $tab,
+                            $text
+                        );
+                    } else {
+                        $output[] =
+                            $tab .
+                            $self->startLI(
+                                $option["value"][$id_key],
+                                $level,
+                                false,
+                                $is_first,
+                                $is_last,
+                                false,
+                                $is_current
+                            ) .
+                            ($auto_link && $link_key
+                                ? '<a href="' .
+                                    CAT_Helper_Page::getLink(
+                                        $option["value"][$id_key]
+                                    ) .
+                                    '">'
+                                : "") .
+                            $text .
+                            ($auto_link && $link_key ? "</a>" : "") .
+                            $self->closeLI();
                     }
                 }
                 $is_first = false;
-            }   // end while
+            } // end while
 
-            if ( isset( $self->_config['__li_last_item_class'] ) && ! empty($self->_config['__li_last_item_class']) ) {
+            if (
+                isset($self->_config["__li_last_item_class"]) &&
+                !empty($self->_config["__li_last_item_class"])
+            ) {
                 // get the very last element
-                $last   = array_splice( $output, -1, 1 );
+                $last = array_splice($output, -1, 1);
                 // add last item css
-                $last   = str_ireplace( 'class="', 'class="'.$self->_config['__li_last_item_class'].' ', $last );
-                $output[] = ( is_array($last) && count($last) ) ? $last[0] : '';
+                $last = str_ireplace(
+                    'class="',
+                    'class="' . $self->_config["__li_last_item_class"] . " ",
+                    $last
+                );
+                $output[] = is_array($last) && count($last) ? $last[0] : "";
             }
 
             return $output;
-        }   // end function list()
+        } // end function list()
 
         /**
          * opens a <select> box with given $name
@@ -364,12 +452,18 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          **/
         private static function startSelect($name)
         {
-            $self      = self::getInstance(false);
-            return
-                  $self->_config['__no_html']
-                ? NULL
-                : '<select name="'.$name.'" id="'.$name.'" class="'. $self->_config['__select_class'].'">'."\n\t";
-        }   // end function startSelect()
+            $self = self::getInstance(false);
+            return $self->_config["__no_html"]
+                ? null
+                : '<select name="' .
+                        $name .
+                        '" id="' .
+                        $name .
+                        '" class="' .
+                        $self->_config["__select_class"] .
+                        '">' .
+                        "\n\t";
+        } // end function startSelect()
 
         /**
          * closes a <select>
@@ -379,12 +473,9 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          **/
         private static function closeSelect()
         {
-            $self      = self::getInstance(false);
-            return
-                $self->_config['__no_html']
-                ? NULL
-                : '</select>';
-        }   // end function closeSelect()
+            $self = self::getInstance(false);
+            return $self->_config["__no_html"] ? null : "</select>";
+        } // end function closeSelect()
 
         /**
          * creates an <option> element
@@ -396,15 +487,20 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          * @param  string  $text
          * @return string
          **/
-        private static function getOption($value,$sel,$tab,$text)
+        private static function getOption($value, $sel, $tab, $text)
         {
-            $self    = self::getInstance(false);
-            $content = $tab . ' ' . $text;
-            return
-                $self->_config['__no_html']
+            $self = self::getInstance(false);
+            $content = $tab . " " . $text;
+            return $self->_config["__no_html"]
                 ? $content
-                : '<option value="'.$value.'"'.$sel.'>'.$content.'</option>';
-        }   // end function getOption()
+                : '<option value="' .
+                        $value .
+                        '"' .
+                        $sel .
+                        ">" .
+                        $content .
+                        "</option>";
+        } // end function getOption()
 
         /**
          *
@@ -412,62 +508,46 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          *
          *
          **/
-        private static function startUL($space=NULL, $ul_id=NULL, $level=NULL )
-        {
+        private static function startUL(
+            $space = null,
+            $ul_id = null,
+            $level = null
+        ) {
+            $self = self::getInstance(false);
 
-            $self  = self::getInstance(false);
-
-            $class = $self->_config['__ul_css_prefix']
-                   . $self->_config['__ul_class'];
+            $class =
+                $self->_config["__ul_css_prefix"] .
+                $self->_config["__ul_class"];
 
             // special CSS class for each level?
             if (
-                   isset( $self->_config['__ul_level_css'] )
-                   &&
-                   $self->_config['__ul_level_css'] === true
+                isset($self->_config["__ul_level_css"]) &&
+                $self->_config["__ul_level_css"] === true
             ) {
-                $suffix  = empty($level)
-                         ? intval( ( strlen($space) / 4 ) )
-                         : $level;
+                $suffix = empty($level) ? intval(strlen($space) / 4) : $level;
 
-                $class  .= ' '
-                        .  $self->_config['__ul_css_prefix']
-                        .  $self->_config['__ul_class']
-                        .  '_'
-                        .  $suffix;
+                $class .=
+                    " " .
+                    $self->_config["__ul_css_prefix"] .
+                    $self->_config["__ul_class"] .
+                    "_" .
+                    $suffix;
             }
 
-            $id     = $ul_id;
-            $output = $space
-                    . str_replace(
-                          array(
-                              '%%id%%',
-                              '%%class%%',
-                          ),
-                          array(
-                              $ul_id,
-                              $class
-                          ),
-                          $self->_config['__list_open']
-                      );
+            $id = $ul_id;
+            $output =
+                $space .
+                str_replace(
+                    ["%%id%%", "%%class%%"],
+                    [$ul_id, $class],
+                    $self->_config["__list_open"]
+                );
 
             // remove empty id-attribute
-            $output = str_replace( ' id=""', '', $output );
+            $output = str_replace(' id=""', "", $output);
 
-            return $output."\n";
-
-        }   // end function startUL()
-        
-        /**
-         *
-         *
-         *
-         *
-         **/
-        function closeUL( $space = NULL ) {
-            $self = self::getInstance(false);
-            return $space . $self->_config['__list_close'];
-        }   // end function closeUL()
+            return $output . "\n";
+        } // end function startUL()
 
         /**
          *
@@ -475,41 +555,61 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          *
          *
          **/
-        function startLI($id,$level,$has_children=false,$is_first=false,$is_last=false,$is_open=false,$is_current=false)
+        function closeUL($space = null)
         {
-            $self  = self::getInstance(false);
-            $id    = ( isset($self->_config['__li_id_prefix']) )
-                   ? $self->_config['__li_id_prefix'].$id
-                   : $id;
-            $class = $self->_config['__li_css_prefix']
-                   . $self->_config['__li_class'];
-            $class .= (isset($self->_config['__li_level_css']) && $self->_config['__li_level_css'] === true)
-                   ? ' '.$self->_config['__li_level_class'].'_'.$level
-                   : '';
-            $class .= ( $has_children )
-                   ?  ' '.$self->_config['__li_has_child_class']
-                   : '';
-            $class .= ( $is_first )
-                   ?  ' '.$self->_config['__li_first_item_class']
-                   : '';
-            $class .= ( $is_open )
-                   ?  ' '.$self->_config['__li_is_open_class']
-                   :  ' '.$self->_config['__li_is_closed_class'];
-            $class .= ( $is_current )
-                   ?  ' '.$self->_config['__li_is_current_class']
-                   : '';
+            $self = self::getInstance(false);
+            return $space . $self->_config["__list_close"];
+        } // end function closeUL()
+
+        /**
+         *
+         *
+         *
+         *
+         **/
+        function startLI(
+            $id,
+            $level,
+            $has_children = false,
+            $is_first = false,
+            $is_last = false,
+            $is_open = false,
+            $is_current = false
+        ) {
+            $self = self::getInstance(false);
+            $id = isset($self->_config["__li_id_prefix"])
+                ? $self->_config["__li_id_prefix"] . $id
+                : $id;
+            $class =
+                $self->_config["__li_css_prefix"] .
+                $self->_config["__li_class"];
+            $class .=
+                isset($self->_config["__li_level_css"]) &&
+                $self->_config["__li_level_css"] === true
+                    ? " " . $self->_config["__li_level_class"] . "_" . $level
+                    : "";
+            $class .= $has_children
+                ? " " . $self->_config["__li_has_child_class"]
+                : "";
+            $class .= $is_first
+                ? " " . $self->_config["__li_first_item_class"]
+                : "";
+            $class .= $is_open
+                ? " " . $self->_config["__li_is_open_class"]
+                : " " . $self->_config["__li_is_closed_class"];
+            $class .= $is_current
+                ? " " . $self->_config["__li_is_current_class"]
+                : "";
 
             $start = str_replace(
-                array( '%%id%%', '%%class%%' ),
-                array( $id     , $class ),
-                $self->_config['__list_item_open']
+                ["%%id%%", "%%class%%"],
+                [$id, $class],
+                $self->_config["__list_item_open"]
             );
             // remove empty id-attribute
-            $start = str_replace( ' id=""', '', $start );
-            return $self->_config['space']
-                 . $start
-                 . "\n";
-        }   // end function startLI()
+            $start = str_replace(' id=""', "", $start);
+            return $self->_config["space"] . $start . "\n";
+        } // end function startLI()
 
         /**
          *
@@ -517,56 +617,58 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          *
          *
          **/
-        function closeLI( $space = NULL )
+        function closeLI($space = null)
         {
-            return $space . self::getInstance(false)->_config['__list_item_close'];
-        }   // end function closeLI()
-        
+            return $space .
+                self::getInstance(false)->_config["__list_item_close"];
+        } // end function closeLI()
+
         /**
          *
          * @access public
          * @return
          **/
-        public function reset() {
-            $this->_config = array(
-	            '__parent_key'          => 'parent',
-	            '__id_key'              => 'page_id',
-	            '__title_key'           => 'menu_title',
-	            '__level_key'           => 'level',
-                '__link_key'            => 'link',
-	            '__children_key'        => 'children',
-	            '__current_key'         => 'current',
-	            '__hidden_key'          => 'hidden',
-                '__editable_key'        => 'editable',
-                '__is_open_key'         => 'is_open',
-                '__is_current_key'      => 'is_current',
-                '__select_class'        => '',
-                '__list_open'           => '<ul id="%%id%%" class="%%class%%">',
-                '__list_close'          => '</ul>',
-                '__list_item_open'      => '<li id="%%id%%" class="%%class%%">',
-                '__list_item_close'     => '</li>',
-                '__ul_css_prefix'       => NULL,
-                '__ul_class'            => 'ui-sortable',
-                '__ul_level_css'        => false,
-                '__li_class'            => 'tree_item',
-                '__li_level_css'        => true,
-                '__li_level_class'      => 'level',
-                '__li_css_prefix'       => NULL,
-                '__li_id_prefix'        => NULL,
-                '__li_first_item_class' => 'first_item',
-                '__li_last_item_class'  => 'last_item',
-                '__li_has_child_class'  => 'has_child',
-                '__li_is_open_class'    => 'item_open',
-                '__li_is_closed_class'  => 'item_closed',
-                '__li_is_current_class' => 'current',
-                '__no_html'             => false,
-                '__auto_link'           => false,
-			    'space'                 => '    ',
-                'max_recursion'         => 15,
-			);
+        public function reset()
+        {
+            $this->_config = [
+                "__parent_key" => "parent",
+                "__id_key" => "page_id",
+                "__title_key" => "menu_title",
+                "__level_key" => "level",
+                "__link_key" => "link",
+                "__children_key" => "children",
+                "__current_key" => "current",
+                "__hidden_key" => "hidden",
+                "__editable_key" => "editable",
+                "__is_open_key" => "is_open",
+                "__is_current_key" => "is_current",
+                "__select_class" => "",
+                "__list_open" => '<ul id="%%id%%" class="%%class%%">',
+                "__list_close" => "</ul>",
+                "__list_item_open" => '<li id="%%id%%" class="%%class%%">',
+                "__list_item_close" => "</li>",
+                "__ul_css_prefix" => null,
+                "__ul_class" => "ui-sortable",
+                "__ul_level_css" => false,
+                "__li_class" => "tree_item",
+                "__li_level_css" => true,
+                "__li_level_class" => "level",
+                "__li_css_prefix" => null,
+                "__li_id_prefix" => null,
+                "__li_first_item_class" => "first_item",
+                "__li_last_item_class" => "last_item",
+                "__li_has_child_class" => "has_child",
+                "__li_is_open_class" => "item_open",
+                "__li_is_closed_class" => "item_closed",
+                "__li_is_current_class" => "current",
+                "__no_html" => false,
+                "__auto_link" => false,
+                "space" => "    ",
+                "max_recursion" => 15,
+            ];
             return $this; // make chainable
-        }   // end function reset()
-        
+        } // end function reset()
+
         /**
          * build multilevel (recursive) array from flat one; will add the
          * children of an item to __children_key array key
@@ -576,35 +678,32 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
          * @param
          * @return  array
          **/
-        public static function buildRecursion ( &$items, $min = -9 )
+        public static function buildRecursion(&$items, $min = -9)
         {
-            if ( ! empty( $items ) && ! is_array( $items ) )
-            {
-                return NULL;
+            if (!empty($items) && !is_array($items)) {
+                return null;
             }
-            if ( isset($items['__is_recursive']) )
-            {
+            if (isset($items["__is_recursive"])) {
                 return $items;
             }
             // if there's only one item, no recursion to do
-            if ( ! ( count( $items ) > 1 ) )
-            {
+            if (!(count($items) > 1)) {
                 return $items;
             }
 
-            $tree    = array();
+            $tree = [];
             $root_id = -1;
-            $self    = self::getInstance(false);
+            $self = self::getInstance(false);
 
             // spare some typing...
-            $ik      = $self->_config['__id_key'];
-            $pk      = $self->_config['__parent_key'];
-            $ck      = $self->_config['__children_key'];
-            $lk      = $self->_config['__level_key'];
+            $ik = $self->_config["__id_key"];
+            $pk = $self->_config["__parent_key"];
+            $ck = $self->_config["__children_key"];
+            $lk = $self->_config["__level_key"];
 
             // make sure that the $items array is indexed by the __id_key
-            $arr     = array();
-            foreach ( $items as $index => $item ){
+            $arr = [];
+            foreach ($items as $index => $item) {
                 $arr[$item[$ik]] = $item;
             }
             $items = $arr;
@@ -618,50 +717,43 @@ if ( ! class_exists( 'CAT_Helper_ListBuilder', false ) ) {
             //
             // http://www.tommylacroix.com/2008/09/10/php-design-pattern-building-a-tree/
             //
-            foreach ( $items as $id => &$node )
-            {
+            foreach ($items as $id => &$node) {
                 // skip nodes with depth < min level
-                if ( isset( $node[$lk] ) && $node[$lk] <= $min )
-                {
+                if (isset($node[$lk]) && $node[$lk] <= $min) {
                     continue;
                 }
 
                 // avoid error messages on missing parent key
-                if ( ! isset( $node[$pk] ) )
-                {
+                if (!isset($node[$pk])) {
                     $node[$pk] = null;
                 }
 
                 // root node
-                if ( $node[$pk] === null && $root_id < 0 )
-                {
+                if ($node[$pk] === null && $root_id < 0) {
                     $tree[$id] = &$node;
-                    $root_id   = $id;
+                    $root_id = $id;
                 }
                 // sub node
-                else
-                {
+                else {
                     // avoid warnings on missing children key
-                    if ( ! isset($items[$node[$pk]][$ck]) || ! is_array($items[$node[$pk]][$ck]) )
-                    {
-                        $items[$node[$pk]][$ck] = array();
+                    if (
+                        !isset($items[$node[$pk]][$ck]) ||
+                        !is_array($items[$node[$pk]][$ck])
+                    ) {
+                        $items[$node[$pk]][$ck] = [];
                     }
                     $items[$node[$pk]][$ck][] = &$node;
                 }
-
             }
-            if ( ! empty($tree) && is_array($tree) && count( $tree ) > 0 )
-            {
+            if (!empty($tree) && is_array($tree) && count($tree) > 0) {
                 // mark tree as already seen
-                $tree[$root_id][$ck]['__is_recursive'] = 1;
+                $tree[$root_id][$ck]["__is_recursive"] = 1;
                 $tree = $tree[$root_id][$ck];
             }
 
             return $tree;
-
-        }   // end function buildRecursion ()
-
-	}
+        } // end function buildRecursion ()
+    }
 }
 
 ?>
