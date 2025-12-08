@@ -45,5 +45,5 @@ interface Dwoo_ICompiler
 	 *
 	 * @param Dwoo_Security_Policy $policy the security policy object
 	 */
-	public function setSecurityPolicy(Dwoo_Security_Policy $policy = null);
+        public function setSecurityPolicy(?Dwoo_Security_Policy $policy = null);
 }
