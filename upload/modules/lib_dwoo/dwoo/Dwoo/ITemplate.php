@@ -71,7 +71,7 @@ interface Dwoo_ITemplate
 	 * @param Dwoo_ICompiler $compiler the compiler that must be used
 	 * @return string
 	 */
-	public function getCompiledTemplate(Dwoo $dwoo, Dwoo_ICompiler $compiler = null);
+        public function getCompiledTemplate(Dwoo $dwoo, ?Dwoo_ICompiler $compiler = null);
 
 	/**
 	 * returns the template name
@@ -146,5 +146,5 @@ interface Dwoo_ITemplate
 	 * 											an include, extends or any other plugin)
 	 * @return Dwoo_ITemplate|null|false
 	 */
-	public static function templateFactory(Dwoo $dwoo, $resourceId, $cacheTime = null, $cacheId = null, $compileId = null, Dwoo_ITemplate $parentTemplate = null);
+        public static function templateFactory(Dwoo $dwoo, $resourceId, $cacheTime = null, $cacheId = null, $compileId = null, ?Dwoo_ITemplate $parentTemplate = null);
 }

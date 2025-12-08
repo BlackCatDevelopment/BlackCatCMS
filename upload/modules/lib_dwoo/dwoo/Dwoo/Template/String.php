@@ -335,7 +335,7 @@ class Dwoo_Template_String implements Dwoo_ITemplate
 	 * @param Dwoo_ICompiler $compiler the compiler that must be used
 	 * @return string
 	 */
-	public function getCompiledTemplate(Dwoo $dwoo, Dwoo_ICompiler $compiler = null)
+        public function getCompiledTemplate(Dwoo $dwoo, ?Dwoo_ICompiler $compiler = null)
 	{
 		$compiledFile = $this->getCompiledFilename($dwoo);
 
@@ -404,10 +404,10 @@ class Dwoo_Template_String implements Dwoo_ITemplate
 	 * 											an include, extends or any other plugin)
 	 * @return Dwoo_Template_String
 	 */
-	public static function templateFactory(Dwoo $dwoo, $resourceId, $cacheTime = null, $cacheId = null, $compileId = null, Dwoo_ITemplate $parentTemplate = null)
-	{
-		return new self($resourceId, $cacheTime, $cacheId, $compileId);
-	}
+        public static function templateFactory(Dwoo $dwoo, $resourceId, $cacheTime = null, $cacheId = null, $compileId = null, ?Dwoo_ITemplate $parentTemplate = null)
+        {
+                return new self($resourceId, $cacheTime, $cacheId, $compileId);
+        }
 
 	/**
 	 * returns the full compiled file name and assigns a default value to it if
