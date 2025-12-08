@@ -150,7 +150,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
         {
             $self  = self::getInstance();
             $addon = $self->db()->query(
-                'SELECT * FROM `:prefix:addons` WHERE addon_id=:id',
+                'SELECT * FROM `:prefix:addons` WHERE `addon_id`=:id',
                 array('id'=>$id)
             );
             if ( $addon->rowCount() > 0 )
@@ -170,7 +170,7 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
         {
             $self  = self::getInstance();
             $addon = $self->db()->query(
-                'SELECT * FROM `:prefix:addons` WHERE directory=:dir',
+                'SELECT * FROM `:prefix:addons` WHERE `directory`=:dir',
                 array('dir'=>$directory)
             );
             if ( $addon->rowCount() > 0 )
@@ -247,13 +247,13 @@ if ( !class_exists( 'CAT_Helper_Addons' ) )
                 $get_function = $and . '( ';
                 foreach ( $function as $item )
                 {
-                    $get_function .= 'function = \'' . htmlspecialchars( $item ) . '\' AND ';
+                    $get_function .= '`function` = \'' . htmlspecialchars( $item ) . '\' AND ';
                 }
                 $get_function = substr( $get_function, 0, -5 ) . ' )';
             }
             else if ( $function != '' )
             {
-                $get_function = $and . 'function = \'' . htmlspecialchars( $function ) . '\'';
+                $get_function = $and . '`function` = \'' . htmlspecialchars( $function ) . '\'';
             }
 
             if ( $get_type || $get_function )
