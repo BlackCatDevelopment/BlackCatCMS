@@ -24,7 +24,7 @@
 			<textarea name="website_footer" id="fc_website_footer" cols="80" rows="6"  class="fc_input_300">{$values.website_footer}</textarea>
 			<div class="clear_sp"></div>
 
-<script charset="windows-1250" type="text/javascript">
+<script charset="windows-1250" >
 	$('select[name=default_template]').change( function()
 	{
 		//$(this).closest('form').removeClass('ajaxForm').unbind();

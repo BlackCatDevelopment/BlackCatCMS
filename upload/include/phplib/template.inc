@@ -28,28 +28,22 @@
  */
 
 // include class.secure.php to protect this file and the whole CMS!
- if (defined("CAT_PATH")) {
-     include CAT_PATH . "/framework/class.secure.php";
- } else {
-     $oneback = "../";
-     $root = $oneback;
-     $level = 1;
-     while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
-         $root .= $oneback;
-         $level += 1;
-     }
-     if (file_exists($root . "framework/class.secure.php")) {
-         include $root . "framework/class.secure.php";
-     } else {
-         throw new \RuntimeException(
-             sprintf(
-                 "Cannot include class.secure.php at %s",
-                 $_SERVER["SCRIPT_NAME"]
-             )
-         );
-     }
- }
- // end include class.secure.php
+if (defined('CAT_PATH')) {	
+	include(CAT_PATH.'/framework/class.secure.php'); 
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
+} else {
+	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
+	$inc = false;
+	foreach ($subs as $sub) {
+		if (empty($sub)) continue; $dir .= '/'.$sub;
+		if (file_exists($dir.'/framework/class.secure.php')) { 
+			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
+		} 
+	}
+	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+}
+// end include class.secure.php
  
 if (!class_exists('Template')) {
 	include_once(CAT_PATH.'/modules/phplib/include.php');
@@ -63,7 +57,7 @@ class Template
   * @var       string
   * @access    public
   */
-  public $classname = "Template";
+  var $classname = "Template";
 
  /**
   * Determines how much debugging output Template will produce.
@@ -287,7 +281,8 @@ class Template
       }
       $this->file[$varname] = $this->filename($filename);
     } else {
-      foreach ($varname as $k => $v) {
+      reset($varname);
+      while (list($v, $f) = each($varname)) {
         if ($this->debug & 4) {
           echo "<p><b>set_file:</b> (with array) varname = $v, filename = $f</p>\n";
         }
@@ -391,7 +386,7 @@ class Template
       }
     } else {
       reset($varname);
-      foreach ($varname as $k => $v) {
+      while (list($k, $v) = each($varname)) {
         if (!empty($k)) {
           if ($this->debug & 1) {
             printf("<b>set_var:</b> (with array) <b>%s</b> = '%s'<br>\n", $k, htmlentities($v));
@@ -437,7 +432,7 @@ class Template
       }
     } else {
       reset($varname);
-      foreach ($varname as $k => $v) {
+      while (list($k, $v) = each($varname)) {
         if (!empty($v)) {
           if ($this->debug & 1) {
             printf("<b>clear_var:</b> (with array) <b>%s</b><br>\n", $v);
@@ -479,7 +474,7 @@ class Template
       }
     } else {
       reset($varname);
-      foreach ($varname as $k => $v) {
+      while (list($k, $v) = each($varname)) {
         if (!empty($v)) {
           if ($this->debug & 1) {
             printf("<b>unset_var:</b> (with array) <b>%s</b><br>\n", $v);
@@ -519,7 +514,7 @@ class Template
 
     // quote the replacement strings to prevent bogus stripping of special chars
     reset($this->varvals);
-    foreach ($this->varvals as $k => $v) {
+    while (list($k, $v) = each($this->varvals)) {
       $varvals_quoted[$k] = preg_replace(array('/\\\\/', '/\$/'), array('\\\\\\\\', '\\\\$'), $v);
     }
 
@@ -605,7 +600,7 @@ class Template
       }
     } else {
       reset($varname);
-      foreach ($varname as $i => $v) {
+      while (list($i, $v) = each($varname)) {
         if ($this->debug & 4) {
           echo "<p><b>parse:</b> (with array) target = $target, i = $i, varname = $v, append = $append</p>\n";
         }
@@ -678,7 +673,7 @@ class Template
       echo "<p><b>get_vars:</b> constructing array of vars...</p>\n";
     }
     reset($this->varkeys);
-    foreach ($this->varkeys as $k => $v) {
+    while (list($k, $v) = each($this->varkeys)) {
       $result[$k] = $this->get_var($k);
     }
     return $result;
@@ -716,7 +711,7 @@ class Template
       return $str;
     } else {
       reset($varname);
-      foreach ($varname as $k => $v) {
+      while (list($k, $v) = each($varname)) {
         if (isset($this->varvals[$v])) {
           $str = $this->varvals[$v];
         } else {
@@ -763,7 +758,7 @@ class Template
     }
 
     reset($m);
-    foreach ($m as $k => $v) {
+    while (list($k, $v) = each($m)) {
       if (!isset($this->varkeys[$v])) {
         if ($this->debug & 4) {
          echo "<p><b>get_undefined:</b> undefined: $v</p>\n";

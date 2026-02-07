@@ -37,9 +37,6 @@ if (!class_exists("CAT_Helper_Template_DriverDecorator", false)) {
             "backend_fallback" => null,
             "workdir" => null,
         ];
-
-        protected array|null $current_block = null;
-
         private $search_order = [
             "current",
             "frontend",
@@ -49,6 +46,7 @@ if (!class_exists("CAT_Helper_Template_DriverDecorator", false)) {
             "workdir",
         ];
         public $template_block;
+        public mixed $current_block;
         protected $_config = ["loglevel" => CAT_Helper_KLogger::CRIT];
         protected $last = null;
 

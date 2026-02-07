@@ -1,5 +1,4 @@
 <?php
-
 include dirname(__FILE__) . '/Compilation/Exception.php';
 
 /**
@@ -554,7 +553,7 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 	 *
 	 * @param Dwoo_Security_Policy $policy the security policy object
 	 */
-        public function setSecurityPolicy(?Dwoo_Security_Policy $policy = null)
+	public function setSecurityPolicy(?Dwoo_Security_Policy $policy = null)
 	{
 		$this->securityPolicy = $policy;
 	}
@@ -791,7 +790,23 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 				$subptr = $ptr;
 
 				while (true) {
-					$parsed = $this->parse($tpl, $subptr, null, false, 'root', $subptr);
+					try {
+						$parsed = $this->parse($tpl, $subptr, null, false, 'root', $subptr);
+					} catch (Exception $e) {
+						$ctxStart = max(0, $ptr - 200);
+						$ctxLen   = 400;
+					
+						$this->debugDump('compile_exception', [
+							'msg'      => $e->getMessage(),
+							'template' => $this->template ? $this->template->getResourceIdentifier() : null,
+							'line'     => $this->line,
+							'ptr'      => $ptr,
+							'subptr'   => $subptr,
+							'context'  => substr($tpl, $ctxStart, $ctxLen),
+						]);
+					
+						throw $e;
+					}
 
 					// reload loop if the compiler was reset
 					if ($ptr === 0) {
@@ -1252,7 +1267,12 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 			$first = $in[$from];
 		}
 
-		$substr = substr($in, $from, $to-$from);
+$ptr = ($pointer === null) ? $from : (int)$pointer;
+		
+		if ($ptr < 0) $ptr = 0;
+		if ($to !== null && $ptr > $to) $ptr = $to;
+		
+		$substr = substr($in, $ptr, $to - $ptr);
 
 		if ($this->debug) echo '<br />PARSE CALL : PARSING "<b>'.htmlentities(substr($in, $from, min($to-$from, 50))).(($to-$from) > 50 ? '...':'').'</b>" @ '.$from.':'.$to.' in '.$curBlock.' : pointer='.$pointer.'<br/>';
 		$parsed = "";
@@ -1407,7 +1427,10 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 			return '';
 		}
 
-		$substr = substr($in, $pointer, $to-$pointer);
+		$ptr = ($pointer === null) ? $from : (int)$pointer;
+		if ($ptr < 0) $ptr = 0;
+		if ($to !== null && $ptr > $to) $ptr = $to;
+		$substr = substr($in, $ptr, $to - $ptr);
 
 		// var parsed, check if any var-extension applies
 		if ($parsed==='var') {
@@ -1767,8 +1790,9 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 					$funcCompiler = $this->customPlugins[$func]['callback'];
 				} else {
 					$funcCompiler = 'Dwoo_Plugin_'.$func.'_compile';
-                }
+				}
 				array_unshift($params, $this);
+				$params = array_values($params);
 				$output = call_user_func_array($funcCompiler, $params);
 			} else {
 				array_unshift($params, '$this');
@@ -2303,7 +2327,7 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 					$output = '$tmp_key';
 				} else {
 					if ($curBlock === 'root') {
-						$output = 'isset($this->scope["'.$key.'"]) ? $this->scope["'.$key.'"] : ""';
+						$output = '$this->scope["'.$key.'"]';
 					} else {
 						$output = '(isset($this->scope["'.$key.'"]) ? $this->scope["'.$key.'"] : null)';
 					}
@@ -2352,12 +2376,10 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 						array_shift($m[1]);
 					}
 
-                                        if ($curBlock !== 'root') {
-                                                $output = '(isset('.$output.') ? '.$output.':null)';
-                                        } elseif (strpos($output, '$this->scope[') === 0) {
-                                                $output = '(isset('.$output.') ? '.$output.' : "")';
-                                        }
-                                }
+					if ($curBlock !== 'root') {
+						$output = '(isset('.$output.') ? '.$output.':null)';
+					}
+				}
 
 				if (count($m[2])) {
 					unset($m[0]);
@@ -2830,7 +2852,15 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 			return $m[1].'.'.$output.'.'.$m[1].(isset($add)?$add:null);
 		}
 	}
-
+protected function debugDump(string $label, array $data): void
+	{
+		$file = defined('CAT_PATH')
+			? CAT_PATH . '/temp/dwoo_compiler_debug.log'
+			: sys_get_temp_dir() . '/dwoo_compiler_debug.log';
+	
+		$out = date('c') . ' ' . $label . "\n" . print_r($data, true) . "\n\n";
+		@file_put_contents($file, $out, FILE_APPEND);
+	}
 	/**
 	 * recursively implodes an array in a similar manner as var_export() does but with some tweaks
 	 * to handle pre-compiled values and the fact that we do not need to enclose everything with
@@ -3033,7 +3063,31 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 				array_push($paramlist, $p);
 			}
 		}
-
+// --- DEBUG: unknown named params
+		if (!empty($ps)) {
+			$known = [];
+			foreach ($map as $m) {
+				$known[] = $m[0]; // param name
+			}
+		
+			// named params sind die Einträge in $ps mit string keys
+			$namedKeys = array_filter(array_keys($ps), 'is_string');
+			$unknown = array_diff($namedKeys, $known);
+		
+			if (!empty($unknown)) {
+				file_put_contents(
+					CAT_PATH . "/temp/dwoo_unknown_named_params.log",
+					date("c") . " UNKNOWN NAMED PARAMS\n" .
+					"callback=" . (is_array($callback) ? (is_object($callback[0]) ? get_class($callback[0]) : $callback[0]) . "::" . $callback[1] : $callback) . "\n" .
+					"template=" . ($this->template ? $this->template->getName() : "n/a") . "\n" .
+					"line=" . $this->line . "\n" .
+					"unknown=" . print_r($unknown, true) . "\n" .
+					"known=" . print_r($known, true) . "\n" .
+					"ps=" . print_r($ps, true) . "\n\n",
+					FILE_APPEND
+				);
+			}
+		}
 		return $paramlist;
 	}
 
@@ -3055,24 +3109,36 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 		}
 
 		$out = array();
-		foreach ($ref->getParameters() as $param) {
-            $name = $classname = null;
-            $type = $param->getType();
-            if(null!==$type) {
-                if(null!==$type->getName()) {
-                    $classname = $type->getName();
-                }
-            }
-			if ($classname !== null && $classname === 'Dwoo') {
+foreach ($ref->getParameters() as $param) {
+			$type = $param->getType();
+		
+			$typeNames = [];
+			if ($type instanceof \ReflectionNamedType) {
+				$typeNames[] = $type->getName();
+			} elseif ($type instanceof \ReflectionUnionType) {
+				foreach ($type->getTypes() as $t) {
+					if ($t instanceof \ReflectionNamedType) {
+						$typeNames[] = $t->getName();
+					}
+				}
+			}
+		
+			// Dwoo / Dwoo_Compiler überspringen
+			if (in_array('Dwoo', $typeNames, true) || in_array('Dwoo_Compiler', $typeNames, true)) {
 				continue;
 			}
-			if ($classname !== null && $classname === 'Dwoo_Compiler') {
+		
+			// "rest" ist array?
+			if ($param->getName() === 'rest') {
+				$out[] = ['*', $param->isOptional(), null];
 				continue;
 			}
-			if ($param->getName() === 'rest' && $this->declaresArray($param)) {
-				$out[] = array('*', $param->isOptional(), null);
-			}
-			$out[] = array($param->getName(), $param->isOptional(), $param->isOptional() ? $param->getDefaultValue() : null);
+		
+			$out[] = [
+				$param->getName(),
+				$param->isOptional(),
+				$param->isOptional() ? $param->getDefaultValue() : null
+			];
 		}
 
 		return $out;
@@ -3092,17 +3158,4 @@ class Dwoo_Compiler implements Dwoo_ICompiler
 		}
 		return self::$instance;
 	}
-
-    function declaresArray(ReflectionParameter $reflectionParameter): bool
-    {
-        $reflectionType = $reflectionParameter->getType();
-
-        if (!$reflectionType) return false;
-
-        $types = $reflectionType instanceof ReflectionUnionType
-            ? $reflectionType->getTypes()
-            : [$reflectionType];
-
-       return in_array('array', array_map(fn(ReflectionNamedType $t) => $t->getName(), $types));
-    }
 }

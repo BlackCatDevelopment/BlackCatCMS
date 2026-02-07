@@ -23,42 +23,34 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+if (defined("CAT_PATH")) {
+    include CAT_PATH . "/framework/class.secure.php";
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'framework/class.secure.php')) {
-		include($root.'framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
-}
+    $root = "../";
+    $level = 1;
 
-$user    = CAT_Users::getInstance();
-
-// if the user has access to the backend dashboard only, redirect to frontend
-if(!$user->is_root() && CAT_Helper_Validate::getInstance()->fromSession('SYSTEM_PERMISSIONS') == 0) {
-    $page = $user->get_initial_page();
-    if($page) {
-        header('Location: '.$page);
-    } else {
-        if(headers_sent()) {
-            header('Refresh: 0; URL='.CAT_URL."/index.php\n\n", true, 302);
-        } else {
-            header('Location: '.CAT_URL.'/index.php');
-        }
+    while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
+        $root .= "../";
+        $level++;
     }
-    exit;
+
+    if (file_exists($root . "framework/class.secure.php")) {
+        include $root . "framework/class.secure.php";
+    } else {
+        trigger_error(
+            sprintf(
+                "[ <b>%s</b> ] Can't include class.secure.php!",
+                $_SERVER["SCRIPT_NAME"]
+            ),
+            E_USER_ERROR
+        );
+    }
 }
 
 global $parser;
 
 $backend = CAT_Backend::getInstance('start');
+$user    = CAT_Users::getInstance();
 $lang    = CAT_Helper_I18n::getInstance();
 $widget  = CAT_Helper_Widget::getInstance();
 

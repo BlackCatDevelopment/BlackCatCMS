@@ -23,20 +23,28 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+if (defined("CAT_PATH")) {
+    include CAT_PATH . "/framework/class.secure.php";
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'framework/class.secure.php')) {
-		include($root.'framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+
+    while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
+        $root .= "../";
+        $level++;
+    }
+
+    if (file_exists($root . "framework/class.secure.php")) {
+        include $root . "framework/class.secure.php";
+    } else {
+        trigger_error(
+            sprintf(
+                "[ <b>%s</b> ] Can't include class.secure.php!",
+                $_SERVER["SCRIPT_NAME"]
+            ),
+            E_USER_ERROR
+        );
+    }
 }
 
 $_SESSION['USER_ID']            = null;
@@ -52,6 +60,6 @@ session_unset();
 session_destroy();
 
 if ( INTRO_PAGE )
-	header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' );
+	header( 'Location: ' . CAT_URL . PAGES_DIRECTORY );
 else
-	header( 'Location: ' . CAT_URL . '/index.php' );
+	header( 'Location: ' . CAT_URL );

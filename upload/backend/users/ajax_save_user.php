@@ -28,12 +28,12 @@ if (defined("CAT_PATH")) {
 } else {
     $root = "../";
     $level = 1;
-    while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
+    while ($level < 10 && !file_exists($root . "/framework/class.secure.php")) {
         $root .= "../";
         $level += 1;
     }
-    if (file_exists($root . "framework/class.secure.php")) {
-        include $root . "framework/class.secure.php";
+    if (file_exists($root . "/framework/class.secure.php")) {
+        include $root . "/framework/class.secure.php";
     } else {
         trigger_error(
             sprintf(
@@ -63,14 +63,16 @@ if (!$users->checkPermission("access", $perm)) {
             ->lang()
             ->translate(
                 "You do not have the permission to {{action}} a user.",
-                ["action" => str_replace("users", "", $perm)]
+                [
+                    "action" => str_replace("users", "", $perm),
+                ]
             )
     );
     exit();
 }
 
-$addUser = trim($val->sanitizePost("addUser", null, true));
-$saveUser = trim($val->sanitizePost("saveUser", null, true));
+$addUser = trim((string) ($val->sanitizePost("addUser", null, true) ?? ""));
+$saveUser = trim((string) ($val->sanitizePost("saveUser", null, true) ?? ""));
 
 include_once CAT_PATH . "/framework/functions.php";
 
@@ -94,7 +96,7 @@ $password2 = $val->sanitizePost("password2");
 $email = $val->sanitizePost("email", null, true);
 $home_folder = $val->sanitizePost("home_folder", null, true);
 $active = $val->sanitizePost("active") != "" ? 1 : 0;
-$otp = $val->sanitizePost("otp") != "" ? true : false;
+$otp = $val->sanitizePost("otp") != "" ? 1 : 0;
 $groups = null;
 
 if ($val->sanitizePost("groups", null, true)) {
@@ -180,11 +182,15 @@ if ($addUser && $users->checkEmailExists($email)) {
 }
 
 $group_id = $val->sanitizePost("groups", null, true);
-$group_id =
-    is_array($group_id) && in_array("1", $group_id) && $addUser != ""
-        ? ($group_id = "1")
-        : $group_id[0];
 
+if (is_array($group_id)) {
+    $group_id =
+        $addUser !== "" && in_array("1", $group_id, true)
+            ? "1"
+            : (string) $group_id[0];
+} else {
+    $group_id = (string) $group_id;
+}
 // create new user
 if ($addUser) {
     $users->createUser(

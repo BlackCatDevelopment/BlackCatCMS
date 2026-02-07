@@ -58,7 +58,7 @@ if (!class_exists("CAT_Helper_Page")) {
         private static $pages_by_parent = [];
         private static $pages_by_id = [];
         private static $pages_sections = [];
-        private static $pages_editable      = 0;
+        private static $pages_editable = 0;
         private static $pages_seo = [];
 
         // header components
@@ -66,8 +66,8 @@ if (!class_exists("CAT_Helper_Page")) {
         private static $meta = [];
         private static $js = [];
         private static $jquery = [];
-        private static $jquery_core         = false;
-        private static $jquery_ui_core      = false;
+        private static $jquery_core = false;
+        private static $jquery_ui_core = false;
 
         // scan dirs
         private static $css_search_path = [];
@@ -85,22 +85,22 @@ if (!class_exists("CAT_Helper_Page")) {
          * @access private
          * @return void
          **/
-        public static function getInstance($skip_init=false)
+        public static function getInstance($skip_init = false)
         {
             if (!self::$instance) {
                 self::$instance = new self();
                 if (!$skip_init) {
                     self::init();
-            }
+                }
             }
             return self::$instance;
-        }   // end function getInstance()
+        } // end function getInstance()
 
         public function __call($method, $args)
         {
             if (!isset($this) || !is_object($this)) {
                 return false;
-        }
+            }
             if (method_exists($this, $method)) {
                 return call_user_func_array([$this, $method], $args);
             }
@@ -115,7 +115,7 @@ if (!class_exists("CAT_Helper_Page")) {
         public static function reset()
         {
             self::init(1);
-        }   // end function reset()
+        } // end function reset()
 
         /**
          * initialize; fills the internal pages array
@@ -124,9 +124,8 @@ if (!class_exists("CAT_Helper_Page")) {
          * @param  boolean $force - always reload
          * @return void
          **/
-        private static function init($force=false)
+        private static function init($force = false)
         {
-
             global $page_id;
 
             if (
@@ -148,7 +147,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 $dir = preg_replace("~^/~", "", $dir);
                 if (!in_array($dir, self::$instance->_config["forbidden_l0"])) {
                     array_push(self::$instance->_config["forbidden_l0"], $dir);
-            }
+                }
             }
             // fill pages array
             if (count(self::$pages) == 0 || $force) {
@@ -157,13 +156,13 @@ if (!class_exists("CAT_Helper_Page")) {
                     ->db()
                     ->query(
                         "SELECT * FROM `:prefix:pages` ORDER BY `level` ASC, `position` ASC"
-                );
+                    );
                 if ($result && $result->rowCount() > 0) {
                     self::$pages = [];
                     self::$pages_editable = 0;
                     self::$pages_by_id = [];
                     $children_count = [];
-                    $direct_parent  = 0;
+                    $direct_parent = 0;
                     while (false !== ($row = $result->fetch())) {
                         $row["children"] = 0;
                         $row["is_parent"] = false;
@@ -206,19 +205,19 @@ if (!class_exists("CAT_Helper_Page")) {
                             ->query(
                                 "SELECT * FROM `:prefix:pages_settings` WHERE page_id=:id",
                                 ["id" => $row["page_id"]]
-                        );
+                            );
                         if ($set && $set->rowCount() > 0) {
                             while (false !== ($set_row = $set->fetch())) {
                                 if (!isset($row["settings"])) {
                                     $row["settings"] = [];
-                            }
+                                }
                                 if (
                                     !isset(
                                         $row["settings"][$set_row["set_type"]]
                                     )
                                 ) {
                                     $row[$set_row["set_type"]] = [];
-                        }
+                                }
                                 if (
                                     !isset(
                                         $row["settings"][$set_row["set_type"]][
@@ -253,7 +252,7 @@ if (!class_exists("CAT_Helper_Page")) {
                         end(self::$pages);
                         self::$pages_by_id[$row["page_id"]] = key(self::$pages);
                         reset(self::$pages);
-                    }   // end while()
+                    } // end while()
 
                     $use_trash = CAT_Registry::get("PAGE_TRASH");
                     // mark pages that have children
@@ -274,7 +273,7 @@ if (!class_exists("CAT_Helper_Page")) {
 
                         // mark editable pages by checking user perms and page
                         // visibility
-// --------------------- NOT READY YET! (???) ----------------------------------------
+                        // --------------------- NOT READY YET! (???) ----------------------------------------
                         if (
                             CAT_Users::ami_group_member(
                                 $page["admin_groups"]
@@ -291,7 +290,7 @@ if (!class_exists("CAT_Helper_Page")) {
                                 self::$pages[$i]["is_editable"] = true;
                                 self::$pages_editable++;
                             }
-        				} else {
+                        } else {
                             if (
                                 CAT_Users::checkPermission(
                                     "pages",
@@ -304,7 +303,7 @@ if (!class_exists("CAT_Helper_Page")) {
                                 self::$pages_editable++;
                             }
                         }
-// --------------------- NOT READY YET! ----------------------------------------
+                        // --------------------- NOT READY YET! ----------------------------------------
                     }
 
                     // resolve the trail
@@ -330,7 +329,7 @@ if (!class_exists("CAT_Helper_Page")) {
                                 self::$pages[self::$pages_by_id[$id]][
                                     "is_in_trail"
                                 ] = true;
-                    }
+                            }
                         }
                     }
 
@@ -338,25 +337,25 @@ if (!class_exists("CAT_Helper_Page")) {
                     if (!isset(self::$pages_by_id["-1"])) {
                         self::$pages_by_id["-1"] = 0;
                     }
-                }       // end if($result)
+                } // end if($result)
             }
 
             // mark root page as current
-            if(empty($page_id)) {
+            if (empty($page_id)) {
                 $page_id = self::getDefaultPage();
                 $pg = CAT_Helper_Array::ArraySearchRecursive(
                     $page_id,
                     self::$pages,
                     "page_id"
                 );
-                if(isset($pg[0])) {
+                if (isset($pg[0])) {
                     self::$pages[$pg[0]]["is_current"] = true;
                     self::$pages[$pg[0]]["is_in_trail"] = true;
                 }
             }
 
             CAT_Registry::register("CAT_HELPER_PAGE_INITIALIZED", true);
-        }   // end function init()
+        } // end function init()
 
         /**
          * allows to add a CSS file programmatically
@@ -376,7 +375,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 "media" => $media,
                 "file" => $url,
             ];
-        }   // end function addCSS()
+        } // end function addCSS()
 
         /**
          * allows to add a JS file programmatically
@@ -390,16 +389,16 @@ if (!class_exists("CAT_Helper_Page")) {
         public static function addJS($url, $for = "frontend", $pos = "header")
         {
             if ($pos == "header") {
-                $static =& CAT_Helper_Page::$js;
+                $static = &CAT_Helper_Page::$js;
             } else {
-                $static =& CAT_Helper_Page::$f_js;
+                $static = &CAT_Helper_Page::$f_js;
             }
             $static[] =
                 self::$space .
                 '<script src="' .
                 CAT_Helper_Validate::sanitize_url($url) .
                 '"></script>';
-        }   // end function addJS()
+        } // end function addJS()
 
         /**
          * creates a new page
@@ -431,7 +430,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 $params[$key] = $value;
                 if (array_key_exists($key, $mandatory)) {
                     unset($mandatory[$key]);
-            }
+                }
             }
             // all mandatory fields filled?
             if (count($mandatory)) {
@@ -445,10 +444,10 @@ if (!class_exists("CAT_Helper_Page")) {
             }
 
             $sql = preg_replace('~,\s*$~', "", $sql);
-            $self->db()->query($sql,$params);
+            $self->db()->query($sql, $params);
             $page_id = $self->db()->lastInsertId();
             $variant = null;
-            
+
             // template variant
             if (isset($options["variant"]) && strlen($options["variant"])) {
                 $self
@@ -463,7 +462,7 @@ if (!class_exists("CAT_Helper_Page")) {
                             "template_variant",
                             $options["variant"],
                         ]
-                );
+                    );
                 $variant = $options["variant"];
             }
 
@@ -475,8 +474,8 @@ if (!class_exists("CAT_Helper_Page")) {
                 ? "1"
                 : "0";
 
-            if(!$self->db()->isError() && $auto_add) {
-            // reload pages list
+            if (!$self->db()->isError() && $auto_add) {
+                // reload pages list
                 self::init(1);
                 // get template and variant
                 $template = self::properties($page_id, "template");
@@ -487,7 +486,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 $template_location =
                     CAT_PATH . "/templates/" . $template . "/info.php";
                 if (file_exists($template_location)) {
-    				require $template_location;
+                    require $template_location;
                 }
                 // if there are some modules defined
                 if (
@@ -496,8 +495,8 @@ if (!class_exists("CAT_Helper_Page")) {
                     count($auto_add_modules)
                 ) {
                     if (isset($auto_add_modules[$variant])) {
-                    $admin  =& $backend;
-                    $addons = CAT_Helper_Addons::getInstance();
+                        $admin = &$backend;
+                        $addons = CAT_Helper_Addons::getInstance();
                         foreach ($auto_add_modules[$variant] as $item) {
                             foreach (
                                 array_values(["module", "fallback"])
@@ -507,16 +506,16 @@ if (!class_exists("CAT_Helper_Page")) {
                                     isset($item[$key]) &&
                                     $addons->isModuleInstalled($item[$key])
                                 ) {
-                                $section_id = CAT_Sections::addSection(
-                                    $page_id,
-                                    $item[$key],
+                                    $section_id = CAT_Sections::addSection(
+                                        $page_id,
+                                        $item[$key],
                                         isset($item["block"])
                                             ? $item["block"]
                                             : 1,
                                         isset($item["name"])
                                             ? $item["name"]
                                             : $item[$key]
-                                );
+                                    );
                                     if (
                                         $section_id &&
                                         file_exists(
@@ -530,7 +529,7 @@ if (!class_exists("CAT_Helper_Page")) {
                                             "/modules/" .
                                             $item[$key] .
                                             "/add.php";
-                                    continue 2;
+                                        continue 2;
                                     }
                                 }
                             }
@@ -540,8 +539,8 @@ if (!class_exists("CAT_Helper_Page")) {
             }
 
             return $self->db()->isError() ? false : $page_id;
-        }   // end function addPage()
-        
+        } // end function addPage()
+
         /**
          * update page options
          *
@@ -550,7 +549,7 @@ if (!class_exists("CAT_Helper_Page")) {
          * @param  array   $options
          * @return boolean
          **/
-        public static function updatePage($page_id,$options)
+        public static function updatePage($page_id, $options)
         {
             if (!self::$instance) {
                 self::getInstance();
@@ -570,7 +569,7 @@ if (!class_exists("CAT_Helper_Page")) {
                             "template_variant",
                             $options["variant"],
                         ]
-                );
+                    );
             }
 
             $sql = "UPDATE `:prefix:pages` SET ";
@@ -587,14 +586,14 @@ if (!class_exists("CAT_Helper_Page")) {
             }
             $sql = preg_replace('~,\s*$~', "", $sql);
             $sql .= " WHERE page_id=:id";
-            self::$instance->db()->query($sql,$params);
+            self::$instance->db()->query($sql, $params);
 
             // reload pages list
             if (!self::$instance->db()->isError()) {
                 self::init(1);
             }
             return self::$instance->db()->isError() === true ? false : true;
-        }   // end function updatePage()
+        } // end function updatePage()
 
         /**
          * save page settings
@@ -604,7 +603,7 @@ if (!class_exists("CAT_Helper_Page")) {
          * @param  array   $options
          * @return void
          **/
-        public static function updatePageSettings($page_id,$options)
+        public static function updatePageSettings($page_id, $options)
         {
             if (!self::$instance) {
                 self::getInstance();
@@ -619,7 +618,7 @@ if (!class_exists("CAT_Helper_Page")) {
                         ->query(
                             "DELETE FROM `:prefix:pages_settings` WHERE `set_type`=? AND `set_name`=? AND `page_id`=?",
                             ["internal", $key, $page_id]
-                    );
+                        );
                 } else {
                     self::$instance
                         ->db()
@@ -629,8 +628,8 @@ if (!class_exists("CAT_Helper_Page")) {
                         );
                 }
             }
-        }   // end function updatePageSettings()
-        
+        } // end function updatePageSettings()
+
         /**
          * delete page; uses _trashPages() if trash is enabled, _deletePage()
          * otherwise
@@ -640,35 +639,35 @@ if (!class_exists("CAT_Helper_Page")) {
          * @param  boolean $use_trash
          * @return boolean
          **/
-        public static function deletePage($page_id,$use_trash=false)
+        public static function deletePage($page_id, $use_trash = false)
         {
             if ($use_trash) {
-            	// Update the page visibility to 'deleted'
+                // Update the page visibility to 'deleted'
                 self::getInstance()
                     ->db()
                     ->query(
-                    "UPDATE `:prefix:pages` SET `visibility` = :vis WHERE `page_id` = :id LIMIT 1",
+                        "UPDATE `:prefix:pages` SET `visibility` = :vis WHERE `page_id` = :id LIMIT 1",
                         ["vis" => "deleted", "id" => $page_id]
-                );
-            	return self::_trashPages($page_id);
+                    );
+                return self::_trashPages($page_id);
             } else {
                 // remove sub pages
-           	    $sub_pages = self::getSubPages($page_id);
+                $sub_pages = self::getSubPages($page_id);
                 $sub_pages = array_reverse($sub_pages);
                 $errors = [];
                 foreach ($sub_pages as $sub_page_id) {
-            		$err = self::_deletePage( $sub_page_id );
-                    $errors = array_merge($errors,$err);
-            	}
-            	// remove the page itself
-            	$err = self::_deletePage($page_id);
-                $errors = array_merge($errors,$err);
+                    $err = self::_deletePage($sub_page_id);
+                    $errors = array_merge($errors, $err);
+                }
+                // remove the page itself
+                $err = self::_deletePage($page_id);
+                $errors = array_merge($errors, $err);
                 if (count($errors)) {
                     return false;
                 }
                 return true;
             }
-        }   // end function deletePage()
+        } // end function deletePage()
 
         /**
          *
@@ -714,14 +713,14 @@ if (!class_exists("CAT_Helper_Page")) {
                 CAT_Helper_Directory::sanitizePath($filename)
             );
             // prevent system directories and files from being overwritten (level 0)
-            $denied   = false;
+            $denied = false;
             if (PAGES_DIRECTORY == "") {
                 $forbidden_dirs = self::$instance->_config["forbidden_l0"];
                 $forbidden_files =
                     self::$instance->_config["forbidden_filenames_l0"];
                 $search = explode("/", $rel_filename);
-                $denied          = in_array($search[1], $forbidden_dirs);
-                $denied          = in_array($search[1], $forbidden_files);
+                $denied = in_array($search[1], $forbidden_dirs);
+                $denied = in_array($search[1], $forbidden_files);
             }
 
             if (true === is_writable($pages_path) && false == $denied) {
@@ -788,8 +787,8 @@ if (!class_exists("CAT_Helper_Page")) {
                 );
                 return false;
             }
-        }   // end function createAccessFile()
-        
+        } // end function createAccessFile()
+
         /**
          *
          * @access public
@@ -800,11 +799,11 @@ if (!class_exists("CAT_Helper_Page")) {
             // Unlink the access file and directory
             $directory =
                 CAT_PATH . PAGES_DIRECTORY . self::properties($page_id, "link");
-            $filename   = $directory . PAGE_EXTENSION;
+            $filename = $directory . PAGE_EXTENSION;
             $directory .= "/";
             if (file_exists($filename)) {
                 if (!is_writable(CAT_PATH . PAGES_DIRECTORY . "/")) {
-                    $self     = self::getInstance(true);
+                    $self = self::getInstance(true);
                     $errors[] = $self
                         ->lang()
                         ->translate("Cannot delete access file!");
@@ -816,10 +815,10 @@ if (!class_exists("CAT_Helper_Page")) {
                     ) {
                         CAT_Helper_Directory::removeDirectory($directory);
                     }
-            	}
+                }
             }
-        }   // end function deleteAccessFile()
-        
+        } // end function deleteAccessFile()
+
         /**
          * delete language link (linked page)
          *
@@ -828,8 +827,8 @@ if (!class_exists("CAT_Helper_Page")) {
          * @param  string  $lang
          * @return boolean
          **/
-        public static function deleteLanguageLink($page_id,$lang)
-    	{
+        public static function deleteLanguageLink($page_id, $lang)
+        {
             if (!self::$instance) {
                 self::getInstance(true);
             }
@@ -838,9 +837,9 @@ if (!class_exists("CAT_Helper_Page")) {
                 ->query(
                     "DELETE FROM `:prefix:page_langs` WHERE link_page_id = :id AND lang = :lang",
                     ["id" => $page_id, "lang" => $lang]
-            );
+                );
             return self::$instance->db()->isError() ? false : true;
-        }   // end function deleteLanguageLink()
+        } // end function deleteLanguageLink()
 
         /**
          * checks if a page exists; checks access file and database entry
@@ -857,14 +856,14 @@ if (!class_exists("CAT_Helper_Page")) {
             $get_same_page = self::$instance
                 ->db()
                 ->query(
-                "SELECT `page_id` FROM `:prefix:pages` WHERE link=:link",
+                    "SELECT `page_id` FROM `:prefix:pages` WHERE link=:link",
                     ["link" => $link]
-            );
+                );
             if ($get_same_page->rowCount() > 0) {
                 return true;
             }
             // check access file
-            if(
+            if (
                 file_exists(
                     CAT_PATH . PAGES_DIRECTORY . $link . PAGE_EXTENSION
                 ) ||
@@ -872,8 +871,8 @@ if (!class_exists("CAT_Helper_Page")) {
             ) {
                 return true;
             }
-        }   // end function exists()
-        
+        } // end function exists()
+
         /**
          *
          * @access public
@@ -896,7 +895,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     $row["page_js_files"] != ""
                 ) {
                     $data["js"] = unserialize($row["page_js_files"]);
-            }
+                }
                 if (
                     isset($row["page_css_files"]) &&
                     $row["page_css_files"] != ""
@@ -914,7 +913,7 @@ if (!class_exists("CAT_Helper_Page")) {
             }
             // add jQuery plugins
             $data["jquery_plugins"] = CAT_Helper_Directory::getInstance()
-                                    ->maxRecursionDepth(0)
+                ->maxRecursionDepth(0)
                 ->scanDirectory(
                     CAT_PATH . "/modules/lib_jquery/plugins",
                     false,
@@ -922,7 +921,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     CAT_PATH . "/modules/lib_jquery/plugins/"
                 );
             $data["js_files"] = CAT_Helper_Directory::getInstance()
-                                    ->maxRecursionDepth(5)
+                ->maxRecursionDepth(5)
                 ->setSuffixFilter(["js"])
                 ->scanDirectory(
                     CAT_PATH . "/modules/lib_jquery/plugins",
@@ -931,7 +930,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     CAT_PATH . "/modules/lib_jquery/plugins"
                 );
             $data["css_files"] = CAT_Helper_Directory::getInstance()
-                                    ->maxRecursionDepth(5)
+                ->maxRecursionDepth(5)
                 ->setSuffixFilter(["css"])
                 ->scanDirectory(
                     CAT_PATH . "/modules/lib_jquery/plugins",
@@ -947,11 +946,11 @@ if (!class_exists("CAT_Helper_Page")) {
                 );
                 if (file_exists($cfg_file)) {
                     if (!class_exists("c_editor", false)) {
-                    require $cfg_file;
+                        require $cfg_file;
                     }
                     $c = new c_editor();
                     if (method_exists($c, "getFrontendCSS")) {
-                    $css = $c->getFrontendCSS();
+                        $css = $c->getFrontendCSS();
                         if (count($css)) {
                             $data["wysiwyg_files"] = $css;
                         }
@@ -960,7 +959,7 @@ if (!class_exists("CAT_Helper_Page")) {
             }
 
             return $data;
-        }   // end function getExtraHeaderFiles()
+        } // end function getExtraHeaderFiles()
 
         /**
          * add header file to the database; returns an array with keys
@@ -979,7 +978,7 @@ if (!class_exists("CAT_Helper_Page")) {
             $file,
             $page_id = null
         ) {
-            $data = self::getExtraHeaderFiles($page_id,true);
+            $data = self::getExtraHeaderFiles($page_id, true);
             $self = self::getInstance();
             if (
                 isset($data[$type]) &&
@@ -1005,10 +1004,10 @@ if (!class_exists("CAT_Helper_Page")) {
                             "/modules/" .
                             WYSIWYG_EDITOR .
                             "/c_editor.php"
-                );
+                    );
                     if (file_exists($cfg_file)) {
                         require $cfg_file;
-                        $c        = new c_editor();
+                        $c = new c_editor();
                         array_push(
                             $paths,
                             CAT_Helper_Directory::sanitizePath(
@@ -1023,13 +1022,13 @@ if (!class_exists("CAT_Helper_Page")) {
                             isset($data[$type]) &&
                             is_array($data[$type]) &&
                             count($data[$type])
-                            ? $data[$type]
+                                ? $data[$type]
                                 : [];
                         array_push(
                             $new,
                             CAT_Helper_Validate::path2uri($path) . $file
                         );
-                    $new = array_unique($new);
+                        $new = array_unique($new);
                         $params = [
                             "field" => "page_" . $type . "_files",
                             "value" => serialize($new),
@@ -1041,7 +1040,7 @@ if (!class_exists("CAT_Helper_Page")) {
                         } else {
                             $q =
                                 "INSERT INTO `:prefix:pages_headers` ( `page_id`, :field: ) VALUES ( :page_id, :value )";
-                    }
+                        }
                         self::getInstance(1)
                             ->db()
                             ->query($q, $params);
@@ -1054,8 +1053,8 @@ if (!class_exists("CAT_Helper_Page")) {
                                 ? self::getInstance(1)->getError()
                                 : "ok",
                         ];
+                    }
                 }
-            }
             }
             return [
                 "success" => false,
@@ -1064,7 +1063,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     " " .
                     $file,
             ];
-        }   // end function adminAddHeaderComponent()
+        } // end function adminAddHeaderComponent()
 
         /**
          * remove header file from the database
@@ -1084,22 +1083,22 @@ if (!class_exists("CAT_Helper_Page")) {
             ) {
                 return ["success" => true, "message" => "ok"];
             }
-            if(($key = array_search($file, $data[$type])) !== false) {
+            if (($key = array_search($file, $data[$type])) !== false) {
                 unset($data[$type][$key]);
             }
             $q = count($data)
-               ? sprintf(
-                     'UPDATE `:prefix:pages_headers` SET `page_%s_files`=\'%s\' WHERE `page_id`="%d"',
+                ? sprintf(
+                    'UPDATE `:prefix:pages_headers` SET `page_%s_files`=\'%s\' WHERE `page_id`="%d"',
                     $type,
                     serialize($data[$type]),
                     $page_id
-                 )
-               : sprintf(
-                     'REPLACE INTO `:prefix:pages_headers` ( `page_id`, `page_%s_files` ) VALUES ( "%d", \'%s\' )',
+                )
+                : sprintf(
+                    'REPLACE INTO `:prefix:pages_headers` ( `page_id`, `page_%s_files` ) VALUES ( "%d", \'%s\' )',
                     $type,
                     $page_id,
                     serialize($data[$type])
-            );
+                );
             self::getInstance(1)
                 ->db()
                 ->query($q);
@@ -1109,7 +1108,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     ? self::getInstance(1)->getError()
                     : "ok",
             ];
-        }   // end function adminDelHeaderComponent()
+        } // end function adminDelHeaderComponent()
 
         /**
          * prints the backend footers
@@ -1348,7 +1347,7 @@ if (!class_exists("CAT_Helper_Page")) {
                             '" ' .
                             'media="' .
                             (isset($item["media"]) ? $item["media"] : "all") .
-                            '" />' .
+                            '" >' .
                             "\n";
                         if (
                             isset($item["conditional"]) &&
@@ -1387,7 +1386,7 @@ if (!class_exists("CAT_Helper_Page")) {
             }
             // for all pages with level 0...
             $root = [];
-            $now  = time();
+            $now = time();
             $ordered = CAT_Helper_Array::ArraySort(self::$pages, "position");
             foreach ($ordered as $page) {
                 if (
@@ -1420,7 +1419,7 @@ if (!class_exists("CAT_Helper_Page")) {
          **/
         public static function getDefaultPageForLanguage($lang)
         {
-            $pages = CAT_Helper_I18n::getUsedLangs(true,false);
+            $pages = CAT_Helper_I18n::getUsedLangs(true, false);
             if (
                 isset($pages[$lang]) &&
                 is_array($pages[$lang]) &&
@@ -1448,8 +1447,8 @@ if (!class_exists("CAT_Helper_Page")) {
                 self::init();
             }
             return self::$pages_editable;
-        }   // end function getEditable()
-        
+        } // end function getEditable()
+
         /**
          * convert page title to a valid filename
          *
@@ -1465,6 +1464,7 @@ if (!class_exists("CAT_Helper_Page")) {
             $bad = [
                 '\'',
                 '"',
+                "`",
                 "`",
                 "!",
                 "@",
@@ -1496,7 +1496,7 @@ if (!class_exists("CAT_Helper_Page")) {
             $string = str_replace(["%2F", "%"], ["/", ""], urlencode($string));
             // Finally, return the cleaned string
             return $string;
-        }   // end function getFilename()
+        } // end function getFilename()
 
         /**
          * calls appropriate function for analyzing and printing page footers
@@ -1617,14 +1617,14 @@ if (!class_exists("CAT_Helper_Page")) {
             if (CAT_Registry::get("SHOW_SEARCH") === true) {
                 array_push(
                     CAT_Helper_Page::$css_search_path,
-                // search
+                    // search
                     "/modules/" .
                         CAT_Registry::get("SEARCH_LIBRARY") .
                         "/templates/custom/",
                     "/modules/" .
                         CAT_Registry::get("SEARCH_LIBRARY") .
                         "/templates/default/"
-            );
+                );
             }
 
             // Javascript search path
@@ -1643,8 +1643,8 @@ if (!class_exists("CAT_Helper_Page")) {
             // -----             get extra header files                    -----
             // -----------------------------------------------------------------
             $global_files = CAT_Helper_Page::getExtraHeaderFiles(0);
-            $page_files   = CAT_Helper_Page::getExtraHeaderFiles($page_id);
-            $all_files    = array_merge($global_files,$page_files);
+            $page_files = CAT_Helper_Page::getExtraHeaderFiles($page_id);
+            $all_files = array_merge($global_files, $page_files);
             if (isset($all_files["css"]) && is_array($all_files["css"])) {
                 foreach ($all_files["css"] as $file) {
                     self::addCSS($file);
@@ -1828,7 +1828,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     str_replace(
                         ["%", "Y", "m", "d"],
                         ["", "yy", "mm", "dd"],
-            	CAT_DATE_FORMAT
+                        CAT_DATE_FORMAT
                     ) .
                     "',
 			TIME_FORMAT						  = '" .
@@ -1863,9 +1863,9 @@ if (!class_exists("CAT_Helper_Page")) {
         public static function getJavaScripts($for = "header")
         {
             if ($for == "header") {
-                $static =& CAT_Helper_Page::$js;
+                $static = &CAT_Helper_Page::$js;
             } else {
-                $static =& CAT_Helper_Page::$f_js;
+                $static = &CAT_Helper_Page::$f_js;
             }
 
             // if there was some CSS added meanwhile...
@@ -1879,7 +1879,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     $js .=
                         '$("head").append("<link rel=\"stylesheet\" href=\"' .
                         $item .
-                        '\" type=\"text/css\" media=\"screen,projection\" />");';
+                        '\" type=\"text/css\" media=\"screen,projection\" >");';
                 }
                 $js .= "</script>";
                 $static[] = $js;
@@ -1901,9 +1901,9 @@ if (!class_exists("CAT_Helper_Page")) {
         public static function getJQuery($for = "header")
         {
             if ($for == "header") {
-                $static =& CAT_Helper_Page::$jquery;
+                $static = &CAT_Helper_Page::$jquery;
             } else {
-                $static =& CAT_Helper_Page::$f_jquery;
+                $static = &CAT_Helper_Page::$f_jquery;
             }
 
             if ($for == "footer" && count(CAT_Helper_Page::$css)) {
@@ -1935,20 +1935,17 @@ if (!class_exists("CAT_Helper_Page")) {
          * @access public
          * @return
          **/
-        public static function getLastEdited($number=10)
+        public static function getLastEdited($number = 10)
         {
             $result = [];
-            $pages  = self::getPages(1);
+            $pages = self::getPages(1);
             // sort pages by when_changed
-            $res = usort(
-                $pages,
-                function($a,$b) {
-                    return ( ( $a["modified_when"] < $b["modified_when"] ) ? 1 : -1 );
-                }
-            );
-            return array_slice($pages,0,$number);
-        }   // end function getLastEdited()
-        
+            $res = usort($pages, function ($a, $b) {
+                return $a["modified_when"] < $b["modified_when"] ? 1 : -1;
+            });
+            return array_slice($pages, 0, $number);
+        } // end function getLastEdited()
+
         /**
          * counts the levels from given page_id to root
          *
@@ -1968,7 +1965,7 @@ if (!class_exists("CAT_Helper_Page")) {
             } else {
                 return 0;
             }
-        }   // end function getLevel()
+        } // end function getLevel()
 
         /**
          *
@@ -1999,7 +1996,7 @@ if (!class_exists("CAT_Helper_Page")) {
             } else {
                 return $link;
             }
-        }   // end function getLink()
+        } // end function getLink()
 
         /**
          *
@@ -2024,12 +2021,12 @@ if (!class_exists("CAT_Helper_Page")) {
                     $row["href"] =
                         self::getLink($row["link"]) .
                         ($row["lang"] != "" ? "?lang=" . $row["lang"] : null);
-                    $items[]     = $row;
+                    $items[] = $row;
                 }
                 return $items;
             }
             return false;
-        }   // end function getLinkedByLanguage()
+        } // end function getLinkedByLanguage()
 
         /**
          * returns META (default charset, keywords, ...) and TITLE
@@ -2057,7 +2054,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     : (defined("DEFAULT_CHARSET")
                         ? DEFAULT_CHARSET
                         : "utf-8")) .
-                '" />';
+                '" >';
 
             // page title
             if (isset($droplets_config["page_title"])) {
@@ -2096,7 +2093,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     CAT_Helper_Page::$space .
                     '<meta name="description" content="' .
                     $description .
-                    '" />';
+                    '" >';
             }
 
             // keywords
@@ -2115,7 +2112,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     CAT_Helper_Page::$space .
                     '<meta name="keywords" content="' .
                     $keywords .
-                    '" />';
+                    '" >';
             }
 
             // other meta tags set by droplets
@@ -2140,19 +2137,19 @@ if (!class_exists("CAT_Helper_Page")) {
                     if (!array_key_exists("nofollow", $check)) {
                         $robots[] = "follow";
                     }
-                    $robots = array_merge($robots,array_values($temp));
+                    $robots = array_merge($robots, array_values($temp));
                 }
                 if (count($robots)) {
                     $output[] =
                         '<meta name="robots" content="' .
                         implode(",", $robots) .
-                        '" />';
-            }
+                        '" >';
+                }
                 if (isset($seo["canonical"]) && isset($seo["canonical"][0])) {
                     $output[] =
                         '<link rel="canonical" href="' .
                         $seo["canonical"][0] .
-                        '" />';
+                        '" >';
                 }
             }
 
@@ -2183,7 +2180,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 }
                 self::$meta = array_merge($alt, self::$meta);
             }
-            return implode("\n",array_unique(self::$meta));
+            return implode("\n", array_unique(self::$meta));
         } // end function getMeta()
 
         /**
@@ -2196,7 +2193,7 @@ if (!class_exists("CAT_Helper_Page")) {
         public static function getPage($page_id)
         {
             return self::properties($page_id);
-        }   // end function getPage()
+        } // end function getPage()
 
         /**
          * resolves the path to root and returns the list of parent IDs
@@ -2216,13 +2213,13 @@ if (!class_exists("CAT_Helper_Page")) {
                 // to fix this here
                 $parent_id = self::properties($page_id, "parent");
                 if (!is_array($parent_id)) {
-                    $ids[]   = $parent_id;
-            }
+                    $ids[] = $parent_id;
+                }
                 $page_id = self::properties($page_id, "parent");
             }
             return $ids;
-        }   // end function getParentIDs()
-        
+        } // end function getParentIDs()
+
         /**
          *
          * @access public
@@ -2230,7 +2227,7 @@ if (!class_exists("CAT_Helper_Page")) {
          **/
         public static function getParentTitles($page_id)
         {
-            $page     = self::properties($page_id);
+            $page = self::properties($page_id);
             $titles[] = isset($page["menu_title"])
                 ? $page["menu_title"]
                 : $page["page_title"];
@@ -2239,16 +2236,16 @@ if (!class_exists("CAT_Helper_Page")) {
                 $titles = array_merge($titles, $parent_titles);
             }
             return $titles;
-        }   // end function getParentTitles()
+        } // end function getParentTitles()
 
         /**
-    	 * checks permission for a page
-    	 *
-    	 * @access public
-    	 * @param  int    $page_id
-    	 * @param  string $action - viewing|admin; default: admin
-    	 * @return boolean
-    	 */
+         * checks permission for a page
+         *
+         * @access public
+         * @param  int    $page_id
+         * @param  string $action - viewing|admin; default: admin
+         * @return boolean
+         */
         public static function getPagePermission($page_id, $action = "admin")
         {
             if ($action != "viewing") {
@@ -2256,7 +2253,7 @@ if (!class_exists("CAT_Helper_Page")) {
             }
             $action_groups = $action . "_groups";
             $action_users = $action . "_users";
-            $page          = self::properties($page_id);
+            $page = self::properties($page_id);
             $groups = [];
             $users = [];
 
@@ -2265,17 +2262,17 @@ if (!class_exists("CAT_Helper_Page")) {
                     ? explode(",", $page[$action_groups])
                     : [];
                 $users = isset($page[$action_users])
-                        ? $page[$action_users]
+                    ? $page[$action_users]
                     : [];
-    		}
+            }
 
             // check if user is in any admin group
             $in_group = false;
             foreach (CAT_Users::getInstance()->get_groups_id() as $cur_gid) {
                 if (in_array($cur_gid, $groups)) {
-    		        $in_group = true;
-    		    }
-    		}
+                    $in_group = true;
+                }
+            }
 
             $by_user = false;
             if (
@@ -2290,10 +2287,10 @@ if (!class_exists("CAT_Helper_Page")) {
                 $by_user = true;
             }
             if (!$in_group && !$by_user) {
-    			return false;
-    		}
-    		return true;
-    	}   // end function getPagePermission()
+                return false;
+            }
+            return true;
+        } // end function getPagePermission()
 
         /**
          * uses ListBuilder to create a dropdown list of pages
@@ -2301,9 +2298,9 @@ if (!class_exists("CAT_Helper_Page")) {
          * @access public
          * @return HTML
          **/
-        public static function getPageSelect($as_array=false)
+        public static function getPageSelect($as_array = false)
         {
-            $pages  = CAT_Helper_Page::getPages(CAT_Backend::isBackend());
+            $pages = CAT_Helper_Page::getPages(CAT_Backend::isBackend());
             if ($as_array) {
                 $opt = [];
                 foreach ($pages as $pg) {
@@ -2321,7 +2318,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     ])
                     ->tree($pages, 0);
             }
-        }   // end function getPageSelect()
+        } // end function getPageSelect()
 
         /**
          *
@@ -2349,10 +2346,10 @@ if (!class_exists("CAT_Helper_Page")) {
                     }
                 } else {
                     return isset($set[$type]) ? $set[$type] : null;
-                    }
                 }
+            }
             return $set;
-        }   // end function getPageSettings()
+        } // end function getPageSettings()
 
         /**
          *
@@ -2363,8 +2360,8 @@ if (!class_exists("CAT_Helper_Page")) {
         {
             $tpl = self::properties($page_id, "template");
             return $tpl != "" ? $tpl : DEFAULT_TEMPLATE;
-        }   // end function getPageTemplate()
-        
+        } // end function getPageTemplate()
+
         /**
          * returns complete pages array
          *
@@ -2372,7 +2369,7 @@ if (!class_exists("CAT_Helper_Page")) {
          * @param  boolean $all - show all page or only visible (default:false)
          * @return array
          **/
-        public static function getPages($all=false)
+        public static function getPages($all = false)
         {
             if (!count(self::$pages)) {
                 self::getInstance();
@@ -2393,7 +2390,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 }
             }
             return $pages;
-        }   // end function getPages()
+        } // end function getPages()
 
         /**
          * returns pages array for given menu number
@@ -2417,10 +2414,10 @@ if (!class_exists("CAT_Helper_Page")) {
                     self::isVisible($pg["page_id"])
                 ) {
                     $menu[] = $pg;
-            }
+                }
             }
             return $menu;
-        }   // end function getPagesForMenu()
+        } // end function getPagesForMenu()
 
         /**
          *
@@ -2433,7 +2430,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 self::getInstance();
             }
             $pages = [];
-            $lang  = strtoupper($lang);
+            $lang = strtoupper($lang);
             foreach (self::$pages as $pg) {
                 // check level and visibility
                 if (
@@ -2444,7 +2441,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 }
             }
             return $pages;
-        }   // end function getPagesForLang()
+        } // end function getPagesForLang()
 
         /**
          *
@@ -2468,12 +2465,12 @@ if (!class_exists("CAT_Helper_Page")) {
                 ) {
                     // optional: check for given menu number
                     if (!$menu_no || $pg["menu"] == $menu_no) {
-                    $pages[] = $pg;
-            }
+                        $pages[] = $pg;
+                    }
                 }
             }
             return $pages;
-        }   // end function getPagesForLevel()
+        } // end function getPagesForLevel()
 
         /**
          *
@@ -2506,7 +2503,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 return CAT_Registry::get("ERR_PAGE_404");
             }
             return null;
-        }   // end function getPageByPath()
+        } // end function getPageByPath()
 
         /**
          * returns a list of page_id's containing the children of given parent
@@ -2522,7 +2519,7 @@ if (!class_exists("CAT_Helper_Page")) {
         ) {
             if (!count(self::$pages_by_parent)) {
                 $pages = self::getPages(CAT_Backend::isBackend());
-                foreach ( $pages as $page ) {
+                foreach ($pages as $page) {
                     self::$pages_by_parent[$page["parent"]][] =
                         $page["page_id"];
                 }
@@ -2530,8 +2527,8 @@ if (!class_exists("CAT_Helper_Page")) {
             return isset(self::$pages_by_parent[$parent])
                 ? self::$pages_by_parent[$parent]
                 : [];
-    	}   // end function getPagesByParent()
-        
+        } // end function getPagesByParent()
+
         /**
          * returns a list of page_id's by visibility
          *
@@ -2543,22 +2540,22 @@ if (!class_exists("CAT_Helper_Page")) {
         {
             if (!count(self::$pages)) {
                 self::getInstance();
-                }
+            }
             if (!count(self::$pages_by_visibility)) {
                 foreach (self::$pages as $page) {
                     self::$pages_by_visibility[$page["visibility"]][] =
                         $page["page_id"];
-            }
+                }
             }
             if ($visibility) {
                 if (isset(self::$pages_by_visibility[$visibility])) {
-                return self::$pages_by_visibility[$visibility];
+                    return self::$pages_by_visibility[$visibility];
                 } else {
                     return [];
-            }
+                }
             }
             return self::$pages_by_visibility;
-        }   // end function getPagesByVisibility()
+        } // end function getPagesByVisibility()
 
         /**
          *
@@ -2576,8 +2573,8 @@ if (!class_exists("CAT_Helper_Page")) {
             }
             $ids[] = $page_id;
             return $as_array ? $ids : implode(",", $ids);
-        }   // end function getPageTrail()
-        
+        } // end function getPageTrail()
+
         /**
          * returns the root level page of a trail
          *
@@ -2589,27 +2586,27 @@ if (!class_exists("CAT_Helper_Page")) {
             if (self::properties($page_id, "level") == 0) {
                 return 0;
             }
-            $trail = self::getPageTrail($page_id,false,true);
+            $trail = self::getPageTrail($page_id, false, true);
             return $trail[0];
-        }   // end function getRootParent()
-        
+        } // end function getRootParent()
+
         /**
          *
          * @access public
          * @return
          **/
-        public static function getSection($page_id,$section_id)
+        public static function getSection($page_id, $section_id)
         {
             $sections = self::getSections($page_id);
             if (count($sections)) {
                 foreach ($sections as $section) {
                     if ($section["section_id"] == $section_id) {
                         return $section;
+                    }
                 }
             }
-            }
             return false;
-        }   // end function getSection()
+        } // end function getSection()
 
         /**
          * returns the sections of a page
@@ -2634,9 +2631,9 @@ if (!class_exists("CAT_Helper_Page")) {
                     ? self::$pages_sections[$page_id]
                     : [];
             } else {
-                    return self::$pages_sections;
+                return self::$pages_sections;
             }
-        }   // end function getSections()
+        } // end function getSections()
 
         /**
          *
@@ -2655,23 +2652,23 @@ if (!class_exists("CAT_Helper_Page")) {
                 self::init();
             }
             // get page data
-            $seo  = isset(self::$pages_seo[$page_id])
-                  ? self::$pages_seo[$page_id]
+            $seo = isset(self::$pages_seo[$page_id])
+                ? self::$pages_seo[$page_id]
                 : [];
             if (count($seo)) {
                 if ($key) {
                     if (isset($seo[$key])) {
-                    return $seo[$key];
+                        return $seo[$key];
                     } else {
                         return null;
-                }
+                    }
                 } else {
                     return $seo;
                 }
             }
             return [];
-        }   // end function getSEO()
-        
+        } // end function getSEO()
+
         /**
          *
          * @access public
@@ -2685,10 +2682,10 @@ if (!class_exists("CAT_Helper_Page")) {
             }
             foreach ($subs as $pg) {
                 $result[] = $pg;
-                $result   = self::getSubPages($pg,$result);
+                $result = self::getSubPages($pg, $result);
             }
             return $result;
-        }   // end function getSubPages()
+        } // end function getSubPages()
 
         /**
          * virtual pages are used for something like
@@ -2703,7 +2700,7 @@ if (!class_exists("CAT_Helper_Page")) {
         public static function getVirtualPage($title)
         {
             global $page_id, $page_description, $page_keywords;
-            $page_id          = 0;
+            $page_id = 0;
             $page_description = "";
             $page_keywords = "";
             define("PAGE_ID", 0);
@@ -2720,8 +2717,8 @@ if (!class_exists("CAT_Helper_Page")) {
             );
             define("MODULE", "");
             define("VISIBILITY", "public");
-        }   // end function getVirtualPage()
-        
+        } // end function getVirtualPage()
+
         /**
          * Work-out if the page parent (if selected) has a seperate language
          *
@@ -2747,8 +2744,8 @@ if (!class_exists("CAT_Helper_Page")) {
                             ? $parent_lang
                             : $page["language"];
                 }
-                }
-        }   // end function sanitizeLanguage()
+            }
+        } // end function sanitizeLanguage()
 
         /**
          * Work-out what the link and page filename should be
@@ -2771,7 +2768,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 // 'intro' and 'index' are not allowed in root level
                 if ($page["link"] == "/index" || $page["link"] == "/intro") {
                     $page["link"] .= "_0";
-            }
+                }
             }
             // sub level
             else {
@@ -2793,7 +2790,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     "/" . $parent_section . self::getFilename($page["link"]);
                 $page["level"] = count($parent_titles);
             }
-        }   // end function sanitizeLink()
+        } // end function sanitizeLink()
 
         /**
          * Work-out if the page parent (if selected) has a seperate template
@@ -2816,8 +2813,8 @@ if (!class_exists("CAT_Helper_Page")) {
                             ? $parent_tpl
                             : $page["template"];
                 }
-                }
-        }   // end function sanitizeTemplate()
+            }
+        } // end function sanitizeTemplate()
 
         /**
          *
@@ -2841,8 +2838,8 @@ if (!class_exists("CAT_Helper_Page")) {
                 $page["page_title"] == ""
                     ? $page["menu_title"]
                     : $page["page_title"];
-        }   // end function sanitizeTitles()
-        
+        } // end function sanitizeTitles()
+
         /**
          * identify the page to show
          *
@@ -2850,7 +2847,7 @@ if (!class_exists("CAT_Helper_Page")) {
          * @param  boolean  $no_intro
          * @return boolean
          **/
-        public static function selectPage( $no_intro = false )
+        public static function selectPage($no_intro = false)
         {
             global $page_id; // may be set by accessor file
 
@@ -2862,8 +2859,8 @@ if (!class_exists("CAT_Helper_Page")) {
                         $result = CAT_Registry::getInstance()
                             ->db()
                             ->query(
-                            'SELECT `value` FROM `:prefix:settings` WHERE `name`="maintenance_page"'
-                        );
+                                'SELECT `value` FROM `:prefix:settings` WHERE `name`="maintenance_page"'
+                            );
                         if (is_resource($result) && $result->rowCount() == 1) {
                             $row = $result->fetch();
                             CAT_Registry::register(
@@ -2891,7 +2888,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 $filename =
                     CAT_PATH . PAGES_DIRECTORY . "/intro" . PAGE_EXTENSION;
                 if (file_exists($filename)) {
-                    $handle  = @fopen($filename, "r");
+                    $handle = @fopen($filename, "r");
                     $content = @fread($handle, filesize($filename));
                     @fclose($handle);
                     CAT_Helper_Page::preprocess($content);
@@ -2919,7 +2916,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     );
                 } else {
                     $page_id = self::getDefaultPage();
-            }
+                }
             }
 
             if (!defined("PAGE_ID")) {
@@ -2950,21 +2947,21 @@ if (!class_exists("CAT_Helper_Page")) {
             }
             // get page data
             $page = isset(self::$pages_by_id[$page_id])
-                  ? self::$pages[self::$pages_by_id[$page_id]]
+                ? self::$pages[self::$pages_by_id[$page_id]]
                 : [];
             if (count($page)) {
                 if ($key) {
                     if (isset($page[$key])) {
-                    return $page[$key];
+                        return $page[$key];
                     } else {
                         return null;
-                }
+                    }
                 } else {
                     return $page;
                 }
             }
             return [];
-        }   // end function properties()
+        } // end function properties()
 
         /**
          * replaces internal links; should be exported into an output filter
@@ -2976,7 +2973,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     "/modules/blackcatFilter/filter/cmsplink.php";
             }
             cmsplink($content);
-        }   // end static function preprocess()
+        } // end static function preprocess()
 
         public static function printUnderConstruction()
         {
@@ -2999,17 +2996,17 @@ if (!class_exists("CAT_Helper_Page")) {
             if (!$file) {
                 self::getInstance()->printFatalError(
                     "Website Under Construction" .
-                        "<br />" .
+                        "<br >" .
                         "Please check back soon..."
                 );
             } else {
                 global $parser;
-                $parser->setPath(pathinfo($file,PATHINFO_DIRNAME));
+                $parser->setPath(pathinfo($file, PATHINFO_DIRNAME));
                 $parser->output(pathinfo($file, PATHINFO_FILENAME), [
                     "IMAGE_URL" => $image_url,
                 ]);
-    		}
-    	}
+            }
+        }
 
         /**
          * recursivly update page trail of subs
@@ -3018,11 +3015,11 @@ if (!class_exists("CAT_Helper_Page")) {
          * @param  integer $parent
          * @param  integer $root_parent
          **/
-        public static function updatePageTrail($parent,$root_parent)
+        public static function updatePageTrail($parent, $root_parent)
         {
-#echo "updatePageTrail($parent,$root_parent)\n";
+            #echo "updatePageTrail($parent,$root_parent)\n";
             $page_id = self::properties($parent, "page_id");
-#echo "page_id $page_id\n";
+            #echo "page_id $page_id\n";
             if ($page_id) {
                 self::$instance
                     ->db()
@@ -3033,13 +3030,13 @@ if (!class_exists("CAT_Helper_Page")) {
                             "trail" => self::getPageTrail($page_id, true),
                             "id" => $page_id,
                         ]
-                );
+                    );
                 if ($page_id !== $parent) {
-                // recurse
-        		    self::updatePageTrail($page_id,$root_parent);
-        	}
+                    // recurse
+                    self::updatePageTrail($page_id, $root_parent);
+                }
             }
-        }   // end function updatePageTrail()
+        } // end function updatePageTrail()
 
         /**
          * checks if page is active (=has active sections and is between
@@ -3070,7 +3067,7 @@ if (!class_exists("CAT_Helper_Page")) {
          **/
         public static function isDeleted($page_id)
         {
-            $page    = self::properties($page_id);
+            $page = self::properties($page_id);
             if ($page["visibility"] == "deleted") {
                 return true;
             }
@@ -3099,7 +3096,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 }
             }
             return CAT_Registry::get("MAINTENANCE_MODE") == "on" ? true : false;
-        }   // end function isMaintenance()
+        } // end function isMaintenance()
 
         /**
          *
@@ -3113,7 +3110,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 return true;
             }
             return false;
-        }   // end function isRedirected()
+        } // end function isRedirected()
 
         /**
          * Check whether a page is visible or not
@@ -3126,7 +3123,7 @@ if (!class_exists("CAT_Helper_Page")) {
         public static function isVisible($page_id)
         {
             $show_it = false;
-            $page    = self::properties($page_id);
+            $page = self::properties($page_id);
             if ($page["language"] != LANGUAGE) {
                 return false;
             }
@@ -3167,7 +3164,7 @@ if (!class_exists("CAT_Helper_Page")) {
                                     $page["viewing_users"]
                                 ) ||
                                 CAT_Users::is_root();
-                    }
+                        }
                     } else {
                         $show_it = false;
                     }
@@ -3176,9 +3173,9 @@ if (!class_exists("CAT_Helper_Page")) {
             return $show_it;
         } // end function isVisible()
 
-// *****************************************************************************
-//                   PRIVATE FUNCTIONS
-// *****************************************************************************
+        // *****************************************************************************
+        //                   PRIVATE FUNCTIONS
+        // *****************************************************************************
 
         /**
          * analyzes CSS files to load and fills the static array $css
@@ -3248,14 +3245,14 @@ if (!class_exists("CAT_Helper_Page")) {
             $self
                 ->log()
                 ->logDebug(
-                sprintf(
+                    sprintf(
                         "analyzing javascripts for [%s], path_prefix [%s], section [%s]",
                         $for,
                         $path_prefix,
                         is_array($section) ? var_export($section, 1) : $section
-                ),
-                $arr
-            );
+                    ),
+                    $arr
+                );
 
             if (!is_array($arr)) {
                 return;
@@ -3273,11 +3270,11 @@ if (!class_exists("CAT_Helper_Page")) {
             $check_paths = [];
             if ($path_prefix != "") {
                 $check_paths = explode("/", $path_prefix);
-                    $check_paths = array_reverse($check_paths);
-                }
+                $check_paths = array_reverse($check_paths);
+            }
 
             // validator is needed to sanitize URL
-                    $val = CAT_Helper_Validate::getInstance();
+            $val = CAT_Helper_Validate::getInstance();
 
             foreach ($arr as $index => $item) {
                 if (is_array($item)) {
@@ -3290,7 +3287,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 if (
                     preg_match("/^http(s)?:/", $item, $m1) || // abs. URL
                     preg_match("#/(modules|templates)/#i", $item, $m2)
-                                        ) {
+                ) {
                     $self->log()->logDebug("m1", $m1);
                     $self->log()->logDebug("m2", $m2);
                     $self->log()->logDebug("abs. URL");
@@ -3320,8 +3317,8 @@ if (!class_exists("CAT_Helper_Page")) {
                             CAT_URL . "/" . $path_prefix . "/" . $item
                         ) .
                         '"></script>';
-                            continue;
-                        }
+                    continue;
+                }
                 // we iterate over $check_paths, adding the path parts and
                 // trying to find the file
                 $add_to_path = "";
@@ -3369,8 +3366,8 @@ if (!class_exists("CAT_Helper_Page")) {
         ) {
             global $page_id;
 
-            $static =& CAT_Helper_Page::$jquery;
-            $val    =  CAT_Helper_Validate::getInstance();
+            $static = &CAT_Helper_Page::$jquery;
+            $val = CAT_Helper_Validate::getInstance();
             if (isset($arr[0])) {
                 $arr = $arr[0];
             }
@@ -3380,15 +3377,15 @@ if (!class_exists("CAT_Helper_Page")) {
                 ->query(
                     "SELECT `use_core`, `use_ui` FROM `:prefix:pages_headers` WHERE `page_id`=:id OR `page_id`=0",
                     ["id" => $page_id]
-            );
+                );
             if ($set->rowCount()) {
                 while (false !== ($row = $set->fetch())) {
                     if ($row["use_ui"] == "Y") {
                         $arr["ui"] = true;
-                }
+                    }
                     if ($row["use_core"] == "Y") {
                         $arr["core"] = true;
-            }
+                    }
                 }
             }
 
@@ -3416,7 +3413,7 @@ if (!class_exists("CAT_Helper_Page")) {
                             $arr["ui-theme"] .
                             "/jquery-ui.css"
                     ) .
-                    '" media="all" />' .
+                    '" media="all" >' .
                     "\n";
             }
 
@@ -3469,7 +3466,7 @@ if (!class_exists("CAT_Helper_Page")) {
             if (isset($arr["all"]) && is_array($arr["all"])) {
                 foreach ($arr["all"] as $item) {
                     $resolved = self::_find_item($item);
-                    if($resolved) {
+                    if ($resolved) {
                         $static[] =
                             CAT_Helper_Page::$space .
                             '<script src="' .
@@ -3522,13 +3519,13 @@ if (!class_exists("CAT_Helper_Page")) {
                     }
                     $str = "<meta ";
                     foreach ($el as $key => $val) {
-                        $str .= $key.'="'.$val.'" ';
+                        $str .= $key . '="' . $val . '" ';
                     }
-                    $str .= "/>";
+                    $str .= ">";
                     self::$meta[] = $str;
                 }
             }
-        }   // end function _analyze_meta()
+        } // end function _analyze_meta()
 
         /**
          * really deletes a page
@@ -3539,9 +3536,9 @@ if (!class_exists("CAT_Helper_Page")) {
         private static function _deletePage($page_id)
         {
             global $wb, $admin, $backend, $database;
-            $admin =& $backend;
+            $admin = &$backend;
 
-            $self   = self::getInstance();
+            $self = self::getInstance();
             $errors = [];
             // delete sections (call delete.php for each)
             $sections = self::getSections($page_id);
@@ -3565,9 +3562,9 @@ if (!class_exists("CAT_Helper_Page")) {
                                 "/modules/" .
                                 $section["module"] .
                                 "/delete.php";
+                        }
                     }
                 }
-            }
             }
             // delete access file
             self::deleteAccessFile($page_id);
@@ -3577,7 +3574,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 ->query(
                     "DELETE FROM `:prefix:pages_settings` WHERE `page_id`=:id",
                     ["id" => $page_id]
-            );
+                );
             // remove page from DB
             $self
                 ->db()
@@ -3593,7 +3590,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 ->query(
                     "DELETE FROM `:prefix:sections` WHERE `page_id` = :id",
                     ["id" => $page_id]
-            );
+                );
             if ($self->db()->isError()) {
                 $errors[] = $self->db()->getError();
             }
@@ -3607,7 +3604,7 @@ if (!class_exists("CAT_Helper_Page")) {
             );
             $order->clean($page_id);
             return $errors;
-        }   // end function _deletePage()
+        } // end function _deletePage()
 
         /**
          * marks pages as 'deleted' if trash is enabled
@@ -3617,21 +3614,21 @@ if (!class_exists("CAT_Helper_Page")) {
          * @param  integer $parent
          * @return void
          **/
-       	private static function _trashPages($parent = 0)
+        private static function _trashPages($parent = 0)
         {
             // get pages for current parent
             $pages = self::getPagesByParent($parent);
             if (count($pages)) {
                 foreach ($pages as $page_id) {
                     $page = self::getPage($page_id);
-    				// Update the page visibility to 'deleted'
+                    // Update the page visibility to 'deleted'
                     self::getInstance()
                         ->db()
                         ->query(
-                        "UPDATE `:prefix:pages` SET visibility = :vis WHERE page_id = :id LIMIT 1",
+                            "UPDATE `:prefix:pages` SET visibility = :vis WHERE page_id = :id LIMIT 1",
                             ["vis" => "deleted", "id" => $page["page_id"]]
-                    );
-    				// Run this function again for all sub-pages
+                        );
+                    // Run this function again for all sub-pages
                     if (!self::_trashPages($page["page_id"])) {
                         return false;
                     }
@@ -3641,11 +3638,11 @@ if (!class_exists("CAT_Helper_Page")) {
                             ->isError()
                     ) {
                         return false;
+                    }
                 }
             }
-            }
             return true;
-    	}   // end function _trashPages()
+        } // end function _trashPages()
 
         /**
          * evaluate correct item path
@@ -3668,7 +3665,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     )
                 )
             ) {
-                $dir = pathinfo($item,PATHINFO_FILENAME);
+                $dir = pathinfo($item, PATHINFO_FILENAME);
                 if (
                     file_exists(
                         CAT_Helper_Directory::sanitizePath(
@@ -3703,7 +3700,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 return $item;
             }
             return null;
-        }   // end function _find_item()
+        } // end function _find_item()
 
         /**
          * load all CSS files
@@ -3720,7 +3717,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     // template.css
                     $file = CAT_Helper_Directory::sanitizePath(
                         $directory . "/template.css"
-                        );
+                    );
                     if (file_exists(CAT_PATH . "/" . $file)) {
                         CAT_Helper_Page::$css[] = [
                             "media" => "screen,projection",
@@ -3730,7 +3727,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     // print.css
                     $file = CAT_Helper_Directory::sanitizePath(
                         $directory . "/print.css"
-                        );
+                    );
                     if (file_exists(CAT_PATH . "/" . $file)) {
                         CAT_Helper_Page::$css[] = [
                             "media" => "print",
@@ -3740,7 +3737,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     // frontend.css / backend.css
                     $file = CAT_Helper_Directory::sanitizePath(
                         $directory . "/" . $for . ".css"
-                        );
+                    );
                     if (file_exists(CAT_PATH . "/" . $file)) {
                         CAT_Helper_Page::$css[] = [
                             "media" => "all",
@@ -3750,7 +3747,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     // frontend.css / backend_print.css
                     $file = CAT_Helper_Directory::sanitizePath(
                         $directory . "/" . $for . "_print.css"
-                        );
+                    );
                     if (file_exists(CAT_PATH . "/" . $file)) {
                         CAT_Helper_Page::$css[] = [
                             "media" => "print",
@@ -3761,7 +3758,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     if ($for == "frontend" && defined("PAGE_ID")) {
                         $file = CAT_Helper_Directory::sanitizePath(
                             $directory . "/" . PAGE_ID . ".css"
-                            );
+                        );
                         if (
                             file_exists(
                                 CAT_Helper_Directory::sanitizePath(
@@ -3776,7 +3773,7 @@ if (!class_exists("CAT_Helper_Page")) {
                         }
                         $file = CAT_Helper_Directory::sanitizePath(
                             $directory . "/" . PAGE_ID . "_print.css"
-                            );
+                        );
                         if (
                             file_exists(
                                 CAT_Helper_Directory::sanitizePath(
@@ -3930,7 +3927,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     ->log()
                     ->logDebug(sprintf('no $mod_headers for [%s]', $for));
             }
-        }   // end function _load_headers_inc()
+        } // end function _load_headers_inc()
 
         /**
          * load JS
@@ -4002,7 +3999,7 @@ if (!class_exists("CAT_Helper_Page")) {
                 );
             }
             if ($page_id && is_numeric($page_id)) {
-                $sections     = self::getSections($page_id);
+                $sections = self::getSections($page_id);
                 $wysiwyg_seen = false;
                 self::$instance->log()->logDebug("sections:", $sections);
                 if (is_array($sections) && count($sections)) {
@@ -4072,9 +4069,9 @@ if (!class_exists("CAT_Helper_Page")) {
                             $for,
                             CAT_PATH . "/modules/" . WYSIWYG_EDITOR
                         );
-                            }
-                            $wysiwyg_seen = true;
-                        }
+                    }
+                    $wysiwyg_seen = true;
+                }
 
                 // search
                 if (
@@ -4092,7 +4089,7 @@ if (!class_exists("CAT_Helper_Page")) {
                     );
                 }
             }
-        }   // end function _load_sections()
+        } // end function _load_sections()
 
         /**
          *
@@ -4101,6 +4098,6 @@ if (!class_exists("CAT_Helper_Page")) {
          **/
         private static function _set_current($page_id)
         {
-        }   // end function _set_current()
+        } // end function _set_current()
     }
 }

@@ -1,4 +1,4 @@
-{include('backend_pages_header.tpl')}
+{include file="backend_pages_header.tpl"}
 <div id="fc_main_content">
 	<div class="fc_modified_header">
 		<div class="fc_current_page">
@@ -18,6 +18,6 @@
     {translate('These settings are page based, to manage global settings, goto Settings -> Header files.')}
     </div><br /><br />
 
-{include('backend_manage_headerfiles.tpl')}
+{include file="backend_manage_headerfiles.tpl"}
 
 </div>

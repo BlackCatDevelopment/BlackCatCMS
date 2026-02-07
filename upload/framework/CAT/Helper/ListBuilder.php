@@ -88,7 +88,7 @@ if (!class_exists("CAT_Helper_ListBuilder", false)) {
             #while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
             while (
                 $loop &&
-                (count($children[$parent]) > 0 || $parent != $root_id)
+                (!empty($children[$parent]) || $parent != $root_id)
             ) {
                 $childKey = key($children[$parent]);
                 if ($childKey === null || $childKey === "") {
@@ -275,17 +275,20 @@ if (!class_exists("CAT_Helper_ListBuilder", false)) {
             #while ( $loop && ( ( $option = each( $children[$parent] ) ) || ( $parent > $root_id ) ) )
             while (
                 $loop &&
-                (count($children[$parent]) > 0 || $parent != $root_id)
+                (!empty($children[$parent]) || $parent != $root_id)
             ) {
-                if (!strlen(key($children[$parent]))) {
+                $childKey = key($children[$parent] ?? []);
+                if ($childKey === null) {
                     $option = false;
                 } else {
                     $option = [
-                        "key" => key($children[$parent]),
+                        "key" => $childKey,
                         "value" => current($children[$parent]),
                     ];
                 }
-                array_shift($children[$parent]);
+                if (!empty($children[$parent])) {
+                    array_shift($children[$parent]);
+                }
                 $is_current = false;
                 if ($option !== false) {
                     if (

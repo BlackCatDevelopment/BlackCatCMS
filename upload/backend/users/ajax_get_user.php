@@ -23,46 +23,52 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-    include(CAT_PATH.'/framework/class.secure.php');
+if (defined("CAT_PATH")) {
+    include CAT_PATH . "/framework/class.secure.php";
 } else {
     $root = "../";
     $level = 1;
-    while (($level < 10) && (!file_exists($root.'framework/class.secure.php'))) {
+    while ($level < 10 && !file_exists($root . "/framework/class.secure.php")) {
         $root .= "../";
         $level += 1;
     }
-    if (file_exists($root.'framework/class.secure.php')) {
-        include($root.'framework/class.secure.php');
+    if (file_exists($root . "/framework/class.secure.php")) {
+        include $root . "/framework/class.secure.php";
     } else {
-        trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+        trigger_error(
+            sprintf(
+                "[ <b>%s</b> ] Can't include class.secure.php!",
+                $_SERVER["SCRIPT_NAME"]
+            ),
+            E_USER_ERROR
+        );
     }
 }
 
-$backend = CAT_Backend::getInstance('Access','users',false,false);
-$users   = CAT_Users::getInstance();
-$val     = CAT_Helper_Validate::getInstance();
+$backend = CAT_Backend::getInstance("Access", "users", false, false);
+$users = CAT_Users::getInstance();
+$val = CAT_Helper_Validate::getInstance();
 
-header('Content-type: application/json');
+header("Content-type: application/json");
 
-if ( !$users->checkPermission('access','users') )
-{
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('You do not have the permission to view users'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+if (!$users->checkPermission("access", "users")) {
+    $ajax = [
+        "message" => $backend
+            ->lang()
+            ->translate("You do not have the permission to view users"),
+        "success" => false,
+    ];
+    print json_encode($ajax);
     exit();
 }
 
-$user_id        = $val->sanitizePost('id','numeric');
-if ( !$user_id || $user_id == 1 )
-{
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('You sent an invalid value'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+$user_id = $val->sanitizePost("id", "numeric");
+if (!$user_id || $user_id == 1) {
+    $ajax = [
+        "message" => $backend->lang()->translate("You sent an invalid value"),
+        "success" => false,
+    ];
+    print json_encode($ajax);
     exit();
 }
 
@@ -71,45 +77,45 @@ $user = $users->get_user_details($user_id);
 // ==============================================
 // ! Insert admin group and current group first
 // ==============================================
-if ($user)
-{
-    // ================================ 
-    // ! Generate username field name   
-    // ================================ 
-    $username_fieldname = 'username_';
-    $salt               = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEZ_+-";
-    $salt_len           = strlen($salt) -1;
-    $i                  = 0;
-    while (++$i <= 7)
-    {
-        $num                 = mt_rand(0, $salt_len);
-        $username_fieldname .= $salt[ $num ];
+if ($user) {
+    // ================================
+    // ! Generate username field name
+    // ================================
+    $username_fieldname = "username_";
+    $salt = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEZ_+-";
+    $salt_len = strlen($salt) - 1;
+    $i = 0;
+    while (++$i <= 7) {
+        $num = mt_rand(0, $salt_len);
+        $username_fieldname .= $salt[$num];
     }
-    $page   = $users->get_initial_page($user_id,true);
-    $ajax    = array(
-        'user_id'            => $user['user_id'],
-        'username'           => $user['username'],
-        'display_name'       => $user['display_name'],
-        'groups'             => explode( ',', $user['groups_id'] ),
-        'email'              => $user['email'],
-        'active'             => $user['active'] == 1 ? true : false,
-        'home_folder'        => $user['home_folder'],
-        'otp'			    => $user['otp'] == 1 ? true : false,
-        'username_fieldname' => $username_fieldname,
-        'message'            => $backend->lang()->translate( 'User loaded successfully' ),
-        'success'            => true,
-        'initial_page'       => $page['init_page'],
-        'initial_page_param' => $page['init_page_param'],
-    );
-    print json_encode( $ajax );
+    $page = $users->get_initial_page($user_id, true) ?: [];
+
+    $ajax = [
+        "user_id" => $user["user_id"],
+        "username" => $user["username"],
+        "display_name" => $user["display_name"],
+        "groups" => explode(",", $user["groups_id"]),
+        "email" => $user["email"],
+        "active" => $user["active"] == 1 ? true : false,
+        "home_folder" => $user["home_folder"],
+        "otp" => $user["otp"] == 1 ? true : false,
+        "username_fieldname" => $username_fieldname,
+        "message" => $backend->lang()->translate("User loaded successfully"),
+        "success" => true,
+        "initial_page" => $page["init_page"] ?? null,
+        "initial_page_param" => $page["init_page_param"] ?? null,
+    ];
+    print json_encode($ajax);
     exit();
-}
-else {
-    $ajax    = array(
-        'message'    => $backend->lang()->translate('User could not be found in database'),
-        'success'    => false
-    );
-    print json_encode( $ajax );
+} else {
+    $ajax = [
+        "message" => $backend
+            ->lang()
+            ->translate("User could not be found in database"),
+        "success" => false,
+    ];
+    print json_encode($ajax);
     exit();
 }
 

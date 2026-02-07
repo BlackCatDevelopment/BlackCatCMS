@@ -54,7 +54,7 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
     private $conn;
 
     /** @var string Name of the default class to instantiate when fetching class instances. */
-    private $defaultFetchClass = '\stdClass';
+    private $defaultFetchClass = "\stdClass";
 
     /** @var mixed[] Constructor arguments for the default class to instantiate when fetching class instances. */
     private $defaultFetchClassCtorArgs = [];
@@ -83,14 +83,16 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
      */
     public function __construct($conn, $sql)
     {
-        if (! is_resource($conn)) {
-            throw new SQLAnywhereException('Invalid SQL Anywhere connection resource: ' . $conn);
+        if (!is_resource($conn)) {
+            throw new SQLAnywhereException(
+                "Invalid SQL Anywhere connection resource: " . $conn
+            );
         }
 
         $this->conn = $conn;
         $this->stmt = sasql_prepare($conn, $sql);
 
-        if (! is_resource($this->stmt)) {
+        if (!is_resource($this->stmt)) {
             throw SQLAnywhereException::fromSQLAnywhereError($conn);
         }
     }
@@ -100,34 +102,49 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
      *
      * @throws SQLAnywhereException
      */
-    public function bindParam($param, &$variable, $type = ParameterType::STRING, $length = null)
-    {
+    public function bindParam(
+        $param,
+        &$variable,
+        $type = ParameterType::STRING,
+        $length = null
+    ) {
         assert(is_int($param));
 
         switch ($type) {
             case ParameterType::INTEGER:
             case ParameterType::BOOLEAN:
-                $type = 'i';
+                $type = "i";
                 break;
 
             case ParameterType::LARGE_OBJECT:
-                $type = 'b';
+                $type = "b";
                 break;
 
             case ParameterType::NULL:
             case ParameterType::STRING:
             case ParameterType::BINARY:
-                $type = 's';
+                $type = "s";
                 break;
 
             default:
-                throw new SQLAnywhereException('Unknown type: ' . $type);
+                throw new SQLAnywhereException("Unknown type: " . $type);
         }
 
-        $this->boundValues[$param] =& $variable;
+        $this->boundValues[$param] = &$variable;
 
-        if (! sasql_stmt_bind_param_ex($this->stmt, $param - 1, $variable, $type, $variable === null)) {
-            throw SQLAnywhereException::fromSQLAnywhereError($this->conn, $this->stmt);
+        if (
+            !sasql_stmt_bind_param_ex(
+                $this->stmt,
+                $param - 1,
+                $variable,
+                $type,
+                $variable === null
+            )
+        ) {
+            throw SQLAnywhereException::fromSQLAnywhereError(
+                $this->conn,
+                $this->stmt
+            );
         }
 
         return true;
@@ -152,8 +169,11 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
      */
     public function closeCursor()
     {
-        if (! sasql_stmt_reset($this->stmt)) {
-            throw SQLAnywhereException::fromSQLAnywhereError($this->conn, $this->stmt);
+        if (!sasql_stmt_reset($this->stmt)) {
+            throw SQLAnywhereException::fromSQLAnywhereError(
+                $this->conn,
+                $this->stmt
+            );
         }
 
         return true;
@@ -206,8 +226,11 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
             }
         }
 
-        if (! sasql_stmt_execute($this->stmt)) {
-            throw SQLAnywhereException::fromSQLAnywhereError($this->conn, $this->stmt);
+        if (!sasql_stmt_execute($this->stmt)) {
+            throw SQLAnywhereException::fromSQLAnywhereError(
+                $this->conn,
+                $this->stmt
+            );
         }
 
         $this->result = sasql_stmt_result_metadata($this->stmt);
@@ -222,9 +245,12 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
      *
      * @throws SQLAnywhereException
      */
-    public function fetch($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
-    {
-        if (! is_resource($this->result)) {
+    public function fetch(
+        $fetchMode = null,
+        $cursorOrientation = PDO::FETCH_ORI_NEXT,
+        $cursorOffset = 0
+    ) {
+        if (!is_resource($this->result)) {
             return false;
         }
 
@@ -242,12 +268,12 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
 
             case FetchMode::CUSTOM_OBJECT:
                 $className = $this->defaultFetchClass;
-                $ctorArgs  = $this->defaultFetchClassCtorArgs;
+                $ctorArgs = $this->defaultFetchClassCtorArgs;
 
                 if (func_num_args() >= 2) {
-                    $args      = func_get_args();
+                    $args = func_get_args();
                     $className = $args[1];
-                    $ctorArgs  = $args[2] ?? [];
+                    $ctorArgs = $args[2] ?? [];
                 }
 
                 $result = sasql_fetch_object($this->result);
@@ -265,7 +291,9 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
                 return sasql_fetch_object($this->result);
 
             default:
-                throw new SQLAnywhereException('Fetch mode is not supported: ' . $fetchMode);
+                throw new SQLAnywhereException(
+                    "Fetch mode is not supported: " . $fetchMode
+                );
         }
     }
 
@@ -274,8 +302,11 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
      *
      * @deprecated Use fetchAllNumeric(), fetchAllAssociative() or fetchFirstColumn() instead.
      */
-    public function fetchAll($fetchMode = null, $fetchArgument = null, $ctorArgs = null)
-    {
+    public function fetchAll(
+        $fetchMode = null,
+        $fetchArgument = null,
+        $ctorArgs = null
+    ) {
         $rows = [];
 
         switch ($fetchMode) {
@@ -334,7 +365,7 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
      */
     public function fetchNumeric()
     {
-        if (! is_resource($this->result)) {
+        if (!is_resource($this->result)) {
             return false;
         }
 
@@ -346,7 +377,7 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
      */
     public function fetchAssociative()
     {
-        if (! is_resource($this->result)) {
+        if (!is_resource($this->result)) {
             return false;
         }
 
@@ -413,9 +444,11 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
      */
     public function setFetchMode($fetchMode, $arg2 = null, $arg3 = null)
     {
-        $this->defaultFetchMode          = $fetchMode;
-        $this->defaultFetchClass         = $arg2 ?: $this->defaultFetchClass;
-        $this->defaultFetchClassCtorArgs = $arg3 ? (array) $arg3 : $this->defaultFetchClassCtorArgs;
+        $this->defaultFetchMode = $fetchMode;
+        $this->defaultFetchClass = $arg2 ?: $this->defaultFetchClass;
+        $this->defaultFetchClassCtorArgs = $arg3
+            ? (array) $arg3
+            : $this->defaultFetchClassCtorArgs;
 
         return true;
     }
@@ -431,33 +464,44 @@ class SQLAnywhereStatement implements IteratorAggregate, Statement, Result
      *
      * @throws SQLAnywhereException
      */
-    private function castObject(stdClass $sourceObject, $destinationClass, array $ctorArgs = [])
-    {
-        if (! is_string($destinationClass)) {
-            if (! is_object($destinationClass)) {
-                throw new SQLAnywhereException(sprintf(
-                    'Destination class has to be of type string or object, %s given.',
-                    gettype($destinationClass)
-                ));
+    private function castObject(
+        stdClass $sourceObject,
+        $destinationClass,
+        array $ctorArgs = []
+    ) {
+        if (!is_string($destinationClass)) {
+            if (!is_object($destinationClass)) {
+                throw new SQLAnywhereException(
+                    sprintf(
+                        "Destination class has to be of type string or object, %s given.",
+                        gettype($destinationClass)
+                    )
+                );
             }
         } else {
             $destinationClass = new ReflectionClass($destinationClass);
             $destinationClass = $destinationClass->newInstanceArgs($ctorArgs);
         }
 
-        $sourceReflection           = new ReflectionObject($sourceObject);
+        $sourceReflection = new ReflectionObject($sourceObject);
         $destinationClassReflection = new ReflectionObject($destinationClass);
 
         foreach ($sourceReflection->getProperties() as $sourceProperty) {
-            $sourceProperty->setAccessible(true);
+            if (PHP_VERSION_ID < 80100) {
+                $sourceProperty->setAccessible(true);
+            }
 
-            $name  = $sourceProperty->getName();
+            $name = $sourceProperty->getName();
             $value = $sourceProperty->getValue($sourceObject);
 
             if ($destinationClassReflection->hasProperty($name)) {
-                $destinationProperty = $destinationClassReflection->getProperty($name);
+                $destinationProperty = $destinationClassReflection->getProperty(
+                    $name
+                );
 
-                $destinationProperty->setAccessible(true);
+                if (PHP_VERSION_ID < 80100) {
+                    $destinationProperty->setAccessible(true);
+                }
                 $destinationProperty->setValue($destinationClass, $value);
             } else {
                 $destinationClass->$name = $value;

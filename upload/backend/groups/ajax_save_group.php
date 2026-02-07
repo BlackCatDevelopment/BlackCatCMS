@@ -23,20 +23,28 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+if (defined("CAT_PATH")) {
+    include CAT_PATH . "/framework/class.secure.php";
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'framework/class.secure.php')) {
-		include($root.'framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+
+    while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
+        $root .= "../";
+        $level++;
+    }
+
+    if (file_exists($root . "framework/class.secure.php")) {
+        include $root . "framework/class.secure.php";
+    } else {
+        trigger_error(
+            sprintf(
+                "[ <b>%s</b> ] Can't include class.secure.php!",
+                $_SERVER["SCRIPT_NAME"]
+            ),
+            E_USER_ERROR
+        );
+    }
 }
 
 $backend = CAT_Backend::getInstance('Access', 'groups', false);
@@ -102,10 +110,7 @@ if(
 require CAT_ADMIN_PATH . '/groups/get_permissions.php';
 
 $params = array(
-    'name'                 => htmlspecialchars($group_name),
-    'system_permissions'   => $system_permissions,
-    'module_permissions'   => $module_permissions,
-    'template_permissions' => $template_permissions
+    'name' => $group_name,'system_permissions'=>$system_permissions,'module_permissions'=>$module_permissions,'template_permissions'=>$template_permissions
 );
 
 if ( $addGroup != '' )

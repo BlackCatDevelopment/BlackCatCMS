@@ -40,7 +40,7 @@ class jQueryAdmin extends LibraryUtils {
         $preset_content = preg_replace( '#\$\(#', 'jQuery(', $preset_content );
         $preset_content = preg_replace( '#\$\.#', 'jQuery.', $preset_content );
         if ( ! preg_match( '#jquery\.noconflict#i', $preset_content ) ) {
-            $preset_content = preg_replace( '#\<head\>#i', '<head><script type="text/javascript">if ( typeof jQuery != "undefined" ) { jQuery.noConflict(); }</script>', $preset_content );
+            $preset_content = preg_replace( '#\<head\>#i', '<head><script >if ( typeof jQuery != "undefined" ) { jQuery.noConflict(); }</script>', $preset_content );
         }
         return $preset_content;
     }

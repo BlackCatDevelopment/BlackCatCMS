@@ -26,52 +26,52 @@ class ChromePhp
     /**
      * @var string
      */
-    const VERSION = '4.0.0';
+    const VERSION = "4.0.0";
 
     /**
      * @var string
      */
-    const HEADER_NAME = 'X-ChromeLogger-Data';
+    const HEADER_NAME = "X-ChromeLogger-Data";
 
     /**
      * @var string
      */
-    const BACKTRACE_LEVEL = 'backtrace_level';
+    const BACKTRACE_LEVEL = "backtrace_level";
 
     /**
      * @var string
      */
-    const LOG = 'log';
+    const LOG = "log";
 
     /**
      * @var string
      */
-    const WARN = 'warn';
+    const WARN = "warn";
 
     /**
      * @var string
      */
-    const ERROR = 'error';
+    const ERROR = "error";
 
     /**
      * @var string
      */
-    const GROUP = 'group';
+    const GROUP = "group";
 
     /**
      * @var string
      */
-    const INFO = 'info';
+    const INFO = "info";
 
     /**
      * @var string
      */
-    const GROUP_END = 'groupEnd';
+    const GROUP_END = "groupEnd";
 
     /**
      * @var string
      */
-    const GROUP_COLLAPSED = 'groupCollapsed';
+    const GROUP_COLLAPSED = "groupCollapsed";
 
     /**
      * @var string
@@ -86,16 +86,16 @@ class ChromePhp
     /**
      * @var array
      */
-    protected $_json = array(
-        'version' => self::VERSION,
-        'columns' => array('log', 'backtrace', 'type'),
-        'rows' => array()
-    );
+    protected $_json = [
+        "version" => self::VERSION,
+        "columns" => ["log", "backtrace", "type"],
+        "rows" => [],
+    ];
 
     /**
      * @var array
      */
-    protected $_backtraces = array();
+    protected $_backtraces = [];
 
     /**
      * @var bool
@@ -105,9 +105,9 @@ class ChromePhp
     /**
      * @var array
      */
-    protected $_settings = array(
-        self::BACKTRACE_LEVEL => 1
-    );
+    protected $_settings = [
+        self::BACKTRACE_LEVEL => 1,
+    ];
 
     /**
      * @var ChromePhp
@@ -119,7 +119,7 @@ class ChromePhp
      *
      * @var array
      */
-    protected $_processed = array();
+    protected $_processed = [];
 
     /**
      * constructor
@@ -127,8 +127,9 @@ class ChromePhp
     private function __construct()
     {
         $this->_php_version = phpversion();
-        $this->_timestamp = $this->_php_version >= 5.1 ? $_SERVER['REQUEST_TIME'] : time();
-        $this->_json['request_uri'] = $_SERVER['REQUEST_URI'];
+        $this->_timestamp =
+            $this->_php_version >= 5.1 ? $_SERVER["REQUEST_TIME"] : time();
+        $this->_json["request_uri"] = $_SERVER["REQUEST_URI"];
     }
 
     /**
@@ -152,7 +153,7 @@ class ChromePhp
      */
     public static function log()
     {
-        return self::_log('', func_get_args());
+        return self::_log("", func_get_args());
     }
 
     /**
@@ -233,9 +234,9 @@ class ChromePhp
 
         $logger = self::getInstance();
 
-        $logger->_processed = array();
+        $logger->_processed = [];
 
-        $logs = array();
+        $logs = [];
         foreach ($args as $arg) {
             $logs[] = $logger->_convert($arg);
         }
@@ -243,9 +244,13 @@ class ChromePhp
         $backtrace = debug_backtrace(false);
         $level = $logger->getSetting(self::BACKTRACE_LEVEL);
 
-        $backtrace_message = 'unknown';
-        if (isset($backtrace[$level]['file']) && isset($backtrace[$level]['line'])) {
-            $backtrace_message = $backtrace[$level]['file'] . ' : ' . $backtrace[$level]['line'];
+        $backtrace_message = "unknown";
+        if (
+            isset($backtrace[$level]["file"]) &&
+            isset($backtrace[$level]["line"])
+        ) {
+            $backtrace_message =
+                $backtrace[$level]["file"] . " : " . $backtrace[$level]["line"];
         }
 
         $logger->_addRow($logs, $backtrace_message, $type);
@@ -268,18 +273,21 @@ class ChromePhp
         //Also avoid recursion when objects refer to each other
         $this->_processed[] = $object;
 
-        $object_as_array = array();
+        $object_as_array = [];
 
         // first add the class name
-        $object_as_array['___class_name'] = get_class($object);
+        $object_as_array["___class_name"] = get_class($object);
 
         // loop through object vars
         $object_vars = get_object_vars($object);
         foreach ($object_vars as $key => $value) {
-
             // same instance as parent object
-            if ($value === $object || in_array($value, $this->_processed, true)) {
-                $value = 'recursion - parent object [' . get_class($value) . ']';
+            if (
+                $value === $object ||
+                in_array($value, $this->_processed, true)
+            ) {
+                $value =
+                    "recursion - parent object [" . get_class($value) . "]";
             }
             $object_as_array[$key] = $this->_convert($value);
         }
@@ -288,7 +296,6 @@ class ChromePhp
 
         // loop through the properties and add those
         foreach ($reflection->getProperties() as $property) {
-
             // if one of these properties was already added above then ignore it
             if (array_key_exists($property->getName(), $object_vars)) {
                 continue;
@@ -296,18 +303,24 @@ class ChromePhp
             $type = $this->_getPropertyKey($property);
 
             if ($this->_php_version >= 5.3) {
-                $property->setAccessible(true);
+                if (PHP_VERSION_ID < 80100) {
+                    $property->setAccessible(true);
+                }
             }
 
             try {
                 $value = $property->getValue($object);
             } catch (ReflectionException $e) {
-                $value = 'only PHP 5.3 can access private/protected properties';
+                $value = "only PHP 5.3 can access private/protected properties";
             }
 
             // same instance as parent object
-            if ($value === $object || in_array($value, $this->_processed, true)) {
-                $value = 'recursion - parent object [' . get_class($value) . ']';
+            if (
+                $value === $object ||
+                in_array($value, $this->_processed, true)
+            ) {
+                $value =
+                    "recursion - parent object [" . get_class($value) . "]";
             }
 
             $object_as_array[$type] = $this->_convert($value);
@@ -323,17 +336,17 @@ class ChromePhp
      */
     protected function _getPropertyKey(ReflectionProperty $property)
     {
-        $static = $property->isStatic() ? ' static' : '';
+        $static = $property->isStatic() ? " static" : "";
         if ($property->isPublic()) {
-            return 'public' . $static . ' ' . $property->getName();
+            return "public" . $static . " " . $property->getName();
         }
 
         if ($property->isProtected()) {
-            return 'protected' . $static . ' ' . $property->getName();
+            return "protected" . $static . " " . $property->getName();
         }
 
         if ($property->isPrivate()) {
-            return 'private' . $static . ' ' . $property->getName();
+            return "private" . $static . " " . $property->getName();
         }
     }
 
@@ -352,7 +365,11 @@ class ChromePhp
 
         // for group, groupEnd, and groupCollapsed
         // take out the backtrace since it is not useful
-        if ($type == self::GROUP || $type == self::GROUP_END || $type == self::GROUP_COLLAPSED) {
+        if (
+            $type == self::GROUP ||
+            $type == self::GROUP_END ||
+            $type == self::GROUP_COLLAPSED
+        ) {
             $backtrace = null;
         }
 
@@ -360,15 +377,15 @@ class ChromePhp
             $this->_backtraces[] = $backtrace;
         }
 
-        $row = array($logs, $backtrace, $type);
+        $row = [$logs, $backtrace, $type];
 
-        $this->_json['rows'][] = $row;
+        $this->_json["rows"][] = $row;
         $this->_writeHeader($this->_json);
     }
 
     protected function _writeHeader($data)
     {
-        header(self::HEADER_NAME . ': ' . $this->_encode($data));
+        header(self::HEADER_NAME . ": " . $this->_encode($data));
     }
 
     /**

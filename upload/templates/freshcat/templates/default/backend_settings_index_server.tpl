@@ -53,7 +53,7 @@
 			{/if}
 			<div class="clear_sp"></div>
 
-<script charset=windows-1250 type="text/javascript">
+<script charset=windows-1250 >
     $('#fc_operating_system_windows').click( function()
     {
         $('#fc_linux').hide();

@@ -1,4 +1,4 @@
-    <script charset=windows-1250 type="text/javascript">
+    <script charset=windows-1250 >
         $.getScript( "{$CAT_URL}/templates/freshcat/js/backend_headerfiles.js" );
     </script>
 

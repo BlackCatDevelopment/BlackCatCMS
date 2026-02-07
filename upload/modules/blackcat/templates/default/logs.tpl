@@ -16,7 +16,7 @@
     <div id="bclogdialog" title="{translate('Log')}:" style="display:none;max-height:400px;overflow:auto;font-size:10px;"></div>
 </div>
 
-<script charset=windows-1250 type="text/javascript">
+<script charset=windows-1250 >
     jQuery(document).ready(function($) {
 
 

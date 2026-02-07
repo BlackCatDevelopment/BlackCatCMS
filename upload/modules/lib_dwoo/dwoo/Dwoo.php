@@ -1,6 +1,6 @@
 <?php
 
-define('DWOO_DIRECTORY', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+define("DWOO_DIRECTORY", dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
 /**
  * main dwoo class, allows communication between the compiler, template and data classes
@@ -35,7 +35,7 @@ class Dwoo
      *
      * @var string
      */
-    const VERSION = '1.1.1';
+    const VERSION = "1.1.1";
 
     /**
      * unique number of this dwoo release
@@ -76,7 +76,7 @@ class Dwoo
      * @see getCharset
      * @var string
      */
-    protected $charset = 'utf-8';
+    protected $charset = "utf-8";
 
     /**
      * global variables that are accessible through $dwoo.* in the templates
@@ -142,7 +142,7 @@ class Dwoo
      * @see removePlugin
      * @var array
      */
-    protected $plugins = array();
+    protected $plugins = [];
 
     /**
      * stores the filter callbacks
@@ -151,7 +151,7 @@ class Dwoo
      * @see removeFilter
      * @var array
      */
-    protected $filters = array();
+    protected $filters = [];
 
     /**
      * stores the resource types and associated
@@ -159,19 +159,16 @@ class Dwoo
      *
      * @var array
      */
-    protected $resources = array
-    (
-        'file'        =>    array
-        (
-            'class'        =>    'Dwoo_Template_File',
-            'compiler'    =>    null
-        ),
-        'string'    =>    array
-        (
-            'class'        =>    'Dwoo_Template_String',
-            'compiler'    =>    null
-        )
-    );
+    protected $resources = [
+        "file" => [
+            "class" => "Dwoo_Template_File",
+            "compiler" => null,
+        ],
+        "string" => [
+            "class" => "Dwoo_Template_String",
+            "compiler" => null,
+        ],
+    ];
 
     /**
      * the dwoo loader object used to load plugins by this dwoo instance
@@ -247,7 +244,7 @@ class Dwoo
      */
     protected $pluginProxy;
 
-     /**
+    /**
      * constructor, sets the cache and compile dir to the default values if not provided
      *
      * @param string $compileDir path to the compiled directory, defaults to lib/compiled
@@ -286,7 +283,7 @@ class Dwoo
      *                                   Dwoo_Compiler will be used.
      * @return string nothing or the template output if $output is true
      */
-    public function output($tpl, $data = array(), ?Dwoo_ICompiler $compiler = null)
+    public function output($tpl, $data = [], ?Dwoo_ICompiler $compiler = null)
     {
         return $this->get($tpl, $data, $compiler, true);
     }
@@ -304,7 +301,7 @@ class Dwoo
      * @param bool $output flag that defines whether the function returns the output of the template (false, default) or echoes it directly (true)
      * @return string nothing or the template output if $output is true
      */
-    public function get($_tpl, $data = array(), $_compiler = null, $_output = false)
+    public function get($_tpl, $data = [], $_compiler = null, $_output = false)
     {
         // a render call came from within a template, so we need a new dwoo instance in order to avoid breaking this one
         if ($this->template instanceof Dwoo_ITemplate) {
@@ -318,7 +315,10 @@ class Dwoo
         } elseif (is_string($_tpl) && file_exists($_tpl)) {
             $_tpl = new Dwoo_Template_File($_tpl);
         } else {
-            throw new Dwoo_Exception('Dwoo->get/Dwoo->output\'s first argument must be a Dwoo_ITemplate (i.e. Dwoo_Template_File) or a valid path to a template file', E_USER_NOTICE);
+            throw new Dwoo_Exception(
+                'Dwoo->get/Dwoo->output\'s first argument must be a Dwoo_ITemplate (i.e. Dwoo_Template_File) or a valid path to a template file',
+                E_USER_NOTICE
+            );
         }
 
         // save the current template, enters render mode at the same time
@@ -331,10 +331,13 @@ class Dwoo
         } elseif (is_array($data)) {
             $this->data = $data;
         } else {
-            throw new Dwoo_Exception('Dwoo->get/Dwoo->output\'s data argument must be a Dwoo_IDataProvider object (i.e. Dwoo_Data) or an associative array', E_USER_NOTICE);
+            throw new Dwoo_Exception(
+                'Dwoo->get/Dwoo->output\'s data argument must be a Dwoo_IDataProvider object (i.e. Dwoo_Data) or an associative array',
+                E_USER_NOTICE
+            );
         }
 
-        $this->globals['template'] = $_tpl->getName();
+        $this->globals["template"] = $_tpl->getName();
         $this->initRuntimeVars($_tpl);
 
         // try to get cached template
@@ -366,16 +369,27 @@ class Dwoo
             // template returned false so it needs to be recompiled
             if ($out === false) {
                 $_tpl->forceCompilation();
-                $compiledTemplate = $_tpl->getCompiledTemplate($this, $_compiler);
+                $compiledTemplate = $_tpl->getCompiledTemplate(
+                    $this,
+                    $_compiler
+                );
                 $out = include $compiledTemplate;
             }
 
             if ($doCache === true) {
-                $out = preg_replace('/(<%|%>|<\?php|<\?|\?>)/', '<?php /*'.$dynamicId.'*/ echo \'$1\'; ?>', $out);
-                if (!class_exists('Dwoo_plugin_dynamic', false)) {
-                    $this->getLoader()->loadPlugin('dynamic');
+                $out = preg_replace(
+                    "/(<%|%>|<\?php|<\?|\?>)/",
+                    "<?php /*" . $dynamicId . '*/ echo \'$1\'; ?>',
+                    $out
+                );
+                if (!class_exists("Dwoo_plugin_dynamic", false)) {
+                    $this->getLoader()->loadPlugin("dynamic");
                 }
-                $out = Dwoo_Plugin_dynamic::unescape($out, $dynamicId, $compiledTemplate);
+                $out = Dwoo_Plugin_dynamic::unescape(
+                    $out,
+                    $dynamicId,
+                    $compiledTemplate
+                );
             }
 
             // process filters
@@ -390,7 +404,6 @@ class Dwoo
             if ($doCache === true) {
                 // building cache
                 $file = $_tpl->cache($this, $out);
-
                 // run it from the cache to be sure dynamics are rendered
                 if ($_output === true) {
                     include $file;
@@ -407,6 +420,7 @@ class Dwoo
                 // no need to build cache
                 // exit render mode
                 $this->template = null;
+
                 // output
                 if ($_output === true) {
                     echo $out;
@@ -423,13 +437,12 @@ class Dwoo
      */
     protected function initGlobals()
     {
-        $this->globals = array
-        (
-            'version'    =>    self::VERSION,
-            'ad'        =>    '<a href="http://dwoo.org/">Powered by Dwoo</a>',
-            'now'        =>    $_SERVER['REQUEST_TIME'],
-            'charset'    =>    $this->charset,
-        );
+        $this->globals = [
+            "version" => self::VERSION,
+            "ad" => '<a href="http://dwoo.org/">Powered by Dwoo</a>',
+            "now" => $_SERVER["REQUEST_TIME"],
+            "charset" => $this->charset,
+        ];
     }
 
     /**
@@ -442,12 +455,12 @@ class Dwoo
      */
     protected function initRuntimeVars(Dwoo_ITemplate $tpl)
     {
-        $this->runtimePlugins = array();
-        $this->scope =& $this->data;
-        $this->scopeTree = array();
-        $this->stack = array();
+        $this->runtimePlugins = [];
+        $this->scope = &$this->data;
+        $this->scopeTree = [];
+        $this->stack = [];
         $this->curBlock = null;
-        $this->buffer = '';
+        $this->buffer = "";
     }
 
     /*
@@ -467,21 +480,55 @@ class Dwoo
     {
         $compilable = $compilable ? self::COMPILABLE_PLUGIN : 0;
         if (is_array($callback)) {
-            if (is_subclass_of(is_object($callback[0]) ? get_class($callback[0]) : $callback[0], 'Dwoo_Block_Plugin')) {
-                $this->plugins[$name] = array('type'=>self::BLOCK_PLUGIN | $compilable, 'callback'=>$callback, 'class'=>(is_object($callback[0]) ? get_class($callback[0]) : $callback[0]));
+            if (
+                is_subclass_of(
+                    is_object($callback[0])
+                        ? get_class($callback[0])
+                        : $callback[0],
+                    "Dwoo_Block_Plugin"
+                )
+            ) {
+                $this->plugins[$name] = [
+                    "type" => self::BLOCK_PLUGIN | $compilable,
+                    "callback" => $callback,
+                    "class" => is_object($callback[0])
+                        ? get_class($callback[0])
+                        : $callback[0],
+                ];
             } else {
-                $this->plugins[$name] = array('type'=>self::CLASS_PLUGIN | $compilable, 'callback'=>$callback, 'class'=>(is_object($callback[0]) ? get_class($callback[0]) : $callback[0]), 'function'=>$callback[1]);
+                $this->plugins[$name] = [
+                    "type" => self::CLASS_PLUGIN | $compilable,
+                    "callback" => $callback,
+                    "class" => is_object($callback[0])
+                        ? get_class($callback[0])
+                        : $callback[0],
+                    "function" => $callback[1],
+                ];
             }
         } elseif (class_exists($callback, false)) {
-            if (is_subclass_of($callback, 'Dwoo_Block_Plugin')) {
-                $this->plugins[$name] = array('type'=>self::BLOCK_PLUGIN | $compilable, 'callback'=>$callback, 'class'=>$callback);
+            if (is_subclass_of($callback, "Dwoo_Block_Plugin")) {
+                $this->plugins[$name] = [
+                    "type" => self::BLOCK_PLUGIN | $compilable,
+                    "callback" => $callback,
+                    "class" => $callback,
+                ];
             } else {
-                $this->plugins[$name] = array('type'=>self::CLASS_PLUGIN | $compilable, 'callback'=>$callback, 'class'=>$callback, 'function'=>'process');
+                $this->plugins[$name] = [
+                    "type" => self::CLASS_PLUGIN | $compilable,
+                    "callback" => $callback,
+                    "class" => $callback,
+                    "function" => "process",
+                ];
             }
         } elseif (function_exists($callback)) {
-            $this->plugins[$name] = array('type'=>self::FUNC_PLUGIN | $compilable, 'callback'=>$callback);
+            $this->plugins[$name] = [
+                "type" => self::FUNC_PLUGIN | $compilable,
+                "callback" => $callback,
+            ];
         } else {
-            throw new Dwoo_Exception('Callback could not be processed correctly, please check that the function/class you used exists');
+            throw new Dwoo_Exception(
+                "Callback could not be processed correctly, please check that the function/class you used exists"
+            );
         }
     }
 
@@ -506,26 +553,40 @@ class Dwoo
     public function addFilter($callback, $autoload = false)
     {
         if ($autoload) {
-            $class = 'Dwoo_Filter_'.$callback;
+            $class = "Dwoo_Filter_" . $callback;
 
             if (!class_exists($class, false) && !function_exists($class)) {
                 try {
                     $this->getLoader()->loadPlugin($callback);
                 } catch (Dwoo_Exception $e) {
-                    if (strstr($callback, 'Dwoo_Filter_')) {
-                        throw new Dwoo_Exception('Wrong filter name : '.$callback.', the "Dwoo_Filter_" prefix should not be used, please only use "'.str_replace('Dwoo_Filter_', '', $callback).'"');
+                    if (strstr($callback, "Dwoo_Filter_")) {
+                        throw new Dwoo_Exception(
+                            "Wrong filter name : " .
+                                $callback .
+                                ', the "Dwoo_Filter_" prefix should not be used, please only use "' .
+                                str_replace("Dwoo_Filter_", "", $callback) .
+                                '"'
+                        );
                     } else {
-                        throw new Dwoo_Exception('Wrong filter name : '.$callback.', when using autoload the filter must be in one of your plugin dir as "name.php" containg a class or function named "Dwoo_Filter_name"');
+                        throw new Dwoo_Exception(
+                            "Wrong filter name : " .
+                                $callback .
+                                ', when using autoload the filter must be in one of your plugin dir as "name.php" containg a class or function named "Dwoo_Filter_name"'
+                        );
                     }
                 }
             }
 
             if (class_exists($class, false)) {
-                $callback = array(new $class($this), 'process');
+                $callback = [new $class($this), "process"];
             } elseif (function_exists($class)) {
                 $callback = $class;
             } else {
-                throw new Dwoo_Exception('Wrong filter name : '.$callback.', when using autoload the filter must be in one of your plugin dir as "name.php" containg a class or function named "Dwoo_Filter_name"');
+                throw new Dwoo_Exception(
+                    "Wrong filter name : " .
+                        $callback .
+                        ', when using autoload the filter must be in one of your plugin dir as "name.php" containg a class or function named "Dwoo_Filter_name"'
+                );
             }
 
             $this->filters[] = $callback;
@@ -541,13 +602,21 @@ class Dwoo
      */
     public function removeFilter($callback)
     {
-        if (($index = array_search('Dwoo_Filter_'.$callback, $this->filters, true)) !== false) {
+        if (
+            ($index = array_search(
+                "Dwoo_Filter_" . $callback,
+                $this->filters,
+                true
+            )) !== false
+        ) {
             unset($this->filters[$index]);
-        } elseif (($index = array_search($callback, $this->filters, true)) !== false) {
+        } elseif (
+            ($index = array_search($callback, $this->filters, true)) !== false
+        ) {
             unset($this->filters[$index]);
-        } else    {
-            $class = 'Dwoo_Filter_' . $callback;
-            foreach ($this->filters as $index=>$filter) {
+        } else {
+            $class = "Dwoo_Filter_" . $callback;
+            foreach ($this->filters as $index => $filter) {
                 if (is_array($filter) && $filter[0] instanceof $class) {
                     unset($this->filters[$index]);
                     break;
@@ -566,19 +635,26 @@ class Dwoo
     public function addResource($name, $class, $compilerFactory = null)
     {
         if (strlen($name) < 2) {
-            throw new Dwoo_Exception('Resource names must be at least two-character long to avoid conflicts with Windows paths');
+            throw new Dwoo_Exception(
+                "Resource names must be at least two-character long to avoid conflicts with Windows paths"
+            );
         }
 
         if (!class_exists($class)) {
-            throw new Dwoo_Exception('Resource class does not exist');
+            throw new Dwoo_Exception("Resource class does not exist");
         }
 
         $interfaces = class_implements($class);
-        if (in_array('Dwoo_ITemplate', $interfaces) === false) {
-            throw new Dwoo_Exception('Resource class must implement Dwoo_ITemplate');
+        if (in_array("Dwoo_ITemplate", $interfaces) === false) {
+            throw new Dwoo_Exception(
+                "Resource class must implement Dwoo_ITemplate"
+            );
         }
 
-        $this->resources[$name] = array('class'=>$class, 'compiler'=>$compilerFactory);
+        $this->resources[$name] = [
+            "class" => $class,
+            "compiler" => $compilerFactory,
+        ];
     }
 
     /**
@@ -589,8 +665,11 @@ class Dwoo
     public function removeResource($name)
     {
         unset($this->resources[$name]);
-        if ($name==='file') {
-            $this->resources['file'] = array('class'=>'Dwoo_Template_File', 'compiler'=>null);
+        if ($name === "file") {
+            $this->resources["file"] = [
+                "class" => "Dwoo_Template_File",
+                "compiler" => null,
+            ];
         }
     }
 
@@ -642,7 +721,12 @@ class Dwoo
     public function getCacheDir()
     {
         if ($this->cacheDir === null) {
-            $this->setCacheDir(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR);
+            $this->setCacheDir(
+                dirname(__FILE__) .
+                    DIRECTORY_SEPARATOR .
+                    "cache" .
+                    DIRECTORY_SEPARATOR
+            );
         }
 
         return $this->cacheDir;
@@ -655,9 +739,13 @@ class Dwoo
      */
     public function setCacheDir($dir)
     {
-        $this->cacheDir = rtrim($dir, '/\\').DIRECTORY_SEPARATOR;
+        $this->cacheDir = rtrim($dir, "/\\") . DIRECTORY_SEPARATOR;
         if (is_writable($this->cacheDir) === false) {
-            throw new Dwoo_Exception('The cache directory must be writable, chmod "'.$this->cacheDir.'" to make it writable');
+            throw new Dwoo_Exception(
+                'The cache directory must be writable, chmod "' .
+                    $this->cacheDir .
+                    '" to make it writable'
+            );
         }
     }
 
@@ -669,7 +757,12 @@ class Dwoo
     public function getCompileDir()
     {
         if ($this->compileDir === null) {
-            $this->setCompileDir(dirname(__FILE__).DIRECTORY_SEPARATOR.'compiled'.DIRECTORY_SEPARATOR);
+            $this->setCompileDir(
+                dirname(__FILE__) .
+                    DIRECTORY_SEPARATOR .
+                    "compiled" .
+                    DIRECTORY_SEPARATOR
+            );
         }
 
         return $this->compileDir;
@@ -682,9 +775,13 @@ class Dwoo
      */
     public function setCompileDir($dir)
     {
-        $this->compileDir = rtrim($dir, '/\\').DIRECTORY_SEPARATOR;
+        $this->compileDir = rtrim($dir, "/\\") . DIRECTORY_SEPARATOR;
         if (is_writable($this->compileDir) === false) {
-            throw new Dwoo_Exception('The compile directory must be writable, chmod "'.$this->compileDir.'" to make it writable');
+            throw new Dwoo_Exception(
+                'The compile directory must be writable, chmod "' .
+                    $this->compileDir .
+                    '" to make it writable'
+            );
         }
     }
 
@@ -762,7 +859,7 @@ class Dwoo
      */
     public function setDefaultCompilerFactory($resourceName, $compilerFactory)
     {
-        $this->resources[$resourceName]['compiler'] = $compilerFactory;
+        $this->resources[$resourceName]["compiler"] = $compilerFactory;
     }
 
     /**
@@ -773,7 +870,7 @@ class Dwoo
      */
     public function getDefaultCompilerFactory($resourceName)
     {
-        return $this->resources[$resourceName]['compiler'];
+        return $this->resources[$resourceName]["compiler"];
     }
 
     /**
@@ -804,7 +901,8 @@ class Dwoo
      *
      * @param Dwoo_IPluginProxy $pluginProxy the proxy object
      */
-    public function setPluginProxy(Dwoo_IPluginProxy $pluginProxy) {
+    public function setPluginProxy(Dwoo_IPluginProxy $pluginProxy)
+    {
         $this->pluginProxy = $pluginProxy;
     }
 
@@ -813,7 +911,8 @@ class Dwoo
      *
      * @param Dwoo_IPluginProxy|null the proxy object if any
      */
-    public function getPluginProxy() {
+    public function getPluginProxy()
+    {
         return $this->pluginProxy;
     }
 
@@ -838,14 +937,18 @@ class Dwoo
      * @param int $olderThan minimum time (in seconds) required for a cached template to be cleared
      * @return int the amount of templates cleared
      */
-    public function clearCache($olderThan=-1)
+    public function clearCache($olderThan = -1)
     {
         $cacheDirs = new RecursiveDirectoryIterator($this->getCacheDir());
         $cache = new RecursiveIteratorIterator($cacheDirs);
         $expired = time() - $olderThan;
         $count = 0;
         foreach ($cache as $file) {
-            if ($cache->isDot() || $cache->isDir() || substr($file, -5) !== '.html') {
+            if (
+                $cache->isDot() ||
+                $cache->isDir() ||
+                substr($file, -5) !== ".html"
+            ) {
                 continue;
             }
             if ($cache->getCTime() < $expired) {
@@ -865,13 +968,29 @@ class Dwoo
      * @param string $compileId the unique compiler identifier
      * @return Dwoo_ITemplate
      */
-    public function templateFactory($resourceName, $resourceId, $cacheTime = null, $cacheId = null, $compileId = null, ?Dwoo_ITemplate $parentTemplate = null)
-    {
+    public function templateFactory(
+        $resourceName,
+        $resourceId,
+        $cacheTime = null,
+        $cacheId = null,
+        $compileId = null,
+        ?Dwoo_ITemplate $parentTemplate = null
+    ) {
         if (isset($this->resources[$resourceName])) {
             // TODO could be changed to $this->resources[$resourceName]['class']::templateFactory(..) in 5.3 maybe
-            return call_user_func(array($this->resources[$resourceName]['class'], 'templateFactory'), $this, $resourceId, $cacheTime, $cacheId, $compileId, $parentTemplate);
+            return call_user_func(
+                [$this->resources[$resourceName]["class"], "templateFactory"],
+                $this,
+                $resourceId,
+                $cacheTime,
+                $cacheId,
+                $compileId,
+                $parentTemplate
+            );
         } else {
-            throw new Dwoo_Exception('Unknown resource type : '.$resourceName);
+            throw new Dwoo_Exception(
+                "Unknown resource type : " . $resourceName
+            );
         }
     }
 
@@ -883,7 +1002,7 @@ class Dwoo
      *                                 and return true only if it's not empty
      * @return bool true if it's an array (and not empty) or false if it's not an array (or if it's empty)
      */
-    public function isArray($value, $checkIsEmpty=false)
+    public function isArray($value, $checkIsEmpty = false)
     {
         if (is_array($value) === true) {
             if ($checkIsEmpty === false) {
@@ -918,12 +1037,20 @@ class Dwoo
      * @param string $message the error message
      * @param int $level the error level, one of the PHP's E_* constants
      */
-    public function triggerError($message, $level=E_USER_NOTICE)
+    public function triggerError($message, $level = E_USER_NOTICE)
     {
         if (!($tplIdentifier = $this->template->getResourceIdentifier())) {
             $tplIdentifier = $this->template->getResourceName();
         }
-        trigger_error('Dwoo error (in '.$tplIdentifier.') : '.$message, $level);
+
+        $full = "Dwoo error (in " . $tplIdentifier . ") : " . $message;
+
+        // PHP 8.4: trigger_error(E_USER_ERROR) ist deprecated -> Exception werfen
+        if ($level === E_USER_ERROR) {
+            throw new Dwoo_Exception($full, E_USER_NOTICE);
+        }
+
+        trigger_error($full, $level);
     }
 
     /*
@@ -937,12 +1064,12 @@ class Dwoo
      * @param array $args the arguments to be passed to the block's init() function
      * @return Dwoo_Block_Plugin the newly created block
      */
-    public function addStack($blockName, array $args=array())
+    public function addStack($blockName, array $args = [])
     {
         if (isset($this->plugins[$blockName])) {
-            $class = $this->plugins[$blockName]['class'];
+            $class = $this->plugins[$blockName]["class"];
         } else {
-            $class = 'Dwoo_Plugin_'.$blockName;
+            $class = "Dwoo_Plugin_" . $blockName;
         }
 
         if ($this->curBlock !== null) {
@@ -956,18 +1083,18 @@ class Dwoo
         $block = new $class($this);
 
         $cnt = count($args);
-        if ($cnt===0) {
+        if ($cnt === 0) {
             $block->init();
-        } elseif ($cnt===1) {
+        } elseif ($cnt === 1) {
             $block->init($args[0]);
-        } elseif ($cnt===2) {
+        } elseif ($cnt === 2) {
             $block->init($args[0], $args[1]);
-        } elseif ($cnt===3) {
+        } elseif ($cnt === 3) {
             $block->init($args[0], $args[1], $args[2]);
-        } elseif ($cnt===4) {
+        } elseif ($cnt === 4) {
             $block->init($args[0], $args[1], $args[2], $args[3]);
         } else {
-            call_user_func_array(array($block,'init'), $args);
+            call_user_func_array([$block, "init"], $args);
         }
 
         $this->stack[] = $this->curBlock = $block;
@@ -988,18 +1115,18 @@ class Dwoo
         ob_clean();
 
         $cnt = count($args);
-        if ($cnt===0) {
+        if ($cnt === 0) {
             $this->curBlock->end();
-        } elseif ($cnt===1) {
+        } elseif ($cnt === 1) {
             $this->curBlock->end($args[0]);
-        } elseif ($cnt===2) {
+        } elseif ($cnt === 2) {
             $this->curBlock->end($args[0], $args[1]);
-        } elseif ($cnt===3) {
+        } elseif ($cnt === 3) {
             $this->curBlock->end($args[0], $args[1], $args[2]);
-        } elseif ($cnt===4) {
+        } elseif ($cnt === 4) {
             $this->curBlock->end($args[0], $args[1], $args[2], $args[3]);
         } else {
-            call_user_func_array(array($this->curBlock, 'end'), $args);
+            call_user_func_array([$this->curBlock, "end"], $args);
         }
 
         $tmp = array_pop($this->stack);
@@ -1025,7 +1152,7 @@ class Dwoo
     {
         $index = array_search($block, $this->stack, true);
         if ($index !== false && $index > 0) {
-            return $this->stack[$index-1];
+            return $this->stack[$index - 1];
         }
         return false;
     }
@@ -1039,9 +1166,9 @@ class Dwoo
     public function findBlock($type)
     {
         if (isset($this->plugins[$type])) {
-            $type = $this->plugins[$type]['class'];
+            $type = $this->plugins[$type]["class"];
         } else {
-            $type = 'Dwoo_Plugin_'.str_replace('Dwoo_Plugin_', '', $type);
+            $type = "Dwoo_Plugin_" . str_replace("Dwoo_Plugin_", "", $type);
         }
 
         $keys = array_keys($this->stack);
@@ -1078,25 +1205,30 @@ class Dwoo
      * @param array $params an array of parameters to send to the process() method
      * @return string the process() return value
      */
-    public function classCall($plugName, array $params = array())
+    public function classCall($plugName, array $params = [])
     {
-        $class = 'Dwoo_Plugin_'.$plugName;
+        $class = "Dwoo_Plugin_" . $plugName;
 
         $plugin = $this->getObjectPlugin($class);
 
         $cnt = count($params);
-        if ($cnt===0) {
+        if ($cnt === 0) {
             return $plugin->process();
-        } elseif ($cnt===1) {
+        } elseif ($cnt === 1) {
             return $plugin->process($params[0]);
-        } elseif ($cnt===2) {
+        } elseif ($cnt === 2) {
             return $plugin->process($params[0], $params[1]);
-        } elseif ($cnt===3) {
+        } elseif ($cnt === 3) {
             return $plugin->process($params[0], $params[1], $params[2]);
-        } elseif ($cnt===4) {
-            return $plugin->process($params[0], $params[1], $params[2], $params[3]);
+        } elseif ($cnt === 4) {
+            return $plugin->process(
+                $params[0],
+                $params[1],
+                $params[2],
+                $params[3]
+            );
         } else {
-            return call_user_func_array(array($plugin, 'process'), $params);
+            return call_user_func_array([$plugin, "process"], $params);
         }
     }
 
@@ -1113,13 +1245,17 @@ class Dwoo
             $addThis = true;
             array_shift($params);
         }
-        if ((is_array($params[0]) || ($params[0] instanceof Iterator && $params[0] instanceof ArrayAccess))) {
+        if (
+            is_array($params[0]) ||
+            ($params[0] instanceof Iterator &&
+                $params[0] instanceof ArrayAccess)
+        ) {
             if (empty($params[0])) {
                 return $params[0];
             }
 
             // array map
-            $out = array();
+            $out = [];
             $cnt = count($params);
 
             if (isset($addThis)) {
@@ -1129,23 +1265,34 @@ class Dwoo
 
                 if (is_string($callback) === false) {
                     while (($i = array_shift($keys)) !== null) {
-                        $out[] = call_user_func_array($callback, array(1=>$items[$i]) + $params);
+                        $out[] = call_user_func_array(
+                            $callback,
+                            [1 => $items[$i]] + $params
+                        );
                     }
-                } elseif ($cnt===1) {
+                } elseif ($cnt === 1) {
                     while (($i = array_shift($keys)) !== null) {
                         $out[] = $callback($this, $items[$i]);
                     }
-                } elseif ($cnt===2) {
+                } elseif ($cnt === 2) {
                     while (($i = array_shift($keys)) !== null) {
                         $out[] = $callback($this, $items[$i], $params[2]);
                     }
-                } elseif ($cnt===3) {
+                } elseif ($cnt === 3) {
                     while (($i = array_shift($keys)) !== null) {
-                        $out[] = $callback($this, $items[$i], $params[2], $params[3]);
+                        $out[] = $callback(
+                            $this,
+                            $items[$i],
+                            $params[2],
+                            $params[3]
+                        );
                     }
                 } else {
                     while (($i = array_shift($keys)) !== null) {
-                        $out[] = call_user_func_array($callback, array(1=>$items[$i]) + $params);
+                        $out[] = call_user_func_array(
+                            $callback,
+                            [1 => $items[$i]] + $params
+                        );
                     }
                 }
             } else {
@@ -1154,27 +1301,38 @@ class Dwoo
 
                 if (is_string($callback) === false) {
                     while (($i = array_shift($keys)) !== null) {
-                        $out[] = call_user_func_array($callback, array($items[$i]) + $params);
+                        $out[] = call_user_func_array(
+                            $callback,
+                            [$items[$i]] + $params
+                        );
                     }
-                } elseif ($cnt===1) {
+                } elseif ($cnt === 1) {
                     while (($i = array_shift($keys)) !== null) {
                         $out[] = $callback($items[$i]);
                     }
-                } elseif ($cnt===2) {
+                } elseif ($cnt === 2) {
                     while (($i = array_shift($keys)) !== null) {
                         $out[] = $callback($items[$i], $params[1]);
                     }
-                } elseif ($cnt===3) {
+                } elseif ($cnt === 3) {
                     while (($i = array_shift($keys)) !== null) {
                         $out[] = $callback($items[$i], $params[1], $params[2]);
                     }
-                } elseif ($cnt===4) {
+                } elseif ($cnt === 4) {
                     while (($i = array_shift($keys)) !== null) {
-                        $out[] = $callback($items[$i], $params[1], $params[2], $params[3]);
+                        $out[] = $callback(
+                            $items[$i],
+                            $params[1],
+                            $params[2],
+                            $params[3]
+                        );
                     }
                 } else {
                     while (($i = array_shift($keys)) !== null) {
-                        $out[] = call_user_func_array($callback, array($items[$i]) + $params);
+                        $out[] = call_user_func_array(
+                            $callback,
+                            [$items[$i]] + $params
+                        );
                     }
                 }
             }
@@ -1199,21 +1357,33 @@ class Dwoo
         }
 
         if (is_array($varstr) === false) {
-            preg_match_all('#(\[|->|\.)?((?:[^.[\]-]|-(?!>))+)\]?#i', $varstr, $m);
+            preg_match_all(
+                "#(\[|->|\.)?((?:[^.[\]-]|-(?!>))+)\]?#i",
+                $varstr,
+                $m
+            );
         } else {
             $m = $varstr;
         }
         unset($varstr);
 
         foreach ($m[1] as $k => $sep) {
-            if ($sep === '.' || $sep === '[' || $sep === '') {
-                if ((is_array($data) || $data instanceof ArrayAccess) && ($safeRead === false || isset($data[$m[2][$k]]))) {
+            if ($sep === "." || $sep === "[" || $sep === "") {
+                if (
+                    (is_array($data) || $data instanceof ArrayAccess) &&
+                    ($safeRead === false || isset($data[$m[2][$k]]))
+                ) {
                     $data = $data[$m[2][$k]];
                 } else {
                     return null;
                 }
             } else {
-                if (is_object($data) && ($safeRead === false || isset($data->$m[2][$k]) || is_callable(array($data, '__get')))) {
+                if (
+                    is_object($data) &&
+                    ($safeRead === false ||
+                        isset($data->$m[2][$k]) ||
+                        is_callable([$data, "__get"]))
+                ) {
                     $data = $data->$m[2][$k];
                 } else {
                     return null;
@@ -1236,7 +1406,7 @@ class Dwoo
         $tree = $this->scopeTree;
         $cur = $this->data;
 
-        while ($parentLevels--!==0) {
+        while ($parentLevels-- !== 0) {
             array_pop($tree);
         }
 
@@ -1248,7 +1418,7 @@ class Dwoo
             }
         }
 
-        if ($varstr!==null) {
+        if ($varstr !== null) {
             return $this->readVarInto($varstr, $cur);
         } else {
             return $cur;
@@ -1263,18 +1433,22 @@ class Dwoo
      */
     public function readVar($varstr)
     {
-        if (is_array($varstr)===true) {
+        if (is_array($varstr) === true) {
             $m = $varstr;
             unset($varstr);
         } else {
-            if (strstr($varstr, '.') === false && strstr($varstr, '[') === false && strstr($varstr, '->') === false) {
-                if ($varstr === 'dwoo') {
+            if (
+                strstr($varstr, ".") === false &&
+                strstr($varstr, "[") === false &&
+                strstr($varstr, "->") === false
+            ) {
+                if ($varstr === "dwoo") {
                     return $this->globals;
-                } elseif ($varstr === '__' || $varstr === '_root' ) {
+                } elseif ($varstr === "__" || $varstr === "_root") {
                     return $this->data;
                     $varstr = substr($varstr, 6);
-                } elseif ($varstr === '_' || $varstr === '_parent') {
-                    $varstr = '.'.$varstr;
+                } elseif ($varstr === "_" || $varstr === "_parent") {
+                    $varstr = "." . $varstr;
                     $tree = $this->scopeTree;
                     $cur = $this->data;
                     array_pop($tree);
@@ -1299,60 +1473,62 @@ class Dwoo
                 }
             }
 
-            if (substr($varstr, 0, 1) === '.') {
-                $varstr = 'dwoo'.$varstr;
+            if (substr($varstr, 0, 1) === ".") {
+                $varstr = "dwoo" . $varstr;
             }
 
-            preg_match_all('#(\[|->|\.)?((?:[^.[\]-]|-(?!>))+)\]?#i', $varstr, $m);
+            preg_match_all(
+                "#(\[|->|\.)?((?:[^.[\]-]|-(?!>))+)\]?#i",
+                $varstr,
+                $m
+            );
         }
 
         $i = $m[2][0];
-        if ($i === 'dwoo') {
+        if ($i === "dwoo") {
             $cur = $this->globals;
             array_shift($m[2]);
             array_shift($m[1]);
             switch ($m[2][0]) {
-
-            case 'get':
-                $cur = $_GET;
-                break;
-            case 'post':
-                $cur = $_POST;
-                break;
-            case 'session':
-                $cur = $_SESSION;
-                break;
-            case 'cookies':
-            case 'cookie':
-                $cur = $_COOKIE;
-                break;
-            case 'server':
-                $cur = $_SERVER;
-                break;
-            case 'env':
-                $cur = $_ENV;
-                break;
-            case 'request':
-                $cur = $_REQUEST;
-                break;
-            case 'const':
-                array_shift($m[2]);
-                if (defined($m[2][0])) {
-                    return constant($m[2][0]);
-                } else {
-                    return null;
-                }
-
+                case "get":
+                    $cur = $_GET;
+                    break;
+                case "post":
+                    $cur = $_POST;
+                    break;
+                case "session":
+                    $cur = $_SESSION;
+                    break;
+                case "cookies":
+                case "cookie":
+                    $cur = $_COOKIE;
+                    break;
+                case "server":
+                    $cur = $_SERVER;
+                    break;
+                case "env":
+                    $cur = $_ENV;
+                    break;
+                case "request":
+                    $cur = $_REQUEST;
+                    break;
+                case "const":
+                    array_shift($m[2]);
+                    if (defined($m[2][0])) {
+                        return constant($m[2][0]);
+                    } else {
+                        return null;
+                    }
             }
             if ($cur !== $this->globals) {
                 array_shift($m[2]);
                 array_shift($m[1]);
             }
-        } elseif ($i === '__' || $i === '_root') {
+        } elseif ($i === "__" || $i === "_root") {
             $cur = $this->data;
             array_shift($m[2]);
             array_shift($m[1]);
-        } elseif ($i === '_' || $i === '_parent') {
+        } elseif ($i === "_" || $i === "_parent") {
             $tree = $this->scopeTree;
             $cur = $this->data;
 
@@ -1360,7 +1536,7 @@ class Dwoo
                 array_pop($tree);
                 array_shift($m[2]);
                 array_shift($m[1]);
-                if (current($m[2]) === '_' || current($m[2]) === '_parent') {
+                if (current($m[2]) === "_" || current($m[2]) === "_parent") {
                     continue;
                 }
 
@@ -1377,14 +1553,17 @@ class Dwoo
             $cur = $this->scope;
         }
 
-        foreach ($m[1] as $k => $sep ) {
-            if ($sep === '.' || $sep === '[' || $sep === '') {
-                if ((is_array($cur) || $cur instanceof ArrayAccess) && isset($cur[$m[2][$k]])) {
+        foreach ($m[1] as $k => $sep) {
+            if ($sep === "." || $sep === "[" || $sep === "") {
+                if (
+                    (is_array($cur) || $cur instanceof ArrayAccess) &&
+                    isset($cur[$m[2][$k]])
+                ) {
                     $cur = $cur[$m[2][$k]];
                 } else {
                     return null;
                 }
-            } elseif ($sep === '->') {
+            } elseif ($sep === "->") {
                 if (is_object($cur)) {
                     $cur = $cur->$m[2][$k];
                 } else {
@@ -1407,45 +1586,52 @@ class Dwoo
      */
     public function assignInScope($value, $scope)
     {
-        $tree =& $this->scopeTree;
-        $data =& $this->data;
+        $tree = &$this->scopeTree;
+        $data = &$this->data;
 
         if (!is_string($scope)) {
-            return $this->triggerError('Assignments must be done into strings, ('.gettype($scope).') '.var_export($scope, true).' given', E_USER_ERROR);
+            return $this->triggerError(
+                "Assignments must be done into strings, (" .
+                    gettype($scope) .
+                    ") " .
+                    var_export($scope, true) .
+                    " given",
+                E_USER_ERROR
+            );
         }
-        if (strstr($scope, '.') === false && strstr($scope, '->') === false) {
+        if (strstr($scope, ".") === false && strstr($scope, "->") === false) {
             $this->scope[$scope] = $value;
         } else {
             // TODO handle _root/_parent scopes ?
-            preg_match_all('#(\[|->|\.)?([^.[\]-]+)\]?#i', $scope, $m);
+            preg_match_all("#(\[|->|\.)?([^.[\]-]+)\]?#i", $scope, $m);
 
-            $cur =& $this->scope;
-            $last = array(array_pop($m[1]), array_pop($m[2]));
+            $cur = &$this->scope;
+            $last = [array_pop($m[1]), array_pop($m[2])];
 
             foreach ($m[1] as $k => $sep) {
-                if ($sep === '.' || $sep === '[' || $sep === '') {
+                if ($sep === "." || $sep === "[" || $sep === "") {
                     if (is_array($cur) === false) {
-                        $cur = array();
+                        $cur = [];
                     }
-                    $cur =& $cur[$m[2][$k]];
-                } elseif ($sep === '->') {
+                    $cur = &$cur[$m[2][$k]];
+                } elseif ($sep === "->") {
                     if (is_object($cur) === false) {
-                        $cur = new stdClass;
+                        $cur = new stdClass();
                     }
-                    $cur =& $cur->$m[2][$k];
+                    $cur = &$cur->$m[2][$k];
                 } else {
                     return false;
                 }
             }
 
-            if ($last[0] === '.' || $last[0] === '[' || $last[0] === '') {
+            if ($last[0] === "." || $last[0] === "[" || $last[0] === "") {
                 if (is_array($cur) === false) {
-                    $cur = array();
+                    $cur = [];
                 }
                 $cur[$last[1]] = $value;
-            } elseif ($last[0] === '->') {
+            } elseif ($last[0] === "->") {
                 if (is_object($cur) === false) {
-                    $cur = new stdClass;
+                    $cur = new stdClass();
                 }
                 $cur->$last[1] = $value;
             } else {
@@ -1465,27 +1651,28 @@ class Dwoo
     {
         $old = $this->scopeTree;
 
-        if (is_string($scope)===true) {
-            $scope = explode('.', $scope);
+        if (is_string($scope) === true) {
+            $scope = explode(".", $scope);
         }
 
-        if ($absolute===true) {
-            $this->scope =& $this->data;
-            $this->scopeTree = array();
+        if ($absolute === true) {
+            $this->scope = &$this->data;
+            $this->scopeTree = [];
         }
 
         while (($bit = array_shift($scope)) !== null) {
-            if ($bit === '_' || $bit === '_parent') {
+            if ($bit === "_" || $bit === "_parent") {
                 array_pop($this->scopeTree);
-                $this->scope =& $this->data;
+                $this->scope = &$this->data;
                 $cnt = count($this->scopeTree);
-                for ($i=0;$i<$cnt;$i++)
-                    $this->scope =& $this->scope[$this->scopeTree[$i]];
-            } elseif ($bit === '__' || $bit === '_root') {
-                $this->scope =& $this->data;
-                $this->scopeTree = array();
+                for ($i = 0; $i < $cnt; $i++) {
+                    $this->scope = &$this->scope[$this->scopeTree[$i]];
+                }
+            } elseif ($bit === "__" || $bit === "_root") {
+                $this->scope = &$this->data;
+                $this->scopeTree = [];
             } elseif (isset($this->scope[$bit])) {
-                $this->scope =& $this->scope[$bit];
+                $this->scope = &$this->scope[$bit];
                 $this->scopeTree[] = $bit;
             } else {
                 unset($this->scope);
@@ -1523,10 +1710,13 @@ class Dwoo
      * @param array  List of arguments
      * @return mixed
      */
-    public function __call($method, $args) {
+    public function __call($method, $args)
+    {
         $proxy = $this->getPluginProxy();
         if (!$proxy) {
-            throw new Dwoo_Exception('Call to undefined method '.__CLASS__.'::'.$method.'()');
+            throw new Dwoo_Exception(
+                "Call to undefined method " . __CLASS__ . "::" . $method . "()"
+            );
         }
         return call_user_func_array($proxy->getCallback($method), $args);
     }

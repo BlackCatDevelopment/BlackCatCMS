@@ -23,20 +23,28 @@
  *
  */
 
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined("CAT_PATH")) {
+    include CAT_PATH . "/framework/class.secure.php";
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'framework/class.secure.php')) { 
-		include($root.'framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+
+    while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
+        $root .= "../";
+        $level++;
+    }
+
+    if (file_exists($root . "framework/class.secure.php")) {
+        include $root . "framework/class.secure.php";
+    } else {
+        trigger_error(
+            sprintf(
+                "[ <b>%s</b> ] Can't include class.secure.php!",
+                $_SERVER["SCRIPT_NAME"]
+            ),
+            E_USER_ERROR
+        );
+    }
 }
 
 $LANG = array(
@@ -60,7 +68,6 @@ $LANG = array(
     'Remote version' => 'Ermittelte Version',
     'Statistics' => 'Statistiken',
     'To disable, go to Settings -> System settings -> Maintenance mode -> set to "off".' => 'Zum Abschalten: Einstellungen -> Systemeinstellungen -> Wartungsmodus -> auf "off" stellen.',
-    'Unable to retrieve news' => 'Es konnten keine News empfangen werden',
     'Version check' => 'Versionsprüfung',
     'Version check failed!' => 'Versionsprüfung fehlgeschlagen!',
     'Version check source file' => 'Quelldatei für die Versionsprüfung',

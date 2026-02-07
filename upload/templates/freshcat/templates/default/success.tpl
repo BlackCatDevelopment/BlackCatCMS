@@ -12,7 +12,7 @@
 </div>
 {/if}
 {if $REDIRECT_TIMER}
-<script type="text/javascript">
+<script >
 	setTimeout("top.location.href ='{$REDIRECT}'", {$REDIRECT_TIMER});
 </script>
 {/if}

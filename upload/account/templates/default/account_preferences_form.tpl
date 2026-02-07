@@ -83,7 +83,7 @@
 	<input type="reset" name="reset" value="{translate('Reset')}" />
 </form>
 {/if}
-<script type="text/javascript">
+<script >
 
 var fileref=document.createElement("link");
 fileref.setAttribute("rel", "stylesheet");

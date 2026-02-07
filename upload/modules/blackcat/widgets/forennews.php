@@ -28,12 +28,12 @@ if (defined('CAT_PATH')) {
 } else {
 	$root = "../";
 	$level = 1;
-	while (($level < 10) && (!file_exists($root.'framework/class.secure.php'))) {
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
 		$root .= "../";
 		$level += 1;
 	}
-	if (file_exists($root.'framework/class.secure.php')) {
-		include($root.'framework/class.secure.php');
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -63,34 +63,30 @@ if(!function_exists('render_widget_blackcat_forennews'))
         $tpl_data    = array();
 
         $dom = new DOMDocument();
-        $xml = _loadURL('https://forum.blackcat-cms.org/feed.php?f=2');
+        $dom->loadXML(_loadURL('https://forum.blackcat-cms.org/feed.php?f=2'));
 
-        if($xml) {
-            $dom->loadXML($xml);
-            $items = $dom->getElementsByTagName('entry');
-            $cnt   = 0;
-            foreach($items as $item)
+        $items = $dom->getElementsByTagName('entry');
+        $cnt   = 0;
+
+        foreach($items as $item)
+        {
+            if($item->childNodes->length)
             {
-                if($item->childNodes->length)
-                {
-                    if(substr(str_replace('News • ','',$item->getElementsByTagName('title')->item(0)->textContent),0,3) == 'Re:') continue;
-                    $tpl_data[] = array(
-                        'published' => $item->getElementsByTagName('published')->item(0)->textContent,
-                        'link'      => $item->getElementsByTagName('link')->item(0)->getAttribute('href'),
-                        'title'     => str_replace('News • ','',$item->getElementsByTagName('title')->item(0)->textContent),
-                    );
-                    $cnt++;
-                    if($cnt == $max) break;
-                }
+                if(substr(str_replace('News • ','',$item->getElementsByTagName('title')->item(0)->textContent),0,3) == 'Re:') continue;
+                $tpl_data[] = array(
+                    'published' => $item->getElementsByTagName('published')->item(0)->textContent,
+                    'link'      => $item->getElementsByTagName('link')->item(0)->getAttribute('href'),
+                    'title'     => str_replace('News • ','',$item->getElementsByTagName('title')->item(0)->textContent),
+                );
+                $cnt++;
+                if($cnt == $max) break;
             }
-
-            global $parser;
-            $parser->setPath(dirname(__FILE__).'/../templates/default');
-            $output = $parser->get('news.tpl',array('news'=>$tpl_data));
-            $parser->resetPath();
-        } else {
-            $output = $pg->lang()->translate('Unable to retrieve news');
         }
+
+        global $parser;
+        $parser->setPath(dirname(__FILE__).'/../templates/default');
+        $output = $parser->get('news.tpl',array('news'=>$tpl_data));
+        $parser->resetPath();
         return $output;
     }
 }

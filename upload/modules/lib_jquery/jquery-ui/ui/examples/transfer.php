@@ -6,10 +6,10 @@
 <head>
   <link href="../../../frontend.css" rel="stylesheet" type="text/css"/>
   <link type="text/css" href="../../themes/base/jquery-ui.css" rel="stylesheet" />
- 	<script type="text/javascript" src="../../../jquery-core/jquery-core.min.js"></script>
-	<script type="text/javascript" src="../jquery.ui.core.min.js"></script>
-  <script type="text/javascript" src="../jquery.effects.core.min.js"></script>
-	<script type="text/javascript" src="../jquery.effects.transfer.min.js"></script>
+ 	<script  src="../../../jquery-core/jquery-core.min.js"></script>
+	<script  src="../jquery.ui.core.min.js"></script>
+  <script  src="../jquery.effects.core.min.js"></script>
+	<script  src="../jquery.effects.transfer.min.js"></script>
 	<?php echo _loadFile( '../presets/transfer.preset' ); ?>
 	<style type="text/css">
   .ui-effects-transfer { border: 2px solid black; background-color: #ccc; }

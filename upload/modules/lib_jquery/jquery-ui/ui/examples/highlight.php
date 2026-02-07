@@ -6,10 +6,10 @@
 <head>
   <link href="../../../frontend.css" rel="stylesheet" type="text/css"/>
   <link type="text/css" href="../../themes/base/jquery-ui.css" rel="stylesheet" />
- 	<script type="text/javascript" src="../../../jquery-core/jquery-core.min.js"></script>
-	<script type="text/javascript" src="../jquery.ui.core.min.js"></script>
-	<script type="text/javascript" src="../jquery.effects.core.min.js"></script>
-	<script type="text/javascript" src="../jquery.effects.highlight.min.js"></script>
+ 	<script  src="../../../jquery-core/jquery-core.min.js"></script>
+	<script  src="../jquery.ui.core.min.js"></script>
+	<script  src="../jquery.effects.core.min.js"></script>
+	<script  src="../jquery.effects.highlight.min.js"></script>
   <script>
   jQuery(document).ready(function($) {
     $('#highlight').effect("highlight", {}, 3000);

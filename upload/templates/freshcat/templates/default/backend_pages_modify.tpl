@@ -1,4 +1,4 @@
-{include('backend_pages_header.tpl')}
+{include file="backend_pages_header.tpl"}
 {include backend_pages_banner.tpl}
 <div id="fc_main_content">
 	<div class="fc_modified_header fc_br_bottom fc_gradient1 fc_border">

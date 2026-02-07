@@ -92,7 +92,7 @@
 
             <div class="clear"></div>
 
-<script charset=windows-1250 type="text/javascript">
+<script charset=windows-1250 >
     $('#fc_catmailer_routine_phpmail').click( function()
     {
         $('#fc_smtp').hide();

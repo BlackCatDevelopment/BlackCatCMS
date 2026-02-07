@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script >
   if( typeof 'jQuery' != 'undefined' ) {
     jQuery(document).ready(function($) {
       $("div.blind").click(function () {

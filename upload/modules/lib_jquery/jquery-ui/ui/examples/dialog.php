@@ -6,13 +6,13 @@
 <head>
   <link href="../../../frontend.css" rel="stylesheet" type="text/css"/>
   <link type="text/css" href="../../themes/base/jquery-ui.css" rel="stylesheet" />
- 	<script type="text/javascript" src="../../../jquery-core/jquery-core.min.js"></script>
-	<script type="text/javascript" src="../../external/jquery.bgiframe-2.1.2.js"></script>
-	<script type="text/javascript" src="../jquery.ui.core.min.js"></script>
-	<script type="text/javascript" src="../jquery.ui.widget.min.js"></script>
-	<script type="text/javascript" src="../jquery.ui.button.min.js"></script>
+ 	<script  src="../../../jquery-core/jquery-core.min.js"></script>
+	<script  src="../../external/jquery.bgiframe-2.1.2.js"></script>
+	<script  src="../jquery.ui.core.min.js"></script>
+	<script  src="../jquery.ui.widget.min.js"></script>
+	<script  src="../jquery.ui.button.min.js"></script>
   <?php echo _loadFile( '../presets/dialog.preset' ); ?>
-  <script src="../jquery.ui.dialog.min.js" type="text/javascript"></script>
+  <script src="../jquery.ui.dialog.min.js" ></script>
   <script>
   $(document).ready(function() {
     $("#dialog").dialog(

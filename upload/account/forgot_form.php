@@ -23,74 +23,93 @@
  *
  */
 
-if (defined('CAT_PATH')) {
-	include(CAT_PATH.'/framework/class.secure.php');
+if (defined("CAT_PATH")) {
+    include CAT_PATH . "/framework/class.secure.php";
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'framework/class.secure.php')) {
-		include($root.'framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+
+    while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
+        $root .= "../";
+        $level++;
+    }
+
+    if (file_exists($root . "framework/class.secure.php")) {
+        include $root . "framework/class.secure.php";
+    } else {
+        trigger_error(
+            sprintf(
+                "[ <b>%s</b> ] Can't include class.secure.php!",
+                $_SERVER["SCRIPT_NAME"]
+            ),
+            E_USER_ERROR
+        );
+    }
 }
 
 // this one is only used for the frontend!
-if ( !FRONTEND_LOGIN ) // no frontend login, no forgot form
-	if ( INTRO_PAGE )
-		die( header( 'Location: ' . CAT_URL . PAGES_DIRECTORY . '/index.php' ) );
-	else
-		die( header( 'Location: ' . CAT_URL . '/index.php' ) );
+if (!FRONTEND_LOGIN) {
+    if (INTRO_PAGE) {
+        // no frontend login, no forgot form
+        die(header("Location: " . CAT_URL . PAGES_DIRECTORY . "/index.php"));
+    } else {
+        die(header("Location: " . CAT_URL . "/index.php"));
+    }
+}
 
-$val          = CAT_Helper_Validate::getInstance();
-$email        = $val->sanitizePost('email',NULL,true);
+$val = CAT_Helper_Validate::getInstance();
+$email = $val->sanitizePost("email", null, true);
 $display_form = true;
-$msg_class    = 'info';
+$msg_class = "info";
 
 global $parser;
-$parser->setPath( CAT_PATH . '/templates/' . DEFAULT_TEMPLATE . '/templates/' . CAT_Registry::get('DEFAULT_THEME_VARIANT') ); // if there's a template for this in the current frontend template
-$parser->setFallbackPath(dirname(__FILE__).'/templates/default'); // fallback to default dir
+$parser->setPath(
+    CAT_PATH .
+        "/templates/" .
+        DEFAULT_TEMPLATE .
+        "/templates/" .
+        CAT_Registry::get("DEFAULT_THEME_VARIANT")
+); // if there's a template for this in the current frontend template
+$parser->setFallbackPath(dirname(__FILE__) . "/templates/default"); // fallback to default dir
 
 // mailer lib installed?
-if(count(CAT_Helper_Addons::getLibraries('mail'))==0)
-{
-    $parser->output('account_forgot_form',
-        array(
-            'message_class' => 'highlight',
-            'display_form'  => false,
-            'message'       => $val->lang()->translate(
-                'Sorry, but the system is unable to use mail to send your details. Please contact the administrator.'
+if (count(CAT_Helper_Addons::getLibraries("mail")) == 0) {
+    $parser->output("account_forgot_form", [
+        "message_class" => "highlight",
+        "display_form" => false,
+        "message" => $val
+            ->lang()
+            ->translate(
+                "Sorry, but the system is unable to use mail to send your details. Please contact the administrator."
             ),
-            'contact'       => (
-                   ( CAT_Registry::exists('SERVER_EMAIL',false) && CAT_Registry::get('SERVER_EMAIL') != 'admin@yourdomain.tld' && $val->validate_email(CAT_Registry::get('SERVER_EMAIL')) )
-                ? '<br />[ <a href="mailto:'.CAT_Registry::get('SERVER_EMAIL').'">'.$val->lang()->translate('Send eMail').'</a> ]'
-                : ''
-            ),
-        )
-    );
-    exit;
+        "contact" =>
+            CAT_Registry::exists("SERVER_EMAIL", false) &&
+            CAT_Registry::get("SERVER_EMAIL") != "admin@yourdomain.tld" &&
+            $val->validate_email(CAT_Registry::get("SERVER_EMAIL"))
+                ? '<br />[ <a href="mailto:' .
+                    CAT_Registry::get("SERVER_EMAIL") .
+                    '">' .
+                    $val->lang()->translate("Send eMail") .
+                    "</a> ]"
+                : "",
+    ]);
+    exit();
 }
 
 // Check if the user has already submitted the form, otherwise show it
-if ( $email && $val->sanitize_email($email) )
-    list($result,$message ) = CAT_Users::handleForgot($email);
-else
-	$email = '';
-
-if ( !isset( $message ) )
-{
-	$message = $val->lang()->translate('Please enter your email address below');
+if ($email && $val->sanitize_email($email)) {
+    list($result, $message) = CAT_Users::handleForgot($email);
+} else {
+    $email = "";
 }
 
-$parser->output('account_forgot_form',
-    array(
-        'message_class' => $msg_class,
-        'email'         => $email,
-        'display_form'  => $display_form,
-        'message'       => $message,
-    )
-);
+if (!isset($message)) {
+    $message = $val->lang()->translate("Please enter your email address below");
+}
+
+$parser->output("account_forgot_form", [
+    "message_class" => $msg_class,
+    "email" => $email,
+    "display_form" => $display_form,
+    "message" => $message,
+]);

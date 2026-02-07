@@ -23,7 +23,7 @@
  *
  */
 require_once dirname(__FILE__) .
-    "/../../../../modules/lib_swift/vendor/autoload.php";
+    "/../../../../modules/lib_swift/swift/swift_required.php";
 
 if (!class_exists("CAT_Helper_Mail_SwiftDriver", false)) {
     class CAT_Helper_Mail_SwiftDriver extends Swift
@@ -73,14 +73,14 @@ if (!class_exists("CAT_Helper_Mail_SwiftDriver", false)) {
             }
             // Create the message
             try {
-                $message = (new Swift_Message($subject))
+                $message = Swift_Message::newInstance()
+                    ->setSubject($subject)
                     ->setFrom($fromaddress)
                     ->setTo($toaddress)
                     ->setBody($message);
                 if ($html != "") {
                     $message->addPart($html, "text/html");
                 }
-
                 if ($attachment) {
                     if (
                         is_array($attachment) &&
@@ -96,12 +96,6 @@ if (!class_exists("CAT_Helper_Mail_SwiftDriver", false)) {
                     }
                 }
             } catch (Exception $e) {
-                if (CAT_Users::is_root()) {
-                    echo $e->getMessage();
-                    // echo "<pre>";
-                    // print_r($e);
-                    // echo "</pre>";
-                }
                 return false;
             }
 
@@ -150,8 +144,14 @@ if (!class_exists("CAT_Helper_Mail_SwiftDriver", false)) {
                             }
                         }
                     }
-
-                    self::$transport = new Swift_SmtpTransport(
+                    if (
+                        self::$settings["smtp_ssl_port"] == "587" &&
+                        !$tp &&
+                        in_array("tls", stream_get_transports())
+                    ) {
+                        $tp = "tls";
+                    }
+                    self::$transport = Swift_SmtpTransport::newInstance(
                         self::$settings["smtp_host"],
                         $port,
                         $tp
@@ -166,9 +166,7 @@ if (!class_exists("CAT_Helper_Mail_SwiftDriver", false)) {
 
                     $use_smtp = true;
                 } else {
-                    self::$transport = new Swift_SendmailTransport(
-                        "/usr/sbin/sendmail -bs"
-                    );
+                    self::$transport = Swift_MailTransport::newInstance();
                 }
                 if (
                     $use_smtp &&
@@ -202,7 +200,7 @@ if (!class_exists("CAT_Helper_Mail_SwiftDriver", false)) {
 
             if (!self::$mailer) {
                 // Create the Mailer using your created Transport
-                self::$mailer = new Swift_Mailer(self::$transport);
+                self::$mailer = Swift_Mailer::newInstance(self::$transport);
             }
 
             try {

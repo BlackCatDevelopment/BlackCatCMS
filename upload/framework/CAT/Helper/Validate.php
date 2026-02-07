@@ -348,9 +348,7 @@ if (!class_exists('CAT_Helper_Validate'))
 
         public static function validate_string($string)
         {
-            // FILTER_VALIDATE_STRING does not exist; ensure we actually have
-            // a string and return it, or false otherwise
-            return is_string($string) ? $string : false;
+            return filter_var($string, FILTER_VALIDATE_STRING);
         }
         public static function validate_ip($ip)
         {

@@ -1,5 +1,21 @@
 <?php
+@ini_set("display_errors", "1");
+@ini_set("display_startup_errors", "1");
+error_reporting(E_ALL);
 
+register_shutdown_function(function () {
+    $e = error_get_last();
+    if (
+        $e &&
+        in_array($e["type"], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])
+    ) {
+        if (!headers_sent()) {
+            http_response_code(500);
+            header("Content-Type: text/plain; charset=utf-8");
+        }
+        echo "FATAL: {$e["message"]}\n{$e["file"]}:{$e["line"]}\n";
+    }
+});
 /**
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,14 +56,7 @@ if (!class_exists("CAT_Helper_Template_DwooDriver", false)) {
         public $fallback_path = null;
         public static $_globals = [];
         protected $logger = null;
-        public array $paths = [
-            "current" => null,
-            "frontend" => null,
-            "frontend_fallback" => null,
-            "backend" => null,
-            "backend_fallback" => null,
-            "workdir" => null,
-        ];
+        public array $paths = [];
 
         public function __construct()
         {
@@ -75,7 +84,7 @@ if (!class_exists("CAT_Helper_Template_DwooDriver", false)) {
         public function output(
             $_tpl,
             $data = [],
-            ?Dwoo_ICompiler $compiler = null
+            Dwoo_ICompiler $compiler = null
         ) {
             echo $this->get($_tpl, $data, $compiler);
         }

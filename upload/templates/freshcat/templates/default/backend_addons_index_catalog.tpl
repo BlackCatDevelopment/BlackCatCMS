@@ -51,7 +51,7 @@
     </tbody>
 </table>
 
-<script charset=iso-8859-1 type="text/javascript">
+<script charset=iso-8859-1 >
     jQuery(document).ready(function($) {
         $('#fc_addons_update_catalog').unbind('click').bind('click',function() {
             var old_version = $('span#fc_addons_catalog_version').text();

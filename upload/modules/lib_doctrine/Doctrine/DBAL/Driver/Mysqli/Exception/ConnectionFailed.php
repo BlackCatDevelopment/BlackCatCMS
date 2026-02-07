@@ -23,14 +23,21 @@ final class ConnectionFailed extends MysqliException
         $error = $connection->connect_error;
         assert($error !== null);
 
-        return new self($error, 'HY000', $connection->connect_errno);
+        return new self($error, "HY000", $connection->connect_errno);
     }
 
     public static function upcast(mysqli_sql_exception $exception): self
     {
-        $p = new ReflectionProperty(mysqli_sql_exception::class, 'sqlstate');
-        $p->setAccessible(true);
+        $p = new ReflectionProperty(mysqli_sql_exception::class, "sqlstate");
+        if (PHP_VERSION_ID < 80100) {
+            $p->setAccessible(true);
+        }
 
-        return new self($exception->getMessage(), $p->getValue($exception), $exception->getCode(), $exception);
+        return new self(
+            $exception->getMessage(),
+            $p->getValue($exception),
+            $exception->getCode(),
+            $exception
+        );
     }
 }

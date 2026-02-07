@@ -1,6 +1,6 @@
 {include file="header.tpl"}
   {if $info}<div class="info ui-corner-all">{$info}</div><br />{/if}
-  <form method="post" action="{$action}">
+  <form method="post" action="{$action|default:''}">
   <input type="hidden" name="tool" value="droplets" />
   {if $can_add}<input type="submit" name="add" class="ui-button ui-button-text" value="{translate('Create new')}" />{/if}
   {if $can_import}<input type="submit" name="import" class="ui-button ui-button-text" value="{translate('Import')}" />{/if}

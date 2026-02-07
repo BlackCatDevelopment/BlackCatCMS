@@ -6,11 +6,11 @@
 <head>
   <link href="../../../frontend.css" rel="stylesheet" type="text/css"/>
   <link type="text/css" href="../../themes/base/jquery-ui.css" rel="stylesheet" />
- 	<script type="text/javascript" src="../../../jquery-core/jquery-core.min.js"></script>
-	<script type="text/javascript" src="../jquery.ui.core.min.js"></script>
+ 	<script  src="../../../jquery-core/jquery-core.min.js"></script>
+	<script  src="../jquery.ui.core.min.js"></script>
   <?php echo _loadFile( '../presets/tabs.preset' ); ?>
-  <script src="../jquery.ui.tabs.min.js" type="text/javascript"></script>
-	<script type="text/javascript">
+  <script src="../jquery.ui.tabs.min.js" ></script>
+	<script >
 	$(function() {
 		$("#tabs").tabs();
 	});

@@ -6,7 +6,13 @@
                 </p>
                 <div class="clear_sp"></div>
                 <p>
-                    <input type="file" name="userfile" />
+                    <div class="fallback">
+                        <input type="file" name="userfile" />
+                    </div>
+                    <div id="fc_dropzone" style="display:none;">
+                        <span>{translate('Click or drag & drop your file to the area below')}</span>
+                        <div class="dropzone"></div>
+                    </div>
                 </p>
                 {if $groups.viewers}
                 <hr />
@@ -34,7 +40,7 @@
                     <input type="reset" name="reset" value="{translate('Reset')}" />
                 </p>
             </form>
-            <script type="text/javascript">
+            <script >
             //<![CDATA[
                 if(typeof Dropzone != 'undefined') {
                     Dropzone.autoDiscover = false;

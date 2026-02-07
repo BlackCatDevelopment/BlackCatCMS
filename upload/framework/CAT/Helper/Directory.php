@@ -130,7 +130,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
             sort($list);
             foreach ($list as $entry) {
                 if (mb_detect_encoding($entry, "UTF-8", true)) {
-                    $entry = utf8_decode($entry);
+                    $entry = mb_convert_encoding($entry, "ISO-8859-1", "UTF-8");
                 }
                 if (
                     preg_match(
@@ -350,7 +350,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         {
             $file = self::sanitizePath($file);
             if (mb_detect_encoding($file, "UTF-8", true)) {
-                $file = utf8_decode($file);
+                $file = mb_convert_encoding($file, "ISO-8859-1", "UTF-8");
             }
             if (is_dir($file)) {
                 return false;
@@ -458,9 +458,9 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         public static function sanitizePath($path)
         {
             $self = self::getInstance();
-            $self->log()->logDebug("> sanitizePath " . $path);
+            $self->log()->logDebug("> sanitizePath " . (string) ($path ?? ""));
             // remove / at end of string; this will make sanitizePath fail otherwise!
-            $path = preg_replace('~/{1,}$~', "", $path ? $path : "");
+            $path = preg_replace('~/{1,}$~', "", (string) ($path ?? ""));
             // make all slashes forward
             $path = str_replace("\\", "/", $path);
             // bla/./bloo ==> bla/bloo
@@ -480,11 +480,10 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                 if ($part === ".." || $part == "") {
                     array_pop($parts);
                 } elseif ($part != "") {
-                    #$self->log()->logDebug('checking part -'.$part."- encoding -", mb_detect_encoding($part,'UTF-8',true));
                     $part =
                         self::$is_win &&
                         mb_detect_encoding($part, "UTF-8", true)
-                            ? utf8_decode($part)
+                            ? mb_convert_encoding($part, "ISO-8859-1", "UTF-8")
                             : $part;
                     $parts[] = $part;
                 }
@@ -554,7 +553,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
             if (!is_array($suffixes)) {
                 $suffixes = [];
             }
-            if (!count($suffixes) > 0 && count(self::$suffix_filter)) {
+            if (count($suffixes) === 0 && count(self::$suffix_filter)) {
                 $suffixes = self::$suffix_filter;
             }
             // make sure $skip_dirs is an array
@@ -564,7 +563,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
             if (!is_array($skip_dirs)) {
                 $skip_dirs = [];
             }
-            if (!count($skip_dirs) > 0 && count(self::$skip_dirs)) {
+            if (count($skip_dirs) === 0 && count(self::$skip_dirs)) {
                 $skip_dirs = self::$skip_dirs;
             }
             // same for $skip_files
@@ -574,7 +573,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
             if (!is_array($skip_files)) {
                 $skip_files = [];
             }
-            if (!count($skip_files) > 0 && count(self::$skip_files)) {
+            if (count($skip_files) === 0 && count(self::$skip_files)) {
                 $skip_files = self::$skip_files;
             }
             if (!$remove_prefix && self::$prefix) {
@@ -1028,9 +1027,20 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         {
             if (self::$is_win) {
                 try {
+                    $dirUtf8 = mb_convert_encoding(
+                        $directory,
+                        "UTF-8",
+                        "ISO-8859-1"
+                    );
+                    $dirLatin = mb_convert_encoding(
+                        $directory,
+                        "ISO-8859-1",
+                        "UTF-8"
+                    );
+
                     if (
-                        is_dir(utf8_encode($directory)) ||
-                        is_dir(utf8_decode($directory)) ||
+                        is_dir($dirUtf8) ||
+                        is_dir($dirLatin) ||
                         is_dir($directory)
                     ) {
                         return true;
@@ -1113,9 +1123,9 @@ if (!class_exists("CAT_Helper_Directory", false)) {
                     "0" . substr(sprintf("%o", fileperms($check_for)), -3)
                 );
             } else {
-                $default_file_mode = "0777";
+                $default_file_mode = octdec("0777");
             }
-            return $default_file_mode;
+            return (int) $default_file_mode;
         } // end function defaultFileMode()
 
         /**
@@ -1157,12 +1167,18 @@ if (!class_exists("CAT_Helper_Directory", false)) {
             // Add the Mcrypt stream filter
             // We use Triple DES here, but you
             // can use other encryption algorithm here
-            stream_filter_append(
-                $fp,
-                "mdecrypt.tripledes",
-                STREAM_FILTER_READ,
-                $opts
-            );
+            if (in_array("mdecrypt.tripledes", stream_get_filters(), true)) {
+                stream_filter_append(
+                    $fp,
+                    "mdecrypt.tripledes",
+                    STREAM_FILTER_READ,
+                    $opts
+                );
+            } else {
+                throw new \RuntimeException(
+                    "Missing stream filter: mdecrypt.tripledes"
+                );
+            }
             // Read the file contents
             $contents = fread($fp, filesize($file));
         } // end function decrypt()
@@ -1189,12 +1205,18 @@ if (!class_exists("CAT_Helper_Directory", false)) {
             // Add the Mcrypt stream filter
             // We use Triple DES here, but you
             // can use other encryption algorithm here
-            stream_filter_append(
-                $fp,
-                "mcrypt.tripledes",
-                STREAM_FILTER_WRITE,
-                $opts
-            );
+            if (in_array("mcrypt.tripledes", stream_get_filters(), true)) {
+                stream_filter_append(
+                    $fp,
+                    "mcrypt.tripledes",
+                    STREAM_FILTER_WRITE,
+                    $opts
+                );
+            } else {
+                throw new \RuntimeException(
+                    "Missing stream filter: mcrypt.tripledes"
+                );
+            }
             // Wrote some contents to the file
             fwrite($fp, $data);
             // Close the file
@@ -1210,7 +1232,7 @@ if (!class_exists("CAT_Helper_Directory", false)) {
         {
             return mb_detect_encoding($file, "UTF-8", true)
                 ? $file
-                : utf8_encode($file);
+                : mb_convert_encoding($file, "UTF-8", "ISO-8859-1");
         } // end function encode()
 
         /**
@@ -1221,31 +1243,31 @@ if (!class_exists("CAT_Helper_Directory", false)) {
          **/
         private static function _class_secure_code()
         {
-            return "
-// include class.secure.php to protect this file and the whole CMS!
-            if (defined(\"CAT_PATH\")) {
-                include CAT_PATH . \"/framework/class.secure.php\";
-            } else {
-                $oneback = \"../\";
-                $root = $oneback;
-                $level = 1;
-                while ($level < 10 && !file_exists($root . \"framework/class.secure.php\")) {
-                    $root .= $oneback;
-                    $level += 1;
-                }
-                if (file_exists($root . \"framework/class.secure.php\")) {
-                    include \$root . \"framework/class.secure.php\";
-                } else {
-                    throw new \RuntimeException(
-                        sprintf(
-                        \"Cannot include class.secure.php at %s\",
-                      \$_SERVER['SCRIPT_NAME']
-                        )
-                    );
-                }
-            }
-            // end include class.secure.php
-";
-        } // end function _class_secure_code()
+            return '
+         // include class.secure.php to protect this file and the whole CMS!
+         if (defined("CAT_PATH")) {
+             include CAT_PATH . "/framework/class.secure.php";
+         } else {
+             $oneback = "../";
+             $root = $oneback;
+             $level = 1;
+             while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
+                 $root .= $oneback;
+                 $level++;
+             }
+             if (file_exists($root . "framework/class.secure.php")) {
+                 include $root . "framework/class.secure.php";
+             } else {
+                 throw new RuntimeException(
+                     sprintf(
+                         "Cannot include class.secure.php at %s",
+                         $_SERVER["SCRIPT_NAME"]
+                     )
+                 );
+             }
+         }
+         // end include class.secure.php
+         ';
+        }
     }
 }

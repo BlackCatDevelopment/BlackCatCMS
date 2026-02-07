@@ -72,7 +72,7 @@
             
             <div class="clear_sp"></div>
 
-<script type="text/javascript">
+<script >
 	var pics = new Array();
 
 	pics["ttf_image"] = new Image();

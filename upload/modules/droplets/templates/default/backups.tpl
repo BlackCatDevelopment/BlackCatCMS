@@ -4,7 +4,7 @@
   <a href="{$CAT_ADMIN_URL}/admintools/tool.php?tool=droplets">&laquo; {translate('Back to overview')} &laquo;</a><br /><br />
   
   {if $info}<div class="info ui-corner-all">{$info}</div><br />{/if}
-  <form method="post" action="{$action}">
+  <form method="post" action="{$action|default:''}">
   <input type="hidden" name="tool" value="droplets" />
   <input type="hidden" name="backups" value="1" />
 

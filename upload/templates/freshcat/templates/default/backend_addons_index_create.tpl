@@ -38,7 +38,7 @@
                 <input type="reset" name="reset" value="{translate('Reset')}" />
             </p>
         </form>
-        <script type="text/javascript">
+        <script >
         //<![CDATA[
         dialog_form(jQuery('form#fc_add_new_module'));
         //]]>

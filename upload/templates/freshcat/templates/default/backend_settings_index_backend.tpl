@@ -50,7 +50,7 @@
 			{/if}
 			<div class="clear_sp"></div>
 
-<script charset=windows-1250 type="text/javascript">
+<script charset=windows-1250 >
 	$('select[name=default_theme]').change( function()
 	{
 		$(this).closest('form').removeClass('ajaxForm').unbind();

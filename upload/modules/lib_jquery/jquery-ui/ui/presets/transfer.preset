@@ -1,7 +1,7 @@
 <style type="text/css">
   .ui-effects-transfer { border: 2px solid black; background-color: #FFFFCC; }
 </style>
-<script type="text/javascript">
+<script >
   if( typeof 'jQuery' != 'undefined' ) {
     jQuery(document).ready(function($) {
       $("div.transfer").click(function () {

@@ -1,5 +1,5 @@
 <!-- position: body -->
-<script type="text/javascript">
+<script >
   if( typeof 'jQuery' != 'undefined' ) {
     jQuery(document).ready(function($) {
       $("#dialog").dialog();

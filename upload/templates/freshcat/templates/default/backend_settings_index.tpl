@@ -77,5 +77,5 @@
 		<input type="reset" name="reset" value="{translate('Reset')}" />
 	</p>
 </form><!-- settings -->
-{*<script src="{$CAT_ADMIN_URL}/settings/setting.js" type="text/javascript"></script>*}
+{*<script src="{$CAT_ADMIN_URL}/settings/setting.js" ></script>*}
 </div>

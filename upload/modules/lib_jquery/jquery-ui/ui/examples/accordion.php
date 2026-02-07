@@ -6,10 +6,10 @@
 <head>
   <link href="../../../frontend.css" rel="stylesheet" type="text/css"/>
   <link type="text/css" href="../../themes/base/jquery-ui.css" rel="stylesheet" />
- 	<script type="text/javascript" src="../../../jquery-core/jquery-core.min.js"></script>
-	<script type="text/javascript" src="../jquery.ui.core.min.js"></script>
+ 	<script  src="../../../jquery-core/jquery-core.min.js"></script>
+	<script  src="../jquery.ui.core.min.js"></script>
   <?php echo _loadFile( '../presets/accordion.preset' ); ?>
-  <script src="../jquery.ui.accordion.min.js" type="text/javascript"></script>
+  <script src="../jquery.ui.accordion.min.js" ></script>
   <script>
   $(document).ready(function() {
     $("#dialog").dialog();

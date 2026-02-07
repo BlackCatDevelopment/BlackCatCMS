@@ -8,7 +8,7 @@
 	<p {if $otp}style="display:none;"{/if}>
     	<label class="account_label" for="{$username_fieldname}">{translate('Username')}:</label>
 		<input type="text" class="account_input" name="{$username_fieldname}" id="{$username_fieldname}" maxlength="30" value="{$user}" /><br />
-    	{if !$otp}<script type="text/javascript">
+    	{if !$otp}<script >
     		var ref= document.getElementById("{$username_fieldname}");
     		if (ref) ref.focus();
     	</script>{/if}
@@ -20,7 +20,7 @@
 	<p {if !$otp}style="display:none;"{/if}>
     	<label class="account_label" for="{$password_fieldname}_1">{translate('New password')}:</label>
 		<input type="password" class="account_input" name="{$password_fieldname}_1" id="{$password_fieldname}_1" maxlength="30" /><br />
-    	{if $otp}<script type="text/javascript">
+    	{if $otp}<script >
     		var ref= document.getElementById("{$password_fieldname}_1");
     		if (ref) ref.focus();
     	</script>{/if}

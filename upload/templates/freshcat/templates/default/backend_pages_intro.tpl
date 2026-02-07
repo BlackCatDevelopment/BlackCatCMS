@@ -96,7 +96,7 @@
         </select><br /><hr />
     </div>
 </div>
-<script charset=windows-1250 type="text/javascript">
+<script charset=windows-1250 >
     $('#fc_intro_forward_by_disabled').click( function()
     {
         $('#fc_forward_by_domain').removeClass('fc_active_element').addClass('fc_inactive_element hidden').hide();

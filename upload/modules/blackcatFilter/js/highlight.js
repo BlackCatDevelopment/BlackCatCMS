@@ -14,7 +14,7 @@ Here's how to implement it:
    There are examples to show you how.
 2. Put this file on your web server.
 3. Add a script tag to your web page, like this:
-	<script type="text/javascript" src="/highlighter.js"></script>
+	<script  src="/highlighter.js"></script>
 4. Add an "onload" attribute to the body tag, like this:
 	<body onload="highlighter.highlight()">
 */

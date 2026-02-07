@@ -28,12 +28,12 @@ if (defined('CAT_PATH')) {
 } else {
     $root = "../";
     $level = 1;
-    while (($level < 10) && (!file_exists($root.'framework/class.secure.php'))) {
+    while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
         $root .= "../";
         $level += 1;
     }
-    if (file_exists($root.'framework/class.secure.php')) {
-        include($root.'framework/class.secure.php');
+    if (file_exists($root.'/framework/class.secure.php')) {
+        include($root.'/framework/class.secure.php');
     } else {
         trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
     }
@@ -548,7 +548,7 @@ function saveSettings($settings)
     global $groups, $allow_tags_in_fields, $allow_empty_values, $boolean, $numeric;
     $old_settings = getSettingsTable();
     foreach ($settings as $key => $value) {
-        $value = empty($value) ? '' : trim($value);
+        $value = trim($value);
         // allow HTML?
         if (!in_array($key, $allow_tags_in_fields)) {
             $value = strip_tags($value);

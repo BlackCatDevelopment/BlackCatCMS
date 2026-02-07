@@ -105,7 +105,7 @@ if (!class_exists("CAT_Users", false)) {
          * @return bool
          **/
         private static function checkNotMD5Password(
-            string $username = null
+            ?string $username = null
         ): bool {
             if (!$username) {
                 return false;
@@ -270,7 +270,22 @@ if (!class_exists("CAT_Users", false)) {
             $lang = CAT_Helper_I18n::getInstance();
             $self = self::getInstance();
 
-            $redirect_url = $val->getURI($val->sanitizePost("redirect"));
+            $redirect_url = $val->getURI($val->sanitizePost("redirect") ?? "");
+
+            // Schleifen verhindern: nie zurück auf Login/aktuelle URL redirecten
+            $cur =
+                ($_SERVER["REQUEST_SCHEME"] ?? "https") .
+                "://" .
+                ($_SERVER["HTTP_HOST"] ?? "") .
+                ($_SERVER["REQUEST_URI"] ?? "");
+            $path = parse_url($redirect_url, PHP_URL_PATH) ?: "";
+            if (
+                !$redirect_url ||
+                $redirect_url === $cur ||
+                preg_match('#/(account/login\.php$|admin/login)#i', $path)
+            ) {
+                $redirect_url = null;
+            }
 
             if (!self::is_authenticated()) {
                 // --- login attempt ---
@@ -676,7 +691,7 @@ if (!class_exists("CAT_Users", false)) {
                     "MIN_PASSWORD_LEN" => AUTH_MIN_PASS_LENGTH,
                     "MAX_PASSWORD_LEN" => AUTH_MAX_PASS_LENGTH,
                     "PAGES_DIRECTORY" => PAGES_DIRECTORY,
-                    "ATTEMPTS" => $val->fromSession("ATTEMTPS"),
+                    "ATTEMPTS" => $val->fromSession("ATTEMPTS"),
                     "MESSAGE" => self::$loginerror,
                 ];
 
@@ -689,8 +704,20 @@ if (!class_exists("CAT_Users", false)) {
 
                 $parser->output("login", $tpl_data);
             } else {
+                // NUR auf der Login-Seite umleiten, sonst Schleife
+                $req = $_SERVER["REQUEST_URI"] ?? "";
+                if (
+                    !preg_match(
+                        '#/(account/login\.php|login(\.php)?)(\?|$)#i',
+                        $req
+                    )
+                ) {
+                    return false;
+                }
+
                 if ($redirect_url) {
                     header("Location: " . $redirect_url);
+                    exit();
                 }
                 if (self::getInstance()->checkPermission("start", "start")) {
                     header(
@@ -699,12 +726,13 @@ if (!class_exists("CAT_Users", false)) {
                                 CAT_ADMIN_URL . "/start/index.php"
                             )
                     );
-                } else {
-                    header(
-                        "Location: " .
-                            CAT_Helper_Validate::getURI(CAT_URL . "/index.php")
-                    );
+                    exit();
                 }
+                header(
+                    "Location: " .
+                        CAT_Helper_Validate::getURI(CAT_URL . "/index.php")
+                );
+                exit();
             }
         } // end function handleLogin()
 
@@ -1402,11 +1430,13 @@ if (!class_exists("CAT_Users", false)) {
                 return self::$groups;
             }
             // get available groups
+            $order = in_array($order, ["name", "group_id"], true)
+                ? $order
+                : "name";
             $query = $self
                 ->db()
                 ->query(
-                    "SELECT `group_id`, `name` FROM `:prefix:groups` ORDER BY :order",
-                    ["order" => $order]
+                    "SELECT `group_id`, `name` FROM `:prefix:groups` ORDER BY `$order`"
                 );
             if ($query->rowCount()) {
                 while ($row = $query->fetch()) {
@@ -1651,13 +1681,16 @@ if (!class_exists("CAT_Users", false)) {
             $admin_groups = [],
             $insert_admin = true
         ) {
-            $groups = false;
+            $groups = [
+                "viewers" => [],
+                "admins" => [],
+            ];
             $viewing_groups = is_array($viewing_groups)
                 ? $viewing_groups
                 : [$viewing_groups];
             $admin_groups = is_array($admin_groups)
                 ? $admin_groups
-                : [$viewing_groups];
+                : [$admin_groups];
             $self = self::getInstance();
 
             // ================
@@ -1971,7 +2004,7 @@ if (!class_exists("CAT_Users", false)) {
                 $groups_list2 = explode(",", $groups_list2);
             }
 
-            return sizeof(array_intersect($groups_list1, $groups_list2)) != 0;
+            return count(array_intersect($groups_list1, $groups_list2)) != 0;
         } // end function is_group_match()
 
         /**
@@ -2023,6 +2056,7 @@ if (!class_exists("CAT_Users", false)) {
             $allow_quotes = true,
             $strict = false
         ) {
+            $password = (string) ($password ?? "");
             $min_length = CAT_Registry::exists("AUTH_MIN_PASS_LENGTH")
                 ? CAT_Registry::get("AUTH_MIN_PASS_LENGTH")
                 : 5;
@@ -2047,14 +2081,20 @@ if (!class_exists("CAT_Users", false)) {
                 return false;
             }
             // any string that doesn't have control characters (ASCII 0 - 31) - spaces allowed
-            if (!preg_match('/^[^\x-\x1F]+$/D', $password, $match)) {
+            // any string that doesn't have control characters (ASCII 0 - 31) - spaces allowed
+            $match = [];
+            $rc = preg_match('/^[^\x00-\x1F]+$/D', $password, $match);
+
+            if ($rc !== 1) {
+                // $rc === 0 -> no match, $rc === false -> regex error
                 self::$validatePasswordError = self::lang()->translate(
                     "Invalid password!"
                 );
+                self::$lastValidatedPassword = null;
                 return false;
-            } else {
-                self::$lastValidatedPassword = $match[0];
             }
+
+            self::$lastValidatedPassword = $match[0];
             if (!$allow_quotes) {
                 // don't allow quotes in the PW!
                 if (preg_match('/(\%27)|(\')|(%2D%2D)|(\-\-)/i', $password)) {
@@ -2075,8 +2115,9 @@ if (!class_exists("CAT_Users", false)) {
                         self::lang()->translate(
                             "The required password complexity is not met"
                         ) . "<br />";
-                    foreach($PASSWORD->getPasswordIssues() as $issue) {
-                        self::$validatePasswordError .= self::lang()->translate($issue) . "<br />";
+                    foreach ($PASSWORD->getPasswordIssues() as $issue) {
+                        self::$validatePasswordError .=
+                            self::lang()->translate($issue) . "<br />";
                     }
                     return false;
                 }

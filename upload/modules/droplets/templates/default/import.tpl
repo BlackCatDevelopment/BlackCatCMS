@@ -2,7 +2,7 @@
   <a href="">{translate('Back to overview')}</a><br />
   {if $problem}<div class="problem ui-corner-all">{$problem}</div>{/if}
   {if $info}<div class="info ui-corner-all">{$info}</div>{/if}
-  <form action="{$action}" enctype="multipart/form-data" method="post">
+  <form action="{$action|default:''}" enctype="multipart/form-data" method="post">
     <input type="hidden" name="tool" value="droplets" />
     <input type="hidden" name="import" value="1" />
     <fieldset>

@@ -22,20 +22,28 @@
  *
  */
  
-if (defined('CAT_PATH')) {	
-	include(CAT_PATH.'/framework/class.secure.php'); 
+if (defined("CAT_PATH")) {
+    include CAT_PATH . "/framework/class.secure.php";
 } else {
-	$root = "../";
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'framework/class.secure.php'))) {
-		$root .= "../";
-		$level += 1;
-	}
-	if (file_exists($root.'framework/class.secure.php')) { 
-		include($root.'framework/class.secure.php'); 
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+    $root = "../";
+    $level = 1;
+
+    while ($level < 10 && !file_exists($root . "framework/class.secure.php")) {
+        $root .= "../";
+        $level++;
+    }
+
+    if (file_exists($root . "framework/class.secure.php")) {
+        include $root . "framework/class.secure.php";
+    } else {
+        trigger_error(
+            sprintf(
+                "[ <b>%s</b> ] Can't include class.secure.php!",
+                $_SERVER["SCRIPT_NAME"]
+            ),
+            E_USER_ERROR
+        );
+    }
 }
 
 // ================================= 
@@ -176,7 +184,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
                         else
                         {
                             $ajax	= array(
-                        		'message'	=> $backend->lang()->translate('File upload error: {{error}}',array('error'=>$backend->lang()->translate($current->error))),
+                        		'message'	=> $backend->lang()->translate('File upload error: {{error}}',array('error'=>$current->error)),
                         		'success'	=> false
                         	);
                         	print json_encode( $ajax );
@@ -186,7 +194,7 @@ elseif ( is_array($val->sanitizePost('upload_counter')) )
                     else
                     {
                             $ajax	= array(
-                        		'message'	=> $backend->lang()->translate('File upload error: {{error}}',array('error'=>$backend->lang()->translate($current->error))),
+                        		'message'	=> $backend->lang()->translate('File upload error: {{error}}',array('error'=>$current->error)),
                         		'success'	=> false
                         	);
                         	print json_encode( $ajax );
